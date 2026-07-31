@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;b12e85be7d455115f6d554170e92b6088ef37ef9bf708b0eae91cd65079b1ecd;D:/Projects/CodeKids/src/frontend/src/app/app.component.ts"],
+  "sourcesContent": [":host { display: block; min-height: 100vh; }"],
+  "mappings": ";AAAA;AAAQ,WAAS;AAAO,cAAY;AAAO;",
+  "names": []
+}

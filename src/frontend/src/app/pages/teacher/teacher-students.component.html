@@ -1,0 +1,27 @@
+<div class="panel-page">
+  <h2>Students</h2>
+  <p class="meta">Classroom progress overview.</p>
+
+  <section class="block">
+    <div class="table">
+      <div class="table-row head">
+        <span>Name</span>
+        <span>XP</span>
+        <span>Steps</span>
+        <span>Quizzes</span>
+        <span>Parent</span>
+      </div>
+      @for (student of dashboard()?.students || []; track student.studentId) {
+        <div class="table-row">
+          <span>{{ student.displayName }}</span>
+          <span>{{ student.totalXp }}</span>
+          <span>{{ student.completedSteps }}</span>
+          <span>{{ student.quizAttempts }}</span>
+          <span>{{ student.parentName || '—' }}</span>
+        </div>
+      } @empty {
+        <p class="meta">No students found.</p>
+      }
+    </div>
+  </section>
+</div>

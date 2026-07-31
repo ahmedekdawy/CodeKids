@@ -1,0 +1,103 @@
+<div class="page">
+  <header class="topbar">
+    <div>
+      <p class="brand">CodeKids</p>
+      <h1>Hi {{ auth.user()?.displayName }}!</h1>
+    </div>
+    <button type="button" class="ghost" (click)="auth.logout()">Sign out</button>
+  </header>
+
+  <section class="hero-strip">
+    <div>
+      <p class="eyebrow">Student mission board</p>
+      <h2>Courses, quizzes, badges, and avatars.</h2>
+      <p>{{ summary()?.totalCompletedSteps || 0 }} steps done · {{ summary()?.totalXp || 0 }} XP</p>
+    </div>
+    <div class="xp-pill">{{ summary()?.totalXp || 0 }} XP</div>
+  </section>
+
+  <section class="block">
+    <h3>Live Zoom classes</h3>
+    @for (meeting of meetings(); track meeting.id) {
+      <div class="meeting-row">
+        <div>
+          <strong>{{ meeting.title }}</strong>
+          <p class="meta">
+            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.durationMinutes }} min · with {{ meeting.hostName }}
+            @if (meeting.classroomName) {
+              · {{ meeting.classroomName }}
+            }
+          </p>
+        </div>
+        <a class="chip quiz" [href]="meeting.joinUrl" target="_blank" rel="noopener">Join Zoom</a>
+      </div>
+    } @empty {
+      <p class="meta">No live classes scheduled right now. Check back soon!</p>
+    }
+  </section>
+
+  <section class="block">
+    <h3>Assignments</h3>
+    <div class="chip-row">
+      @for (assignment of assignments(); track assignment.id) {
+        <a class="chip" [routerLink]="['/assignments', assignment.id]">{{ assignment.title }}</a>
+      } @empty {
+        <span class="meta">No assignments yet.</span>
+      }
+    </div>
+  </section>
+
+  <section class="grid-two">
+    <article>
+      <h3>Courses</h3>
+      @for (course of courses(); track course.id) {
+        <div class="block">
+          <strong>{{ course.title }}</strong>
+          <p>{{ course.description }}</p>
+          <p class="meta">Ages {{ course.ageMin }}–{{ course.ageMax }} · {{ course.theme }}</p>
+          <div class="chip-row">
+            @for (lesson of course.lessons; track lesson.id) {
+              <a class="chip" [routerLink]="['/lessons', lesson.id]">{{ lesson.title }}</a>
+            }
+            @for (quiz of course.quizzes; track quiz.id) {
+              <a class="chip quiz" [routerLink]="['/quizzes', quiz.id]">Quiz: {{ quiz.title }}</a>
+            }
+          </div>
+        </div>
+      }
+    </article>
+
+    <aside class="side-stack">
+      <article>
+        <h3>Badges</h3>
+        <div class="chip-row">
+          @for (badge of badges(); track badge.id) {
+            <div class="badge" [class.earned]="badge.isEarned">
+              <span>{{ badge.icon }}</span>
+              <strong>{{ badge.name }}</strong>
+              <small>{{ badge.description }}</small>
+            </div>
+          }
+        </div>
+      </article>
+
+      <article>
+        <h3>Avatars</h3>
+        <div class="avatar-row">
+          @for (avatar of avatars(); track avatar.id) {
+            <button
+              type="button"
+              class="avatar"
+              [class.selected]="avatar.isSelected"
+              [disabled]="!avatar.isUnlocked"
+              (click)="selectAvatar(avatar)">
+              <span class="emoji">{{ avatar.emoji }}</span>
+              <strong>{{ avatar.name }}</strong>
+              <small>{{ avatar.isUnlocked ? 'Unlocked' : 'Needs ' + avatar.unlockXp + ' XP' }}</small>
+            </button>
+          }
+        </div>
+      </article>
+    </aside>
+  </section>
+</div>

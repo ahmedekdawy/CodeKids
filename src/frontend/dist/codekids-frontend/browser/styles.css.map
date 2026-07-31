@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/styles.css"],
+  "sourcesContent": ["@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap');\r\n\r\n:root {\r\n  color-scheme: dark;\r\n  --font-display: 'Baloo 2', cursive;\r\n  --font-body: 'Space Grotesk', sans-serif;\r\n}\r\n\r\n* {\r\n  box-sizing: border-box;\r\n}\r\n\r\nhtml,\r\nbody {\r\n  margin: 0;\r\n  padding: 0;\r\n  font-family: var(--font-body);\r\n  background: #07111f;\r\n}\r\n\r\na {\r\n  color: inherit;\r\n}\r\n"],
+  "mappings": ";;;AAEA;AACE,gBAAc;AACd,kBAAgB,SAAS,EAAE;AAC3B,eAAa,eAAe,EAAE;AAChC;AAEA;AACE,cAAY;AACd;AAEA;AACA;AACE,UAAQ;AACR,WAAS;AACT,eAAa,IAAI;AACjB,cAAY;AACd;AAEA;AACE,SAAO;AACT;",
+  "names": []
+}

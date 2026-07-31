@@ -1,0 +1,27 @@
+<div class="panel-page">
+  <section class="hero-strip">
+    <div>
+      <p class="eyebrow">Classroom overview</p>
+      <h2>Welcome, {{ dashboard()?.teacherName }}</h2>
+      <p>
+        {{ dashboard()?.studentCount || 0 }} students ·
+        {{ classrooms().length }} classrooms ·
+        avg {{ dashboard()?.averageXp || 0 }} XP
+      </p>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>Your classrooms</h3>
+    @for (room of classrooms(); track room.id) {
+      <div class="meeting-row">
+        <div>
+          <strong>{{ room.name }}</strong>
+          <p class="meta">{{ room.courseTitle || 'No course' }} · {{ room.students.length }} students</p>
+        </div>
+      </div>
+    } @empty {
+      <p class="meta">No classrooms assigned yet.</p>
+    }
+  </section>
+</div>

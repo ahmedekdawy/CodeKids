@@ -1,0 +1,80 @@
+<div class="panel-page">
+  <h2>Courses</h2>
+  <p class="meta">Create, edit, and delete courses. Click headers to sort.</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>Create course</h3>
+    <form class="meeting-form" (ngSubmit)="createCourse()">
+      <label>Title <input [(ngModel)]="courseTitle" name="courseTitle" required /></label>
+      <label>Theme <input [(ngModel)]="courseTheme" name="courseTheme" /></label>
+      <label>Description <input [(ngModel)]="courseDescription" name="courseDescription" /></label>
+      <label>Age min <input type="number" [(ngModel)]="courseAgeMin" name="courseAgeMin" /></label>
+      <label>Age max <input type="number" [(ngModel)]="courseAgeMax" name="courseAgeMax" /></label>
+      <label>Sort <input type="number" [(ngModel)]="courseSort" name="courseSort" /></label>
+      <button type="submit">Create course</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>Course list</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('title')">Title <span class="sort-mark">{{ sortMark('title') }}</span></th>
+            <th class="sortable" (click)="setSort('theme')">Theme <span class="sort-mark">{{ sortMark('theme') }}</span></th>
+            <th class="sortable" (click)="setSort('ageMin')">Ages <span class="sort-mark">{{ sortMark('ageMin') }}</span></th>
+            <th class="sortable" (click)="setSort('sortOrder')">Sort <span class="sort-mark">{{ sortMark('sortOrder') }}</span></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (course of sortedCourses(); track course.id) {
+            <tr>
+              @if (editingId() === course.id) {
+                <td>
+                  <input [(ngModel)]="editTitle" [name]="'cTitle-' + course.id" />
+                  <input [(ngModel)]="editDescription" [name]="'cDesc-' + course.id" placeholder="Description" />
+                </td>
+                <td><input [(ngModel)]="editTheme" [name]="'cTheme-' + course.id" /></td>
+                <td>
+                  <input type="number" [(ngModel)]="editAgeMin" [name]="'cMin-' + course.id" />
+                  –
+                  <input type="number" [(ngModel)]="editAgeMax" [name]="'cMax-' + course.id" />
+                </td>
+                <td><input type="number" [(ngModel)]="editSort" [name]="'cSort-' + course.id" /></td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" (click)="saveEdit(course.id)">Save</button>
+                    <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
+                  </div>
+                </td>
+              } @else {
+                <td>
+                  <strong>{{ course.title }}</strong>
+                  <div class="meta">{{ course.description }}</div>
+                </td>
+                <td>{{ course.theme }}</td>
+                <td>{{ course.ageMin }}–{{ course.ageMax }}</td>
+                <td>{{ course.sortOrder }}</td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" (click)="startEdit(course)">Edit</button>
+                    <button type="button" class="danger" (click)="deleteCourse(course)">Delete</button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

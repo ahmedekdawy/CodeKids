@@ -1,0 +1,88 @@
+@import '../../styles/dashboard-shared.css';
+
+.user-row {
+  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.75rem 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.data-table th {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.data-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.data-table th.sortable:hover {
+  color: #ffd60a;
+}
+
+.data-table th .sort-mark {
+  margin-left: 0.35rem;
+  opacity: 0.7;
+}
+
+.data-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.data-table input,
+.data-table select {
+  width: 100%;
+  min-width: 7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(8, 15, 31, 0.45);
+  color: #fff;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.row-actions button {
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.row-actions button.danger {
+  background: rgba(255, 107, 107, 0.25);
+  color: #fff;
+}
+
+.row-actions button.ghost-btn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+  .user-row {
+    grid-template-columns: 1fr;
+  }
+}

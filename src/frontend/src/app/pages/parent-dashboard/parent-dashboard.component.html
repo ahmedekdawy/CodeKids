@@ -1,0 +1,58 @@
+<div class="page">
+  <header class="topbar">
+    <div>
+      <p class="brand">CodeKids</p>
+      <h1>Parent dashboard</h1>
+    </div>
+    <button type="button" class="ghost" (click)="auth.logout()">Sign out</button>
+  </header>
+
+  <section class="hero-strip">
+    <div>
+      <p class="eyebrow">Family progress</p>
+      <h2>Hello {{ dashboard()?.parentName }}</h2>
+      <p>Track your children's XP, completed steps, quizzes, and badges.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>Upcoming Zoom classes</h3>
+    @for (meeting of meetings(); track meeting.id) {
+      <div class="meeting-row">
+        <div>
+          <strong>{{ meeting.title }}</strong>
+          <p class="meta">
+            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.durationMinutes }} min · {{ meeting.hostName }}
+          </p>
+        </div>
+        <a class="chip quiz" [href]="meeting.joinUrl" target="_blank" rel="noopener">Open join link</a>
+      </div>
+    } @empty {
+      <p class="meta">No live classes scheduled.</p>
+    }
+  </section>
+
+  <section class="grid-cards">
+    @for (child of dashboard()?.children || []; track child.studentId) {
+      <article class="block">
+        <h3>{{ child.displayName }}</h3>
+        <p>{{ child.totalXp }} XP · {{ child.completedSteps }} steps · {{ child.quizAttempts }} quizzes</p>
+        <p class="meta">Student ID: {{ child.studentId }}</p>
+        <div class="chip-row">
+          @for (badge of child.badges; track badge) {
+            <span class="chip">{{ badge }}</span>
+          }
+          @if (!child.badges.length) {
+            <span class="meta">No badges yet</span>
+          }
+        </div>
+      </article>
+    } @empty {
+      <article class="block">
+        <h3>No linked students yet</h3>
+        <p>When a student registers with your Parent ID, their progress will appear here.</p>
+        <p class="meta">Your Parent ID: {{ auth.user()?.id }}</p>
+      </article>
+    }
+  </section>
+</div>

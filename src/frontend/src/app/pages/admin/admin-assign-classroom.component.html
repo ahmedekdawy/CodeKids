@@ -1,0 +1,68 @@
+<div class="panel-page">
+  <h2>Assign teacher / course</h2>
+  <p class="meta">Attach a teacher and course to an existing classroom.</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <form class="meeting-form" (ngSubmit)="assignClassroom()">
+      <label>
+        Classroom
+        <select [(ngModel)]="assignClassroomId" name="assignClassroomId">
+          <option value="">Select</option>
+          @for (room of classrooms(); track room.id) {
+            <option [value]="room.id">{{ room.name }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Teacher
+        <select [(ngModel)]="assignTeacherId" name="assignTeacherId">
+          <option value="">Unassigned</option>
+          @for (teacher of teachers(); track teacher.id) {
+            <option [value]="teacher.id">{{ teacher.displayName }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Course
+        <select [(ngModel)]="assignCourseId" name="assignCourseId">
+          <option value="">None</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ course.title }}</option>
+          }
+        </select>
+      </label>
+      <button type="submit">Save assignment</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>Current assignments</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('name')">Classroom <span class="sort-mark">{{ sortMark('name') }}</span></th>
+            <th class="sortable" (click)="setSort('teacherName')">Teacher <span class="sort-mark">{{ sortMark('teacherName') }}</span></th>
+            <th class="sortable" (click)="setSort('courseTitle')">Course <span class="sort-mark">{{ sortMark('courseTitle') }}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (room of sortedClassrooms(); track room.id) {
+            <tr>
+              <td>{{ room.name }}</td>
+              <td>{{ room.teacherName || '—' }}</td>
+              <td>{{ room.courseTitle || '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

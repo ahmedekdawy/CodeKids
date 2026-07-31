@@ -1,0 +1,49 @@
+<div class="panel-page">
+  <h2>Quizzes</h2>
+  <p class="meta">Create classroom quizzes with multiple-choice questions.</p>
+
+  @if (info()) {
+    <p class="feedback ok">{{ info() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>Create quiz</h3>
+    <form class="meeting-form" (ngSubmit)="createQuiz()">
+      <label>Title <input [(ngModel)]="quizTitle" name="quizTitle" required /></label>
+      <label>Description <input [(ngModel)]="quizDescription" name="quizDescription" /></label>
+      <label>
+        Course
+        <select [(ngModel)]="quizCourseId" name="quizCourseId">
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ course.title }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Classroom
+        <select [(ngModel)]="quizClassroomId" name="quizClassroomId">
+          @for (room of classrooms(); track room.id) {
+            <option [value]="room.id">{{ room.name }}</option>
+          }
+        </select>
+      </label>
+      <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
+      <label>Question <input [(ngModel)]="quizPrompt" name="quizPrompt" required /></label>
+      <label>A <input [(ngModel)]="quizA" name="quizA" required /></label>
+      <label>B <input [(ngModel)]="quizB" name="quizB" required /></label>
+      <label>C <input [(ngModel)]="quizC" name="quizC" required /></label>
+      <label>
+        Correct
+        <select [(ngModel)]="quizCorrect" name="quizCorrect">
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+        </select>
+      </label>
+      <button type="submit">Create quiz</button>
+    </form>
+  </section>
+</div>

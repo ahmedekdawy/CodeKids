@@ -1,0 +1,75 @@
+<div class="panel-page">
+  <h2>Students</h2>
+  <p class="meta">Manage student accounts and WhatsApp mobile numbers.</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>Create student</h3>
+    <form class="meeting-form" (ngSubmit)="createStudent()">
+      <label>Name <input [(ngModel)]="studentName" name="studentName" required /></label>
+      <label>Email <input [(ngModel)]="studentEmail" name="studentEmail" type="email" required /></label>
+      <label>Password <input [(ngModel)]="studentPassword" name="studentPassword" type="password" required /></label>
+      <label>Mobile (WhatsApp) <input [(ngModel)]="studentMobile" name="studentMobile" placeholder="2010xxxxxxx" /></label>
+      <label>Parent ID <input [(ngModel)]="studentParentId" name="studentParentId" /></label>
+      <button type="submit">Create student</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>Student list</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('displayName')">Name <span class="sort-mark">{{ sortMark('displayName') }}</span></th>
+            <th class="sortable" (click)="setSort('email')">Email <span class="sort-mark">{{ sortMark('email') }}</span></th>
+            <th class="sortable" (click)="setSort('mobilePhone')">Mobile <span class="sort-mark">{{ sortMark('mobilePhone') }}</span></th>
+            <th class="sortable" (click)="setSort('totalXp')">XP <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
+            <th>Parent ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (student of sortedStudents(); track student.id) {
+            <tr>
+              @if (editingId() === student.id) {
+                <td><input [(ngModel)]="editName" [name]="'sName-' + student.id" /></td>
+                <td><input [(ngModel)]="editEmail" [name]="'sEmail-' + student.id" /></td>
+                <td><input [(ngModel)]="editMobile" [name]="'sMobile-' + student.id" placeholder="2010xxxxxxx" /></td>
+                <td>{{ student.totalXp }}</td>
+                <td>
+                  <input [(ngModel)]="editParentId" [name]="'sParent-' + student.id" />
+                  <input [(ngModel)]="editPassword" [name]="'sPass-' + student.id" type="password" placeholder="New password" />
+                </td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" (click)="saveEdit(student.id)">Save</button>
+                    <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
+                  </div>
+                </td>
+              } @else {
+                <td>{{ student.displayName }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.mobilePhone || '—' }}</td>
+                <td>{{ student.totalXp }}</td>
+                <td>{{ student.parentId || '—' }}</td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" (click)="startEdit(student)">Edit</button>
+                    <button type="button" class="danger" (click)="deleteStudent(student)">Delete</button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

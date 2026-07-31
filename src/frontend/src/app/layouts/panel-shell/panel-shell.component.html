@@ -1,0 +1,42 @@
+<div class="shell" [class.collapsed]="collapsed()">
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <p class="brand">{{ collapsed() ? 'CK' : 'CodeKids' }}</p>
+        @if (!collapsed()) {
+          <strong>{{ title }}</strong>
+          <small>{{ subtitle }}</small>
+        }
+      </div>
+      <button type="button" class="collapse-btn" (click)="toggle()" [title]="collapsed() ? 'Expand menu' : 'Collapse menu'">
+        {{ collapsed() ? '»' : '«' }}
+      </button>
+    </div>
+
+    <nav class="side-nav">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [title]="item.label">
+          <span class="nav-icon">{{ iconFor(item) }}</span>
+          @if (!collapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <button type="button" class="logout" (click)="auth.logout()" [title]="'Sign out'">
+      @if (collapsed()) {
+        ⎋
+      } @else {
+        Sign out
+      }
+    </button>
+  </aside>
+
+  <main class="shell-main">
+    <ng-content />
+  </main>
+</div>

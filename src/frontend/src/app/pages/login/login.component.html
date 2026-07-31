@@ -1,0 +1,33 @@
+<section class="auth-shell">
+  <div class="auth-panel">
+    <p class="brand">CodeKids</p>
+    <h1>Welcome back, young coder.</h1>
+    <p class="supporting">Sign in as a student, parent, or teacher.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        <span>Email</span>
+        <input formControlName="email" type="email" placeholder="student@codekids.local" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input formControlName="password" type="password" placeholder="Password" />
+      </label>
+
+      <button type="submit" [disabled]="loading() || form.invalid">Sign in</button>
+    </form>
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    <p class="hint">Demo: student@codekids.local / Student123!</p>
+    <p class="hint">Also parent@codekids.local / Parent123! and teacher@codekids.local / Teacher123!</p>
+    <a routerLink="/register">Create an account</a>
+  </div>
+  <div class="auth-visual" aria-hidden="true">
+    <div class="glow"></div>
+    <div class="code-card">
+      <span>LOOP 3 FORWARD</span>
+      <span>IF asteroid THEN dodge</span>
+    </div>
+  </div>
+</section>

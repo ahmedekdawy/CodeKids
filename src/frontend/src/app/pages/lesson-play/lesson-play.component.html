@@ -1,0 +1,47 @@
+<div class="page">
+  <a routerLink="/student" class="back">← Back to missions</a>
+  @if (lesson(); as current) {
+    <section class="hero-strip">
+      <div>
+        <p class="eyebrow">{{ current.theme }} lesson</p>
+        <h1>{{ current.title }}</h1>
+        <p>{{ current.description }}</p>
+      </div>
+      <div class="xp-pill">{{ current.xpReward }} XP</div>
+    </section>
+
+    <section class="grid-two">
+      <nav class="block">
+        <h3>Steps</h3>
+        @for (step of current.steps; track step.id) {
+          <button type="button" class="list-btn" [class.active]="selectedStep()?.id === step.id" (click)="chooseStep(step)">
+            Step {{ step.stepNumber }} · {{ step.title }}
+          </button>
+        }
+      </nav>
+
+      @if (selectedStep(); as step) {
+        <article class="block">
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.prompt }}</p>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <textarea formControlName="answer" rows="6" placeholder="Type your answer..."></textarea>
+            <button type="submit" [disabled]="loading() || form.invalid">Check answer</button>
+          </form>
+          @if (feedback(); as result) {
+            <div class="feedback" [class.ok]="result.isCorrect">
+              <strong>{{ result.isCorrect ? 'Nice work!' : 'Try again!' }}</strong>
+              <p>{{ result.feedback }}</p>
+              @if (result.isCorrect) {
+                <span>+{{ result.earnedXp }} XP · Total {{ result.totalXp }} XP</span>
+              }
+              @if (result.newlyAwardedBadges.length) {
+                <p>New badges: {{ result.newlyAwardedBadges.join(', ') }}</p>
+              }
+            </div>
+          }
+        </article>
+      }
+    </section>
+  }
+</div>

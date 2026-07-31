@@ -1,0 +1,46 @@
+<div class="panel-page">
+  <h2>Review answers</h2>
+  <p class="meta">Load assignment submissions and mark student answers.</p>
+
+  @if (info()) {
+    <p class="feedback ok">{{ info() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <form class="meeting-form" (ngSubmit)="loadSubmissions()">
+      <label>
+        Assignment
+        <select [(ngModel)]="reviewAssignmentId" name="reviewAssignmentId">
+          <option value="">Select</option>
+          @for (assignment of assignments(); track assignment.id) {
+            <option [value]="assignment.id">{{ assignment.title }}</option>
+          }
+        </select>
+      </label>
+      <label>Feedback <input [(ngModel)]="gradeFeedback" name="gradeFeedback" /></label>
+      <button type="submit">Load submissions</button>
+    </form>
+  </section>
+
+  @for (submission of submissions(); track submission.id) {
+    <section class="block">
+      <strong>{{ submission.studentName }}</strong>
+      <p class="meta">{{ submission.status }} · score {{ submission.score ?? '—' }}/{{ submission.maxScore ?? '—' }}</p>
+      @for (answer of submission.answers; track answer.questionId) {
+        <div class="question">
+          <p>{{ answer.prompt }}</p>
+          <p>Answer: {{ answer.answerText }}</p>
+          <p class="meta">Key: {{ answer.correctAnswer }}</p>
+          <div class="chip-row">
+            <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, true)">Correct</button>
+            <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, false)">Wrong</button>
+          </div>
+        </div>
+      }
+      <button type="button" (click)="grade(submission)">Save grade</button>
+    </section>
+  }
+</div>

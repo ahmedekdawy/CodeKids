@@ -1,0 +1,81 @@
+<div class="panel-page">
+  <h2>Zoom meetings</h2>
+  <p class="meta">Connect your personal Zoom, schedule class meetings, and WhatsApp students on their mobile numbers.</p>
+
+  @if (info()) {
+    <p class="feedback ok">{{ info() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>Personal Zoom</h3>
+    @if (zoomStatus()?.connected) {
+      <p class="meta">
+        Connected as <strong>{{ zoomStatus()?.email || 'Zoom account' }}</strong>.
+        New meetings are created on your personal Zoom.
+      </p>
+      <button type="button" class="ghost-btn" (click)="disconnectZoom()">Disconnect Zoom</button>
+    } @else {
+      <p class="meta">
+        Connect your personal Zoom account so meetings are hosted under your name.
+        @if (zoomStatus()?.appFallbackAvailable) {
+          Without connecting, the app Zoom account (or mock links) is used.
+        }
+      </p>
+      <button type="button" (click)="connectZoom()" [disabled]="connecting()">
+        {{ connecting() ? 'Redirecting…' : 'Connect personal Zoom' }}
+      </button>
+    }
+  </section>
+
+  <section class="block">
+    <h3>Schedule Zoom</h3>
+    <form class="meeting-form" (ngSubmit)="createMeeting()">
+      <label>Title <input type="text" [(ngModel)]="title" name="title" required /></label>
+      <label>Description <input type="text" [(ngModel)]="description" name="description" /></label>
+      <label>
+        Classroom
+        <select [(ngModel)]="classroomId" name="classroomId" required>
+          <option value="">Select classroom</option>
+          @for (room of classrooms(); track room.id) {
+            <option [value]="room.id">{{ room.name }}</option>
+          }
+        </select>
+      </label>
+      <label>Starts at <input type="datetime-local" [(ngModel)]="startsAtLocal" name="startsAtLocal" required /></label>
+      <label>Duration <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="15" max="240" step="15" /></label>
+      <label class="checkbox">
+        <input type="checkbox" [(ngModel)]="notifyWhatsApp" name="notifyWhatsApp" />
+        WhatsApp enrolled students (their mobile) + classroom notify phones
+      </label>
+      <button type="submit" [disabled]="creating()">{{ creating() ? 'Creating…' : 'Create Zoom meeting' }}</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>Upcoming sessions</h3>
+    @for (meeting of meetings(); track meeting.id) {
+      <div class="meeting-row">
+        <div>
+          <strong>{{ meeting.title }}</strong>
+          <p class="meta">
+            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.classroomName || 'Classroom' }} · {{ meeting.durationMinutes }} min
+          </p>
+        </div>
+        <div class="chip-row">
+          <a class="chip" [href]="meeting.joinUrl" target="_blank" rel="noopener">Join</a>
+          @if (meeting.startUrl) {
+            <a class="chip quiz" [href]="meeting.startUrl" target="_blank" rel="noopener">Start host</a>
+          }
+          @if (meeting.whatsAppShareUrl) {
+            <a class="chip" [href]="meeting.whatsAppShareUrl" target="_blank" rel="noopener">Share WhatsApp</a>
+          }
+        </div>
+      </div>
+    } @empty {
+      <p class="meta">No upcoming Zoom sessions.</p>
+    }
+  </section>
+</div>

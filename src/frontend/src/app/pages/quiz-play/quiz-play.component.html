@@ -1,0 +1,48 @@
+<div class="page">
+  <a routerLink="/student" class="back">← Back to missions</a>
+  @if (quiz(); as current) {
+    <section class="hero-strip">
+      <div>
+        <p class="eyebrow">Checkpoint quiz</p>
+        <h1>{{ current.title }}</h1>
+        <p>{{ current.description }}</p>
+      </div>
+      <div class="xp-pill">{{ current.xpReward }} XP</div>
+    </section>
+
+    <section class="block">
+      @if (form) {
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          @for (question of current.questions; track question.id) {
+            <div class="question">
+              <strong>{{ question.sortOrder }}. {{ question.prompt }}</strong>
+              <label>
+                <input type="radio" [formControlName]="question.id" value="A" />
+                A) {{ question.optionA }}
+              </label>
+              <label>
+                <input type="radio" [formControlName]="question.id" value="B" />
+                B) {{ question.optionB }}
+              </label>
+              <label>
+                <input type="radio" [formControlName]="question.id" value="C" />
+                C) {{ question.optionC }}
+              </label>
+            </div>
+          }
+          <button type="submit" [disabled]="loading() || form.invalid">Submit quiz</button>
+        </form>
+      }
+      @if (result(); as response) {
+        <div class="feedback ok">
+          <strong>{{ response.score }}/{{ response.totalQuestions }}</strong>
+          <p>{{ response.feedback }}</p>
+          <span>+{{ response.earnedXp }} XP · Total {{ response.totalXp }} XP</span>
+          @if (response.newlyAwardedBadges.length) {
+            <p>New badges: {{ response.newlyAwardedBadges.join(', ') }}</p>
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

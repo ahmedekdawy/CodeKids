@@ -1,0 +1,41 @@
+<div class="page">
+  <header class="topbar">
+    <div>
+      <p class="brand">CodeKids</p>
+      <h1>{{ assignment()?.title || 'Assignment' }}</h1>
+    </div>
+    <a class="back" routerLink="/student">Back</a>
+  </header>
+
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  @if (result(); as submission) {
+    <section class="block">
+      <h3>Submitted</h3>
+      <p>Status: {{ submission.status }} · Score: {{ submission.score ?? 'pending' }}/{{ submission.maxScore ?? '—' }}</p>
+      @if (submission.teacherFeedback) {
+        <p>{{ submission.teacherFeedback }}</p>
+      }
+    </section>
+  } @else if (assignment(); as current) {
+    <section class="block">
+      <p>{{ current.description }}</p>
+      <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} XP</p>
+      @for (question of current.questions; track question.id) {
+        <div class="question">
+          <strong>{{ question.prompt }}</strong>
+          @if (question.questionType === 'MultipleChoice') {
+            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'A')" /> A. {{ question.optionA }}</label>
+            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'B')" /> B. {{ question.optionB }}</label>
+            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'C')" /> C. {{ question.optionC }}</label>
+          } @else {
+            <textarea [value]="answers()[question.id] || ''" (input)="setAnswer(question.id, $any($event.target).value)"></textarea>
+          }
+        </div>
+      }
+      <button type="button" (click)="submit()">Submit assignment</button>
+    </section>
+  }
+</div>

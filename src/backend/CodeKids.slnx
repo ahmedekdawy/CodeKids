@@ -1,0 +1,8 @@
+<Solution>
+
+    <Project Path="CodeKids.Api/CodeKids.Api.csproj" />
+    <Project Path="CodeKids.Application/CodeKids.Application.csproj" />
+    <Project Path="CodeKids.Domain/CodeKids.Domain.csproj" />
+    <Project Path="CodeKids.Infrastructure/CodeKids.Infrastructure.csproj" />
+
+</Solution>
