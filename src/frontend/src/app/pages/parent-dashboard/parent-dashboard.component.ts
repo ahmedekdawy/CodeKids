@@ -3,11 +3,12 @@ import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { LiveSession, ParentDashboard } from '../../models';
+import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, SiteBrandComponent],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })

@@ -2,7 +2,10 @@
   <aside class="sidebar">
     <div class="sidebar-top">
       <div class="sidebar-brand">
-        <p class="brand">{{ collapsed() ? 'CK' : 'CodeKids' }}</p>
+        @if (brand.logoUrl(); as logo) {
+          <img class="brand-logo" [src]="logo" [alt]="brand.siteName()" />
+        }
+        <p class="brand">{{ collapsed() ? brand.shortName() : brand.siteName() }}</p>
         @if (!collapsed()) {
           <strong>{{ titleKey | t }}</strong>
           <small>{{ subtitleKey | t }}</small>

@@ -49,8 +49,8 @@ public static class SchemaBootstrap
                 "Description" character varying(500) NOT NULL,
                 "AgeMin" integer NOT NULL,
                 "AgeMax" integer NOT NULL,
-                "Term" character varying(20) NOT NULL DEFAULT 'FullYear',
-                "Grade" integer NOT NULL DEFAULT 1,
+                "Term" character varying(20) NULL,
+                "Grade" integer NULL,
                 "SortOrder" integer NOT NULL,
                 CONSTRAINT "PK_Courses" PRIMARY KEY ("Id")
             );
@@ -352,6 +352,17 @@ public static class SchemaBootstrap
                 "SentAtUtc" timestamp with time zone NOT NULL,
                 CONSTRAINT "PK_WhatsAppReportLogs" PRIMARY KEY ("Id")
             );
+
+            CREATE TABLE IF NOT EXISTS "SiteSettings" (
+                "Id" uuid NOT NULL,
+                "SiteName" character varying(120) NOT NULL,
+                "LogoStorageKey" character varying(400) NOT NULL DEFAULT '',
+                "LogoContentType" character varying(120) NOT NULL DEFAULT '',
+                "BannerStorageKey" character varying(400) NOT NULL DEFAULT '',
+                "BannerContentType" character varying(120) NOT NULL DEFAULT '',
+                "UpdatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_SiteSettings" PRIMARY KEY ("Id")
+            );
             """,
             cancellationToken);
 
@@ -393,6 +404,9 @@ public static class SchemaBootstrap
             ALTER TABLE "BankQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
             ALTER TABLE "ExamQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
             ALTER TABLE "QuizQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
+
+            ALTER TABLE "Courses" ALTER COLUMN "Term" DROP NOT NULL;
+            ALTER TABLE "Courses" ALTER COLUMN "Grade" DROP NOT NULL;
             """,
             cancellationToken);
     }

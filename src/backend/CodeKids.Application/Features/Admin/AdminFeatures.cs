@@ -40,8 +40,8 @@ public sealed record CreateCourseRequest(
     string Description,
     int AgeMin,
     int AgeMax,
-    string Term,
-    int Grade,
+    string? Term,
+    int? Grade,
     int SortOrder);
 
 public sealed record CreateCourseCommand(
@@ -50,8 +50,8 @@ public sealed record CreateCourseCommand(
     string Description,
     int AgeMin,
     int AgeMax,
-    string Term,
-    int Grade,
+    string? Term,
+    int? Grade,
     int SortOrder) : ICommand<CourseSummaryDto>;
 
 public sealed record CourseSummaryDto(
@@ -61,8 +61,8 @@ public sealed record CourseSummaryDto(
     string Description,
     int AgeMin,
     int AgeMax,
-    string Term,
-    int Grade,
+    string? Term,
+    int? Grade,
     int SortOrder);
 
 public sealed class CreateManagedUserCommandHandler(
@@ -182,11 +182,11 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         return ToSummary(course);
     }
 
-    internal static CourseTerm ParseTerm(string? value)
+    internal static CourseTerm? ParseTerm(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            return CourseTerm.FullYear;
+            return null;
         }
 
         if (!Enum.TryParse<CourseTerm>(value.Trim(), true, out var term))
@@ -197,8 +197,13 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         return term;
     }
 
-    internal static int NormalizeGrade(int grade)
+    internal static int? NormalizeGrade(int? grade)
     {
+        if (grade is null or 0)
+        {
+            return null;
+        }
+
         if (grade is < 1 or > 12)
         {
             throw new InvalidOperationException("Grade must be between 1 and 12.");
@@ -215,7 +220,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             course.Description,
             course.AgeMin,
             course.AgeMax,
-            course.Term.ToString(),
+            course.Term?.ToString(),
             course.Grade,
             course.SortOrder);
 }
@@ -246,8 +251,8 @@ public sealed record UpdateCourseRequest(
     string Description,
     int AgeMin,
     int AgeMax,
-    string Term,
-    int Grade,
+    string? Term,
+    int? Grade,
     int SortOrder);
 
 public sealed record UpdateCourseCommand(
@@ -257,8 +262,8 @@ public sealed record UpdateCourseCommand(
     string Description,
     int AgeMin,
     int AgeMax,
-    string Term,
-    int Grade,
+    string? Term,
+    int? Grade,
     int SortOrder) : ICommand<CourseSummaryDto>;
 
 public sealed record DeleteCourseCommand(Guid CourseId) : ICommand<bool>;

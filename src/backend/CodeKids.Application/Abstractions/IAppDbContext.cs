@@ -32,6 +32,7 @@ public interface IAppDbContext
     DbSet<LessonVideo> LessonVideos { get; }
     DbSet<VideoWatchSession> VideoWatchSessions { get; }
     DbSet<WhatsAppReportLog> WhatsAppReportLogs { get; }
+    DbSet<SiteSettings> SiteSettings { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -1,7 +1,7 @@
 <section class="auth-shell">
   <div class="auth-panel">
     <div class="auth-panel-top">
-      <p class="brand">CodeKids</p>
+      <app-site-brand />
       <app-language-switcher />
     </div>
     <h1>{{ 'auth.login.title' | t }}</h1>
@@ -32,11 +32,15 @@
     </div>
   </div>
 
-  <div class="auth-visual" aria-hidden="true">
-    <div class="glow"></div>
-    <div class="code-card">
-      <span>LOOP 3 FORWARD</span>
-      <span>IF asteroid THEN dodge</span>
-    </div>
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">
+    @if (brand.bannerUrl(); as banner) {
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />
+    } @else {
+      <div class="glow"></div>
+      <div class="code-card">
+        <span>LOOP 3 FORWARD</span>
+        <span>IF asteroid THEN dodge</span>
+      </div>
+    }
   </div>
 </section>

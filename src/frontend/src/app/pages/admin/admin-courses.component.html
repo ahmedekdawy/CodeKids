@@ -18,6 +18,7 @@
       <label>
         {{ 'common.term' | t }}
         <select [(ngModel)]="courseTerm" name="courseTerm">
+          <option value="">{{ 'common.allTerms' | t }}</option>
           @for (term of terms; track term) {
             <option [value]="term">{{ termLabel(term) }}</option>
           }
@@ -26,11 +27,13 @@
       <label>
         {{ 'common.grade' | t }}
         <select [(ngModel)]="courseGrade" name="courseGrade">
+          <option [ngValue]="null">{{ 'common.allGrades' | t }}</option>
           @for (g of grades; track g) {
             <option [ngValue]="g">{{ gradeLabel(g) }}</option>
           }
         </select>
       </label>
+      <p class="meta">{{ 'admin.courses.allHint' | t }}</p>
       <label>{{ 'common.ageMin' | t }} <input type="number" [(ngModel)]="courseAgeMin" name="courseAgeMin" /></label>
       <label>{{ 'common.ageMax' | t }} <input type="number" [(ngModel)]="courseAgeMax" name="courseAgeMax" /></label>
       <label>{{ 'common.sort' | t }} <input type="number" [(ngModel)]="courseSort" name="courseSort" /></label>
@@ -64,6 +67,7 @@
                 <td><input [(ngModel)]="editTheme" [name]="'cTheme-' + course.id" /></td>
                 <td>
                   <select [(ngModel)]="editTerm" [name]="'cTerm-' + course.id">
+                    <option value="">{{ 'common.allTerms' | t }}</option>
                     @for (term of terms; track term) {
                       <option [value]="term">{{ termLabel(term) }}</option>
                     }
@@ -71,6 +75,7 @@
                 </td>
                 <td>
                   <select [(ngModel)]="editGrade" [name]="'cGrade-' + course.id">
+                    <option [ngValue]="null">{{ 'common.allGrades' | t }}</option>
                     @for (g of grades; track g) {
                       <option [ngValue]="g">{{ g }}</option>
                     }
@@ -95,7 +100,7 @@
                 </td>
                 <td>{{ course.theme }}</td>
                 <td>{{ termLabel(course.term) }}</td>
-                <td>{{ course.grade }}</td>
+                <td>{{ gradeLabel(course.grade) }}</td>
                 <td>{{ course.ageMin }}–{{ course.ageMax }}</td>
                 <td>{{ course.sortOrder }}</td>
                 <td>

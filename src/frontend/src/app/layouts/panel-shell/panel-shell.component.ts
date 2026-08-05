@@ -2,6 +2,7 @@ import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
+import { SiteBrandService } from '../../site-brand.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 
@@ -22,6 +23,7 @@ const COLLAPSED_KEY = 'codekids_sidebar_collapsed';
 export class PanelShellComponent implements OnInit {
   readonly auth = inject(AuthService);
   readonly locale = inject(LocaleService);
+  readonly brand = inject(SiteBrandService);
   readonly collapsed = signal(false);
 
   @Input({ required: true }) titleKey = '';

@@ -1,0 +1,69 @@
+<div class="panel-page">
+  <h2>{{ 'admin.site.title' | t }}</h2>
+  <p class="meta">{{ 'admin.site.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>{{ 'admin.site.branding' | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="save()">
+      <label>
+        {{ 'admin.site.siteName' | t }}
+        <input [(ngModel)]="siteName" name="siteName" required maxlength="120" />
+      </label>
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}
+      </button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'admin.site.logo' | t }}</h3>
+    <p class="meta">{{ 'admin.site.logoHint' | t }}</p>
+    @if (logoUrl(); as src) {
+      <img class="brand-preview logo" [src]="src" [alt]="'admin.site.logo' | t" />
+    } @else {
+      <p class="meta">{{ 'admin.site.noLogo' | t }}</p>
+    }
+    <div class="form-actions">
+      <label class="file-btn">
+        {{ uploading() === 'logo' ? ('common.loading' | t) : ('admin.site.uploadLogo' | t) }}
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" hidden (change)="onFile('logo', $event)" />
+      </label>
+      @if (logoUrl()) {
+        <button type="button" class="ghost-btn" (click)="clearImage('logo')">{{ 'admin.site.clearLogo' | t }}</button>
+      }
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'admin.site.banner' | t }}</h3>
+    <p class="meta">{{ 'admin.site.bannerHint' | t }}</p>
+    <div class="login-preview">
+      <div class="login-preview-form" aria-hidden="true">
+        <span>{{ 'admin.site.loginPreviewLeft' | t }}</span>
+      </div>
+      <div class="login-preview-visual">
+        @if (bannerUrl(); as src) {
+          <img [src]="src" [alt]="'admin.site.banner' | t" />
+        } @else {
+          <span>{{ 'admin.site.noBanner' | t }}</span>
+        }
+      </div>
+    </div>
+    <div class="form-actions">
+      <label class="file-btn">
+        {{ uploading() === 'banner' ? ('common.loading' | t) : ('admin.site.uploadBanner' | t) }}
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" hidden (change)="onFile('banner', $event)" />
+      </label>
+      @if (bannerUrl()) {
+        <button type="button" class="ghost-btn" (click)="clearImage('banner')">{{ 'admin.site.clearBanner' | t }}</button>
+      }
+    </div>
+  </section>
+</div>

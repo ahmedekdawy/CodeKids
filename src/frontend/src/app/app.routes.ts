@@ -14,6 +14,7 @@ import { AdminCoursesComponent } from './pages/admin/admin-courses.component';
 import { AdminCreateClassroomComponent } from './pages/admin/admin-create-classroom.component';
 import { AdminAssignClassroomComponent } from './pages/admin/admin-assign-classroom.component';
 import { AdminEnrollStudentComponent } from './pages/admin/admin-enroll-student.component';
+import { AdminSiteSettingsComponent } from './pages/admin/admin-site-settings.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
 import { TeacherOverviewComponent } from './pages/teacher/teacher-overview.component';
 import { TeacherZoomComponent } from './pages/teacher/teacher-zoom.component';
@@ -91,6 +92,7 @@ export const routes: Routes = [
       { path: 'create-classroom', component: AdminCreateClassroomComponent },
       { path: 'assign-classroom', component: AdminAssignClassroomComponent },
       { path: 'enroll-student', component: AdminEnrollStudentComponent },
+      { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' }
     ]
   },

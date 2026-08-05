@@ -31,8 +31,8 @@ export class AdminCoursesComponent {
   courseDescription = '';
   courseAgeMin = 8;
   courseAgeMax = 12;
-  courseTerm: CourseTerm = 'FullYear';
-  courseGrade = 1;
+  courseTerm: CourseTerm | '' = '';
+  courseGrade: number | null = null;
   courseSort = 10;
 
   editTitle = '';
@@ -40,8 +40,8 @@ export class AdminCoursesComponent {
   editDescription = '';
   editAgeMin = 8;
   editAgeMax = 12;
-  editTerm: CourseTerm | string = 'FullYear';
-  editGrade = 1;
+  editTerm: CourseTerm | string | '' = '';
+  editGrade: number | null = null;
   editSort = 0;
 
   readonly sortedCourses = computed(() =>
@@ -66,7 +66,8 @@ export class AdminCoursesComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
-  termLabel(term: string): string {
+  termLabel(term: string | null | undefined): string {
+    if (!term) return this.locale.t('common.allTerms');
     switch (term) {
       case 'FirstTerm':
         return this.locale.t('term.first');
@@ -79,7 +80,8 @@ export class AdminCoursesComponent {
     }
   }
 
-  gradeLabel(grade: number): string {
+  gradeLabel(grade: number | null | undefined): string {
+    if (grade == null) return this.locale.t('common.allGrades');
     return this.locale.t('common.gradeN', { n: grade });
   }
 
@@ -92,7 +94,7 @@ export class AdminCoursesComponent {
         description: this.courseDescription,
         ageMin: this.courseAgeMin,
         ageMax: this.courseAgeMax,
-        term: this.courseTerm,
+        term: this.courseTerm || null,
         grade: this.courseGrade,
         sortOrder: this.courseSort
       })
@@ -101,11 +103,11 @@ export class AdminCoursesComponent {
           this.message.set(this.locale.t('admin.courses.created'));
           this.courseTitle = '';
           this.courseDescription = '';
-          this.courseTerm = 'FullYear';
-          this.courseGrade = 1;
+          this.courseTerm = '';
+          this.courseGrade = null;
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.courses.createFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.createFailed'))
       });
   }
 
@@ -116,8 +118,8 @@ export class AdminCoursesComponent {
     this.editDescription = course.description;
     this.editAgeMin = course.ageMin;
     this.editAgeMax = course.ageMax;
-    this.editTerm = course.term || 'FullYear';
-    this.editGrade = course.grade || 1;
+    this.editTerm = course.term || '';
+    this.editGrade = course.grade ?? null;
     this.editSort = course.sortOrder;
   }
 
@@ -134,7 +136,7 @@ export class AdminCoursesComponent {
         description: this.editDescription,
         ageMin: this.editAgeMin,
         ageMax: this.editAgeMax,
-        term: this.editTerm,
+        term: this.editTerm || null,
         grade: this.editGrade,
         sortOrder: this.editSort
       })
@@ -144,7 +146,7 @@ export class AdminCoursesComponent {
           this.editingId.set(null);
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.courses.updateFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.updateFailed'))
       });
   }
 
@@ -156,7 +158,7 @@ export class AdminCoursesComponent {
         this.message.set(this.locale.t('admin.courses.deleted'));
         this.reload();
       },
-      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.courses.deleteFailed'))
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.deleteFailed'))
     });
   }
 

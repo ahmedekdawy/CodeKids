@@ -5,11 +5,12 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, AssignmentSubmission } from '../../models';
 import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
+import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe],
+  imports: [FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })

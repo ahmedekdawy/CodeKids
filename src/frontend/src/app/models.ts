@@ -43,11 +43,18 @@ export interface Course {
   description: string;
   ageMin: number;
   ageMax: number;
-  term: CourseTerm | string;
-  grade: number;
+  term?: CourseTerm | string | null;
+  grade?: number | null;
   sortOrder: number;
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
+}
+
+export interface SiteSettings {
+  siteName: string;
+  logoUrl?: string | null;
+  bannerUrl?: string | null;
+  updatedAtUtc: string;
 }
 
 export interface LessonStep {

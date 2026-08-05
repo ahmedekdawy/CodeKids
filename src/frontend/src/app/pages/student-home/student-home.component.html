@@ -1,7 +1,7 @@
 <div class="page student-home">
   <header class="topbar student-topbar">
     <div class="brand-block">
-      <p class="brand">CodeKids</p>
+      <app-site-brand />
       <p class="greeting">{{ 'student.greeting' | t: { name: auth.user()?.displayName || '' } }}</p>
     </div>
     <div class="topbar-actions">
@@ -115,7 +115,7 @@
               </header>
 
               <p class="meta course-meta">
-                {{ 'student.grade' | t: { grade: course.grade } }} · {{ termLabel(course.term) }}
+                {{ gradeLabel(course.grade) }} · {{ termLabel(course.term) }}
                 · {{ 'student.ages' | t: { min: course.ageMin, max: course.ageMax } }}
               </p>
 

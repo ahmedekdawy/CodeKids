@@ -21,6 +21,7 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.courses', path: '/admin/courses', icon: 'C' },
     { labelKey: 'nav.admin.classrooms', path: '/admin/create-classroom', icon: 'R' },
     { labelKey: 'nav.admin.assign', path: '/admin/assign-classroom', icon: 'A' },
-    { labelKey: 'nav.admin.enroll', path: '/admin/enroll-student', icon: 'E' }
+    { labelKey: 'nav.admin.enroll', path: '/admin/enroll-student', icon: 'E' },
+    { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B' }
   ];
 }

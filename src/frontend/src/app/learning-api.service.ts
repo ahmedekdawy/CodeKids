@@ -31,7 +31,8 @@ import {
   TeacherVideoLibrary,
   WatchSession,
   ZoomConnectionStatus,
-  ZoomOAuthSettings
+  ZoomOAuthSettings,
+  SiteSettings
 } from './models';
 import { environment } from '../environments/environment';
 
@@ -210,8 +211,8 @@ export class LearningApiService {
     description: string;
     ageMin: number;
     ageMax: number;
-    term: string;
-    grade: number;
+    term?: string | null;
+    grade?: number | null;
     sortOrder: number;
   }): Observable<Course> {
     return this.http.post<Course>(`${this.baseUrl}/admin/courses`, payload);
@@ -225,12 +226,38 @@ export class LearningApiService {
       description: string;
       ageMin: number;
       ageMax: number;
-      term: string;
-      grade: number;
+      term?: string | null;
+      grade?: number | null;
       sortOrder: number;
     }
   ): Observable<Course> {
     return this.http.put<Course>(`${this.baseUrl}/admin/courses/${courseId}`, payload);
+  }
+
+  getSiteSettings(): Observable<SiteSettings> {
+    return this.http.get<SiteSettings>(`${this.baseUrl}/site-settings`);
+  }
+
+  updateSiteSettings(payload: {
+    siteName: string;
+    clearLogo?: boolean;
+    clearBanner?: boolean;
+  }): Observable<SiteSettings> {
+    return this.http.put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload);
+  }
+
+  uploadSiteImage(kind: 'logo' | 'banner', file: File): Observable<SiteSettings> {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('kind', kind);
+    return this.http.post<SiteSettings>(`${this.baseUrl}/admin/site-settings/upload`, form);
+  }
+
+  siteAssetUrl(path: string | null | undefined): string | null {
+    if (!path) return null;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    const root = this.baseUrl.replace(/\/api\/?$/, '');
+    return `${root}${path.startsWith('/') ? path : `/${path}`}`;
   }
 
   deleteCourse(courseId: string): Observable<void> {

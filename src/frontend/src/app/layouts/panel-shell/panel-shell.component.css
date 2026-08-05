@@ -51,6 +51,22 @@
   min-width: 0;
 }
 
+.brand-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.2rem;
+  margin-bottom: 0.15rem;
+}
+
+.shell.collapsed .brand-logo {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 0.2rem;
+}
+
 .brand {
   margin: 0;
   font-family: var(--font-display);

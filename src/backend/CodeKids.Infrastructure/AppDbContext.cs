@@ -34,6 +34,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<LessonVideo> LessonVideos => Set<LessonVideo>();
     public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
     public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
+    public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -464,6 +465,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.RecipientPhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.Status).HasMaxLength(40).IsRequired();
             entity.Property(x => x.MessagePreview).HasMaxLength(1000).IsRequired();
+        });
+
+        modelBuilder.Entity<SiteSettings>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.SiteName).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.LogoStorageKey).HasMaxLength(400).IsRequired();
+            entity.Property(x => x.LogoContentType).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.BannerStorageKey).HasMaxLength(400).IsRequired();
+            entity.Property(x => x.BannerContentType).HasMaxLength(120).IsRequired();
         });
     }
 }

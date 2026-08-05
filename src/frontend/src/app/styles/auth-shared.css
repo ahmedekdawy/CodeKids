@@ -9,12 +9,8 @@
   color: #fff;
 }
 
-.auth-panel,
-.auth-visual {
-  padding: clamp(2rem, 5vw, 4.5rem);
-}
-
 .auth-panel {
+  padding: clamp(2rem, 5vw, 4.5rem);
   display: grid;
   align-content: center;
   gap: 1.1rem;
@@ -26,11 +22,17 @@
 .auth-panel .brand {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   line-height: 0.95;
+}
+
+.auth-panel app-site-brand .site-brand-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
 }
 
 .auth-panel h1 {
@@ -175,6 +177,30 @@
   overflow: hidden;
   display: grid;
   place-items: center;
+  min-height: 100%;
+  padding: 0;
+}
+
+.auth-visual:not(.has-banner) {
+  padding: clamp(2rem, 5vw, 4.5rem);
+}
+
+.auth-banner-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.auth-visual.has-banner::before {
+  display: none;
+}
+
+.auth-visual.has-banner .glow {
+  display: none;
 }
 
 .glow {
@@ -237,6 +263,9 @@
   .auth-visual {
     min-height: 16rem;
     order: -1;
+  }
+
+  .auth-visual:not(.has-banner) {
     padding-bottom: 1rem;
   }
 

@@ -1,7 +1,7 @@
 <div class="page">
   <header class="topbar">
     <div>
-      <p class="brand">CodeKids</p>
+      <app-site-brand />
       <h1>{{ exam()?.title || ('play.examFallback' | t) }}</h1>
     </div>
     <a class="back" routerLink="/student">{{ 'common.backBtn' | t }}</a>

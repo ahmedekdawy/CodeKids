@@ -4,12 +4,13 @@ import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, Avatar, Badge, Course, CourseTerm, Exam, LiveSession, StudentSummary } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
 
 @Component({
   selector: 'app-student-home',
-  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent],
+  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent],
   templateUrl: './student-home.component.html',
   styleUrl: './student-home.component.css'
 })
@@ -57,9 +58,15 @@ export class StudentHomeComponent {
     return new Date(iso).toLocaleString(this.locale.lang());
   }
 
-  termLabel(term: CourseTerm | string): string {
+  termLabel(term: CourseTerm | string | null | undefined): string {
+    if (!term) return this.locale.t('student.allTerms');
     if (term === 'FirstTerm') return this.locale.t('student.firstTerm');
     if (term === 'SecondTerm') return this.locale.t('student.secondTerm');
     return this.locale.t('student.fullYear');
+  }
+
+  gradeLabel(grade: number | null | undefined): string {
+    if (grade == null) return this.locale.t('student.allGrades');
+    return this.locale.t('student.grade', { grade });
   }
 }

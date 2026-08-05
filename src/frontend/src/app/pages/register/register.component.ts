@@ -4,13 +4,15 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { UserRole } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { LocaleService } from '../../i18n/locale.service';
+import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
@@ -19,6 +21,7 @@ export class RegisterComponent {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly locale = inject(LocaleService);
+  readonly brand = inject(SiteBrandService);
 
   readonly form = this.fb.nonNullable.group({
     displayName: ['', Validators.required],
