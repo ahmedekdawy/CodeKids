@@ -1,28 +1,37 @@
 <section class="auth-shell">
   <div class="auth-panel">
-    <p class="brand">CodeKids</p>
-    <h1>Welcome back, young coder.</h1>
-    <p class="supporting">Sign in as a student, parent, or teacher.</p>
+    <div class="auth-panel-top">
+      <p class="brand">CodeKids</p>
+      <app-language-switcher />
+    </div>
+    <h1>{{ 'auth.login.title' | t }}</h1>
+    <p class="supporting">{{ 'auth.login.subtitle' | t }}</p>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
       <label>
-        <span>Email</span>
-        <input formControlName="email" type="email" placeholder="student@codekids.local" />
+        <span>{{ 'auth.email' | t }}</span>
+        <input formControlName="email" type="email" placeholder="student@codekids.local" autocomplete="username" />
       </label>
       <label>
-        <span>Password</span>
-        <input formControlName="password" type="password" placeholder="Password" />
+        <span>{{ 'auth.password' | t }}</span>
+        <input formControlName="password" type="password" [placeholder]="'auth.passwordPlaceholder' | t" autocomplete="current-password" />
       </label>
 
-      <button type="submit" [disabled]="loading() || form.invalid">Sign in</button>
+      <button type="submit" [disabled]="loading() || form.invalid">{{ 'auth.signIn' | t }}</button>
     </form>
+
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
-    <p class="hint">Demo: student@codekids.local / Student123!</p>
-    <p class="hint">Also parent@codekids.local / Parent123! and teacher@codekids.local / Teacher123!</p>
-    <a routerLink="/register">Create an account</a>
+
+    <p class="hint">{{ 'auth.demoStudent' | t }}</p>
+    <p class="hint">{{ 'auth.demoOthers' | t }}</p>
+
+    <div class="auth-links">
+      <a routerLink="/register">{{ 'auth.createAccount' | t }}</a>
+    </div>
   </div>
+
   <div class="auth-visual" aria-hidden="true">
     <div class="glow"></div>
     <div class="code-card">

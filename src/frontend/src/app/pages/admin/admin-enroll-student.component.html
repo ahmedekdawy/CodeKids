@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Enroll student</h2>
-  <p class="meta">Add or remove students from classroom rosters.</p>
+  <h2>{{ 'admin.enroll.title' | t }}</h2>
+  <p class="meta">{{ 'admin.enroll.subtitle' | t }}</p>
 
   @if (message()) {
     <p class="feedback ok">{{ message() }}</p>
@@ -12,37 +12,37 @@
   <section class="block">
     <form class="meeting-form" (ngSubmit)="enrollStudent()">
       <label>
-        Classroom
+        {{ 'common.classroom' | t }}
         <select [(ngModel)]="enrollClassroomId" name="enrollClassroomId">
-          <option value="">Select</option>
+          <option value="">{{ 'common.select' | t }}</option>
           @for (room of classrooms(); track room.id) {
             <option [value]="room.id">{{ room.name }}</option>
           }
         </select>
       </label>
       <label>
-        Student
+        {{ 'common.student' | t }}
         <select [(ngModel)]="enrollStudentId" name="enrollStudentId">
-          <option value="">Select</option>
+          <option value="">{{ 'common.select' | t }}</option>
           @for (student of students(); track student.id) {
             <option [value]="student.id">{{ student.displayName }}</option>
           }
         </select>
       </label>
-      <button type="submit">Enroll</button>
+      <button type="submit">{{ 'admin.enroll.enroll' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>Enrollments</h3>
+    <h3>{{ 'admin.enroll.list' | t }}</h3>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th class="sortable" (click)="setSort('classroomName')">Classroom <span class="sort-mark">{{ sortMark('classroomName') }}</span></th>
-            <th class="sortable" (click)="setSort('studentName')">Student <span class="sort-mark">{{ sortMark('studentName') }}</span></th>
-            <th class="sortable" (click)="setSort('studentEmail')">Email <span class="sort-mark">{{ sortMark('studentEmail') }}</span></th>
-            <th>Actions</th>
+            <th class="sortable" (click)="setSort('classroomName')">{{ 'common.classroom' | t }} <span class="sort-mark">{{ sortMark('classroomName') }}</span></th>
+            <th class="sortable" (click)="setSort('studentName')">{{ 'common.student' | t }} <span class="sort-mark">{{ sortMark('studentName') }}</span></th>
+            <th class="sortable" (click)="setSort('studentEmail')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('studentEmail') }}</span></th>
+            <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -53,13 +53,13 @@
               <td>{{ row.studentEmail }}</td>
               <td>
                 <div class="row-actions">
-                  <button type="button" class="danger" (click)="removeEnrollment(row)">Remove</button>
+                  <app-icon-action-button kind="delete" variant="danger" [label]="'admin.enroll.removeLabel' | t" (action)="removeEnrollment(row)" />
                 </div>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="meta">No enrollments yet.</td>
+              <td colspan="4" class="meta">{{ 'admin.enroll.empty' | t }}</td>
             </tr>
           }
         </tbody>

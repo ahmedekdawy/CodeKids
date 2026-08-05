@@ -1,9 +1,12 @@
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth.service';
+import { LocaleService } from '../../i18n/locale.service';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 export interface PanelNavItem {
-  label: string;
+  labelKey: string;
   path: string;
   icon?: string;
 }
@@ -12,16 +15,17 @@ const COLLAPSED_KEY = 'codekids_sidebar_collapsed';
 
 @Component({
   selector: 'app-panel-shell',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './panel-shell.component.html',
   styleUrl: './panel-shell.component.css'
 })
 export class PanelShellComponent implements OnInit {
   readonly auth = inject(AuthService);
+  readonly locale = inject(LocaleService);
   readonly collapsed = signal(false);
 
-  @Input({ required: true }) title = '';
-  @Input({ required: true }) subtitle = '';
+  @Input({ required: true }) titleKey = '';
+  @Input({ required: true }) subtitleKey = '';
   @Input({ required: true }) navItems: PanelNavItem[] = [];
 
   ngOnInit(): void {
@@ -35,6 +39,10 @@ export class PanelShellComponent implements OnInit {
   }
 
   iconFor(item: PanelNavItem): string {
-    return item.icon || item.label.trim().charAt(0).toUpperCase();
+    return item.icon || item.labelKey.slice(-1).toUpperCase();
+  }
+
+  collapseTitle(): string {
+    return this.locale.t(this.collapsed() ? 'common.expandMenu' : 'common.collapseMenu');
   }
 }

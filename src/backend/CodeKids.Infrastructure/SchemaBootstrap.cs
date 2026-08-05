@@ -7,17 +7,144 @@ public static class SchemaBootstrap
     public static async Task EnsureAsync(AppDbContext dbContext, CancellationToken cancellationToken = default)
     {
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+
+        // Create core tables that may be missing on partially provisioned databases
+        // (EnsureCreated skips when any tables already exist).
         await dbContext.Database.ExecuteSqlRawAsync(
             """
-            ALTER TABLE "Quizzes" ADD COLUMN IF NOT EXISTS "ClassroomId" uuid NULL;
-            ALTER TABLE "Quizzes" ADD COLUMN IF NOT EXISTS "CreatedByUserId" uuid NULL;
-            ALTER TABLE "LiveSessions" ADD COLUMN IF NOT EXISTS "ClassroomId" uuid NULL;
-            ALTER TABLE "LiveSessions" ADD COLUMN IF NOT EXISTS "WhatsAppNotified" boolean NOT NULL DEFAULT FALSE;
-            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "MobilePhone" character varying(30) NOT NULL DEFAULT '';
-            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomAccessToken" character varying(2000) NOT NULL DEFAULT '';
-            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomRefreshToken" character varying(2000) NOT NULL DEFAULT '';
-            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomTokenExpiresAt" timestamp with time zone NULL;
-            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomConnectedEmail" character varying(160) NOT NULL DEFAULT '';
+            CREATE TABLE IF NOT EXISTS "Avatars" (
+                "Id" uuid NOT NULL,
+                "Name" character varying(80) NOT NULL,
+                "Theme" character varying(60) NOT NULL,
+                "AccentColor" character varying(20) NOT NULL,
+                "Emoji" character varying(16) NOT NULL,
+                "UnlockXp" integer NOT NULL,
+                CONSTRAINT "PK_Avatars" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "Users" (
+                "Id" uuid NOT NULL,
+                "Email" character varying(160) NOT NULL,
+                "DisplayName" character varying(80) NOT NULL,
+                "PasswordHash" character varying(200) NOT NULL,
+                "Role" character varying(30) NOT NULL,
+                "ParentId" uuid NULL,
+                "AvatarId" uuid NULL,
+                "MobilePhone" character varying(30) NOT NULL DEFAULT '',
+                "ZoomAccessToken" character varying(2000) NOT NULL DEFAULT '',
+                "ZoomRefreshToken" character varying(2000) NOT NULL DEFAULT '',
+                "ZoomTokenExpiresAt" timestamp with time zone NULL,
+                "ZoomConnectedEmail" character varying(160) NOT NULL DEFAULT '',
+                "TotalXp" integer NOT NULL DEFAULT 0,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_Users" PRIMARY KEY ("Id")
+            );
+
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_Email" ON "Users" ("Email");
+
+            CREATE TABLE IF NOT EXISTS "Courses" (
+                "Id" uuid NOT NULL,
+                "Title" character varying(120) NOT NULL,
+                "Theme" character varying(60) NOT NULL,
+                "Description" character varying(500) NOT NULL,
+                "AgeMin" integer NOT NULL,
+                "AgeMax" integer NOT NULL,
+                "Term" character varying(20) NOT NULL DEFAULT 'FullYear',
+                "Grade" integer NOT NULL DEFAULT 1,
+                "SortOrder" integer NOT NULL,
+                CONSTRAINT "PK_Courses" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "Lessons" (
+                "Id" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "Title" character varying(120) NOT NULL,
+                "Theme" character varying(60) NOT NULL,
+                "Description" character varying(500) NOT NULL,
+                "Difficulty" integer NOT NULL,
+                "XpReward" integer NOT NULL,
+                "SortOrder" integer NOT NULL,
+                CONSTRAINT "PK_Lessons" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "LessonSteps" (
+                "Id" uuid NOT NULL,
+                "LessonId" uuid NOT NULL,
+                "Title" character varying(120) NOT NULL,
+                "Prompt" character varying(500) NOT NULL,
+                "ExpectedAnswer" character varying(120) NOT NULL,
+                "StepNumber" integer NOT NULL,
+                CONSTRAINT "PK_LessonSteps" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "StudentProgress" (
+                "Id" uuid NOT NULL,
+                "UserId" uuid NOT NULL,
+                "LessonId" uuid NOT NULL,
+                "StepId" uuid NOT NULL,
+                "IsCompleted" boolean NOT NULL,
+                "EarnedXp" integer NOT NULL,
+                "CompletedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_StudentProgress" PRIMARY KEY ("Id")
+            );
+
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_StudentProgress_UserId_StepId" ON "StudentProgress" ("UserId", "StepId");
+
+            CREATE TABLE IF NOT EXISTS "Badges" (
+                "Id" uuid NOT NULL,
+                "Code" character varying(40) NOT NULL,
+                "Name" character varying(120) NOT NULL,
+                "Description" character varying(400) NOT NULL,
+                "Icon" character varying(16) NOT NULL,
+                "RequiredXp" integer NOT NULL,
+                "RequiredSteps" integer NOT NULL,
+                CONSTRAINT "PK_Badges" PRIMARY KEY ("Id")
+            );
+
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Badges_Code" ON "Badges" ("Code");
+
+            CREATE TABLE IF NOT EXISTS "UserBadges" (
+                "Id" uuid NOT NULL,
+                "UserId" uuid NOT NULL,
+                "BadgeId" uuid NOT NULL,
+                "AwardedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_UserBadges" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "Quizzes" (
+                "Id" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "ClassroomId" uuid NULL,
+                "CreatedByUserId" uuid NULL,
+                "Title" character varying(120) NOT NULL,
+                "Description" character varying(400) NOT NULL,
+                "XpReward" integer NOT NULL,
+                CONSTRAINT "PK_Quizzes" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "QuizQuestions" (
+                "Id" uuid NOT NULL,
+                "QuizId" uuid NOT NULL,
+                "Prompt" character varying(300) NOT NULL,
+                "OptionA" character varying(200) NOT NULL,
+                "OptionB" character varying(200) NOT NULL,
+                "OptionC" character varying(200) NOT NULL,
+                "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]',
+                "CorrectOption" character varying(40) NOT NULL,
+                "SortOrder" integer NOT NULL,
+                CONSTRAINT "PK_QuizQuestions" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "QuizAttempts" (
+                "Id" uuid NOT NULL,
+                "UserId" uuid NOT NULL,
+                "QuizId" uuid NOT NULL,
+                "Score" integer NOT NULL,
+                "TotalQuestions" integer NOT NULL,
+                "EarnedXp" integer NOT NULL,
+                "CompletedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_QuizAttempts" PRIMARY KEY ("Id")
+            );
 
             CREATE TABLE IF NOT EXISTS "Classrooms" (
                 "Id" uuid NOT NULL,
@@ -105,9 +232,167 @@ public static class SchemaBootstrap
                 CONSTRAINT "PK_LiveSessions" PRIMARY KEY ("Id")
             );
 
+            CREATE TABLE IF NOT EXISTS "BankQuestions" (
+                "Id" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "CreatedByUserId" uuid NOT NULL,
+                "ParentQuestionId" uuid NULL,
+                "QuestionType" character varying(30) NOT NULL,
+                "Prompt" character varying(4000) NOT NULL,
+                "PassageText" character varying(4000) NOT NULL,
+                "OptionA" character varying(200) NULL,
+                "OptionB" character varying(200) NULL,
+                "OptionC" character varying(200) NULL,
+                "OptionD" character varying(200) NULL,
+                "CorrectAnswer" character varying(200) NOT NULL,
+                "Points" integer NOT NULL,
+                "SortOrder" integer NOT NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_BankQuestions" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "Exams" (
+                "Id" uuid NOT NULL,
+                "ClassroomId" uuid NOT NULL,
+                "CourseId" uuid NULL,
+                "CreatedByUserId" uuid NOT NULL,
+                "Title" character varying(160) NOT NULL,
+                "Description" character varying(800) NOT NULL,
+                "DueAtUtc" timestamp with time zone NULL,
+                "XpReward" integer NOT NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_Exams" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "ExamQuestions" (
+                "Id" uuid NOT NULL,
+                "ExamId" uuid NOT NULL,
+                "BankQuestionId" uuid NULL,
+                "ParentExamQuestionId" uuid NULL,
+                "QuestionType" character varying(30) NOT NULL,
+                "Prompt" character varying(4000) NOT NULL,
+                "PassageText" character varying(4000) NOT NULL,
+                "OptionA" character varying(200) NULL,
+                "OptionB" character varying(200) NULL,
+                "OptionC" character varying(200) NULL,
+                "OptionD" character varying(200) NULL,
+                "CorrectAnswer" character varying(200) NOT NULL,
+                "Points" integer NOT NULL,
+                "SortOrder" integer NOT NULL,
+                CONSTRAINT "PK_ExamQuestions" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "ExamAttempts" (
+                "Id" uuid NOT NULL,
+                "ExamId" uuid NOT NULL,
+                "StudentId" uuid NOT NULL,
+                "Status" character varying(20) NOT NULL,
+                "Score" integer NULL,
+                "MaxScore" integer NULL,
+                "TeacherFeedback" character varying(800) NULL,
+                "SubmittedAtUtc" timestamp with time zone NOT NULL,
+                "GradedAtUtc" timestamp with time zone NULL,
+                CONSTRAINT "PK_ExamAttempts" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "ExamAnswers" (
+                "Id" uuid NOT NULL,
+                "AttemptId" uuid NOT NULL,
+                "ExamQuestionId" uuid NOT NULL,
+                "AnswerText" character varying(1000) NOT NULL,
+                "IsCorrect" boolean NULL,
+                "PointsAwarded" integer NULL,
+                CONSTRAINT "PK_ExamAnswers" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "MediaAssets" (
+                "Id" uuid NOT NULL,
+                "StorageKey" character varying(400) NOT NULL,
+                "FileName" character varying(260) NOT NULL,
+                "ContentType" character varying(120) NOT NULL,
+                "SizeBytes" bigint NOT NULL,
+                "DurationSeconds" integer NULL,
+                "UploadedByUserId" uuid NOT NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_MediaAssets" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "LessonVideos" (
+                "Id" uuid NOT NULL,
+                "LessonId" uuid NOT NULL,
+                "MediaAssetId" uuid NOT NULL,
+                "Title" character varying(160) NOT NULL,
+                "SortOrder" integer NOT NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_LessonVideos" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "VideoWatchSessions" (
+                "Id" uuid NOT NULL,
+                "MediaAssetId" uuid NOT NULL,
+                "StudentId" uuid NOT NULL,
+                "LessonId" uuid NULL,
+                "ActualWatchSeconds" integer NOT NULL,
+                "MaxPositionSeconds" integer NOT NULL,
+                "UsedSpeedUp" boolean NOT NULL DEFAULT FALSE,
+                "SkippedAhead" boolean NOT NULL DEFAULT FALSE,
+                "StartedAtUtc" timestamp with time zone NOT NULL,
+                "LastEventAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_VideoWatchSessions" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "WhatsAppReportLogs" (
+                "Id" uuid NOT NULL,
+                "ClassroomId" uuid NULL,
+                "StudentId" uuid NULL,
+                "ReportType" character varying(60) NOT NULL,
+                "RecipientPhone" character varying(30) NOT NULL,
+                "Status" character varying(40) NOT NULL,
+                "MessagePreview" character varying(1000) NOT NULL,
+                "SentAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_WhatsAppReportLogs" PRIMARY KEY ("Id")
+            );
+            """,
+            cancellationToken);
+
+        // Additive column upgrades (safe when tables exist)
+        await dbContext.Database.ExecuteSqlRawAsync(
+            """
+            ALTER TABLE "Quizzes" ADD COLUMN IF NOT EXISTS "ClassroomId" uuid NULL;
+            ALTER TABLE "Quizzes" ADD COLUMN IF NOT EXISTS "CreatedByUserId" uuid NULL;
+            ALTER TABLE "LiveSessions" ADD COLUMN IF NOT EXISTS "ClassroomId" uuid NULL;
+            ALTER TABLE "LiveSessions" ADD COLUMN IF NOT EXISTS "WhatsAppNotified" boolean NOT NULL DEFAULT FALSE;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "MobilePhone" character varying(30) NOT NULL DEFAULT '';
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomAccessToken" character varying(2000) NOT NULL DEFAULT '';
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomRefreshToken" character varying(2000) NOT NULL DEFAULT '';
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomTokenExpiresAt" timestamp with time zone NULL;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomConnectedEmail" character varying(160) NOT NULL DEFAULT '';
+            ALTER TABLE "Courses" ADD COLUMN IF NOT EXISTS "Term" character varying(20) NOT NULL DEFAULT 'FullYear';
+            ALTER TABLE "Courses" ADD COLUMN IF NOT EXISTS "Grade" integer NOT NULL DEFAULT 1;
+
             CREATE INDEX IF NOT EXISTS "IX_ClassroomStudents_ClassroomId_StudentId" ON "ClassroomStudents" ("ClassroomId", "StudentId");
             CREATE INDEX IF NOT EXISTS "IX_AssignmentSubmissions_AssignmentId_StudentId" ON "AssignmentSubmissions" ("AssignmentId", "StudentId");
             CREATE INDEX IF NOT EXISTS "IX_LiveSessions_StartsAtUtc" ON "LiveSessions" ("StartsAtUtc");
+            CREATE INDEX IF NOT EXISTS "IX_BankQuestions_CourseId_CreatedByUserId" ON "BankQuestions" ("CourseId", "CreatedByUserId");
+            CREATE INDEX IF NOT EXISTS "IX_ExamAttempts_ExamId_StudentId" ON "ExamAttempts" ("ExamId", "StudentId");
+            CREATE INDEX IF NOT EXISTS "IX_LessonVideos_LessonId" ON "LessonVideos" ("LessonId");
+            CREATE INDEX IF NOT EXISTS "IX_VideoWatchSessions_MediaAssetId_StudentId" ON "VideoWatchSessions" ("MediaAssetId", "StudentId");
+
+            UPDATE "BankQuestions" SET "QuestionType" = 'Paragraph' WHERE "QuestionType" = 'UnderlineParagraph';
+            UPDATE "ExamQuestions" SET "QuestionType" = 'Paragraph' WHERE "QuestionType" = 'UnderlineParagraph';
+            ALTER TABLE "BankQuestions" ALTER COLUMN "Prompt" TYPE character varying(4000);
+            ALTER TABLE "ExamQuestions" ALTER COLUMN "Prompt" TYPE character varying(4000);
+
+            ALTER TABLE "Assignments" ADD COLUMN IF NOT EXISTS "SolutionVideoMediaAssetId" uuid NULL;
+            ALTER TABLE "AssignmentSubmissions" ADD COLUMN IF NOT EXISTS "StartedAtUtc" timestamp with time zone NULL;
+            ALTER TABLE "ExamAttempts" ADD COLUMN IF NOT EXISTS "StartedAtUtc" timestamp with time zone NOT NULL DEFAULT NOW();
+            ALTER TABLE "ExamAttempts" ALTER COLUMN "SubmittedAtUtc" DROP NOT NULL;
+            ALTER TABLE "BankQuestions" ADD COLUMN IF NOT EXISTS "LessonId" uuid NULL;
+            ALTER TABLE "ExamQuestions" ADD COLUMN IF NOT EXISTS "LessonId" uuid NULL;
+            ALTER TABLE "Classrooms" ADD COLUMN IF NOT EXISTS "DailyWhatsAppReportsEnabled" boolean NOT NULL DEFAULT TRUE;
+            ALTER TABLE "BankQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
+            ALTER TABLE "ExamQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
+            ALTER TABLE "QuizQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
             """,
             cancellationToken);
     }

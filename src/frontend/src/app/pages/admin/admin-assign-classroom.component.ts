@@ -1,17 +1,20 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Classroom, Course, ManagedUser } from '../../models';
+import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 
 @Component({
   selector: 'app-admin-assign-classroom',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './admin-assign-classroom.component.html',
   styleUrl: './admin-panel.css'
 })
 export class AdminAssignClassroomComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly teachers = signal<ManagedUser[]>([]);
   readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
@@ -54,7 +57,7 @@ export class AdminAssignClassroomComponent {
     this.message.set('');
     this.error.set('');
     if (!this.assignClassroomId) {
-      this.error.set('Select a classroom.');
+      this.error.set(this.locale.t('admin.assign.selectClassroom'));
       return;
     }
     this.api
@@ -64,10 +67,10 @@ export class AdminAssignClassroomComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('Classroom assignments updated.');
+          this.message.set(this.locale.t('admin.assign.updated'));
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not assign classroom.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.assign.assignFailed'))
       });
   }
 }

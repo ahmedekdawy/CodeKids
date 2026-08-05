@@ -1,43 +1,51 @@
 <section class="auth-shell">
   <div class="auth-panel">
-    <p class="brand">CodeKids</p>
-    <h1>Join the coding crew.</h1>
-    <p class="supporting">Create a student or parent account. Teachers are created by Super Admin.</p>
+    <div class="auth-panel-top">
+      <p class="brand">CodeKids</p>
+      <app-language-switcher />
+    </div>
+    <h1>{{ 'auth.register.title' | t }}</h1>
+    <p class="supporting">{{ 'auth.register.subtitle' | t }}</p>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
       <label>
-        <span>Display name</span>
-        <input formControlName="displayName" placeholder="Ava" />
+        <span>{{ 'auth.displayName' | t }}</span>
+        <input formControlName="displayName" [placeholder]="'auth.displayNamePlaceholder' | t" autocomplete="nickname" />
       </label>
       <label>
-        <span>Email</span>
-        <input formControlName="email" type="email" />
+        <span>{{ 'auth.email' | t }}</span>
+        <input formControlName="email" type="email" autocomplete="email" />
       </label>
       <label>
-        <span>Password</span>
-        <input formControlName="password" type="password" />
+        <span>{{ 'auth.password' | t }}</span>
+        <input formControlName="password" type="password" autocomplete="new-password" />
       </label>
       <label>
-        <span>Role</span>
+        <span>{{ 'auth.role' | t }}</span>
         <select formControlName="role">
-          <option value="Student">Student</option>
-          <option value="Parent">Parent</option>
+          <option value="Student">{{ 'role.student' | t }}</option>
+          <option value="Parent">{{ 'role.parent' | t }}</option>
         </select>
       </label>
       @if (form.controls.role.value === 'Student') {
         <label>
-          <span>Parent ID (optional)</span>
-          <input formControlName="parentId" placeholder="Paste parent account GUID" />
+          <span>{{ 'auth.parentId' | t }}</span>
+          <input formControlName="parentId" [placeholder]="'auth.parentIdPlaceholder' | t" />
         </label>
       }
 
-      <button type="submit" [disabled]="loading() || form.invalid">Create account</button>
+      <button type="submit" [disabled]="loading() || form.invalid">{{ 'auth.createAccountBtn' | t }}</button>
     </form>
+
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
-    <a routerLink="/login">Already have an account?</a>
+
+    <div class="auth-links">
+      <a routerLink="/login">{{ 'auth.haveAccount' | t }}</a>
+    </div>
   </div>
+
   <div class="auth-visual" aria-hidden="true">
     <div class="glow"></div>
     <div class="code-card">

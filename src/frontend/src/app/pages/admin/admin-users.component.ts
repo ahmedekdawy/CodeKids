@@ -1,17 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { ManagedUser } from '../../models';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 
 @Component({
   selector: 'app-admin-users',
-  imports: [FormsModule],
+  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-panel.css'
 })
 export class AdminUsersComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly users = signal<ManagedUser[]>([]);
   readonly message = signal('');
   readonly error = signal('');
@@ -53,6 +57,21 @@ export class AdminUsersComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
+  roleLabel(role: string): string {
+    switch (role) {
+      case 'Teacher':
+        return this.locale.t('role.teacher');
+      case 'Student':
+        return this.locale.t('role.student');
+      case 'Parent':
+        return this.locale.t('role.parent');
+      case 'SuperAdmin':
+        return this.locale.t('role.superAdmin');
+      default:
+        return role;
+    }
+  }
+
   createUser(): void {
     this.clearStatus();
     this.api
@@ -65,13 +84,13 @@ export class AdminUsersComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('User created.');
+          this.message.set(this.locale.t('admin.users.created'));
           this.userEmail = '';
           this.userName = '';
           this.userPassword = '';
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not create user.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.users.createFailed'))
       });
   }
 
@@ -100,23 +119,23 @@ export class AdminUsersComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('User updated.');
+          this.message.set(this.locale.t('admin.users.updated'));
           this.editingId.set(null);
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not update user.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.users.updateFailed'))
       });
   }
 
   deleteUser(user: ManagedUser): void {
-    if (!confirm(`Delete ${user.displayName}?`)) return;
+    if (!confirm(this.locale.t('admin.users.confirmDelete', { name: user.displayName }))) return;
     this.clearStatus();
     this.api.deleteUser(user.id).subscribe({
       next: () => {
-        this.message.set('User deleted.');
+        this.message.set(this.locale.t('admin.users.deleted'));
         this.reload();
       },
-      error: (err) => this.error.set(err?.error?.message || 'Could not delete user.')
+      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.users.deleteFailed'))
     });
   }
 

@@ -4,6 +4,7 @@ using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using CodeKids.Application.Features.Admin;
+using CodeKids.Application.Features.Analytics;
 using CodeKids.Application.Features.Assignments;
 using CodeKids.Application.Features.Auth;
 using CodeKids.Application.Features.Avatars;
@@ -11,11 +12,15 @@ using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.Classrooms;
 using CodeKids.Application.Features.Courses;
 using CodeKids.Application.Features.Dashboard;
+using CodeKids.Application.Features.Exams;
 using CodeKids.Application.Features.Lessons;
+using CodeKids.Application.Features.Media;
 using CodeKids.Application.Features.Meetings;
 using CodeKids.Application.Features.Progress;
+using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.Quizzes;
 using CodeKids.Application.Features.ZoomConnect;
+using CodeKids.Application.Common;
 using CodeKids.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -51,8 +56,11 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddCors(options =>
 {
+    var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+        ?? ["http://localhost:4200"];
+
     options.AddPolicy("frontend", policy =>
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(origins)
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -60,6 +68,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+builder.Services.AddMediaStorage(builder.Configuration);
 builder.Services.AddZoomIntegration(builder.Configuration);
 builder.Services.AddWhatsAppIntegration(builder.Configuration);
 
@@ -85,12 +94,17 @@ builder.Services.AddScoped<IQueryHandler<GetAvatarsQuery, IReadOnlyList<AvatarDt
 builder.Services.AddScoped<ICommandHandler<SelectAvatarCommand, AvatarDto>, SelectAvatarCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetParentDashboardQuery, ParentDashboardDto>, GetParentDashboardQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTeacherDashboardQuery, TeacherDashboardDto>, GetTeacherDashboardQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetTeacherStudentDetailQuery, TeacherStudentDetailDto>, GetTeacherStudentDetailQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetClassroomDiagnosisQuery, ClassroomDiagnosisDto>, GetClassroomDiagnosisQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<RunDailyWhatsAppReportsCommand, DailyWhatsAppReportsResultDto>, RunDailyWhatsAppReportsCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateMeetingCommand, LiveSessionDto>, CreateMeetingCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetMeetingsQuery, IReadOnlyList<LiveSessionDto>>, GetMeetingsQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetZoomConnectUrlQuery, ZoomConnectUrlDto>, GetZoomConnectUrlQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<CompleteZoomConnectCommand, ZoomConnectResultDto>, CompleteZoomConnectCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetZoomStatusQuery, ZoomConnectionStatus>, GetZoomStatusQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<DisconnectZoomCommand, bool>, DisconnectZoomCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetZoomOAuthSettingsQuery, ZoomUserOAuthSettingsDto>, GetZoomOAuthSettingsQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<SaveZoomOAuthSettingsCommand, ZoomUserOAuthSettingsDto>, SaveZoomOAuthSettingsCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateManagedUserCommand, ManagedUserDto>, CreateManagedUserCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateManagedUserCommand, ManagedUserDto>, UpdateManagedUserCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteManagedUserCommand, bool>, DeleteManagedUserCommandHandler>();
@@ -99,9 +113,10 @@ builder.Services.AddScoped<ICommandHandler<CreateClassroomCommand, ClassroomDto>
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomCommand, ClassroomDto>, UpdateClassroomCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteClassroomCommand, bool>, DeleteClassroomCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomAssignmentsCommand, ClassroomDto>, UpdateClassroomAssignmentsCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<AddStudentToClassroomCommand, ClassroomDto>, AddStudentToClassroomCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<AddStudentToClassroomCommand, EnrollStudentResultDto>, AddStudentToClassroomCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<RemoveStudentFromClassroomCommand, ClassroomDto>, RemoveStudentFromClassroomCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomWhatsAppCommand, ClassroomDto>, UpdateClassroomWhatsAppCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto>, SendClassroomWhatsAppCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetClassroomsQuery, IReadOnlyList<ClassroomDto>>, GetClassroomsQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetClassroomByIdQuery, ClassroomDto?>, GetClassroomByIdQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateAssignmentCommand, AssignmentDto>, CreateAssignmentCommandHandler>();
@@ -110,6 +125,25 @@ builder.Services.AddScoped<IQueryHandler<GetAssignmentByIdQuery, AssignmentDto?>
 builder.Services.AddScoped<ICommandHandler<SubmitAssignmentCommand, AssignmentSubmissionDto>, SubmitAssignmentCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAssignmentSubmissionsQuery, IReadOnlyList<AssignmentSubmissionDto>>, GetAssignmentSubmissionsQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<GradeSubmissionCommand, AssignmentSubmissionDto>, GradeSubmissionCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateBankQuestionCommand, BankQuestionDto>, CreateBankQuestionCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<ListBankQuestionsQuery, IReadOnlyList<BankQuestionDto>>, ListBankQuestionsQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateBankQuestionCommand, BankQuestionDto>, UpdateBankQuestionCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteBankQuestionCommand, bool>, DeleteBankQuestionCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateExamCommand, ExamDto>, CreateExamCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetExamsQuery, IReadOnlyList<ExamDto>>, GetExamsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetExamByIdQuery, ExamDto?>, GetExamByIdQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<SubmitExamCommand, ExamAttemptDto>, SubmitExamCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<StartExamCommand, ExamAttemptDto>, StartExamCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetExamAttemptsQuery, IReadOnlyList<ExamAttemptDto>>, GetExamAttemptsQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<AttachLessonVideoCommand, LessonVideoDto>, AttachLessonVideoCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<AttachAssignmentSolutionVideoCommand, MediaAssetDto>, AttachAssignmentSolutionVideoCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetLessonVideosQuery, IReadOnlyList<LessonVideoDto>>, GetLessonVideosQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetTeacherVideoLibraryQuery, TeacherVideoLibraryDto>, GetTeacherVideoLibraryQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteLessonVideoCommand, bool>, DeleteLessonVideoCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteAssignmentSolutionVideoCommand, bool>, DeleteAssignmentSolutionVideoCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetPlaybackQuery, PlaybackDto>, GetPlaybackQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<RecordWatchEventsCommand, WatchSessionDto>, RecordWatchEventsCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetWatchSessionsQuery, IReadOnlyList<WatchSessionDto>>, GetWatchSessionsQueryHandler>();
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
 builder.Services
@@ -131,6 +165,15 @@ builder.Services
     });
 builder.Services.AddAuthorization();
 
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 524288000;
+});
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 524288000;
+});
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -147,8 +190,21 @@ using (var scope = app.Services.CreateScope())
     await DataSeeder.SeedAsync(dbContext, passwordHasher);
 }
 
-static IResult ProblemFromException(Exception ex) =>
-    Results.BadRequest(new { message = ex.Message });
+static IResult ProblemFromException(Exception ex)
+{
+    if (ex is ApiException api)
+    {
+        return Results.BadRequest(new { code = api.Code, message = api.Message, args = api.Args });
+    }
+
+    var resolved = ApiErrorCatalog.TryResolve(ex.Message);
+    if (resolved is not null)
+    {
+        return Results.BadRequest(new { code = resolved.Value.Code, message = ex.Message, args = resolved.Value.Args });
+    }
+
+    return Results.BadRequest(new { code = "api.errors.unknown", message = ex.Message });
+}
 
 app.MapPost("/api/auth/register", async (
     RegisterRequest request,
@@ -199,7 +255,15 @@ app.MapPost("/api/admin/courses", async (
     try
     {
         return Results.Ok(await handler.Handle(
-            new CreateCourseCommand(request.Title, request.Theme, request.Description, request.AgeMin, request.AgeMax, request.SortOrder),
+            new CreateCourseCommand(
+                request.Title,
+                request.Theme,
+                request.Description,
+                request.AgeMin,
+                request.AgeMax,
+                request.Term,
+                request.Grade,
+                request.SortOrder),
             cancellationToken));
     }
     catch (Exception ex)
@@ -217,7 +281,16 @@ app.MapPut("/api/admin/courses/{courseId:guid}", async (
     try
     {
         return Results.Ok(await handler.Handle(
-            new UpdateCourseCommand(courseId, request.Title, request.Theme, request.Description, request.AgeMin, request.AgeMax, request.SortOrder),
+            new UpdateCourseCommand(
+                courseId,
+                request.Title,
+                request.Theme,
+                request.Description,
+                request.AgeMin,
+                request.AgeMax,
+                request.Term,
+                request.Grade,
+                request.SortOrder),
             cancellationToken));
     }
     catch (Exception ex)
@@ -417,7 +490,7 @@ app.MapPut("/api/classrooms/{classroomId:guid}/assignments", async (
 app.MapPost("/api/classrooms/{classroomId:guid}/students", async (
     Guid classroomId,
     AddClassroomStudentRequest request,
-    ICommandHandler<AddStudentToClassroomCommand, ClassroomDto> handler,
+    ICommandHandler<AddStudentToClassroomCommand, EnrollStudentResultDto> handler,
     CancellationToken cancellationToken) =>
 {
     try
@@ -431,6 +504,31 @@ app.MapPost("/api/classrooms/{classroomId:guid}/students", async (
         return ProblemFromException(ex);
     }
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapPost("/api/classrooms/{classroomId:guid}/whatsapp/send", async (
+    Guid classroomId,
+    SendClassroomWhatsAppRequest request,
+    HttpContext httpContext,
+    ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new SendClassroomWhatsAppCommand(
+                userId,
+                classroomId,
+                request.Message,
+                request.StudentIds,
+                request.IncludeGroupInviteLink),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
 app.MapDelete("/api/classrooms/{classroomId:guid}/students/{studentId:guid}", async (
     Guid classroomId,
@@ -459,7 +557,11 @@ app.MapPut("/api/classrooms/{classroomId:guid}/whatsapp", async (
     try
     {
         return Results.Ok(await handler.Handle(
-            new UpdateClassroomWhatsAppCommand(classroomId, request.WhatsAppGroupInviteUrl, request.WhatsAppNotifyPhones),
+            new UpdateClassroomWhatsAppCommand(
+                classroomId,
+                request.WhatsAppGroupInviteUrl,
+                request.WhatsAppNotifyPhones,
+                request.DailyWhatsAppReportsEnabled),
             cancellationToken));
     }
     catch (Exception ex)
@@ -682,6 +784,443 @@ app.MapPost("/api/assignments/submissions/grade", async (
     }
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+app.MapGet("/api/question-bank", async (
+    Guid? courseId,
+    Guid? lessonId,
+    HttpContext httpContext,
+    IQueryHandler<ListBankQuestionsQuery, IReadOnlyList<BankQuestionDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    var userId = CurrentUser.GetUserId(httpContext.User);
+    return Results.Ok(await handler.Handle(new ListBankQuestionsQuery(userId, courseId, lessonId), cancellationToken));
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapPost("/api/question-bank", async (
+    CreateBankQuestionRequest request,
+    HttpContext httpContext,
+    ICommandHandler<CreateBankQuestionCommand, BankQuestionDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new CreateBankQuestionCommand(
+                userId,
+                request.CourseId,
+                request.LessonId,
+                request.QuestionType,
+                request.Prompt,
+                request.PassageText,
+                request.OptionA,
+                request.OptionB,
+                request.OptionC,
+                request.OptionD,
+                request.Options,
+                request.CorrectAnswer,
+                request.Points,
+                request.SortOrder,
+                request.Children),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapPut("/api/question-bank/{questionId:guid}", async (
+    Guid questionId,
+    UpdateBankQuestionRequest request,
+    HttpContext httpContext,
+    ICommandHandler<UpdateBankQuestionCommand, BankQuestionDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new UpdateBankQuestionCommand(
+                userId,
+                questionId,
+                request.LessonId,
+                request.Prompt,
+                request.PassageText,
+                request.OptionA,
+                request.OptionB,
+                request.OptionC,
+                request.OptionD,
+                request.Options,
+                request.CorrectAnswer,
+                request.Points,
+                request.SortOrder),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapDelete("/api/question-bank/{questionId:guid}", async (
+    Guid questionId,
+    HttpContext httpContext,
+    ICommandHandler<DeleteBankQuestionCommand, bool> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        await handler.Handle(new DeleteBankQuestionCommand(userId, questionId), cancellationToken);
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapGet("/api/exams", async (
+    Guid? classroomId,
+    HttpContext httpContext,
+    IQueryHandler<GetExamsQuery, IReadOnlyList<ExamDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    var userId = CurrentUser.GetUserId(httpContext.User);
+    var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+    return Results.Ok(await handler.Handle(new GetExamsQuery(userId, role, classroomId), cancellationToken));
+}).RequireAuthorization();
+
+app.MapGet("/api/exams/{examId:guid}", async (
+    Guid examId,
+    HttpContext httpContext,
+    IQueryHandler<GetExamByIdQuery, ExamDto?> handler,
+    CancellationToken cancellationToken) =>
+{
+    var userId = CurrentUser.GetUserId(httpContext.User);
+    var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+    var exam = await handler.Handle(new GetExamByIdQuery(examId, userId, role), cancellationToken);
+    return exam is null ? Results.NotFound() : Results.Ok(exam);
+}).RequireAuthorization();
+
+app.MapPost("/api/exams", async (
+    CreateExamRequest request,
+    HttpContext httpContext,
+    ICommandHandler<CreateExamCommand, ExamDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new CreateExamCommand(
+                userId,
+                request.ClassroomId,
+                request.CourseId,
+                request.Title,
+                request.Description,
+                request.DueAtUtc,
+                request.XpReward,
+                request.QuestionIds),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapPost("/api/exams/{examId:guid}/start", async (
+    Guid examId,
+    HttpContext httpContext,
+    ICommandHandler<StartExamCommand, ExamAttemptDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(new StartExamCommand(userId, examId), cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Student" });
+
+app.MapPost("/api/exams/submit", async (
+    SubmitExamRequest request,
+    HttpContext httpContext,
+    ICommandHandler<SubmitExamCommand, ExamAttemptDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new SubmitExamCommand(userId, request.ExamId, request.Answers),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Student" });
+
+app.MapPost("/api/media/upload", async (
+    HttpRequest request,
+    HttpContext httpContext,
+    IFileStorage fileStorage,
+    IAppDbContext dbContext,
+    Microsoft.Extensions.Options.IOptions<MediaOptions> mediaOptions,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        if (!request.HasFormContentType)
+        {
+            return Results.BadRequest(new { code = "api.errors.media.multipartRequired", message = "Expected multipart form upload." });
+        }
+
+        var form = await request.ReadFormAsync(cancellationToken);
+        var file = form.Files.GetFile("file") ?? form.Files.FirstOrDefault();
+        if (file is null || file.Length == 0)
+        {
+            return Results.BadRequest(new { code = "api.errors.media.noFile", message = "No file uploaded." });
+        }
+
+        var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
+        MediaUploadRules.EnsureAllowed(contentType, file.Length, mediaOptions.Value.MaxUploadBytes);
+
+        int? durationSeconds = null;
+        if (int.TryParse(form["durationSeconds"], out var parsedDuration) && parsedDuration > 0)
+        {
+            durationSeconds = parsedDuration;
+        }
+
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        await using var stream = file.OpenReadStream();
+        var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken);
+
+        var asset = new CodeKids.Domain.Entities.MediaAsset
+        {
+            Id = Guid.NewGuid(),
+            StorageKey = storageKey,
+            FileName = Path.GetFileName(file.FileName),
+            ContentType = contentType,
+            SizeBytes = file.Length,
+            DurationSeconds = durationSeconds,
+            UploadedByUserId = userId,
+            CreatedAtUtc = DateTimeOffset.UtcNow
+        };
+        dbContext.MediaAssets.Add(asset);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Results.Ok(new MediaAssetDto(
+            asset.Id,
+            asset.FileName,
+            asset.ContentType,
+            asset.SizeBytes,
+            asset.DurationSeconds,
+            asset.CreatedAtUtc));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" })
+    .DisableAntiforgery();
+
+app.MapPost("/api/lessons/{lessonId:guid}/videos", async (
+    Guid lessonId,
+    AttachLessonVideoRequest request,
+    HttpContext httpContext,
+    ICommandHandler<AttachLessonVideoCommand, LessonVideoDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new AttachLessonVideoCommand(userId, lessonId, request.MediaAssetId, request.Title, request.SortOrder),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+app.MapGet("/api/lessons/{lessonId:guid}/videos", async (
+    Guid lessonId,
+    IQueryHandler<GetLessonVideosQuery, IReadOnlyList<LessonVideoDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    return Results.Ok(await handler.Handle(new GetLessonVideosQuery(lessonId), cancellationToken));
+}).RequireAuthorization();
+
+app.MapPost("/api/assignments/{assignmentId:guid}/solution-video", async (
+    Guid assignmentId,
+    AttachLessonVideoRequest request,
+    HttpContext httpContext,
+    ICommandHandler<AttachAssignmentSolutionVideoCommand, MediaAssetDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new AttachAssignmentSolutionVideoCommand(userId, assignmentId, request.MediaAssetId),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapGet("/api/media/library", async (
+    HttpContext httpContext,
+    IQueryHandler<GetTeacherVideoLibraryQuery, TeacherVideoLibraryDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    var userId = CurrentUser.GetUserId(httpContext.User);
+    return Results.Ok(await handler.Handle(new GetTeacherVideoLibraryQuery(userId), cancellationToken));
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+app.MapDelete("/api/lessons/videos/{lessonVideoId:guid}", async (
+    Guid lessonVideoId,
+    HttpContext httpContext,
+    ICommandHandler<DeleteLessonVideoCommand, bool> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        await handler.Handle(new DeleteLessonVideoCommand(userId, lessonVideoId), cancellationToken);
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+app.MapDelete("/api/assignments/{assignmentId:guid}/solution-video", async (
+    Guid assignmentId,
+    HttpContext httpContext,
+    ICommandHandler<DeleteAssignmentSolutionVideoCommand, bool> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        await handler.Handle(new DeleteAssignmentSolutionVideoCommand(userId, assignmentId), cancellationToken);
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+app.MapGet("/api/media/{mediaAssetId:guid}/playback", async (
+    Guid mediaAssetId,
+    HttpContext httpContext,
+    IQueryHandler<GetPlaybackQuery, PlaybackDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        var baseApiUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api";
+        return Results.Ok(await handler.Handle(
+            new GetPlaybackQuery(mediaAssetId, userId, baseApiUrl),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization();
+
+app.MapGet("/api/media/stream", async (
+    string token,
+    IMediaAccessTokenService tokenService,
+    IAppDbContext dbContext,
+    IFileStorage fileStorage,
+    CancellationToken cancellationToken) =>
+{
+    if (!tokenService.TryValidate(token, out var mediaAssetId, out _, out _))
+    {
+        return Results.Unauthorized();
+    }
+
+    var media = await dbContext.MediaAssets.AsNoTracking()
+        .FirstOrDefaultAsync(x => x.Id == mediaAssetId, cancellationToken);
+    if (media is null)
+    {
+        return Results.NotFound();
+    }
+
+    var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
+    return Results.File(
+        stream,
+        contentType: media.ContentType,
+        fileDownloadName: null,
+        enableRangeProcessing: true);
+}).AllowAnonymous();
+
+app.MapPost("/api/media/watch-events", async (
+    RecordWatchEventsRequest request,
+    HttpContext httpContext,
+    ICommandHandler<RecordWatchEventsCommand, WatchSessionDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new RecordWatchEventsCommand(
+                userId,
+                request.MediaAssetId,
+                request.LessonId,
+                request.SessionId,
+                request.Events),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Student" });
+
+app.MapGet("/api/media/{mediaAssetId:guid}/watch-sessions", async (
+    Guid mediaAssetId,
+    HttpContext httpContext,
+    IQueryHandler<GetWatchSessionsQuery, IReadOnlyList<WatchSessionDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    var userId = CurrentUser.GetUserId(httpContext.User);
+    return Results.Ok(await handler.Handle(new GetWatchSessionsQuery(userId, mediaAssetId), cancellationToken));
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+app.MapGet("/api/exams/{examId:guid}/attempts", async (
+    Guid examId,
+    HttpContext httpContext,
+    IQueryHandler<GetExamAttemptsQuery, IReadOnlyList<ExamAttemptDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(new GetExamAttemptsQuery(userId, examId), cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
 app.MapGet("/api/badges/me", async (
     HttpContext httpContext,
     IQueryHandler<GetBadgesQuery, IReadOnlyList<BadgeDto>> handler,
@@ -749,6 +1288,61 @@ app.MapGet("/api/dashboard/teacher", async (
         return ProblemFromException(ex);
     }
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapGet("/api/dashboard/teacher/students/{studentId:guid}", async (
+    Guid studentId,
+    HttpContext httpContext,
+    IQueryHandler<GetTeacherStudentDetailQuery, TeacherStudentDetailDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new GetTeacherStudentDetailQuery(userId, studentId),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapGet("/api/dashboard/teacher/classrooms/{classroomId:guid}/diagnosis", async (
+    Guid classroomId,
+    HttpContext httpContext,
+    IQueryHandler<GetClassroomDiagnosisQuery, ClassroomDiagnosisDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        var userId = CurrentUser.GetUserId(httpContext.User);
+        return Results.Ok(await handler.Handle(
+            new GetClassroomDiagnosisQuery(userId, classroomId),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapPost("/api/reports/whatsapp/daily", async (
+    bool? force,
+    ICommandHandler<RunDailyWhatsAppReportsCommand, DailyWhatsAppReportsResultDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return Results.Ok(await handler.Handle(
+            new RunDailyWhatsAppReportsCommand(Force: force == true),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
 
 app.MapGet("/api/meetings", async (
     HttpContext httpContext,
@@ -862,5 +1456,33 @@ app.MapPost("/api/zoom/disconnect", async (
         return ProblemFromException(ex);
     }
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+app.MapGet("/api/zoom/oauth-settings", async (
+    IQueryHandler<GetZoomOAuthSettingsQuery, ZoomUserOAuthSettingsDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    return Results.Ok(await handler.Handle(new GetZoomOAuthSettingsQuery(), cancellationToken));
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+app.MapPut("/api/zoom/oauth-settings", async (
+    SaveZoomUserOAuthSettingsRequest request,
+    ICommandHandler<SaveZoomOAuthSettingsCommand, ZoomUserOAuthSettingsDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return Results.Ok(await handler.Handle(
+            new SaveZoomOAuthSettingsCommand(
+                request.ClientId,
+                request.ClientSecret,
+                request.RedirectUri,
+                request.FrontendRedirectUri),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
 
 app.Run();

@@ -1,17 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Classroom, Course, ManagedUser } from '../../models';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 
 @Component({
   selector: 'app-admin-create-classroom',
-  imports: [FormsModule],
+  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-create-classroom.component.html',
   styleUrl: './admin-panel.css'
 })
 export class AdminCreateClassroomComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly teachers = signal<ManagedUser[]>([]);
   readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
@@ -74,7 +78,7 @@ export class AdminCreateClassroomComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('Classroom created.');
+          this.message.set(this.locale.t('admin.classrooms.created'));
           this.classroomName = '';
           this.classroomDescription = '';
           this.classroomTeacherId = '';
@@ -83,7 +87,7 @@ export class AdminCreateClassroomComponent {
           this.classroomWhatsAppPhones = '';
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not create classroom.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.classrooms.createFailed'))
       });
   }
 
@@ -114,23 +118,23 @@ export class AdminCreateClassroomComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('Classroom updated.');
+          this.message.set(this.locale.t('admin.classrooms.updated'));
           this.editingId.set(null);
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not update classroom.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.classrooms.updateFailed'))
       });
   }
 
   deleteClassroom(room: Classroom): void {
-    if (!confirm(`Delete classroom ${room.name}?`)) return;
+    if (!confirm(this.locale.t('admin.classrooms.confirmDelete', { name: room.name }))) return;
     this.clearStatus();
     this.api.deleteClassroom(room.id).subscribe({
       next: () => {
-        this.message.set('Classroom deleted.');
+        this.message.set(this.locale.t('admin.classrooms.deleted'));
         this.reload();
       },
-      error: (err) => this.error.set(err?.error?.message || 'Could not delete classroom.')
+      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.classrooms.deleteFailed'))
     });
   }
 

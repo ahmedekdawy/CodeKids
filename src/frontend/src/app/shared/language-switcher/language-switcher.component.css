@@ -1,0 +1,31 @@
+.lang-switch {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border-radius: var(--radius-pill, 999px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+}
+
+.lang-btn {
+  min-width: 2.2rem;
+  border: 0;
+  border-radius: var(--radius-pill, 999px);
+  padding: 0.35rem 0.65rem;
+  background: transparent;
+  color: var(--text-muted, rgba(244, 247, 251, 0.72));
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lang-btn:hover {
+  color: var(--text, #fff);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lang-btn.active {
+  background: rgba(255, 214, 10, 0.18);
+  color: var(--accent, #ffd60a);
+}

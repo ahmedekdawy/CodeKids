@@ -14,6 +14,13 @@ public sealed record ZoomConnectResultDto(string FrontendRedirectUrl);
 public sealed record GetZoomStatusQuery(Guid TeacherUserId) : IQuery<ZoomConnectionStatus>;
 public sealed record DisconnectZoomCommand(Guid TeacherUserId) : ICommand<bool>;
 
+public sealed record GetZoomOAuthSettingsQuery() : IQuery<ZoomUserOAuthSettingsDto>;
+public sealed record SaveZoomOAuthSettingsCommand(
+    string ClientId,
+    string? ClientSecret,
+    string? RedirectUri,
+    string? FrontendRedirectUri) : ICommand<ZoomUserOAuthSettingsDto>;
+
 public sealed class GetZoomConnectUrlQueryHandler(
     IAppDbContext dbContext,
     IZoomUserOAuthService zoomUserOAuth) : IQueryHandler<GetZoomConnectUrlQuery, ZoomConnectUrlDto>
@@ -80,7 +87,10 @@ public sealed class GetZoomStatusQueryHandler(
             teacher.HasPersonalZoom,
             string.IsNullOrWhiteSpace(teacher.ZoomConnectedEmail) ? null : teacher.ZoomConnectedEmail,
             teacher.ZoomTokenExpiresAt,
-            zoomUserOAuth.IsServerOAuthConfigured);
+            zoomUserOAuth.IsServerOAuthConfigured,
+            zoomUserOAuth.IsUserOAuthConfigured,
+            zoomUserOAuth.UserOAuthRedirectUri,
+            zoomUserOAuth.MaskedClientId);
     }
 }
 
@@ -99,5 +109,40 @@ public sealed class DisconnectZoomCommandHandler(IAppDbContext dbContext)
         teacher.ZoomConnectedEmail = string.Empty;
         await dbContext.SaveChangesAsync(cancellationToken);
         return true;
+    }
+}
+
+public sealed class GetZoomOAuthSettingsQueryHandler(
+    IZoomOAuthSettingsStore settingsStore) : IQueryHandler<GetZoomOAuthSettingsQuery, ZoomUserOAuthSettingsDto>
+{
+    public Task<ZoomUserOAuthSettingsDto> Handle(GetZoomOAuthSettingsQuery query, CancellationToken cancellationToken)
+    {
+        var snap = settingsStore.Get();
+        var maskedSecret = string.IsNullOrWhiteSpace(snap.ClientSecret)
+            ? string.Empty
+            : snap.ClientSecret.Length <= 4
+                ? new string('•', snap.ClientSecret.Length)
+                : $"{new string('•', Math.Max(4, snap.ClientSecret.Length - 4))}{snap.ClientSecret[^4..]}";
+
+        return Task.FromResult(new ZoomUserOAuthSettingsDto(
+            settingsStore.IsUserOAuthConfigured,
+            snap.ClientId,
+            maskedSecret,
+            !string.IsNullOrWhiteSpace(snap.ClientSecret),
+            snap.RedirectUri,
+            snap.FrontendRedirectUri,
+            string.IsNullOrWhiteSpace(snap.RedirectUri)
+                ? "http://localhost:5078/api/zoom/callback"
+                : snap.RedirectUri));
+    }
+}
+
+public sealed class SaveZoomOAuthSettingsCommandHandler(
+    IZoomOAuthSettingsStore settingsStore) : ICommandHandler<SaveZoomOAuthSettingsCommand, ZoomUserOAuthSettingsDto>
+{
+    public Task<ZoomUserOAuthSettingsDto> Handle(SaveZoomOAuthSettingsCommand command, CancellationToken cancellationToken)
+    {
+        settingsStore.Save(command.ClientId, command.ClientSecret, command.RedirectUri, command.FrontendRedirectUri);
+        return new GetZoomOAuthSettingsQueryHandler(settingsStore).Handle(new GetZoomOAuthSettingsQuery(), cancellationToken);
     }
 }

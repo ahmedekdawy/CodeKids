@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using System.Web;
 using CodeKids.Application.Abstractions;
 using Microsoft.Extensions.Options;
 
@@ -14,7 +13,7 @@ public sealed class WhatsAppClient(
     private readonly WhatsAppOptions _options = options.Value;
 
     public string BuildShareUrl(string message) =>
-        $"https://wa.me/?text={HttpUtility.UrlEncode(message)}";
+        $"https://wa.me/?text={Uri.EscapeDataString(message)}";
 
     public async Task<WhatsAppSendResult> SendTextAsync(string phoneE164, string message, CancellationToken cancellationToken)
     {

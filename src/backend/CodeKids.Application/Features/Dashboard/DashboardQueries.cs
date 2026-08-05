@@ -1,3 +1,4 @@
+using CodeKids.Application.Features.Analytics;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Enums;
 using CodeKids.Application.Abstractions;
@@ -24,9 +25,14 @@ public sealed record TeacherStudentDto(
     string DisplayName,
     string Email,
     int TotalXp,
+    int LevelNumber,
+    string LevelName,
+    int LevelProgressPercent,
     int CompletedSteps,
     int QuizAttempts,
-    string? ParentName);
+    int WeakLessonCount,
+    string? ParentName,
+    string? Signal);
 
 public sealed record TeacherDashboardDto(
     Guid TeacherId,
@@ -34,6 +40,8 @@ public sealed record TeacherDashboardDto(
     int StudentCount,
     int TotalCompletedSteps,
     int AverageXp,
+    int BehindCount,
+    IReadOnlyList<string> TopWeakLessons,
     IReadOnlyList<TeacherStudentDto> Students);
 
 public sealed record GetParentDashboardQuery(Guid ParentId) : IQuery<ParentDashboardDto>;
@@ -94,14 +102,20 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == query.TeacherId && x.Role == UserRole.Teacher, cancellationToken)
             ?? throw new InvalidOperationException("Teacher account not found.");
 
+        var studentIds = await dbContext.ClassroomStudents
+            .AsNoTracking()
+            .Where(x => x.Classroom!.TeacherId == query.TeacherId)
+            .Select(x => x.StudentId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
         var students = await dbContext.Users
             .AsNoTracking()
             .Include(x => x.Parent)
-            .Where(x => x.Role == UserRole.Student)
+            .Where(x => studentIds.Contains(x.Id) && x.Role == UserRole.Student)
             .OrderByDescending(x => x.TotalXp)
             .ToListAsync(cancellationToken);
 
-        var studentIds = students.Select(x => x.Id).ToList();
         var progressCounts = await dbContext.StudentProgress
             .Where(x => studentIds.Contains(x.UserId) && x.IsCompleted)
             .GroupBy(x => x.UserId)
@@ -114,14 +128,46 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
             .Select(g => new { UserId = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.UserId, x => x.Count, cancellationToken);
 
-        var mapped = students.Select(student => new TeacherStudentDto(
-            student.Id,
-            student.DisplayName,
-            student.Email,
-            student.TotalXp,
-            progressCounts.GetValueOrDefault(student.Id),
-            quizCounts.GetValueOrDefault(student.Id),
-            student.Parent?.DisplayName)).ToList();
+        var classroomWeak = await AnalyticsQueries.GetWeakLessonsForClassroom(
+            dbContext, studentIds, cancellationToken);
+
+        var mapped = new List<TeacherStudentDto>();
+        var avgXp = students.Count == 0 ? 0 : students.Average(x => x.TotalXp);
+        var behindCount = 0;
+
+        foreach (var student in students)
+        {
+            var level = StudentLevelCalculator.FromXp(student.TotalXp);
+            var weak = await AnalyticsQueries.GetWeakLessonsForStudent(dbContext, student.Id, cancellationToken);
+            string? signal = null;
+            if (student.TotalXp < avgXp * 0.6 || level.LevelNumber <= 1)
+            {
+                signal = "Behind";
+                behindCount++;
+            }
+            else if (weak.Count > 0 && weak[0].AccuracyPercent < 50)
+            {
+                signal = "Needs review";
+            }
+            else if (level.LevelNumber >= 4)
+            {
+                signal = "Strong";
+            }
+
+            mapped.Add(new TeacherStudentDto(
+                student.Id,
+                student.DisplayName,
+                student.Email,
+                student.TotalXp,
+                level.LevelNumber,
+                level.Name,
+                level.ProgressPercent,
+                progressCounts.GetValueOrDefault(student.Id),
+                quizCounts.GetValueOrDefault(student.Id),
+                weak.Count,
+                student.Parent?.DisplayName,
+                signal));
+        }
 
         return new TeacherDashboardDto(
             teacher.Id,
@@ -129,7 +175,8 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
             mapped.Count,
             mapped.Sum(x => x.CompletedSteps),
             mapped.Count == 0 ? 0 : (int)mapped.Average(x => x.TotalXp),
+            behindCount,
+            classroomWeak.Take(5).Select(x => x.LessonTitle).ToList(),
             mapped);
     }
 }
-

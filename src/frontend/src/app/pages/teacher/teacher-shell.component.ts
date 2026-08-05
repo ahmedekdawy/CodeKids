@@ -7,8 +7,8 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
   imports: [PanelShellComponent, RouterOutlet],
   template: `
     <app-panel-shell
-      title="Teacher"
-      subtitle="Classroom workspace"
+      titleKey="shell.teacher.title"
+      subtitleKey="shell.teacher.subtitle"
       [navItems]="navItems">
       <router-outlet />
     </app-panel-shell>
@@ -16,11 +16,15 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
 })
 export class TeacherShellComponent {
   readonly navItems: PanelNavItem[] = [
-    { label: 'Overview', path: '/teacher/overview', icon: 'O' },
-    { label: 'Zoom', path: '/teacher/zoom', icon: 'Z' },
-    { label: 'Quizzes', path: '/teacher/quizzes', icon: 'Q' },
-    { label: 'Assignments', path: '/teacher/assignments', icon: 'A' },
-    { label: 'Review', path: '/teacher/review', icon: 'R' },
-    { label: 'Students', path: '/teacher/students', icon: 'S' }
+    { labelKey: 'nav.teacher.overview', path: '/teacher/overview', icon: 'O' },
+    { labelKey: 'nav.teacher.videos', path: '/teacher/videos', icon: 'V' },
+    { labelKey: 'nav.teacher.zoom', path: '/teacher/zoom', icon: 'Z' },
+    { labelKey: 'nav.teacher.whatsapp', path: '/teacher/whatsapp', icon: 'W' },
+    { labelKey: 'nav.teacher.questionBank', path: '/teacher/question-bank', icon: 'B' },
+    { labelKey: 'nav.teacher.exams', path: '/teacher/exams', icon: 'E' },
+    { labelKey: 'nav.teacher.quizzes', path: '/teacher/quizzes', icon: 'Q' },
+    { labelKey: 'nav.teacher.assignments', path: '/teacher/assignments', icon: 'A' },
+    { labelKey: 'nav.teacher.review', path: '/teacher/review', icon: 'R' },
+    { labelKey: 'nav.teacher.students', path: '/teacher/students', icon: 'S' }
   ];
 }

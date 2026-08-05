@@ -12,5 +12,6 @@ public class Lesson
     public int SortOrder { get; set; }
     public Course? Course { get; set; }
     public List<LessonStep> Steps { get; set; } = [];
+    public List<LessonVideo> Videos { get; set; } = [];
 }
 

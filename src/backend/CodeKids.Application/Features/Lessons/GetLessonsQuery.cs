@@ -18,7 +18,15 @@ public sealed record LessonDto(
     string Description,
     int Difficulty,
     int XpReward,
-    IReadOnlyList<LessonStepDto> Steps);
+    IReadOnlyList<LessonStepDto> Steps,
+    IReadOnlyList<LessonVideoSummaryDto> Videos);
+
+public sealed record LessonVideoSummaryDto(
+    Guid Id,
+    Guid MediaAssetId,
+    string Title,
+    int SortOrder,
+    int? DurationSeconds);
 
 public sealed record GetLessonsQuery(Guid? CourseId = null) : IQuery<IReadOnlyList<LessonDto>>;
 
@@ -32,6 +40,7 @@ public sealed class GetLessonsQueryHandler(IAppDbContext dbContext)
         var lessonsQuery = dbContext.Lessons
             .AsNoTracking()
             .Include(x => x.Steps)
+            .Include(x => x.Videos)
             .AsQueryable();
 
         if (query.CourseId is Guid courseId)
@@ -59,6 +68,16 @@ public sealed class GetLessonsQueryHandler(IAppDbContext dbContext)
             lesson.Steps
                 .OrderBy(step => step.StepNumber)
                 .Select(step => new LessonStepDto(step.Id, step.StepNumber, step.Title, step.Prompt))
+                .ToList(),
+            lesson.Videos
+                .OrderBy(v => v.SortOrder)
+                .ThenBy(v => v.CreatedAtUtc)
+                .Select(v => new LessonVideoSummaryDto(
+                    v.Id,
+                    v.MediaAssetId,
+                    v.Title,
+                    v.SortOrder,
+                    null))
                 .ToList());
 }
 
@@ -70,9 +89,37 @@ public sealed class GetLessonByIdQueryHandler(IAppDbContext dbContext)
         var lesson = await dbContext.Lessons
             .AsNoTracking()
             .Include(x => x.Steps)
+            .Include(x => x.Videos)
+                .ThenInclude(v => v.MediaAsset)
             .FirstOrDefaultAsync(x => x.Id == query.LessonId, cancellationToken);
 
-        return lesson is null ? null : GetLessonsQueryHandler.Map(lesson);
+        if (lesson is null)
+        {
+            return null;
+        }
+
+        return new LessonDto(
+            lesson.Id,
+            lesson.CourseId,
+            lesson.Title,
+            lesson.Theme,
+            lesson.Description,
+            lesson.Difficulty,
+            lesson.XpReward,
+            lesson.Steps
+                .OrderBy(step => step.StepNumber)
+                .Select(step => new LessonStepDto(step.Id, step.StepNumber, step.Title, step.Prompt))
+                .ToList(),
+            lesson.Videos
+                .OrderBy(v => v.SortOrder)
+                .ThenBy(v => v.CreatedAtUtc)
+                .Select(v => new LessonVideoSummaryDto(
+                    v.Id,
+                    v.MediaAssetId,
+                    v.Title,
+                    v.SortOrder,
+                    v.MediaAsset?.DurationSeconds))
+                .ToList());
     }
 }
 

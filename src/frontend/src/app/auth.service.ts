@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../environments/environment';
 import { AuthResponse, AuthUser, UserRole } from './models';
 
 const TOKEN_KEY = 'codekids_token';
@@ -11,7 +12,7 @@ const USER_KEY = 'codekids_user';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly baseUrl = 'http://localhost:5078/api/auth';
+  private readonly baseUrl = `${environment.apiBaseUrl}/auth`;
 
   readonly user = signal<AuthUser | null>(this.readUser());
   readonly token = signal<string | null>(localStorage.getItem(TOKEN_KEY));

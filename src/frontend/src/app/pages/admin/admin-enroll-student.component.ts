@@ -1,7 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Classroom, ManagedUser } from '../../models';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 
 interface EnrollmentRow {
@@ -14,12 +17,13 @@ interface EnrollmentRow {
 
 @Component({
   selector: 'app-admin-enroll-student',
-  imports: [FormsModule],
+  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-enroll-student.component.html',
   styleUrl: './admin-panel.css'
 })
 export class AdminEnrollStudentComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly students = signal<ManagedUser[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
   readonly message = signal('');
@@ -70,27 +74,27 @@ export class AdminEnrollStudentComponent {
   enrollStudent(): void {
     this.clearStatus();
     if (!this.enrollClassroomId || !this.enrollStudentId) {
-      this.error.set('Select classroom and student.');
+      this.error.set(this.locale.t('admin.enroll.selectBoth'));
       return;
     }
     this.api.addStudentToClassroom(this.enrollClassroomId, this.enrollStudentId).subscribe({
-      next: () => {
-        this.message.set('Student enrolled.');
+      next: (result) => {
+        this.message.set(this.locale.t('admin.enroll.enrolled', { status: result.whatsAppStatus }));
         this.reload();
       },
-      error: (err) => this.error.set(err?.error?.message || 'Could not enroll student.')
+      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.enroll.enrollFailed'))
     });
   }
 
   removeEnrollment(row: EnrollmentRow): void {
-    if (!confirm(`Remove ${row.studentName} from ${row.classroomName}?`)) return;
+    if (!confirm(this.locale.t('admin.enroll.confirmRemove', { student: row.studentName, classroom: row.classroomName }))) return;
     this.clearStatus();
     this.api.removeStudentFromClassroom(row.classroomId, row.studentId).subscribe({
       next: () => {
-        this.message.set('Student removed from classroom.');
+        this.message.set(this.locale.t('admin.enroll.removed'));
         this.reload();
       },
-      error: (err) => this.error.set(err?.error?.message || 'Could not remove student.')
+      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.enroll.removeFailed'))
     });
   }
 

@@ -1,21 +1,43 @@
 <div class="page">
-  <a routerLink="/student" class="back">← Back to missions</a>
+  <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
   @if (lesson(); as current) {
     <section class="hero-strip">
       <div>
-        <p class="eyebrow">{{ current.theme }} lesson</p>
+        <p class="eyebrow">{{ 'play.lessonEyebrow' | t:{ theme: current.theme } }}</p>
         <h1>{{ current.title }}</h1>
         <p>{{ current.description }}</p>
       </div>
-      <div class="xp-pill">{{ current.xpReward }} XP</div>
+      <div class="xp-pill">{{ current.xpReward }} {{ 'common.xp' | t }}</div>
     </section>
+
+    @if (current.videos?.length) {
+      <section class="block video-block">
+        <nav class="video-nav">
+          @for (video of current.videos; track video.id) {
+            <button
+              type="button"
+              class="list-btn"
+              [class.active]="selectedVideo()?.id === video.id"
+              (click)="chooseVideo(video)">
+              {{ video.title }}
+            </button>
+          }
+        </nav>
+        @if (selectedVideo(); as video) {
+          <app-protected-video-player
+            [mediaAssetId]="video.mediaAssetId"
+            [lessonId]="current.id"
+            [title]="video.title" />
+        }
+      </section>
+    }
 
     <section class="grid-two">
       <nav class="block">
-        <h3>Steps</h3>
+        <h3>{{ 'play.steps' | t }}</h3>
         @for (step of current.steps; track step.id) {
           <button type="button" class="list-btn" [class.active]="selectedStep()?.id === step.id" (click)="chooseStep(step)">
-            Step {{ step.stepNumber }} · {{ step.title }}
+            {{ 'play.stepN' | t:{ n: step.stepNumber, title: step.title } }}
           </button>
         }
       </nav>
@@ -25,18 +47,18 @@
           <h3>{{ step.title }}</h3>
           <p>{{ step.prompt }}</p>
           <form [formGroup]="form" (ngSubmit)="submit()">
-            <textarea formControlName="answer" rows="6" placeholder="Type your answer..."></textarea>
-            <button type="submit" [disabled]="loading() || form.invalid">Check answer</button>
+            <textarea formControlName="answer" rows="6" [placeholder]="'play.answerPlaceholder' | t"></textarea>
+            <button type="submit" [disabled]="loading() || form.invalid">{{ 'play.checkAnswer' | t }}</button>
           </form>
           @if (feedback(); as result) {
             <div class="feedback" [class.ok]="result.isCorrect">
-              <strong>{{ result.isCorrect ? 'Nice work!' : 'Try again!' }}</strong>
-              <p>{{ result.feedback }}</p>
+              <strong>{{ result.isCorrect ? ('play.niceWork' | t) : ('play.tryAgain' | t) }}</strong>
+              <p>{{ feedbackText(result) }}</p>
               @if (result.isCorrect) {
-                <span>+{{ result.earnedXp }} XP · Total {{ result.totalXp }} XP</span>
+                <span>{{ 'play.xpEarned' | t:{ earned: result.earnedXp, total: result.totalXp } }}</span>
               }
               @if (result.newlyAwardedBadges.length) {
-                <p>New badges: {{ result.newlyAwardedBadges.join(', ') }}</p>
+                <p>{{ 'student.newBadges' | t }} {{ result.newlyAwardedBadges.join(', ') }}</p>
               }
             </div>
           }

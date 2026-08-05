@@ -3,11 +3,14 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { LocaleService } from '../../i18n/locale.service';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -15,6 +18,7 @@ export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly locale = inject(LocaleService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['student@codekids.local', [Validators.required, Validators.email]],
@@ -39,7 +43,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.message || 'Could not sign in.');
+        this.error.set(this.locale.fromApiError(err, 'auth.signInFailed'));
       }
     });
   }

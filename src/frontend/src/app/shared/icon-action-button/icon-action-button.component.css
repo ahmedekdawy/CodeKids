@@ -1,0 +1,51 @@
+.icon-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text, #fff);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-action-btn svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.icon-action-btn:hover:not(:disabled) {
+  background: rgba(95, 211, 188, 0.14);
+  border-color: rgba(95, 211, 188, 0.45);
+}
+
+.icon-action-btn.play:hover:not(:disabled) {
+  background: rgba(255, 214, 10, 0.16);
+  border-color: rgba(255, 214, 10, 0.55);
+  color: #ffd60a;
+}
+
+.icon-action-btn.danger:hover:not(:disabled) {
+  background: rgba(255, 107, 107, 0.18);
+  border-color: rgba(255, 107, 107, 0.55);
+  color: #fff;
+}
+
+.icon-action-btn.ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.icon-action-btn.ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-strong, rgba(255, 255, 255, 0.18));
+}
+
+.icon-action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

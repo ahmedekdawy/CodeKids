@@ -1,6 +1,7 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public sealed record QuizQuestionDto(
     string OptionA,
     string OptionB,
     string OptionC,
+    IReadOnlyList<ChoiceOptionDto> Options,
     int SortOrder);
 
 public sealed record QuizDto(
@@ -33,13 +35,15 @@ public sealed record SubmitQuizResponse(
     int EarnedXp,
     int TotalXp,
     string Feedback,
+    string? FeedbackCode,
     IReadOnlyList<string> NewlyAwardedBadges);
 
 public sealed record CreateQuizQuestionInput(
     string Prompt,
-    string OptionA,
-    string OptionB,
-    string OptionC,
+    string? OptionA,
+    string? OptionB,
+    string? OptionC,
+    IReadOnlyList<string>? Options,
     string CorrectOption,
     int SortOrder);
 
@@ -117,20 +121,31 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
         var order = 1;
         foreach (var q in command.Questions)
         {
-            var correct = q.CorrectOption.Trim().ToUpperInvariant();
-            if (correct is not ("A" or "B" or "C"))
+            var options = q.Options is { Count: > 0 }
+                ? ChoiceOptions.FromTexts(q.Options)
+                : ChoiceOptions.Parse(null, q.OptionA, q.OptionB, q.OptionC);
+
+            if (options.Count < 2)
             {
-                throw new InvalidOperationException("Correct option must be A, B, or C.");
+                throw new InvalidOperationException("Each quiz question needs at least two options.");
             }
 
+            var correct = q.CorrectOption.Trim().ToUpperInvariant();
+            if (!ChoiceOptions.AllowedKeys(options).Contains(correct))
+            {
+                throw new InvalidOperationException("Correct option must match one of the listed choices.");
+            }
+
+            var (a, b, c, _) = ChoiceOptions.ToLegacy(options);
             quiz.Questions.Add(new QuizQuestion
             {
                 Id = Guid.NewGuid(),
                 QuizId = quiz.Id,
                 Prompt = q.Prompt.Trim(),
-                OptionA = q.OptionA.Trim(),
-                OptionB = q.OptionB.Trim(),
-                OptionC = q.OptionC.Trim(),
+                OptionA = a ?? string.Empty,
+                OptionB = b ?? string.Empty,
+                OptionC = c ?? string.Empty,
+                OptionsJson = ChoiceOptions.ToJson(options),
                 CorrectOption = correct,
                 SortOrder = q.SortOrder <= 0 ? order : q.SortOrder
             });
@@ -177,7 +192,14 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
             quiz.XpReward,
             quiz.Questions
                 .OrderBy(x => x.SortOrder)
-                .Select(x => new QuizQuestionDto(x.Id, x.Prompt, x.OptionA, x.OptionB, x.OptionC, x.SortOrder))
+                .Select(x => new QuizQuestionDto(
+                    x.Id,
+                    x.Prompt,
+                    x.OptionA,
+                    x.OptionB,
+                    x.OptionC,
+                    ChoiceOptions.Parse(x.OptionsJson, x.OptionA, x.OptionB, x.OptionC),
+                    x.SortOrder))
                 .ToList());
 }
 
@@ -256,6 +278,7 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             earnedXp,
             user.TotalXp,
             ratio >= 0.7 ? "Quiz cleared! Your coding brain is glowing." : "Keep practicing — you're getting closer!",
+            ratio >= 0.7 ? "api.feedback.quizPassed" : "api.feedback.quizRetry",
             newBadges);
     }
 }

@@ -4,13 +4,16 @@
       <div class="sidebar-brand">
         <p class="brand">{{ collapsed() ? 'CK' : 'CodeKids' }}</p>
         @if (!collapsed()) {
-          <strong>{{ title }}</strong>
-          <small>{{ subtitle }}</small>
+          <strong>{{ titleKey | t }}</strong>
+          <small>{{ subtitleKey | t }}</small>
         }
       </div>
-      <button type="button" class="collapse-btn" (click)="toggle()" [title]="collapsed() ? 'Expand menu' : 'Collapse menu'">
-        {{ collapsed() ? '»' : '«' }}
-      </button>
+      <div class="sidebar-tools">
+        <app-language-switcher />
+        <button type="button" class="collapse-btn" (click)="toggle()" [title]="collapseTitle()">
+          {{ collapsed() ? '»' : '«' }}
+        </button>
+      </div>
     </div>
 
     <nav class="side-nav">
@@ -18,20 +21,20 @@
         <a
           [routerLink]="item.path"
           routerLinkActive="active"
-          [title]="item.label">
+          [title]="item.labelKey | t">
           <span class="nav-icon">{{ iconFor(item) }}</span>
           @if (!collapsed()) {
-            <span class="nav-label">{{ item.label }}</span>
+            <span class="nav-label">{{ item.labelKey | t }}</span>
           }
         </a>
       }
     </nav>
 
-    <button type="button" class="logout" (click)="auth.logout()" [title]="'Sign out'">
+    <button type="button" class="logout" (click)="auth.logout()" [title]="'common.signOut' | t">
       @if (collapsed()) {
         ⎋
       } @else {
-        Sign out
+        {{ 'common.signOut' | t }}
       }
     </button>
   </aside>

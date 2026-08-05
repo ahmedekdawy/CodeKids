@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Assignments</h2>
-  <p class="meta">Create classroom assignments with short-answer or multiple-choice questions.</p>
+  <h2>{{ 'teacher.assignments.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.assignments.subtitle' | t }}</p>
 
   @if (info()) {
     <p class="feedback ok">{{ info() }}</p>
@@ -10,12 +10,12 @@
   }
 
   <section class="block">
-    <h3>Create assignment</h3>
+    <h3>{{ 'teacher.assignments.create' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createAssignment()">
-      <label>Title <input [(ngModel)]="assignmentTitle" name="assignmentTitle" required /></label>
-      <label>Description <input [(ngModel)]="assignmentDescription" name="assignmentDescription" /></label>
+      <label>{{ 'common.title' | t }} <input [(ngModel)]="assignmentTitle" name="assignmentTitle" required /></label>
+      <label>{{ 'common.description' | t }} <input [(ngModel)]="assignmentDescription" name="assignmentDescription" /></label>
       <label>
-        Classroom
+        {{ 'common.classroom' | t }}
         <select [(ngModel)]="assignmentClassroomId" name="assignmentClassroomId">
           @for (room of classrooms(); track room.id) {
             <option [value]="room.id">{{ room.name }}</option>
@@ -24,34 +24,34 @@
       </label>
       <label>XP <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" /></label>
       <label>
-        Type
+        {{ 'common.type' | t }}
         <select [(ngModel)]="assignmentType" name="assignmentType">
-          <option value="ShortAnswer">Short answer</option>
-          <option value="MultipleChoice">Multiple choice</option>
+          <option value="ShortAnswer">{{ 'assignType.shortAnswer' | t }}</option>
+          <option value="MultipleChoice">{{ 'assignType.multipleChoice' | t }}</option>
         </select>
       </label>
-      <label>Question <input [(ngModel)]="assignmentPrompt" name="assignmentPrompt" required /></label>
+      <label>{{ 'teacher.assignments.question' | t }} <input [(ngModel)]="assignmentPrompt" name="assignmentPrompt" required /></label>
       @if (assignmentType === 'MultipleChoice') {
         <label>A <input [(ngModel)]="assignmentOptionA" name="assignmentOptionA" /></label>
         <label>B <input [(ngModel)]="assignmentOptionB" name="assignmentOptionB" /></label>
         <label>C <input [(ngModel)]="assignmentOptionC" name="assignmentOptionC" /></label>
       }
-      <label>Correct answer <input [(ngModel)]="assignmentCorrect" name="assignmentCorrect" required /></label>
-      <button type="submit">Create assignment</button>
+      <label>{{ 'common.correctAnswer' | t }} <input [(ngModel)]="assignmentCorrect" name="assignmentCorrect" required /></label>
+      <button type="submit">{{ 'teacher.assignments.create' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>Your assignments</h3>
+    <h3>{{ 'teacher.assignments.list' | t }}</h3>
     @for (assignment of assignments(); track assignment.id) {
       <div class="meeting-row">
         <div>
           <strong>{{ assignment.title }}</strong>
-          <p class="meta">{{ assignment.classroomName }} · {{ assignment.xpReward }} XP · {{ assignment.questions.length }} questions</p>
+          <p class="meta">{{ assignment.classroomName }} · {{ assignment.xpReward }} XP · {{ assignment.questions.length }} {{ 'common.questions' | t }}</p>
         </div>
       </div>
     } @empty {
-      <p class="meta">No assignments yet.</p>
+      <p class="meta">{{ 'teacher.assignments.empty' | t }}</p>
     }
   </section>
 </div>

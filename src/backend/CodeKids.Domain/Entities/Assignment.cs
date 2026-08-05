@@ -11,10 +11,12 @@ public class Assignment
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset? DueAtUtc { get; set; }
     public int XpReward { get; set; }
+    public Guid? SolutionVideoMediaAssetId { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public Classroom? Classroom { get; set; }
     public User? CreatedBy { get; set; }
+    public MediaAsset? SolutionVideo { get; set; }
     public List<AssignmentQuestion> Questions { get; set; } = [];
     public List<AssignmentSubmission> Submissions { get; set; } = [];
 }
@@ -44,6 +46,7 @@ public class AssignmentSubmission
     public int? Score { get; set; }
     public int? MaxScore { get; set; }
     public string? TeacherFeedback { get; set; }
+    public DateTimeOffset? StartedAtUtc { get; set; }
     public DateTimeOffset SubmittedAtUtc { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? GradedAtUtc { get; set; }
 

@@ -1,103 +1,235 @@
-<div class="page">
-  <header class="topbar">
-    <div>
+<div class="page student-home">
+  <header class="topbar student-topbar">
+    <div class="brand-block">
       <p class="brand">CodeKids</p>
-      <h1>Hi {{ auth.user()?.displayName }}!</h1>
+      <p class="greeting">{{ 'student.greeting' | t: { name: auth.user()?.displayName || '' } }}</p>
     </div>
-    <button type="button" class="ghost" (click)="auth.logout()">Sign out</button>
+    <div class="topbar-actions">
+      <app-language-switcher />
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    </div>
   </header>
 
-  <section class="hero-strip">
-    <div>
-      <p class="eyebrow">Student mission board</p>
-      <h2>Courses, quizzes, badges, and avatars.</h2>
-      <p>{{ summary()?.totalCompletedSteps || 0 }} steps done · {{ summary()?.totalXp || 0 }} XP</p>
-    </div>
-    <div class="xp-pill">{{ summary()?.totalXp || 0 }} XP</div>
-  </section>
-
-  <section class="block">
-    <h3>Live Zoom classes</h3>
-    @for (meeting of meetings(); track meeting.id) {
-      <div class="meeting-row">
-        <div>
-          <strong>{{ meeting.title }}</strong>
-          <p class="meta">
-            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.durationMinutes }} min · with {{ meeting.hostName }}
-            @if (meeting.classroomName) {
-              · {{ meeting.classroomName }}
-            }
-          </p>
-        </div>
-        <a class="chip quiz" [href]="meeting.joinUrl" target="_blank" rel="noopener">Join Zoom</a>
+  <section class="welcome-panel">
+    <div class="welcome-main">
+      <div class="profile-identity">
+        @if (selectedAvatar(); as avatar) {
+          <span class="avatar-display" [attr.aria-label]="avatar.name">{{ avatar.emoji }}</span>
+          <div class="avatar-picker">
+            <strong class="avatar-name">{{ avatar.name }}</strong>
+            <label class="avatar-select-label">
+              <span class="sr-only">{{ 'student.selectAvatar' | t }}</span>
+              <select class="avatar-select" [value]="avatar.id" (change)="onAvatarPick($event)">
+                @for (option of avatars(); track option.id) {
+                  <option [value]="option.id" [disabled]="!option.isUnlocked">
+                    {{ option.emoji }} {{ option.name }}
+                    @if (!option.isUnlocked) {
+                      ({{ 'student.needsXp' | t: { xp: option.unlockXp } }})
+                    }
+                  </option>
+                }
+              </select>
+            </label>
+          </div>
+        } @else {
+          <p class="meta">{{ 'student.pickAvatar' | t }}</p>
+        }
       </div>
-    } @empty {
-      <p class="meta">No live classes scheduled right now. Check back soon!</p>
-    }
-  </section>
 
-  <section class="block">
-    <h3>Assignments</h3>
-    <div class="chip-row">
-      @for (assignment of assignments(); track assignment.id) {
-        <a class="chip" [routerLink]="['/assignments', assignment.id]">{{ assignment.title }}</a>
-      } @empty {
-        <span class="meta">No assignments yet.</span>
-      }
+      <div class="welcome-copy">
+        <p class="eyebrow">{{ 'student.missionBoard' | t }}</p>
+        <h1>{{ 'student.heroTitle' | t }}</h1>
+        <p class="welcome-sub">
+          {{ 'student.stepsXp' | t: { steps: summary()?.totalCompletedSteps || 0, xp: summary()?.totalXp || 0 } }}
+        </p>
+      </div>
+    </div>
+
+    <div class="welcome-side">
+      <div class="xp-badge" aria-label="XP">
+        <span class="xp-value">{{ summary()?.totalXp || 0 }}</span>
+        <span class="xp-unit">XP</span>
+      </div>
+
+      <div class="badge-panel">
+        <div class="badge-panel-head">
+          <h3>{{ 'student.badges' | t }}</h3>
+          @if (earnedBadges().length) {
+            <span class="count-pill">{{ earnedBadges().length }}</span>
+          }
+        </div>
+        @if (earnedBadges().length) {
+          <div class="badge-row">
+            @for (badge of earnedBadges(); track badge.id) {
+              <div class="badge-chip" [title]="badge.description">
+                <span>{{ badge.icon }}</span>
+                <strong>{{ badge.name }}</strong>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="meta empty-hint">{{ 'student.noBadges' | t }}</p>
+        }
+      </div>
     </div>
   </section>
 
-  <section class="grid-two">
-    <article>
-      <h3>Courses</h3>
-      @for (course of courses(); track course.id) {
-        <div class="block">
-          <strong>{{ course.title }}</strong>
-          <p>{{ course.description }}</p>
-          <p class="meta">Ages {{ course.ageMin }}–{{ course.ageMax }} · {{ course.theme }}</p>
-          <div class="chip-row">
-            @for (lesson of course.lessons; track lesson.id) {
-              <a class="chip" [routerLink]="['/lessons', lesson.id]">{{ lesson.title }}</a>
-            }
-            @for (quiz of course.quizzes; track quiz.id) {
-              <a class="chip quiz" [routerLink]="['/quizzes', quiz.id]">Quiz: {{ quiz.title }}</a>
+  <section class="stat-row student-stats" aria-label="Progress">
+    <div class="stat-card">
+      <strong>{{ summary()?.totalCompletedSteps || 0 }}</strong>
+      <span>{{ 'student.stepsCompleted' | t }}</span>
+    </div>
+    <div class="stat-card">
+      <strong>{{ summary()?.totalXp || 0 }}</strong>
+      <span>{{ 'student.totalXp' | t }}</span>
+    </div>
+    <div class="stat-card">
+      <strong>{{ meetings().length }}</strong>
+      <span>{{ 'student.liveClasses' | t }}</span>
+    </div>
+    <div class="stat-card">
+      <strong>{{ openTasks() }}</strong>
+      <span>{{ 'student.tasksOpen' | t }}</span>
+    </div>
+  </section>
+
+  <div class="student-layout">
+    <main class="student-main">
+      <section class="section-card">
+        <header class="section-head">
+          <div>
+            <h2>{{ 'student.courses' | t }}</h2>
+            <p class="section-hint">{{ 'student.coursesHint' | t }}</p>
+          </div>
+        </header>
+
+        <div class="course-grid">
+          @for (course of courses(); track course.id) {
+            <article class="course-card">
+              <header class="course-head">
+                <div>
+                  <h3>{{ course.title }}</h3>
+                  <p class="course-desc">{{ course.description }}</p>
+                </div>
+                <span class="theme-tag">{{ course.theme }}</span>
+              </header>
+
+              <p class="meta course-meta">
+                {{ 'student.grade' | t: { grade: course.grade } }} · {{ termLabel(course.term) }}
+                · {{ 'student.ages' | t: { min: course.ageMin, max: course.ageMax } }}
+              </p>
+
+              <div class="course-counts">
+                <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
+                <span>{{ 'student.quizCount' | t: { count: course.quizzes.length } }}</span>
+              </div>
+
+              @if (course.lessons.length) {
+                <div class="link-group">
+                  <p class="group-label">{{ 'student.lessons' | t }}</p>
+                  <div class="chip-row">
+                    @for (lesson of course.lessons; track lesson.id) {
+                      <a class="chip" [routerLink]="['/lessons', lesson.id]">{{ lesson.title }}</a>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (course.quizzes.length) {
+                <div class="link-group">
+                  <p class="group-label">{{ 'student.quizzes' | t }}</p>
+                  <div class="chip-row">
+                    @for (quiz of course.quizzes; track quiz.id) {
+                      <a class="chip quiz" [routerLink]="['/quizzes', quiz.id]">{{ quiz.title }}</a>
+                    }
+                  </div>
+                </div>
+              }
+            </article>
+          } @empty {
+            <p class="meta empty-state">{{ 'student.noCourses' | t }}</p>
+          }
+        </div>
+      </section>
+    </main>
+
+    <aside class="student-aside">
+      <section class="section-card">
+        <header class="section-head">
+          <div>
+            <h2>{{ 'student.zoomTitle' | t }}</h2>
+            <p class="section-hint">{{ 'student.upcoming' | t }}</p>
+          </div>
+        </header>
+
+        <div class="item-list">
+          @for (meeting of meetings(); track meeting.id) {
+            <div class="item-row">
+              <div class="item-body">
+                <strong>{{ meeting.title }}</strong>
+                <p class="meta">
+                  {{ formatWhen(meeting.startsAtUtc) }}
+                  · {{ meeting.durationMinutes }} {{ 'student.minutes' | t }}
+                </p>
+                <p class="meta">
+                  {{ 'student.withHost' | t: { name: meeting.hostName } }}
+                  @if (meeting.classroomName) {
+                    · {{ meeting.classroomName }}
+                  }
+                </p>
+              </div>
+              <a class="action-btn" [href]="meeting.joinUrl" target="_blank" rel="noopener">
+                {{ 'student.joinZoom' | t }}
+              </a>
+            </div>
+          } @empty {
+            <p class="meta empty-state">{{ 'student.noMeetings' | t }}</p>
+          }
+        </div>
+      </section>
+
+      <section class="section-card">
+        <header class="section-head">
+          <div>
+            <h2>{{ 'student.tasks' | t }}</h2>
+            <p class="section-hint">{{ 'student.tasksHint' | t }}</p>
+          </div>
+        </header>
+
+        <div class="task-group">
+          <p class="group-label">{{ 'student.assignments' | t }}</p>
+          <div class="item-list">
+            @for (assignment of assignments(); track assignment.id) {
+              <a class="item-row link-row" [routerLink]="['/assignments', assignment.id]">
+                <div class="item-body">
+                  <strong>{{ assignment.title }}</strong>
+                  <p class="meta">{{ assignment.classroomName }} · {{ 'student.xpLabel' | t: { xp: assignment.xpReward } }}</p>
+                </div>
+                <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+              </a>
+            } @empty {
+              <p class="meta empty-state">{{ 'student.noAssignments' | t }}</p>
             }
           </div>
         </div>
-      }
-    </article>
 
-    <aside class="side-stack">
-      <article>
-        <h3>Badges</h3>
-        <div class="chip-row">
-          @for (badge of badges(); track badge.id) {
-            <div class="badge" [class.earned]="badge.isEarned">
-              <span>{{ badge.icon }}</span>
-              <strong>{{ badge.name }}</strong>
-              <small>{{ badge.description }}</small>
-            </div>
-          }
+        <div class="task-group">
+          <p class="group-label">{{ 'student.exams' | t }}</p>
+          <div class="item-list">
+            @for (exam of exams(); track exam.id) {
+              <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
+                <div class="item-body">
+                  <strong>{{ exam.title }}</strong>
+                  <p class="meta">{{ exam.classroomName }} · {{ 'student.xpLabel' | t: { xp: exam.xpReward } }}</p>
+                </div>
+                <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+              </a>
+            } @empty {
+              <p class="meta empty-state">{{ 'student.noExams' | t }}</p>
+            }
+          </div>
         </div>
-      </article>
-
-      <article>
-        <h3>Avatars</h3>
-        <div class="avatar-row">
-          @for (avatar of avatars(); track avatar.id) {
-            <button
-              type="button"
-              class="avatar"
-              [class.selected]="avatar.isSelected"
-              [disabled]="!avatar.isUnlocked"
-              (click)="selectAvatar(avatar)">
-              <span class="emoji">{{ avatar.emoji }}</span>
-              <strong>{{ avatar.name }}</strong>
-              <small>{{ avatar.isUnlocked ? 'Unlocked' : 'Needs ' + avatar.unlockXp + ' XP' }}</small>
-            </button>
-          }
-        </div>
-      </article>
+      </section>
     </aside>
-  </section>
+  </div>
 </div>

@@ -1,0 +1,47 @@
+@import '../../styles/dashboard-shared.css';
+
+label {
+  display: block;
+  margin: 0.35rem 0;
+}
+
+.passage {
+  white-space: pre-wrap;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border-left: 3px solid #5fd3bc;
+  color: #f4f7fb;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0 12px 12px 0;
+}
+
+.passage.underline-text {
+  border-left-color: #ff9f1c;
+  text-decoration-thickness: 2px;
+}
+
+.child-question {
+  margin: 0.75rem 0 0.75rem 1rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.25);
+  color: #f4f7fb;
+}
+
+.prompt-html,
+.prompt-html * {
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: #f4f7fb !important;
+}
+
+.question input[type='text'] {
+  display: block;
+  width: min(100%, 28rem);
+  margin-top: 0.4rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  color: #12263f;
+  font: inherit;
+}

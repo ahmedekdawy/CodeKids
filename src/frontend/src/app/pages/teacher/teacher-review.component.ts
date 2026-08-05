@@ -1,16 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, AssignmentSubmission } from '../../models';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-teacher-review',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './teacher-review.component.html',
   styleUrl: './teacher-panel.css'
 })
 export class TeacherReviewComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly assignments = signal<Assignment[]>([]);
   readonly submissions = signal<AssignmentSubmission[]>([]);
   readonly error = signal('');
@@ -27,7 +30,7 @@ export class TeacherReviewComponent {
     if (!this.reviewAssignmentId) return;
     this.api.getAssignmentSubmissions(this.reviewAssignmentId).subscribe({
       next: (subs) => this.submissions.set(subs),
-      error: (err) => this.error.set(err?.error?.message || 'Could not load submissions.')
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.review.loadFailed'))
     });
   }
 
@@ -44,10 +47,10 @@ export class TeacherReviewComponent {
       })
       .subscribe({
         next: () => {
-          this.info.set('Submission graded.');
+          this.info.set(this.locale.t('teacher.review.graded'));
           this.loadSubmissions();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not grade.')
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.review.gradeFailed'))
       });
   }
 

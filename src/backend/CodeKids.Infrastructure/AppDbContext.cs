@@ -25,6 +25,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<AssignmentQuestion> AssignmentQuestions => Set<AssignmentQuestion>();
     public DbSet<AssignmentSubmission> AssignmentSubmissions => Set<AssignmentSubmission>();
     public DbSet<AssignmentAnswer> AssignmentAnswers => Set<AssignmentAnswer>();
+    public DbSet<BankQuestion> BankQuestions => Set<BankQuestion>();
+    public DbSet<Exam> Exams => Set<Exam>();
+    public DbSet<ExamQuestion> ExamQuestions => Set<ExamQuestion>();
+    public DbSet<ExamAttempt> ExamAttempts => Set<ExamAttempt>();
+    public DbSet<ExamAnswer> ExamAnswers => Set<ExamAnswer>();
+    public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
+    public DbSet<LessonVideo> LessonVideos => Set<LessonVideo>();
+    public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
+    public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -65,6 +74,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.Term).HasConversion<string>().HasMaxLength(20);
             entity.HasMany(x => x.Lessons)
                 .WithOne(x => x.Course)
                 .HasForeignKey(x => x.CourseId)
@@ -82,6 +92,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.HasMany(x => x.Steps)
+                .WithOne(x => x.Lesson)
+                .HasForeignKey(x => x.LessonId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.Videos)
                 .WithOne(x => x.Lesson)
                 .HasForeignKey(x => x.LessonId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -128,10 +142,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Prompt).HasMaxLength(300).IsRequired();
-            entity.Property(x => x.OptionA).HasMaxLength(120).IsRequired();
-            entity.Property(x => x.OptionB).HasMaxLength(120).IsRequired();
-            entity.Property(x => x.OptionC).HasMaxLength(120).IsRequired();
-            entity.Property(x => x.CorrectOption).HasMaxLength(1).IsRequired();
+            entity.Property(x => x.OptionA).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.OptionB).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.OptionC).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
+            entity.Property(x => x.CorrectOption).HasMaxLength(40).IsRequired();
         });
 
         modelBuilder.Entity<QuizAttempt>(entity =>
@@ -238,6 +253,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(x => x.CreatedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.SolutionVideo)
+                .WithMany()
+                .HasForeignKey(x => x.SolutionVideoMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
             entity.HasMany(x => x.Questions)
                 .WithOne(x => x.Assignment)
                 .HasForeignKey(x => x.AssignmentId)
@@ -283,6 +302,168 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(x => x.QuestionId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<BankQuestion>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.QuestionType).HasConversion<string>().HasMaxLength(30);
+            entity.Property(x => x.Prompt).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.PassageText).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.OptionA).HasMaxLength(200);
+            entity.Property(x => x.OptionB).HasMaxLength(200);
+            entity.Property(x => x.OptionC).HasMaxLength(200);
+            entity.Property(x => x.OptionD).HasMaxLength(200);
+            entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(200).IsRequired();
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Lesson)
+                .WithMany()
+                .HasForeignKey(x => x.LessonId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.CreatedBy)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Parent)
+                .WithMany(x => x.Children)
+                .HasForeignKey(x => x.ParentQuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Exam>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(800).IsRequired();
+            entity.HasOne(x => x.Classroom)
+                .WithMany()
+                .HasForeignKey(x => x.ClassroomId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.CreatedBy)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasMany(x => x.Questions)
+                .WithOne(x => x.Exam)
+                .HasForeignKey(x => x.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.Attempts)
+                .WithOne(x => x.Exam)
+                .HasForeignKey(x => x.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ExamQuestion>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.QuestionType).HasConversion<string>().HasMaxLength(30);
+            entity.Property(x => x.Prompt).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.PassageText).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.OptionA).HasMaxLength(200);
+            entity.Property(x => x.OptionB).HasMaxLength(200);
+            entity.Property(x => x.OptionC).HasMaxLength(200);
+            entity.Property(x => x.OptionD).HasMaxLength(200);
+            entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(200).IsRequired();
+            entity.HasOne(x => x.BankQuestion)
+                .WithMany()
+                .HasForeignKey(x => x.BankQuestionId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.Lesson)
+                .WithMany()
+                .HasForeignKey(x => x.LessonId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.Parent)
+                .WithMany(x => x.Children)
+                .HasForeignKey(x => x.ParentExamQuestionId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<ExamAttempt>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.ExamId, x.StudentId }).IsUnique();
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.TeacherFeedback).HasMaxLength(800);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.Answers)
+                .WithOne(x => x.Attempt)
+                .HasForeignKey(x => x.AttemptId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ExamAnswer>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.AnswerText).HasMaxLength(1000).IsRequired();
+            entity.HasOne(x => x.Question)
+                .WithMany()
+                .HasForeignKey(x => x.ExamQuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<MediaAsset>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.StorageKey).HasMaxLength(400).IsRequired();
+            entity.Property(x => x.FileName).HasMaxLength(260).IsRequired();
+            entity.Property(x => x.ContentType).HasMaxLength(120).IsRequired();
+            entity.HasOne(x => x.UploadedBy)
+                .WithMany()
+                .HasForeignKey(x => x.UploadedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<LessonVideo>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).HasMaxLength(160).IsRequired();
+            entity.HasOne(x => x.Lesson)
+                .WithMany(x => x.Videos)
+                .HasForeignKey(x => x.LessonId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.MediaAsset)
+                .WithMany()
+                .HasForeignKey(x => x.MediaAssetId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<VideoWatchSession>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.MediaAssetId, x.StudentId });
+            entity.HasOne(x => x.MediaAsset)
+                .WithMany()
+                .HasForeignKey(x => x.MediaAssetId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Lesson)
+                .WithMany()
+                .HasForeignKey(x => x.LessonId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WhatsAppReportLog>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.ReportType).HasMaxLength(60).IsRequired();
+            entity.Property(x => x.RecipientPhone).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Status).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.MessagePreview).HasMaxLength(1000).IsRequired();
         });
     }
 }

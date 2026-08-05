@@ -1,12 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { CompleteStepResponse, Lesson, LessonStep } from '../../models';
+import { CompleteStepResponse, Lesson, LessonStep, LessonVideoSummary } from '../../models';
+import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-lesson-play',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe],
   templateUrl: './lesson-play.component.html',
   styleUrl: './lesson-play.component.css'
 })
@@ -14,9 +17,11 @@ export class LessonPlayComponent {
   private readonly api = inject(LearningApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly locale = inject(LocaleService);
 
   readonly lesson = signal<Lesson | null>(null);
   readonly selectedStep = signal<LessonStep | null>(null);
+  readonly selectedVideo = signal<LessonVideoSummary | null>(null);
   readonly feedback = signal<CompleteStepResponse | null>(null);
   readonly loading = signal(false);
   readonly form = this.fb.nonNullable.group({
@@ -28,6 +33,7 @@ export class LessonPlayComponent {
     this.api.getLesson(lessonId).subscribe((lesson) => {
       this.lesson.set(lesson);
       this.selectedStep.set(lesson.steps[0] ?? null);
+      this.selectedVideo.set(lesson.videos?.[0] ?? null);
     });
   }
 
@@ -35,6 +41,10 @@ export class LessonPlayComponent {
     this.selectedStep.set(step);
     this.form.reset({ answer: '' });
     this.feedback.set(null);
+  }
+
+  chooseVideo(video: LessonVideoSummary): void {
+    this.selectedVideo.set(video);
   }
 
   submit(): void {
@@ -65,5 +75,9 @@ export class LessonPlayComponent {
       },
       error: () => this.loading.set(false)
     });
+  }
+
+  feedbackText(result: CompleteStepResponse): string {
+    return this.locale.fromApiFeedback(result);
   }
 }

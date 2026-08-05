@@ -21,6 +21,11 @@ import { TeacherQuizzesComponent } from './pages/teacher/teacher-quizzes.compone
 import { TeacherAssignmentsComponent } from './pages/teacher/teacher-assignments.component';
 import { TeacherReviewComponent } from './pages/teacher/teacher-review.component';
 import { TeacherStudentsComponent } from './pages/teacher/teacher-students.component';
+import { TeacherQuestionBankComponent } from './pages/teacher/teacher-question-bank.component';
+import { TeacherExamsComponent } from './pages/teacher/teacher-exams.component';
+import { TeacherVideosComponent } from './pages/teacher/teacher-videos.component';
+import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.component';
+import { ExamPlayComponent } from './pages/exam-play/exam-play.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -47,6 +52,11 @@ export const routes: Routes = [
     component: AssignmentPlayComponent
   },
   {
+    path: 'exams/:examId',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: ExamPlayComponent
+  },
+  {
     path: 'parent',
     canActivate: [authGuard, roleGuard(['Parent'])],
     component: ParentDashboardComponent
@@ -58,7 +68,11 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: TeacherOverviewComponent },
+      { path: 'videos', component: TeacherVideosComponent },
       { path: 'zoom', component: TeacherZoomComponent },
+      { path: 'whatsapp', component: TeacherWhatsAppComponent },
+      { path: 'question-bank', component: TeacherQuestionBankComponent },
+      { path: 'exams', component: TeacherExamsComponent },
       { path: 'quizzes', component: TeacherQuizzesComponent },
       { path: 'assignments', component: TeacherAssignmentsComponent },
       { path: 'review', component: TeacherReviewComponent },

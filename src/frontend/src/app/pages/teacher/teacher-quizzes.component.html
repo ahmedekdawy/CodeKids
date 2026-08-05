@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Quizzes</h2>
-  <p class="meta">Create classroom quizzes with multiple-choice questions.</p>
+  <h2>{{ 'teacher.quizzes.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.quizzes.subtitle' | t }}</p>
 
   @if (info()) {
     <p class="feedback ok">{{ info() }}</p>
@@ -10,12 +10,12 @@
   }
 
   <section class="block">
-    <h3>Create quiz</h3>
+    <h3>{{ 'teacher.quizzes.create' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createQuiz()">
-      <label>Title <input [(ngModel)]="quizTitle" name="quizTitle" required /></label>
-      <label>Description <input [(ngModel)]="quizDescription" name="quizDescription" /></label>
+      <label>{{ 'common.title' | t }} <input [(ngModel)]="quizTitle" name="quizTitle" required /></label>
+      <label>{{ 'common.description' | t }} <input [(ngModel)]="quizDescription" name="quizDescription" /></label>
       <label>
-        Course
+        {{ 'common.course' | t }}
         <select [(ngModel)]="quizCourseId" name="quizCourseId">
           @for (course of courses(); track course.id) {
             <option [value]="course.id">{{ course.title }}</option>
@@ -23,7 +23,7 @@
         </select>
       </label>
       <label>
-        Classroom
+        {{ 'common.classroom' | t }}
         <select [(ngModel)]="quizClassroomId" name="quizClassroomId">
           @for (room of classrooms(); track room.id) {
             <option [value]="room.id">{{ room.name }}</option>
@@ -31,19 +31,39 @@
         </select>
       </label>
       <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
-      <label>Question <input [(ngModel)]="quizPrompt" name="quizPrompt" required /></label>
-      <label>A <input [(ngModel)]="quizA" name="quizA" required /></label>
-      <label>B <input [(ngModel)]="quizB" name="quizB" required /></label>
-      <label>C <input [(ngModel)]="quizC" name="quizC" required /></label>
-      <label>
-        Correct
-        <select [(ngModel)]="quizCorrect" name="quizCorrect">
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-        </select>
-      </label>
-      <button type="submit">Create quiz</button>
+      <label>{{ 'teacher.quizzes.question' | t }} <input [(ngModel)]="quizPrompt" name="quizPrompt" required /></label>
+
+      <div class="options-editor">
+        <div class="options-head">
+          <h4>{{ 'teacher.quizzes.options' | t }}</h4>
+          <button type="button" class="ghost-btn" (click)="addOption()">{{ 'common.addOption' | t }}</button>
+        </div>
+        @for (opt of options; track $index; let i = $index) {
+          <div class="option-row">
+            <span class="option-key">{{ optionLabel(i) }}</span>
+            <input [(ngModel)]="opt.text" [name]="'quizOpt-' + i" [placeholder]="'common.optionText' | t" (ngModelChange)="onOptionTextChange()" />
+            <app-icon-action-button
+              kind="delete"
+              variant="ghost"
+              [label]="'common.removeOption' | t"
+              [disabled]="options.length <= 2"
+              (action)="removeOption(i)"
+            />
+          </div>
+        }
+
+        <label>
+          {{ 'common.correctAnswer' | t }}
+          <select [(ngModel)]="quizCorrect" name="quizCorrect" required>
+            <option value="">{{ 'common.selectCorrect' | t }}</option>
+            @for (opt of filledOptions(); track opt.key) {
+              <option [value]="opt.key">{{ opt.key }} — {{ opt.text }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <button type="submit">{{ 'teacher.quizzes.create' | t }}</button>
     </form>
   </section>
 </div>

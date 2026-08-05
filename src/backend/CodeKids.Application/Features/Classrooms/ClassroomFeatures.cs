@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Classrooms;
 
-public sealed record ClassroomStudentDto(Guid StudentId, string DisplayName, string Email);
+public sealed record ClassroomStudentDto(Guid StudentId, string DisplayName, string Email, string MobilePhone);
 
 public sealed record ClassroomDto(
     Guid Id,
@@ -18,7 +18,28 @@ public sealed record ClassroomDto(
     string? CourseTitle,
     string WhatsAppGroupInviteUrl,
     string WhatsAppNotifyPhones,
+    bool DailyWhatsAppReportsEnabled,
     IReadOnlyList<ClassroomStudentDto> Students);
+
+public sealed record EnrollStudentResultDto(ClassroomDto Classroom, string WhatsAppStatus);
+
+public sealed record SendClassroomWhatsAppRequest(
+    string Message,
+    IReadOnlyList<Guid>? StudentIds,
+    bool IncludeGroupInviteLink = true);
+
+public sealed record SendClassroomWhatsAppCommand(
+    Guid TeacherUserId,
+    Guid ClassroomId,
+    string Message,
+    IReadOnlyList<Guid>? StudentIds,
+    bool IncludeGroupInviteLink) : ICommand<SendClassroomWhatsAppResultDto>;
+
+public sealed record SendClassroomWhatsAppResultDto(
+    int SentCount,
+    int FailedCount,
+    string Status,
+    string? GroupShareUrl);
 
 public sealed record CreateClassroomRequest(
     string Name,
@@ -45,16 +66,18 @@ public sealed record UpdateClassroomAssignmentsCommand(
     Guid? TeacherId,
     Guid? CourseId) : ICommand<ClassroomDto>;
 
-public sealed record AddStudentToClassroomCommand(Guid ClassroomId, Guid StudentId) : ICommand<ClassroomDto>;
+public sealed record AddStudentToClassroomCommand(Guid ClassroomId, Guid StudentId) : ICommand<EnrollStudentResultDto>;
 
 public sealed record UpdateClassroomWhatsAppRequest(
     string? WhatsAppGroupInviteUrl,
-    string? WhatsAppNotifyPhones);
+    string? WhatsAppNotifyPhones,
+    bool? DailyWhatsAppReportsEnabled);
 
 public sealed record UpdateClassroomWhatsAppCommand(
     Guid ClassroomId,
     string? WhatsAppGroupInviteUrl,
-    string? WhatsAppNotifyPhones) : ICommand<ClassroomDto>;
+    string? WhatsAppNotifyPhones,
+    bool? DailyWhatsAppReportsEnabled) : ICommand<ClassroomDto>;
 
 public sealed record GetClassroomsQuery(Guid ViewerUserId, string ViewerRole) : IQuery<IReadOnlyList<ClassroomDto>>;
 
@@ -132,9 +155,14 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             classroom.Course?.Title,
             classroom.WhatsAppGroupInviteUrl,
             classroom.WhatsAppNotifyPhones,
+            classroom.DailyWhatsAppReportsEnabled,
             classroom.Students
                 .Where(x => x.Student is not null)
-                .Select(x => new ClassroomStudentDto(x.StudentId, x.Student!.DisplayName, x.Student.Email))
+                .Select(x => new ClassroomStudentDto(
+                    x.StudentId,
+                    x.Student!.DisplayName,
+                    x.Student.Email,
+                    x.Student.MobilePhone))
                 .OrderBy(x => x.DisplayName)
                 .ToList());
 }
@@ -157,10 +185,11 @@ public sealed class UpdateClassroomAssignmentsCommandHandler(IAppDbContext dbCon
     }
 }
 
-public sealed class AddStudentToClassroomCommandHandler(IAppDbContext dbContext)
-    : ICommandHandler<AddStudentToClassroomCommand, ClassroomDto>
+public sealed class AddStudentToClassroomCommandHandler(
+    IAppDbContext dbContext,
+    IWhatsAppClient whatsAppClient) : ICommandHandler<AddStudentToClassroomCommand, EnrollStudentResultDto>
 {
-    public async Task<ClassroomDto> Handle(AddStudentToClassroomCommand command, CancellationToken cancellationToken)
+    public async Task<EnrollStudentResultDto> Handle(AddStudentToClassroomCommand command, CancellationToken cancellationToken)
     {
         var classroom = await dbContext.Classrooms.FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
@@ -180,10 +209,119 @@ public sealed class AddStudentToClassroomCommandHandler(IAppDbContext dbContext)
                 StudentId = student.Id,
                 JoinedAtUtc = DateTimeOffset.UtcNow
             });
-            await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        return (await CreateClassroomCommandHandler.LoadDto(dbContext, classroom.Id, cancellationToken))!;
+        var whatsAppStatus = "No student mobile on file.";
+        var mobile = (student.MobilePhone ?? string.Empty).Trim();
+        if (!string.IsNullOrWhiteSpace(mobile))
+        {
+            classroom.WhatsAppNotifyPhones = MergePhones(classroom.WhatsAppNotifyPhones, mobile);
+
+            var invite = classroom.WhatsAppGroupInviteUrl?.Trim() ?? string.Empty;
+            var message = string.IsNullOrWhiteSpace(invite)
+                ? $"CodeKids: You were enrolled in classroom \"{classroom.Name}\"."
+                : $"CodeKids: You were enrolled in classroom \"{classroom.Name}\".\nJoin the WhatsApp group:\n{invite}";
+
+            var send = await whatsAppClient.SendTextAsync(mobile, message, cancellationToken);
+            whatsAppStatus = string.IsNullOrWhiteSpace(invite)
+                ? $"Added {mobile} to classroom notify list. Invite link not set. WhatsApp: {send.Detail}"
+                : $"Added {mobile} to classroom notify list and sent group invite. WhatsApp: {send.Detail}";
+        }
+        else if (!string.IsNullOrWhiteSpace(classroom.WhatsAppGroupInviteUrl))
+        {
+            whatsAppStatus = "Student enrolled, but has no mobile number — could not send WhatsApp group invite.";
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        var dto = (await CreateClassroomCommandHandler.LoadDto(dbContext, classroom.Id, cancellationToken))!;
+        return new EnrollStudentResultDto(dto, whatsAppStatus);
+    }
+
+    internal static string MergePhones(string existing, string phone)
+    {
+        var phones = existing
+            .Split([',', ';', ' ', '\n', '\r', '\t'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+        if (!phones.Any(p => string.Equals(p, phone, StringComparison.OrdinalIgnoreCase)))
+        {
+            phones.Add(phone);
+        }
+
+        return string.Join(", ", phones);
+    }
+}
+
+public sealed class SendClassroomWhatsAppCommandHandler(
+    IAppDbContext dbContext,
+    IWhatsAppClient whatsAppClient) : ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto>
+{
+    public async Task<SendClassroomWhatsAppResultDto> Handle(
+        SendClassroomWhatsAppCommand command,
+        CancellationToken cancellationToken)
+    {
+        var message = command.Message.Trim();
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            throw new InvalidOperationException("Message is required.");
+        }
+
+        var classroom = await dbContext.Classrooms
+            .Include(x => x.Students)
+                .ThenInclude(s => s.Student)
+            .FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
+            ?? throw new InvalidOperationException("Classroom not found.");
+
+        if (classroom.TeacherId != command.TeacherUserId)
+        {
+            throw new InvalidOperationException("Only the assigned classroom teacher can message this class.");
+        }
+
+        var body = message;
+        if (command.IncludeGroupInviteLink && !string.IsNullOrWhiteSpace(classroom.WhatsAppGroupInviteUrl))
+        {
+            body += $"\n\nClass WhatsApp group: {classroom.WhatsAppGroupInviteUrl}";
+        }
+
+        var groupShareUrl = whatsAppClient.BuildShareUrl(body);
+
+        IEnumerable<ClassroomStudent> memberships = classroom.Students;
+        if (command.StudentIds is { Count: > 0 })
+        {
+            var selected = command.StudentIds.ToHashSet();
+            memberships = memberships.Where(x => selected.Contains(x.StudentId));
+        }
+
+        var phones = memberships
+            .Select(x => x.Student?.MobilePhone?.Trim() ?? string.Empty)
+            .Where(p => p.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (phones.Count == 0)
+        {
+            return new SendClassroomWhatsAppResultDto(
+                0,
+                0,
+                "No selected students have a mobile number. Use the group share link instead.",
+                groupShareUrl);
+        }
+
+        var sent = 0;
+        var failed = 0;
+        var details = new List<string>();
+        foreach (var phone in phones)
+        {
+            var result = await whatsAppClient.SendTextAsync(phone, body, cancellationToken);
+            details.Add($"{phone}: {result.Detail}");
+            if (result.Sent) sent++;
+            else failed++;
+        }
+
+        return new SendClassroomWhatsAppResultDto(
+            sent,
+            failed,
+            string.Join(" | ", details),
+            groupShareUrl);
     }
 }
 
@@ -203,6 +341,11 @@ public sealed class UpdateClassroomWhatsAppCommandHandler(IAppDbContext dbContex
         if (command.WhatsAppNotifyPhones is not null)
         {
             classroom.WhatsAppNotifyPhones = command.WhatsAppNotifyPhones.Trim();
+        }
+
+        if (command.DailyWhatsAppReportsEnabled is bool enabled)
+        {
+            classroom.DailyWhatsAppReportsEnabled = enabled;
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

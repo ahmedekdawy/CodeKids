@@ -1,0 +1,353 @@
+<div class="panel-page">
+  <h2>{{ 'videos.title' | t }}</h2>
+  <p class="meta">{{ 'videos.subtitle' | t }}</p>
+
+  @if (info()) {
+    <p class="feedback ok">{{ info() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <div class="video-tabs-shell">
+    <div class="video-tabs" role="tablist" aria-label="Video library sections">
+      <button
+        type="button"
+        role="tab"
+        class="video-tab"
+        [class.active]="tab() === 'lesson'"
+        [attr.aria-selected]="tab() === 'lesson'"
+        (click)="setTab('lesson')"
+      >
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor"/></svg>
+        </span>
+        <span class="tab-copy">
+          <span class="tab-label">{{ 'videos.tab.lesson' | t }}</span>
+          <span class="tab-hint">{{ 'videos.tab.lessonHint' | t }}</span>
+        </span>
+        <span class="tab-count">{{ lessonVideos().length }}</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="video-tab"
+        [class.active]="tab() === 'solution'"
+        [attr.aria-selected]="tab() === 'solution'"
+        (click)="setTab('solution')"
+      >
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M13 5h6v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11 13 19 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        <span class="tab-copy">
+          <span class="tab-label">{{ 'videos.tab.solution' | t }}</span>
+          <span class="tab-hint">{{ 'videos.tab.solutionHint' | t }}</span>
+        </span>
+        <span class="tab-count">{{ solutionVideos().length }}</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="video-tab"
+        [class.active]="tab() === 'analytics'"
+        [attr.aria-selected]="tab() === 'analytics'"
+        (click)="setTab('analytics')"
+      >
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 19V5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 19h16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M8 15V11M12 15V8M16 15v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        <span class="tab-copy">
+          <span class="tab-label">{{ 'videos.tab.analytics' | t }}</span>
+          <span class="tab-hint">{{ 'videos.tab.analyticsHint' | t }}</span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="video-tab-panel">
+  @if (tab() === 'lesson') {
+    <section class="block">
+      <h3>{{ 'videos.uploadLesson' | t }}</h3>
+      <form class="meeting-form" (submit)="$event.preventDefault()">
+        <label>
+          {{ 'common.course' | t }}
+          <select [(ngModel)]="selectedCourseId" name="courseId" (ngModelChange)="onCourseChange()">
+            @for (course of courses(); track course.id) {
+              <option [value]="course.id">{{ course.title }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'common.lesson' | t }}
+          <select [(ngModel)]="selectedLessonId" name="lessonId">
+            @for (lesson of lessonsForCourse(); track lesson.id) {
+              <option [value]="lesson.id">{{ lesson.title }}</option>
+            }
+          </select>
+        </label>
+        <label>{{ 'common.title' | t }} <input [(ngModel)]="videoTitle" name="videoTitle" [placeholder]="'videos.optionalTitle' | t" /></label>
+        <label>
+          {{ 'videos.videoFile' | t }}
+          <input type="file" accept="video/mp4,video/webm,video/quicktime" (change)="onLessonFile($event)" [disabled]="uploading()" />
+        </label>
+      </form>
+    </section>
+
+    <section class="block">
+      <div class="video-table-head">
+        <h3>{{ 'videos.lessonList' | t }}</h3>
+        <p class="meta">{{ shownLabel(filteredLessonVideos().length, lessonVideos().length) }}</p>
+      </div>
+
+      <div class="video-filters">
+        <label>
+          {{ 'common.course' | t }}
+          <select [(ngModel)]="lessonFilterCourseId" name="lessonFilterCourse" (ngModelChange)="onLessonFilterCourseChange()">
+            <option value="">{{ 'videos.allCourses' | t }}</option>
+            @for (course of courses(); track course.id) {
+              <option [value]="course.id">{{ course.title }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'common.lesson' | t }}
+          <select [(ngModel)]="lessonFilterLessonId" name="lessonFilterLesson">
+            <option value="">{{ 'videos.allLessons' | t }}</option>
+            @for (lesson of lessonFilterOptions(); track lesson.id) {
+              <option [value]="lesson.id">{{ lesson.title }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'common.search' | t }}
+          <input [(ngModel)]="lessonSearch" name="lessonSearch" [placeholder]="'videos.searchLesson' | t" />
+        </label>
+        <button type="button" class="ghost-btn" (click)="clearLessonFilters()">{{ 'common.clearFilters' | t }}</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table video-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.title' | t }}</th>
+              <th>{{ 'common.course' | t }}</th>
+              <th>{{ 'common.lesson' | t }}</th>
+              <th>{{ 'common.file' | t }}</th>
+              <th>{{ 'common.size' | t }}</th>
+              <th>{{ 'common.duration' | t }}</th>
+              <th>{{ 'common.uploaded' | t }}</th>
+              <th>{{ 'common.actions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (video of filteredLessonVideos(); track video.id) {
+              <tr
+                class="video-row-clickable"
+                tabindex="0"
+                [attr.aria-label]="'Play ' + video.title"
+                (click)="playLessonVideo(video)"
+                (keydown.enter)="playLessonVideo(video)"
+                (keydown.space)="$event.preventDefault(); playLessonVideo(video)"
+              >
+                <td><strong>{{ video.title }}</strong></td>
+                <td>{{ video.courseTitle }}</td>
+                <td>{{ video.lessonTitle }}</td>
+                <td class="mono">{{ video.fileName }}</td>
+                <td>{{ formatBytes(video.sizeBytes) }}</td>
+                <td>{{ formatDuration(video.durationSeconds) }}</td>
+                <td>{{ formatDate(video.createdAtUtc) }}</td>
+                <td class="row-actions-cell" (click)="$event.stopPropagation()">
+                  <div class="row-actions">
+                    <app-icon-action-button kind="play" [label]="'videos.playVideo' | t" (action)="playLessonVideo(video)" />
+                    <button type="button" class="ghost-btn small-btn" (click)="inspectWatch(video.mediaAssetId)">{{ 'videos.analytics' | t }}</button>
+                    <app-icon-action-button kind="delete" variant="danger" [label]="'videos.deleteLesson' | t" (action)="deleteLessonVideo(video)" />
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="meta">{{ 'videos.noLessonMatch' | t }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab() === 'solution') {
+    <section class="block">
+      <h3>{{ 'videos.uploadSolution' | t }}</h3>
+      <form class="meeting-form" (submit)="$event.preventDefault()">
+        <label>
+          {{ 'videos.assignment' | t }}
+          <select [(ngModel)]="selectedAssignmentId" name="assignmentId">
+            @for (assignment of assignments(); track assignment.id) {
+              <option [value]="assignment.id">
+                {{ assignment.title }}
+                @if (assignment.solutionVideoMediaAssetId) { ({{ 'videos.hasSolution' | t }}) }
+              </option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'videos.solutionVideo' | t }}
+          <input type="file" accept="video/mp4,video/webm,video/quicktime" (change)="onSolutionFile($event)" [disabled]="uploading()" />
+        </label>
+      </form>
+    </section>
+
+    <section class="block">
+      <div class="video-table-head">
+        <h3>{{ 'videos.solutionList' | t }}</h3>
+        <p class="meta">{{ shownLabel(filteredSolutionVideos().length, solutionVideos().length) }}</p>
+      </div>
+
+      <div class="video-filters">
+        <label>
+          {{ 'common.classroom' | t }}
+          <select [(ngModel)]="solutionFilterClassroomId" name="solutionFilterClassroom">
+            <option value="">{{ 'videos.allClassrooms' | t }}</option>
+            @for (room of classroomFilterOptions(); track room.id) {
+              <option [value]="room.id">{{ room.name }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'common.search' | t }}
+          <input [(ngModel)]="solutionSearch" name="solutionSearch" [placeholder]="'videos.searchSolution' | t" />
+        </label>
+        <button type="button" class="ghost-btn" (click)="clearSolutionFilters()">{{ 'common.clearFilters' | t }}</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table video-table">
+          <thead>
+            <tr>
+              <th>{{ 'videos.assignment' | t }}</th>
+              <th>{{ 'common.classroom' | t }}</th>
+              <th>{{ 'common.file' | t }}</th>
+              <th>{{ 'common.size' | t }}</th>
+              <th>{{ 'common.duration' | t }}</th>
+              <th>{{ 'common.uploaded' | t }}</th>
+              <th>{{ 'common.actions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (video of filteredSolutionVideos(); track video.assignmentId) {
+              <tr
+                class="video-row-clickable"
+                tabindex="0"
+                [attr.aria-label]="'Play ' + video.assignmentTitle"
+                (click)="playSolutionVideo(video)"
+                (keydown.enter)="playSolutionVideo(video)"
+                (keydown.space)="$event.preventDefault(); playSolutionVideo(video)"
+              >
+                <td><strong>{{ video.assignmentTitle }}</strong></td>
+                <td>{{ video.classroomName }}</td>
+                <td class="mono">{{ video.fileName }}</td>
+                <td>{{ formatBytes(video.sizeBytes) }}</td>
+                <td>{{ formatDuration(video.durationSeconds) }}</td>
+                <td>{{ formatDate(video.createdAtUtc) }}</td>
+                <td class="row-actions-cell" (click)="$event.stopPropagation()">
+                  <div class="row-actions">
+                    <app-icon-action-button kind="play" [label]="'videos.playVideo' | t" (action)="playSolutionVideo(video)" />
+                    <app-icon-action-button kind="delete" variant="danger" [label]="'videos.deleteSolution' | t" (action)="deleteSolutionVideo(video)" />
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="meta">{{ 'videos.noSolutionMatch' | t }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab() === 'analytics') {
+    <section class="block">
+      <h3>{{ 'videos.analyticsTitle' | t }}</h3>
+      <form class="meeting-form" (submit)="$event.preventDefault()">
+        <label>
+          {{ 'videos.mediaAssetId' | t }}
+          <input [(ngModel)]="selectedMediaAssetId" name="mediaAssetId" [placeholder]="'videos.mediaAssetPlaceholder' | t" />
+        </label>
+        <button type="button" (click)="loadWatchSessions()">{{ 'videos.loadSessions' | t }}</button>
+      </form>
+
+      @if (watchSessions().length) {
+        <div class="video-filters">
+          <label>
+            {{ 'videos.searchStudent' | t }}
+            <input [(ngModel)]="analyticsSearch" name="analyticsSearch" [placeholder]="'videos.studentPlaceholder' | t" />
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table video-table">
+            <thead>
+              <tr>
+                <th>{{ 'videos.student' | t }}</th>
+                <th>{{ 'videos.watchTime' | t }}</th>
+                <th>{{ 'videos.maxPosition' | t }}</th>
+                <th>{{ 'videos.flags' | t }}</th>
+                <th>{{ 'videos.started' | t }}</th>
+                <th>{{ 'videos.lastActivity' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (session of filteredWatchSessions(); track session.id) {
+                <tr>
+                  <td><strong>{{ session.studentName }}</strong></td>
+                  <td>{{ session.actualWatchSeconds }}s</td>
+                  <td>{{ session.maxPositionSeconds }}s</td>
+                  <td>
+                    @if (session.usedSpeedUp) { {{ 'videos.spedUp' | t }} }
+                    @if (session.skippedAhead) {
+                      @if (session.usedSpeedUp) { · }
+                      {{ 'videos.skipped' | t }}
+                    }
+                    @if (!session.usedSpeedUp && !session.skippedAhead) { — }
+                  </td>
+                  <td>{{ formatDate(session.startedAtUtc) }}</td>
+                  <td>{{ formatDate(session.lastEventAtUtc) }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="meta">{{ 'videos.noSessionsMatch' | t }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="meta">{{ 'videos.noSessionsYet' | t }}</p>
+      }
+    </section>
+  }
+  </div>
+</div>
+
+@if (preview(); as item) {
+  <div class="video-modal-backdrop" role="dialog" aria-modal="true" aria-label="Video player" (click)="closePreview()">
+    <div class="video-modal" (click)="$event.stopPropagation()">
+      <header class="video-modal-head">
+        <h3>{{ item.title }}</h3>
+        <button type="button" class="modal-close" (click)="closePreview()" [attr.aria-label]="'videos.close' | t">×</button>
+      </header>
+      @for (key of [previewKey()]; track key) {
+        <app-protected-video-player
+          [mediaAssetId]="item.mediaAssetId"
+          [lessonId]="item.lessonId ?? null"
+          [title]="item.title"
+          [autoLoad]="true"
+          [autoplay]="true"
+          [compact]="true"
+        />
+      }
+    </div>
+  </div>
+}

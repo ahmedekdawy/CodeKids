@@ -1,0 +1,104 @@
+<div class="page">
+  <header class="topbar">
+    <div>
+      <p class="brand">CodeKids</p>
+      <h1>{{ exam()?.title || ('play.examFallback' | t) }}</h1>
+    </div>
+    <a class="back" routerLink="/student">{{ 'common.backBtn' | t }}</a>
+  </header>
+
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  @if (result(); as attempt) {
+    <section class="block">
+      <h3>{{ 'play.autoGraded' | t }}</h3>
+      <p>
+        {{ 'common.status' | t }}: {{ attempt.status }} · {{ 'common.score' | t }}: {{ attempt.score ?? ('common.emDash' | t) }}/{{ attempt.maxScore ?? ('common.emDash' | t) }}
+        @if (attempt.durationSeconds != null) {
+          {{ 'play.timeSeconds' | t:{ seconds: attempt.durationSeconds } }}
+        }
+      </p>
+      @for (answer of attempt.answers; track answer.questionId) {
+        <div class="question">
+          <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
+          <p class="meta">
+            {{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}
+            @if (answer.isCorrect === true) { · {{ 'common.correct' | t }} }
+            @else if (answer.isCorrect === false) { · {{ 'common.incorrect' | t }} }
+          </p>
+        </div>
+      }
+    </section>
+  } @else if (exam(); as current) {
+    <section class="block">
+      <p>{{ current.description }}</p>
+      <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} {{ 'common.xp' | t }}</p>
+
+      @for (question of current.questions; track question.id) {
+        <div class="question">
+          <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
+          @if (question.passageText) {
+            <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
+          }
+
+          @if (question.questionType === 'Paragraph') {
+            @for (child of question.children; track child.id) {
+              <div class="child-question">
+                <strong>{{ child.prompt }}</strong>
+                @if (child.questionType === 'TrueFalse') {
+                  <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'True')" /> {{ 'common.true' | t }}</label>
+                  <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'False')" /> {{ 'common.false' | t }}</label>
+                } @else if (child.questionType === 'MultiChoice') {
+                  @for (opt of choiceOptions(child); track opt.key) {
+                    <label>
+                      <input type="checkbox" [checked]="isMultiChecked(child.id, opt.key)" (change)="toggleMulti(child.id, opt.key)" />
+                      {{ opt.key }}. {{ opt.text }}
+                    </label>
+                  }
+                } @else {
+                  @for (opt of choiceOptions(child); track opt.key) {
+                    <label>
+                      <input type="radio" [name]="child.id" (change)="setAnswer(child.id, opt.key)" />
+                      {{ opt.key }}. {{ opt.text }}
+                    </label>
+                  }
+                }
+              </div>
+            }
+          } @else if (question.questionType === 'Underline') {
+            <label>
+              {{ 'play.underlinedPhrase' | t }}
+              <input
+                type="text"
+                [value]="answers()[question.id] || ''"
+                (input)="setAnswer(question.id, $any($event.target).value)"
+                [placeholder]="'play.underlinePlaceholder' | t"
+              />
+            </label>
+          } @else if (question.questionType === 'TrueFalse') {
+            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'True')" /> {{ 'common.true' | t }}</label>
+            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'False')" /> {{ 'common.false' | t }}</label>
+          } @else if (question.questionType === 'MultiChoice') {
+            @for (opt of choiceOptions(question); track opt.key) {
+              <label>
+                <input type="checkbox" [checked]="isMultiChecked(question.id, opt.key)" (change)="toggleMulti(question.id, opt.key)" />
+                {{ opt.key }}. {{ opt.text }}
+              </label>
+            }
+          } @else {
+            @for (opt of choiceOptions(question); track opt.key) {
+              <label>
+                <input type="radio" [name]="question.id" (change)="setAnswer(question.id, opt.key)" />
+                {{ opt.key }}. {{ opt.text }}
+              </label>
+            }
+          }
+        </div>
+      }
+
+      <button type="button" (click)="submit()">{{ 'play.submitExam' | t }}</button>
+    </section>
+  }
+</div>

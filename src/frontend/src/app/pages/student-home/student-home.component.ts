@@ -1,18 +1,22 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Avatar, Badge, Course, LiveSession, StudentSummary } from '../../models';
+import { Assignment, Avatar, Badge, Course, CourseTerm, Exam, LiveSession, StudentSummary } from '../../models';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
+import { LocaleService } from '../../i18n/locale.service';
 
 @Component({
   selector: 'app-student-home',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './student-home.component.html',
   styleUrl: './student-home.component.css'
 })
 export class StudentHomeComponent {
   readonly auth = inject(AuthService);
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
 
   readonly courses = signal<Course[]>([]);
   readonly summary = signal<StudentSummary | null>(null);
@@ -20,6 +24,11 @@ export class StudentHomeComponent {
   readonly avatars = signal<Avatar[]>([]);
   readonly meetings = signal<LiveSession[]>([]);
   readonly assignments = signal<Assignment[]>([]);
+  readonly exams = signal<Exam[]>([]);
+
+  readonly selectedAvatar = computed(() => this.avatars().find((a) => a.isSelected) ?? null);
+  readonly earnedBadges = computed(() => this.badges().filter((b) => b.isEarned));
+  readonly openTasks = computed(() => this.assignments().length + this.exams().length);
 
   constructor() {
     this.api.getCourses().subscribe((courses) => this.courses.set(courses));
@@ -28,16 +37,29 @@ export class StudentHomeComponent {
     this.api.getAvatars().subscribe((avatars) => this.avatars.set(avatars));
     this.api.getMeetings().subscribe((meetings) => this.meetings.set(meetings));
     this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
+    this.api.getExams().subscribe((exams) => this.exams.set(exams));
   }
 
   selectAvatar(avatar: Avatar): void {
-    if (!avatar.isUnlocked) return;
+    if (!avatar.isUnlocked || avatar.isSelected) return;
     this.api.selectAvatar(avatar.id).subscribe(() => {
       this.api.getAvatars().subscribe((avatars) => this.avatars.set(avatars));
     });
   }
 
+  onAvatarPick(event: Event): void {
+    const id = (event.target as HTMLSelectElement).value;
+    const avatar = this.avatars().find((a) => a.id === id);
+    if (avatar) this.selectAvatar(avatar);
+  }
+
   formatWhen(iso: string): string {
-    return new Date(iso).toLocaleString();
+    return new Date(iso).toLocaleString(this.locale.lang());
+  }
+
+  termLabel(term: CourseTerm | string): string {
+    if (term === 'FirstTerm') return this.locale.t('student.firstTerm');
+    if (term === 'SecondTerm') return this.locale.t('student.secondTerm');
+    return this.locale.t('student.fullYear');
   }
 }

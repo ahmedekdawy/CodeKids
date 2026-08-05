@@ -3,11 +3,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { UserRole } from '../../models';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { LocaleService } from '../../i18n/locale.service';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
@@ -15,6 +18,7 @@ export class RegisterComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly locale = inject(LocaleService);
 
   readonly form = this.fb.nonNullable.group({
     displayName: ['', Validators.required],
@@ -48,7 +52,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.message || 'Could not register.');
+        this.error.set(this.locale.fromApiError(err, 'auth.registerFailed'));
       }
     });
   }

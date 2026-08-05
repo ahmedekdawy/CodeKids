@@ -1,17 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { ManagedUser } from '../../models';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 
 @Component({
   selector: 'app-admin-students',
-  imports: [FormsModule],
+  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-students.component.html',
   styleUrl: './admin-panel.css'
 })
 export class AdminStudentsComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly students = signal<ManagedUser[]>([]);
   readonly message = signal('');
   readonly error = signal('');
@@ -66,14 +70,14 @@ export class AdminStudentsComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('Student created.');
+          this.message.set(this.locale.t('admin.students.created'));
           this.studentEmail = '';
           this.studentName = '';
           this.studentPassword = '';
           this.studentMobile = '';
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not create student.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.students.createFailed'))
       });
   }
 
@@ -103,23 +107,23 @@ export class AdminStudentsComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set('Student updated.');
+          this.message.set(this.locale.t('admin.students.updated'));
           this.editingId.set(null);
           this.reload();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not update student.')
+        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.students.updateFailed'))
       });
   }
 
   deleteStudent(student: ManagedUser): void {
-    if (!confirm(`Delete student ${student.displayName}?`)) return;
+    if (!confirm(this.locale.t('admin.students.confirmDelete', { name: student.displayName }))) return;
     this.clearStatus();
     this.api.deleteUser(student.id).subscribe({
       next: () => {
-        this.message.set('Student deleted.');
+        this.message.set(this.locale.t('admin.students.deleted'));
         this.reload();
       },
-      error: (err) => this.error.set(err?.error?.message || 'Could not delete student.')
+      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.students.deleteFailed'))
     });
   }
 

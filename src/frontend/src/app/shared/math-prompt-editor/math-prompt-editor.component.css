@@ -1,0 +1,74 @@
+.math-editor {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: rgba(6, 14, 28, 0.72);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.math-editor:focus-within {
+  border-color: rgba(255, 214, 10, 0.65);
+  box-shadow: var(--focus-ring);
+}
+
+.math-editor.disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.55rem 0.65rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar button {
+  min-width: 2rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid var(--border);
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: none;
+}
+
+.toolbar button:hover:not(:disabled) {
+  background: rgba(255, 214, 10, 0.18);
+  transform: none;
+  box-shadow: none;
+}
+
+.toolbar button.sym {
+  min-width: 1.8rem;
+  padding: 0.3rem 0.4rem;
+}
+
+.toolbar .sep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  margin: 0 0.15rem;
+}
+
+.surface {
+  min-height: 7rem;
+  padding: 0.85rem 1rem;
+  color: #f4f7fb;
+  font-size: 1rem;
+  line-height: 1.5;
+  outline: none;
+}
+
+.surface:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-soft);
+}
+
+.math-frac {
+  font-family: Georgia, 'Times New Roman', serif;
+}

@@ -1,16 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../auth.service';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { LiveSession, ParentDashboard } from '../../models';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-parent-dashboard',
+  imports: [TranslatePipe],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })
 export class ParentDashboardComponent {
   readonly auth = inject(AuthService);
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly dashboard = signal<ParentDashboard | null>(null);
   readonly meetings = signal<LiveSession[]>([]);
 
@@ -20,6 +24,6 @@ export class ParentDashboardComponent {
   }
 
   formatWhen(iso: string): string {
-    return new Date(iso).toLocaleString();
+    return new Date(iso).toLocaleString(this.locale.lang());
   }
 }

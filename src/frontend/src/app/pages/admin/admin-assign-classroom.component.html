@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Assign teacher / course</h2>
-  <p class="meta">Attach a teacher and course to an existing classroom.</p>
+  <h2>{{ 'admin.assign.title' | t }}</h2>
+  <p class="meta">{{ 'admin.assign.subtitle' | t }}</p>
 
   @if (message()) {
     <p class="feedback ok">{{ message() }}</p>
@@ -12,53 +12,53 @@
   <section class="block">
     <form class="meeting-form" (ngSubmit)="assignClassroom()">
       <label>
-        Classroom
+        {{ 'common.classroom' | t }}
         <select [(ngModel)]="assignClassroomId" name="assignClassroomId">
-          <option value="">Select</option>
+          <option value="">{{ 'common.select' | t }}</option>
           @for (room of classrooms(); track room.id) {
             <option [value]="room.id">{{ room.name }}</option>
           }
         </select>
       </label>
       <label>
-        Teacher
+        {{ 'common.teacher' | t }}
         <select [(ngModel)]="assignTeacherId" name="assignTeacherId">
-          <option value="">Unassigned</option>
+          <option value="">{{ 'common.unassigned' | t }}</option>
           @for (teacher of teachers(); track teacher.id) {
             <option [value]="teacher.id">{{ teacher.displayName }}</option>
           }
         </select>
       </label>
       <label>
-        Course
+        {{ 'common.course' | t }}
         <select [(ngModel)]="assignCourseId" name="assignCourseId">
-          <option value="">None</option>
+          <option value="">{{ 'common.none' | t }}</option>
           @for (course of courses(); track course.id) {
             <option [value]="course.id">{{ course.title }}</option>
           }
         </select>
       </label>
-      <button type="submit">Save assignment</button>
+      <button type="submit">{{ 'admin.assign.save' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>Current assignments</h3>
+    <h3>{{ 'admin.assign.list' | t }}</h3>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th class="sortable" (click)="setSort('name')">Classroom <span class="sort-mark">{{ sortMark('name') }}</span></th>
-            <th class="sortable" (click)="setSort('teacherName')">Teacher <span class="sort-mark">{{ sortMark('teacherName') }}</span></th>
-            <th class="sortable" (click)="setSort('courseTitle')">Course <span class="sort-mark">{{ sortMark('courseTitle') }}</span></th>
+            <th class="sortable" (click)="setSort('name')">{{ 'common.classroom' | t }} <span class="sort-mark">{{ sortMark('name') }}</span></th>
+            <th class="sortable" (click)="setSort('teacherName')">{{ 'common.teacher' | t }} <span class="sort-mark">{{ sortMark('teacherName') }}</span></th>
+            <th class="sortable" (click)="setSort('courseTitle')">{{ 'common.course' | t }} <span class="sort-mark">{{ sortMark('courseTitle') }}</span></th>
           </tr>
         </thead>
         <tbody>
           @for (room of sortedClassrooms(); track room.id) {
             <tr>
               <td>{{ room.name }}</td>
-              <td>{{ room.teacherName || '—' }}</td>
-              <td>{{ room.courseTitle || '—' }}</td>
+              <td>{{ room.teacherName || ('common.emDash' | t) }}</td>
+              <td>{{ room.courseTitle || ('common.emDash' | t) }}</td>
             </tr>
           }
         </tbody>

@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 /5 - Presentation/local.settings.json
 global.json
+# Runtime Zoom OAuth credentials saved by setup wizard
+**/App_Data/
+# Uploaded lesson / solution videos
+**/App_Data/media/

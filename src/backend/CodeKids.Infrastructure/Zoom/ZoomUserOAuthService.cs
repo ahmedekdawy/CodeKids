@@ -11,39 +11,53 @@ namespace CodeKids.Infrastructure.Zoom;
 public sealed class ZoomUserOAuthService(
     IHttpClientFactory httpClientFactory,
     IOptions<ZoomOptions> options,
+    IZoomOAuthSettingsStore settingsStore,
     IConfiguration configuration) : IZoomUserOAuthService
 {
     private readonly ZoomOptions _options = options.Value;
 
-    public bool IsUserOAuthConfigured => _options.IsUserOAuthConfigured;
+    public bool IsUserOAuthConfigured => settingsStore.IsUserOAuthConfigured;
     public bool IsServerOAuthConfigured => _options.IsConfigured;
-    public string FrontendRedirectUri => _options.FrontendRedirectUri;
+
+    public string FrontendRedirectUri => settingsStore.Get().FrontendRedirectUri;
+    public string UserOAuthRedirectUri => settingsStore.Get().RedirectUri;
+
+    public string? MaskedClientId
+    {
+        get
+        {
+            var id = settingsStore.Get().ClientId;
+            if (string.IsNullOrWhiteSpace(id)) return null;
+            if (id.Length <= 8) return new string('•', id.Length);
+            return $"{id[..4]}…{id[^4..]}";
+        }
+    }
 
     public string BuildAuthorizeUrl(Guid teacherUserId)
     {
-        if (!_options.IsUserOAuthConfigured)
-        {
-            throw new InvalidOperationException("Zoom user OAuth is not configured. Set Zoom:UserOAuthClientId and Zoom:UserOAuthClientSecret.");
-        }
-
+        var settings = RequireConfigured();
         var state = CreateState(teacherUserId);
         return "https://zoom.us/oauth/authorize"
             + $"?response_type=code"
-            + $"&client_id={Uri.EscapeDataString(_options.UserOAuthClientId)}"
-            + $"&redirect_uri={Uri.EscapeDataString(_options.UserOAuthRedirectUri)}"
+            + $"&client_id={Uri.EscapeDataString(settings.ClientId)}"
+            + $"&redirect_uri={Uri.EscapeDataString(settings.RedirectUri)}"
             + $"&state={Uri.EscapeDataString(state)}";
     }
 
     public async Task<ZoomOAuthTokens> ExchangeCodeAsync(string code, CancellationToken cancellationToken)
     {
+        var settings = RequireConfigured();
         return await RequestTokensAsync(
-            $"grant_type=authorization_code&code={Uri.EscapeDataString(code)}&redirect_uri={Uri.EscapeDataString(_options.UserOAuthRedirectUri)}",
+            settings,
+            $"grant_type=authorization_code&code={Uri.EscapeDataString(code)}&redirect_uri={Uri.EscapeDataString(settings.RedirectUri)}",
             cancellationToken);
     }
 
     public async Task<ZoomOAuthTokens> RefreshAsync(string refreshToken, CancellationToken cancellationToken)
     {
+        var settings = RequireConfigured();
         return await RequestTokensAsync(
+            settings,
             $"grant_type=refresh_token&refresh_token={Uri.EscapeDataString(refreshToken)}",
             cancellationToken);
     }
@@ -70,16 +84,25 @@ public sealed class ZoomUserOAuthService(
         }
     }
 
-    private async Task<ZoomOAuthTokens> RequestTokensAsync(string formBody, CancellationToken cancellationToken)
+    private ZoomUserOAuthSettingsSnapshot RequireConfigured()
     {
-        if (!_options.IsUserOAuthConfigured)
+        if (!settingsStore.IsUserOAuthConfigured)
         {
-            throw new InvalidOperationException("Zoom user OAuth is not configured.");
+            throw new InvalidOperationException(
+                "Personal Zoom OAuth is not configured. Use the Zoom setup wizard to enter Client ID and Client Secret.");
         }
 
+        return settingsStore.Get();
+    }
+
+    private async Task<ZoomOAuthTokens> RequestTokensAsync(
+        ZoomUserOAuthSettingsSnapshot settings,
+        string formBody,
+        CancellationToken cancellationToken)
+    {
         var client = httpClientFactory.CreateClient(nameof(ZoomUserOAuthService));
         var credentials = Convert.ToBase64String(
-            Encoding.UTF8.GetBytes($"{_options.UserOAuthClientId}:{_options.UserOAuthClientSecret}"));
+            Encoding.UTF8.GetBytes($"{settings.ClientId}:{settings.ClientSecret}"));
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://zoom.us/oauth/token");
         request.Headers.Authorization = new AuthenticationHeaderValue("Basic", credentials);

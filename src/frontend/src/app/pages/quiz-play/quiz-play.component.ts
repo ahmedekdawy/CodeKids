@@ -1,12 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Quiz, SubmitQuizResponse } from '../../models';
+import { ChoiceOption, Quiz, QuizQuestion, SubmitQuizResponse } from '../../models';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-quiz-play',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './quiz-play.component.html',
   styleUrl: './quiz-play.component.css'
 })
@@ -14,6 +16,7 @@ export class QuizPlayComponent {
   private readonly api = inject(LearningApiService);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly locale = inject(LocaleService);
 
   readonly quiz = signal<Quiz | null>(null);
   readonly result = signal<SubmitQuizResponse | null>(null);
@@ -33,6 +36,15 @@ export class QuizPlayComponent {
         )
       );
     });
+  }
+
+  choiceOptions(question: QuizQuestion): ChoiceOption[] {
+    if (question.options?.length) return question.options;
+    const legacy: ChoiceOption[] = [];
+    if (question.optionA) legacy.push({ key: 'A', text: question.optionA });
+    if (question.optionB) legacy.push({ key: 'B', text: question.optionB });
+    if (question.optionC) legacy.push({ key: 'C', text: question.optionC });
+    return legacy;
   }
 
   submit(): void {
@@ -57,5 +69,9 @@ export class QuizPlayComponent {
       },
       error: () => this.loading.set(false)
     });
+  }
+
+  feedbackText(response: SubmitQuizResponse): string {
+    return this.locale.fromApiFeedback(response);
   }
 }

@@ -1,0 +1,77 @@
+.player-shell {
+  display: grid;
+  gap: 0.75rem;
+  color: #f4f7fb;
+}
+
+.player-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.player-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0f172a;
+}
+
+.stage video {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  background: #000;
+}
+
+.player-shell.compact .player-head h3 {
+  font-size: 0.95rem;
+}
+
+.player-shell.compact .stage video {
+  max-height: min(70vh, 520px);
+}
+.watermark {
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  bottom: 2.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.45);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.meta {
+  margin: 0;
+  color: rgba(244, 247, 251, 0.78);
+  font-size: 0.85rem;
+}
+
+.err {
+  margin: 0;
+  color: #ffb4b4;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  background: #0f766e;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

@@ -1,1 +1,27 @@
 @import '../../styles/dashboard-shared.css';
+
+.link-row {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease;
+}
+
+.table-row.link-row:hover,
+.meeting-row.link-row:hover {
+  background: rgba(95, 211, 188, 0.08);
+}
+
+.meeting-form,
+.qb-form,
+.form-card form {
+  gap: 1rem;
+}
+
+.panel-page .block form,
+.panel-page .meeting-form {
+  padding: 0.15rem 0;
+}

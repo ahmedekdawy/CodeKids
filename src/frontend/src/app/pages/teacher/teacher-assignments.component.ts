@@ -1,16 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, Classroom } from '../../models';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-teacher-assignments',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   templateUrl: './teacher-assignments.component.html',
   styleUrl: './teacher-panel.css'
 })
 export class TeacherAssignmentsComponent {
   private readonly api = inject(LearningApiService);
+  private readonly locale = inject(LocaleService);
   readonly classrooms = signal<Classroom[]>([]);
   readonly assignments = signal<Assignment[]>([]);
   readonly error = signal('');
@@ -59,12 +62,12 @@ export class TeacherAssignmentsComponent {
       })
       .subscribe({
         next: () => {
-          this.info.set('Assignment created.');
+          this.info.set(this.locale.t('teacher.assignments.created'));
           this.assignmentTitle = '';
           this.assignmentPrompt = '';
           this.reloadAssignments();
         },
-        error: (err) => this.error.set(err?.error?.message || 'Could not create assignment.')
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.assignments.createFailed'))
       });
   }
 

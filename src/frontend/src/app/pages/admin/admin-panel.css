@@ -12,15 +12,18 @@
 
 .data-table th,
 .data-table td {
-  padding: 0.75rem 0.65rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.8rem 0.7rem;
+  border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: middle;
 }
 
 .data-table th {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-soft);
   font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -30,7 +33,7 @@
 }
 
 .data-table th.sortable:hover {
-  color: #ffd60a;
+  color: var(--accent);
 }
 
 .data-table th .sort-mark {
@@ -39,19 +42,26 @@
 }
 
 .data-table tr:hover td {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .data-table input,
 .data-table select {
   width: 100%;
   min-width: 7rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(8, 15, 31, 0.45);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: rgba(6, 14, 28, 0.72);
   color: #fff;
-  padding: 0.45rem 0.55rem;
+  padding: 0.5rem 0.6rem;
   font: inherit;
+}
+
+.data-table input:focus,
+.data-table select:focus {
+  outline: none;
+  border-color: rgba(255, 214, 10, 0.65);
+  box-shadow: var(--focus-ring);
 }
 
 .row-actions {
@@ -62,23 +72,32 @@
 
 .row-actions button {
   padding: 0.45rem 0.75rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.85rem;
 }
 
+.row-actions app-icon-action-button {
+  display: inline-flex;
+}
+
 .row-actions button.danger {
-  background: rgba(255, 107, 107, 0.25);
+  background: rgba(255, 107, 107, 0.22);
   color: #fff;
+  box-shadow: none;
 }
 
 .row-actions button.ghost-btn {
   background: transparent;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-strong);
+  box-shadow: none;
 }
 
 .table-wrap {
   overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 @media (max-width: 900px) {

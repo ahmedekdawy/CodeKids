@@ -1,27 +1,76 @@
 <div class="panel-page">
-  <h2>Students</h2>
-  <p class="meta">Classroom progress overview.</p>
+  <h2>{{ 'teacher.students.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.students.subtitle' | t }}</p>
+
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
 
   <section class="block">
     <div class="table">
       <div class="table-row head">
-        <span>Name</span>
+        <span>{{ 'common.name' | t }}</span>
+        <span>{{ 'teacher.students.level' | t }}</span>
         <span>XP</span>
-        <span>Steps</span>
-        <span>Quizzes</span>
-        <span>Parent</span>
+        <span>{{ 'common.steps' | t }}</span>
+        <span>{{ 'teacher.students.weak' | t }}</span>
+        <span>{{ 'teacher.students.signal' | t }}</span>
       </div>
       @for (student of dashboard()?.students || []; track student.studentId) {
-        <div class="table-row">
+        <button type="button" class="table-row link-row" (click)="openStudent(student.studentId)">
           <span>{{ student.displayName }}</span>
+          <span>L{{ student.levelNumber }} · {{ student.levelName }}</span>
           <span>{{ student.totalXp }}</span>
           <span>{{ student.completedSteps }}</span>
-          <span>{{ student.quizAttempts }}</span>
-          <span>{{ student.parentName || '—' }}</span>
-        </div>
+          <span>{{ student.weakLessonCount }}</span>
+          <span>{{ student.signal || ('common.emDash' | t) }}</span>
+        </button>
       } @empty {
-        <p class="meta">No students found.</p>
+        <p class="meta">{{ 'teacher.students.empty' | t }}</p>
       }
     </div>
   </section>
+
+  @if (detail(); as student) {
+    <section class="block">
+      <div class="meeting-row">
+        <div>
+          <strong>{{ student.displayName }}</strong>
+          <p class="meta">
+            {{ 'teacher.students.levelDetail' | t:{ n: student.level.levelNumber, name: student.level.name, xp: student.totalXp, pct: student.level.progressPercent } }}
+          </p>
+          <p class="meta">
+            {{ 'teacher.students.parent' | t }} {{ student.parentName || ('common.emDash' | t) }}
+            @if (student.parentMobilePhone) { · {{ student.parentMobilePhone }} }
+          </p>
+        </div>
+        <button type="button" (click)="closeDetail()">{{ 'common.close' | t }}</button>
+      </div>
+
+      <h3>{{ 'teacher.students.weakLessons' | t }}</h3>
+      @for (weak of student.weakLessons; track weak.lessonId) {
+        <p class="meta">{{ 'teacher.students.weakLine' | t:{ lesson: weak.lessonTitle, pct: weak.accuracyPercent, wrong: weak.wrongAnswers, total: weak.totalAnswers } }}</p>
+      } @empty {
+        <p class="meta">{{ 'teacher.students.noWeak' | t }}</p>
+      }
+
+      <h3>{{ 'teacher.students.mastery' | t }}</h3>
+      @for (m of student.lessonMastery; track m.lessonId) {
+        <p class="meta">{{ 'teacher.students.masteryLine' | t:{ lesson: m.lessonTitle, pct: m.masteryPercent, done: m.completedSteps, total: m.totalSteps, sec: m.actualWatchSeconds } }}</p>
+      } @empty {
+        <p class="meta">{{ 'teacher.students.noMastery' | t }}</p>
+      }
+
+      <h3>{{ 'teacher.students.recentWatch' | t }}</h3>
+      @for (w of student.recentWatch; track w.mediaAssetId + w.lastEventAtUtc) {
+        <p class="meta">
+          {{ w.lessonTitle || ('teacher.students.videoFallback' | t) }} · {{ w.actualWatchSeconds }}s
+          @if (w.usedSpeedUp) { · {{ 'videos.spedUp' | t }} }
+          @if (w.skippedAhead) { · {{ 'videos.skipped' | t }} }
+        </p>
+      } @empty {
+        <p class="meta">{{ 'teacher.students.noWatch' | t }}</p>
+      }
+    </section>
+  }
 </div>

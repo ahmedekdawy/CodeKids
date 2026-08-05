@@ -1,0 +1,18 @@
+<div class="lang-switch" role="group" [attr.aria-label]="'lang.switch' | t">
+  <button
+    type="button"
+    class="lang-btn"
+    [class.active]="locale.lang() === 'en'"
+    (click)="setLang('en')"
+  >
+    EN
+  </button>
+  <button
+    type="button"
+    class="lang-btn"
+    [class.active]="locale.lang() === 'ar'"
+    (click)="setLang('ar')"
+  >
+    ع
+  </button>
+</div>

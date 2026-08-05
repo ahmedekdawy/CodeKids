@@ -2,9 +2,9 @@
   <header class="topbar">
     <div>
       <p class="brand">CodeKids</p>
-      <h1>{{ assignment()?.title || 'Assignment' }}</h1>
+      <h1>{{ assignment()?.title || ('play.assignmentFallback' | t) }}</h1>
     </div>
-    <a class="back" routerLink="/student">Back</a>
+    <a class="back" routerLink="/student">{{ 'common.backBtn' | t }}</a>
   </header>
 
   @if (error()) {
@@ -13,16 +13,24 @@
 
   @if (result(); as submission) {
     <section class="block">
-      <h3>Submitted</h3>
-      <p>Status: {{ submission.status }} · Score: {{ submission.score ?? 'pending' }}/{{ submission.maxScore ?? '—' }}</p>
+      <h3>{{ 'play.submitted' | t }}</h3>
+      <p>{{ submittedScore(submission) }}</p>
       @if (submission.teacherFeedback) {
         <p>{{ submission.teacherFeedback }}</p>
       }
     </section>
+
+    @if (submission.solutionVideoMediaAssetId) {
+      <section class="block">
+        <app-protected-video-player
+          [mediaAssetId]="submission.solutionVideoMediaAssetId"
+          [title]="'play.solutionVideo' | t" />
+      </section>
+    }
   } @else if (assignment(); as current) {
     <section class="block">
       <p>{{ current.description }}</p>
-      <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} XP</p>
+      <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} {{ 'common.xp' | t }}</p>
       @for (question of current.questions; track question.id) {
         <div class="question">
           <strong>{{ question.prompt }}</strong>
@@ -35,7 +43,7 @@
           }
         </div>
       }
-      <button type="button" (click)="submit()">Submit assignment</button>
+      <button type="button" (click)="submit()">{{ 'play.submitAssignment' | t }}</button>
     </section>
   }
 </div>

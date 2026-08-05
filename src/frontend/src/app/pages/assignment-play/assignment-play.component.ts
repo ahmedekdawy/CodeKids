@@ -1,18 +1,22 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, AssignmentSubmission } from '../../models';
+import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })
 export class AssignmentPlayComponent {
   private readonly api = inject(LearningApiService);
   private readonly route = inject(ActivatedRoute);
+  private readonly locale = inject(LocaleService);
 
   readonly assignment = signal<Assignment | null>(null);
   readonly result = signal<AssignmentSubmission | null>(null);
@@ -29,7 +33,15 @@ export class AssignmentPlayComponent {
         for (const q of assignment.questions) seed[q.id] = '';
         this.answers.set(seed);
       },
-      error: () => this.error.set('Assignment not found.')
+      error: () => this.error.set(this.locale.t('play.assignmentNotFound'))
+    });
+  }
+
+  submittedScore(submission: AssignmentSubmission): string {
+    return this.locale.t('play.submittedScore', {
+      status: submission.status,
+      score: submission.score ?? this.locale.t('common.pending'),
+      max: submission.maxScore ?? this.locale.t('common.emDash')
     });
   }
 
@@ -50,7 +62,7 @@ export class AssignmentPlayComponent {
       })
       .subscribe({
         next: (result) => this.result.set(result),
-        error: (err) => this.error.set(err?.error?.message || 'Could not submit assignment.')
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'play.submitAssignmentFailed'))
       });
   }
 }

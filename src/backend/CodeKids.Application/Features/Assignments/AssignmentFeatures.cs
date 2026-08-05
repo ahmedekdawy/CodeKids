@@ -38,6 +38,7 @@ public sealed record AssignmentDto(
     int XpReward,
     Guid CreatedByUserId,
     string CreatedByName,
+    Guid? SolutionVideoMediaAssetId,
     IReadOnlyList<AssignmentQuestionDto> Questions);
 
 public sealed record CreateAssignmentRequest(
@@ -91,8 +92,10 @@ public sealed record AssignmentSubmissionDto(
     int? Score,
     int? MaxScore,
     string? TeacherFeedback,
+    DateTimeOffset? StartedAtUtc,
     DateTimeOffset SubmittedAtUtc,
     DateTimeOffset? GradedAtUtc,
+    Guid? SolutionVideoMediaAssetId,
     IReadOnlyList<AssignmentAnswerReviewDto> Answers);
 
 public sealed record GetAssignmentSubmissionsQuery(Guid TeacherUserId, Guid AssignmentId)
@@ -190,10 +193,10 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        return assignment is null ? null : Map(assignment, includeAnswerKey);
+        return assignment is null ? null : Map(assignment, includeAnswerKey, includeSolutionVideo: includeAnswerKey);
     }
 
-    internal static AssignmentDto Map(Assignment assignment, bool includeAnswerKey) =>
+    internal static AssignmentDto Map(Assignment assignment, bool includeAnswerKey, bool includeSolutionVideo) =>
         new(
             assignment.Id,
             assignment.ClassroomId,
@@ -204,6 +207,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
             assignment.XpReward,
             assignment.CreatedByUserId,
             assignment.CreatedBy?.DisplayName ?? "Teacher",
+            includeSolutionVideo ? assignment.SolutionVideoMediaAssetId : null,
             assignment.Questions
                 .OrderBy(x => x.SortOrder)
                 .Select(q => new AssignmentQuestionDto(
@@ -257,7 +261,10 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
             assignments = [];
         }
 
-        return assignments.Select(a => CreateAssignmentCommandHandler.Map(a, includeAnswerKey: isTeacher || isAdmin)).ToList();
+        return assignments.Select(a => CreateAssignmentCommandHandler.Map(
+            a,
+            includeAnswerKey: isTeacher || isAdmin,
+            includeSolutionVideo: isTeacher || isAdmin)).ToList();
     }
 }
 
@@ -304,6 +311,7 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             AssignmentId = assignment.Id,
             StudentId = student.Id,
             Status = AssignmentSubmissionStatus.Submitted,
+            StartedAtUtc = DateTimeOffset.UtcNow,
             SubmittedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -397,8 +405,10 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             submission.Score,
             submission.MaxScore,
             submission.TeacherFeedback,
+            submission.StartedAtUtc,
             submission.SubmittedAtUtc,
             submission.GradedAtUtc,
+            submission.Assignment?.SolutionVideoMediaAssetId,
             submission.Answers.Select(a => new AssignmentAnswerReviewDto(
                 a.QuestionId,
                 a.Question?.Prompt ?? "",

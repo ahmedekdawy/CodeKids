@@ -1,0 +1,61 @@
+.zoom-wizard {
+  border: 1px solid rgba(255, 214, 10, 0.28);
+  background: linear-gradient(180deg, rgba(255, 214, 10, 0.08), transparent 60%);
+}
+
+.wizard-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.wizard-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.wizard-steps span {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.wizard-steps span.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hot));
+  border-color: transparent;
+  color: var(--accent-ink);
+  font-weight: 800;
+}
+
+.wizard-body ol {
+  margin: 0.5rem 0 1rem 1.2rem;
+}
+
+.redirect-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.redirect-row code {
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  word-break: break-all;
+}
+
+.wizard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

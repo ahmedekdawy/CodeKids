@@ -45,6 +45,8 @@ public static class DataSeeder
                     Description = "First coding missions for ages 8–10: loops and variables.",
                     AgeMin = 8,
                     AgeMax = 10,
+                    Term = CourseTerm.FirstTerm,
+                    Grade = 3,
                     SortOrder = 1,
                     Lessons =
                     [
@@ -158,6 +160,8 @@ public static class DataSeeder
                     Description = "Next-level thinking for ages 10–12 with conditions.",
                     AgeMin = 10,
                     AgeMax = 12,
+                    Term = CourseTerm.FullYear,
+                    Grade = 5,
                     SortOrder = 2,
                     Lessons =
                     [

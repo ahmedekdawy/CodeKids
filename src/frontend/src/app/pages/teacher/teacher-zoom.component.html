@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Zoom meetings</h2>
-  <p class="meta">Connect your personal Zoom, schedule class meetings, and WhatsApp students on their mobile numbers.</p>
+  <h2>{{ 'teacher.zoom.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.zoom.subtitle' | t }}</p>
 
   @if (info()) {
     <p class="feedback ok">{{ info() }}</p>
@@ -9,73 +9,168 @@
     <p class="feedback">{{ error() }}</p>
   }
 
+  @if (showWizard()) {
+    <section class="block zoom-wizard">
+      <div class="wizard-head">
+        <h3>{{ 'teacher.zoom.wizardTitle' | t }}</h3>
+        <button type="button" class="ghost-btn" (click)="closeWizard()">{{ 'common.close' | t }}</button>
+      </div>
+      <div class="wizard-steps">
+        <span [class.active]="wizardStep() === 1">{{ 'teacher.zoom.step1' | t }}</span>
+        <span [class.active]="wizardStep() === 2">{{ 'teacher.zoom.step2' | t }}</span>
+        <span [class.active]="wizardStep() === 3">{{ 'teacher.zoom.step3' | t }}</span>
+      </div>
+
+      @if (wizardStep() === 1) {
+        <div class="wizard-body">
+          <p>{{ 'teacher.zoom.step1Text' | t }}</p>
+          <ol>
+            <li>{{ 'teacher.zoom.step1Detail' | t }}</li>
+            <li>{{ 'teacher.zoom.redirectHint' | t }}</li>
+          </ol>
+          <div class="redirect-row">
+            <code>{{ redirectUri || oauthSettings()?.suggestedRedirectUri }}</code>
+            <button type="button" class="ghost-btn" (click)="copyRedirect()">{{ 'common.copy' | t }}</button>
+          </div>
+          <p class="meta">{{ 'teacher.zoom.scopes' | t }}</p>
+          <div class="wizard-actions">
+            <button type="button" (click)="nextStep()">{{ 'common.next' | t }}</button>
+          </div>
+        </div>
+      }
+
+      @if (wizardStep() === 2) {
+        <div class="wizard-body">
+          <form class="meeting-form" (ngSubmit)="saveOauthSettings()">
+            <label>
+              {{ 'teacher.zoom.clientId' | t }}
+              <input [(ngModel)]="clientId" name="clientId" required [placeholder]="'teacher.zoom.clientIdPlaceholder' | t" />
+            </label>
+            <label>
+              {{ 'teacher.zoom.clientSecret' | t }}
+              <input
+                [(ngModel)]="clientSecret"
+                name="clientSecret"
+                type="password"
+                [placeholder]="oauthSettings()?.hasClientSecret ? ('teacher.zoom.secretPlaceholder' | t) : ('teacher.zoom.clientIdPlaceholder' | t)"
+              />
+            </label>
+            <label>
+              {{ 'teacher.zoom.redirectUri' | t }}
+              <input [(ngModel)]="redirectUri" name="redirectUri" />
+            </label>
+            <label>
+              {{ 'teacher.zoom.frontendReturn' | t }}
+              <input [(ngModel)]="frontendRedirectUri" name="frontendRedirectUri" />
+            </label>
+            <div class="wizard-actions">
+              <button type="button" class="ghost-btn" (click)="prevStep()">{{ 'common.backBtn' | t }}</button>
+              <button type="submit" [disabled]="savingOauth()">
+                {{ savingOauth() ? ('common.saving' | t) : ('teacher.zoom.saveCredentials' | t) }}
+              </button>
+            </div>
+          </form>
+        </div>
+      }
+
+      @if (wizardStep() === 3) {
+        <div class="wizard-body">
+          @if (oauthSettings()?.configured) {
+            <p class="feedback ok">{{ 'teacher.zoom.oauthConfigured' | t }}{{ oauthSettings()?.clientId ? ' (' + (zoomStatus()?.userOAuthClientIdMasked || oauthSettings()?.clientId) + ')' : '' }}</p>
+            <p class="meta">{{ 'teacher.zoom.connectHint' | t }}</p>
+            <div class="wizard-actions">
+              <button type="button" class="ghost-btn" (click)="prevStep()">{{ 'teacher.zoom.editCredentials' | t }}</button>
+              <button type="button" (click)="connectZoom()" [disabled]="connecting()">
+                {{ connecting() ? ('common.redirecting' | t) : ('teacher.zoom.connectPersonal' | t) }}
+              </button>
+            </div>
+          } @else {
+            <p class="meta">{{ 'teacher.zoom.saveFirst' | t }}</p>
+            <div class="wizard-actions">
+              <button type="button" (click)="prevStep()">{{ 'common.backBtn' | t }}</button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
+
   <section class="block">
-    <h3>Personal Zoom</h3>
-    @if (zoomStatus()?.connected) {
+    <h3>{{ 'teacher.zoom.personalTitle' | t }}</h3>
+    @if (!zoomStatus()?.userOAuthConfigured && !showWizard()) {
+      <p class="meta">{{ 'teacher.zoom.notConfigured' | t }}</p>
+      <button type="button" (click)="openWizard()">{{ 'teacher.zoom.openWizard' | t }}</button>
+    } @else if (zoomStatus()?.connected) {
       <p class="meta">
-        Connected as <strong>{{ zoomStatus()?.email || 'Zoom account' }}</strong>.
-        New meetings are created on your personal Zoom.
+        {{ 'teacher.zoom.connectedAs' | t:{ email: zoomStatus()?.email || ('teacher.zoom.zoomAccount' | t) } }}.
+        {{ 'teacher.zoom.personalActive' | t }}
       </p>
-      <button type="button" class="ghost-btn" (click)="disconnectZoom()">Disconnect Zoom</button>
+      <div class="chip-row">
+        <button type="button" class="ghost-btn" (click)="disconnectZoom()">{{ 'teacher.zoom.disconnect' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="openWizard()">{{ 'teacher.zoom.oauthSettings' | t }}</button>
+      </div>
     } @else {
       <p class="meta">
-        Connect your personal Zoom account so meetings are hosted under your name.
+        {{ 'teacher.zoom.connectHint' | t }}
         @if (zoomStatus()?.appFallbackAvailable) {
-          Without connecting, the app Zoom account (or mock links) is used.
+          {{ 'teacher.zoom.fallbackHint' | t }}
         }
       </p>
-      <button type="button" (click)="connectZoom()" [disabled]="connecting()">
-        {{ connecting() ? 'Redirecting…' : 'Connect personal Zoom' }}
-      </button>
+      <div class="chip-row">
+        <button type="button" (click)="connectZoom()" [disabled]="connecting()">
+          {{ connecting() ? ('common.redirecting' | t) : ('teacher.zoom.connectPersonal' | t) }}
+        </button>
+        <button type="button" class="ghost-btn" (click)="openWizard()">{{ 'teacher.zoom.oauthSettings' | t }}</button>
+      </div>
     }
   </section>
 
   <section class="block">
-    <h3>Schedule Zoom</h3>
+    <h3>{{ 'teacher.zoom.schedule' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createMeeting()">
-      <label>Title <input type="text" [(ngModel)]="title" name="title" required /></label>
-      <label>Description <input type="text" [(ngModel)]="description" name="description" /></label>
+      <label>{{ 'common.title' | t }} <input type="text" [(ngModel)]="title" name="title" required /></label>
+      <label>{{ 'common.description' | t }} <input type="text" [(ngModel)]="description" name="description" /></label>
       <label>
-        Classroom
+        {{ 'common.classroom' | t }}
         <select [(ngModel)]="classroomId" name="classroomId" required>
-          <option value="">Select classroom</option>
+          <option value="">{{ 'common.selectClassroom' | t }}</option>
           @for (room of classrooms(); track room.id) {
             <option [value]="room.id">{{ room.name }}</option>
           }
         </select>
       </label>
-      <label>Starts at <input type="datetime-local" [(ngModel)]="startsAtLocal" name="startsAtLocal" required /></label>
-      <label>Duration <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="15" max="240" step="15" /></label>
+      <label>{{ 'teacher.zoom.startsAt' | t }} <input type="datetime-local" [(ngModel)]="startsAtLocal" name="startsAtLocal" required /></label>
+      <label>{{ 'teacher.zoom.duration' | t }} <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="15" max="240" step="15" /></label>
       <label class="checkbox">
         <input type="checkbox" [(ngModel)]="notifyWhatsApp" name="notifyWhatsApp" />
-        WhatsApp enrolled students (their mobile) + classroom notify phones
+        {{ 'teacher.zoom.whatsappNotify' | t }}
       </label>
-      <button type="submit" [disabled]="creating()">{{ creating() ? 'Creating…' : 'Create Zoom meeting' }}</button>
+      <button type="submit" [disabled]="creating()">{{ creating() ? ('common.creating' | t) : ('teacher.zoom.createMeeting' | t) }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>Upcoming sessions</h3>
+    <h3>{{ 'teacher.zoom.upcoming' | t }}</h3>
     @for (meeting of meetings(); track meeting.id) {
       <div class="meeting-row">
         <div>
           <strong>{{ meeting.title }}</strong>
           <p class="meta">
-            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.classroomName || 'Classroom' }} · {{ meeting.durationMinutes }} min
+            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.classroomName || ('common.classroom' | t) }} · {{ meeting.durationMinutes }} {{ 'common.min' | t }}
           </p>
         </div>
         <div class="chip-row">
-          <a class="chip" [href]="meeting.joinUrl" target="_blank" rel="noopener">Join</a>
+          <a class="chip" [href]="meeting.joinUrl" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
           @if (meeting.startUrl) {
-            <a class="chip quiz" [href]="meeting.startUrl" target="_blank" rel="noopener">Start host</a>
+            <a class="chip quiz" [href]="meeting.startUrl" target="_blank" rel="noopener">{{ 'teacher.zoom.startHost' | t }}</a>
           }
           @if (meeting.whatsAppShareUrl) {
-            <a class="chip" [href]="meeting.whatsAppShareUrl" target="_blank" rel="noopener">Share WhatsApp</a>
+            <a class="chip" [href]="meeting.whatsAppShareUrl" target="_blank" rel="noopener">{{ 'teacher.zoom.shareWhatsApp' | t }}</a>
           }
         </div>
       </div>
     } @empty {
-      <p class="meta">No upcoming Zoom sessions.</p>
+      <p class="meta">{{ 'teacher.zoom.noSessions' | t }}</p>
     }
   </section>
 </div>

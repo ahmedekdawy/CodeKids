@@ -8,6 +8,8 @@ public class QuizQuestion
     public string OptionA { get; set; } = string.Empty;
     public string OptionB { get; set; } = string.Empty;
     public string OptionC { get; set; } = string.Empty;
+    /// <summary>JSON array of { key, text } for dynamic choice options.</summary>
+    public string OptionsJson { get; set; } = "[]";
     public string CorrectOption { get; set; } = "A";
     public int SortOrder { get; set; }
     public Quiz? Quiz { get; set; }

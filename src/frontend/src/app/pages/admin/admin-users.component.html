@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Users</h2>
-  <p class="meta">Create, edit, and delete platform users. Click column headers to sort.</p>
+  <h2>{{ 'admin.users.title' | t }}</h2>
+  <p class="meta">{{ 'admin.users.subtitle' | t }}</p>
 
   @if (message()) {
     <p class="feedback ok">{{ message() }}</p>
@@ -10,36 +10,36 @@
   }
 
   <section class="block">
-    <h3>Create user</h3>
+    <h3>{{ 'admin.users.create' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createUser()">
-      <label>Name <input [(ngModel)]="userName" name="userName" required /></label>
-      <label>Email <input [(ngModel)]="userEmail" name="userEmail" type="email" required /></label>
-      <label>Password <input [(ngModel)]="userPassword" name="userPassword" type="password" required /></label>
+      <label>{{ 'common.name' | t }} <input [(ngModel)]="userName" name="userName" required /></label>
+      <label>{{ 'common.email' | t }} <input [(ngModel)]="userEmail" name="userEmail" type="email" required /></label>
+      <label>{{ 'common.password' | t }} <input [(ngModel)]="userPassword" name="userPassword" type="password" required /></label>
       <label>
-        Role
+        {{ 'common.role' | t }}
         <select [(ngModel)]="userRole" name="userRole">
-          <option value="Teacher">Teacher</option>
-          <option value="Student">Student</option>
-          <option value="Parent">Parent</option>
-          <option value="SuperAdmin">SuperAdmin</option>
+          <option value="Teacher">{{ roleLabel('Teacher') }}</option>
+          <option value="Student">{{ roleLabel('Student') }}</option>
+          <option value="Parent">{{ roleLabel('Parent') }}</option>
+          <option value="SuperAdmin">{{ roleLabel('SuperAdmin') }}</option>
         </select>
       </label>
-      <label>Parent ID (students) <input [(ngModel)]="userParentId" name="userParentId" /></label>
-      <button type="submit">Create user</button>
+      <label>{{ 'admin.users.parentIdStudents' | t }} <input [(ngModel)]="userParentId" name="userParentId" /></label>
+      <button type="submit">{{ 'admin.users.create' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>All users</h3>
+    <h3>{{ 'admin.users.list' | t }}</h3>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th class="sortable" (click)="setSort('displayName')">Name <span class="sort-mark">{{ sortMark('displayName') }}</span></th>
-            <th class="sortable" (click)="setSort('email')">Email <span class="sort-mark">{{ sortMark('email') }}</span></th>
-            <th class="sortable" (click)="setSort('role')">Role <span class="sort-mark">{{ sortMark('role') }}</span></th>
-            <th class="sortable" (click)="setSort('totalXp')">XP <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
-            <th>Actions</th>
+            <th class="sortable" (click)="setSort('displayName')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('displayName') }}</span></th>
+            <th class="sortable" (click)="setSort('email')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('email') }}</span></th>
+            <th class="sortable" (click)="setSort('role')">{{ 'common.role' | t }} <span class="sort-mark">{{ sortMark('role') }}</span></th>
+            <th class="sortable" (click)="setSort('totalXp')">{{ 'common.xp' | t }} <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
+            <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -50,30 +50,30 @@
                 <td><input [(ngModel)]="editEmail" [name]="'editEmail-' + user.id" /></td>
                 <td>
                   <select [(ngModel)]="editRole" [name]="'editRole-' + user.id">
-                    <option value="Teacher">Teacher</option>
-                    <option value="Student">Student</option>
-                    <option value="Parent">Parent</option>
-                    <option value="SuperAdmin">SuperAdmin</option>
+                    <option value="Teacher">{{ roleLabel('Teacher') }}</option>
+                    <option value="Student">{{ roleLabel('Student') }}</option>
+                    <option value="Parent">{{ roleLabel('Parent') }}</option>
+                    <option value="SuperAdmin">{{ roleLabel('SuperAdmin') }}</option>
                   </select>
-                  <input [(ngModel)]="editParentId" [name]="'editParent-' + user.id" placeholder="Parent ID" />
-                  <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" placeholder="New password (optional)" />
+                  <input [(ngModel)]="editParentId" [name]="'editParent-' + user.id" [placeholder]="'common.parentId' | t" />
+                  <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" [placeholder]="'common.newPasswordOptional' | t" />
                 </td>
                 <td>{{ user.totalXp }}</td>
                 <td>
                   <div class="row-actions">
-                    <button type="button" (click)="saveEdit(user.id)">Save</button>
-                    <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
+                    <button type="button" (click)="saveEdit(user.id)">{{ 'common.save' | t }}</button>
+                    <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
                   </div>
                 </td>
               } @else {
                 <td>{{ user.displayName }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
+                <td>{{ roleLabel(user.role) }}</td>
                 <td>{{ user.totalXp }}</td>
                 <td>
                   <div class="row-actions">
-                    <button type="button" (click)="startEdit(user)">Edit</button>
-                    <button type="button" class="danger" (click)="deleteUser(user)">Delete</button>
+                    <app-icon-action-button kind="edit" (action)="startEdit(user)" />
+                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteUser(user)" />
                   </div>
                 </td>
               }

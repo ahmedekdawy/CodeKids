@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Classrooms</h2>
-  <p class="meta">Create, edit, and delete classrooms. Click headers to sort.</p>
+  <h2>{{ 'admin.classrooms.title' | t }}</h2>
+  <p class="meta">{{ 'admin.classrooms.subtitle' | t }}</p>
 
   @if (message()) {
     <p class="feedback ok">{{ message() }}</p>
@@ -10,45 +10,45 @@
   }
 
   <section class="block">
-    <h3>Create classroom</h3>
+    <h3>{{ 'admin.classrooms.create' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createClassroom()">
-      <label>Name <input [(ngModel)]="classroomName" name="classroomName" required /></label>
-      <label>Description <input [(ngModel)]="classroomDescription" name="classroomDescription" /></label>
+      <label>{{ 'common.name' | t }} <input [(ngModel)]="classroomName" name="classroomName" required /></label>
+      <label>{{ 'common.description' | t }} <input [(ngModel)]="classroomDescription" name="classroomDescription" /></label>
       <label>
-        Teacher
+        {{ 'common.teacher' | t }}
         <select [(ngModel)]="classroomTeacherId" name="classroomTeacherId">
-          <option value="">Unassigned</option>
+          <option value="">{{ 'common.unassigned' | t }}</option>
           @for (teacher of teachers(); track teacher.id) {
             <option [value]="teacher.id">{{ teacher.displayName }}</option>
           }
         </select>
       </label>
       <label>
-        Course
+        {{ 'common.course' | t }}
         <select [(ngModel)]="classroomCourseId" name="classroomCourseId">
-          <option value="">None</option>
+          <option value="">{{ 'common.none' | t }}</option>
           @for (course of courses(); track course.id) {
             <option [value]="course.id">{{ course.title }}</option>
           }
         </select>
       </label>
-      <label>WhatsApp invite <input [(ngModel)]="classroomWhatsAppInvite" name="classroomWhatsAppInvite" /></label>
-      <label>WhatsApp phones <input [(ngModel)]="classroomWhatsAppPhones" name="classroomWhatsAppPhones" /></label>
-      <button type="submit">Create classroom</button>
+      <label>{{ 'admin.classrooms.whatsAppInvite' | t }} <input [(ngModel)]="classroomWhatsAppInvite" name="classroomWhatsAppInvite" /></label>
+      <label>{{ 'admin.classrooms.whatsAppPhones' | t }} <input [(ngModel)]="classroomWhatsAppPhones" name="classroomWhatsAppPhones" /></label>
+      <button type="submit">{{ 'admin.classrooms.create' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>Classroom list</h3>
+    <h3>{{ 'admin.classrooms.list' | t }}</h3>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th class="sortable" (click)="setSort('name')">Name <span class="sort-mark">{{ sortMark('name') }}</span></th>
-            <th class="sortable" (click)="setSort('teacherName')">Teacher <span class="sort-mark">{{ sortMark('teacherName') }}</span></th>
-            <th class="sortable" (click)="setSort('courseTitle')">Course <span class="sort-mark">{{ sortMark('courseTitle') }}</span></th>
-            <th>Students</th>
-            <th>Actions</th>
+            <th class="sortable" (click)="setSort('name')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('name') }}</span></th>
+            <th class="sortable" (click)="setSort('teacherName')">{{ 'common.teacher' | t }} <span class="sort-mark">{{ sortMark('teacherName') }}</span></th>
+            <th class="sortable" (click)="setSort('courseTitle')">{{ 'common.course' | t }} <span class="sort-mark">{{ sortMark('courseTitle') }}</span></th>
+            <th>{{ 'common.students' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -57,13 +57,13 @@
               @if (editingId() === room.id) {
                 <td>
                   <input [(ngModel)]="editName" [name]="'rName-' + room.id" />
-                  <input [(ngModel)]="editDescription" [name]="'rDesc-' + room.id" placeholder="Description" />
-                  <input [(ngModel)]="editWhatsAppInvite" [name]="'rInvite-' + room.id" placeholder="WhatsApp invite" />
-                  <input [(ngModel)]="editWhatsAppPhones" [name]="'rPhones-' + room.id" placeholder="WhatsApp phones" />
+                  <input [(ngModel)]="editDescription" [name]="'rDesc-' + room.id" [placeholder]="'common.descriptionPlaceholder' | t" />
+                  <input [(ngModel)]="editWhatsAppInvite" [name]="'rInvite-' + room.id" [placeholder]="'admin.classrooms.whatsAppInvite' | t" />
+                  <input [(ngModel)]="editWhatsAppPhones" [name]="'rPhones-' + room.id" [placeholder]="'admin.classrooms.whatsAppPhones' | t" />
                 </td>
                 <td>
                   <select [(ngModel)]="editTeacherId" [name]="'rTeacher-' + room.id">
-                    <option value="">Unassigned</option>
+                    <option value="">{{ 'common.unassigned' | t }}</option>
                     @for (teacher of teachers(); track teacher.id) {
                       <option [value]="teacher.id">{{ teacher.displayName }}</option>
                     }
@@ -71,7 +71,7 @@
                 </td>
                 <td>
                   <select [(ngModel)]="editCourseId" [name]="'rCourse-' + room.id">
-                    <option value="">None</option>
+                    <option value="">{{ 'common.none' | t }}</option>
                     @for (course of courses(); track course.id) {
                       <option [value]="course.id">{{ course.title }}</option>
                     }
@@ -80,8 +80,8 @@
                 <td>{{ room.students.length }}</td>
                 <td>
                   <div class="row-actions">
-                    <button type="button" (click)="saveEdit(room.id)">Save</button>
-                    <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
+                    <button type="button" (click)="saveEdit(room.id)">{{ 'common.save' | t }}</button>
+                    <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
                   </div>
                 </td>
               } @else {
@@ -89,13 +89,13 @@
                   <strong>{{ room.name }}</strong>
                   <div class="meta">{{ room.description }}</div>
                 </td>
-                <td>{{ room.teacherName || '—' }}</td>
-                <td>{{ room.courseTitle || '—' }}</td>
+                <td>{{ room.teacherName || ('common.emDash' | t) }}</td>
+                <td>{{ room.courseTitle || ('common.emDash' | t) }}</td>
                 <td>{{ room.students.length }}</td>
                 <td>
                   <div class="row-actions">
-                    <button type="button" (click)="startEdit(room)">Edit</button>
-                    <button type="button" class="danger" (click)="deleteClassroom(room)">Delete</button>
+                    <app-icon-action-button kind="edit" (action)="startEdit(room)" />
+                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteClassroom(room)" />
                   </div>
                 </td>
               }

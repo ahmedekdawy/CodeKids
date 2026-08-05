@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Review answers</h2>
-  <p class="meta">Load assignment submissions and mark student answers.</p>
+  <h2>{{ 'teacher.review.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.review.subtitle' | t }}</p>
 
   @if (info()) {
     <p class="feedback ok">{{ info() }}</p>
@@ -12,35 +12,35 @@
   <section class="block">
     <form class="meeting-form" (ngSubmit)="loadSubmissions()">
       <label>
-        Assignment
+        {{ 'videos.assignment' | t }}
         <select [(ngModel)]="reviewAssignmentId" name="reviewAssignmentId">
-          <option value="">Select</option>
+          <option value="">{{ 'common.select' | t }}</option>
           @for (assignment of assignments(); track assignment.id) {
             <option [value]="assignment.id">{{ assignment.title }}</option>
           }
         </select>
       </label>
-      <label>Feedback <input [(ngModel)]="gradeFeedback" name="gradeFeedback" /></label>
-      <button type="submit">Load submissions</button>
+      <label>{{ 'common.feedback' | t }} <input [(ngModel)]="gradeFeedback" name="gradeFeedback" /></label>
+      <button type="submit">{{ 'teacher.review.load' | t }}</button>
     </form>
   </section>
 
   @for (submission of submissions(); track submission.id) {
     <section class="block">
       <strong>{{ submission.studentName }}</strong>
-      <p class="meta">{{ submission.status }} · score {{ submission.score ?? '—' }}/{{ submission.maxScore ?? '—' }}</p>
+      <p class="meta">{{ submission.status }} · {{ 'teacher.review.scoreLine' | t:{ score: submission.score ?? ('common.emDash' | t), max: submission.maxScore ?? ('common.emDash' | t) } }}</p>
       @for (answer of submission.answers; track answer.questionId) {
         <div class="question">
           <p>{{ answer.prompt }}</p>
-          <p>Answer: {{ answer.answerText }}</p>
-          <p class="meta">Key: {{ answer.correctAnswer }}</p>
+          <p>{{ 'common.answer' | t }}: {{ answer.answerText }}</p>
+          <p class="meta">{{ 'common.key' | t }}: {{ answer.correctAnswer }}</p>
           <div class="chip-row">
-            <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, true)">Correct</button>
-            <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, false)">Wrong</button>
+            <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, true)">{{ 'common.correct' | t }}</button>
+            <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, false)">{{ 'common.wrong' | t }}</button>
           </div>
         </div>
       }
-      <button type="button" (click)="grade(submission)">Save grade</button>
+      <button type="button" (click)="grade(submission)">{{ 'teacher.review.saveGrade' | t }}</button>
     </section>
   }
 </div>

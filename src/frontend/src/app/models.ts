@@ -34,6 +34,8 @@ export interface CourseQuiz {
   questionCount: number;
 }
 
+export type CourseTerm = 'FirstTerm' | 'SecondTerm' | 'FullYear';
+
 export interface Course {
   id: string;
   title: string;
@@ -41,6 +43,8 @@ export interface Course {
   description: string;
   ageMin: number;
   ageMax: number;
+  term: CourseTerm | string;
+  grade: number;
   sortOrder: number;
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
@@ -53,6 +57,14 @@ export interface LessonStep {
   prompt: string;
 }
 
+export interface LessonVideoSummary {
+  id: string;
+  mediaAssetId: string;
+  title: string;
+  sortOrder: number;
+  durationSeconds?: number | null;
+}
+
 export interface Lesson {
   id: string;
   courseId: string;
@@ -62,6 +74,72 @@ export interface Lesson {
   difficulty: number;
   xpReward: number;
   steps: LessonStep[];
+  videos?: LessonVideoSummary[];
+}
+
+export interface MediaAsset {
+  id: string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  durationSeconds?: number | null;
+  createdAtUtc: string;
+}
+
+export interface TeacherLessonVideo {
+  id: string;
+  lessonId: string;
+  lessonTitle: string;
+  courseId: string;
+  courseTitle: string;
+  mediaAssetId: string;
+  title: string;
+  fileName: string;
+  sizeBytes: number;
+  durationSeconds?: number | null;
+  sortOrder: number;
+  createdAtUtc: string;
+}
+
+export interface TeacherSolutionVideo {
+  assignmentId: string;
+  assignmentTitle: string;
+  classroomId: string;
+  classroomName: string;
+  mediaAssetId: string;
+  fileName: string;
+  sizeBytes: number;
+  durationSeconds?: number | null;
+  createdAtUtc: string;
+}
+
+export interface TeacherVideoLibrary {
+  lessonVideos: TeacherLessonVideo[];
+  solutionVideos: TeacherSolutionVideo[];
+}
+
+export interface PlaybackInfo {
+  mediaAssetId: string;
+  playbackUrl: string;
+  watermarkText: string;
+  expiresAtUtc: string;
+  durationSeconds?: number | null;
+  contentType: string;
+  fileName: string;
+}
+
+export interface WatchSession {
+  id: string;
+  mediaAssetId: string;
+  studentId: string;
+  studentName: string;
+  lessonId?: string | null;
+  actualWatchSeconds: number;
+  maxPositionSeconds: number;
+  usedSpeedUp: boolean;
+  skippedAhead: boolean;
+  startedAtUtc: string;
+  lastEventAtUtc: string;
 }
 
 export interface StudentSummary {
@@ -77,8 +155,14 @@ export interface CompleteStepResponse {
   isCorrect: boolean;
   earnedXp: number;
   feedback: string;
+  feedbackCode?: string | null;
   totalXp: number;
   newlyAwardedBadges: string[];
+}
+
+export interface ChoiceOption {
+  key: string;
+  text: string;
 }
 
 export interface QuizQuestion {
@@ -87,6 +171,7 @@ export interface QuizQuestion {
   optionA: string;
   optionB: string;
   optionC: string;
+  options?: ChoiceOption[];
   sortOrder: number;
 }
 
@@ -106,6 +191,7 @@ export interface SubmitQuizResponse {
   earnedXp: number;
   totalXp: number;
   feedback: string;
+  feedbackCode?: string | null;
   newlyAwardedBadges: string[];
 }
 
@@ -152,9 +238,14 @@ export interface TeacherStudent {
   displayName: string;
   email: string;
   totalXp: number;
+  levelNumber: number;
+  levelName: string;
+  levelProgressPercent: number;
   completedSteps: number;
   quizAttempts: number;
+  weakLessonCount: number;
   parentName?: string | null;
+  signal?: string | null;
 }
 
 export interface TeacherDashboard {
@@ -163,7 +254,80 @@ export interface TeacherDashboard {
   studentCount: number;
   totalCompletedSteps: number;
   averageXp: number;
+  behindCount: number;
+  topWeakLessons: string[];
   students: TeacherStudent[];
+}
+
+export interface StudentLevel {
+  levelNumber: number;
+  code: string;
+  name: string;
+  minXp: number;
+  nextMinXp?: number | null;
+  progressPercent: number;
+}
+
+export interface LessonWeakness {
+  lessonId: string;
+  lessonTitle: string;
+  wrongAnswers: number;
+  totalAnswers: number;
+  accuracyPercent: number;
+}
+
+export interface LessonMastery {
+  lessonId: string;
+  lessonTitle: string;
+  completedSteps: number;
+  totalSteps: number;
+  actualWatchSeconds: number;
+  videoDurationSeconds?: number | null;
+  masteryPercent: number;
+}
+
+export interface WatchSummary {
+  mediaAssetId: string;
+  lessonId?: string | null;
+  lessonTitle?: string | null;
+  actualWatchSeconds: number;
+  usedSpeedUp: boolean;
+  skippedAhead: boolean;
+  lastEventAtUtc: string;
+}
+
+export interface TeacherStudentDetail {
+  studentId: string;
+  displayName: string;
+  email: string;
+  mobilePhone?: string | null;
+  parentName?: string | null;
+  parentMobilePhone?: string | null;
+  totalXp: number;
+  level: StudentLevel;
+  completedSteps: number;
+  quizAttempts: number;
+  examAttempts: number;
+  assignmentSubmissions: number;
+  lessonMastery: LessonMastery[];
+  weakLessons: LessonWeakness[];
+  recentWatch: WatchSummary[];
+}
+
+export interface ClassroomDiagnosis {
+  classroomId: string;
+  classroomName: string;
+  weakLessons: LessonWeakness[];
+  behindStudents: string[];
+  strongStudents: string[];
+}
+
+export interface DailyWhatsAppReportsResult {
+  studentMessagesAttempted: number;
+  parentMessagesAttempted: number;
+  sentCount: number;
+  failedCount: number;
+  skippedCount: number;
 }
 
 export interface LiveSession {
@@ -210,12 +374,26 @@ export interface ZoomConnectionStatus {
   email?: string | null;
   expiresAt?: string | null;
   appFallbackAvailable: boolean;
+  userOAuthConfigured?: boolean;
+  userOAuthRedirectUri?: string | null;
+  userOAuthClientIdMasked?: string | null;
+}
+
+export interface ZoomOAuthSettings {
+  configured: boolean;
+  clientId: string;
+  clientSecretMasked: string;
+  hasClientSecret: boolean;
+  redirectUri: string;
+  frontendRedirectUri: string;
+  suggestedRedirectUri: string;
 }
 
 export interface ClassroomStudent {
   studentId: string;
   displayName: string;
   email: string;
+  mobilePhone?: string;
 }
 
 export interface Classroom {
@@ -228,7 +406,20 @@ export interface Classroom {
   courseTitle?: string | null;
   whatsAppGroupInviteUrl: string;
   whatsAppNotifyPhones: string;
+  dailyWhatsAppReportsEnabled?: boolean;
   students: ClassroomStudent[];
+}
+
+export interface EnrollStudentResult {
+  classroom: Classroom;
+  whatsAppStatus: string;
+}
+
+export interface SendClassroomWhatsAppResult {
+  sentCount: number;
+  failedCount: number;
+  status: string;
+  groupShareUrl?: string | null;
 }
 
 export interface AssignmentQuestion {
@@ -253,6 +444,7 @@ export interface Assignment {
   xpReward: number;
   createdByUserId: string;
   createdByName: string;
+  solutionVideoMediaAssetId?: string | null;
   questions: AssignmentQuestion[];
 }
 
@@ -276,7 +468,100 @@ export interface AssignmentSubmission {
   score?: number | null;
   maxScore?: number | null;
   teacherFeedback?: string | null;
+  startedAtUtc?: string | null;
   submittedAtUtc: string;
   gradedAtUtc?: string | null;
+  solutionVideoMediaAssetId?: string | null;
   answers: AssignmentAnswerReview[];
+}
+
+export type BankQuestionType =
+  | 'Choose'
+  | 'TrueFalse'
+  | 'SingleChoice'
+  | 'MultiChoice'
+  | 'Paragraph'
+  | 'Underline';
+
+export interface BankQuestion {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  lessonId?: string | null;
+  lessonTitle?: string | null;
+  createdByUserId: string;
+  parentQuestionId?: string | null;
+  questionType: BankQuestionType | string;
+  prompt: string;
+  passageText: string;
+  optionA?: string | null;
+  optionB?: string | null;
+  optionC?: string | null;
+  optionD?: string | null;
+  options?: ChoiceOption[];
+  correctAnswer: string;
+  points: number;
+  sortOrder: number;
+  children: BankQuestion[];
+}
+
+export interface ExamQuestion {
+  id: string;
+  bankQuestionId?: string | null;
+  parentExamQuestionId?: string | null;
+  questionType: string;
+  prompt: string;
+  passageText: string;
+  optionA?: string | null;
+  optionB?: string | null;
+  optionC?: string | null;
+  optionD?: string | null;
+  options?: ChoiceOption[];
+  points: number;
+  sortOrder: number;
+  correctAnswer?: string | null;
+  children: ExamQuestion[];
+}
+
+export interface Exam {
+  id: string;
+  classroomId: string;
+  classroomName: string;
+  courseId?: string | null;
+  courseTitle?: string | null;
+  title: string;
+  description: string;
+  dueAtUtc?: string | null;
+  xpReward: number;
+  createdByUserId: string;
+  createdByName: string;
+  questions: ExamQuestion[];
+}
+
+export interface ExamAnswerReview {
+  questionId: string;
+  prompt: string;
+  questionType: string;
+  answerText: string;
+  correctAnswer?: string | null;
+  isCorrect?: boolean | null;
+  pointsAwarded?: number | null;
+  points: number;
+}
+
+export interface ExamAttempt {
+  id: string;
+  examId: string;
+  examTitle: string;
+  studentId: string;
+  studentName: string;
+  status: string;
+  score?: number | null;
+  maxScore?: number | null;
+  teacherFeedback?: string | null;
+  startedAtUtc: string;
+  submittedAtUtc?: string | null;
+  gradedAtUtc?: string | null;
+  durationSeconds?: number | null;
+  answers: ExamAnswerReview[];
 }

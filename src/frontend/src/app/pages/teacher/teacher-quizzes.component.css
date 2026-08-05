@@ -1,0 +1,39 @@
+.options-editor {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.9rem;
+  margin: 0.5rem 0 1rem;
+  border-radius: var(--radius-md, 12px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+}
+
+.options-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.options-head h4 {
+  margin: 0;
+}
+
+.option-row {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.option-key {
+  font-weight: 800;
+  color: var(--accent, #ffd60a);
+  text-align: center;
+}
+
+@media (max-width: 820px) {
+  .option-row {
+    grid-template-columns: 2rem 1fr;
+  }
+}

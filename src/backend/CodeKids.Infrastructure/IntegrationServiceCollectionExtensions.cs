@@ -1,4 +1,6 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Infrastructure.Jobs;
+using CodeKids.Infrastructure.Media;
 using CodeKids.Infrastructure.WhatsApp;
 using CodeKids.Infrastructure.Zoom;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +10,15 @@ namespace CodeKids.Infrastructure;
 
 public static class IntegrationServiceCollectionExtensions
 {
+    public static IServiceCollection AddMediaStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<MediaOptions>(configuration.GetSection(MediaOptions.SectionName));
+        services.AddSingleton<IFileStorage, LocalFileStorage>();
+        services.AddSingleton<IMediaAccessTokenService, MediaAccessTokenService>();
+        services.AddHostedService<DailyReportHostedService>();
+        return services;
+    }
+
     public static IServiceCollection AddZoomIntegration(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<ZoomOptions>(configuration.GetSection(ZoomOptions.SectionName));
@@ -17,6 +28,7 @@ public static class IntegrationServiceCollectionExtensions
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         });
         services.AddHttpClient(nameof(ZoomUserOAuthService));
+        services.AddSingleton<IZoomOAuthSettingsStore, ZoomOAuthSettingsStore>();
         services.AddSingleton<IZoomMeetingClient, ZoomMeetingClient>();
         services.AddSingleton<IZoomUserOAuthService, ZoomUserOAuthService>();
         return services;

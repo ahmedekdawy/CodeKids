@@ -40,6 +40,8 @@ public sealed record CreateCourseRequest(
     string Description,
     int AgeMin,
     int AgeMax,
+    string Term,
+    int Grade,
     int SortOrder);
 
 public sealed record CreateCourseCommand(
@@ -48,6 +50,8 @@ public sealed record CreateCourseCommand(
     string Description,
     int AgeMin,
     int AgeMax,
+    string Term,
+    int Grade,
     int SortOrder) : ICommand<CourseSummaryDto>;
 
 public sealed record CourseSummaryDto(
@@ -57,6 +61,8 @@ public sealed record CourseSummaryDto(
     string Description,
     int AgeMin,
     int AgeMax,
+    string Term,
+    int Grade,
     int SortOrder);
 
 public sealed class CreateManagedUserCommandHandler(
@@ -154,6 +160,9 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Course title is required.");
         }
 
+        var term = ParseTerm(command.Term);
+        var grade = NormalizeGrade(command.Grade);
+
         var course = new Course
         {
             Id = Guid.NewGuid(),
@@ -162,15 +171,53 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             Description = (command.Description ?? string.Empty).Trim(),
             AgeMin = command.AgeMin <= 0 ? 8 : command.AgeMin,
             AgeMax = command.AgeMax <= 0 ? 12 : command.AgeMax,
+            Term = term,
+            Grade = grade,
             SortOrder = command.SortOrder
         };
 
         dbContext.Courses.Add(course);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return new CourseSummaryDto(
-            course.Id, course.Title, course.Theme, course.Description, course.AgeMin, course.AgeMax, course.SortOrder);
+        return ToSummary(course);
     }
+
+    internal static CourseTerm ParseTerm(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return CourseTerm.FullYear;
+        }
+
+        if (!Enum.TryParse<CourseTerm>(value.Trim(), true, out var term))
+        {
+            throw new InvalidOperationException("Term must be FirstTerm, SecondTerm, or FullYear.");
+        }
+
+        return term;
+    }
+
+    internal static int NormalizeGrade(int grade)
+    {
+        if (grade is < 1 or > 12)
+        {
+            throw new InvalidOperationException("Grade must be between 1 and 12.");
+        }
+
+        return grade;
+    }
+
+    internal static CourseSummaryDto ToSummary(Course course) =>
+        new(
+            course.Id,
+            course.Title,
+            course.Theme,
+            course.Description,
+            course.AgeMin,
+            course.AgeMax,
+            course.Term.ToString(),
+            course.Grade,
+            course.SortOrder);
 }
 
 public sealed record UpdateManagedUserRequest(
@@ -199,6 +246,8 @@ public sealed record UpdateCourseRequest(
     string Description,
     int AgeMin,
     int AgeMax,
+    string Term,
+    int Grade,
     int SortOrder);
 
 public sealed record UpdateCourseCommand(
@@ -208,6 +257,8 @@ public sealed record UpdateCourseCommand(
     string Description,
     int AgeMin,
     int AgeMax,
+    string Term,
+    int Grade,
     int SortOrder) : ICommand<CourseSummaryDto>;
 
 public sealed record DeleteCourseCommand(Guid CourseId) : ICommand<bool>;
@@ -337,11 +388,12 @@ public sealed class UpdateCourseCommandHandler(IAppDbContext dbContext)
         course.Description = (command.Description ?? string.Empty).Trim();
         course.AgeMin = command.AgeMin <= 0 ? 8 : command.AgeMin;
         course.AgeMax = command.AgeMax <= 0 ? 12 : command.AgeMax;
+        course.Term = CreateCourseCommandHandler.ParseTerm(command.Term);
+        course.Grade = CreateCourseCommandHandler.NormalizeGrade(command.Grade);
         course.SortOrder = command.SortOrder;
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        return new CourseSummaryDto(
-            course.Id, course.Title, course.Theme, course.Description, course.AgeMin, course.AgeMax, course.SortOrder);
+        return CreateCourseCommandHandler.ToSummary(course);
     }
 }
 

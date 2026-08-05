@@ -1,0 +1,26 @@
+<div class="math-editor" [class.disabled]="disabled">
+  <div class="toolbar" role="toolbar" [attr.aria-label]="'editor.formattingToolbar' | t">
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('bold')" title="Bold"><b>B</b></button>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('italic')" title="Italic"><i>I</i></button>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('underline')" title="Underline"><u>U</u></button>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('subscript')" title="Subscript">X<sub>2</sub></button>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('superscript')" title="Superscript">X<sup>2</sup></button>
+    <span class="sep"></span>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="insertFraction()" title="Fraction">a/b</button>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="insertSqrt()" title="Square root">√</button>
+    <button type="button" (mousedown)="$event.preventDefault()" (click)="insertPower()" title="Power">xⁿ</button>
+    <span class="sep"></span>
+    @for (symbol of symbols; track symbol) {
+      <button type="button" class="sym" (mousedown)="$event.preventDefault()" (click)="insertSymbol(symbol)">{{ symbol }}</button>
+    }
+  </div>
+  <div
+    #editor
+    class="surface"
+    contenteditable="true"
+    role="textbox"
+    aria-multiline="true"
+    (input)="onInput()"
+    (blur)="onBlur()"
+    [attr.data-placeholder]="'editor.promptPlaceholder' | t"></div>
+</div>

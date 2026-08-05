@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>Courses</h2>
-  <p class="meta">Create, edit, and delete courses. Click headers to sort.</p>
+  <h2>{{ 'admin.courses.title' | t }}</h2>
+  <p class="meta">{{ 'admin.courses.subtitle' | t }}</p>
 
   @if (message()) {
     <p class="feedback ok">{{ message() }}</p>
@@ -10,29 +10,47 @@
   }
 
   <section class="block">
-    <h3>Create course</h3>
+    <h3>{{ 'admin.courses.create' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createCourse()">
-      <label>Title <input [(ngModel)]="courseTitle" name="courseTitle" required /></label>
-      <label>Theme <input [(ngModel)]="courseTheme" name="courseTheme" /></label>
-      <label>Description <input [(ngModel)]="courseDescription" name="courseDescription" /></label>
-      <label>Age min <input type="number" [(ngModel)]="courseAgeMin" name="courseAgeMin" /></label>
-      <label>Age max <input type="number" [(ngModel)]="courseAgeMax" name="courseAgeMax" /></label>
-      <label>Sort <input type="number" [(ngModel)]="courseSort" name="courseSort" /></label>
-      <button type="submit">Create course</button>
+      <label>{{ 'common.title' | t }} <input [(ngModel)]="courseTitle" name="courseTitle" required /></label>
+      <label>{{ 'common.theme' | t }} <input [(ngModel)]="courseTheme" name="courseTheme" /></label>
+      <label>{{ 'common.description' | t }} <input [(ngModel)]="courseDescription" name="courseDescription" /></label>
+      <label>
+        {{ 'common.term' | t }}
+        <select [(ngModel)]="courseTerm" name="courseTerm">
+          @for (term of terms; track term) {
+            <option [value]="term">{{ termLabel(term) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <select [(ngModel)]="courseGrade" name="courseGrade">
+          @for (g of grades; track g) {
+            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
+          }
+        </select>
+      </label>
+      <label>{{ 'common.ageMin' | t }} <input type="number" [(ngModel)]="courseAgeMin" name="courseAgeMin" /></label>
+      <label>{{ 'common.ageMax' | t }} <input type="number" [(ngModel)]="courseAgeMax" name="courseAgeMax" /></label>
+      <label>{{ 'common.sort' | t }} <input type="number" [(ngModel)]="courseSort" name="courseSort" /></label>
+      <button type="submit">{{ 'admin.courses.create' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>Course list</h3>
+    <h3>{{ 'admin.courses.list' | t }}</h3>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th class="sortable" (click)="setSort('title')">Title <span class="sort-mark">{{ sortMark('title') }}</span></th>
-            <th class="sortable" (click)="setSort('theme')">Theme <span class="sort-mark">{{ sortMark('theme') }}</span></th>
-            <th class="sortable" (click)="setSort('ageMin')">Ages <span class="sort-mark">{{ sortMark('ageMin') }}</span></th>
-            <th class="sortable" (click)="setSort('sortOrder')">Sort <span class="sort-mark">{{ sortMark('sortOrder') }}</span></th>
-            <th>Actions</th>
+            <th class="sortable" (click)="setSort('title')">{{ 'common.title' | t }} <span class="sort-mark">{{ sortMark('title') }}</span></th>
+            <th class="sortable" (click)="setSort('theme')">{{ 'common.theme' | t }} <span class="sort-mark">{{ sortMark('theme') }}</span></th>
+            <th class="sortable" (click)="setSort('term')">{{ 'common.term' | t }} <span class="sort-mark">{{ sortMark('term') }}</span></th>
+            <th class="sortable" (click)="setSort('grade')">{{ 'common.grade' | t }} <span class="sort-mark">{{ sortMark('grade') }}</span></th>
+            <th class="sortable" (click)="setSort('ageMin')">{{ 'common.ages' | t }} <span class="sort-mark">{{ sortMark('ageMin') }}</span></th>
+            <th class="sortable" (click)="setSort('sortOrder')">{{ 'common.sort' | t }} <span class="sort-mark">{{ sortMark('sortOrder') }}</span></th>
+            <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -41,9 +59,23 @@
               @if (editingId() === course.id) {
                 <td>
                   <input [(ngModel)]="editTitle" [name]="'cTitle-' + course.id" />
-                  <input [(ngModel)]="editDescription" [name]="'cDesc-' + course.id" placeholder="Description" />
+                  <input [(ngModel)]="editDescription" [name]="'cDesc-' + course.id" [placeholder]="'common.descriptionPlaceholder' | t" />
                 </td>
                 <td><input [(ngModel)]="editTheme" [name]="'cTheme-' + course.id" /></td>
+                <td>
+                  <select [(ngModel)]="editTerm" [name]="'cTerm-' + course.id">
+                    @for (term of terms; track term) {
+                      <option [value]="term">{{ termLabel(term) }}</option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  <select [(ngModel)]="editGrade" [name]="'cGrade-' + course.id">
+                    @for (g of grades; track g) {
+                      <option [ngValue]="g">{{ g }}</option>
+                    }
+                  </select>
+                </td>
                 <td>
                   <input type="number" [(ngModel)]="editAgeMin" [name]="'cMin-' + course.id" />
                   –
@@ -52,8 +84,8 @@
                 <td><input type="number" [(ngModel)]="editSort" [name]="'cSort-' + course.id" /></td>
                 <td>
                   <div class="row-actions">
-                    <button type="button" (click)="saveEdit(course.id)">Save</button>
-                    <button type="button" class="ghost-btn" (click)="cancelEdit()">Cancel</button>
+                    <button type="button" (click)="saveEdit(course.id)">{{ 'common.save' | t }}</button>
+                    <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
                   </div>
                 </td>
               } @else {
@@ -62,12 +94,14 @@
                   <div class="meta">{{ course.description }}</div>
                 </td>
                 <td>{{ course.theme }}</td>
+                <td>{{ termLabel(course.term) }}</td>
+                <td>{{ course.grade }}</td>
                 <td>{{ course.ageMin }}–{{ course.ageMax }}</td>
                 <td>{{ course.sortOrder }}</td>
                 <td>
                   <div class="row-actions">
-                    <button type="button" (click)="startEdit(course)">Edit</button>
-                    <button type="button" class="danger" (click)="deleteCourse(course)">Delete</button>
+                    <app-icon-action-button kind="edit" (action)="startEdit(course)" />
+                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteCourse(course)" />
                   </div>
                 </td>
               }

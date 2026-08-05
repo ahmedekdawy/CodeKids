@@ -7,8 +7,8 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
   imports: [PanelShellComponent, RouterOutlet],
   template: `
     <app-panel-shell
-      title="Super Admin"
-      subtitle="Platform control"
+      titleKey="shell.admin.title"
+      subtitleKey="shell.admin.subtitle"
       [navItems]="navItems">
       <router-outlet />
     </app-panel-shell>
@@ -16,11 +16,11 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
 })
 export class AdminShellComponent {
   readonly navItems: PanelNavItem[] = [
-    { label: 'Users', path: '/admin/users', icon: 'U' },
-    { label: 'Students', path: '/admin/students', icon: 'S' },
-    { label: 'Courses', path: '/admin/courses', icon: 'C' },
-    { label: 'Classrooms', path: '/admin/create-classroom', icon: 'R' },
-    { label: 'Assign', path: '/admin/assign-classroom', icon: 'A' },
-    { label: 'Enroll', path: '/admin/enroll-student', icon: 'E' }
+    { labelKey: 'nav.admin.users', path: '/admin/users', icon: 'U' },
+    { labelKey: 'nav.admin.students', path: '/admin/students', icon: 'S' },
+    { labelKey: 'nav.admin.courses', path: '/admin/courses', icon: 'C' },
+    { labelKey: 'nav.admin.classrooms', path: '/admin/create-classroom', icon: 'R' },
+    { labelKey: 'nav.admin.assign', path: '/admin/assign-classroom', icon: 'A' },
+    { labelKey: 'nav.admin.enroll', path: '/admin/enroll-student', icon: 'E' }
   ];
 }

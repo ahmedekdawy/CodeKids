@@ -23,6 +23,8 @@ public sealed record CourseDto(
     string Description,
     int AgeMin,
     int AgeMax,
+    string Term,
+    int Grade,
     int SortOrder,
     IReadOnlyList<CourseLessonDto> Lessons,
     IReadOnlyList<CourseQuizDto> Quizzes);
@@ -50,6 +52,8 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
             course.Description,
             course.AgeMin,
             course.AgeMax,
+            course.Term.ToString(),
+            course.Grade,
             course.SortOrder,
             course.Lessons
                 .OrderBy(x => x.SortOrder)

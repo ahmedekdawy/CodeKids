@@ -1,0 +1,43 @@
+<section class="player-shell" [class.compact]="compact()">
+  <header class="player-head">
+    <h3>{{ title() }}</h3>
+    @if (!playback() && !autoLoad()) {
+      <button type="button" (click)="load()" [disabled]="loading()">{{ 'player.loadVideo' | t }}</button>
+    }
+    @if (loading() && !playback()) {
+      <span class="meta">{{ 'common.loading' | t }}</span>
+    }
+  </header>
+
+  @if (error()) {
+    <p class="err">{{ error() }}</p>
+  }
+
+  @if (playback(); as info) {
+    <div class="stage">
+      <video
+        #videoEl
+        [src]="info.playbackUrl"
+        controls
+        controlsList="nodownload noplaybackrate"
+        disablePictureInPicture
+        (canplay)="onCanPlay()"
+        (play)="onPlay()"
+        (pause)="onPause()"
+        (ended)="onEnded()"
+        (ratechange)="onRateChange()"
+        (seeking)="onSeeking()"
+        (seeked)="onSeeked()"
+        (contextmenu)="$event.preventDefault()">
+      </video>
+      <div class="watermark" aria-hidden="true">{{ info.watermarkText }}</div>
+    </div>
+    @if (session(); as watch) {
+      <p class="meta">
+        {{ 'player.watched' | t: { seconds: watch.actualWatchSeconds } }}
+        @if (watch.usedSpeedUp) { · {{ 'player.speedUpDetected' | t }} }
+        @if (watch.skippedAhead) { · {{ 'player.skipDetected' | t }} }
+      </p>
+    }
+  }
+</section>

@@ -10,6 +10,7 @@ public class Classroom
     public string WhatsAppGroupInviteUrl { get; set; } = string.Empty;
     /// <summary>Comma-separated E.164 phone numbers notified via WhatsApp Cloud API.</summary>
     public string WhatsAppNotifyPhones { get; set; } = string.Empty;
+    public bool DailyWhatsAppReportsEnabled { get; set; } = true;
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public User? Teacher { get; set; }
