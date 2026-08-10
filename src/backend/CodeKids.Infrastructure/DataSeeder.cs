@@ -307,12 +307,22 @@ public static class DataSeeder
                     Id = classroomId,
                     Name = "Rocket Room A",
                     Description = "Starter coding classroom",
-                    TeacherId = teacherId,
                     CourseId = courseExists ? starterCourseId : null,
                     WhatsAppGroupInviteUrl = "",
                     WhatsAppNotifyPhones = "",
                     CreatedAtUtc = DateTimeOffset.UtcNow
                 });
+                if (courseExists)
+                {
+                    dbContext.ClassroomCourses.Add(new ClassroomCourse
+                    {
+                        Id = Guid.NewGuid(),
+                        ClassroomId = classroomId,
+                        CourseId = starterCourseId,
+                        TeacherId = teacherId,
+                        AssignedAtUtc = DateTimeOffset.UtcNow
+                    });
+                }
                 dbContext.ClassroomStudents.Add(new ClassroomStudent
                 {
                     Id = Guid.NewGuid(),

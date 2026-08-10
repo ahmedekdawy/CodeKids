@@ -2,10 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Classroom, Course, ManagedUser } from '../../models';
+import { Classroom, ClassroomCourseAssignment } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
+import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
+
+type ClassroomRow = Classroom & { gradeLabel: string };
 
 @Component({
   selector: 'app-admin-create-classroom',
@@ -16,8 +19,6 @@ import { SortDir, nextSort, sortBy } from '../../sort.util';
 export class AdminCreateClassroomComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
-  readonly teachers = signal<ManagedUser[]>([]);
-  readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
   readonly message = signal('');
   readonly error = signal('');
@@ -25,33 +26,35 @@ export class AdminCreateClassroomComponent {
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
 
+  readonly grades = GRADE_CODES;
+
   classroomName = '';
   classroomDescription = '';
-  classroomTeacherId = '';
-  classroomCourseId = '';
+  readonly classroomGrade = signal<number | ''>('');
   classroomWhatsAppInvite = '';
   classroomWhatsAppPhones = '';
 
   editName = '';
   editDescription = '';
-  editTeacherId = '';
-  editCourseId = '';
+  readonly editGrade = signal<number | ''>('');
   editWhatsAppInvite = '';
   editWhatsAppPhones = '';
+  private editCourses: ClassroomCourseAssignment[] = [];
 
-  readonly sortedClassrooms = computed(() =>
-    sortBy(this.classrooms(), this.sortKey(), this.sortDir())
-  );
+  readonly sortedClassrooms = computed(() => {
+    this.locale.lang();
+    const rows: ClassroomRow[] = this.classrooms().map((room) => ({
+      ...room,
+      gradeLabel: this.gradeLabel(room.grade)
+    }));
+    return sortBy(rows, this.sortKey(), this.sortDir());
+  });
 
   constructor() {
     this.reload();
   }
 
   reload(): void {
-    this.api.getUsers().subscribe((users) => {
-      this.teachers.set(users.filter((u) => u.role === 'Teacher'));
-    });
-    this.api.getCourses().subscribe((courses) => this.courses.set(courses));
     this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
   }
 
@@ -65,14 +68,19 @@ export class AdminCreateClassroomComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
+  gradeLabel(grade: number | null | undefined): string {
+    if (grade == null) return this.locale.t('common.emDash');
+    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  }
+
   createClassroom(): void {
     this.clearStatus();
     this.api
       .createClassroom({
         name: this.classroomName,
         description: this.classroomDescription,
-        teacherId: this.classroomTeacherId || null,
-        courseId: this.classroomCourseId || null,
+        grade: this.classroomGrade() === '' ? null : Number(this.classroomGrade()),
+        courses: [],
         whatsAppGroupInviteUrl: this.classroomWhatsAppInvite,
         whatsAppNotifyPhones: this.classroomWhatsAppPhones
       })
@@ -81,13 +89,12 @@ export class AdminCreateClassroomComponent {
           this.message.set(this.locale.t('admin.classrooms.created'));
           this.classroomName = '';
           this.classroomDescription = '';
-          this.classroomTeacherId = '';
-          this.classroomCourseId = '';
+          this.classroomGrade.set('');
           this.classroomWhatsAppInvite = '';
           this.classroomWhatsAppPhones = '';
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.classrooms.createFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.classrooms.createFailed'))
       });
   }
 
@@ -95,10 +102,15 @@ export class AdminCreateClassroomComponent {
     this.editingId.set(room.id);
     this.editName = room.name;
     this.editDescription = room.description;
-    this.editTeacherId = room.teacherId || '';
-    this.editCourseId = room.courseId || '';
+    this.editGrade.set(room.grade ?? '');
     this.editWhatsAppInvite = room.whatsAppGroupInviteUrl || '';
     this.editWhatsAppPhones = room.whatsAppNotifyPhones || '';
+    const courses = room.courses ?? [];
+    this.editCourses = courses.length
+      ? courses.map((c) => ({ courseId: c.courseId, teacherId: c.teacherId }))
+      : room.courseId
+        ? [{ courseId: room.courseId, teacherId: room.teachers?.[0]?.teacherId || '' }]
+        : [];
   }
 
   cancelEdit(): void {
@@ -111,8 +123,8 @@ export class AdminCreateClassroomComponent {
       .updateClassroom(classroomId, {
         name: this.editName,
         description: this.editDescription,
-        teacherId: this.editTeacherId || null,
-        courseId: this.editCourseId || null,
+        grade: this.editGrade() === '' ? null : Number(this.editGrade()),
+        courses: this.editCourses,
         whatsAppGroupInviteUrl: this.editWhatsAppInvite,
         whatsAppNotifyPhones: this.editWhatsAppPhones
       })
@@ -122,7 +134,7 @@ export class AdminCreateClassroomComponent {
           this.editingId.set(null);
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.classrooms.updateFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.classrooms.updateFailed'))
       });
   }
 
@@ -134,7 +146,7 @@ export class AdminCreateClassroomComponent {
         this.message.set(this.locale.t('admin.classrooms.deleted'));
         this.reload();
       },
-      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.classrooms.deleteFailed'))
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.classrooms.deleteFailed'))
     });
   }
 

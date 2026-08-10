@@ -33,6 +33,31 @@
     </div>
   </section>
 
+  <section class="block">
+    <h3>{{ 'teacher.overview.studentsByGrade' | t }}</h3>
+    <p class="meta">{{ 'teacher.overview.studentsByGradeHint' | t }}</p>
+    @for (group of studentsByGrade(); track group.gradeLabel) {
+      <div class="grade-roster">
+        <div class="grade-roster-head">
+          <strong>{{ group.gradeLabel }}</strong>
+          <span class="meta">{{ 'teacher.overview.studentsCount' | t:{ count: group.students.length } }}</span>
+        </div>
+        @if (group.courseTitles.length) {
+          <p class="meta">{{ 'teacher.overview.coursesForGrade' | t:{ list: group.courseTitles.join(', ') } }}</p>
+        }
+        <ul class="student-name-list">
+          @for (student of group.students; track student.studentId) {
+            <li>{{ student.displayName }}</li>
+          } @empty {
+            <li class="meta">{{ 'common.emDash' | t }}</li>
+          }
+        </ul>
+      </div>
+    } @empty {
+      <p class="meta">{{ 'teacher.overview.noStudentsByGrade' | t }}</p>
+    }
+  </section>
+
   @if (dashboard()?.topWeakLessons?.length) {
     <section class="block">
       <h3>{{ 'teacher.overview.weakLessons' | t }}</h3>
@@ -48,7 +73,7 @@
       <button type="button" class="meeting-row link-row" (click)="loadDiagnosis(room.id)">
         <div>
           <strong>{{ room.name }}</strong>
-          <p class="meta">{{ room.courseTitle || ('common.noCourse' | t) }} · {{ 'teacher.overview.studentsCount' | t:{ count: room.students.length } }}</p>
+          <p class="meta">{{ courseDisplay(room) }} · {{ 'teacher.overview.studentsCount' | t:{ count: room.students.length } }}</p>
         </div>
       </button>
     } @empty {

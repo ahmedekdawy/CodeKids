@@ -7,6 +7,7 @@ import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-
 import { MathPromptEditorComponent } from '../../shared/math-prompt-editor/math-prompt-editor.component';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { formatCourseLabel } from '../../grade.util';
 
 interface OptionDraft {
   text: string;
@@ -73,6 +74,16 @@ export class TeacherQuestionBankComponent {
       Underline: 'qtype.underline'
     };
     return this.locale.t(map[type] ?? type);
+  }
+
+  courseLabel(course: Course): string {
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
+  }
+
+  courseLabelById(courseId: string, fallbackTitle?: string | null): string {
+    const course = this.courses().find((c) => c.id === courseId);
+    if (course) return this.courseLabel(course);
+    return formatCourseLabel((k, p) => this.locale.t(k, p), fallbackTitle, null);
   }
 
   onCourseChange(): void {

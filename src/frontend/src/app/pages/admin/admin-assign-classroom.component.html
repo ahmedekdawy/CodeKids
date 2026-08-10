@@ -13,56 +13,70 @@
     <form class="meeting-form" (ngSubmit)="assignClassroom()">
       <label>
         {{ 'common.classroom' | t }}
-        <select [(ngModel)]="assignClassroomId" name="assignClassroomId">
+        <select
+          [ngModel]="assignClassroomId()"
+          name="assignClassroomId"
+          (ngModelChange)="onClassroomChange($event)"
+        >
           <option value="">{{ 'common.select' | t }}</option>
           @for (room of classrooms(); track room.id) {
             <option [value]="room.id">{{ room.name }}</option>
           }
         </select>
       </label>
-      <label>
-        {{ 'common.teacher' | t }}
-        <select [(ngModel)]="assignTeacherId" name="assignTeacherId">
-          <option value="">{{ 'common.unassigned' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        {{ 'common.course' | t }}
-        <select [(ngModel)]="assignCourseId" name="assignCourseId">
-          <option value="">{{ 'common.none' | t }}</option>
-          @for (course of courses(); track course.id) {
-            <option [value]="course.id">{{ course.title }}</option>
-          }
-        </select>
-      </label>
-      <button type="submit">{{ 'admin.assign.save' | t }}</button>
-    </form>
-  </section>
 
-  <section class="block">
-    <h3>{{ 'admin.assign.list' | t }}</h3>
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th class="sortable" (click)="setSort('name')">{{ 'common.classroom' | t }} <span class="sort-mark">{{ sortMark('name') }}</span></th>
-            <th class="sortable" (click)="setSort('teacherName')">{{ 'common.teacher' | t }} <span class="sort-mark">{{ sortMark('teacherName') }}</span></th>
-            <th class="sortable" (click)="setSort('courseTitle')">{{ 'common.course' | t }} <span class="sort-mark">{{ sortMark('courseTitle') }}</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (room of sortedClassrooms(); track room.id) {
-            <tr>
-              <td>{{ room.name }}</td>
-              <td>{{ room.teacherName || ('common.emDash' | t) }}</td>
-              <td>{{ room.courseTitle || ('common.emDash' | t) }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+      @if (selectedClassroom(); as room) {
+        <p class="meta">
+          {{ 'common.grade' | t }}: {{ gradeLabel(room.grade) }}
+        </p>
+      }
+
+      <div class="course-teacher-block">
+        <div class="course-teacher-head">
+          <strong>{{ 'admin.classrooms.coursesTeachers' | t }}</strong>
+          <button type="button" class="ghost-btn" (click)="addCourseRow()" [disabled]="!assignClassroomId()">
+            {{ 'admin.classrooms.addCourse' | t }}
+          </button>
+        </div>
+        <p class="meta">{{ 'admin.classrooms.coursesTeachersHint' | t }}</p>
+        @for (row of courseRows(); track $index; let i = $index) {
+          <div class="course-teacher-row">
+            <label>
+              {{ 'common.course' | t }}
+              <select
+                [ngModel]="row.courseId"
+                [name]="'aCourse-' + i"
+                [disabled]="!assignClassroomId()"
+                (ngModelChange)="onRowCourseChange(i, $event)"
+              >
+                <option value="">{{ 'common.select' | t }}</option>
+                @for (course of courseOptions(); track course.id) {
+                  <option [value]="course.id">{{ courseOptionLabel(course) }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              {{ 'common.teacher' | t }}
+              <select
+                [ngModel]="row.teacherId"
+                [name]="'aTeacher-' + i"
+                [disabled]="!assignClassroomId()"
+                (ngModelChange)="onRowTeacherChange(i, $event)"
+              >
+                <option value="">{{ 'common.select' | t }}</option>
+                @for (teacher of teachers(); track teacher.id) {
+                  <option [value]="teacher.id">{{ teacher.displayName }}</option>
+                }
+              </select>
+            </label>
+            <button type="button" class="ghost-btn" (click)="removeCourseRow(i)" [disabled]="!assignClassroomId()">
+              {{ 'common.remove' | t }}
+            </button>
+          </div>
+        }
+      </div>
+
+      <button type="submit" [disabled]="!assignClassroomId()">{{ 'admin.assign.save' | t }}</button>
+    </form>
   </section>
 </div>

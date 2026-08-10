@@ -120,12 +120,13 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
     public async Task<AssignmentDto> Handle(CreateAssignmentCommand command, CancellationToken cancellationToken)
     {
         var classroom = await dbContext.Classrooms
+            .Include(x => x.Courses)
             .FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 
-        if (classroom.TeacherId != command.TeacherUserId)
+        if (!classroom.Courses.Any(t => t.TeacherId == command.TeacherUserId))
         {
-            throw new InvalidOperationException("Only the assigned classroom teacher can create assignments.");
+            throw new InvalidOperationException("Only an assigned classroom teacher can create assignments.");
         }
 
         var title = command.Title.Trim();
@@ -189,6 +190,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
         var assignment = await dbContext.Assignments
             .AsNoTracking()
             .Include(x => x.Classroom)
+                .ThenInclude(c => c!.Courses)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -231,6 +233,8 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
         var assignments = await dbContext.Assignments
             .AsNoTracking()
             .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
+            .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
@@ -248,7 +252,7 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
 
         if (isTeacher)
         {
-            assignments = assignments.Where(x => x.Classroom?.TeacherId == query.ViewerUserId).ToList();
+            assignments = assignments.Where(x => x.Classroom?.Courses.Any(t => t.TeacherId == query.ViewerUserId) == true).ToList();
         }
         else if (isStudent)
         {
@@ -286,6 +290,8 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
     {
         var assignment = await dbContext.Assignments
             .Include(x => x.Questions)
+            .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
             .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
             .FirstOrDefaultAsync(x => x.Id == command.AssignmentId, cancellationToken)
@@ -428,10 +434,11 @@ public sealed class GetAssignmentSubmissionsQueryHandler(IAppDbContext dbContext
     {
         var assignment = await dbContext.Assignments
             .Include(x => x.Classroom)
+                .ThenInclude(c => c!.Courses)
             .FirstOrDefaultAsync(x => x.Id == query.AssignmentId, cancellationToken)
             ?? throw new InvalidOperationException("Assignment not found.");
 
-        if (assignment.Classroom?.TeacherId != query.TeacherUserId)
+        if (assignment.Classroom?.Courses.Any(t => t.TeacherId == query.TeacherUserId) != true)
         {
             throw new InvalidOperationException("Only the classroom teacher can review submissions.");
         }
@@ -458,13 +465,14 @@ public sealed class GradeSubmissionCommandHandler(IAppDbContext dbContext)
         var submission = await dbContext.AssignmentSubmissions
             .Include(x => x.Answers)
             .Include(x => x.Assignment!)
-                .ThenInclude(a => a.Classroom)
+                .ThenInclude(a => a.Classroom!)
+                .ThenInclude(c => c.Courses)
             .Include(x => x.Assignment!)
                 .ThenInclude(a => a.Questions)
             .FirstOrDefaultAsync(x => x.Id == command.SubmissionId, cancellationToken)
             ?? throw new InvalidOperationException("Submission not found.");
 
-        if (submission.Assignment?.Classroom?.TeacherId != command.TeacherUserId)
+        if (submission.Assignment?.Classroom?.Courses.Any(t => t.TeacherId == command.TeacherUserId) != true)
         {
             throw new InvalidOperationException("Only the classroom teacher can grade submissions.");
         }

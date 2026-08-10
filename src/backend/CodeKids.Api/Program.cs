@@ -5,6 +5,7 @@ using CodeKids.Domain.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using CodeKids.Application.Features.Admin;
 using CodeKids.Application.Features.Analytics;
+using CodeKids.Application.Features.Appointments;
 using CodeKids.Application.Features.Assignments;
 using CodeKids.Application.Features.Auth;
 using CodeKids.Application.Features.Avatars;
@@ -82,7 +83,7 @@ builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDt
 builder.Services.AddScoped<IQueryHandler<GetSiteSettingsQuery, SiteSettingsDto>, GetSiteSettingsQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateSiteSettingsCommand, SiteSettingsDto>, UpdateSiteSettingsCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UploadSiteImageCommand, SiteSettingsDto>, UploadSiteImageCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<CreateCourseCommand, CourseSummaryDto>, CreateCourseCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateCourseCommand, IReadOnlyList<CourseSummaryDto>>, CreateCourseCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateCourseCommand, CourseSummaryDto>, UpdateCourseCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteCourseCommand, bool>, DeleteCourseCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>>, GetLessonsQueryHandler>();
@@ -103,6 +104,10 @@ builder.Services.AddScoped<IQueryHandler<GetClassroomDiagnosisQuery, ClassroomDi
 builder.Services.AddScoped<ICommandHandler<RunDailyWhatsAppReportsCommand, DailyWhatsAppReportsResultDto>, RunDailyWhatsAppReportsCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<CreateMeetingCommand, LiveSessionDto>, CreateMeetingCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetMeetingsQuery, IReadOnlyList<LiveSessionDto>>, GetMeetingsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListAppointmentsQuery, IReadOnlyList<AppointmentDto>>, ListAppointmentsQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateAppointmentCommand, AppointmentDto>, CreateAppointmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateAppointmentCommand, AppointmentDto>, UpdateAppointmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteAppointmentCommand, bool>, DeleteAppointmentCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetZoomConnectUrlQuery, ZoomConnectUrlDto>, GetZoomConnectUrlQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<CompleteZoomConnectCommand, ZoomConnectResultDto>, CompleteZoomConnectCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetZoomStatusQuery, ZoomConnectionStatus>, GetZoomStatusQueryHandler>();
@@ -375,7 +380,7 @@ app.MapPost("/api/admin/site-settings/upload", async (
 
 app.MapPost("/api/admin/courses", async (
     CreateCourseRequest request,
-    ICommandHandler<CreateCourseCommand, CourseSummaryDto> handler,
+    ICommandHandler<CreateCourseCommand, IReadOnlyList<CourseSummaryDto>> handler,
     CancellationToken cancellationToken) =>
 {
     try
@@ -388,7 +393,7 @@ app.MapPost("/api/admin/courses", async (
                 request.AgeMin,
                 request.AgeMax,
                 request.Term,
-                request.Grade,
+                request.Grades,
                 request.SortOrder),
             cancellationToken));
     }
@@ -441,6 +446,77 @@ app.MapDelete("/api/admin/courses/{courseId:guid}", async (
     }
 }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+app.MapGet("/api/admin/appointments", async (
+    DateTimeOffset? fromUtc,
+    DateTimeOffset? toUtc,
+    IQueryHandler<ListAppointmentsQuery, IReadOnlyList<AppointmentDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    return Results.Ok(await handler.Handle(new ListAppointmentsQuery(fromUtc, toUtc), cancellationToken));
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapPost("/api/admin/appointments", async (
+    CreateAppointmentRequest request,
+    ICommandHandler<CreateAppointmentCommand, AppointmentDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return Results.Ok(await handler.Handle(
+            new CreateAppointmentCommand(
+                request.TeacherId,
+                request.CourseId,
+                request.StartsAtUtc,
+                request.EndsAtUtc,
+                request.Notes),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapPut("/api/admin/appointments/{appointmentId:guid}", async (
+    Guid appointmentId,
+    UpdateAppointmentRequest request,
+    ICommandHandler<UpdateAppointmentCommand, AppointmentDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return Results.Ok(await handler.Handle(
+            new UpdateAppointmentCommand(
+                appointmentId,
+                request.TeacherId,
+                request.CourseId,
+                request.StartsAtUtc,
+                request.EndsAtUtc,
+                request.Notes),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapDelete("/api/admin/appointments/{appointmentId:guid}", async (
+    Guid appointmentId,
+    ICommandHandler<DeleteAppointmentCommand, bool> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        await handler.Handle(new DeleteAppointmentCommand(appointmentId), cancellationToken);
+        return Results.NoContent();
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
 app.MapGet("/api/admin/users", async (
     string? role,
     IQueryHandler<ListManagedUsersQuery, IReadOnlyList<ManagedUserDto>> handler,
@@ -466,7 +542,10 @@ app.MapPost("/api/admin/users", async (
                 request.Password,
                 request.Role,
                 request.ParentId,
-                request.MobilePhone),
+                request.Grade,
+                request.MobilePhone,
+                request.WorkShift,
+                request.Stages),
             cancellationToken));
     }
     catch (Exception ex)
@@ -494,7 +573,10 @@ app.MapPut("/api/admin/users/{userId:guid}", async (
                 request.Role,
                 request.ParentId,
                 request.Password,
-                request.MobilePhone),
+                request.Grade,
+                request.MobilePhone,
+                request.WorkShift,
+                request.Stages),
             cancellationToken));
     }
     catch (Exception ex)
@@ -542,8 +624,8 @@ app.MapPost("/api/classrooms", async (
             new CreateClassroomCommand(
                 request.Name,
                 request.Description,
-                request.TeacherId,
-                request.CourseId,
+                request.Grade,
+                request.Courses,
                 request.WhatsAppGroupInviteUrl,
                 request.WhatsAppNotifyPhones),
             cancellationToken));
@@ -567,8 +649,8 @@ app.MapPut("/api/classrooms/{classroomId:guid}", async (
                 classroomId,
                 request.Name,
                 request.Description,
-                request.TeacherId,
-                request.CourseId,
+                request.Grade,
+                request.Courses,
                 request.WhatsAppGroupInviteUrl,
                 request.WhatsAppNotifyPhones),
             cancellationToken));
@@ -604,7 +686,7 @@ app.MapPut("/api/classrooms/{classroomId:guid}/assignments", async (
     try
     {
         return Results.Ok(await handler.Handle(
-            new UpdateClassroomAssignmentsCommand(classroomId, request.TeacherId, request.CourseId),
+            new UpdateClassroomAssignmentsCommand(classroomId, request.Courses),
             cancellationToken));
     }
     catch (Exception ex)

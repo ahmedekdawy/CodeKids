@@ -1,6 +1,6 @@
 <div class="panel-page">
-  <h2>{{ 'admin.users.title' | t }}</h2>
-  <p class="meta">{{ 'admin.users.subtitle' | t }}</p>
+  <h2>{{ meta().titleKey | t }}</h2>
+  <p class="meta">{{ meta().subtitleKey | t }}</p>
 
   @if (message()) {
     <p class="feedback ok">{{ message() }}</p>
@@ -10,55 +10,136 @@
   }
 
   <section class="block">
-    <h3>{{ 'admin.users.create' | t }}</h3>
+    <h3>{{ meta().createKey | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createUser()">
       <label>{{ 'common.name' | t }} <input [(ngModel)]="userName" name="userName" required /></label>
-      <label>{{ 'common.email' | t }} <input [(ngModel)]="userEmail" name="userEmail" type="email" required /></label>
+      <label>{{ 'common.email' | t }} <input [(ngModel)]="userEmail" name="userEmail" type="email" [placeholder]="'common.optional' | t" /></label>
+      <label>{{ 'common.mobile' | t }} <input [(ngModel)]="userMobile" name="userMobile" [placeholder]="'admin.users.mobilePlaceholder' | t" /></label>
       <label>{{ 'common.password' | t }} <input [(ngModel)]="userPassword" name="userPassword" type="password" required /></label>
-      <label>
-        {{ 'common.role' | t }}
-        <select [(ngModel)]="userRole" name="userRole">
-          <option value="Teacher">{{ roleLabel('Teacher') }}</option>
-          <option value="Student">{{ roleLabel('Student') }}</option>
-          <option value="Parent">{{ roleLabel('Parent') }}</option>
-          <option value="SuperAdmin">{{ roleLabel('SuperAdmin') }}</option>
-        </select>
-      </label>
-      <label>{{ 'admin.users.parentIdStudents' | t }} <input [(ngModel)]="userParentId" name="userParentId" /></label>
-      <button type="submit">{{ 'admin.users.create' | t }}</button>
+      @if (managedRole() === 'Teacher') {
+        <label>
+          {{ 'admin.users.workShift' | t }}
+          <select [(ngModel)]="userWorkShift" name="userWorkShift">
+            @for (shift of workShifts; track shift) {
+              <option [ngValue]="shift">{{ workShiftLabel(shift) }}</option>
+            }
+          </select>
+        </label>
+        <label class="stage-multi">
+          {{ 'admin.users.stages' | t }}
+          <app-searchable-multi-select
+            [(ngModel)]="userStages"
+            name="userStages"
+            [options]="stageOptions()"
+            [placeholder]="'admin.users.stages' | t"
+          />
+          <span class="meta">{{ 'admin.users.stagesHint' | t }}</span>
+        </label>
+      }
+      <button type="submit">{{ meta().createKey | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>{{ 'admin.users.list' | t }}</h3>
+    <h3>{{ meta().listKey | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.name' | t }}
+        <input
+          [ngModel]="filterName()"
+          name="filterName"
+          (ngModelChange)="setFilterName($event)"
+          [placeholder]="'common.search' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.email' | t }}
+        <input
+          [ngModel]="filterEmail()"
+          name="filterEmail"
+          (ngModelChange)="setFilterEmail($event)"
+          [placeholder]="'common.search' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.mobile' | t }}
+        <input
+          [ngModel]="filterMobile()"
+          name="filterMobile"
+          (ngModelChange)="setFilterMobile($event)"
+          [placeholder]="'common.search' | t"
+        />
+      </label>
+      @if (managedRole() === 'Parent') {
+        <label>
+          {{ 'admin.parents.parentFilter' | t }}
+          <input
+            [ngModel]="filterParent()"
+            name="filterParent"
+            (ngModelChange)="setFilterParent($event)"
+            [placeholder]="'common.search' | t"
+          />
+        </label>
+      }
+      <label>
+        {{ 'common.rowsPerPage' | t }}
+        <select [ngModel]="pageSize()" name="pageSize" (ngModelChange)="setPageSize($event)">
+          @for (size of pageSizeOptions; track size) {
+            <option [ngValue]="size">{{ size }}</option>
+          }
+        </select>
+      </label>
+      @if (hasActiveFilters()) {
+        <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
+      }
+      <span class="meta">{{ 'common.ofShown' | t: { shown: pagedUsers().length, total: totalFiltered() } }}</span>
+    </div>
+
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
             <th class="sortable" (click)="setSort('displayName')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('displayName') }}</span></th>
             <th class="sortable" (click)="setSort('email')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('email') }}</span></th>
-            <th class="sortable" (click)="setSort('role')">{{ 'common.role' | t }} <span class="sort-mark">{{ sortMark('role') }}</span></th>
-            <th class="sortable" (click)="setSort('totalXp')">{{ 'common.xp' | t }} <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
+            <th class="sortable" (click)="setSort('mobilePhone')">{{ 'common.mobile' | t }} <span class="sort-mark">{{ sortMark('mobilePhone') }}</span></th>
+            @if (managedRole() === 'Teacher') {
+              <th>{{ 'admin.users.workShift' | t }}</th>
+              <th>{{ 'admin.users.stages' | t }}</th>
+            }
             <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
-          @for (user of sortedUsers(); track user.id) {
+          @for (user of pagedUsers(); track user.id) {
             <tr>
               @if (editingId() === user.id) {
                 <td><input [(ngModel)]="editName" [name]="'editName-' + user.id" /></td>
                 <td><input [(ngModel)]="editEmail" [name]="'editEmail-' + user.id" /></td>
                 <td>
-                  <select [(ngModel)]="editRole" [name]="'editRole-' + user.id">
-                    <option value="Teacher">{{ roleLabel('Teacher') }}</option>
-                    <option value="Student">{{ roleLabel('Student') }}</option>
-                    <option value="Parent">{{ roleLabel('Parent') }}</option>
-                    <option value="SuperAdmin">{{ roleLabel('SuperAdmin') }}</option>
-                  </select>
-                  <input [(ngModel)]="editParentId" [name]="'editParent-' + user.id" [placeholder]="'common.parentId' | t" />
-                  <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" [placeholder]="'common.newPasswordOptional' | t" />
+                  <input [(ngModel)]="editMobile" [name]="'editMobile-' + user.id" />
+                  @if (managedRole() !== 'Teacher') {
+                    <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" [placeholder]="'common.newPasswordOptional' | t" />
+                  }
                 </td>
-                <td>{{ user.totalXp }}</td>
+                @if (managedRole() === 'Teacher') {
+                  <td>
+                    <select [(ngModel)]="editWorkShift" [name]="'editShift-' + user.id">
+                      @for (shift of workShifts; track shift) {
+                        <option [ngValue]="shift">{{ workShiftLabel(shift) }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td>
+                    <app-searchable-multi-select
+                      [(ngModel)]="editStages"
+                      [name]="'editStages-' + user.id"
+                      [options]="stageOptions()"
+                      [placeholder]="'admin.users.stages' | t"
+                      [compact]="true"
+                    />
+                    <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" [placeholder]="'common.newPasswordOptional' | t" />
+                  </td>
+                }
                 <td>
                   <div class="row-actions">
                     <button type="button" (click)="saveEdit(user.id)">{{ 'common.save' | t }}</button>
@@ -67,9 +148,12 @@
                 </td>
               } @else {
                 <td>{{ user.displayName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ roleLabel(user.role) }}</td>
-                <td>{{ user.totalXp }}</td>
+                <td>{{ user.email || ('common.emDash' | t) }}</td>
+                <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
+                @if (managedRole() === 'Teacher') {
+                  <td>{{ workShiftLabel(user.workShift) }}</td>
+                  <td>{{ stagesLabel(user.stages) }}</td>
+                }
                 <td>
                   <div class="row-actions">
                     <app-icon-action-button kind="edit" (action)="startEdit(user)" />
@@ -78,9 +162,23 @@
                 </td>
               }
             </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="managedRole() === 'Teacher' ? 6 : 4">{{ 'common.noData' | t }}</td>
+            </tr>
           }
         </tbody>
       </table>
+    </div>
+
+    <div class="list-pager">
+      <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ 'common.previous' | t }}
+      </button>
+      <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+      <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ 'common.next' | t }}
+      </button>
     </div>
   </section>
 </div>

@@ -73,7 +73,7 @@
           {{ 'common.course' | t }}
           <select [(ngModel)]="selectedCourseId" name="courseId" (ngModelChange)="onCourseChange()">
             @for (course of courses(); track course.id) {
-              <option [value]="course.id">{{ course.title }}</option>
+              <option [value]="course.id">{{ courseLabel(course) }}</option>
             }
           </select>
         </label>
@@ -105,7 +105,7 @@
           <select [(ngModel)]="lessonFilterCourseId" name="lessonFilterCourse" (ngModelChange)="onLessonFilterCourseChange()">
             <option value="">{{ 'videos.allCourses' | t }}</option>
             @for (course of courses(); track course.id) {
-              <option [value]="course.id">{{ course.title }}</option>
+              <option [value]="course.id">{{ courseLabel(course) }}</option>
             }
           </select>
         </label>
@@ -150,7 +150,7 @@
                 (keydown.space)="$event.preventDefault(); playLessonVideo(video)"
               >
                 <td><strong>{{ video.title }}</strong></td>
-                <td>{{ video.courseTitle }}</td>
+                <td>{{ courseLabelById(video.courseId, video.courseTitle) }}</td>
                 <td>{{ video.lessonTitle }}</td>
                 <td class="mono">{{ video.fileName }}</td>
                 <td>{{ formatBytes(video.sizeBytes) }}</td>

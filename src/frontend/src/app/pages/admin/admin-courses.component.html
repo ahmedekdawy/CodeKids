@@ -24,16 +24,16 @@
           }
         </select>
       </label>
-      <label>
+      <label class="grade-multi">
         {{ 'common.grade' | t }}
-        <select [(ngModel)]="courseGrade" name="courseGrade">
-          <option [ngValue]="null">{{ 'common.allGrades' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+        <app-searchable-multi-select
+          [(ngModel)]="courseGrades"
+          name="courseGrades"
+          [options]="gradeOptions()"
+          [placeholder]="'common.allGrades' | t"
+        />
+        <span class="meta">{{ 'admin.courses.allHint' | t }}</span>
       </label>
-      <p class="meta">{{ 'admin.courses.allHint' | t }}</p>
       <label>{{ 'common.ageMin' | t }} <input type="number" [(ngModel)]="courseAgeMin" name="courseAgeMin" /></label>
       <label>{{ 'common.ageMax' | t }} <input type="number" [(ngModel)]="courseAgeMax" name="courseAgeMax" /></label>
       <label>{{ 'common.sort' | t }} <input type="number" [(ngModel)]="courseSort" name="courseSort" /></label>
@@ -43,6 +43,26 @@
 
   <section class="block">
     <h3>{{ 'admin.courses.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.grade' | t }}
+        <select
+          [ngModel]="filterGrade()"
+          name="courseFilterGrade"
+          (ngModelChange)="onFilterGradeChange($event)"
+        >
+          <option value="">{{ 'common.all' | t }}</option>
+          <option value="all">{{ 'common.allGrades' | t }}</option>
+          @for (g of grades; track g) {
+            <option [value]="g">{{ gradeLabel(g) }}</option>
+          }
+        </select>
+      </label>
+      @if (filterGrade() !== '') {
+        <button type="button" class="ghost-btn" (click)="clearGradeFilter()">{{ 'common.clearFilters' | t }}</button>
+      }
+      <span class="meta">{{ 'common.ofShown' | t: { shown: sortedCourses().length, total: courses().length } }}</span>
+    </div>
     <div class="table-wrap">
       <table class="data-table">
         <thead>

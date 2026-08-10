@@ -1,0 +1,121 @@
+<div class="panel-page">
+  <h2>{{ 'admin.appointments.title' | t }}</h2>
+  <p class="meta">{{ 'admin.appointments.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>{{ (editingId() ? 'admin.appointments.edit' : 'admin.appointments.create') | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="createOrSave()">
+      <label>
+        {{ 'common.teacher' | t }}
+        <select [(ngModel)]="teacherId" name="teacherId" required>
+          <option value="">{{ 'common.select' | t }}</option>
+          @for (teacher of teachers(); track teacher.id) {
+            <option [value]="teacher.id">{{ teacher.displayName }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'common.course' | t }}
+        <select [(ngModel)]="courseId" name="courseId" required>
+          <option value="">{{ 'common.select' | t }}</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ courseLabel(course) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.appointments.from' | t }}
+        <input
+          type="datetime-local"
+          [ngModel]="startsAtLocal"
+          name="startsAtLocal"
+          (ngModelChange)="onStartChange($event)"
+          required
+        />
+      </label>
+      <label>
+        {{ 'admin.appointments.to' | t }}
+        <input type="datetime-local" [(ngModel)]="endsAtLocal" name="endsAtLocal" required />
+        <span class="meta">{{ 'admin.appointments.sessionHint' | t: { minutes: sessionMinutes } }}</span>
+      </label>
+      <label>
+        {{ 'common.description' | t }}
+        <input [(ngModel)]="notes" name="notes" [placeholder]="'common.optional' | t" />
+      </label>
+      <div class="form-actions">
+        <button type="submit">{{ (editingId() ? 'common.save' : 'admin.appointments.create') | t }}</button>
+        @if (editingId()) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  <section class="block">
+    <div class="calendar-toolbar">
+      <h3>{{ 'admin.appointments.calendar' | t }}</h3>
+      <div class="calendar-nav">
+        <button type="button" class="ghost-btn" (click)="prevWeek()">{{ 'common.previous' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="goThisWeek()">{{ 'admin.appointments.thisWeek' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="nextWeek()">{{ 'common.next' | t }}</button>
+        <span class="meta">{{ weekLabel() }}</span>
+      </div>
+    </div>
+
+    <div class="week-day-tabs" role="tablist">
+      @for (day of weekDays(); track day.key) {
+        <button
+          type="button"
+          class="week-day-tab"
+          [class.active]="selectedDayKey() === day.key"
+          (click)="selectDay(day.key)"
+        >
+          {{ day.label }}
+          @if (dayCount(day.key)) {
+            <span class="day-count">{{ dayCount(day.key) }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    <div class="day-calendar">
+      <div class="day-hours" aria-hidden="true">
+        @for (hour of hours; track hour) {
+          <div class="day-hour" [style.height.px]="pxPerHour">{{ hourLabel(hour) }}</div>
+        }
+      </div>
+      <div class="day-grid" [style.height.px]="calendarHeight">
+        @for (hour of hours; track hour) {
+          <div class="day-grid-line" [style.top.px]="(hour - hourStart) * pxPerHour"></div>
+        }
+        @for (block of selectedDayBlocks(); track block.appointment.id) {
+          <div
+            class="calendar-event"
+            [style.top]="blockStyle(block).top"
+            [style.height]="blockStyle(block).height"
+            [style.left]="blockStyle(block).left"
+            [style.width]="blockStyle(block).width"
+            [title]="appointmentLabel(block.appointment)"
+          >
+            <div class="calendar-event-time">{{ formatTimeRange(block.appointment) }}</div>
+            <div class="calendar-event-time">{{ appointmentLabel(block.appointment) }}</div>
+            <div class="row-actions">
+              <app-icon-action-button kind="edit" (action)="startEdit(block.appointment)" />
+              <app-icon-action-button kind="delete" variant="danger" (action)="deleteAppointment(block.appointment)" />
+            </div>
+          </div>
+        }
+        @if (selectedDayBlocks().length === 0) {
+          <p class="calendar-empty">{{ 'admin.appointments.emptyDay' | t }}</p>
+        }
+      </div>
+    </div>
+  </section>
+</div>

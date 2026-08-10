@@ -17,7 +17,9 @@ public interface IAppDbContext
     DbSet<Badge> Badges { get; }
     DbSet<UserBadge> UserBadges { get; }
     DbSet<LiveSession> LiveSessions { get; }
+    DbSet<Appointment> Appointments { get; }
     DbSet<Classroom> Classrooms { get; }
+    DbSet<ClassroomCourse> ClassroomCourses { get; }
     DbSet<ClassroomStudent> ClassroomStudents { get; }
     DbSet<Assignment> Assignments { get; }
     DbSet<AssignmentQuestion> AssignmentQuestions { get; }

@@ -16,12 +16,15 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
 })
 export class AdminShellComponent {
   readonly navItems: PanelNavItem[] = [
-    { labelKey: 'nav.admin.users', path: '/admin/users', icon: 'U' },
+    { labelKey: 'nav.admin.admins', path: '/admin/admins', icon: 'A' },
+    { labelKey: 'nav.admin.teachers', path: '/admin/teachers', icon: 'T' },
+    { labelKey: 'nav.admin.parents', path: '/admin/parents', icon: 'P' },
     { labelKey: 'nav.admin.students', path: '/admin/students', icon: 'S' },
     { labelKey: 'nav.admin.courses', path: '/admin/courses', icon: 'C' },
     { labelKey: 'nav.admin.classrooms', path: '/admin/create-classroom', icon: 'R' },
-    { labelKey: 'nav.admin.assign', path: '/admin/assign-classroom', icon: 'A' },
+    { labelKey: 'nav.admin.assign', path: '/admin/assign-classroom', icon: 'G' },
     { labelKey: 'nav.admin.enroll', path: '/admin/enroll-student', icon: 'E' },
+    { labelKey: 'nav.admin.appointments', path: '/admin/appointments', icon: 'K' },
     { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B' }
   ];
 }

@@ -199,11 +199,12 @@ public sealed class AttachAssignmentSolutionVideoCommandHandler(IAppDbContext db
         CancellationToken cancellationToken)
     {
         var assignment = await dbContext.Assignments
-            .Include(x => x.Classroom)
+            .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
             .FirstOrDefaultAsync(x => x.Id == command.AssignmentId, cancellationToken)
             ?? throw new InvalidOperationException("Assignment not found.");
 
-        if (assignment.Classroom?.TeacherId != command.TeacherUserId
+        if (assignment.Classroom?.Courses.Any(t => t.TeacherId == command.TeacherUserId) != true
             && assignment.CreatedByUserId != command.TeacherUserId)
         {
             throw new InvalidOperationException("Only the classroom teacher can attach a solution video.");
@@ -441,7 +442,7 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
             .Where(x => x.SolutionVideoMediaAssetId != null)
             .Where(x => isAdmin
                 || x.CreatedByUserId == query.TeacherUserId
-                || x.Classroom!.TeacherId == query.TeacherUserId
+                || x.Classroom!.Courses.Any(t => t.TeacherId == query.TeacherUserId)
                 || x.SolutionVideo!.UploadedByUserId == query.TeacherUserId)
             .OrderByDescending(x => x.SolutionVideo!.CreatedAtUtc)
             .Select(x => new TeacherSolutionVideoDto(
@@ -495,7 +496,8 @@ public sealed class DeleteAssignmentSolutionVideoCommandHandler(IAppDbContext db
     public async Task<bool> Handle(DeleteAssignmentSolutionVideoCommand command, CancellationToken cancellationToken)
     {
         var assignment = await dbContext.Assignments
-            .Include(x => x.Classroom)
+            .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
             .Include(x => x.SolutionVideo)
             .FirstOrDefaultAsync(x => x.Id == command.AssignmentId, cancellationToken)
             ?? throw new InvalidOperationException("Assignment not found.");
@@ -509,7 +511,7 @@ public sealed class DeleteAssignmentSolutionVideoCommandHandler(IAppDbContext db
             x => x.Id == command.TeacherUserId && x.Role == UserRole.SuperAdmin,
             cancellationToken);
         if (!isAdmin
-            && assignment.Classroom?.TeacherId != command.TeacherUserId
+            && assignment.Classroom?.Courses.Any(t => t.TeacherId == command.TeacherUserId) != true
             && assignment.CreatedByUserId != command.TeacherUserId
             && assignment.SolutionVideo?.UploadedByUserId != command.TeacherUserId)
         {

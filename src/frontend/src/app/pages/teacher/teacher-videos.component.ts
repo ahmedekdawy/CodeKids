@@ -13,6 +13,7 @@ import {
   TeacherSolutionVideo,
   WatchSession
 } from '../../models';
+import { formatCourseLabel } from '../../grade.util';
 
 type VideoTab = 'lesson' | 'solution' | 'analytics';
 
@@ -137,6 +138,16 @@ export class TeacherVideosComponent {
 
   lessonsForCourse(courseId = this.selectedCourseId): CourseLesson[] {
     return this.courses().find((c) => c.id === courseId)?.lessons || [];
+  }
+
+  courseLabel(course: Course): string {
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
+  }
+
+  courseLabelById(courseId: string, fallbackTitle?: string | null): string {
+    const course = this.courses().find((c) => c.id === courseId);
+    if (course) return this.courseLabel(course);
+    return formatCourseLabel((k, p) => this.locale.t(k, p), fallbackTitle, null);
   }
 
   lessonFilterOptions(): { id: string; title: string }[] {

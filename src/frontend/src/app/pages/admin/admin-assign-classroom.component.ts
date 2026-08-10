@@ -2,9 +2,15 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Classroom, Course, ManagedUser } from '../../models';
+import { Classroom, ClassroomCourseAssignment, Course, ManagedUser } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
-import { SortDir, nextSort, sortBy } from '../../sort.util';
+import {
+  courseMatchesClassroomGrade,
+  formatGradeLabel,
+  teacherCoversGrade
+} from '../../grade.util';
+
+type CourseTeacherRow = { courseId: string; teacherId: string };
 
 @Component({
   selector: 'app-admin-assign-classroom',
@@ -15,21 +21,52 @@ import { SortDir, nextSort, sortBy } from '../../sort.util';
 export class AdminAssignClassroomComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
-  readonly teachers = signal<ManagedUser[]>([]);
-  readonly courses = signal<Course[]>([]);
+  readonly allTeachers = signal<ManagedUser[]>([]);
+  readonly allCourses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
   readonly message = signal('');
   readonly error = signal('');
-  readonly sortKey = signal('name');
-  readonly sortDir = signal<SortDir>('asc');
 
-  assignClassroomId = '';
-  assignTeacherId = '';
-  assignCourseId = '';
+  readonly assignClassroomId = signal('');
+  readonly courseRows = signal<CourseTeacherRow[]>([{ courseId: '', teacherId: '' }]);
 
-  readonly sortedClassrooms = computed(() =>
-    sortBy(this.classrooms(), this.sortKey(), this.sortDir())
+  readonly selectedClassroom = computed(() =>
+    this.classrooms().find((c) => c.id === this.assignClassroomId()) ?? null
   );
+
+  readonly selectedGrade = computed(() => this.selectedClassroom()?.grade ?? null);
+
+  readonly teachers = computed(() => {
+    const grade = this.selectedGrade();
+    const selectedIds = new Set(
+      this.courseRows()
+        .map((r) => r.teacherId)
+        .filter(Boolean)
+    );
+    return this.allTeachers()
+      .filter((t) => selectedIds.has(t.id) || teacherCoversGrade(t.stages, grade))
+      .slice()
+      .sort((a, b) => a.displayName.localeCompare(b.displayName));
+  });
+
+  readonly courseOptions = computed(() => {
+    this.locale.lang();
+    const grade = this.selectedGrade();
+    const selectedIds = new Set(
+      this.courseRows()
+        .map((r) => r.courseId)
+        .filter(Boolean)
+    );
+    return this.allCourses()
+      .filter((c) => selectedIds.has(c.id) || courseMatchesClassroomGrade(c.grade, grade))
+      .slice()
+      .sort((a, b) => {
+        const ga = a.grade ?? 999;
+        const gb = b.grade ?? 999;
+        if (ga !== gb) return ga - gb;
+        return a.title.localeCompare(b.title);
+      });
+  });
 
   constructor() {
     this.reload();
@@ -37,40 +74,127 @@ export class AdminAssignClassroomComponent {
 
   reload(): void {
     this.api.getUsers().subscribe((users) => {
-      this.teachers.set(users.filter((u) => u.role === 'Teacher'));
+      this.allTeachers.set(users.filter((u) => u.role === 'Teacher'));
     });
-    this.api.getCourses().subscribe((courses) => this.courses.set(courses));
-    this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
+    this.api.getCourses().subscribe((courses) => this.allCourses.set(courses));
+    this.api.getClassrooms().subscribe((classrooms) => {
+      this.classrooms.set(classrooms);
+      const selectedId = this.assignClassroomId();
+      if (selectedId) this.loadRowsFromClassroom(selectedId, classrooms);
+    });
   }
 
-  setSort(key: string): void {
-    this.sortDir.set(nextSort(this.sortKey(), key, this.sortDir()));
-    this.sortKey.set(key);
+  courseDisplay(title?: string | null, grade?: number | null): string {
+    if (!title) return '';
+    return `${formatGradeLabel((k, p) => this.locale.t(k, p), grade)} - ${title}`;
   }
 
-  sortMark(key: string): string {
-    if (this.sortKey() !== key) return '';
-    return this.sortDir() === 'asc' ? '↑' : '↓';
+  gradeLabel(grade?: number | null): string {
+    if (grade == null) return this.locale.t('common.none');
+    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  }
+
+  courseOptionLabel(course: Course): string {
+    return this.courseDisplay(course.title, course.grade);
+  }
+
+  addCourseRow(): void {
+    this.courseRows.update((rows) => [...rows, { courseId: '', teacherId: '' }]);
+  }
+
+  removeCourseRow(index: number): void {
+    this.courseRows.update((rows) => {
+      const next = rows.filter((_, i) => i !== index);
+      return next.length ? next : [{ courseId: '', teacherId: '' }];
+    });
+  }
+
+  onClassroomChange(classroomId: string): void {
+    this.assignClassroomId.set(classroomId);
+    this.clearStatus();
+    this.loadRowsFromClassroom(classroomId, this.classrooms());
+  }
+
+  onRowCourseChange(index: number, courseId: string): void {
+    this.courseRows.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, courseId } : row))
+    );
+  }
+
+  onRowTeacherChange(index: number, teacherId: string): void {
+    this.courseRows.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, teacherId } : row))
+    );
   }
 
   assignClassroom(): void {
-    this.message.set('');
-    this.error.set('');
-    if (!this.assignClassroomId) {
+    this.clearStatus();
+    if (!this.assignClassroomId()) {
       this.error.set(this.locale.t('admin.assign.selectClassroom'));
       return;
     }
+    const rows = this.courseRows();
+    if (rows.some((r) => (r.courseId && !r.teacherId) || (!r.courseId && r.teacherId))) {
+      this.error.set(this.locale.t('admin.classrooms.courseTeacherRequired'));
+      return;
+    }
     this.api
-      .assignClassroom(this.assignClassroomId, {
-        teacherId: this.assignTeacherId || null,
-        courseId: this.assignCourseId || null
+      .assignClassroom(this.assignClassroomId(), {
+        courses: this.toAssignments(rows)
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.assign.updated'));
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.assign.assignFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.assign.assignFailed'))
       });
+  }
+
+  private loadRowsFromClassroom(classroomId: string, classrooms: Classroom[]): void {
+    if (!classroomId) {
+      this.courseRows.set([{ courseId: '', teacherId: '' }]);
+      return;
+    }
+
+    const room = classrooms.find((c) => c.id === classroomId);
+    if (!room) {
+      this.courseRows.set([{ courseId: '', teacherId: '' }]);
+      return;
+    }
+
+    const courses = room.courses ?? [];
+    if (courses.length) {
+      this.courseRows.set(
+        courses.map((c) => ({
+          courseId: c.courseId || '',
+          teacherId: c.teacherId || ''
+        }))
+      );
+      return;
+    }
+
+    if (room.courseId) {
+      this.courseRows.set([
+        {
+          courseId: room.courseId,
+          teacherId: room.teachers?.[0]?.teacherId || ''
+        }
+      ]);
+      return;
+    }
+
+    this.courseRows.set([{ courseId: '', teacherId: '' }]);
+  }
+
+  private toAssignments(rows: CourseTeacherRow[]): ClassroomCourseAssignment[] {
+    return rows
+      .filter((r) => r.courseId && r.teacherId)
+      .map((r) => ({ courseId: r.courseId, teacherId: r.teacherId }));
+  }
+
+  private clearStatus(): void {
+    this.message.set('');
+    this.error.set('');
   }
 }

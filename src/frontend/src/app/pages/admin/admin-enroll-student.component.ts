@@ -6,6 +6,7 @@ import { Classroom, ManagedUser } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
+import { formatGradeLabel } from '../../grade.util';
 
 interface EnrollmentRow {
   classroomId: string;
@@ -30,9 +31,21 @@ export class AdminEnrollStudentComponent {
   readonly error = signal('');
   readonly sortKey = signal('classroomName');
   readonly sortDir = signal<SortDir>('asc');
+  readonly enrollStudentId = signal('');
+  readonly enrollClassroomId = signal('');
 
-  enrollClassroomId = '';
-  enrollStudentId = '';
+  readonly selectedStudent = computed(() =>
+    this.students().find((s) => s.id === this.enrollStudentId()) ?? null
+  );
+
+  /** Classrooms whose courses match the student grade (or all-grades / no courses). */
+  readonly enrollableClassrooms = computed(() => {
+    const student = this.selectedStudent();
+    const rooms = this.classrooms();
+    if (!student) return rooms;
+    const grade = student.grade ?? null;
+    return rooms.filter((room) => this.classroomMatchesGrade(room, grade));
+  });
 
   readonly enrollmentRows = computed(() => {
     const rows: EnrollmentRow[] = [];
@@ -71,18 +84,52 @@ export class AdminEnrollStudentComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
+  studentLabel(student: ManagedUser): string {
+    if (student.grade == null) return student.displayName;
+    return `${student.displayName} (${formatGradeLabel((k, p) => this.locale.t(k, p), student.grade)})`;
+  }
+
+  classroomMatchesGrade(room: Classroom, studentGrade: number | null): boolean {
+    const courses = room.courses ?? [];
+    if (!courses.length) {
+      if (room.courseId) {
+        return room.courseGrade == null || studentGrade == null || room.courseGrade === studentGrade;
+      }
+      return true;
+    }
+    return courses.some(
+      (c) => c.courseGrade == null || studentGrade == null || c.courseGrade === studentGrade
+    );
+  }
+
+  onStudentChange(studentId: string): void {
+    this.enrollStudentId.set(studentId);
+    const allowed = this.enrollableClassrooms();
+    if (this.enrollClassroomId() && !allowed.some((r) => r.id === this.enrollClassroomId())) {
+      this.enrollClassroomId.set('');
+    }
+  }
+
   enrollStudent(): void {
     this.clearStatus();
-    if (!this.enrollClassroomId || !this.enrollStudentId) {
+    const classroomId = this.enrollClassroomId();
+    const studentId = this.enrollStudentId();
+    if (!classroomId || !studentId) {
       this.error.set(this.locale.t('admin.enroll.selectBoth'));
       return;
     }
-    this.api.addStudentToClassroom(this.enrollClassroomId, this.enrollStudentId).subscribe({
+    const student = this.selectedStudent();
+    const room = this.classrooms().find((c) => c.id === classroomId);
+    if (student && room && !this.classroomMatchesGrade(room, student.grade ?? null)) {
+      this.error.set(this.locale.t('admin.enroll.gradeMismatch'));
+      return;
+    }
+    this.api.addStudentToClassroom(classroomId, studentId).subscribe({
       next: (result) => {
         this.message.set(this.locale.t('admin.enroll.enrolled', { status: result.whatsAppStatus }));
         this.reload();
       },
-      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.enroll.enrollFailed'))
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.enroll.enrollFailed'))
     });
   }
 
@@ -94,7 +141,7 @@ export class AdminEnrollStudentComponent {
         this.message.set(this.locale.t('admin.enroll.removed'));
         this.reload();
       },
-      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.enroll.removeFailed'))
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.enroll.removeFailed'))
     });
   }
 

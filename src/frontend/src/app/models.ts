@@ -1,4 +1,5 @@
 export type UserRole = 'Student' | 'Parent' | 'Teacher' | 'SuperAdmin';
+export type TeacherWorkShift = 'Am' | 'Pm' | 'Both';
 
 export interface AuthUser {
   id: string;
@@ -8,6 +9,8 @@ export interface AuthUser {
   parentId?: string | null;
   avatarId?: string | null;
   totalXp: number;
+  mobilePhone?: string;
+  workShift?: TeacherWorkShift | string | null;
 }
 
 export interface AuthResponse {
@@ -356,6 +359,18 @@ export interface LiveSession {
   whatsAppStatus?: string | null;
 }
 
+export interface Appointment {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  courseId: string;
+  courseName: string;
+  startsAtUtc: string;
+  endsAtUtc: string;
+  notes: string;
+  label: string;
+}
+
 export interface CreateMeetingPayload {
   title: string;
   description?: string;
@@ -372,8 +387,11 @@ export interface ManagedUser {
   displayName: string;
   role: UserRole;
   parentId?: string | null;
+  grade?: number | null;
   totalXp: number;
   mobilePhone?: string;
+  workShift?: TeacherWorkShift | string | null;
+  stages?: number[];
 }
 
 export interface ZoomConnectionStatus {
@@ -403,14 +421,34 @@ export interface ClassroomStudent {
   mobilePhone?: string;
 }
 
+export interface ClassroomTeacher {
+  teacherId: string;
+  displayName: string;
+}
+
+export interface ClassroomCourse {
+  courseId: string;
+  courseTitle: string;
+  courseGrade?: number | null;
+  teacherId: string;
+  teacherName: string;
+}
+
+export interface ClassroomCourseAssignment {
+  courseId: string;
+  teacherId: string;
+}
+
 export interface Classroom {
   id: string;
   name: string;
   description: string;
-  teacherId?: string | null;
-  teacherName?: string | null;
+  grade?: number | null;
+  teachers: ClassroomTeacher[];
+  courses?: ClassroomCourse[];
   courseId?: string | null;
   courseTitle?: string | null;
+  courseGrade?: number | null;
   whatsAppGroupInviteUrl: string;
   whatsAppNotifyPhones: string;
   dailyWhatsAppReportsEnabled?: boolean;

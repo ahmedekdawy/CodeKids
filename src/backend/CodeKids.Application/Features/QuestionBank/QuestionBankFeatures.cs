@@ -411,12 +411,14 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             ?? throw new InvalidOperationException("Course not found.");
 
         var ownsClassroom = await dbContext.Classrooms.AnyAsync(
-            x => x.TeacherId == teacherUserId && (x.CourseId == null || x.CourseId == courseId),
+            x => x.Courses.Any(t => t.TeacherId == teacherUserId) && (x.CourseId == null || x.CourseId == courseId),
             cancellationToken);
         if (!ownsClassroom)
         {
             // Allow any teacher with at least one classroom to contribute to any course bank.
-            ownsClassroom = await dbContext.Classrooms.AnyAsync(x => x.TeacherId == teacherUserId, cancellationToken);
+            ownsClassroom = await dbContext.ClassroomCourses.AnyAsync(
+                x => x.TeacherId == teacherUserId,
+                cancellationToken);
         }
 
         if (!ownsClassroom)

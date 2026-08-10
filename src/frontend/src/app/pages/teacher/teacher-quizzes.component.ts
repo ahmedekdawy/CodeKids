@@ -5,6 +5,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { Classroom, Course } from '../../models';
+import { formatCourseLabel } from '../../grade.util';
 
 interface OptionDraft {
   text: string;
@@ -42,6 +43,10 @@ export class TeacherQuizzesComponent {
       this.classrooms.set(classrooms);
       if (!this.quizClassroomId && classrooms[0]) this.quizClassroomId = classrooms[0].id;
     });
+  }
+
+  courseLabel(course: Course): string {
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
   }
 
   optionLabel(index: number): string {

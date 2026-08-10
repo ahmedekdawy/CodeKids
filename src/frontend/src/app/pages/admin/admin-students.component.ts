@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
+import { includesIgnoreCase, paginate, totalPages } from '../../list-query.util';
 import { ManagedUser } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
@@ -17,11 +18,19 @@ export class AdminStudentsComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
   readonly students = signal<ManagedUser[]>([]);
+  readonly parents = signal<ManagedUser[]>([]);
   readonly message = signal('');
   readonly error = signal('');
   readonly sortKey = signal('displayName');
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
+  readonly page = signal(1);
+  readonly pageSize = signal(10);
+  readonly filterName = signal('');
+  readonly filterEmail = signal('');
+  readonly filterMobile = signal('');
+  readonly filterParent = signal('');
+  readonly pageSizeOptions = [10, 25, 50];
 
   studentEmail = '';
   studentName = '';
@@ -35,8 +44,39 @@ export class AdminStudentsComponent {
   editPassword = '';
   editMobile = '';
 
+  readonly parentOptions = computed(() =>
+    this.parents()
+      .slice()
+      .sort((a, b) => a.displayName.localeCompare(b.displayName))
+  );
+
+  readonly filteredStudents = computed(() => {
+    const name = this.filterName();
+    const email = this.filterEmail();
+    const mobile = this.filterMobile();
+    const parentQ = this.filterParent().trim().toLowerCase();
+
+    return this.students().filter((student) => {
+      if (!includesIgnoreCase(student.displayName, name)) return false;
+      if (!includesIgnoreCase(student.email, email)) return false;
+      if (!includesIgnoreCase(student.mobilePhone, mobile)) return false;
+      if (parentQ) {
+        const parentLabel = this.parentLabel(student.parentId).toLowerCase();
+        const parentId = (student.parentId || '').toLowerCase();
+        if (!parentLabel.includes(parentQ) && !parentId.includes(parentQ)) return false;
+      }
+      return true;
+    });
+  });
+
   readonly sortedStudents = computed(() =>
-    sortBy(this.students(), this.sortKey(), this.sortDir())
+    sortBy(this.filteredStudents(), this.sortKey(), this.sortDir())
+  );
+
+  readonly totalFiltered = computed(() => this.sortedStudents().length);
+  readonly totalPages = computed(() => totalPages(this.totalFiltered(), this.pageSize()));
+  readonly pagedStudents = computed(() =>
+    paginate(this.sortedStudents(), this.page(), this.pageSize())
   );
 
   constructor() {
@@ -44,12 +84,23 @@ export class AdminStudentsComponent {
   }
 
   reload(): void {
-    this.api.getUsers('Student').subscribe((students) => this.students.set(students));
+    this.api.getUsers('Student').subscribe((students) => {
+      this.students.set(students);
+      this.clampPage();
+    });
+    this.api.getUsers('Parent').subscribe((parents) => this.parents.set(parents));
+  }
+
+  parentLabel(parentId?: string | null): string {
+    if (!parentId) return this.locale.t('common.emDash');
+    const parent = this.parents().find((p) => p.id === parentId);
+    return parent?.displayName || parentId;
   }
 
   setSort(key: string): void {
     this.sortDir.set(nextSort(this.sortKey(), key, this.sortDir()));
     this.sortKey.set(key);
+    this.page.set(1);
   }
 
   sortMark(key: string): string {
@@ -57,11 +108,65 @@ export class AdminStudentsComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
+  onFilterChange(): void {
+    this.page.set(1);
+  }
+
+  setFilterName(value: string): void {
+    this.filterName.set(value);
+    this.onFilterChange();
+  }
+
+  setFilterEmail(value: string): void {
+    this.filterEmail.set(value);
+    this.onFilterChange();
+  }
+
+  setFilterMobile(value: string): void {
+    this.filterMobile.set(value);
+    this.onFilterChange();
+  }
+
+  setFilterParent(value: string): void {
+    this.filterParent.set(value);
+    this.onFilterChange();
+  }
+
+  setPageSize(value: string | number): void {
+    this.pageSize.set(Number(value) || 10);
+    this.page.set(1);
+  }
+
+  goToPage(page: number): void {
+    this.page.set(Math.min(Math.max(1, page), this.totalPages()));
+  }
+
+  resetFilters(): void {
+    this.filterName.set('');
+    this.filterEmail.set('');
+    this.filterMobile.set('');
+    this.filterParent.set('');
+    this.page.set(1);
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(
+      this.filterName().trim() ||
+      this.filterEmail().trim() ||
+      this.filterMobile().trim() ||
+      this.filterParent().trim()
+    );
+  }
+
   createStudent(): void {
     this.clearStatus();
+    if (!this.studentEmail.trim() && !this.studentMobile.trim()) {
+      this.error.set(this.locale.t('admin.users.emailOrMobileRequired'));
+      return;
+    }
     this.api
       .createUser({
-        email: this.studentEmail,
+        email: this.studentEmail.trim() || null,
         displayName: this.studentName,
         password: this.studentPassword,
         role: 'Student',
@@ -75,9 +180,10 @@ export class AdminStudentsComponent {
           this.studentName = '';
           this.studentPassword = '';
           this.studentMobile = '';
+          this.studentParentId = '';
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.students.createFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.createFailed'))
       });
   }
 
@@ -96,9 +202,13 @@ export class AdminStudentsComponent {
 
   saveEdit(studentId: string): void {
     this.clearStatus();
+    if (!this.editEmail.trim() && !this.editMobile.trim()) {
+      this.error.set(this.locale.t('admin.users.emailOrMobileRequired'));
+      return;
+    }
     this.api
       .updateUser(studentId, {
-        email: this.editEmail,
+        email: this.editEmail.trim() || null,
         displayName: this.editName,
         role: 'Student',
         parentId: this.editParentId || null,
@@ -111,7 +221,7 @@ export class AdminStudentsComponent {
           this.editingId.set(null);
           this.reload();
         },
-        error: (err) => this.error.set(this.locale.fromApiError(err,'admin.students.updateFailed'))
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.updateFailed'))
       });
   }
 
@@ -123,8 +233,14 @@ export class AdminStudentsComponent {
         this.message.set(this.locale.t('admin.students.deleted'));
         this.reload();
       },
-      error: (err) => this.error.set(this.locale.fromApiError(err,'admin.students.deleteFailed'))
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.deleteFailed'))
     });
+  }
+
+  private clampPage(): void {
+    if (this.page() > this.totalPages()) {
+      this.page.set(this.totalPages());
+    }
   }
 
   private clearStatus(): void {

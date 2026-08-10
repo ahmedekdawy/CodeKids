@@ -7,6 +7,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
+import { formatGradeLabel } from '../../grade.util';
 
 @Component({
   selector: 'app-student-home',
@@ -66,7 +67,6 @@ export class StudentHomeComponent {
   }
 
   gradeLabel(grade: number | null | undefined): string {
-    if (grade == null) return this.locale.t('student.allGrades');
-    return this.locale.t('student.grade', { grade });
+    return formatGradeLabel((k, p) => this.locale.t(k, p), grade, 'student.allGrades');
   }
 }

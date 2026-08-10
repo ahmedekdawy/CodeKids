@@ -86,16 +86,20 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
 
         if (command.ClassroomId is Guid classroomId)
         {
-            var classroom = await dbContext.Classrooms.FirstOrDefaultAsync(x => x.Id == classroomId, cancellationToken)
+            var classroom = await dbContext.Classrooms
+                .Include(x => x.Courses)
+                .FirstOrDefaultAsync(x => x.Id == classroomId, cancellationToken)
                 ?? throw new InvalidOperationException("Classroom not found.");
-            if (classroom.TeacherId != command.TeacherUserId)
+            if (!classroom.Courses.Any(t => t.TeacherId == command.TeacherUserId))
             {
-                throw new InvalidOperationException("Only the assigned classroom teacher can create quizzes for that classroom.");
+                throw new InvalidOperationException("Only an assigned classroom teacher can create quizzes for that classroom.");
             }
         }
         else
         {
-            var teaches = await dbContext.Classrooms.AnyAsync(x => x.TeacherId == command.TeacherUserId, cancellationToken);
+            var teaches = await dbContext.ClassroomCourses.AnyAsync(
+                x => x.TeacherId == command.TeacherUserId,
+                cancellationToken);
             if (!teaches)
             {
                 throw new InvalidOperationException("Teacher must be assigned to a classroom before creating quizzes.");

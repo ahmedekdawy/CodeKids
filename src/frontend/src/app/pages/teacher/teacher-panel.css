@@ -25,3 +25,39 @@
 .panel-page .meeting-form {
   padding: 0.15rem 0;
 }
+
+.grade-roster {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.85rem 0.9rem;
+  margin-top: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.grade-roster-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.student-name-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.student-name-list li {
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background: rgba(95, 211, 188, 0.1);
+  border: 1px solid rgba(95, 211, 188, 0.2);
+  font-weight: 500;
+}

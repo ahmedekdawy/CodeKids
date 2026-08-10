@@ -12,22 +12,33 @@
   <section class="block">
     <form class="meeting-form" (ngSubmit)="enrollStudent()">
       <label>
-        {{ 'common.classroom' | t }}
-        <select [(ngModel)]="enrollClassroomId" name="enrollClassroomId">
+        {{ 'common.student' | t }}
+        <select
+          [ngModel]="enrollStudentId()"
+          name="enrollStudentId"
+          (ngModelChange)="onStudentChange($event)"
+        >
           <option value="">{{ 'common.select' | t }}</option>
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
+          @for (student of students(); track student.id) {
+            <option [value]="student.id">{{ studentLabel(student) }}</option>
           }
         </select>
       </label>
       <label>
-        {{ 'common.student' | t }}
-        <select [(ngModel)]="enrollStudentId" name="enrollStudentId">
+        {{ 'common.classroom' | t }}
+        <select
+          [ngModel]="enrollClassroomId()"
+          name="enrollClassroomId"
+          (ngModelChange)="enrollClassroomId.set($event)"
+        >
           <option value="">{{ 'common.select' | t }}</option>
-          @for (student of students(); track student.id) {
-            <option [value]="student.id">{{ student.displayName }}</option>
+          @for (room of enrollableClassrooms(); track room.id) {
+            <option [value]="room.id">{{ room.name }}</option>
           }
         </select>
+        @if (enrollStudentId()) {
+          <span class="meta">{{ 'admin.enroll.gradeFilterHint' | t }}</span>
+        }
       </label>
       <button type="submit">{{ 'admin.enroll.enroll' | t }}</button>
     </form>

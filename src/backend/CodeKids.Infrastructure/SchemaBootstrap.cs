@@ -40,7 +40,8 @@ public static class SchemaBootstrap
                 CONSTRAINT "PK_Users" PRIMARY KEY ("Id")
             );
 
-            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_Email" ON "Users" ("Email");
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_Email" ON "Users" ("Email") WHERE "Email" <> '';
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_MobilePhone" ON "Users" ("MobilePhone") WHERE "MobilePhone" <> '';
 
             CREATE TABLE IF NOT EXISTS "Courses" (
                 "Id" uuid NOT NULL,
@@ -158,6 +159,15 @@ public static class SchemaBootstrap
                 CONSTRAINT "PK_Classrooms" PRIMARY KEY ("Id")
             );
 
+            CREATE TABLE IF NOT EXISTS "ClassroomCourses" (
+                "Id" uuid NOT NULL,
+                "ClassroomId" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "TeacherId" uuid NOT NULL,
+                "AssignedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_ClassroomCourses" PRIMARY KEY ("Id")
+            );
+
             CREATE TABLE IF NOT EXISTS "ClassroomStudents" (
                 "Id" uuid NOT NULL,
                 "ClassroomId" uuid NOT NULL,
@@ -230,6 +240,17 @@ public static class SchemaBootstrap
                 "WhatsAppNotified" boolean NOT NULL DEFAULT FALSE,
                 "CreatedAtUtc" timestamp with time zone NOT NULL,
                 CONSTRAINT "PK_LiveSessions" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "Appointments" (
+                "Id" uuid NOT NULL,
+                "TeacherId" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "StartsAtUtc" timestamp with time zone NOT NULL,
+                "EndsAtUtc" timestamp with time zone NOT NULL,
+                "Notes" character varying(500) NOT NULL DEFAULT '',
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_Appointments" PRIMARY KEY ("Id")
             );
 
             CREATE TABLE IF NOT EXISTS "BankQuestions" (
@@ -374,16 +395,56 @@ public static class SchemaBootstrap
             ALTER TABLE "LiveSessions" ADD COLUMN IF NOT EXISTS "ClassroomId" uuid NULL;
             ALTER TABLE "LiveSessions" ADD COLUMN IF NOT EXISTS "WhatsAppNotified" boolean NOT NULL DEFAULT FALSE;
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "MobilePhone" character varying(30) NOT NULL DEFAULT '';
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "Grade" integer NULL;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "WorkShift" character varying(20) NULL;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "Stages" character varying(40) NOT NULL DEFAULT '';
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomAccessToken" character varying(2000) NOT NULL DEFAULT '';
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomRefreshToken" character varying(2000) NOT NULL DEFAULT '';
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomTokenExpiresAt" timestamp with time zone NULL;
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomConnectedEmail" character varying(160) NOT NULL DEFAULT '';
+            -- Allow multiple empty emails/phones; uniqueness only when set.
+            DROP INDEX IF EXISTS "IX_Users_Email";
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_Email" ON "Users" ("Email") WHERE "Email" <> '';
+            DROP INDEX IF EXISTS "IX_Users_MobilePhone";
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_MobilePhone" ON "Users" ("MobilePhone") WHERE "MobilePhone" <> '';
             ALTER TABLE "Courses" ADD COLUMN IF NOT EXISTS "Term" character varying(20) NOT NULL DEFAULT 'FullYear';
             ALTER TABLE "Courses" ADD COLUMN IF NOT EXISTS "Grade" integer NOT NULL DEFAULT 1;
 
+            CREATE TABLE IF NOT EXISTS "ClassroomCourses" (
+                "Id" uuid NOT NULL,
+                "ClassroomId" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "TeacherId" uuid NOT NULL,
+                "AssignedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_ClassroomCourses" PRIMARY KEY ("Id")
+            );
+            CREATE INDEX IF NOT EXISTS "IX_ClassroomCourses_ClassroomId_CourseId" ON "ClassroomCourses" ("ClassroomId", "CourseId");
+            CREATE INDEX IF NOT EXISTS "IX_ClassroomCourses_TeacherId" ON "ClassroomCourses" ("TeacherId");
             CREATE INDEX IF NOT EXISTS "IX_ClassroomStudents_ClassroomId_StudentId" ON "ClassroomStudents" ("ClassroomId", "StudentId");
+
+            -- Backfill one course+teacher link from legacy single CourseId + TeacherId.
+            INSERT INTO "ClassroomCourses" ("Id", "ClassroomId", "CourseId", "TeacherId", "AssignedAtUtc")
+            SELECT gen_random_uuid(),
+                   c."Id",
+                   c."CourseId",
+                   c."TeacherId",
+                   COALESCE(c."CreatedAtUtc", NOW())
+            FROM "Classrooms" c
+            WHERE c."CourseId" IS NOT NULL
+              AND c."TeacherId" IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM "ClassroomCourses" cc
+                  WHERE cc."ClassroomId" = c."Id" AND cc."CourseId" = c."CourseId"
+              );
+
+            -- Teachers now live on ClassroomCourses only.
+            DROP TABLE IF EXISTS "ClassroomTeachers";
+
             CREATE INDEX IF NOT EXISTS "IX_AssignmentSubmissions_AssignmentId_StudentId" ON "AssignmentSubmissions" ("AssignmentId", "StudentId");
             CREATE INDEX IF NOT EXISTS "IX_LiveSessions_StartsAtUtc" ON "LiveSessions" ("StartsAtUtc");
+            CREATE INDEX IF NOT EXISTS "IX_Appointments_StartsAtUtc" ON "Appointments" ("StartsAtUtc");
+            CREATE INDEX IF NOT EXISTS "IX_Appointments_TeacherId_StartsAtUtc" ON "Appointments" ("TeacherId", "StartsAtUtc");
             CREATE INDEX IF NOT EXISTS "IX_BankQuestions_CourseId_CreatedByUserId" ON "BankQuestions" ("CourseId", "CreatedByUserId");
             CREATE INDEX IF NOT EXISTS "IX_ExamAttempts_ExamId_StudentId" ON "ExamAttempts" ("ExamId", "StudentId");
             CREATE INDEX IF NOT EXISTS "IX_LessonVideos_LessonId" ON "LessonVideos" ("LessonId");
@@ -401,6 +462,7 @@ public static class SchemaBootstrap
             ALTER TABLE "BankQuestions" ADD COLUMN IF NOT EXISTS "LessonId" uuid NULL;
             ALTER TABLE "ExamQuestions" ADD COLUMN IF NOT EXISTS "LessonId" uuid NULL;
             ALTER TABLE "Classrooms" ADD COLUMN IF NOT EXISTS "DailyWhatsAppReportsEnabled" boolean NOT NULL DEFAULT TRUE;
+            ALTER TABLE "Classrooms" ADD COLUMN IF NOT EXISTS "Grade" integer NULL;
             ALTER TABLE "BankQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
             ALTER TABLE "ExamQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';
             ALTER TABLE "QuizQuestions" ADD COLUMN IF NOT EXISTS "OptionsJson" character varying(8000) NOT NULL DEFAULT '[]';

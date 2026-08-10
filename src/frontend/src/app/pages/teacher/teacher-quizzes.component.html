@@ -17,8 +17,8 @@
       <label>
         {{ 'common.course' | t }}
         <select [(ngModel)]="quizCourseId" name="quizCourseId">
-          @for (course of courses(); track course.id) {
-            <option [value]="course.id">{{ course.title }}</option>
+            @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ courseLabel(course) }}</option>
           }
         </select>
       </label>

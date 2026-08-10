@@ -1,16 +1,18 @@
 import {
-  DOCUMENT,
   Injectable,
-  InjectionToken,
   Service,
-  inject,
   setClassMetadata,
+  ɵɵdefineService
+} from "./chunk-FXNMDNDQ.js";
+import {
+  DOCUMENT,
+  InjectionToken,
+  inject,
   ɵɵdefineInjectable,
-  ɵɵdefineService,
   ɵɵinject
-} from "./chunk-FCZGHZFH.js";
+} from "./chunk-O7GWECDV.js";
 
-// ../node_modules/@angular/common/fesm2022/_xhr-chunk.mjs
+// node_modules/@angular/common/fesm2022/_xhr-chunk.mjs
 function parseCookieValue(cookieStr, name) {
   name = encodeURIComponent(name);
   for (const cookie of cookieStr.split(";")) {
@@ -67,7 +69,7 @@ var XhrFactory = class _XhrFactory {
   }], null, null);
 })();
 
-// ../node_modules/@angular/common/fesm2022/_platform_location-chunk.mjs
+// node_modules/@angular/common/fesm2022/_platform_location-chunk.mjs
 var _DOM = null;
 function getDOM() {
   return _DOM;
@@ -193,4 +195,4 @@ export {
   LOCATION_INITIALIZED,
   BrowserPlatformLocation
 };
-//# sourceMappingURL=chunk-USN34DEC.js.map
+//# sourceMappingURL=chunk-OMJKAIXT.js.map

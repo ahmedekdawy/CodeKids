@@ -45,10 +45,28 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
                 .ThenInclude(x => x.Questions)
             .AsQueryable();
 
-        // Students see global courses (no grade/term) plus courses linked to their classrooms.
+        // Students see classroom courses that match their grade (or all-grades courses).
         if (query.Role == nameof(UserRole.Student) && query.UserId is Guid studentId)
         {
+            var studentGrade = await dbContext.Users
+                .AsNoTracking()
+                .Where(x => x.Id == studentId)
+                .Select(x => x.Grade)
+                .FirstOrDefaultAsync(cancellationToken);
+
             var classroomCourseIds = await dbContext.ClassroomStudents
+                .AsNoTracking()
+                .Where(x => x.StudentId == studentId)
+                .Join(
+                    dbContext.ClassroomCourses.AsNoTracking(),
+                    cs => cs.ClassroomId,
+                    cc => cc.ClassroomId,
+                    (_, cc) => cc.CourseId)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+
+            // Also include legacy classroom.CourseId links until fully migrated.
+            var legacyCourseIds = await dbContext.ClassroomStudents
                 .AsNoTracking()
                 .Where(x => x.StudentId == studentId)
                 .Join(
@@ -61,9 +79,23 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
                 .Distinct()
                 .ToListAsync(cancellationToken);
 
+            classroomCourseIds = classroomCourseIds.Concat(legacyCourseIds).Distinct().ToList();
+
             coursesQuery = coursesQuery.Where(c =>
-                (c.Grade == null && c.Term == null) ||
-                classroomCourseIds.Contains(c.Id));
+                classroomCourseIds.Contains(c.Id)
+                && (c.Grade == null || studentGrade == null || c.Grade == studentGrade));
+        }
+        // Teachers see only courses assigned to them on classrooms.
+        else if (query.Role == nameof(UserRole.Teacher) && query.UserId is Guid teacherId)
+        {
+            var teacherCourseIds = await dbContext.ClassroomCourses
+                .AsNoTracking()
+                .Where(x => x.TeacherId == teacherId)
+                .Select(x => x.CourseId)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+
+            coursesQuery = coursesQuery.Where(c => teacherCourseIds.Contains(c.Id));
         }
 
         var courses = await coursesQuery

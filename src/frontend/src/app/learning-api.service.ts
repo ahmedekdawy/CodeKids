@@ -2,12 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
+  Appointment,
   Assignment,
   AssignmentSubmission,
   Avatar,
   Badge,
   BankQuestion,
   Classroom,
+  ClassroomCourseAssignment,
   CompleteStepResponse,
   Course,
   CreateMeetingPayload,
@@ -146,18 +148,56 @@ export class LearningApiService {
     return this.http.post<LiveSession>(`${this.baseUrl}/meetings`, payload);
   }
 
+  getAppointments(fromUtc?: string, toUtc?: string): Observable<Appointment[]> {
+    const params = new URLSearchParams();
+    if (fromUtc) params.set('fromUtc', fromUtc);
+    if (toUtc) params.set('toUtc', toUtc);
+    const query = params.toString();
+    return this.http.get<Appointment[]>(`${this.baseUrl}/admin/appointments${query ? `?${query}` : ''}`);
+  }
+
+  createAppointment(payload: {
+    teacherId: string;
+    courseId: string;
+    startsAtUtc: string;
+    endsAtUtc: string;
+    notes?: string | null;
+  }): Observable<Appointment> {
+    return this.http.post<Appointment>(`${this.baseUrl}/admin/appointments`, payload);
+  }
+
+  updateAppointment(
+    appointmentId: string,
+    payload: {
+      teacherId: string;
+      courseId: string;
+      startsAtUtc: string;
+      endsAtUtc: string;
+      notes?: string | null;
+    }
+  ): Observable<Appointment> {
+    return this.http.put<Appointment>(`${this.baseUrl}/admin/appointments/${appointmentId}`, payload);
+  }
+
+  deleteAppointment(appointmentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/appointments/${appointmentId}`);
+  }
+
   getUsers(role?: string): Observable<ManagedUser[]> {
     const query = role ? `?role=${role}` : '';
     return this.http.get<ManagedUser[]>(`${this.baseUrl}/admin/users${query}`);
   }
 
   createUser(payload: {
-    email: string;
+    email?: string | null;
     displayName: string;
     password: string;
     role: string;
     parentId?: string | null;
+    grade?: number | null;
     mobilePhone?: string | null;
+    workShift?: string | null;
+    stages?: number[] | null;
   }): Observable<ManagedUser> {
     return this.http.post<ManagedUser>(`${this.baseUrl}/admin/users`, payload);
   }
@@ -165,12 +205,15 @@ export class LearningApiService {
   updateUser(
     userId: string,
     payload: {
-      email: string;
+      email?: string | null;
       displayName: string;
       role: string;
       parentId?: string | null;
       password?: string | null;
+      grade?: number | null;
       mobilePhone?: string | null;
+      workShift?: string | null;
+      stages?: number[] | null;
     }
   ): Observable<ManagedUser> {
     return this.http.put<ManagedUser>(`${this.baseUrl}/admin/users/${userId}`, payload);
@@ -209,13 +252,13 @@ export class LearningApiService {
     title: string;
     theme: string;
     description: string;
-    ageMin: number;
-    ageMax: number;
+    ageMin?: number | null;
+    ageMax?: number | null;
     term?: string | null;
-    grade?: number | null;
-    sortOrder: number;
-  }): Observable<Course> {
-    return this.http.post<Course>(`${this.baseUrl}/admin/courses`, payload);
+    grades?: number[] | null;
+    sortOrder?: number | null;
+  }): Observable<Course[]> {
+    return this.http.post<Course[]>(`${this.baseUrl}/admin/courses`, payload);
   }
 
   updateCourse(
@@ -224,11 +267,11 @@ export class LearningApiService {
       title: string;
       theme: string;
       description: string;
-      ageMin: number;
-      ageMax: number;
+      ageMin?: number | null;
+      ageMax?: number | null;
       term?: string | null;
       grade?: number | null;
-      sortOrder: number;
+      sortOrder?: number | null;
     }
   ): Observable<Course> {
     return this.http.put<Course>(`${this.baseUrl}/admin/courses/${courseId}`, payload);
@@ -271,8 +314,8 @@ export class LearningApiService {
   createClassroom(payload: {
     name: string;
     description?: string;
-    teacherId?: string | null;
-    courseId?: string | null;
+    grade?: number | null;
+    courses?: ClassroomCourseAssignment[] | null;
     whatsAppGroupInviteUrl?: string;
     whatsAppNotifyPhones?: string;
   }): Observable<Classroom> {
@@ -284,8 +327,8 @@ export class LearningApiService {
     payload: {
       name: string;
       description?: string;
-      teacherId?: string | null;
-      courseId?: string | null;
+      grade?: number | null;
+      courses?: ClassroomCourseAssignment[] | null;
       whatsAppGroupInviteUrl?: string;
       whatsAppNotifyPhones?: string;
     }
@@ -297,7 +340,10 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/classrooms/${classroomId}`);
   }
 
-  assignClassroom(classroomId: string, payload: { teacherId?: string | null; courseId?: string | null }): Observable<Classroom> {
+  assignClassroom(
+    classroomId: string,
+    payload: { courses?: ClassroomCourseAssignment[] | null }
+  ): Observable<Classroom> {
     return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/assignments`, payload);
   }
 

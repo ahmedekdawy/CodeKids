@@ -9,8 +9,8 @@
 
     <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
       <label>
-        <span>{{ 'auth.email' | t }}</span>
-        <input formControlName="email" type="email" placeholder="student@codekids.local" autocomplete="username" />
+        <span>{{ 'auth.loginOrMobile' | t }}</span>
+        <input formControlName="login" type="text" placeholder="student@codekids.local" autocomplete="username" />
       </label>
       <label>
         <span>{{ 'auth.password' | t }}</span>

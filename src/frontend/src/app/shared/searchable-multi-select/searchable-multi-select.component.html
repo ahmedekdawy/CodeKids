@@ -1,0 +1,40 @@
+<div class="ms">
+  <button type="button" class="ms-trigger" (click)="toggleOpen()" [disabled]="disabled()" [attr.aria-expanded]="open()">
+    <span class="ms-summary" [class.ms-summary--placeholder]="!selected().length">{{ summary() }}</span>
+    @if (selected().length) {
+      <span class="ms-count">{{ selected().length }}</span>
+      <span class="ms-clear" role="button" tabindex="0" (click)="clearAll($event)" [attr.aria-label]="'common.clearFilters' | t">×</span>
+    }
+    <span class="ms-caret" aria-hidden="true"></span>
+  </button>
+
+  @if (open()) {
+    <div class="ms-panel" role="listbox" aria-multiselectable="true">
+      <input
+        class="ms-search"
+        type="search"
+        [value]="query()"
+        (input)="onQueryInput($event)"
+        [placeholder]="searchPlaceholder() || ('common.search' | t)"
+        autocomplete="off"
+      />
+      <div class="ms-options">
+        @for (opt of filteredOptions(); track opt.value) {
+          <button
+            type="button"
+            class="ms-option"
+            role="option"
+            [attr.aria-selected]="isSelected(opt.value)"
+            [class.ms-option--selected]="isSelected(opt.value)"
+            (click)="toggleOption(opt.value)"
+          >
+            <span class="ms-check" aria-hidden="true"></span>
+            <span class="ms-label">{{ opt.label }}</span>
+          </button>
+        } @empty {
+          <p class="ms-empty">{{ 'common.none' | t }}</p>
+        }
+      </div>
+    </div>
+  }
+</div>

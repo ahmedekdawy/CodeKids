@@ -1,40 +1,28 @@
 import {
   withHttpTransferCache
-} from "./chunk-QPF22TYC.js";
+} from "./chunk-N6ZWM5FS.js";
 import {
   CommonModule,
   PLATFORM_BROWSER_ID
-} from "./chunk-FKKROREE.js";
+} from "./chunk-Y77V3NH4.js";
 import {
   DomAdapter,
   getDOM,
   parseCookieValue,
   setRootDomAdapter
-} from "./chunk-USN34DEC.js";
+} from "./chunk-OMJKAIXT.js";
 import {
   APP_BOOTSTRAP_LISTENER,
-  APP_ID,
   ApplicationModule,
   ApplicationRef,
-  CACHE_ACTIVE,
-  CSP_NONCE,
   Console,
-  DOCUMENT,
-  ENVIRONMENT_INITIALIZER,
-  ErrorHandler,
-  INJECTOR_SCOPE,
   IS_ENABLED_BLOCKING_INITIAL_NAVIGATION,
   Inject,
   Injectable,
-  InjectionToken,
   NgModule,
-  NgZone,
   Optional,
-  PLATFORM_ID,
-  PLATFORM_INITIALIZER,
   RendererFactory2,
   RendererStyleFlags2,
-  RuntimeError,
   SHARED_STYLES_HOST,
   SecurityContext,
   Service,
@@ -44,10 +32,7 @@ import {
   TestabilityRegistry,
   TracingService,
   USE_PENDING_TASKS,
-  Version,
   ViewEncapsulation,
-  XSS_SECURITY_URL,
-  _global,
   _sanitizeHtml,
   _sanitizeUrl,
   allLeavingAnimations,
@@ -58,11 +43,7 @@ import {
   bypassSanitizationTrustStyle,
   bypassSanitizationTrustUrl,
   createPlatformFactory,
-  formatRuntimeError,
-  forwardRef,
-  inject,
   internalCreateApplication,
-  makeEnvironmentProviders,
   platformCore,
   provideStabilityDebugging,
   setClassMetadata,
@@ -72,18 +53,39 @@ import {
   withEventReplay,
   withI18nSupport,
   withIncrementalHydration,
+  ɵɵdefineNgModule,
+  ɵɵdefineService
+} from "./chunk-FXNMDNDQ.js";
+import {
+  APP_ID,
+  CACHE_ACTIVE,
+  CSP_NONCE,
+  DOCUMENT,
+  ENVIRONMENT_INITIALIZER,
+  ErrorHandler,
+  INJECTOR_SCOPE,
+  InjectionToken,
+  NgZone,
+  PLATFORM_ID,
+  PLATFORM_INITIALIZER,
+  RuntimeError,
+  Version,
+  XSS_SECURITY_URL,
+  _global,
+  formatRuntimeError,
+  forwardRef,
+  inject,
+  makeEnvironmentProviders,
   ɵɵdefineInjectable,
   ɵɵdefineInjector,
-  ɵɵdefineNgModule,
-  ɵɵdefineService,
   ɵɵinject
-} from "./chunk-FCZGHZFH.js";
+} from "./chunk-O7GWECDV.js";
 import {
   __async,
   __spreadValues
-} from "./chunk-KW66VODW.js";
+} from "./chunk-MTKG5SJP.js";
 
-// ../node_modules/@angular/platform-browser/fesm2022/_dom_renderer-chunk.mjs
+// node_modules/@angular/platform-browser/fesm2022/_dom_renderer-chunk.mjs
 var EventManagerPlugin = class {
   _doc;
   constructor(_doc) {
@@ -784,7 +786,7 @@ var EmulatedEncapsulationDomRenderer2 = class extends NoneEncapsulationDomRender
   }
 };
 
-// ../node_modules/@angular/platform-browser/fesm2022/_browser-chunk.mjs
+// node_modules/@angular/platform-browser/fesm2022/_browser-chunk.mjs
 var BrowserDomAdapter = class _BrowserDomAdapter extends DomAdapter {
   supportsDOMEvents = true;
   static makeCurrent() {
@@ -1144,7 +1146,7 @@ var BrowserModule = class _BrowserModule {
   }], () => [], null);
 })();
 
-// ../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs
+// node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs
 var Meta = class _Meta {
   _doc = inject(DOCUMENT);
   _dom = getDOM();
@@ -1550,4 +1552,4 @@ export {
   DomSanitizerImpl,
   VERSION
 };
-//# sourceMappingURL=chunk-EKOWQENT.js.map
+//# sourceMappingURL=chunk-RCBXOF2K.js.map

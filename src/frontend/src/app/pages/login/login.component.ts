@@ -24,7 +24,7 @@ export class LoginComponent {
   readonly brand = inject(SiteBrandService);
 
   readonly form = this.fb.nonNullable.group({
-    email: ['student@codekids.local', [Validators.required, Validators.email]],
+    login: ['student@codekids.local', Validators.required],
     password: ['Student123!', Validators.required]
   });
   readonly loading = signal(false);
@@ -36,10 +36,10 @@ export class LoginComponent {
       return;
     }
 
-    const { email, password } = this.form.getRawValue();
+    const { login, password } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set('');
-    this.auth.login(email, password).subscribe({
+    this.auth.login(login.trim(), password).subscribe({
       next: () => {
         this.loading.set(false);
         void this.router.navigateByUrl(this.auth.roleHome());

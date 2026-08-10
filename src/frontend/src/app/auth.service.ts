@@ -17,8 +17,8 @@ export class AuthService {
   readonly user = signal<AuthUser | null>(this.readUser());
   readonly token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, { email, password }).pipe(
+  login(login: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, { email: login, password }).pipe(
       tap((response) => this.persist(response))
     );
   }

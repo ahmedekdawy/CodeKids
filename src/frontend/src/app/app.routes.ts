@@ -15,6 +15,7 @@ import { AdminCreateClassroomComponent } from './pages/admin/admin-create-classr
 import { AdminAssignClassroomComponent } from './pages/admin/admin-assign-classroom.component';
 import { AdminEnrollStudentComponent } from './pages/admin/admin-enroll-student.component';
 import { AdminSiteSettingsComponent } from './pages/admin/admin-site-settings.component';
+import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
 import { TeacherOverviewComponent } from './pages/teacher/teacher-overview.component';
 import { TeacherZoomComponent } from './pages/teacher/teacher-zoom.component';
@@ -85,13 +86,17 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['SuperAdmin'])],
     component: AdminShellComponent,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'users' },
-      { path: 'users', component: AdminUsersComponent },
+      { path: '', pathMatch: 'full', redirectTo: 'admins' },
+      { path: 'admins', component: AdminUsersComponent, data: { role: 'SuperAdmin' } },
+      { path: 'teachers', component: AdminUsersComponent, data: { role: 'Teacher' } },
+      { path: 'parents', component: AdminUsersComponent, data: { role: 'Parent' } },
+      { path: 'users', redirectTo: 'admins' },
       { path: 'students', component: AdminStudentsComponent },
       { path: 'courses', component: AdminCoursesComponent },
       { path: 'create-classroom', component: AdminCreateClassroomComponent },
       { path: 'assign-classroom', component: AdminAssignClassroomComponent },
       { path: 'enroll-student', component: AdminEnrollStudentComponent },
+      { path: 'appointments', component: AdminAppointmentsComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' }
     ]

@@ -74,10 +74,11 @@ public sealed class CreateMeetingCommandHandler(
             ?? throw new InvalidOperationException("Teacher account not found.");
 
         var classroom = await dbContext.Classrooms
+            .Include(x => x.Courses)
             .FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 
-        if (classroom.TeacherId != host.Id)
+        if (!classroom.Courses.Any(t => t.TeacherId == host.Id))
         {
             throw new InvalidOperationException("You can only schedule Zoom meetings for classrooms assigned to you.");
         }
@@ -231,6 +232,8 @@ public sealed class GetMeetingsQueryHandler(IAppDbContext dbContext)
             .Include(x => x.Host)
             .Include(x => x.Course)
             .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
+            .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
             .Where(x => x.StartsAtUtc >= now)
             .OrderBy(x => x.StartsAtUtc)
@@ -243,7 +246,7 @@ public sealed class GetMeetingsQueryHandler(IAppDbContext dbContext)
 
         if (isTeacher)
         {
-            sessions = sessions.Where(x => x.HostUserId == query.ViewerUserId || x.Classroom?.TeacherId == query.ViewerUserId).ToList();
+            sessions = sessions.Where(x => x.HostUserId == query.ViewerUserId || x.Classroom?.Courses.Any(t => t.TeacherId == query.ViewerUserId) == true).ToList();
         }
         else if (isStudent)
         {

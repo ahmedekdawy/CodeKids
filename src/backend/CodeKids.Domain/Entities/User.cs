@@ -11,7 +11,13 @@ public class User
     public UserRole Role { get; set; }
     public Guid? ParentId { get; set; }
     public Guid? AvatarId { get; set; }
+    /// <summary>Student grade: KG1=-1, KG2=0, 1–12; null when unset or not a student.</summary>
+    public int? Grade { get; set; }
     public string MobilePhone { get; set; } = string.Empty;
+    /// <summary>Teacher work period: Am, Pm, or Both; null for non-teachers.</summary>
+    public TeacherWorkShift? WorkShift { get; set; }
+    /// <summary>Comma-separated stage codes (0–3) for teachers; empty for non-teachers.</summary>
+    public string Stages { get; set; } = string.Empty;
     public string ZoomAccessToken { get; set; } = string.Empty;
     public string ZoomRefreshToken { get; set; } = string.Empty;
     public DateTimeOffset? ZoomTokenExpiresAt { get; set; }

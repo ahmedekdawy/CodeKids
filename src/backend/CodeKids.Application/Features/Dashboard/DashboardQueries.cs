@@ -104,7 +104,7 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
 
         var studentIds = await dbContext.ClassroomStudents
             .AsNoTracking()
-            .Where(x => x.Classroom!.TeacherId == query.TeacherId)
+            .Where(x => x.Classroom!.Courses.Any(t => t.TeacherId == query.TeacherId))
             .Select(x => x.StudentId)
             .Distinct()
             .ToListAsync(cancellationToken);

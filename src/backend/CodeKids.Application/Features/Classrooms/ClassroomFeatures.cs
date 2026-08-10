@@ -1,4 +1,6 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Admin;
+using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -8,14 +10,27 @@ namespace CodeKids.Application.Features.Classrooms;
 
 public sealed record ClassroomStudentDto(Guid StudentId, string DisplayName, string Email, string MobilePhone);
 
+public sealed record ClassroomTeacherDto(Guid TeacherId, string DisplayName);
+
+public sealed record ClassroomCourseDto(
+    Guid CourseId,
+    string CourseTitle,
+    int? CourseGrade,
+    Guid TeacherId,
+    string TeacherName);
+
+public sealed record ClassroomCourseAssignmentRequest(Guid CourseId, Guid TeacherId);
+
 public sealed record ClassroomDto(
     Guid Id,
     string Name,
     string Description,
-    Guid? TeacherId,
-    string? TeacherName,
+    int? Grade,
+    IReadOnlyList<ClassroomTeacherDto> Teachers,
+    IReadOnlyList<ClassroomCourseDto> Courses,
     Guid? CourseId,
     string? CourseTitle,
+    int? CourseGrade,
     string WhatsAppGroupInviteUrl,
     string WhatsAppNotifyPhones,
     bool DailyWhatsAppReportsEnabled,
@@ -44,27 +59,26 @@ public sealed record SendClassroomWhatsAppResultDto(
 public sealed record CreateClassroomRequest(
     string Name,
     string? Description,
-    Guid? TeacherId,
-    Guid? CourseId,
+    int? Grade,
+    IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
     string? WhatsAppNotifyPhones);
 
-public sealed record AssignClassroomRequest(Guid? TeacherId, Guid? CourseId);
+public sealed record AssignClassroomRequest(IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses);
 
 public sealed record AddClassroomStudentRequest(Guid StudentId);
 
 public sealed record CreateClassroomCommand(
     string Name,
     string? Description,
-    Guid? TeacherId,
-    Guid? CourseId,
+    int? Grade,
+    IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
     string? WhatsAppNotifyPhones) : ICommand<ClassroomDto>;
 
 public sealed record UpdateClassroomAssignmentsCommand(
     Guid ClassroomId,
-    Guid? TeacherId,
-    Guid? CourseId) : ICommand<ClassroomDto>;
+    IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses) : ICommand<ClassroomDto>;
 
 public sealed record AddStudentToClassroomCommand(Guid ClassroomId, Guid StudentId) : ICommand<EnrollStudentResultDto>;
 
@@ -88,15 +102,16 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
 {
     public async Task<ClassroomDto> Handle(CreateClassroomCommand command, CancellationToken cancellationToken)
     {
-        await ValidateTeacherAndCourse(dbContext, command.TeacherId, command.CourseId, cancellationToken);
+        var grade = CreateCourseCommandHandler.NormalizeGrade(command.Grade);
+        var assignments = await ValidateCourseAssignments(dbContext, command.Courses, grade, cancellationToken);
 
         var classroom = new Classroom
         {
             Id = Guid.NewGuid(),
             Name = command.Name.Trim(),
             Description = (command.Description ?? string.Empty).Trim(),
-            TeacherId = command.TeacherId,
-            CourseId = command.CourseId,
+            Grade = grade,
+            CourseId = assignments.Count > 0 ? assignments[0].CourseId : null,
             WhatsAppGroupInviteUrl = (command.WhatsAppGroupInviteUrl ?? string.Empty).Trim(),
             WhatsAppNotifyPhones = (command.WhatsAppNotifyPhones ?? string.Empty).Trim(),
             CreatedAtUtc = DateTimeOffset.UtcNow
@@ -108,26 +123,85 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
         }
 
         dbContext.Classrooms.Add(classroom);
+        await ReplaceCourseAssignmentsAsync(dbContext, classroom.Id, assignments, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         return (await LoadDto(dbContext, classroom.Id, cancellationToken))!;
     }
 
-    internal static async Task ValidateTeacherAndCourse(
+    internal static async Task<IReadOnlyList<ClassroomCourseAssignmentRequest>> ValidateCourseAssignments(
         IAppDbContext dbContext,
-        Guid? teacherId,
-        Guid? courseId,
+        IReadOnlyList<ClassroomCourseAssignmentRequest>? courses,
+        int? classroomGrade,
         CancellationToken cancellationToken)
     {
-        if (teacherId is Guid tid)
+        var assignments = (courses ?? [])
+            .Where(x => x.CourseId != Guid.Empty && x.TeacherId != Guid.Empty)
+            .GroupBy(x => x.CourseId)
+            .Select(g => g.Last())
+            .ToList();
+
+        if (assignments.Count == 0) return assignments;
+
+        var courseIds = assignments.Select(x => x.CourseId).ToList();
+        var teacherIds = assignments.Select(x => x.TeacherId).Distinct().ToList();
+
+        var matchedCourses = await dbContext.Courses
+            .AsNoTracking()
+            .Where(x => courseIds.Contains(x.Id))
+            .Select(x => new { x.Id, x.Grade })
+            .ToListAsync(cancellationToken);
+        if (matchedCourses.Count != courseIds.Count)
         {
-            var ok = await dbContext.Users.AnyAsync(x => x.Id == tid && x.Role == UserRole.Teacher, cancellationToken);
-            if (!ok) throw new InvalidOperationException("Teacher not found.");
+            throw new InvalidOperationException("One or more courses were not found.");
         }
 
-        if (courseId is Guid cid)
+        if (classroomGrade is not null
+            && matchedCourses.Any(c => !GradeStageHelper.CourseMatchesClassroomGrade(c.Grade, classroomGrade)))
         {
-            var ok = await dbContext.Courses.AnyAsync(x => x.Id == cid, cancellationToken);
-            if (!ok) throw new InvalidOperationException("Course not found.");
+            throw new InvalidOperationException("One or more courses do not match the classroom grade.");
+        }
+
+        var teachers = await dbContext.Users
+            .AsNoTracking()
+            .Where(x => teacherIds.Contains(x.Id) && x.Role == UserRole.Teacher)
+            .Select(x => new { x.Id, x.Stages })
+            .ToListAsync(cancellationToken);
+        if (teachers.Count != teacherIds.Count)
+        {
+            throw new InvalidOperationException("One or more teachers were not found.");
+        }
+
+        if (classroomGrade is not null
+            && teachers.Any(t => !GradeStageHelper.TeacherCoversStage(t.Stages, classroomGrade)))
+        {
+            throw new InvalidOperationException("One or more teachers are not assigned to this classroom stage.");
+        }
+
+        return assignments;
+    }
+
+    internal static async Task ReplaceCourseAssignmentsAsync(
+        IAppDbContext dbContext,
+        Guid classroomId,
+        IReadOnlyList<ClassroomCourseAssignmentRequest> assignments,
+        CancellationToken cancellationToken)
+    {
+        var existingCourses = await dbContext.ClassroomCourses
+            .Where(x => x.ClassroomId == classroomId)
+            .ToListAsync(cancellationToken);
+        dbContext.ClassroomCourses.RemoveRange(existingCourses);
+
+        var now = DateTimeOffset.UtcNow;
+        foreach (var item in assignments)
+        {
+            dbContext.ClassroomCourses.Add(new ClassroomCourse
+            {
+                Id = Guid.NewGuid(),
+                ClassroomId = classroomId,
+                CourseId = item.CourseId,
+                TeacherId = item.TeacherId,
+                AssignedAtUtc = now
+            });
         }
     }
 
@@ -135,7 +209,10 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
     {
         var classroom = await dbContext.Classrooms
             .AsNoTracking()
-            .Include(x => x.Teacher)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Course)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Teacher)
             .Include(x => x.Course)
             .Include(x => x.Students)
                 .ThenInclude(x => x.Student)
@@ -144,15 +221,40 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
         return classroom is null ? null : Map(classroom);
     }
 
-    internal static ClassroomDto Map(Classroom classroom) =>
-        new(
+    internal static bool HasTeacher(Classroom classroom, Guid teacherUserId) =>
+        classroom.Courses.Any(x => x.TeacherId == teacherUserId);
+
+    internal static ClassroomDto Map(Classroom classroom)
+    {
+        var courses = classroom.Courses
+            .Where(x => x.Course is not null && x.Teacher is not null)
+            .OrderBy(x => x.Course!.Grade ?? 999)
+            .ThenBy(x => x.Course!.Title)
+            .Select(x => new ClassroomCourseDto(
+                x.CourseId,
+                x.Course!.Title,
+                x.Course.Grade,
+                x.TeacherId,
+                x.Teacher!.DisplayName))
+            .ToList();
+
+        var primary = courses.FirstOrDefault();
+        var teachers = courses
+            .GroupBy(x => x.TeacherId)
+            .Select(g => new ClassroomTeacherDto(g.Key, g.First().TeacherName))
+            .OrderBy(x => x.DisplayName)
+            .ToList();
+
+        return new(
             classroom.Id,
             classroom.Name,
             classroom.Description,
-            classroom.TeacherId,
-            classroom.Teacher?.DisplayName,
-            classroom.CourseId,
-            classroom.Course?.Title,
+            classroom.Grade,
+            teachers,
+            courses,
+            primary?.CourseId ?? classroom.CourseId,
+            primary?.CourseTitle ?? classroom.Course?.Title,
+            primary?.CourseGrade ?? classroom.Course?.Grade,
             classroom.WhatsAppGroupInviteUrl,
             classroom.WhatsAppNotifyPhones,
             classroom.DailyWhatsAppReportsEnabled,
@@ -165,6 +267,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
                     x.Student.MobilePhone))
                 .OrderBy(x => x.DisplayName)
                 .ToList());
+    }
 }
 
 public sealed class UpdateClassroomAssignmentsCommandHandler(IAppDbContext dbContext)
@@ -172,14 +275,15 @@ public sealed class UpdateClassroomAssignmentsCommandHandler(IAppDbContext dbCon
 {
     public async Task<ClassroomDto> Handle(UpdateClassroomAssignmentsCommand command, CancellationToken cancellationToken)
     {
-        await CreateClassroomCommandHandler.ValidateTeacherAndCourse(
-            dbContext, command.TeacherId, command.CourseId, cancellationToken);
-
         var classroom = await dbContext.Classrooms.FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 
-        classroom.TeacherId = command.TeacherId;
-        classroom.CourseId = command.CourseId;
+        var assignments = await CreateClassroomCommandHandler.ValidateCourseAssignments(
+            dbContext, command.Courses, classroom.Grade, cancellationToken);
+
+        classroom.CourseId = assignments.Count > 0 ? assignments[0].CourseId : null;
+        await CreateClassroomCommandHandler.ReplaceCourseAssignmentsAsync(
+            dbContext, classroom.Id, assignments, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         return (await CreateClassroomCommandHandler.LoadDto(dbContext, classroom.Id, cancellationToken))!;
     }
@@ -266,14 +370,15 @@ public sealed class SendClassroomWhatsAppCommandHandler(
         }
 
         var classroom = await dbContext.Classrooms
+            .Include(x => x.Courses)
             .Include(x => x.Students)
                 .ThenInclude(s => s.Student)
             .FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 
-        if (classroom.TeacherId != command.TeacherUserId)
+        if (!CreateClassroomCommandHandler.HasTeacher(classroom, command.TeacherUserId))
         {
-            throw new InvalidOperationException("Only the assigned classroom teacher can message this class.");
+            throw new InvalidOperationException("Only an assigned classroom teacher can message this class.");
         }
 
         var body = message;
@@ -360,7 +465,10 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
     {
         var classrooms = await dbContext.Classrooms
             .AsNoTracking()
-            .Include(x => x.Teacher)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Course)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Teacher)
             .Include(x => x.Course)
             .Include(x => x.Students)
                 .ThenInclude(x => x.Student)
@@ -369,7 +477,9 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
 
         if (string.Equals(query.ViewerRole, nameof(UserRole.Teacher), StringComparison.OrdinalIgnoreCase))
         {
-            classrooms = classrooms.Where(x => x.TeacherId == query.ViewerUserId).ToList();
+            classrooms = classrooms
+                .Where(x => CreateClassroomCommandHandler.HasTeacher(x, query.ViewerUserId))
+                .ToList();
         }
         else if (string.Equals(query.ViewerRole, nameof(UserRole.Student), StringComparison.OrdinalIgnoreCase))
         {
@@ -402,8 +512,8 @@ public sealed class GetClassroomByIdQueryHandler(IAppDbContext dbContext)
 public sealed record UpdateClassroomRequest(
     string Name,
     string? Description,
-    Guid? TeacherId,
-    Guid? CourseId,
+    int? Grade,
+    IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
     string? WhatsAppNotifyPhones);
 
@@ -411,8 +521,8 @@ public sealed record UpdateClassroomCommand(
     Guid ClassroomId,
     string Name,
     string? Description,
-    Guid? TeacherId,
-    Guid? CourseId,
+    int? Grade,
+    IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
     string? WhatsAppNotifyPhones) : ICommand<ClassroomDto>;
 
@@ -425,8 +535,9 @@ public sealed class UpdateClassroomCommandHandler(IAppDbContext dbContext)
 {
     public async Task<ClassroomDto> Handle(UpdateClassroomCommand command, CancellationToken cancellationToken)
     {
-        await CreateClassroomCommandHandler.ValidateTeacherAndCourse(
-            dbContext, command.TeacherId, command.CourseId, cancellationToken);
+        var grade = CreateCourseCommandHandler.NormalizeGrade(command.Grade);
+        var assignments = await CreateClassroomCommandHandler.ValidateCourseAssignments(
+            dbContext, command.Courses, grade, cancellationToken);
 
         var classroom = await dbContext.Classrooms.FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
@@ -439,10 +550,13 @@ public sealed class UpdateClassroomCommandHandler(IAppDbContext dbContext)
 
         classroom.Name = name;
         classroom.Description = (command.Description ?? string.Empty).Trim();
-        classroom.TeacherId = command.TeacherId;
-        classroom.CourseId = command.CourseId;
+        classroom.Grade = grade;
+        classroom.CourseId = assignments.Count > 0 ? assignments[0].CourseId : null;
         classroom.WhatsAppGroupInviteUrl = (command.WhatsAppGroupInviteUrl ?? string.Empty).Trim();
         classroom.WhatsAppNotifyPhones = (command.WhatsAppNotifyPhones ?? string.Empty).Trim();
+
+        await CreateClassroomCommandHandler.ReplaceCourseAssignmentsAsync(
+            dbContext, classroom.Id, assignments, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return (await CreateClassroomCommandHandler.LoadDto(dbContext, classroom.Id, cancellationToken))!;
@@ -456,6 +570,11 @@ public sealed class DeleteClassroomCommandHandler(IAppDbContext dbContext)
     {
         var classroom = await dbContext.Classrooms.FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
+
+        var courseLinks = await dbContext.ClassroomCourses
+            .Where(x => x.ClassroomId == classroom.Id)
+            .ToListAsync(cancellationToken);
+        dbContext.ClassroomCourses.RemoveRange(courseLinks);
 
         var memberships = await dbContext.ClassroomStudents
             .Where(x => x.ClassroomId == classroom.Id)

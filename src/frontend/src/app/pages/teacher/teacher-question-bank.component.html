@@ -18,7 +18,7 @@
           <select [(ngModel)]="courseId" name="courseId" (ngModelChange)="onCourseChange()" required>
             <option value="">{{ 'common.selectCourse' | t }}</option>
             @for (course of courses(); track course.id) {
-              <option [value]="course.id">{{ course.title }}</option>
+              <option [value]="course.id">{{ courseLabel(course) }}</option>
             }
           </select>
         </label>
@@ -234,7 +234,7 @@
         <div>
           <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
           <p class="meta">
-            {{ typeLabel(question.questionType) }} · {{ question.courseTitle }} · {{ question.points }} {{ 'common.pts' | t }}
+            {{ typeLabel(question.questionType) }} · {{ courseLabelById(question.courseId, question.courseTitle) }} · {{ question.points }} {{ 'common.pts' | t }}
             @if (question.options?.length) {
               · {{ question.options!.length }} {{ 'common.options' | t }} · {{ 'common.correctAnswer' | t }} {{ question.correctAnswer }}
             }

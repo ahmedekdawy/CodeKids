@@ -19,7 +19,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Badge> Badges => Set<Badge>();
     public DbSet<UserBadge> UserBadges => Set<UserBadge>();
     public DbSet<LiveSession> LiveSessions => Set<LiveSession>();
+    public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Classroom> Classrooms => Set<Classroom>();
+    public DbSet<ClassroomCourse> ClassroomCourses => Set<ClassroomCourse>();
     public DbSet<ClassroomStudent> ClassroomStudents => Set<ClassroomStudent>();
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<AssignmentQuestion> AssignmentQuestions => Set<AssignmentQuestion>();
@@ -41,12 +43,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.HasIndex(x => x.Email).IsUnique();
+            entity.HasIndex(x => x.Email)
+                .IsUnique()
+                .HasFilter("\"Email\" <> ''");
+            entity.HasIndex(x => x.MobilePhone)
+                .IsUnique()
+                .HasFilter("\"MobilePhone\" <> ''");
             entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
             entity.Property(x => x.DisplayName).HasMaxLength(80).IsRequired();
             entity.Property(x => x.PasswordHash).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Role).HasConversion<string>().HasMaxLength(30);
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();
             entity.Property(x => x.ZoomAccessToken).HasMaxLength(2000).IsRequired();
             entity.Property(x => x.ZoomRefreshToken).HasMaxLength(2000).IsRequired();
             entity.Property(x => x.ZoomConnectedEmail).HasMaxLength(160).IsRequired();
@@ -210,6 +219,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Notes).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => x.StartsAtUtc);
+            entity.HasIndex(x => new { x.TeacherId, x.StartsAtUtc });
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
         modelBuilder.Entity<Classroom>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -217,17 +242,31 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.Property(x => x.WhatsAppGroupInviteUrl).HasMaxLength(500).IsRequired();
             entity.Property(x => x.WhatsAppNotifyPhones).HasMaxLength(1000).IsRequired();
-            entity.HasOne(x => x.Teacher)
-                .WithMany()
-                .HasForeignKey(x => x.TeacherId)
-                .OnDelete(DeleteBehavior.SetNull);
             entity.HasOne(x => x.Course)
                 .WithMany()
                 .HasForeignKey(x => x.CourseId)
                 .OnDelete(DeleteBehavior.SetNull);
+            entity.HasMany(x => x.Courses)
+                .WithOne(x => x.Classroom)
+                .HasForeignKey(x => x.ClassroomId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(x => x.Students)
                 .WithOne(x => x.Classroom)
                 .HasForeignKey(x => x.ClassroomId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ClassroomCourse>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.ClassroomId, x.CourseId }).IsUnique();
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

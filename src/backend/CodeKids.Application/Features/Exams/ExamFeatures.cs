@@ -106,12 +106,13 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
     public async Task<ExamDto> Handle(CreateExamCommand command, CancellationToken cancellationToken)
     {
         var classroom = await dbContext.Classrooms
+            .Include(x => x.Courses)
             .FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 
-        if (classroom.TeacherId != command.TeacherUserId)
+        if (!classroom.Courses.Any(t => t.TeacherId == command.TeacherUserId))
         {
-            throw new InvalidOperationException("Only the assigned classroom teacher can create exams.");
+            throw new InvalidOperationException("Only an assigned classroom teacher can create exams.");
         }
 
         var title = command.Title.Trim();
@@ -217,6 +218,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
         var exam = await dbContext.Exams
             .AsNoTracking()
             .Include(x => x.Classroom)
+                .ThenInclude(c => c!.Courses)
             .Include(x => x.Course)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
@@ -280,6 +282,8 @@ public sealed class GetExamsQueryHandler(IAppDbContext dbContext)
         var exams = await dbContext.Exams
             .AsNoTracking()
             .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
+            .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
             .Include(x => x.Course)
             .Include(x => x.CreatedBy)
@@ -298,7 +302,7 @@ public sealed class GetExamsQueryHandler(IAppDbContext dbContext)
 
         if (isTeacher)
         {
-            exams = exams.Where(x => x.Classroom?.TeacherId == query.ViewerUserId).ToList();
+            exams = exams.Where(x => x.Classroom?.Courses.Any(t => t.TeacherId == query.ViewerUserId) == true).ToList();
         }
         else if (isStudent)
         {
@@ -332,6 +336,8 @@ public sealed class StartExamCommandHandler(IAppDbContext dbContext)
     public async Task<ExamAttemptDto> Handle(StartExamCommand command, CancellationToken cancellationToken)
     {
         var exam = await dbContext.Exams
+            .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
             .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
             .FirstOrDefaultAsync(x => x.Id == command.ExamId, cancellationToken)
@@ -384,6 +390,8 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
     {
         var exam = await dbContext.Exams
             .Include(x => x.Questions)
+            .Include(x => x.Classroom!)
+                .ThenInclude(c => c.Courses)
             .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
             .FirstOrDefaultAsync(x => x.Id == command.ExamId, cancellationToken)
@@ -523,10 +531,11 @@ public sealed class GetExamAttemptsQueryHandler(IAppDbContext dbContext)
     {
         var exam = await dbContext.Exams
             .Include(x => x.Classroom)
+                .ThenInclude(c => c!.Courses)
             .FirstOrDefaultAsync(x => x.Id == query.ExamId, cancellationToken)
             ?? throw new InvalidOperationException("Exam not found.");
 
-        if (exam.Classroom?.TeacherId != query.TeacherUserId)
+        if (exam.Classroom?.Courses.Any(t => t.TeacherId == query.TeacherUserId) != true)
         {
             throw new InvalidOperationException("Only the classroom teacher can review exam attempts.");
         }

@@ -1,4 +1,6 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Auth;
+using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -12,25 +14,34 @@ public sealed record ManagedUserDto(
     string DisplayName,
     string Role,
     Guid? ParentId,
+    int? Grade,
     int TotalXp,
-    string MobilePhone);
+    string MobilePhone,
+    string? WorkShift,
+    IReadOnlyList<int> Stages);
 
 public sealed record CreateManagedUserRequest(
-    string Email,
+    string? Email,
     string DisplayName,
     string Password,
     string Role,
     Guid? ParentId,
-    string? MobilePhone = null);
+    int? Grade = null,
+    string? MobilePhone = null,
+    string? WorkShift = null,
+    IReadOnlyList<int>? Stages = null);
 
 public sealed record CreateManagedUserCommand(
     Guid AdminUserId,
-    string Email,
+    string? Email,
     string DisplayName,
     string Password,
     string Role,
     Guid? ParentId,
-    string? MobilePhone = null) : ICommand<ManagedUserDto>;
+    int? Grade = null,
+    string? MobilePhone = null,
+    string? WorkShift = null,
+    IReadOnlyList<int>? Stages = null) : ICommand<ManagedUserDto>;
 
 public sealed record ListManagedUsersQuery(string? Role = null) : IQuery<IReadOnlyList<ManagedUserDto>>;
 
@@ -38,21 +49,21 @@ public sealed record CreateCourseRequest(
     string Title,
     string Theme,
     string Description,
-    int AgeMin,
-    int AgeMax,
+    int? AgeMin,
+    int? AgeMax,
     string? Term,
-    int? Grade,
-    int SortOrder);
+    IReadOnlyList<int>? Grades,
+    int? SortOrder);
 
 public sealed record CreateCourseCommand(
     string Title,
     string Theme,
     string Description,
-    int AgeMin,
-    int AgeMax,
+    int? AgeMin,
+    int? AgeMax,
     string? Term,
-    int? Grade,
-    int SortOrder) : ICommand<CourseSummaryDto>;
+    IReadOnlyList<int>? Grades,
+    int? SortOrder) : ICommand<IReadOnlyList<CourseSummaryDto>>;
 
 public sealed record CourseSummaryDto(
     Guid Id,
@@ -81,8 +92,15 @@ public sealed class CreateManagedUserCommandHandler(
             throw new InvalidOperationException("Role must be Teacher, Student, Parent, or SuperAdmin.");
         }
 
-        var email = command.Email.Trim().ToLowerInvariant();
-        if (await dbContext.Users.AnyAsync(x => x.Email == email, cancellationToken))
+        var email = NormalizeEmail(command.Email);
+        var mobile = RegisterCommandHandler.NormalizePhone(command.MobilePhone);
+        if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(mobile))
+        {
+            throw new InvalidOperationException("Email or mobile is required.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(email)
+            && await dbContext.Users.AnyAsync(x => x.Email == email, cancellationToken))
         {
             throw new InvalidOperationException("An account with that email already exists.");
         }
@@ -97,6 +115,17 @@ public sealed class CreateManagedUserCommandHandler(
             }
         }
 
+        var grade = role == UserRole.Student
+            ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
+            : null;
+        var workShift = ParseWorkShift(role, command.WorkShift);
+        var stages = ParseTeacherStages(role, command.Stages);
+        if (!string.IsNullOrWhiteSpace(mobile)
+            && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile, cancellationToken))
+        {
+            throw new InvalidOperationException("An account with that mobile number already exists.");
+        }
+
         var defaultAvatar = role == UserRole.Student
             ? await dbContext.Avatars.OrderBy(x => x.UnlockXp).FirstOrDefaultAsync(cancellationToken)
             : null;
@@ -109,8 +138,11 @@ public sealed class CreateManagedUserCommandHandler(
             PasswordHash = passwordHasher.Hash(command.Password),
             Role = role,
             ParentId = role == UserRole.Student ? command.ParentId : null,
+            Grade = grade,
             AvatarId = defaultAvatar?.Id,
-            MobilePhone = NormalizePhone(command.MobilePhone),
+            MobilePhone = mobile,
+            WorkShift = workShift,
+            Stages = stages,
             TotalXp = 0
         };
 
@@ -121,11 +153,54 @@ public sealed class CreateManagedUserCommandHandler(
         return ToDto(user);
     }
 
-    internal static string NormalizePhone(string? phone) =>
-        (phone ?? string.Empty).Trim();
+    internal static string NormalizeEmail(string? email) =>
+        (email ?? string.Empty).Trim().ToLowerInvariant();
+
+    internal static TeacherWorkShift? ParseWorkShift(UserRole role, string? workShift)
+    {
+        if (role != UserRole.Teacher)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(workShift))
+        {
+            return TeacherWorkShift.Both;
+        }
+
+        if (!Enum.TryParse<TeacherWorkShift>(workShift.Trim(), true, out var shift)
+            || shift is not (TeacherWorkShift.Am or TeacherWorkShift.Pm or TeacherWorkShift.Both))
+        {
+            throw new InvalidOperationException("Teacher work shift must be Am, Pm, or Both.");
+        }
+
+        return shift;
+    }
+
+    internal static string ParseTeacherStages(UserRole role, IReadOnlyList<int>? stages)
+    {
+        if (role != UserRole.Teacher)
+        {
+            return string.Empty;
+        }
+
+        return GradeStageHelper.SerializeStages(stages);
+    }
 
     internal static ManagedUserDto ToDto(User user) =>
-        new(user.Id, user.Email, user.DisplayName, user.Role.ToString(), user.ParentId, user.TotalXp, user.MobilePhone);
+        new(
+            user.Id,
+            user.Email,
+            user.DisplayName,
+            user.Role.ToString(),
+            user.ParentId,
+            user.Grade,
+            user.TotalXp,
+            user.MobilePhone,
+            user.WorkShift?.ToString(),
+            user.Role == UserRole.Teacher
+                ? GradeStageHelper.ParseStages(user.Stages)
+                : Array.Empty<int>());
 }
 
 public sealed class ListManagedUsersQueryHandler(IAppDbContext dbContext)
@@ -140,19 +215,19 @@ public sealed class ListManagedUsersQueryHandler(IAppDbContext dbContext)
             users = users.Where(x => x.Role == role);
         }
 
-        return await users
+        return (await users
             .OrderBy(x => x.Role)
             .ThenBy(x => x.DisplayName)
-            .Select(x => new ManagedUserDto(
-                x.Id, x.Email, x.DisplayName, x.Role.ToString(), x.ParentId, x.TotalXp, x.MobilePhone))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken))
+            .Select(CreateManagedUserCommandHandler.ToDto)
+            .ToList();
     }
 }
 
 public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
-    : ICommandHandler<CreateCourseCommand, CourseSummaryDto>
+    : ICommandHandler<CreateCourseCommand, IReadOnlyList<CourseSummaryDto>>
 {
-    public async Task<CourseSummaryDto> Handle(CreateCourseCommand command, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<CourseSummaryDto>> Handle(CreateCourseCommand command, CancellationToken cancellationToken)
     {
         var title = command.Title.Trim();
         if (string.IsNullOrWhiteSpace(title))
@@ -161,25 +236,30 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         }
 
         var term = ParseTerm(command.Term);
-        var grade = NormalizeGrade(command.Grade);
+        var grades = NormalizeGrades(command.Grades);
+        var theme = string.IsNullOrWhiteSpace(command.Theme) ? "General" : command.Theme.Trim();
+        var description = (command.Description ?? string.Empty).Trim();
+        var ageMin = command.AgeMin is null or <= 0 ? 8 : command.AgeMin.Value;
+        var ageMax = command.AgeMax is null or <= 0 ? 12 : command.AgeMax.Value;
+        var sortOrder = command.SortOrder ?? 0;
 
-        var course = new Course
+        var courses = grades.Select(grade => new Course
         {
             Id = Guid.NewGuid(),
             Title = title,
-            Theme = string.IsNullOrWhiteSpace(command.Theme) ? "General" : command.Theme.Trim(),
-            Description = (command.Description ?? string.Empty).Trim(),
-            AgeMin = command.AgeMin <= 0 ? 8 : command.AgeMin,
-            AgeMax = command.AgeMax <= 0 ? 12 : command.AgeMax,
+            Theme = theme,
+            Description = description,
+            AgeMin = ageMin,
+            AgeMax = ageMax,
             Term = term,
             Grade = grade,
-            SortOrder = command.SortOrder
-        };
+            SortOrder = sortOrder
+        }).ToList();
 
-        dbContext.Courses.Add(course);
+        dbContext.Courses.AddRange(courses);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return ToSummary(course);
+        return courses.Select(ToSummary).ToList();
     }
 
     internal static CourseTerm? ParseTerm(string? value)
@@ -197,16 +277,35 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         return term;
     }
 
+    /// <summary>
+    /// Empty/null grades → one course for all grades (null).
+    /// Otherwise one course per distinct grade (KG1=-1, KG2=0, or 1–12).
+    /// </summary>
+    internal static IReadOnlyList<int?> NormalizeGrades(IReadOnlyList<int>? grades)
+    {
+        if (grades is null || grades.Count == 0)
+        {
+            return [null];
+        }
+
+        return grades
+            .Select(g => NormalizeGrade(g))
+            .Distinct()
+            .OrderBy(g => g ?? 999)
+            .ToList();
+    }
+
+    /// <summary>KG1 = -1, KG2 = 0, grades 1–12; null means all grades.</summary>
     internal static int? NormalizeGrade(int? grade)
     {
-        if (grade is null or 0)
+        if (grade is null)
         {
             return null;
         }
 
-        if (grade is < 1 or > 12)
+        if (grade is < -1 or > 12)
         {
-            throw new InvalidOperationException("Grade must be between 1 and 12.");
+            throw new InvalidOperationException("Grade must be KG1, KG2, or between 1 and 12.");
         }
 
         return grade;
@@ -226,22 +325,28 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
 }
 
 public sealed record UpdateManagedUserRequest(
-    string Email,
+    string? Email,
     string DisplayName,
     string Role,
     Guid? ParentId,
     string? Password,
-    string? MobilePhone = null);
+    int? Grade = null,
+    string? MobilePhone = null,
+    string? WorkShift = null,
+    IReadOnlyList<int>? Stages = null);
 
 public sealed record UpdateManagedUserCommand(
     Guid AdminUserId,
     Guid UserId,
-    string Email,
+    string? Email,
     string DisplayName,
     string Role,
     Guid? ParentId,
     string? Password,
-    string? MobilePhone = null) : ICommand<ManagedUserDto>;
+    int? Grade = null,
+    string? MobilePhone = null,
+    string? WorkShift = null,
+    IReadOnlyList<int>? Stages = null) : ICommand<ManagedUserDto>;
 
 public sealed record DeleteManagedUserCommand(Guid AdminUserId, Guid UserId) : ICommand<bool>;
 
@@ -249,22 +354,22 @@ public sealed record UpdateCourseRequest(
     string Title,
     string Theme,
     string Description,
-    int AgeMin,
-    int AgeMax,
+    int? AgeMin,
+    int? AgeMax,
     string? Term,
     int? Grade,
-    int SortOrder);
+    int? SortOrder);
 
 public sealed record UpdateCourseCommand(
     Guid CourseId,
     string Title,
     string Theme,
     string Description,
-    int AgeMin,
-    int AgeMax,
+    int? AgeMin,
+    int? AgeMax,
     string? Term,
     int? Grade,
-    int SortOrder) : ICommand<CourseSummaryDto>;
+    int? SortOrder) : ICommand<CourseSummaryDto>;
 
 public sealed record DeleteCourseCommand(Guid CourseId) : ICommand<bool>;
 
@@ -287,8 +392,15 @@ public sealed class UpdateManagedUserCommandHandler(
             throw new InvalidOperationException("Role must be Teacher, Student, Parent, or SuperAdmin.");
         }
 
-        var email = command.Email.Trim().ToLowerInvariant();
-        if (await dbContext.Users.AnyAsync(x => x.Email == email && x.Id != user.Id, cancellationToken))
+        var email = CreateManagedUserCommandHandler.NormalizeEmail(command.Email);
+        var mobile = RegisterCommandHandler.NormalizePhone(command.MobilePhone);
+        if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(mobile))
+        {
+            throw new InvalidOperationException("Email or mobile is required.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(email)
+            && await dbContext.Users.AnyAsync(x => x.Email == email && x.Id != user.Id, cancellationToken))
         {
             throw new InvalidOperationException("An account with that email already exists.");
         }
@@ -316,7 +428,18 @@ public sealed class UpdateManagedUserCommandHandler(
         user.DisplayName = command.DisplayName.Trim();
         user.Role = role;
         user.ParentId = role == UserRole.Student ? command.ParentId : null;
-        user.MobilePhone = CreateManagedUserCommandHandler.NormalizePhone(command.MobilePhone);
+        user.Grade = role == UserRole.Student
+            ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
+            : null;
+        if (!string.IsNullOrWhiteSpace(mobile)
+            && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile && x.Id != user.Id, cancellationToken))
+        {
+            throw new InvalidOperationException("An account with that mobile number already exists.");
+        }
+
+        user.MobilePhone = mobile;
+        user.WorkShift = CreateManagedUserCommandHandler.ParseWorkShift(role, command.WorkShift);
+        user.Stages = CreateManagedUserCommandHandler.ParseTeacherStages(role, command.Stages);
         if (!string.IsNullOrWhiteSpace(command.Password))
         {
             user.PasswordHash = passwordHasher.Hash(command.Password);
@@ -349,13 +472,10 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
             }
         }
 
-        var classroomsAsTeacher = await dbContext.Classrooms
+        var teacherLinks = await dbContext.ClassroomCourses
             .Where(x => x.TeacherId == user.Id)
             .ToListAsync(cancellationToken);
-        foreach (var classroom in classroomsAsTeacher)
-        {
-            classroom.TeacherId = null;
-        }
+        dbContext.ClassroomCourses.RemoveRange(teacherLinks);
 
         var memberships = await dbContext.ClassroomStudents
             .Where(x => x.StudentId == user.Id)
@@ -391,11 +511,11 @@ public sealed class UpdateCourseCommandHandler(IAppDbContext dbContext)
         course.Title = title;
         course.Theme = string.IsNullOrWhiteSpace(command.Theme) ? "General" : command.Theme.Trim();
         course.Description = (command.Description ?? string.Empty).Trim();
-        course.AgeMin = command.AgeMin <= 0 ? 8 : command.AgeMin;
-        course.AgeMax = command.AgeMax <= 0 ? 12 : command.AgeMax;
+        course.AgeMin = command.AgeMin is null or <= 0 ? 8 : command.AgeMin.Value;
+        course.AgeMax = command.AgeMax is null or <= 0 ? 12 : command.AgeMax.Value;
         course.Term = CreateCourseCommandHandler.ParseTerm(command.Term);
         course.Grade = CreateCourseCommandHandler.NormalizeGrade(command.Grade);
-        course.SortOrder = command.SortOrder;
+        course.SortOrder = command.SortOrder ?? 0;
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return CreateCourseCommandHandler.ToSummary(course);
@@ -415,6 +535,11 @@ public sealed class DeleteCourseCommandHandler(IAppDbContext dbContext)
         {
             classroom.CourseId = null;
         }
+
+        var courseLinks = await dbContext.ClassroomCourses
+            .Where(x => x.CourseId == course.Id)
+            .ToListAsync(cancellationToken);
+        dbContext.ClassroomCourses.RemoveRange(courseLinks);
 
         dbContext.Courses.Remove(course);
         await dbContext.SaveChangesAsync(cancellationToken);

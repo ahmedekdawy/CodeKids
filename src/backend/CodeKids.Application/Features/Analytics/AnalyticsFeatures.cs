@@ -119,7 +119,7 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             .AsNoTracking()
             .Include(x => x.Classroom)
             .AnyAsync(
-                x => x.StudentId == query.StudentId && x.Classroom!.TeacherId == query.TeacherUserId,
+                x => x.StudentId == query.StudentId && x.Classroom!.Courses.Any(t => t.TeacherId == query.TeacherUserId),
                 cancellationToken);
 
         if (!enrolled)
@@ -133,12 +133,22 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == query.StudentId && x.Role == UserRole.Student, cancellationToken)
             ?? throw new InvalidOperationException("Student not found.");
 
-        var classroomCourseIds = await dbContext.Classrooms
+        var classroomCourseIds = await dbContext.ClassroomCourses
             .AsNoTracking()
-            .Where(x => x.TeacherId == query.TeacherUserId && x.CourseId != null)
-            .Select(x => x.CourseId!.Value)
+            .Where(x => x.TeacherId == query.TeacherUserId)
+            .Select(x => x.CourseId)
             .Distinct()
             .ToListAsync(cancellationToken);
+
+        if (classroomCourseIds.Count == 0)
+        {
+            classroomCourseIds = await dbContext.Classrooms
+                .AsNoTracking()
+                .Where(x => x.Courses.Any(t => t.TeacherId == query.TeacherUserId) && x.CourseId != null)
+                .Select(x => x.CourseId!.Value)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+        }
 
         var lessons = await dbContext.Lessons
             .AsNoTracking()
@@ -251,7 +261,7 @@ public sealed class GetClassroomDiagnosisQueryHandler(IAppDbContext dbContext)
             .AsNoTracking()
             .Include(x => x.Students)
             .FirstOrDefaultAsync(
-                x => x.Id == query.ClassroomId && x.TeacherId == query.TeacherUserId,
+                x => x.Id == query.ClassroomId && x.Courses.Any(t => t.TeacherId == query.TeacherUserId),
                 cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 

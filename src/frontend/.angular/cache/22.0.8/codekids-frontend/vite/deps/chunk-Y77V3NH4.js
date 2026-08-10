@@ -1,23 +1,16 @@
 import {
   PlatformLocation
-} from "./chunk-USN34DEC.js";
+} from "./chunk-OMJKAIXT.js";
 import {
   ApplicationRef,
   Attribute,
   ChangeDetectorRef,
   DEFAULT_CURRENCY_CODE,
-  DOCUMENT,
-  DestroyRef,
   Directive,
   ElementRef,
   Host,
-  IMAGE_CONFIG,
-  IMAGE_CONFIG_DEFAULTS,
-  INTERNAL_APPLICATION_ERROR_HANDLER,
   Inject,
   Injectable,
-  InjectionToken,
-  Injector,
   Input,
   IterableDiffers,
   KeyValueDiffers,
@@ -25,54 +18,63 @@ import {
   LocaleDataIndex,
   NgModule,
   NgModuleRef$1,
-  NgZone,
   Optional,
   Pipe,
   Renderer2,
   RendererStyleFlags2,
-  RuntimeError,
   Service,
   TemplateRef,
-  Version,
   ViewContainerRef,
   booleanAttribute,
   createNgModule,
   findLocaleData,
-  formatRuntimeError,
   getLocaleCurrencyCode,
   getLocalePluralCase,
-  inject,
   isPromise,
-  isSignal,
   isSubscribable,
   numberAttribute,
   performanceMarkFeature,
   registerLocaleData,
   setClassMetadata,
-  stringify,
-  untracked,
   unwrapSafeValue,
   ɵɵNgOnChangesFeature,
   ɵɵdefineDirective,
-  ɵɵdefineInjectable,
-  ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵdefinePipe,
   ɵɵdefineService,
   ɵɵdirectiveInject,
   ɵɵgetInheritedFactory,
-  ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-FCZGHZFH.js";
+} from "./chunk-FXNMDNDQ.js";
+import {
+  DOCUMENT,
+  DestroyRef,
+  IMAGE_CONFIG,
+  IMAGE_CONFIG_DEFAULTS,
+  INTERNAL_APPLICATION_ERROR_HANDLER,
+  InjectionToken,
+  Injector,
+  NgZone,
+  RuntimeError,
+  Version,
+  formatRuntimeError,
+  inject,
+  isSignal,
+  stringify,
+  untracked,
+  ɵɵdefineInjectable,
+  ɵɵdefineInjector,
+  ɵɵinject
+} from "./chunk-O7GWECDV.js";
 import {
   Subject,
   __async,
   __spreadProps,
   __spreadValues
-} from "./chunk-KW66VODW.js";
+} from "./chunk-MTKG5SJP.js";
 
-// ../node_modules/@angular/common/fesm2022/_location-chunk.mjs
+// node_modules/@angular/common/fesm2022/_location-chunk.mjs
 function joinWithSlash(start, end) {
   if (!start) return end;
   if (!end) return start;
@@ -377,7 +379,7 @@ function _stripOrigin(baseHref) {
   return baseHref;
 }
 
-// ../node_modules/@angular/common/fesm2022/_common_module-chunk.mjs
+// node_modules/@angular/common/fesm2022/_common_module-chunk.mjs
 var HashLocationStrategy = class _HashLocationStrategy extends LocationStrategy {
   _platformLocation;
   _baseHref = "";
@@ -3211,7 +3213,7 @@ var CommonModule = class _CommonModule {
   }], null, null);
 })();
 
-// ../node_modules/@angular/common/fesm2022/_platform_navigation-chunk.mjs
+// node_modules/@angular/common/fesm2022/_platform_navigation-chunk.mjs
 var PRECOMMIT_HANDLER_SUPPORTED = new InjectionToken("", {
   factory: () => {
     return typeof window !== "undefined" && typeof window.NavigationPrecommitController !== "undefined";
@@ -3237,7 +3239,7 @@ var PlatformNavigation = class _PlatformNavigation {
   }], null, null);
 })();
 
-// ../node_modules/@angular/common/fesm2022/common.mjs
+// node_modules/@angular/common/fesm2022/common.mjs
 var NavigationAdapterForLocation = class _NavigationAdapterForLocation extends Location {
   navigation = inject(PlatformNavigation);
   destroyRef = inject(DestroyRef);
@@ -4680,4 +4682,4 @@ export {
   PRECONNECT_CHECK_BLOCKLIST,
   NgOptimizedImage
 };
-//# sourceMappingURL=chunk-FKKROREE.js.map
+//# sourceMappingURL=chunk-Y77V3NH4.js.map

@@ -3,6 +3,7 @@ using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
 using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace CodeKids.Application.Features.Auth;
 
@@ -13,7 +14,9 @@ public sealed record AuthUserDto(
     string Role,
     Guid? ParentId,
     Guid? AvatarId,
-    int TotalXp);
+    int TotalXp,
+    string MobilePhone,
+    string? WorkShift);
 
 public sealed record AuthResponse(string Token, AuthUserDto User);
 
@@ -24,6 +27,7 @@ public sealed record RegisterRequest(
     string Role,
     Guid? ParentId);
 
+/// <summary>Email holds email or mobile login identifier.</summary>
 public sealed record LoginRequest(string Email, string Password);
 
 public sealed record RegisterCommand(
@@ -87,8 +91,35 @@ public sealed class RegisterCommandHandler(
         return new AuthResponse(jwtTokenService.CreateToken(user), ToDto(user));
     }
 
-    private static AuthUserDto ToDto(User user) =>
-        new(user.Id, user.Email, user.DisplayName, user.Role.ToString(), user.ParentId, user.AvatarId, user.TotalXp);
+    internal static AuthUserDto ToDto(User user) =>
+        new(
+            user.Id,
+            user.Email,
+            user.DisplayName,
+            user.Role.ToString(),
+            user.ParentId,
+            user.AvatarId,
+            user.TotalXp,
+            user.MobilePhone,
+            user.WorkShift?.ToString());
+
+    /// <summary>Keeps digits and an optional leading +.</summary>
+    internal static string NormalizePhone(string? phone)
+    {
+        var raw = (phone ?? string.Empty).Trim();
+        if (raw.Length == 0) return string.Empty;
+
+        var sb = new StringBuilder(raw.Length);
+        foreach (var c in raw)
+        {
+            if (char.IsDigit(c) || (c == '+' && sb.Length == 0))
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.ToString();
+    }
 }
 
 public sealed class LoginCommandHandler(
@@ -98,19 +129,36 @@ public sealed class LoginCommandHandler(
 {
     public async Task<AuthResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
-        var email = command.Email.Trim().ToLowerInvariant();
-        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken)
-            ?? throw new InvalidOperationException("Invalid email or password.");
-
-        if (!passwordHasher.Verify(command.Password, user.PasswordHash))
+        var login = (command.Email ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(login))
         {
-            throw new InvalidOperationException("Invalid email or password.");
+            throw new InvalidOperationException("Invalid email, mobile, or password.");
+        }
+
+        User? user;
+        if (login.Contains('@', StringComparison.Ordinal))
+        {
+            var email = login.ToLowerInvariant();
+            user = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+        }
+        else
+        {
+            var phone = RegisterCommandHandler.NormalizePhone(login);
+            if (string.IsNullOrWhiteSpace(phone))
+            {
+                throw new InvalidOperationException("Invalid email, mobile, or password.");
+            }
+
+            user = await dbContext.Users.FirstOrDefaultAsync(x => x.MobilePhone == phone, cancellationToken);
+        }
+
+        if (user is null || !passwordHasher.Verify(command.Password, user.PasswordHash))
+        {
+            throw new InvalidOperationException("Invalid email, mobile, or password.");
         }
 
         return new AuthResponse(
             jwtTokenService.CreateToken(user),
-            new AuthUserDto(user.Id, user.Email, user.DisplayName, user.Role.ToString(), user.ParentId, user.AvatarId, user.TotalXp));
+            RegisterCommandHandler.ToDto(user));
     }
 }
-
-

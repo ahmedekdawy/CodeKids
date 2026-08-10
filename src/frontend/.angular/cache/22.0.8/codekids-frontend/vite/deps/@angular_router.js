@@ -1,7 +1,7 @@
 import {
   Title
-} from "./chunk-EKOWQENT.js";
-import "./chunk-QPF22TYC.js";
+} from "./chunk-RCBXOF2K.js";
+import "./chunk-N6ZWM5FS.js";
 import {
   HashLocationStrategy,
   Location,
@@ -11,11 +11,11 @@ import {
   PathLocationStrategy,
   PlatformNavigation,
   ViewportScroller
-} from "./chunk-FKKROREE.js";
+} from "./chunk-Y77V3NH4.js";
 import {
   LOCATION_INITIALIZED,
   PlatformLocation
-} from "./chunk-USN34DEC.js";
+} from "./chunk-OMJKAIXT.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -26,76 +26,78 @@ import {
   Component,
   Console,
   ContentChildren,
-  DOCUMENT,
-  DestroyRef,
   Directive,
-  ENVIRONMENT_INITIALIZER,
   ElementRef,
-  EnvironmentInjector,
-  EventEmitter,
   HostAttributeToken,
   HostListener,
-  INTERNAL_APPLICATION_ERROR_HANDLER,
   IS_ENABLED_BLOCKING_INITIAL_NAVIGATION,
   IS_HYDRATION_DOM_REUSE_ENABLED,
   Injectable,
-  InjectionToken,
-  Injector,
   Input,
   NgModule,
   NgModuleFactory$1,
-  NgZone,
   Output,
-  PendingTasksInternal,
   Renderer2,
-  RuntimeError,
   Service,
-  Version,
   ViewContainerRef,
   afterNextRender,
   booleanAttribute,
-  computed,
   createEnvironmentInjector,
-  effect,
-  formatRuntimeError,
-  inject,
   input,
-  isInjectable,
   isNgModule,
   isPromise,
-  isStandalone,
-  linkedSignal,
-  makeEnvironmentProviders,
   maybeUnwrapDefaultExport,
   performanceMarkFeature,
-  promiseWithResolvers,
   provideAppInitializer,
-  provideEnvironmentInitializer,
   publishNonCoreGlobalUtil,
   reflectComponentType,
-  runInInjectionContext,
   setClassMetadata,
-  signal,
-  untracked,
   ɵɵNgOnChangesFeature,
   ɵɵattribute,
   ɵɵcontentQuery,
   ɵɵdefineComponent,
   ɵɵdefineDirective,
-  ɵɵdefineInjectable,
-  ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵdefineService,
   ɵɵdirectiveInject,
   ɵɵelement,
-  ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵinvalidFactory,
   ɵɵlistener,
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵsanitizeUrlOrResourceUrl
-} from "./chunk-FCZGHZFH.js";
+} from "./chunk-FXNMDNDQ.js";
+import {
+  DOCUMENT,
+  DestroyRef,
+  ENVIRONMENT_INITIALIZER,
+  EnvironmentInjector,
+  EventEmitter,
+  INTERNAL_APPLICATION_ERROR_HANDLER,
+  InjectionToken,
+  Injector,
+  NgZone,
+  PendingTasksInternal,
+  RuntimeError,
+  Version,
+  computed,
+  effect,
+  formatRuntimeError,
+  inject,
+  isInjectable,
+  isStandalone,
+  linkedSignal,
+  makeEnvironmentProviders,
+  promiseWithResolvers,
+  provideEnvironmentInitializer,
+  runInInjectionContext,
+  signal,
+  untracked,
+  ɵɵdefineInjectable,
+  ɵɵdefineInjector,
+  ɵɵinject
+} from "./chunk-O7GWECDV.js";
 import {
   BehaviorSubject,
   EMPTY,
@@ -128,9 +130,9 @@ import {
   takeUntil,
   tap,
   throwError
-} from "./chunk-KW66VODW.js";
+} from "./chunk-MTKG5SJP.js";
 
-// ../node_modules/@angular/router/fesm2022/_router-chunk.mjs
+// node_modules/@angular/router/fesm2022/_router-chunk.mjs
 var PRIMARY_OUTLET = "primary";
 var RouteTitleKey = /* @__PURE__ */ Symbol("RouteTitle");
 var ParamsAsMap = class {
@@ -4555,7 +4557,7 @@ function validateCommands(commands) {
   }
 }
 
-// ../node_modules/@angular/router/fesm2022/_router_module-chunk.mjs
+// node_modules/@angular/router/fesm2022/_router_module-chunk.mjs
 var ReactiveRouterState = class _ReactiveRouterState {
   router = inject(Router);
   stateManager = inject(StateManager);
@@ -6061,7 +6063,7 @@ function provideRouterInitializer() {
   }];
 }
 
-// ../node_modules/@angular/router/fesm2022/router.mjs
+// node_modules/@angular/router/fesm2022/router.mjs
 function mapToCanMatch(providers) {
   return providers.map((provider) => (...params) => inject(provider).canMatch(...params));
 }

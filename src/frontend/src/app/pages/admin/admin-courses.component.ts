@@ -4,12 +4,17 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Course, CourseTerm } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import {
+  MultiSelectOption,
+  SearchableMultiSelectComponent
+} from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
+import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 
 @Component({
   selector: 'app-admin-courses',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
   templateUrl: './admin-courses.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -22,30 +27,47 @@ export class AdminCoursesComponent {
   readonly sortKey = signal('title');
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
+  /** Empty string = all courses; `'all'` = grade-null courses; otherwise a grade number. */
+  readonly filterGrade = signal<number | '' | 'all'>('');
 
   readonly terms: CourseTerm[] = ['FirstTerm', 'SecondTerm', 'FullYear'];
-  readonly grades = Array.from({ length: 12 }, (_, i) => i + 1);
+  readonly grades = GRADE_CODES;
+  readonly gradeOptions = computed<MultiSelectOption[]>(() => {
+    this.locale.lang();
+    return this.grades.map((g) => ({
+      value: g,
+      label: formatGradeLabel((k, p) => this.locale.t(k, p), g)
+    }));
+  });
 
   courseTitle = '';
   courseTheme = 'Adventure';
   courseDescription = '';
-  courseAgeMin = 8;
-  courseAgeMax = 12;
+  courseAgeMin: number | null = 8;
+  courseAgeMax: number | null = 12;
   courseTerm: CourseTerm | '' = '';
-  courseGrade: number | null = null;
-  courseSort = 10;
+  /** Empty = one course for all grades; otherwise one course per selected grade. */
+  courseGrades: number[] = [];
+  courseSort: number | null = 10;
 
   editTitle = '';
   editTheme = '';
   editDescription = '';
-  editAgeMin = 8;
-  editAgeMax = 12;
+  editAgeMin: number | null = 8;
+  editAgeMax: number | null = 12;
   editTerm: CourseTerm | string | '' = '';
   editGrade: number | null = null;
-  editSort = 0;
+  editSort: number | null = 0;
+
+  readonly filteredCourses = computed(() => {
+    const filter = this.filterGrade();
+    if (filter === '') return this.courses();
+    if (filter === 'all') return this.courses().filter((c) => c.grade == null);
+    return this.courses().filter((c) => c.grade === filter);
+  });
 
   readonly sortedCourses = computed(() =>
-    sortBy(this.courses(), this.sortKey(), this.sortDir())
+    sortBy(this.filteredCourses(), this.sortKey(), this.sortDir())
   );
 
   constructor() {
@@ -66,6 +88,18 @@ export class AdminCoursesComponent {
     return this.sortDir() === 'asc' ? '↑' : '↓';
   }
 
+  onFilterGradeChange(value: string): void {
+    if (value === '' || value === 'all') {
+      this.filterGrade.set(value);
+      return;
+    }
+    this.filterGrade.set(Number(value));
+  }
+
+  clearGradeFilter(): void {
+    this.filterGrade.set('');
+  }
+
   termLabel(term: string | null | undefined): string {
     if (!term) return this.locale.t('common.allTerms');
     switch (term) {
@@ -81,8 +115,7 @@ export class AdminCoursesComponent {
   }
 
   gradeLabel(grade: number | null | undefined): string {
-    if (grade == null) return this.locale.t('common.allGrades');
-    return this.locale.t('common.gradeN', { n: grade });
+    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
   }
 
   createCourse(): void {
@@ -92,19 +125,26 @@ export class AdminCoursesComponent {
         title: this.courseTitle,
         theme: this.courseTheme,
         description: this.courseDescription,
-        ageMin: this.courseAgeMin,
-        ageMax: this.courseAgeMax,
+        ageMin: this.courseAgeMin ?? 8,
+        ageMax: this.courseAgeMax ?? 12,
         term: this.courseTerm || null,
-        grade: this.courseGrade,
-        sortOrder: this.courseSort
+        grades: this.courseGrades,
+        sortOrder: this.courseSort ?? 0
       })
       .subscribe({
-        next: () => {
-          this.message.set(this.locale.t('admin.courses.created'));
+        next: (created) => {
+          this.message.set(
+            created.length === 1
+              ? this.locale.t('admin.courses.created')
+              : this.locale.t('admin.courses.createdMany', { n: created.length })
+          );
           this.courseTitle = '';
           this.courseDescription = '';
           this.courseTerm = '';
-          this.courseGrade = null;
+          this.courseGrades = [];
+          this.courseAgeMin = 8;
+          this.courseAgeMax = 12;
+          this.courseSort = 10;
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.createFailed'))
@@ -134,11 +174,11 @@ export class AdminCoursesComponent {
         title: this.editTitle,
         theme: this.editTheme,
         description: this.editDescription,
-        ageMin: this.editAgeMin,
-        ageMax: this.editAgeMax,
+        ageMin: this.editAgeMin ?? 8,
+        ageMax: this.editAgeMax ?? 12,
         term: this.editTerm || null,
         grade: this.editGrade,
-        sortOrder: this.editSort
+        sortOrder: this.editSort ?? 0
       })
       .subscribe({
         next: () => {
