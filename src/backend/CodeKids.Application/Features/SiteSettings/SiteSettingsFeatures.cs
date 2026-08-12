@@ -9,9 +9,15 @@ public sealed record SiteSettingsDto(
     string SiteName,
     string? LogoUrl,
     string? BannerUrl,
+    DateTimeOffset? TimetableWeekStartUtc,
     DateTimeOffset UpdatedAtUtc);
 
-public sealed record UpdateSiteSettingsRequest(string SiteName, bool? ClearLogo = null, bool? ClearBanner = null);
+public sealed record UpdateSiteSettingsRequest(
+    string SiteName,
+    bool? ClearLogo = null,
+    bool? ClearBanner = null,
+    DateTimeOffset? TimetableWeekStartUtc = null,
+    bool? ClearTimetableWeek = null);
 
 public sealed record GetSiteSettingsQuery() : IQuery<SiteSettingsDto>;
 
@@ -19,7 +25,9 @@ public sealed record UpdateSiteSettingsCommand(
     Guid AdminUserId,
     string SiteName,
     bool ClearLogo,
-    bool ClearBanner) : ICommand<SiteSettingsDto>;
+    bool ClearBanner,
+    DateTimeOffset? TimetableWeekStartUtc,
+    bool ClearTimetableWeek) : ICommand<SiteSettingsDto>;
 
 public sealed record UploadSiteImageCommand(
     Guid AdminUserId,
@@ -34,6 +42,7 @@ public static class SiteSettingsMapper
             settings.SiteName,
             string.IsNullOrWhiteSpace(settings.LogoStorageKey) ? null : "/api/site-settings/logo",
             string.IsNullOrWhiteSpace(settings.BannerStorageKey) ? null : "/api/site-settings/banner",
+            settings.TimetableWeekStartUtc,
             settings.UpdatedAtUtc);
 }
 
@@ -99,9 +108,25 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
             settings.BannerContentType = string.Empty;
         }
 
+        if (command.ClearTimetableWeek)
+        {
+            settings.TimetableWeekStartUtc = null;
+        }
+        else if (command.TimetableWeekStartUtc.HasValue)
+        {
+            settings.TimetableWeekStartUtc = NormalizeTimetableWeekStart(command.TimetableWeekStartUtc.Value);
+        }
+
         settings.UpdatedAtUtc = DateTimeOffset.UtcNow;
         await dbContext.SaveChangesAsync(cancellationToken);
         return SiteSettingsMapper.ToDto(settings);
+    }
+
+    private static DateTimeOffset NormalizeTimetableWeekStart(DateTimeOffset value)
+    {
+        var date = value.UtcDateTime.Date;
+        var sunday = date.AddDays(-(int)date.DayOfWeek);
+        return new DateTimeOffset(sunday, TimeSpan.Zero);
     }
 }
 

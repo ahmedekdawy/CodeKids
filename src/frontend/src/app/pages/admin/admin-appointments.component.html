@@ -14,7 +14,12 @@
     <form class="meeting-form" (ngSubmit)="createOrSave()">
       <label>
         {{ 'common.teacher' | t }}
-        <select [(ngModel)]="teacherId" name="teacherId" required>
+        <select
+          [ngModel]="teacherId"
+          name="teacherId"
+          required
+          (ngModelChange)="onTeacherChange($event)"
+        >
           <option value="">{{ 'common.select' | t }}</option>
           @for (teacher of teachers(); track teacher.id) {
             <option [value]="teacher.id">{{ teacher.displayName }}</option>
@@ -23,12 +28,20 @@
       </label>
       <label>
         {{ 'common.course' | t }}
-        <select [(ngModel)]="courseId" name="courseId" required>
+        <select
+          [(ngModel)]="courseId"
+          name="courseId"
+          required
+          [disabled]="!selectedTeacherId()"
+        >
           <option value="">{{ 'common.select' | t }}</option>
-          @for (course of courses(); track course.id) {
+          @for (course of availableCourses(); track course.id) {
             <option [value]="course.id">{{ courseLabel(course) }}</option>
           }
         </select>
+        @if (selectedTeacherId() && availableCourses().length === 0) {
+          <span class="meta">{{ 'admin.appointments.noTeacherCourses' | t }}</span>
+        }
       </label>
       <label>
         {{ 'admin.appointments.from' | t }}
@@ -49,6 +62,19 @@
         {{ 'common.description' | t }}
         <input [(ngModel)]="notes" name="notes" [placeholder]="'common.optional' | t" />
       </label>
+      @if (!editingId()) {
+        <label class="checkbox">
+          <input type="checkbox" [(ngModel)]="repeatWeekly" name="repeatWeekly" />
+          <span>{{ 'admin.appointments.repeatWeekly' | t }}</span>
+        </label>
+        @if (repeatWeekly) {
+          <label>
+            {{ 'admin.appointments.repeatUntil' | t }}
+            <input type="date" [(ngModel)]="repeatUntilLocal" name="repeatUntilLocal" required />
+            <span class="meta">{{ 'admin.appointments.repeatHint' | t }}</span>
+          </label>
+        }
+      }
       <div class="form-actions">
         <button type="submit">{{ (editingId() ? 'common.save' : 'admin.appointments.create') | t }}</button>
         @if (editingId()) {

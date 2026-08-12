@@ -10,16 +10,56 @@
   }
 
   <section class="block">
-    <h3>{{ meta().createKey | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createUser()">
-      <label>{{ 'common.name' | t }} <input [(ngModel)]="userName" name="userName" required /></label>
-      <label>{{ 'common.email' | t }} <input [(ngModel)]="userEmail" name="userEmail" type="email" [placeholder]="'common.optional' | t" /></label>
-      <label>{{ 'common.mobile' | t }} <input [(ngModel)]="userMobile" name="userMobile" [placeholder]="'admin.users.mobilePlaceholder' | t" /></label>
-      <label>{{ 'common.password' | t }} <input [(ngModel)]="userPassword" name="userPassword" type="password" required /></label>
+    <h3>{{ (editingId() ? 'common.edit' : meta().createKey) | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="editingId() ? saveEdit(editingId()!) : createUser()">
+      <label>
+        {{ 'common.name' | t }}
+        <input
+          [ngModel]="editingId() ? editName : userName"
+          (ngModelChange)="editingId() ? (editName = $event) : (userName = $event)"
+          name="userName"
+          required
+        />
+      </label>
+      <label>
+        {{ 'common.email' | t }}
+        <input
+          [ngModel]="editingId() ? editEmail : userEmail"
+          (ngModelChange)="editingId() ? (editEmail = $event) : (userEmail = $event)"
+          name="userEmail"
+          type="email"
+          [placeholder]="'common.optional' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.mobile' | t }}
+        <input
+          [ngModel]="editingId() ? editMobile : userMobile"
+          (ngModelChange)="editingId() ? (editMobile = $event) : (userMobile = $event)"
+          name="userMobile"
+          [placeholder]="'admin.users.mobilePlaceholder' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.password' | t }}
+        <input
+          [ngModel]="editingId() ? editPassword : userPassword"
+          (ngModelChange)="editingId() ? (editPassword = $event) : (userPassword = $event)"
+          name="userPassword"
+          type="password"
+          [required]="!editingId()"
+          [placeholder]="editingId() ? ('common.newPasswordOptional' | t) : ''"
+        />
+      </label>
+
       @if (managedRole() === 'Teacher') {
         <label>
           {{ 'admin.users.workShift' | t }}
-          <select [(ngModel)]="userWorkShift" name="userWorkShift">
+          <select
+            [ngModel]="editingId() ? editWorkShift : userWorkShift"
+            (ngModelChange)="editingId() ? (editWorkShift = $event) : (userWorkShift = $event)"
+            name="userWorkShift"
+          >
             @for (shift of workShifts; track shift) {
               <option [ngValue]="shift">{{ workShiftLabel(shift) }}</option>
             }
@@ -28,15 +68,144 @@
         <label class="stage-multi">
           {{ 'admin.users.stages' | t }}
           <app-searchable-multi-select
-            [(ngModel)]="userStages"
+            [ngModel]="editingId() ? editStages : userStages"
+            (ngModelChange)="editingId() ? (editStages = $event) : (userStages = $event)"
             name="userStages"
             [options]="stageOptions()"
             [placeholder]="'admin.users.stages' | t"
           />
           <span class="meta">{{ 'admin.users.stagesHint' | t }}</span>
         </label>
+
+        <label>
+          {{ 'admin.users.contractType' | t }}
+          <select
+            [ngModel]="editingId() ? editContractType : userContractType"
+            (ngModelChange)="editingId() ? (editContractType = $event) : (userContractType = $event)"
+            name="userContractType"
+          >
+            @for (type of contractTypes; track type) {
+              <option [ngValue]="type">{{ contractTypeLabel(type) }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'admin.users.primaryAmount' | t }}
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            [ngModel]="editingId() ? editPrimaryAmount : userPrimaryAmount"
+            (ngModelChange)="editingId() ? (editPrimaryAmount = $event) : (userPrimaryAmount = $event)"
+            name="userPrimaryAmount"
+          />
+        </label>
+        <label>
+          {{ 'admin.users.prepAmount' | t }}
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            [ngModel]="editingId() ? editPrepAmount : userPrepAmount"
+            (ngModelChange)="editingId() ? (editPrepAmount = $event) : (userPrepAmount = $event)"
+            name="userPrepAmount"
+          />
+        </label>
+        <label>
+          {{ 'admin.users.secondaryAmount' | t }}
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            [ngModel]="editingId() ? editSecondaryAmount : userSecondaryAmount"
+            (ngModelChange)="editingId() ? (editSecondaryAmount = $event) : (userSecondaryAmount = $event)"
+            name="userSecondaryAmount"
+          />
+        </label>
+
+        <div class="course-teacher-block">
+          <div class="course-teacher-head">
+            <strong>{{ 'admin.users.subjectRates' | t }}</strong>
+            <button
+              type="button"
+              class="ghost-btn"
+              (click)="editingId() ? addEditRateRow() : addUserRateRow()"
+            >
+              {{ 'admin.users.addSubjectRate' | t }}
+            </button>
+          </div>
+          <p class="meta">{{ 'admin.users.subjectRatesHint' | t }}</p>
+          @for (
+            row of editingId() ? editCourseRates() : userCourseRates();
+            track $index;
+            let i = $index
+          ) {
+            <div class="course-teacher-row">
+              <label>
+                {{ 'common.course' | t }}
+                <select
+                  [ngModel]="row.courseId"
+                  [name]="'rateCourse-' + i"
+                  (ngModelChange)="
+                    editingId() ? onEditRateCourseChange(i, $event) : onUserRateCourseChange(i, $event)
+                  "
+                >
+                  <option value="">{{ 'common.select' | t }}</option>
+                  @for (course of courseOptions(); track course.id) {
+                    <option [value]="course.id">{{ courseOptionLabel(course) }}</option>
+                  }
+                </select>
+              </label>
+              <label>
+                {{ 'admin.users.sessionAmount' | t }}
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [ngModel]="row.sessionAmount"
+                  [name]="'rateSession-' + i"
+                  (ngModelChange)="
+                    editingId()
+                      ? onEditRateSessionChange(i, $event)
+                      : onUserRateSessionChange(i, $event)
+                  "
+                />
+              </label>
+              <label>
+                {{ 'admin.users.monthlySalary' | t }}
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  [ngModel]="row.monthlySalary"
+                  [name]="'rateMonthly-' + i"
+                  (ngModelChange)="
+                    editingId()
+                      ? onEditRateMonthlyChange(i, $event)
+                      : onUserRateMonthlyChange(i, $event)
+                  "
+                />
+              </label>
+              <button
+                type="button"
+                class="ghost-btn"
+                (click)="editingId() ? removeEditRateRow(i) : removeUserRateRow(i)"
+              >
+                {{ 'common.remove' | t }}
+              </button>
+            </div>
+          }
+        </div>
       }
-      <button type="submit">{{ meta().createKey | t }}</button>
+
+      <div class="form-actions">
+        <button type="submit">
+          {{ (editingId() ? 'common.save' : meta().createKey) | t }}
+        </button>
+        @if (editingId()) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
+      </div>
     </form>
   </section>
 
@@ -104,7 +273,9 @@
             <th class="sortable" (click)="setSort('mobilePhone')">{{ 'common.mobile' | t }} <span class="sort-mark">{{ sortMark('mobilePhone') }}</span></th>
             @if (managedRole() === 'Teacher') {
               <th>{{ 'admin.users.workShift' | t }}</th>
+              <th>{{ 'admin.users.contractType' | t }}</th>
               <th>{{ 'admin.users.stages' | t }}</th>
+              <th>{{ 'admin.users.primaryAmount' | t }}</th>
             }
             <th>{{ 'common.actions' | t }}</th>
           </tr>
@@ -112,59 +283,25 @@
         <tbody>
           @for (user of pagedUsers(); track user.id) {
             <tr>
-              @if (editingId() === user.id) {
-                <td><input [(ngModel)]="editName" [name]="'editName-' + user.id" /></td>
-                <td><input [(ngModel)]="editEmail" [name]="'editEmail-' + user.id" /></td>
-                <td>
-                  <input [(ngModel)]="editMobile" [name]="'editMobile-' + user.id" />
-                  @if (managedRole() !== 'Teacher') {
-                    <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" [placeholder]="'common.newPasswordOptional' | t" />
-                  }
-                </td>
-                @if (managedRole() === 'Teacher') {
-                  <td>
-                    <select [(ngModel)]="editWorkShift" [name]="'editShift-' + user.id">
-                      @for (shift of workShifts; track shift) {
-                        <option [ngValue]="shift">{{ workShiftLabel(shift) }}</option>
-                      }
-                    </select>
-                  </td>
-                  <td>
-                    <app-searchable-multi-select
-                      [(ngModel)]="editStages"
-                      [name]="'editStages-' + user.id"
-                      [options]="stageOptions()"
-                      [placeholder]="'admin.users.stages' | t"
-                      [compact]="true"
-                    />
-                    <input [(ngModel)]="editPassword" [name]="'editPass-' + user.id" type="password" [placeholder]="'common.newPasswordOptional' | t" />
-                  </td>
-                }
-                <td>
-                  <div class="row-actions">
-                    <button type="button" (click)="saveEdit(user.id)">{{ 'common.save' | t }}</button>
-                    <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
-                  </div>
-                </td>
-              } @else {
-                <td>{{ user.displayName }}</td>
-                <td>{{ user.email || ('common.emDash' | t) }}</td>
-                <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
-                @if (managedRole() === 'Teacher') {
-                  <td>{{ workShiftLabel(user.workShift) }}</td>
-                  <td>{{ stagesLabel(user.stages) }}</td>
-                }
-                <td>
-                  <div class="row-actions">
-                    <app-icon-action-button kind="edit" (action)="startEdit(user)" />
-                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteUser(user)" />
-                  </div>
-                </td>
+              <td>{{ user.displayName }}</td>
+              <td>{{ user.email || ('common.emDash' | t) }}</td>
+              <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
+              @if (managedRole() === 'Teacher') {
+                <td>{{ workShiftLabel(user.workShift) }}</td>
+                <td>{{ contractTypeLabel(user.contractType) }}</td>
+                <td>{{ stagesLabel(user.stages) }}</td>
+                <td>{{ moneyLabel(user.primaryAmount) }}</td>
               }
+              <td>
+                <div class="row-actions">
+                  <app-icon-action-button kind="edit" (action)="startEdit(user)" />
+                  <app-icon-action-button kind="delete" variant="danger" (action)="deleteUser(user)" />
+                </div>
+              </td>
             </tr>
           } @empty {
             <tr>
-              <td [attr.colspan]="managedRole() === 'Teacher' ? 6 : 4">{{ 'common.noData' | t }}</td>
+              <td [attr.colspan]="managedRole() === 'Teacher' ? 8 : 4">{{ 'common.noData' | t }}</td>
             </tr>
           }
         </tbody>

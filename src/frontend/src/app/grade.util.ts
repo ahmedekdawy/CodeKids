@@ -84,6 +84,7 @@ export function courseMatchesClassroomGrade(
   classroomGrade: number | null | undefined
 ): boolean {
   if (classroomGrade == null) return true;
-  return courseGrade == null || courseGrade === classroomGrade;
+  if (courseGrade == null) return false;
+  return Number(courseGrade) === Number(classroomGrade);
 }
 

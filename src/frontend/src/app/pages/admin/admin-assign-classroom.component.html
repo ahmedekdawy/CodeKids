@@ -28,17 +28,33 @@
       @if (selectedClassroom(); as room) {
         <p class="meta">
           {{ 'common.grade' | t }}: {{ gradeLabel(room.grade) }}
+          @if (room.grade != null) {
+            — {{ 'admin.assign.coursesForGrade' | t }}
+          } @else {
+            — {{ 'admin.assign.setGradeFirst' | t }}
+          }
         </p>
       }
 
       <div class="course-teacher-block">
         <div class="course-teacher-head">
           <strong>{{ 'admin.classrooms.coursesTeachers' | t }}</strong>
-          <button type="button" class="ghost-btn" (click)="addCourseRow()" [disabled]="!assignClassroomId()">
+          <button
+            type="button"
+            class="ghost-btn"
+            (click)="addCourseRow()"
+            [disabled]="!assignClassroomId() || !hasGradeFilter()"
+          >
             {{ 'admin.classrooms.addCourse' | t }}
           </button>
         </div>
         <p class="meta">{{ 'admin.classrooms.coursesTeachersHint' | t }}</p>
+        @if (assignClassroomId() && !hasGradeFilter()) {
+          <p class="meta">{{ 'admin.assign.setGradeFirst' | t }}</p>
+        }
+        @if (assignClassroomId() && hasGradeFilter() && courseOptions().length === 0) {
+          <p class="meta">{{ 'admin.assign.noCoursesForGrade' | t }}</p>
+        }
         @for (row of courseRows(); track $index; let i = $index) {
           <div class="course-teacher-row">
             <label>
@@ -46,7 +62,7 @@
               <select
                 [ngModel]="row.courseId"
                 [name]="'aCourse-' + i"
-                [disabled]="!assignClassroomId()"
+                [disabled]="!assignClassroomId() || !hasGradeFilter()"
                 (ngModelChange)="onRowCourseChange(i, $event)"
               >
                 <option value="">{{ 'common.select' | t }}</option>
@@ -60,7 +76,7 @@
               <select
                 [ngModel]="row.teacherId"
                 [name]="'aTeacher-' + i"
-                [disabled]="!assignClassroomId()"
+                [disabled]="!assignClassroomId() || !hasGradeFilter()"
                 (ngModelChange)="onRowTeacherChange(i, $event)"
               >
                 <option value="">{{ 'common.select' | t }}</option>
@@ -69,14 +85,21 @@
                 }
               </select>
             </label>
-            <button type="button" class="ghost-btn" (click)="removeCourseRow(i)" [disabled]="!assignClassroomId()">
+            <button
+              type="button"
+              class="ghost-btn"
+              (click)="removeCourseRow(i)"
+              [disabled]="!assignClassroomId() || !hasGradeFilter()"
+            >
               {{ 'common.remove' | t }}
             </button>
           </div>
         }
       </div>
 
-      <button type="submit" [disabled]="!assignClassroomId()">{{ 'admin.assign.save' | t }}</button>
+      <button type="submit" [disabled]="!assignClassroomId() || !hasGradeFilter()">
+        {{ 'admin.assign.save' | t }}
+      </button>
     </form>
   </section>
 </div>

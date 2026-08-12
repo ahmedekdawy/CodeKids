@@ -10,7 +10,7 @@
     <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
       <label>
         <span>{{ 'auth.loginOrMobile' | t }}</span>
-        <input formControlName="login" type="text" placeholder="student@codekids.local" autocomplete="username" />
+        <input formControlName="login" type="text" placeholder="" autocomplete="username" />
       </label>
       <label>
         <span>{{ 'auth.password' | t }}</span>
@@ -24,10 +24,8 @@
       <p class="error">{{ error() }}</p>
     }
 
-    <p class="hint">{{ 'auth.demoStudent' | t }}</p>
-    <p class="hint">{{ 'auth.demoOthers' | t }}</p>
-
     <div class="auth-links">
+      <a routerLink="/forgot-password">{{ 'auth.forgot.link' | t }}</a>
       <a routerLink="/register">{{ 'auth.createAccount' | t }}</a>
     </div>
   </div>

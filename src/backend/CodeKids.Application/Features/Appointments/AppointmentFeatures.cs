@@ -12,6 +12,7 @@ public sealed record AppointmentDto(
     string TeacherName,
     Guid CourseId,
     string CourseName,
+    int? CourseGrade,
     DateTimeOffset StartsAtUtc,
     DateTimeOffset EndsAtUtc,
     string Notes,
@@ -22,7 +23,9 @@ public sealed record CreateAppointmentRequest(
     Guid CourseId,
     DateTimeOffset StartsAtUtc,
     DateTimeOffset EndsAtUtc,
-    string? Notes);
+    string? Notes,
+    bool RepeatWeekly = false,
+    DateTimeOffset? RepeatUntilUtc = null);
 
 public sealed record UpdateAppointmentRequest(
     Guid TeacherId,
@@ -33,14 +36,19 @@ public sealed record UpdateAppointmentRequest(
 
 public sealed record ListAppointmentsQuery(
     DateTimeOffset? FromUtc = null,
-    DateTimeOffset? ToUtc = null) : IQuery<IReadOnlyList<AppointmentDto>>;
+    DateTimeOffset? ToUtc = null,
+    Guid? TeacherId = null) : IQuery<IReadOnlyList<AppointmentDto>>;
 
 public sealed record CreateAppointmentCommand(
     Guid TeacherId,
     Guid CourseId,
     DateTimeOffset StartsAtUtc,
     DateTimeOffset EndsAtUtc,
-    string? Notes) : ICommand<AppointmentDto>;
+    string? Notes,
+    bool RepeatWeekly = false,
+    DateTimeOffset? RepeatUntilUtc = null) : ICommand<CreateAppointmentsResult>;
+
+public sealed record CreateAppointmentsResult(IReadOnlyList<AppointmentDto> Items);
 
 public sealed record UpdateAppointmentCommand(
     Guid AppointmentId,
@@ -73,6 +81,11 @@ public sealed class ListAppointmentsQueryHandler(IAppDbContext dbContext)
             appointments = appointments.Where(x => x.StartsAtUtc <= query.ToUtc.Value);
         }
 
+        if (query.TeacherId.HasValue)
+        {
+            appointments = appointments.Where(x => x.TeacherId == query.TeacherId.Value);
+        }
+
         return (await appointments
             .OrderBy(x => x.StartsAtUtc)
             .ToListAsync(cancellationToken))
@@ -84,48 +97,119 @@ public sealed class ListAppointmentsQueryHandler(IAppDbContext dbContext)
     {
         var teacherName = appointment.Teacher?.DisplayName ?? string.Empty;
         var courseName = appointment.Course?.Title ?? string.Empty;
+        var courseGrade = appointment.Course?.Grade;
+        var gradeLabel = FormatGradeLabel(courseGrade);
+        var label = string.Join('-', new[] { teacherName, gradeLabel, courseName }.Where(x => !string.IsNullOrWhiteSpace(x)));
         return new AppointmentDto(
             appointment.Id,
             appointment.TeacherId,
             teacherName,
             appointment.CourseId,
             courseName,
+            courseGrade,
             appointment.StartsAtUtc,
             appointment.EndsAtUtc,
             appointment.Notes,
-            $"{teacherName}-{courseName}");
+            label);
     }
+
+    private static string FormatGradeLabel(int? grade) =>
+        grade switch
+        {
+            null => "All",
+            -1 => "KG1",
+            0 => "KG2",
+            _ => $"Grade {grade}"
+        };
 }
 
 public sealed class CreateAppointmentCommandHandler(IAppDbContext dbContext)
-    : ICommandHandler<CreateAppointmentCommand, AppointmentDto>
+    : ICommandHandler<CreateAppointmentCommand, CreateAppointmentsResult>
 {
-    public async Task<AppointmentDto> Handle(CreateAppointmentCommand command, CancellationToken cancellationToken)
+    private const int MaxWeeklyOccurrences = 104;
+
+    public async Task<CreateAppointmentsResult> Handle(CreateAppointmentCommand command, CancellationToken cancellationToken)
     {
-        await AppointmentValidators.ValidateAsync(
-            dbContext,
-            command.TeacherId,
-            command.CourseId,
-            command.StartsAtUtc,
-            command.EndsAtUtc,
-            excludeAppointmentId: null,
-            cancellationToken);
-
-        var appointment = new Appointment
+        var occurrences = BuildOccurrences(command);
+        if (occurrences.Count > MaxWeeklyOccurrences)
         {
-            Id = Guid.NewGuid(),
-            TeacherId = command.TeacherId,
-            CourseId = command.CourseId,
-            StartsAtUtc = command.StartsAtUtc.ToUniversalTime(),
-            EndsAtUtc = command.EndsAtUtc.ToUniversalTime(),
-            Notes = (command.Notes ?? string.Empty).Trim(),
-            CreatedAtUtc = DateTimeOffset.UtcNow
-        };
+            throw new InvalidOperationException("Weekly recurrence exceeds the maximum number of sessions.");
+        }
 
-        dbContext.Appointments.Add(appointment);
+        foreach (var (startsAtUtc, endsAtUtc) in occurrences)
+        {
+            await AppointmentValidators.ValidateAsync(
+                dbContext,
+                command.TeacherId,
+                command.CourseId,
+                startsAtUtc,
+                endsAtUtc,
+                excludeAppointmentId: null,
+                cancellationToken);
+        }
+
+        var notes = (command.Notes ?? string.Empty).Trim();
+        var createdIds = new List<Guid>(occurrences.Count);
+        foreach (var (startsAtUtc, endsAtUtc) in occurrences)
+        {
+            var appointment = new Appointment
+            {
+                Id = Guid.NewGuid(),
+                TeacherId = command.TeacherId,
+                CourseId = command.CourseId,
+                StartsAtUtc = startsAtUtc,
+                EndsAtUtc = endsAtUtc,
+                Notes = notes,
+                CreatedAtUtc = DateTimeOffset.UtcNow
+            };
+
+            dbContext.Appointments.Add(appointment);
+            createdIds.Add(appointment.Id);
+        }
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return await AppointmentValidators.LoadDtoAsync(dbContext, appointment.Id, cancellationToken);
+        var items = new List<AppointmentDto>(createdIds.Count);
+        foreach (var id in createdIds)
+        {
+            items.Add(await AppointmentValidators.LoadDtoAsync(dbContext, id, cancellationToken));
+        }
+
+        return new CreateAppointmentsResult(items);
+    }
+
+    private static IReadOnlyList<(DateTimeOffset StartsAtUtc, DateTimeOffset EndsAtUtc)> BuildOccurrences(
+        CreateAppointmentCommand command)
+    {
+        var start = command.StartsAtUtc.ToUniversalTime();
+        var end = command.EndsAtUtc.ToUniversalTime();
+        var duration = end - start;
+
+        if (!command.RepeatWeekly)
+        {
+            return [(start, end)];
+        }
+
+        if (!command.RepeatUntilUtc.HasValue)
+        {
+            throw new InvalidOperationException("Repeat until date is required for weekly recurrence.");
+        }
+
+        var repeatUntil = command.RepeatUntilUtc.Value.ToUniversalTime();
+        if (repeatUntil < start)
+        {
+            throw new InvalidOperationException("Repeat until date must be on or after the first session.");
+        }
+
+        var occurrences = new List<(DateTimeOffset StartsAtUtc, DateTimeOffset EndsAtUtc)>();
+        var currentStart = start;
+        while (currentStart <= repeatUntil)
+        {
+            occurrences.Add((currentStart, currentStart + duration));
+            currentStart = currentStart.AddDays(7);
+        }
+
+        return occurrences;
     }
 }
 

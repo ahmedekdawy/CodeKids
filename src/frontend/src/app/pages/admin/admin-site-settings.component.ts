@@ -24,6 +24,8 @@ export class AdminSiteSettingsComponent {
   readonly uploading = signal<'logo' | 'banner' | null>(null);
 
   siteName = 'CodeKids';
+  timetableWeekLocal = '';
+  useCurrentTimetableWeek = true;
 
   constructor() {
     this.reload();
@@ -34,6 +36,7 @@ export class AdminSiteSettingsComponent {
       next: (settings) => {
         this.settings.set(settings);
         this.siteName = settings.siteName;
+        this.applyTimetableWeek(settings);
         this.brand.apply(settings);
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.site.loadFailed'))
@@ -52,14 +55,28 @@ export class AdminSiteSettingsComponent {
     return url ? `${url}?v=${settings?.updatedAtUtc || ''}` : null;
   }
 
+  onUseCurrentWeekChange(useCurrent: boolean): void {
+    this.useCurrentTimetableWeek = useCurrent;
+    if (!useCurrent && !this.timetableWeekLocal) {
+      this.timetableWeekLocal = toDateInputValue(new Date());
+    }
+  }
+
   save(): void {
     this.message.set('');
     this.error.set('');
+
+    if (!this.useCurrentTimetableWeek && !this.timetableWeekLocal) {
+      this.error.set(this.locale.t('admin.site.timetableWeekRequired'));
+      return;
+    }
+
     this.saving.set(true);
-    this.api.updateSiteSettings({ siteName: this.siteName }).subscribe({
+    this.api.updateSiteSettings(this.buildSavePayload()).subscribe({
       next: (settings) => {
         this.saving.set(false);
         this.settings.set(settings);
+        this.applyTimetableWeek(settings);
         this.brand.apply(settings);
         this.message.set(this.locale.t('admin.site.saved'));
       },
@@ -98,17 +115,62 @@ export class AdminSiteSettingsComponent {
     this.error.set('');
     this.api
       .updateSiteSettings({
-        siteName: this.siteName,
+        ...this.buildSavePayload(),
         clearLogo: kind === 'logo',
         clearBanner: kind === 'banner'
       })
       .subscribe({
         next: (settings) => {
           this.settings.set(settings);
+          this.applyTimetableWeek(settings);
           this.brand.apply(settings);
           this.message.set(this.locale.t('admin.site.saved'));
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.site.saveFailed'))
       });
   }
+
+  private buildSavePayload(): {
+    siteName: string;
+    timetableWeekStartUtc?: string;
+    clearTimetableWeek?: boolean;
+  } {
+    if (this.useCurrentTimetableWeek) {
+      return {
+        siteName: this.siteName.trim(),
+        clearTimetableWeek: true
+      };
+    }
+
+    const weekStart = startOfWeekSunday(new Date(`${this.timetableWeekLocal}T00:00:00`));
+    return {
+      siteName: this.siteName.trim(),
+      timetableWeekStartUtc: weekStart.toISOString()
+    };
+  }
+
+  private applyTimetableWeek(settings: SiteSettings): void {
+    if (settings.timetableWeekStartUtc) {
+      const configured = new Date(settings.timetableWeekStartUtc);
+      if (!Number.isNaN(configured.getTime())) {
+        this.useCurrentTimetableWeek = false;
+        this.timetableWeekLocal = toDateInputValue(startOfWeekSunday(configured));
+        return;
+      }
+    }
+    this.useCurrentTimetableWeek = true;
+    this.timetableWeekLocal = '';
+  }
+}
+
+function startOfWeekSunday(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - d.getDay());
+  return d;
+}
+
+function toDateInputValue(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }

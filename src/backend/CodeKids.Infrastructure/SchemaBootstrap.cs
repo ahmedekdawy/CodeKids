@@ -253,6 +253,26 @@ public static class SchemaBootstrap
                 CONSTRAINT "PK_Appointments" PRIMARY KEY ("Id")
             );
 
+            CREATE TABLE IF NOT EXISTS "FixedTimetableEntries" (
+                "Id" uuid NOT NULL,
+                "TeacherId" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "DayOfWeek" integer NOT NULL,
+                "SessionNumber" integer NOT NULL,
+                "Period" character varying(10) NOT NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_FixedTimetableEntries" PRIMARY KEY ("Id")
+            );
+
+            CREATE TABLE IF NOT EXISTS "TeacherSessionAttendances" (
+                "Id" uuid NOT NULL,
+                "TeacherId" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "SessionDate" date NOT NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_TeacherSessionAttendances" PRIMARY KEY ("Id")
+            );
+
             CREATE TABLE IF NOT EXISTS "BankQuestions" (
                 "Id" uuid NOT NULL,
                 "CourseId" uuid NOT NULL,
@@ -398,6 +418,42 @@ public static class SchemaBootstrap
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "Grade" integer NULL;
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "WorkShift" character varying(20) NULL;
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "Stages" character varying(40) NOT NULL DEFAULT '';
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ContractType" character varying(20) NULL;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "PrimaryAmount" numeric(18,2) NULL;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "PrepAmount" numeric(18,2) NULL;
+            ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "SecondaryAmount" numeric(18,2) NULL;
+            ALTER TABLE "Users" DROP COLUMN IF EXISTS "SpecialSessionAmount";
+
+            CREATE TABLE IF NOT EXISTS "TeacherCourseRates" (
+                "Id" uuid NOT NULL,
+                "TeacherId" uuid NOT NULL,
+                "CourseId" uuid NOT NULL,
+                "SessionAmount" numeric(18,2) NULL,
+                "MonthlySalary" numeric(18,2) NULL,
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_TeacherCourseRates" PRIMARY KEY ("Id")
+            );
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'FK_TeacherCourseRates_Users_TeacherId'
+                ) THEN
+                    ALTER TABLE "TeacherCourseRates"
+                        ADD CONSTRAINT "FK_TeacherCourseRates_Users_TeacherId"
+                        FOREIGN KEY ("TeacherId") REFERENCES "Users" ("Id") ON DELETE CASCADE;
+                END IF;
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'FK_TeacherCourseRates_Courses_CourseId'
+                ) THEN
+                    ALTER TABLE "TeacherCourseRates"
+                        ADD CONSTRAINT "FK_TeacherCourseRates_Courses_CourseId"
+                        FOREIGN KEY ("CourseId") REFERENCES "Courses" ("Id") ON DELETE CASCADE;
+                END IF;
+            END $$;
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_TeacherCourseRates_TeacherId_CourseId"
+                ON "TeacherCourseRates" ("TeacherId", "CourseId");
+            CREATE INDEX IF NOT EXISTS "IX_TeacherCourseRates_CourseId"
+                ON "TeacherCourseRates" ("CourseId");
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomAccessToken" character varying(2000) NOT NULL DEFAULT '';
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomRefreshToken" character varying(2000) NOT NULL DEFAULT '';
             ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ZoomTokenExpiresAt" timestamp with time zone NULL;
@@ -445,6 +501,32 @@ public static class SchemaBootstrap
             CREATE INDEX IF NOT EXISTS "IX_LiveSessions_StartsAtUtc" ON "LiveSessions" ("StartsAtUtc");
             CREATE INDEX IF NOT EXISTS "IX_Appointments_StartsAtUtc" ON "Appointments" ("StartsAtUtc");
             CREATE INDEX IF NOT EXISTS "IX_Appointments_TeacherId_StartsAtUtc" ON "Appointments" ("TeacherId", "StartsAtUtc");
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber"
+                ON "FixedTimetableEntries" ("TeacherId", "DayOfWeek", "Period", "SessionNumber");
+            CREATE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_DayOfWeek_Period_SessionNumber"
+                ON "FixedTimetableEntries" ("DayOfWeek", "Period", "SessionNumber");
+
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'FK_TeacherSessionAttendances_Users_TeacherId'
+                ) THEN
+                    ALTER TABLE "TeacherSessionAttendances"
+                        ADD CONSTRAINT "FK_TeacherSessionAttendances_Users_TeacherId"
+                        FOREIGN KEY ("TeacherId") REFERENCES "Users" ("Id") ON DELETE RESTRICT;
+                END IF;
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'FK_TeacherSessionAttendances_Courses_CourseId'
+                ) THEN
+                    ALTER TABLE "TeacherSessionAttendances"
+                        ADD CONSTRAINT "FK_TeacherSessionAttendances_Courses_CourseId"
+                        FOREIGN KEY ("CourseId") REFERENCES "Courses" ("Id") ON DELETE RESTRICT;
+                END IF;
+            END $$;
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_TeacherSessionAttendances_TeacherId_CourseId_SessionDate"
+                ON "TeacherSessionAttendances" ("TeacherId", "CourseId", "SessionDate");
+            CREATE INDEX IF NOT EXISTS "IX_TeacherSessionAttendances_SessionDate"
+                ON "TeacherSessionAttendances" ("SessionDate");
             CREATE INDEX IF NOT EXISTS "IX_BankQuestions_CourseId_CreatedByUserId" ON "BankQuestions" ("CourseId", "CreatedByUserId");
             CREATE INDEX IF NOT EXISTS "IX_ExamAttempts_ExamId_StudentId" ON "ExamAttempts" ("ExamId", "StudentId");
             CREATE INDEX IF NOT EXISTS "IX_LessonVideos_LessonId" ON "LessonVideos" ("LessonId");

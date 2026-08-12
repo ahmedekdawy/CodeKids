@@ -13,6 +13,8 @@ type TranslateFn = (key: string, params?: Record<string, string | number>) => st
 const LEGACY_MESSAGE_CODES: Record<string, string> = {
   'Invalid email or password.': 'api.errors.auth.invalidCredentials',
   'An account with that email already exists.': 'api.errors.auth.emailExists',
+  'Reset token is invalid or has expired.': 'api.errors.auth.resetTokenInvalid',
+  'Password must be at least 6 characters.': 'api.errors.auth.passwordTooShort',
   'Exam already submitted.': 'api.errors.exam.alreadySubmitted',
   'Assignment already submitted.': 'api.errors.assignment.alreadySubmitted'
 };

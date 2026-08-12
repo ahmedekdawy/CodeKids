@@ -34,7 +34,10 @@ export class AdminAssignClassroomComponent {
     this.classrooms().find((c) => c.id === this.assignClassroomId()) ?? null
   );
 
-  readonly selectedGrade = computed(() => this.selectedClassroom()?.grade ?? null);
+  readonly selectedGrade = computed(() => {
+    const room = this.selectedClassroom();
+    return room ? readOptionalGrade(room.grade) : null;
+  });
 
   readonly teachers = computed(() => {
     const grade = this.selectedGrade();
@@ -49,16 +52,14 @@ export class AdminAssignClassroomComponent {
       .sort((a, b) => a.displayName.localeCompare(b.displayName));
   });
 
+  /** Courses for the selected classroom grade only. Empty until a graded classroom is chosen. */
   readonly courseOptions = computed(() => {
     this.locale.lang();
     const grade = this.selectedGrade();
-    const selectedIds = new Set(
-      this.courseRows()
-        .map((r) => r.courseId)
-        .filter(Boolean)
-    );
+    if (grade == null) return [];
+
     return this.allCourses()
-      .filter((c) => selectedIds.has(c.id) || courseMatchesClassroomGrade(c.grade, grade))
+      .filter((c) => courseMatchesClassroomGrade(c.grade, grade))
       .slice()
       .sort((a, b) => {
         const ga = a.grade ?? 999;
@@ -68,6 +69,8 @@ export class AdminAssignClassroomComponent {
       });
   });
 
+  readonly hasGradeFilter = computed(() => this.selectedGrade() != null);
+
   constructor() {
     this.reload();
   }
@@ -76,11 +79,27 @@ export class AdminAssignClassroomComponent {
     this.api.getUsers().subscribe((users) => {
       this.allTeachers.set(users.filter((u) => u.role === 'Teacher'));
     });
-    this.api.getCourses().subscribe((courses) => this.allCourses.set(courses));
-    this.api.getClassrooms().subscribe((classrooms) => {
-      this.classrooms.set(classrooms);
+
+    let coursesReady = false;
+    let classroomsReady = false;
+    let loadedClassrooms: Classroom[] = [];
+
+    const applySelection = () => {
+      if (!coursesReady || !classroomsReady) return;
       const selectedId = this.assignClassroomId();
-      if (selectedId) this.loadRowsFromClassroom(selectedId, classrooms);
+      if (selectedId) this.loadRowsFromClassroom(selectedId, loadedClassrooms);
+    };
+
+    this.api.getCourses().subscribe((courses) => {
+      this.allCourses.set((courses ?? []).map(normalizeCourse));
+      coursesReady = true;
+      applySelection();
+    });
+    this.api.getClassrooms().subscribe((classrooms) => {
+      loadedClassrooms = (classrooms ?? []).map(normalizeClassroom);
+      this.classrooms.set(loadedClassrooms);
+      classroomsReady = true;
+      applySelection();
     });
   }
 
@@ -133,9 +152,18 @@ export class AdminAssignClassroomComponent {
       this.error.set(this.locale.t('admin.assign.selectClassroom'));
       return;
     }
+    if (this.selectedGrade() == null) {
+      this.error.set(this.locale.t('admin.assign.gradeRequired'));
+      return;
+    }
     const rows = this.courseRows();
     if (rows.some((r) => (r.courseId && !r.teacherId) || (!r.courseId && r.teacherId))) {
       this.error.set(this.locale.t('admin.classrooms.courseTeacherRequired'));
+      return;
+    }
+    const allowed = new Set(this.courseOptions().map((c) => c.id));
+    if (rows.some((r) => r.courseId && !allowed.has(r.courseId))) {
+      this.error.set(this.locale.t('admin.assign.courseGradeMismatch'));
       return;
     }
     this.api
@@ -163,18 +191,26 @@ export class AdminAssignClassroomComponent {
       return;
     }
 
+    const grade = readOptionalGrade(room.grade);
+    const allowedCourseIds = new Set(
+      this.allCourses()
+        .filter((c) => courseMatchesClassroomGrade(c.grade, grade))
+        .map((c) => c.id)
+    );
+
     const courses = room.courses ?? [];
     if (courses.length) {
-      this.courseRows.set(
-        courses.map((c) => ({
+      const rows = courses
+        .map((c) => ({
           courseId: c.courseId || '',
           teacherId: c.teacherId || ''
         }))
-      );
+        .filter((r) => !r.courseId || grade == null || allowedCourseIds.has(r.courseId));
+      this.courseRows.set(rows.length ? rows : [{ courseId: '', teacherId: '' }]);
       return;
     }
 
-    if (room.courseId) {
+    if (room.courseId && (grade == null || allowedCourseIds.has(room.courseId))) {
       this.courseRows.set([
         {
           courseId: room.courseId,
@@ -197,4 +233,46 @@ export class AdminAssignClassroomComponent {
     this.message.set('');
     this.error.set('');
   }
+}
+
+function readOptionalGrade(value: unknown): number | null {
+  if (value == null || value === '') return null;
+  const n = Number(value);
+  return Number.isNaN(n) ? null : n;
+}
+
+function normalizeCourse(course: Course): Course {
+  const raw = course as Course & Record<string, unknown>;
+  return {
+    ...course,
+    id: String(raw.id ?? raw['Id'] ?? ''),
+    title: String(raw.title ?? raw['Title'] ?? ''),
+    grade: readOptionalGrade(raw.grade ?? raw['Grade'])
+  };
+}
+
+function normalizeClassroom(room: Classroom): Classroom {
+  const raw = room as Classroom & Record<string, unknown>;
+  const courses = Array.isArray(raw.courses)
+    ? raw.courses
+    : Array.isArray(raw['Courses'])
+      ? (raw['Courses'] as Classroom['courses'])
+      : [];
+  return {
+    ...room,
+    id: String(raw.id ?? raw['Id'] ?? ''),
+    name: String(raw.name ?? raw['Name'] ?? ''),
+    grade: readOptionalGrade(raw.grade ?? raw['Grade']),
+    courses: (courses ?? []).map((c) => {
+      const link = c as NonNullable<Classroom['courses']>[number] & Record<string, unknown>;
+      return {
+        ...c,
+        courseId: String(link.courseId ?? link['CourseId'] ?? ''),
+        courseTitle: String(link.courseTitle ?? link['CourseTitle'] ?? ''),
+        courseGrade: readOptionalGrade(link.courseGrade ?? link['CourseGrade']),
+        teacherId: String(link.teacherId ?? link['TeacherId'] ?? ''),
+        teacherName: String(link.teacherName ?? link['TeacherName'] ?? '')
+      };
+    })
+  };
 }

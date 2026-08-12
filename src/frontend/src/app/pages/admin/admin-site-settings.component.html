@@ -16,6 +16,25 @@
         {{ 'admin.site.siteName' | t }}
         <input [(ngModel)]="siteName" name="siteName" required maxlength="120" />
       </label>
+
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          [ngModel]="useCurrentTimetableWeek"
+          name="useCurrentTimetableWeek"
+          (ngModelChange)="onUseCurrentWeekChange($event)"
+        />
+        <span>{{ 'admin.site.useCurrentTimetableWeek' | t }}</span>
+      </label>
+
+      @if (!useCurrentTimetableWeek) {
+        <label>
+          {{ 'admin.site.timetableWeekStart' | t }}
+          <input type="date" [(ngModel)]="timetableWeekLocal" name="timetableWeekLocal" required />
+          <span class="meta">{{ 'admin.site.timetableWeekHint' | t }}</span>
+        </label>
+      }
+
       <button type="submit" [disabled]="saving()">
         {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}
       </button>

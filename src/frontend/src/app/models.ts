@@ -1,5 +1,14 @@
 export type UserRole = 'Student' | 'Parent' | 'Teacher' | 'SuperAdmin';
 export type TeacherWorkShift = 'Am' | 'Pm' | 'Both';
+export type TeacherContractType = 'Session' | 'Monthly';
+
+export interface TeacherCourseRate {
+  courseId: string;
+  courseName?: string;
+  courseGrade?: number | null;
+  sessionAmount?: number | null;
+  monthlySalary?: number | null;
+}
 
 export interface AuthUser {
   id: string;
@@ -57,6 +66,7 @@ export interface SiteSettings {
   siteName: string;
   logoUrl?: string | null;
   bannerUrl?: string | null;
+  timetableWeekStartUtc?: string | null;
   updatedAtUtc: string;
 }
 
@@ -365,10 +375,51 @@ export interface Appointment {
   teacherName: string;
   courseId: string;
   courseName: string;
+  courseGrade?: number | null;
   startsAtUtc: string;
   endsAtUtc: string;
   notes: string;
   label: string;
+}
+
+export interface FixedTimetableEntry {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  courseId: string;
+  courseName: string;
+  courseGrade?: number | null;
+  dayOfWeek: number;
+  sessionNumber: number;
+  period: 'am' | 'pm' | string;
+  label: string;
+}
+
+export interface TeacherSessionAttendance {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  courseId: string;
+  courseName: string;
+  courseGrade?: number | null;
+  sessionDate: string;
+  label: string;
+}
+
+export interface TeacherPayrollRow {
+  teacherId: string;
+  teacherName: string;
+  primarySessions: number;
+  prepSessions: number;
+  secondarySessions: number;
+  totalAmount: number;
+}
+
+export interface TeacherPayrollReport {
+  fromDate: string;
+  toDate: string;
+  rows: TeacherPayrollRow[];
+  grandTotal: number;
 }
 
 export interface CreateMeetingPayload {
@@ -392,6 +443,11 @@ export interface ManagedUser {
   mobilePhone?: string;
   workShift?: TeacherWorkShift | string | null;
   stages?: number[];
+  contractType?: TeacherContractType | string | null;
+  primaryAmount?: number | null;
+  prepAmount?: number | null;
+  secondaryAmount?: number | null;
+  courseRates?: TeacherCourseRate[];
 }
 
 export interface ZoomConnectionStatus {

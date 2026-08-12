@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/teacher/teacher-quizzes.component.css"],
+  "sourcesContent": [".options-editor {\r\n  display: grid;\r\n  gap: 0.65rem;\r\n  padding: 0.9rem;\r\n  margin: 0.5rem 0 1rem;\r\n  border-radius: var(--radius-md, 12px);\r\n  background: rgba(255, 255, 255, 0.04);\r\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\r\n}\r\n\r\n.options-head {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  align-items: center;\r\n  gap: 0.75rem;\r\n}\r\n\r\n.options-head h4 {\r\n  margin: 0;\r\n}\r\n\r\n.option-row {\r\n  display: grid;\r\n  grid-template-columns: 2.2rem 1fr auto;\r\n  gap: 0.55rem;\r\n  align-items: center;\r\n}\r\n\r\n.option-key {\r\n  font-weight: 800;\r\n  color: var(--accent, #ffd60a);\r\n  text-align: center;\r\n}\r\n\r\n@media (max-width: 820px) {\r\n  .option-row {\r\n    grid-template-columns: 2rem 1fr;\r\n  }\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,OAAK;AACL,WAAS;AACT,UAAQ,OAAO,EAAE;AACjB,iBAAe,IAAI,WAAW,EAAE;AAChC,cAAY,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AAChC,UAAQ,IAAI,MAAM,IAAI,QAAQ,EAAE,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AACtD;AAEA,CAAC;AACC,WAAS;AACT,mBAAiB;AACjB,eAAa;AACb,OAAK;AACP;AAEA,CAPC,aAOa;AACZ,UAAQ;AACV;AAEA,CAAC;AACC,WAAS;AACT,yBAAuB,OAAO,IAAI;AAClC,OAAK;AACL,eAAa;AACf;AAEA,CAAC;AACC,eAAa;AACb,SAAO,IAAI,QAAQ,EAAE;AACrB,cAAY;AACd;AAEA,QAAO,WAAY;AACjB,GAdD;AAeG,2BAAuB,KAAK;AAC9B;AACF;",
+  "names": []
+}

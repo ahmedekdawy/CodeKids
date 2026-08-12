@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import {
   Appointment,
   Assignment,
@@ -18,6 +18,9 @@ import {
   EnrollStudentResult,
   Exam,
   ExamAttempt,
+  FixedTimetableEntry,
+  TeacherSessionAttendance,
+  TeacherPayrollReport,
   Lesson,
   LiveSession,
   ManagedUser,
@@ -156,14 +159,24 @@ export class LearningApiService {
     return this.http.get<Appointment[]>(`${this.baseUrl}/admin/appointments${query ? `?${query}` : ''}`);
   }
 
+  getMyAppointments(fromUtc?: string, toUtc?: string): Observable<Appointment[]> {
+    const params = new URLSearchParams();
+    if (fromUtc) params.set('fromUtc', fromUtc);
+    if (toUtc) params.set('toUtc', toUtc);
+    const query = params.toString();
+    return this.http.get<Appointment[]>(`${this.baseUrl}/appointments${query ? `?${query}` : ''}`);
+  }
+
   createAppointment(payload: {
     teacherId: string;
     courseId: string;
     startsAtUtc: string;
     endsAtUtc: string;
     notes?: string | null;
-  }): Observable<Appointment> {
-    return this.http.post<Appointment>(`${this.baseUrl}/admin/appointments`, payload);
+    repeatWeekly?: boolean;
+    repeatUntilUtc?: string | null;
+  }): Observable<{ items: Appointment[] }> {
+    return this.http.post<{ items: Appointment[] }>(`${this.baseUrl}/admin/appointments`, payload);
   }
 
   updateAppointment(
@@ -183,6 +196,135 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/admin/appointments/${appointmentId}`);
   }
 
+  getTimetableEntries(filters?: {
+    teacherId?: string;
+    grade?: number;
+    period?: string;
+  }): Observable<FixedTimetableEntry[]> {
+    const params = new URLSearchParams();
+    if (filters?.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.period) params.set('period', filters.period);
+    const query = params.toString();
+    return this.http.get<FixedTimetableEntry[]>(
+      `${this.baseUrl}/admin/timetable-entries${query ? `?${query}` : ''}`
+    );
+  }
+
+  getMyTimetableEntries(filters?: { grade?: number; period?: string }): Observable<FixedTimetableEntry[]> {
+    const params = new URLSearchParams();
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.period) params.set('period', filters.period);
+    const query = params.toString();
+    return this.http.get<FixedTimetableEntry[]>(
+      `${this.baseUrl}/timetable-entries${query ? `?${query}` : ''}`
+    );
+  }
+
+  createTimetableEntry(payload: {
+    teacherId: string;
+    courseId: string;
+    dayOfWeek: number;
+    sessionNumber: number;
+    period: string;
+  }): Observable<FixedTimetableEntry> {
+    return this.http.post<FixedTimetableEntry>(`${this.baseUrl}/admin/timetable-entries`, payload);
+  }
+
+  updateTimetableEntry(
+    entryId: string,
+    payload: {
+      teacherId: string;
+      courseId: string;
+      dayOfWeek: number;
+      sessionNumber: number;
+      period: string;
+    }
+  ): Observable<FixedTimetableEntry> {
+    return this.http.put<FixedTimetableEntry>(`${this.baseUrl}/admin/timetable-entries/${entryId}`, payload);
+  }
+
+  deleteTimetableEntry(entryId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/timetable-entries/${entryId}`);
+  }
+
+  getSessionAttendance(filters?: {
+    teacherId?: string;
+    grade?: number;
+    sessionDate?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Observable<TeacherSessionAttendance[]> {
+    const params = new URLSearchParams();
+    if (filters?.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.sessionDate) params.set('sessionDate', filters.sessionDate);
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    const query = params.toString();
+    return this.http.get<TeacherSessionAttendance[]>(
+      `${this.baseUrl}/admin/session-attendance${query ? `?${query}` : ''}`
+    );
+  }
+
+  getMySessionAttendance(filters?: {
+    grade?: number;
+    sessionDate?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Observable<TeacherSessionAttendance[]> {
+    const params = new URLSearchParams();
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.sessionDate) params.set('sessionDate', filters.sessionDate);
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    const query = params.toString();
+    return this.http.get<TeacherSessionAttendance[]>(
+      `${this.baseUrl}/session-attendance${query ? `?${query}` : ''}`
+    );
+  }
+
+  createSessionAttendance(payload: {
+    teacherId: string;
+    courseId: string;
+    sessionDate: string;
+  }): Observable<TeacherSessionAttendance> {
+    return this.http.post<TeacherSessionAttendance>(`${this.baseUrl}/admin/session-attendance`, payload);
+  }
+
+  createMySessionAttendance(payload: {
+    courseId: string;
+    sessionDate: string;
+  }): Observable<TeacherSessionAttendance> {
+    return this.http.post<TeacherSessionAttendance>(`${this.baseUrl}/session-attendance`, payload);
+  }
+
+  deleteSessionAttendance(attendanceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/session-attendance/${attendanceId}`);
+  }
+
+  deleteMySessionAttendance(attendanceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/session-attendance/${attendanceId}`);
+  }
+
+  getPayrollReport(filters: {
+    fromDate: string;
+    toDate: string;
+    teacherId?: string;
+    stage?: number;
+    grade?: number;
+  }): Observable<TeacherPayrollReport> {
+    const params = new URLSearchParams();
+    params.set('fromDate', filters.fromDate);
+    params.set('toDate', filters.toDate);
+    if (filters.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters.stage != null) params.set('stage', String(filters.stage));
+    if (filters.grade != null) params.set('grade', String(filters.grade));
+    return this.http.get<TeacherPayrollReport>(
+      `${this.baseUrl}/admin/payroll-report?${params.toString()}`
+    );
+  }
+
   getUsers(role?: string): Observable<ManagedUser[]> {
     const query = role ? `?role=${role}` : '';
     return this.http.get<ManagedUser[]>(`${this.baseUrl}/admin/users${query}`);
@@ -198,6 +340,15 @@ export class LearningApiService {
     mobilePhone?: string | null;
     workShift?: string | null;
     stages?: number[] | null;
+    contractType?: string | null;
+    primaryAmount?: number | null;
+    prepAmount?: number | null;
+    secondaryAmount?: number | null;
+    courseRates?: Array<{
+      courseId: string;
+      sessionAmount?: number | null;
+      monthlySalary?: number | null;
+    }> | null;
   }): Observable<ManagedUser> {
     return this.http.post<ManagedUser>(`${this.baseUrl}/admin/users`, payload);
   }
@@ -214,6 +365,15 @@ export class LearningApiService {
       mobilePhone?: string | null;
       workShift?: string | null;
       stages?: number[] | null;
+      contractType?: string | null;
+      primaryAmount?: number | null;
+      prepAmount?: number | null;
+      secondaryAmount?: number | null;
+      courseRates?: Array<{
+        courseId: string;
+        sessionAmount?: number | null;
+        monthlySalary?: number | null;
+      }> | null;
     }
   ): Observable<ManagedUser> {
     return this.http.put<ManagedUser>(`${this.baseUrl}/admin/users/${userId}`, payload);
@@ -278,22 +438,30 @@ export class LearningApiService {
   }
 
   getSiteSettings(): Observable<SiteSettings> {
-    return this.http.get<SiteSettings>(`${this.baseUrl}/site-settings`);
+    return this.http
+      .get<SiteSettings>(`${this.baseUrl}/site-settings`)
+      .pipe(map((settings) => normalizeSiteSettings(settings)));
   }
 
   updateSiteSettings(payload: {
     siteName: string;
     clearLogo?: boolean;
     clearBanner?: boolean;
+    timetableWeekStartUtc?: string | null;
+    clearTimetableWeek?: boolean;
   }): Observable<SiteSettings> {
-    return this.http.put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload);
+    return this.http
+      .put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload)
+      .pipe(map((settings) => normalizeSiteSettings(settings)));
   }
 
   uploadSiteImage(kind: 'logo' | 'banner', file: File): Observable<SiteSettings> {
     const form = new FormData();
     form.append('file', file);
     form.append('kind', kind);
-    return this.http.post<SiteSettings>(`${this.baseUrl}/admin/site-settings/upload`, form);
+    return this.http
+      .post<SiteSettings>(`${this.baseUrl}/admin/site-settings/upload`, form)
+      .pipe(map((settings) => normalizeSiteSettings(settings)));
   }
 
   siteAssetUrl(path: string | null | undefined): string | null {
@@ -563,4 +731,17 @@ export class LearningApiService {
   getWatchSessions(mediaAssetId: string): Observable<WatchSession[]> {
     return this.http.get<WatchSession[]>(`${this.baseUrl}/media/${mediaAssetId}/watch-sessions`);
   }
+}
+
+function normalizeSiteSettings(raw: SiteSettings | Record<string, unknown>): SiteSettings {
+  const item = raw as SiteSettings & Record<string, unknown>;
+  const timetableWeek =
+    item.timetableWeekStartUtc ?? item['TimetableWeekStartUtc'] ?? item['timetableWeekStartUtc'];
+  return {
+    siteName: String(item.siteName ?? item['SiteName'] ?? 'CodeKids'),
+    logoUrl: (item.logoUrl ?? item['LogoUrl'] ?? null) as string | null,
+    bannerUrl: (item.bannerUrl ?? item['BannerUrl'] ?? null) as string | null,
+    timetableWeekStartUtc: timetableWeek == null ? null : String(timetableWeek),
+    updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? '')
+  };
 }

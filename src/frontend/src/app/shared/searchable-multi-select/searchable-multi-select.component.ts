@@ -1,5 +1,7 @@
+import { NgStyle } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
   computed,
@@ -18,7 +20,7 @@ export interface MultiSelectOption {
 
 @Component({
   selector: 'app-searchable-multi-select',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, NgStyle],
   templateUrl: './searchable-multi-select.component.html',
   styleUrl: './searchable-multi-select.component.css',
   host: {
@@ -36,6 +38,7 @@ export interface MultiSelectOption {
 })
 export class SearchableMultiSelectComponent implements ControlValueAccessor {
   private readonly hostEl = inject(ElementRef<HTMLElement>);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly options = input.required<MultiSelectOption[]>();
   readonly placeholder = input('');
@@ -46,6 +49,7 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
   readonly query = signal('');
   readonly selected = signal<(string | number)[]>([]);
   readonly disabled = signal(false);
+  readonly panelStyle = signal<Record<string, string>>({});
 
   readonly filteredOptions = computed(() => {
     const q = this.query().trim().toLowerCase();
@@ -71,6 +75,17 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
   private onChange: (value: (string | number)[]) => void = () => undefined;
   private onTouched: () => void = () => undefined;
 
+  private readonly onScrollReposition = (): void => {
+    if (this.open()) this.positionPanel();
+  };
+
+  constructor() {
+    document.addEventListener('scroll', this.onScrollReposition, true);
+    this.destroyRef.onDestroy(() => {
+      document.removeEventListener('scroll', this.onScrollReposition, true);
+    });
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.open()) return;
@@ -82,6 +97,11 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
   @HostListener('document:keydown.escape')
   onEscape(): void {
     if (this.open()) this.close();
+  }
+
+  @HostListener('window:resize')
+  onViewportChange(): void {
+    if (this.open()) this.positionPanel();
   }
 
   writeValue(value: (string | number)[] | null): void {
@@ -108,6 +128,7 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
     }
     this.query.set('');
     this.open.set(true);
+    requestAnimationFrame(() => this.positionPanel());
   }
 
   isSelected(value: string | number): boolean {
@@ -139,6 +160,47 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
   private close(): void {
     this.open.set(false);
     this.query.set('');
+    this.panelStyle.set({});
     this.onTouched();
+  }
+
+  /** Escape overflow clipping (tables / panel scroll) by pinning the menu to the viewport. */
+  private positionPanel(): void {
+    const trigger = this.hostEl.nativeElement.querySelector('.ms-trigger') as HTMLElement | null;
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    const gap = 6;
+    const minWidth = this.compact() ? 14 * 16 : 16 * 16;
+    const width = Math.max(rect.width, minWidth);
+    const maxPanel = 22 * 16;
+    const spaceBelow = window.innerHeight - rect.bottom - gap;
+    const spaceAbove = rect.top - gap;
+    const openUp = spaceBelow < 10 * 16 && spaceAbove > spaceBelow;
+    const maxHeight = Math.max(8 * 16, Math.min(maxPanel, openUp ? spaceAbove : spaceBelow));
+
+    let left = rect.left;
+    if (left + width > window.innerWidth - 8) {
+      left = Math.max(8, window.innerWidth - width - 8);
+    }
+
+    const style: Record<string, string> = {
+      position: 'fixed',
+      left: `${left}px`,
+      right: 'auto',
+      width: `${width}px`,
+      zIndex: '1200',
+      maxHeight: `${maxHeight}px`
+    };
+
+    if (openUp) {
+      style['bottom'] = `${window.innerHeight - rect.top + gap}px`;
+      style['top'] = 'auto';
+    } else {
+      style['top'] = `${rect.bottom + gap}px`;
+      style['bottom'] = 'auto';
+    }
+
+    this.panelStyle.set(style);
   }
 }

@@ -1,0 +1,105 @@
+<div class="panel-page">
+  <h2>{{ 'admin.payroll.title' | t }}</h2>
+  <p class="meta">{{ 'admin.payroll.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <div class="list-filters">
+      <label>
+        {{ 'admin.payroll.dateFrom' | t }}
+        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reload()" />
+      </label>
+      <label>
+        {{ 'admin.payroll.dateTo' | t }}
+        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reload()" />
+      </label>
+      <label>
+        {{ 'common.teacher' | t }}
+        <select [(ngModel)]="filterTeacherId" name="filterTeacher" (ngModelChange)="reload()">
+          <option value="">{{ 'common.all' | t }}</option>
+          @for (teacher of teachers(); track teacher.id) {
+            <option [value]="teacher.id">{{ teacher.displayName }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'common.stage' | t }}
+        <select [(ngModel)]="filterStage" name="filterStage" (ngModelChange)="reload()">
+          <option [ngValue]="''">{{ 'common.all' | t }}</option>
+          @for (stage of stages; track stage) {
+            <option [ngValue]="stage">{{ stageLabel(stage) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <select [(ngModel)]="filterGrade" name="filterGrade" (ngModelChange)="reload()">
+          <option [ngValue]="''">{{ 'common.all' | t }}</option>
+          @for (g of grades; track g) {
+            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
+          }
+        </select>
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
+      <button type="button" class="ghost-btn" [disabled]="exporting()" (click)="exportImage()">
+        {{ (exporting() ? 'admin.payroll.exporting' : 'admin.payroll.exportImage') | t }}
+      </button>
+    </div>
+  </section>
+
+  <section class="block" #reportTable>
+    <h3>
+      {{ 'admin.payroll.list' | t }}
+      @if (report(); as r) {
+        <span class="meta">
+          ({{ r.fromDate }} – {{ r.toDate }})
+        </span>
+      }
+    </h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.payroll.teacherName' | t }}</th>
+            <th>{{ 'admin.payroll.primarySessions' | t }}</th>
+            <th>{{ 'admin.payroll.prepSessions' | t }}</th>
+            <th>{{ 'admin.payroll.secondarySessions' | t }}</th>
+            <th>{{ 'admin.payroll.totalAmount' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (report(); as r) {
+            @for (row of r.rows; track row.teacherId) {
+              <tr>
+                <td>{{ row.teacherName }}</td>
+                <td>{{ row.primarySessions }}</td>
+                <td>{{ row.prepSessions }}</td>
+                <td>{{ row.secondarySessions }}</td>
+                <td>{{ moneyLabel(row.totalAmount) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5">{{ 'common.noData' | t }}</td>
+              </tr>
+            }
+            <tr class="total-row">
+              <td colspan="4"><strong>{{ 'admin.payroll.grandTotal' | t }}</strong></td>
+              <td><strong>{{ moneyLabel(r.grandTotal) }}</strong></td>
+            </tr>
+          } @else {
+            <tr>
+              <td colspan="5">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

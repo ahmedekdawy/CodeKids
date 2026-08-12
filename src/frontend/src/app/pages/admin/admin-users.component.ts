@@ -6,7 +6,14 @@ import { map } from 'rxjs';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { includesIgnoreCase, paginate, totalPages } from '../../list-query.util';
-import { ManagedUser, TeacherWorkShift, UserRole } from '../../models';
+import {
+  Course,
+  ManagedUser,
+  TeacherContractType,
+  TeacherCourseRate,
+  TeacherWorkShift,
+  UserRole
+} from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import {
   MultiSelectOption,
@@ -14,9 +21,10 @@ import {
 } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
-import { STAGE_CODES, formatStageLabel } from '../../grade.util';
+import { STAGE_CODES, formatCourseLabel, formatStageLabel } from '../../grade.util';
 
 type ManagedRole = Extract<UserRole, 'SuperAdmin' | 'Teacher' | 'Parent'>;
+type CourseRateRow = { courseId: string; sessionAmount: number | null; monthlySalary: number | null };
 
 const ROLE_META: Record<
   ManagedRole,
@@ -64,6 +72,7 @@ export class AdminUsersComponent {
 
   readonly meta = computed(() => ROLE_META[this.managedRole()]);
   readonly users = signal<ManagedUser[]>([]);
+  readonly courses = signal<Course[]>([]);
   readonly message = signal('');
   readonly error = signal('');
   readonly sortKey = signal<string>('displayName');
@@ -85,6 +94,7 @@ export class AdminUsersComponent {
     }));
   });
   readonly workShifts: TeacherWorkShift[] = ['Am', 'Pm', 'Both'];
+  readonly contractTypes: TeacherContractType[] = ['Session', 'Monthly'];
   readonly pageSizeOptions = [10, 25, 50];
 
   userEmail = '';
@@ -93,6 +103,11 @@ export class AdminUsersComponent {
   userMobile = '';
   userWorkShift: TeacherWorkShift = 'Both';
   userStages: number[] = [...STAGE_CODES];
+  userContractType: TeacherContractType = 'Session';
+  userPrimaryAmount: number | null = null;
+  userPrepAmount: number | null = null;
+  userSecondaryAmount: number | null = null;
+  readonly userCourseRates = signal<CourseRateRow[]>([]);
 
   editEmail = '';
   editName = '';
@@ -100,6 +115,11 @@ export class AdminUsersComponent {
   editWorkShift: TeacherWorkShift = 'Both';
   editStages: number[] = [...STAGE_CODES];
   editPassword = '';
+  editContractType: TeacherContractType = 'Session';
+  editPrimaryAmount: number | null = null;
+  editPrepAmount: number | null = null;
+  editSecondaryAmount: number | null = null;
+  readonly editCourseRates = signal<CourseRateRow[]>([]);
 
   readonly filteredUsers = computed(() => {
     const name = this.filterName();
@@ -132,6 +152,18 @@ export class AdminUsersComponent {
     paginate(this.sortedUsers(), this.page(), this.pageSize())
   );
 
+  readonly courseOptions = computed(() => {
+    this.locale.lang();
+    return this.courses()
+      .slice()
+      .sort((a, b) => {
+        const ga = a.grade ?? 999;
+        const gb = b.grade ?? 999;
+        if (ga !== gb) return ga - gb;
+        return a.title.localeCompare(b.title);
+      });
+  });
+
   constructor() {
     this.route.data.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data) => {
       const role = (data['role'] as ManagedRole) || 'SuperAdmin';
@@ -139,6 +171,9 @@ export class AdminUsersComponent {
       this.cancelEdit();
       this.clearStatus();
       this.reload(role);
+      if (role === 'Teacher') {
+        this.api.getCourses().subscribe((courses) => this.courses.set(courses ?? []));
+      }
     });
   }
 
@@ -236,6 +271,80 @@ export class AdminUsersComponent {
     }
   }
 
+  contractTypeLabel(type?: string | null): string {
+    if (!type) return this.locale.t('common.emDash');
+    if (type === 'Session') return this.locale.t('admin.users.contractSession');
+    if (type === 'Monthly') return this.locale.t('admin.users.contractMonthly');
+    return type;
+  }
+
+  courseOptionLabel(course: Course): string {
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
+  }
+
+  moneyLabel(value?: number | null): string {
+    if (value == null) return this.locale.t('common.emDash');
+    return String(value);
+  }
+
+  addUserRateRow(): void {
+    this.userCourseRates.update((rows) => [
+      ...rows,
+      { courseId: '', sessionAmount: null, monthlySalary: null }
+    ]);
+  }
+
+  removeUserRateRow(index: number): void {
+    this.userCourseRates.update((rows) => rows.filter((_, i) => i !== index));
+  }
+
+  onUserRateCourseChange(index: number, courseId: string): void {
+    this.userCourseRates.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, courseId } : row))
+    );
+  }
+
+  onUserRateSessionChange(index: number, value: string | number): void {
+    this.userCourseRates.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, sessionAmount: parseMoney(value) } : row))
+    );
+  }
+
+  onUserRateMonthlyChange(index: number, value: string | number): void {
+    this.userCourseRates.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, monthlySalary: parseMoney(value) } : row))
+    );
+  }
+
+  addEditRateRow(): void {
+    this.editCourseRates.update((rows) => [
+      ...rows,
+      { courseId: '', sessionAmount: null, monthlySalary: null }
+    ]);
+  }
+
+  removeEditRateRow(index: number): void {
+    this.editCourseRates.update((rows) => rows.filter((_, i) => i !== index));
+  }
+
+  onEditRateCourseChange(index: number, courseId: string): void {
+    this.editCourseRates.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, courseId } : row))
+    );
+  }
+
+  onEditRateSessionChange(index: number, value: string | number): void {
+    this.editCourseRates.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, sessionAmount: parseMoney(value) } : row))
+    );
+  }
+
+  onEditRateMonthlyChange(index: number, value: string | number): void {
+    this.editCourseRates.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, monthlySalary: parseMoney(value) } : row))
+    );
+  }
+
   createUser(): void {
     this.clearStatus();
     const role = this.managedRole();
@@ -247,6 +356,11 @@ export class AdminUsersComponent {
       this.error.set(this.locale.t('admin.users.stagesRequired'));
       return;
     }
+    const rates = role === 'Teacher' ? this.toRatePayload(this.userCourseRates()) : null;
+    if (rates === false) {
+      this.error.set(this.locale.t('admin.users.rateIncomplete'));
+      return;
+    }
     this.api
       .createUser({
         email: this.userEmail.trim() || null,
@@ -255,17 +369,17 @@ export class AdminUsersComponent {
         role,
         mobilePhone: this.userMobile || null,
         workShift: role === 'Teacher' ? this.userWorkShift : null,
-        stages: role === 'Teacher' ? this.userStages : null
+        stages: role === 'Teacher' ? this.userStages : null,
+        contractType: role === 'Teacher' ? this.userContractType : null,
+        primaryAmount: role === 'Teacher' ? this.userPrimaryAmount : null,
+        prepAmount: role === 'Teacher' ? this.userPrepAmount : null,
+        secondaryAmount: role === 'Teacher' ? this.userSecondaryAmount : null,
+        courseRates: rates
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.users.created'));
-          this.userEmail = '';
-          this.userName = '';
-          this.userPassword = '';
-          this.userMobile = '';
-          this.userWorkShift = 'Both';
-          this.userStages = [...STAGE_CODES];
+          this.resetCreateForm();
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.createFailed'))
@@ -280,10 +394,17 @@ export class AdminUsersComponent {
     this.editWorkShift = (user.workShift as TeacherWorkShift) || 'Both';
     this.editStages = user.stages?.length ? [...user.stages] : [...STAGE_CODES];
     this.editPassword = '';
+    this.editContractType = (user.contractType as TeacherContractType) || 'Session';
+    this.editPrimaryAmount = user.primaryAmount ?? null;
+    this.editPrepAmount = user.prepAmount ?? null;
+    this.editSecondaryAmount = user.secondaryAmount ?? null;
+    this.editCourseRates.set(toRateRows(user.courseRates));
+    this.clearStatus();
   }
 
   cancelEdit(): void {
     this.editingId.set(null);
+    this.editCourseRates.set([]);
   }
 
   saveEdit(userId: string): void {
@@ -297,6 +418,11 @@ export class AdminUsersComponent {
       this.error.set(this.locale.t('admin.users.stagesRequired'));
       return;
     }
+    const rates = role === 'Teacher' ? this.toRatePayload(this.editCourseRates()) : null;
+    if (rates === false) {
+      this.error.set(this.locale.t('admin.users.rateIncomplete'));
+      return;
+    }
     this.api
       .updateUser(userId, {
         email: this.editEmail.trim() || null,
@@ -305,12 +431,17 @@ export class AdminUsersComponent {
         mobilePhone: this.editMobile || null,
         workShift: role === 'Teacher' ? this.editWorkShift : null,
         stages: role === 'Teacher' ? this.editStages : null,
+        contractType: role === 'Teacher' ? this.editContractType : null,
+        primaryAmount: role === 'Teacher' ? this.editPrimaryAmount : null,
+        prepAmount: role === 'Teacher' ? this.editPrepAmount : null,
+        secondaryAmount: role === 'Teacher' ? this.editSecondaryAmount : null,
+        courseRates: rates,
         password: this.editPassword || null
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.users.updated'));
-          this.editingId.set(null);
+          this.cancelEdit();
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.updateFailed'))
@@ -329,6 +460,36 @@ export class AdminUsersComponent {
     });
   }
 
+  private resetCreateForm(): void {
+    this.userEmail = '';
+    this.userName = '';
+    this.userPassword = '';
+    this.userMobile = '';
+    this.userWorkShift = 'Both';
+    this.userStages = [...STAGE_CODES];
+    this.userContractType = 'Session';
+    this.userPrimaryAmount = null;
+    this.userPrepAmount = null;
+    this.userSecondaryAmount = null;
+    this.userCourseRates.set([]);
+  }
+
+  private toRatePayload(
+    rows: CourseRateRow[]
+  ): Array<{ courseId: string; sessionAmount?: number | null; monthlySalary?: number | null }> | false {
+    const filled = rows.filter(
+      (r) => r.courseId || r.sessionAmount != null || r.monthlySalary != null
+    );
+    if (filled.some((r) => !r.courseId || (r.sessionAmount == null && r.monthlySalary == null))) {
+      return false;
+    }
+    return filled.map((r) => ({
+      courseId: r.courseId,
+      sessionAmount: r.sessionAmount,
+      monthlySalary: r.monthlySalary
+    }));
+  }
+
   private clampPage(): void {
     if (this.page() > this.totalPages()) {
       this.page.set(this.totalPages());
@@ -339,4 +500,22 @@ export class AdminUsersComponent {
     this.message.set('');
     this.error.set('');
   }
+}
+
+function parseMoney(value: string | number | null | undefined): number | null {
+  if (value == null || value === '') return null;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const n = Number(trimmed);
+  return Number.isFinite(n) ? n : null;
+}
+
+function toRateRows(rates?: TeacherCourseRate[] | null): CourseRateRow[] {
+  if (!rates?.length) return [];
+  return rates.map((r) => ({
+    courseId: r.courseId,
+    sessionAmount: r.sessionAmount ?? null,
+    monthlySalary: r.monthlySalary ?? null
+  }));
 }

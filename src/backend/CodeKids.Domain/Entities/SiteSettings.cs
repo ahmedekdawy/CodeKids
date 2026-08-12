@@ -10,5 +10,6 @@ public class SiteSettings
     public string LogoContentType { get; set; } = string.Empty;
     public string BannerStorageKey { get; set; } = string.Empty;
     public string BannerContentType { get; set; } = string.Empty;
+    public DateTimeOffset? TimetableWeekStartUtc { get; set; }
     public DateTimeOffset UpdatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 }

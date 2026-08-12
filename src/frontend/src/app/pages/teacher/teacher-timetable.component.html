@@ -1,0 +1,93 @@
+<div class="panel-page timetable-page" dir="rtl">
+  <h2>{{ 'teacher.timetable.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.timetable.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <div class="list-filters">
+      <label>
+        {{ 'common.grade' | t }}
+        <select
+          [ngModel]="filterGrade()"
+          name="teacherTimetableGrade"
+          (ngModelChange)="onFilterGradeChange($event)"
+        >
+          <option value="">{{ 'common.allGrades' | t }}</option>
+          @for (g of grades; track g) {
+            <option [value]="g">{{ gradeLabel(g) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.timetable.period' | t }}
+        <select
+          [ngModel]="filterPeriod()"
+          name="teacherTimetablePeriod"
+          (ngModelChange)="onFilterPeriodChange($event)"
+        >
+          <option value="">{{ 'admin.timetable.allPeriods' | t }}</option>
+          <option value="am">{{ 'admin.timetable.am' | t }}</option>
+          <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="timetable-export-bar">
+      <button
+        type="button"
+        class="ghost-btn"
+        [disabled]="exporting()"
+        (click)="exportAsImage()"
+      >
+        {{ (exporting() ? 'admin.timetable.exporting' : 'admin.timetable.exportImage') | t }}
+      </button>
+    </div>
+
+    <div class="timetable-wrap" dir="rtl" #timetableWrap>
+      <table class="timetable">
+        <thead>
+          <tr>
+            <th class="timetable-day-col" rowspan="2">{{ 'admin.timetable.day' | t }}</th>
+            @if (amSlots().length) {
+              <th class="timetable-shift" [attr.colspan]="amSlots().length">{{ shiftLabel('am') }}</th>
+            }
+            @if (pmSlots().length) {
+              <th class="timetable-shift pm" [attr.colspan]="pmSlots().length">{{ shiftLabel('pm') }}</th>
+            }
+          </tr>
+          <tr>
+            @for (slot of sessionSlots(); track slot.key) {
+              <th class="timetable-period">
+                <div class="timetable-session-id">{{ slot.sessionNumber }}</div>
+                <div class="timetable-session-time">{{ slot.timeLabel }}</div>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (day of timetableDays(); track day.dayOfWeek) {
+            <tr>
+              <th class="timetable-day">{{ day.label }}</th>
+              @for (slot of sessionSlots(); track slot.key) {
+                <td class="timetable-cell" [class.pm]="slot.period === 'pm'">
+                  @for (cell of day.cells[slot.key]; track cell.entry.id) {
+                    <div class="timetable-entry" [title]="cell.entry.label">
+                      <div class="timetable-course">{{ cell.courseLine }}</div>
+                    </div>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="meta">{{ 'teacher.timetable.hint' | t }}</p>
+  </section>
+</div>

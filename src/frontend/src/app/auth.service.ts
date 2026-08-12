@@ -35,6 +35,14 @@ export class AuthService {
     );
   }
 
+  forgotPassword(email: string): Observable<{ accepted: boolean; message: string }> {
+    return this.http.post<{ accepted: boolean; message: string }>(`${this.baseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ accepted: boolean }> {
+    return this.http.post<{ accepted: boolean }>(`${this.baseUrl}/reset-password`, { token, newPassword });
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);

@@ -1,0 +1,108 @@
+<div class="panel-page">
+  <h2>{{ 'teacher.attendance.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.attendance.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>{{ 'teacher.attendance.create' | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="create()">
+      <label>
+        {{ 'common.grade' | t }}
+        <select [ngModel]="formGrade()" name="grade" (ngModelChange)="onGradeChange($event)">
+          <option [ngValue]="''">{{ 'common.all' | t }}</option>
+          @for (g of grades; track g) {
+            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'common.course' | t }}
+        <select [(ngModel)]="courseId" name="courseId" required>
+          <option value="">{{ 'common.select' | t }}</option>
+          @for (course of availableCourses(); track course.id) {
+            <option [value]="course.id">{{ courseLabel(course) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'common.date' | t }}
+        <input type="date" [(ngModel)]="sessionDate" name="sessionDate" required />
+      </label>
+      <button type="submit">{{ 'teacher.attendance.create' | t }}</button>
+    </form>
+    @if (availableCourses().length === 0) {
+      <p class="meta">{{ 'teacher.attendance.noCourses' | t }}</p>
+    }
+  </section>
+
+  <section class="block">
+    <h3>{{ 'teacher.attendance.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.grade' | t }}
+        <select [ngModel]="filterGrade()" name="filterGrade" (ngModelChange)="filterGrade.set($event); reload()">
+          <option [ngValue]="''">{{ 'common.all' | t }}</option>
+          @for (g of grades; track g) {
+            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input
+          type="date"
+          [ngModel]="filterFromDate()"
+          name="filterFromDate"
+          (ngModelChange)="filterFromDate.set($event); reload()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input
+          type="date"
+          [ngModel]="filterToDate()"
+          name="filterToDate"
+          (ngModelChange)="filterToDate.set($event); reload()"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetDateFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'common.date' | t }}</th>
+            <th>{{ 'common.grade' | t }}</th>
+            <th>{{ 'common.course' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.sessionDate }}</td>
+              <td>{{ gradeLabel(row.courseGrade) }}</td>
+              <td>{{ row.courseName }}</td>
+              <td>
+                <app-icon-action-button kind="delete" variant="danger" (action)="remove(row)" />
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

@@ -16,6 +16,7 @@
     "@angular/platform-browser": "latest",
     "@angular/platform-browser-dynamic": "latest",
     "@angular/router": "latest",
+    "html2canvas": "^1.4.1",
     "rxjs": "latest",
     "tslib": "latest",
     "zone.js": "latest"

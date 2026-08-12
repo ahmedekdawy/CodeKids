@@ -20,6 +20,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<UserBadge> UserBadges => Set<UserBadge>();
     public DbSet<LiveSession> LiveSessions => Set<LiveSession>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<FixedTimetableEntry> FixedTimetableEntries => Set<FixedTimetableEntry>();
+    public DbSet<TeacherSessionAttendance> TeacherSessionAttendances => Set<TeacherSessionAttendance>();
+    public DbSet<TeacherCourseRate> TeacherCourseRates => Set<TeacherCourseRate>();
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<Classroom> Classrooms => Set<Classroom>();
     public DbSet<ClassroomCourse> ClassroomCourses => Set<ClassroomCourse>();
     public DbSet<ClassroomStudent> ClassroomStudents => Set<ClassroomStudent>();
@@ -56,7 +60,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.ContractType).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.PrimaryAmount).HasPrecision(18, 2);
+            entity.Property(x => x.PrepAmount).HasPrecision(18, 2);
+            entity.Property(x => x.SecondaryAmount).HasPrecision(18, 2);
             entity.Property(x => x.ZoomAccessToken).HasMaxLength(2000).IsRequired();
+            entity.HasMany(x => x.CourseRates)
+                .WithOne(x => x.Teacher)
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.Property(x => x.ZoomRefreshToken).HasMaxLength(2000).IsRequired();
             entity.Property(x => x.ZoomConnectedEmail).HasMaxLength(160).IsRequired();
             entity.HasOne(x => x.Parent)
@@ -233,6 +245,61 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(x => x.CourseId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<FixedTimetableEntry>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Period).HasConversion<string>().HasMaxLength(10);
+            entity.HasIndex(x => new { x.TeacherId, x.DayOfWeek, x.Period, x.SessionNumber }).IsUnique();
+            entity.HasIndex(x => new { x.DayOfWeek, x.Period, x.SessionNumber });
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TeacherSessionAttendance>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.TeacherId, x.CourseId, x.SessionDate }).IsUnique();
+            entity.HasIndex(x => x.SessionDate);
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TeacherCourseRate>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.SessionAmount).HasPrecision(18, 2);
+            entity.Property(x => x.MonthlySalary).HasPrecision(18, 2);
+            entity.HasIndex(x => new { x.TeacherId, x.CourseId }).IsUnique();
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<PasswordResetToken>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.TokenHash).HasMaxLength(128).IsRequired();
+            entity.HasIndex(x => x.TokenHash).IsUnique();
+            entity.HasIndex(x => x.UserId);
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Classroom>(entity =>

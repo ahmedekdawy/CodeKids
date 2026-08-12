@@ -18,6 +18,10 @@ public interface IAppDbContext
     DbSet<UserBadge> UserBadges { get; }
     DbSet<LiveSession> LiveSessions { get; }
     DbSet<Appointment> Appointments { get; }
+    DbSet<FixedTimetableEntry> FixedTimetableEntries { get; }
+    DbSet<TeacherSessionAttendance> TeacherSessionAttendances { get; }
+    DbSet<TeacherCourseRate> TeacherCourseRates { get; }
+    DbSet<PasswordResetToken> PasswordResetTokens { get; }
     DbSet<Classroom> Classrooms { get; }
     DbSet<ClassroomCourse> ClassroomCourses { get; }
     DbSet<ClassroomStudent> ClassroomStudents { get; }

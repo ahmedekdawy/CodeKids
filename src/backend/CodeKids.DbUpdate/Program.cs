@@ -27,6 +27,7 @@ var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
 await SchemaBootstrap.EnsureAsync(db);
+await db.Database.MigrateAsync();
 await DataSeeder.SeedAsync(db, hasher);
 
 var classroomCount = await db.Classrooms.CountAsync();

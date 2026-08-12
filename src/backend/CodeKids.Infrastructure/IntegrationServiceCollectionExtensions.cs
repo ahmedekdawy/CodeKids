@@ -1,4 +1,6 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Options;
+using CodeKids.Infrastructure.Email;
 using CodeKids.Infrastructure.Jobs;
 using CodeKids.Infrastructure.Media;
 using CodeKids.Infrastructure.WhatsApp;
@@ -16,6 +18,15 @@ public static class IntegrationServiceCollectionExtensions
         services.AddSingleton<IFileStorage, LocalFileStorage>();
         services.AddSingleton<IMediaAccessTokenService, MediaAccessTokenService>();
         services.AddHostedService<DailyReportHostedService>();
+        return services;
+    }
+
+    public static IServiceCollection AddEmailSender(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+        services.Configure<FrontendOptions>(configuration.GetSection(FrontendOptions.SectionName));
+        services.AddSingleton<IEmailSender, SmtpEmailSender>();
+        services.AddSingleton<IEmailService, EmailService>();
         return services;
     }
 

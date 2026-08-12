@@ -18,6 +18,14 @@ public class User
     public TeacherWorkShift? WorkShift { get; set; }
     /// <summary>Comma-separated stage codes (0–3) for teachers; empty for non-teachers.</summary>
     public string Stages { get; set; } = string.Empty;
+    /// <summary>Teacher pay contract: Session or Monthly; null for non-teachers.</summary>
+    public TeacherContractType? ContractType { get; set; }
+    /// <summary>Default primary session amount.</summary>
+    public decimal? PrimaryAmount { get; set; }
+    /// <summary>Default preparatory (إعدادي) session amount.</summary>
+    public decimal? PrepAmount { get; set; }
+    /// <summary>Default secondary session amount.</summary>
+    public decimal? SecondaryAmount { get; set; }
     public string ZoomAccessToken { get; set; } = string.Empty;
     public string ZoomRefreshToken { get; set; } = string.Empty;
     public DateTimeOffset? ZoomTokenExpiresAt { get; set; }
@@ -31,6 +39,7 @@ public class User
     public List<UserBadge> Badges { get; set; } = [];
     public List<StudentProgress> Progress { get; set; } = [];
     public List<QuizAttempt> QuizAttempts { get; set; } = [];
+    public List<TeacherCourseRate> CourseRates { get; set; } = [];
 
     public bool HasPersonalZoom =>
         !string.IsNullOrWhiteSpace(ZoomAccessToken) && !string.IsNullOrWhiteSpace(ZoomRefreshToken);

@@ -25,6 +25,9 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.assign', path: '/admin/assign-classroom', icon: 'G' },
     { labelKey: 'nav.admin.enroll', path: '/admin/enroll-student', icon: 'E' },
     { labelKey: 'nav.admin.appointments', path: '/admin/appointments', icon: 'K' },
+    { labelKey: 'nav.admin.timetable', path: '/admin/timetable', icon: 'H' },
+    { labelKey: 'nav.admin.attendance', path: '/admin/attendance', icon: 'N' },
+    { labelKey: 'nav.admin.payroll', path: '/admin/payroll', icon: '$' },
     { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B' }
   ];
 }

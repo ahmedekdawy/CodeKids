@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './auth.guard';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { StudentHomeComponent } from './pages/student-home/student-home.component';
 import { LessonPlayComponent } from './pages/lesson-play/lesson-play.component';
 import { QuizPlayComponent } from './pages/quiz-play/quiz-play.component';
@@ -16,6 +18,9 @@ import { AdminAssignClassroomComponent } from './pages/admin/admin-assign-classr
 import { AdminEnrollStudentComponent } from './pages/admin/admin-enroll-student.component';
 import { AdminSiteSettingsComponent } from './pages/admin/admin-site-settings.component';
 import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.component';
+import { AdminTimetableComponent } from './pages/admin/admin-timetable.component';
+import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
+import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
 import { TeacherOverviewComponent } from './pages/teacher/teacher-overview.component';
 import { TeacherZoomComponent } from './pages/teacher/teacher-zoom.component';
@@ -27,12 +32,17 @@ import { TeacherQuestionBankComponent } from './pages/teacher/teacher-question-b
 import { TeacherExamsComponent } from './pages/teacher/teacher-exams.component';
 import { TeacherVideosComponent } from './pages/teacher/teacher-videos.component';
 import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.component';
+import { TeacherAppointmentsComponent } from './pages/teacher/teacher-appointments.component';
+import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.component';
+import { TeacherAttendanceComponent } from './pages/teacher/teacher-attendance.component';
 import { ExamPlayComponent } from './pages/exam-play/exam-play.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: 'student',
     canActivate: [authGuard, roleGuard(['Student'])],
@@ -72,6 +82,9 @@ export const routes: Routes = [
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
       { path: 'zoom', component: TeacherZoomComponent },
+      { path: 'appointments', component: TeacherAppointmentsComponent },
+      { path: 'timetable', component: TeacherTimetableComponent },
+      { path: 'attendance', component: TeacherAttendanceComponent },
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
       { path: 'question-bank', component: TeacherQuestionBankComponent },
       { path: 'exams', component: TeacherExamsComponent },
@@ -97,6 +110,9 @@ export const routes: Routes = [
       { path: 'assign-classroom', component: AdminAssignClassroomComponent },
       { path: 'enroll-student', component: AdminEnrollStudentComponent },
       { path: 'appointments', component: AdminAppointmentsComponent },
+      { path: 'timetable', component: AdminTimetableComponent },
+      { path: 'attendance', component: AdminAttendanceComponent },
+      { path: 'payroll', component: AdminPayrollComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' }
     ]

@@ -8,6 +8,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Admin;
 
+public sealed record TeacherCourseRateDto(
+    Guid CourseId,
+    string CourseName,
+    int? CourseGrade,
+    decimal? SessionAmount,
+    decimal? MonthlySalary);
+
+public sealed record TeacherCourseRateInput(
+    Guid CourseId,
+    decimal? SessionAmount = null,
+    decimal? MonthlySalary = null);
+
 public sealed record ManagedUserDto(
     Guid Id,
     string Email,
@@ -18,7 +30,12 @@ public sealed record ManagedUserDto(
     int TotalXp,
     string MobilePhone,
     string? WorkShift,
-    IReadOnlyList<int> Stages);
+    IReadOnlyList<int> Stages,
+    string? ContractType = null,
+    decimal? PrimaryAmount = null,
+    decimal? PrepAmount = null,
+    decimal? SecondaryAmount = null,
+    IReadOnlyList<TeacherCourseRateDto>? CourseRates = null);
 
 public sealed record CreateManagedUserRequest(
     string? Email,
@@ -29,7 +46,12 @@ public sealed record CreateManagedUserRequest(
     int? Grade = null,
     string? MobilePhone = null,
     string? WorkShift = null,
-    IReadOnlyList<int>? Stages = null);
+    IReadOnlyList<int>? Stages = null,
+    string? ContractType = null,
+    decimal? PrimaryAmount = null,
+    decimal? PrepAmount = null,
+    decimal? SecondaryAmount = null,
+    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null);
 
 public sealed record CreateManagedUserCommand(
     Guid AdminUserId,
@@ -41,7 +63,12 @@ public sealed record CreateManagedUserCommand(
     int? Grade = null,
     string? MobilePhone = null,
     string? WorkShift = null,
-    IReadOnlyList<int>? Stages = null) : ICommand<ManagedUserDto>;
+    IReadOnlyList<int>? Stages = null,
+    string? ContractType = null,
+    decimal? PrimaryAmount = null,
+    decimal? PrepAmount = null,
+    decimal? SecondaryAmount = null,
+    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null) : ICommand<ManagedUserDto>;
 
 public sealed record ListManagedUsersQuery(string? Role = null) : IQuery<IReadOnlyList<ManagedUserDto>>;
 
@@ -120,6 +147,7 @@ public sealed class CreateManagedUserCommandHandler(
             : null;
         var workShift = ParseWorkShift(role, command.WorkShift);
         var stages = ParseTeacherStages(role, command.Stages);
+        var contract = ParseTeacherContract(role, command);
         if (!string.IsNullOrWhiteSpace(mobile)
             && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile, cancellationToken))
         {
@@ -143,14 +171,19 @@ public sealed class CreateManagedUserCommandHandler(
             MobilePhone = mobile,
             WorkShift = workShift,
             Stages = stages,
+            ContractType = contract.ContractType,
+            PrimaryAmount = contract.PrimaryAmount,
+            PrepAmount = contract.PrepAmount,
+            SecondaryAmount = contract.SecondaryAmount,
             TotalXp = 0
         };
 
         dbContext.Users.Add(user);
+        await ReplaceCourseRatesAsync(dbContext, user.Id, role, command.CourseRates, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         _ = admin;
-        return ToDto(user);
+        return await LoadDtoAsync(dbContext, user.Id, cancellationToken);
     }
 
     internal static string NormalizeEmail(string? email) =>
@@ -187,8 +220,155 @@ public sealed class CreateManagedUserCommandHandler(
         return GradeStageHelper.SerializeStages(stages);
     }
 
-    internal static ManagedUserDto ToDto(User user) =>
-        new(
+    internal static (
+        TeacherContractType? ContractType,
+        decimal? PrimaryAmount,
+        decimal? PrepAmount,
+        decimal? SecondaryAmount)
+        ParseTeacherContract(
+            UserRole role,
+            string? contractType,
+            decimal? primaryAmount,
+            decimal? prepAmount,
+            decimal? secondaryAmount)
+    {
+        if (role != UserRole.Teacher)
+        {
+            return (null, null, null, null);
+        }
+
+        TeacherContractType parsedType;
+        if (string.IsNullOrWhiteSpace(contractType))
+        {
+            parsedType = TeacherContractType.Session;
+        }
+        else if (!Enum.TryParse(contractType.Trim(), true, out parsedType)
+                 || parsedType is not (TeacherContractType.Session or TeacherContractType.Monthly))
+        {
+            throw new InvalidOperationException("Teacher contract type must be Session or Monthly.");
+        }
+
+        return (
+            parsedType,
+            NormalizeMoney(primaryAmount),
+            NormalizeMoney(prepAmount),
+            NormalizeMoney(secondaryAmount));
+    }
+
+    private static (
+        TeacherContractType? ContractType,
+        decimal? PrimaryAmount,
+        decimal? PrepAmount,
+        decimal? SecondaryAmount)
+        ParseTeacherContract(UserRole role, CreateManagedUserCommand command) =>
+        ParseTeacherContract(
+            role,
+            command.ContractType,
+            command.PrimaryAmount,
+            command.PrepAmount,
+            command.SecondaryAmount);
+
+    internal static decimal? NormalizeMoney(decimal? value)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        if (value < 0)
+        {
+            throw new InvalidOperationException("Payment amounts cannot be negative.");
+        }
+
+        return Math.Round(value.Value, 2, MidpointRounding.AwayFromZero);
+    }
+
+    internal static async Task ReplaceCourseRatesAsync(
+        IAppDbContext dbContext,
+        Guid teacherId,
+        UserRole role,
+        IReadOnlyList<TeacherCourseRateInput>? rates,
+        CancellationToken cancellationToken)
+    {
+        var existing = await dbContext.TeacherCourseRates
+            .Where(x => x.TeacherId == teacherId)
+            .ToListAsync(cancellationToken);
+        if (existing.Count > 0)
+        {
+            dbContext.TeacherCourseRates.RemoveRange(existing);
+        }
+
+        if (role != UserRole.Teacher || rates is null || rates.Count == 0)
+        {
+            return;
+        }
+
+        var courseIds = rates.Select(x => x.CourseId).Distinct().ToList();
+        if (courseIds.Count != rates.Count)
+        {
+            throw new InvalidOperationException("Each subject rate must use a unique course.");
+        }
+
+        var matched = await dbContext.Courses
+            .AsNoTracking()
+            .Where(x => courseIds.Contains(x.Id))
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken);
+        if (matched.Count != courseIds.Count)
+        {
+            throw new InvalidOperationException("One or more courses were not found for teacher rates.");
+        }
+
+        foreach (var rate in rates)
+        {
+            var sessionAmount = NormalizeMoney(rate.SessionAmount);
+            var monthlySalary = NormalizeMoney(rate.MonthlySalary);
+            if (sessionAmount is null && monthlySalary is null)
+            {
+                throw new InvalidOperationException("Each subject rate needs a session amount or monthly salary.");
+            }
+
+            dbContext.TeacherCourseRates.Add(new TeacherCourseRate
+            {
+                Id = Guid.NewGuid(),
+                TeacherId = teacherId,
+                CourseId = rate.CourseId,
+                SessionAmount = sessionAmount,
+                MonthlySalary = monthlySalary,
+                CreatedAtUtc = DateTimeOffset.UtcNow
+            });
+        }
+    }
+
+    internal static async Task<ManagedUserDto> LoadDtoAsync(
+        IAppDbContext dbContext,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        var user = await dbContext.Users
+            .AsNoTracking()
+            .Include(x => x.CourseRates)
+            .ThenInclude(x => x.Course)
+            .FirstAsync(x => x.Id == userId, cancellationToken);
+        return ToDto(user);
+    }
+
+    internal static ManagedUserDto ToDto(User user)
+    {
+        var rates = user.Role == UserRole.Teacher
+            ? (user.CourseRates ?? [])
+                .OrderBy(x => x.Course?.Grade ?? 999)
+                .ThenBy(x => x.Course?.Title)
+                .Select(x => new TeacherCourseRateDto(
+                    x.CourseId,
+                    x.Course?.Title ?? string.Empty,
+                    x.Course?.Grade,
+                    x.SessionAmount,
+                    x.MonthlySalary))
+                .ToList()
+            : [];
+
+        return new(
             user.Id,
             user.Email,
             user.DisplayName,
@@ -200,7 +380,13 @@ public sealed class CreateManagedUserCommandHandler(
             user.WorkShift?.ToString(),
             user.Role == UserRole.Teacher
                 ? GradeStageHelper.ParseStages(user.Stages)
-                : Array.Empty<int>());
+                : Array.Empty<int>(),
+            user.ContractType?.ToString(),
+            user.PrimaryAmount,
+            user.PrepAmount,
+            user.SecondaryAmount,
+            rates);
+    }
 }
 
 public sealed class ListManagedUsersQueryHandler(IAppDbContext dbContext)
@@ -208,7 +394,11 @@ public sealed class ListManagedUsersQueryHandler(IAppDbContext dbContext)
 {
     public async Task<IReadOnlyList<ManagedUserDto>> Handle(ListManagedUsersQuery query, CancellationToken cancellationToken)
     {
-        var users = dbContext.Users.AsNoTracking().AsQueryable();
+        var users = dbContext.Users
+            .AsNoTracking()
+            .Include(x => x.CourseRates)
+            .ThenInclude(x => x.Course)
+            .AsQueryable();
         if (!string.IsNullOrWhiteSpace(query.Role) &&
             Enum.TryParse<UserRole>(query.Role, true, out var role))
         {
@@ -333,7 +523,12 @@ public sealed record UpdateManagedUserRequest(
     int? Grade = null,
     string? MobilePhone = null,
     string? WorkShift = null,
-    IReadOnlyList<int>? Stages = null);
+    IReadOnlyList<int>? Stages = null,
+    string? ContractType = null,
+    decimal? PrimaryAmount = null,
+    decimal? PrepAmount = null,
+    decimal? SecondaryAmount = null,
+    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null);
 
 public sealed record UpdateManagedUserCommand(
     Guid AdminUserId,
@@ -346,7 +541,12 @@ public sealed record UpdateManagedUserCommand(
     int? Grade = null,
     string? MobilePhone = null,
     string? WorkShift = null,
-    IReadOnlyList<int>? Stages = null) : ICommand<ManagedUserDto>;
+    IReadOnlyList<int>? Stages = null,
+    string? ContractType = null,
+    decimal? PrimaryAmount = null,
+    decimal? PrepAmount = null,
+    decimal? SecondaryAmount = null,
+    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null) : ICommand<ManagedUserDto>;
 
 public sealed record DeleteManagedUserCommand(Guid AdminUserId, Guid UserId) : ICommand<bool>;
 
@@ -440,13 +640,29 @@ public sealed class UpdateManagedUserCommandHandler(
         user.MobilePhone = mobile;
         user.WorkShift = CreateManagedUserCommandHandler.ParseWorkShift(role, command.WorkShift);
         user.Stages = CreateManagedUserCommandHandler.ParseTeacherStages(role, command.Stages);
+        var contract = CreateManagedUserCommandHandler.ParseTeacherContract(
+            role,
+            command.ContractType,
+            command.PrimaryAmount,
+            command.PrepAmount,
+            command.SecondaryAmount);
+        user.ContractType = contract.ContractType;
+        user.PrimaryAmount = contract.PrimaryAmount;
+        user.PrepAmount = contract.PrepAmount;
+        user.SecondaryAmount = contract.SecondaryAmount;
         if (!string.IsNullOrWhiteSpace(command.Password))
         {
             user.PasswordHash = passwordHasher.Hash(command.Password);
         }
 
+        await CreateManagedUserCommandHandler.ReplaceCourseRatesAsync(
+            dbContext,
+            user.Id,
+            role,
+            command.CourseRates,
+            cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        return CreateManagedUserCommandHandler.ToDto(user);
+        return await CreateManagedUserCommandHandler.LoadDtoAsync(dbContext, user.Id, cancellationToken);
     }
 }
 

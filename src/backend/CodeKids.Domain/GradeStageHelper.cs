@@ -94,7 +94,7 @@ public static class GradeStageHelper
             return true;
         }
 
-        // null course grade = all grades
-        return courseGrade is null || courseGrade == classroomGrade;
+        // Classroom has a grade: only courses for that exact grade.
+        return courseGrade is not null && courseGrade == classroomGrade;
     }
 }
