@@ -13,6 +13,7 @@ import { AdminShellComponent } from './pages/admin/admin-shell.component';
 import { AdminUsersComponent } from './pages/admin/admin-users.component';
 import { AdminStudentsComponent } from './pages/admin/admin-students.component';
 import { AdminCoursesComponent } from './pages/admin/admin-courses.component';
+import { AdminCourseTreeComponent } from './pages/admin/admin-course-tree.component';
 import { AdminCreateClassroomComponent } from './pages/admin/admin-create-classroom.component';
 import { AdminAssignClassroomComponent } from './pages/admin/admin-assign-classroom.component';
 import { AdminEnrollStudentComponent } from './pages/admin/admin-enroll-student.component';
@@ -109,6 +110,7 @@ export const routes: Routes = [
       { path: 'users', redirectTo: 'admins' },
       { path: 'students', component: AdminStudentsComponent },
       { path: 'courses', component: AdminCoursesComponent },
+      { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'create-classroom', component: AdminCreateClassroomComponent },
       { path: 'assign-classroom', component: AdminAssignClassroomComponent },
       { path: 'enroll-student', component: AdminEnrollStudentComponent },

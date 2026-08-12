@@ -1,0 +1,167 @@
+<div class="panel-page">
+  <h2>{{ 'admin.courseTree.title' | t }}</h2>
+  <p class="meta">{{ 'admin.courseTree.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <label>
+      {{ 'admin.courseTree.selectCourse' | t }}
+      <select
+        [ngModel]="selectedCourseId()"
+        (ngModelChange)="onCourseChange($event)"
+        name="courseId">
+        @for (course of courses(); track course.id) {
+          <option [value]="course.id">{{ courseLabel(course) }}</option>
+        }
+      </select>
+    </label>
+  </section>
+
+  @if (selectedCourse(); as course) {
+    <section class="block">
+      <h3>{{ 'admin.courseTree.addUnit' | t }}</h3>
+      <form class="meeting-form" (ngSubmit)="createUnit()">
+        <label>
+          {{ 'admin.courseTree.unitTitle' | t }}
+          <input [(ngModel)]="unitTitle" name="unitTitle" required />
+        </label>
+        <label>
+          {{ 'common.description' | t }}
+          <input [(ngModel)]="unitDescription" name="unitDescription" [placeholder]="'common.optional' | t" />
+        </label>
+        <label>
+          {{ 'common.sortOrder' | t }}
+          <input type="number" [(ngModel)]="unitSort" name="unitSort" />
+        </label>
+        <button type="submit">{{ 'admin.courseTree.addUnit' | t }}</button>
+      </form>
+    </section>
+
+    <section class="block">
+      <h3>{{ 'admin.courseTree.tree' | t }} — {{ course.title }}</h3>
+      @if (!units().length) {
+        <p class="meta">{{ 'admin.courseTree.empty' | t }}</p>
+      }
+
+      <div class="course-tree">
+        @for (unit of units(); track unit.id || 'orphan') {
+          <div class="tree-unit">
+            <div class="tree-unit-head">
+              <button type="button" class="ghost-btn tree-toggle" (click)="toggleUnit(unit.id || 'orphan')">
+                {{ isExpanded(unit.id || 'orphan') ? '▾' : '▸' }}
+              </button>
+
+              @if (editingUnitId() === unit.id) {
+                <form class="meeting-form tree-inline-form" (ngSubmit)="saveUnit()">
+                  <input [(ngModel)]="editUnitTitle" name="editUnitTitle" required />
+                  <input [(ngModel)]="editUnitDescription" name="editUnitDescription" [placeholder]="'common.optional' | t" />
+                  <input type="number" [(ngModel)]="editUnitSort" name="editUnitSort" />
+                  <button type="submit">{{ 'common.save' | t }}</button>
+                  <button type="button" class="ghost-btn" (click)="cancelUnitEdit()">{{ 'common.cancel' | t }}</button>
+                </form>
+              } @else {
+                <div class="tree-unit-title">
+                  <strong>{{ unit.title }}</strong>
+                  <span class="meta">· {{ unit.lessons.length }} {{ 'admin.courseTree.lessons' | t }}</span>
+                  @if (unit.description) {
+                    <span class="meta">— {{ unit.description }}</span>
+                  }
+                </div>
+                @if (unit.id) {
+                  <div class="row-actions">
+                    <app-icon-action-button kind="edit" (clicked)="startUnitEdit(unit)" />
+                    <app-icon-action-button kind="delete" (clicked)="deleteUnit(unit)" />
+                  </div>
+                }
+              }
+            </div>
+
+            @if (isExpanded(unit.id || 'orphan')) {
+              <div class="tree-unit-body">
+                @for (lesson of unit.lessons; track lesson.id) {
+                  <div class="tree-lesson">
+                    @if (editingLessonId() === lesson.id) {
+                      <form class="meeting-form tree-inline-form" (ngSubmit)="saveLesson()">
+                        <input [(ngModel)]="editLessonTitle" name="editLessonTitle" required />
+                        <input [(ngModel)]="editLessonTheme" name="editLessonTheme" />
+                        <input [(ngModel)]="editLessonDescription" name="editLessonDescription" [placeholder]="'common.optional' | t" />
+                        <input type="number" min="1" max="5" [(ngModel)]="editLessonDifficulty" name="editLessonDifficulty" />
+                        <input type="number" min="0" [(ngModel)]="editLessonXp" name="editLessonXp" />
+                        <input type="number" [(ngModel)]="editLessonSort" name="editLessonSort" />
+                        <select [(ngModel)]="editLessonUnitId" name="editLessonUnitId">
+                          @for (u of units(); track u.id) {
+                            @if (u.id) {
+                              <option [value]="u.id">{{ u.title }}</option>
+                            }
+                          }
+                        </select>
+                        <button type="submit">{{ 'common.save' | t }}</button>
+                        <button type="button" class="ghost-btn" (click)="cancelLessonEdit()">{{ 'common.cancel' | t }}</button>
+                      </form>
+                    } @else {
+                      <div class="tree-lesson-title">
+                        <span>{{ lesson.sortOrder }}. {{ lesson.title }}</span>
+                        <span class="meta">
+                          · {{ lesson.theme }} · XP {{ lesson.xpReward }} · {{ 'admin.courseTree.difficulty' | t }}
+                          {{ lesson.difficulty }}
+                        </span>
+                      </div>
+                      <div class="row-actions">
+                        <app-icon-action-button kind="edit" (clicked)="startLessonEdit(lesson, unit.id)" />
+                        <app-icon-action-button kind="delete" (clicked)="deleteLesson(lesson)" />
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (unit.id) {
+                  @if (addingLessonForUnitId() === unit.id) {
+                    <form class="meeting-form tree-add-lesson" (ngSubmit)="createLesson()">
+                      <h4>{{ 'admin.courseTree.addLesson' | t }}</h4>
+                      <label>
+                        {{ 'admin.courseTree.lessonTitle' | t }}
+                        <input [(ngModel)]="lessonTitle" name="lessonTitle" required />
+                      </label>
+                      <label>
+                        {{ 'admin.courseTree.theme' | t }}
+                        <input [(ngModel)]="lessonTheme" name="lessonTheme" />
+                      </label>
+                      <label>
+                        {{ 'common.description' | t }}
+                        <input [(ngModel)]="lessonDescription" name="lessonDescription" [placeholder]="'common.optional' | t" />
+                      </label>
+                      <label>
+                        {{ 'admin.courseTree.difficulty' | t }}
+                        <input type="number" min="1" max="5" [(ngModel)]="lessonDifficulty" name="lessonDifficulty" />
+                      </label>
+                      <label>
+                        {{ 'admin.courseTree.xpReward' | t }}
+                        <input type="number" min="0" [(ngModel)]="lessonXp" name="lessonXp" />
+                      </label>
+                      <label>
+                        {{ 'common.sortOrder' | t }}
+                        <input type="number" [(ngModel)]="lessonSort" name="lessonSort" />
+                      </label>
+                      <button type="submit">{{ 'admin.courseTree.addLesson' | t }}</button>
+                      <button type="button" class="ghost-btn" (click)="cancelAddLesson()">{{ 'common.cancel' | t }}</button>
+                    </form>
+                  } @else {
+                    <button type="button" class="ghost-btn" (click)="startAddLesson(unit.id)">
+                      + {{ 'admin.courseTree.addLesson' | t }}
+                    </button>
+                  }
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>

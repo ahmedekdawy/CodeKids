@@ -29,6 +29,7 @@ export interface AuthResponse {
 
 export interface CourseLesson {
   id: string;
+  unitId?: string | null;
   title: string;
   theme: string;
   description: string;
@@ -36,6 +37,15 @@ export interface CourseLesson {
   xpReward: number;
   sortOrder: number;
   stepCount: number;
+}
+
+export interface CourseUnit {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  lessons: CourseLesson[];
 }
 
 export interface CourseQuiz {
@@ -58,6 +68,7 @@ export interface Course {
   term?: CourseTerm | string | null;
   grade?: number | null;
   sortOrder: number;
+  units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
 }

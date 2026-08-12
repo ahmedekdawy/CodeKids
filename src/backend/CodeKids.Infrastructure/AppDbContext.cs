@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users => Set<User>();
     public DbSet<Avatar> Avatars => Set<Avatar>();
     public DbSet<Course> Courses => Set<Course>();
+    public DbSet<CourseUnit> CourseUnits => Set<CourseUnit>();
     public DbSet<Lesson> Lessons => Set<Lesson>();
     public DbSet<LessonStep> LessonSteps => Set<LessonStep>();
     public DbSet<StudentProgress> StudentProgress => Set<StudentProgress>();
@@ -99,6 +100,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.Property(x => x.Term).HasConversion<string>().HasMaxLength(20);
+            entity.HasMany(x => x.Units)
+                .WithOne(x => x.Course)
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(x => x.Lessons)
                 .WithOne(x => x.Course)
                 .HasForeignKey(x => x.CourseId)
@@ -109,12 +114,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<CourseUnit>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => new { x.CourseId, x.SortOrder });
+            entity.HasMany(x => x.Lessons)
+                .WithOne(x => x.Unit)
+                .HasForeignKey(x => x.UnitId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<Lesson>(entity =>
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => x.UnitId);
             entity.HasMany(x => x.Steps)
                 .WithOne(x => x.Lesson)
                 .HasForeignKey(x => x.LessonId)

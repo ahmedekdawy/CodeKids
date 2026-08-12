@@ -8,6 +8,7 @@ public interface IAppDbContext
     DbSet<User> Users { get; }
     DbSet<Avatar> Avatars { get; }
     DbSet<Course> Courses { get; }
+    DbSet<CourseUnit> CourseUnits { get; }
     DbSet<Lesson> Lessons { get; }
     DbSet<LessonStep> LessonSteps { get; }
     DbSet<StudentProgress> StudentProgress { get; }

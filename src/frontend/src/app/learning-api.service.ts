@@ -12,6 +12,8 @@ import {
   ClassroomCourseAssignment,
   CompleteStepResponse,
   Course,
+  CourseLesson,
+  CourseUnit,
   CreateMeetingPayload,
   ClassroomDiagnosis,
   DailyWhatsAppReportsResult,
@@ -515,6 +517,57 @@ export class LearningApiService {
     }
   ): Observable<Course> {
     return this.http.put<Course>(`${this.baseUrl}/admin/courses/${courseId}`, payload);
+  }
+
+  createCourseUnit(
+    courseId: string,
+    payload: { title: string; description?: string | null; sortOrder?: number | null }
+  ): Observable<CourseUnit> {
+    return this.http.post<CourseUnit>(`${this.baseUrl}/admin/courses/${courseId}/units`, payload);
+  }
+
+  updateCourseUnit(
+    unitId: string,
+    payload: { title: string; description?: string | null; sortOrder?: number | null }
+  ): Observable<CourseUnit> {
+    return this.http.put<CourseUnit>(`${this.baseUrl}/admin/units/${unitId}`, payload);
+  }
+
+  deleteCourseUnit(unitId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/units/${unitId}`);
+  }
+
+  createCourseLesson(
+    unitId: string,
+    payload: {
+      title: string;
+      theme: string;
+      description?: string | null;
+      difficulty?: number | null;
+      xpReward?: number | null;
+      sortOrder?: number | null;
+    }
+  ): Observable<CourseLesson> {
+    return this.http.post<CourseLesson>(`${this.baseUrl}/admin/units/${unitId}/lessons`, payload);
+  }
+
+  updateCourseLesson(
+    lessonId: string,
+    payload: {
+      unitId?: string | null;
+      title: string;
+      theme: string;
+      description?: string | null;
+      difficulty?: number | null;
+      xpReward?: number | null;
+      sortOrder?: number | null;
+    }
+  ): Observable<CourseLesson> {
+    return this.http.put<CourseLesson>(`${this.baseUrl}/admin/lessons/${lessonId}`, payload);
+  }
+
+  deleteCourseLesson(lessonId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/lessons/${lessonId}`);
   }
 
   getSiteSettings(): Observable<SiteSettings> {

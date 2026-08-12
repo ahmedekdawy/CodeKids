@@ -1,8 +1,3 @@
-using CodeKids.Domain.Abstractions;
-using CodeKids.Application.Abstractions;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
-
 namespace CodeKids.Application.Features.Courses;
 
 public sealed record CourseDto(
@@ -15,5 +10,6 @@ public sealed record CourseDto(
     string? Term,
     int? Grade,
     int SortOrder,
+    IReadOnlyList<CourseUnitDto> Units,
     IReadOnlyList<CourseLessonDto> Lessons,
     IReadOnlyList<CourseQuizDto> Quizzes);

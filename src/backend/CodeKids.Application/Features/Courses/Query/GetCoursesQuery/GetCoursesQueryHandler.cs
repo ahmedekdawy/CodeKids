@@ -12,6 +12,7 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
     {
         var coursesQuery = dbContext.Courses
             .AsNoTracking()
+            .Include(x => x.Units)
             .Include(x => x.Lessons)
                 .ThenInclude(x => x.Steps)
             .Include(x => x.Quizzes)
@@ -75,35 +76,57 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
             .OrderBy(x => x.SortOrder)
             .ToListAsync(cancellationToken);
 
-        return courses.Select(course => new CourseDto(
-            course.Id,
-            course.Title,
-            course.Theme,
-            course.Description,
-            course.AgeMin,
-            course.AgeMax,
-            course.Term?.ToString(),
-            course.Grade,
-            course.SortOrder,
-            course.Lessons
+        return courses.Select(course =>
+        {
+            var lessons = course.Lessons
                 .OrderBy(x => x.SortOrder)
-                .Select(lesson => new CourseLessonDto(
-                    lesson.Id,
-                    lesson.Title,
-                    lesson.Theme,
-                    lesson.Description,
-                    lesson.Difficulty,
-                    lesson.XpReward,
-                    lesson.SortOrder,
-                    lesson.Steps.Count))
-                .ToList(),
-            course.Quizzes
-                .Select(quiz => new CourseQuizDto(
-                    quiz.Id,
-                    quiz.Title,
-                    quiz.Description,
-                    quiz.XpReward,
-                    quiz.Questions.Count))
-                .ToList())).ToList();
+                .Select(MapLesson)
+                .ToList();
+
+            var units = course.Units
+                .OrderBy(x => x.SortOrder)
+                .ThenBy(x => x.Title)
+                .Select(unit => new CourseUnitDto(
+                    unit.Id,
+                    unit.CourseId,
+                    unit.Title,
+                    unit.Description,
+                    unit.SortOrder,
+                    lessons.Where(l => l.UnitId == unit.Id).ToList()))
+                .ToList();
+
+            return new CourseDto(
+                course.Id,
+                course.Title,
+                course.Theme,
+                course.Description,
+                course.AgeMin,
+                course.AgeMax,
+                course.Term?.ToString(),
+                course.Grade,
+                course.SortOrder,
+                units,
+                lessons,
+                course.Quizzes
+                    .Select(quiz => new CourseQuizDto(
+                        quiz.Id,
+                        quiz.Title,
+                        quiz.Description,
+                        quiz.XpReward,
+                        quiz.Questions.Count))
+                    .ToList());
+        }).ToList();
     }
+
+    private static CourseLessonDto MapLesson(Domain.Entities.Lesson lesson) =>
+        new(
+            lesson.Id,
+            lesson.UnitId,
+            lesson.Title,
+            lesson.Theme,
+            lesson.Description,
+            lesson.Difficulty,
+            lesson.XpReward,
+            lesson.SortOrder,
+            lesson.Steps.Count);
 }

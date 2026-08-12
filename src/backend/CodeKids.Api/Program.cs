@@ -174,6 +174,13 @@ builder.Services.AddScoped<ICommandHandler<UpdateCourseCommand, CourseSummaryDto
 
 builder.Services.AddScoped<ICommandHandler<DeleteCourseCommand, bool>, DeleteCourseCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<CreateCourseUnitCommand, CourseUnitDto>, CreateCourseUnitCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateCourseUnitCommand, CourseUnitDto>, UpdateCourseUnitCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteCourseUnitCommand, bool>, DeleteCourseUnitCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateCourseLessonCommand, CourseLessonDto>, CreateCourseLessonCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateCourseLessonCommand, CourseLessonDto>, UpdateCourseLessonCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteCourseLessonCommand, bool>, DeleteCourseLessonCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>>, GetLessonsQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetLessonByIdQuery, LessonDto?>, GetLessonByIdQueryHandler>();
@@ -445,6 +452,7 @@ app.MapBadgesEndpoints();
 app.MapClassroomsEndpoints();
 
 app.MapCoursesEndpoints();
+app.MapCourseTreeEndpoints();
 
 app.MapDashboardEndpoints();
 
