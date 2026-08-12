@@ -27,6 +27,12 @@ type TimetableDayRow = {
   cells: Record<string, TimetableCell[]>;
 };
 
+type SlotTarget = {
+  dayOfWeek: number;
+  sessionNumber: number;
+  period: 'am' | 'pm';
+};
+
 @Component({
   selector: 'app-admin-timetable',
   imports: [FormsModule, TranslatePipe, IconActionButtonComponent],
@@ -45,10 +51,13 @@ export class AdminTimetableComponent {
   readonly filterTeacherId = signal('');
   readonly filterPeriod = signal<TimetablePeriodFilter>('');
   readonly editingId = signal<string | null>(null);
+  readonly dialogOpen = signal(false);
+  readonly dragOverKey = signal<string | null>(null);
   readonly message = signal('');
   readonly error = signal('');
   readonly loading = signal(false);
   readonly exporting = signal(false);
+  readonly moving = signal(false);
 
   readonly timetableWrap = viewChild<ElementRef<HTMLElement>>('timetableWrap');
 
@@ -63,6 +72,7 @@ export class AdminTimetableComponent {
   period: 'am' | 'pm' | '' = '';
 
   readonly selectedTeacherId = signal('');
+  private dragEntryId: string | null = null;
 
   readonly availableCourses = computed(() => {
     const teacherId = this.selectedTeacherId();
@@ -127,6 +137,16 @@ export class AdminTimetableComponent {
         cells
       };
     });
+  });
+
+  readonly dialogSlotLabel = computed(() => {
+    this.locale.lang();
+    if (this.dayOfWeek === '' || this.sessionNumber === '' || !this.period) return '';
+    const day = arabicWeekdayName(Number(this.dayOfWeek));
+    const periodLabel = this.locale.t(
+      this.period === 'pm' ? 'admin.timetable.pm' : 'admin.timetable.am'
+    );
+    return `${day} · ${periodLabel} · ${this.locale.t('admin.timetable.session')} ${this.sessionNumber}`;
   });
 
   constructor() {
@@ -209,6 +229,100 @@ export class AdminTimetableComponent {
     return this.locale.t(shift === 'am' ? 'admin.timetable.am' : 'admin.timetable.pm');
   }
 
+  cellKey(dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): string {
+    return `${dayOfWeek}-${period}-${sessionNumber}`;
+  }
+
+  openCreateDialog(): void {
+    this.editingId.set(null);
+    this.resetFormFields();
+    const filterPeriod = this.filterPeriod();
+    if (filterPeriod === 'am' || filterPeriod === 'pm') {
+      this.period = filterPeriod;
+    }
+    this.dialogOpen.set(true);
+    this.clearStatus();
+  }
+
+  openCreateForSlot(dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): void {
+    this.editingId.set(null);
+    this.resetFormFields();
+    this.dayOfWeek = dayOfWeek;
+    this.sessionNumber = sessionNumber;
+    this.period = period;
+    this.dialogOpen.set(true);
+    this.clearStatus();
+  }
+
+  onCellDoubleClick(dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): void {
+    this.openCreateForSlot(dayOfWeek, period, sessionNumber);
+  }
+
+  startEdit(entry: FixedTimetableEntry): void {
+    this.editingId.set(entry.id);
+    this.teacherId = entry.teacherId;
+    this.selectedTeacherId.set(entry.teacherId);
+    this.courseId = entry.courseId;
+    this.dayOfWeek = entry.dayOfWeek;
+    this.sessionNumber = entry.sessionNumber;
+    this.period = normalizePeriod(entry.period);
+    this.dialogOpen.set(true);
+    this.clearStatus();
+  }
+
+  closeDialog(): void {
+    this.dialogOpen.set(false);
+    this.editingId.set(null);
+    this.resetFormFields();
+  }
+
+  onEntryDragStart(event: DragEvent, entry: FixedTimetableEntry): void {
+    this.dragEntryId = entry.id;
+    event.dataTransfer?.setData('text/plain', entry.id);
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+    }
+  }
+
+  onEntryDragEnd(): void {
+    this.dragEntryId = null;
+    this.dragOverKey.set(null);
+  }
+
+  onCellDragOver(event: DragEvent, dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): void {
+    if (!this.dragEntryId) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+    this.dragOverKey.set(this.cellKey(dayOfWeek, period, sessionNumber));
+  }
+
+  onCellDragLeave(dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): void {
+    const key = this.cellKey(dayOfWeek, period, sessionNumber);
+    if (this.dragOverKey() === key) this.dragOverKey.set(null);
+  }
+
+  onCellDrop(event: DragEvent, dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): void {
+    event.preventDefault();
+    this.dragOverKey.set(null);
+    const entryId =
+      this.dragEntryId || event.dataTransfer?.getData('text/plain') || null;
+    this.dragEntryId = null;
+    if (!entryId || this.moving()) return;
+
+    const entry = this.entries().find((e) => e.id === entryId);
+    if (!entry) return;
+
+    if (
+      entry.dayOfWeek === dayOfWeek &&
+      entry.sessionNumber === sessionNumber &&
+      normalizePeriod(entry.period) === period
+    ) {
+      return;
+    }
+
+    this.moveEntry(entry, { dayOfWeek, sessionNumber, period });
+  }
+
   async exportAsImage(): Promise<void> {
     const wrap = this.timetableWrap()?.nativeElement;
     if (!wrap || this.exporting()) return;
@@ -250,7 +364,7 @@ export class AdminTimetableComponent {
       this.api.updateTimetableEntry(editingId, payload).subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.timetable.updated'));
-          this.cancelEdit();
+          this.closeDialog();
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.timetable.saveFailed'))
@@ -261,26 +375,13 @@ export class AdminTimetableComponent {
     this.api.createTimetableEntry(payload).subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.timetable.created'));
+        // Keep teacher/course; keep slot so another session can be added quickly.
+        this.editingId.set(null);
+        this.dialogOpen.set(false);
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.timetable.saveFailed'))
     });
-  }
-
-  startEdit(entry: FixedTimetableEntry): void {
-    this.editingId.set(entry.id);
-    this.teacherId = entry.teacherId;
-    this.selectedTeacherId.set(entry.teacherId);
-    this.courseId = entry.courseId;
-    this.dayOfWeek = entry.dayOfWeek;
-    this.sessionNumber = entry.sessionNumber;
-    this.period = normalizePeriod(entry.period);
-    this.clearStatus();
-  }
-
-  cancelEdit(): void {
-    this.editingId.set(null);
-    this.resetForm();
   }
 
   deleteEntry(entry: FixedTimetableEntry): void {
@@ -291,14 +392,38 @@ export class AdminTimetableComponent {
     this.api.deleteTimetableEntry(entry.id).subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.timetable.deleted'));
-        if (this.editingId() === entry.id) this.cancelEdit();
+        if (this.editingId() === entry.id) this.closeDialog();
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.timetable.deleteFailed'))
     });
   }
 
-  private resetForm(): void {
+  private moveEntry(entry: FixedTimetableEntry, target: SlotTarget): void {
+    this.clearStatus();
+    this.moving.set(true);
+    this.api
+      .updateTimetableEntry(entry.id, {
+        teacherId: entry.teacherId,
+        courseId: entry.courseId,
+        dayOfWeek: target.dayOfWeek,
+        sessionNumber: target.sessionNumber,
+        period: target.period
+      })
+      .subscribe({
+        next: () => {
+          this.moving.set(false);
+          this.message.set(this.locale.t('admin.timetable.moved'));
+          this.reload();
+        },
+        error: (err) => {
+          this.moving.set(false);
+          this.error.set(this.locale.fromApiError(err, 'admin.timetable.moveFailed'));
+        }
+      });
+  }
+
+  private resetFormFields(): void {
     this.teacherId = '';
     this.selectedTeacherId.set('');
     this.courseId = '';

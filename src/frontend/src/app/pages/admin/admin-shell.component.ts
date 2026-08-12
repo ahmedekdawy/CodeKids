@@ -28,6 +28,7 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.timetable', path: '/admin/timetable', icon: 'H' },
     { labelKey: 'nav.admin.attendance', path: '/admin/attendance', icon: 'N' },
     { labelKey: 'nav.admin.payroll', path: '/admin/payroll', icon: '$' },
+    { labelKey: 'nav.admin.payments', path: '/admin/payments', icon: 'F' },
     { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B' }
   ];
 }

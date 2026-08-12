@@ -1,0 +1,192 @@
+<div class="panel-page">
+  <h2>{{ 'admin.payments.title' | t }}</h2>
+  <p class="meta">{{ 'admin.payments.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>{{ 'admin.payments.create' | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="create()">
+      <label>
+        {{ 'admin.payments.payerType' | t }}
+        <select [ngModel]="payerKind" name="payerKind" (ngModelChange)="onPayerKindChange($event)">
+          <option value="parent">{{ 'common.parent' | t }}</option>
+          <option value="student">{{ 'admin.payments.orphanStudent' | t }}</option>
+        </select>
+      </label>
+
+      @if (payerKind === 'parent') {
+        <label>
+          {{ 'common.parent' | t }}
+          <select [(ngModel)]="parentId" name="parentId" required>
+            <option value="">{{ 'common.select' | t }}</option>
+            @for (parent of parents(); track parent.id) {
+              <option [value]="parent.id">{{ parent.displayName }}</option>
+            }
+          </select>
+        </label>
+      } @else {
+        <label>
+          {{ 'common.student' | t }}
+          <select [(ngModel)]="studentId" name="studentId" required>
+            <option value="">{{ 'common.select' | t }}</option>
+            @for (student of orphanStudents(); track student.id) {
+              <option [value]="student.id">{{ student.displayName }}</option>
+            }
+          </select>
+        </label>
+        @if (orphanStudents().length === 0) {
+          <p class="meta">{{ 'admin.payments.noOrphanStudents' | t }}</p>
+        }
+      }
+
+      <label>
+        {{ 'admin.payments.year' | t }}
+        <select [(ngModel)]="year" name="year" required>
+          @for (y of years; track y) {
+            <option [ngValue]="y">{{ y }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.payments.month' | t }}
+        <select [(ngModel)]="month" name="month" required>
+          @for (m of months; track m) {
+            <option [ngValue]="m">{{ monthLabel(m) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'admin.payments.amount' | t }}
+        <input type="number" min="0.01" step="0.01" [(ngModel)]="amount" name="amount" required />
+      </label>
+      <label>
+        {{ 'admin.payments.paymentDate' | t }}
+        <input type="date" [(ngModel)]="paymentDate" name="paymentDate" required />
+      </label>
+      <label>
+        {{ 'common.notes' | t }}
+        <input [(ngModel)]="notes" name="notes" [placeholder]="'common.optional' | t" />
+      </label>
+      <button type="submit">{{ 'admin.payments.create' | t }}</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'admin.payments.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'admin.payments.payerType' | t }}
+        <select
+          [ngModel]="filterPayerKind"
+          name="filterPayerKind"
+          (ngModelChange)="onFilterPayerKindChange($event)"
+        >
+          <option value="">{{ 'common.all' | t }}</option>
+          <option value="parent">{{ 'common.parent' | t }}</option>
+          <option value="student">{{ 'admin.payments.orphanStudent' | t }}</option>
+        </select>
+      </label>
+
+      @if (filterPayerKind === 'parent') {
+        <label>
+          {{ 'common.parent' | t }}
+          <select
+            [(ngModel)]="filterParentId"
+            name="filterParentId"
+            (ngModelChange)="reload()"
+          >
+            <option value="">{{ 'common.all' | t }}</option>
+            @for (parent of parents(); track parent.id) {
+              <option [value]="parent.id">{{ parent.displayName }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      @if (filterPayerKind === 'student') {
+        <label>
+          {{ 'common.student' | t }}
+          <select
+            [(ngModel)]="filterStudentId"
+            name="filterStudentId"
+            (ngModelChange)="reload()"
+          >
+            <option value="">{{ 'common.all' | t }}</option>
+            @for (student of orphanStudents(); track student.id) {
+              <option [value]="student.id">{{ student.displayName }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <label>
+        {{ 'admin.payments.dateFrom' | t }}
+        <input
+          type="date"
+          [(ngModel)]="filterFromDate"
+          name="filterFromDate"
+          (ngModelChange)="reload()"
+        />
+      </label>
+      <label>
+        {{ 'admin.payments.dateTo' | t }}
+        <input
+          type="date"
+          [(ngModel)]="filterToDate"
+          name="filterToDate"
+          (ngModelChange)="reload()"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+      <span class="meta">{{ 'admin.payments.filteredTotal' | t }}: {{ moneyLabel(filteredTotal()) }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.payments.paymentDate' | t }}</th>
+            <th>{{ 'admin.payments.payer' | t }}</th>
+            <th>{{ 'admin.payments.year' | t }}</th>
+            <th>{{ 'admin.payments.month' | t }}</th>
+            <th>{{ 'admin.payments.amount' | t }}</th>
+            <th>{{ 'common.notes' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.paymentDate }}</td>
+              <td>
+                {{ row.payerLabel }}
+                <span class="meta">
+                  ({{ row.parentId ? ('common.parent' | t) : ('common.student' | t) }})
+                </span>
+              </td>
+              <td>{{ row.year }}</td>
+              <td>{{ monthLabel(row.month) }}</td>
+              <td>{{ moneyLabel(row.amount) }}</td>
+              <td>{{ row.notes || ('common.emDash' | t) }}</td>
+              <td>
+                <app-icon-action-button kind="delete" variant="danger" (action)="remove(row)" />
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

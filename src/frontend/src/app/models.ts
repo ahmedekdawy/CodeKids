@@ -422,6 +422,20 @@ export interface TeacherPayrollReport {
   grandTotal: number;
 }
 
+export interface TuitionPayment {
+  id: string;
+  parentId?: string | null;
+  parentName?: string | null;
+  studentId?: string | null;
+  studentName?: string | null;
+  year: number;
+  month: number;
+  amount: number;
+  paymentDate: string;
+  notes: string;
+  payerLabel: string;
+}
+
 export interface CreateMeetingPayload {
   title: string;
   description?: string;

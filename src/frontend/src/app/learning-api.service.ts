@@ -21,6 +21,7 @@ import {
   FixedTimetableEntry,
   TeacherSessionAttendance,
   TeacherPayrollReport,
+  TuitionPayment,
   Lesson,
   LiveSession,
   ManagedUser,
@@ -323,6 +324,43 @@ export class LearningApiService {
     return this.http.get<TeacherPayrollReport>(
       `${this.baseUrl}/admin/payroll-report?${params.toString()}`
     );
+  }
+
+  getTuitionPayments(filters?: {
+    parentId?: string;
+    studentId?: string;
+    fromDate?: string;
+    toDate?: string;
+    year?: number;
+    month?: number;
+  }): Observable<TuitionPayment[]> {
+    const params = new URLSearchParams();
+    if (filters?.parentId) params.set('parentId', filters.parentId);
+    if (filters?.studentId) params.set('studentId', filters.studentId);
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    if (filters?.year != null) params.set('year', String(filters.year));
+    if (filters?.month != null) params.set('month', String(filters.month));
+    const query = params.toString();
+    return this.http.get<TuitionPayment[]>(
+      `${this.baseUrl}/admin/payments${query ? `?${query}` : ''}`
+    );
+  }
+
+  createTuitionPayment(payload: {
+    parentId?: string | null;
+    studentId?: string | null;
+    year: number;
+    month: number;
+    amount: number;
+    paymentDate: string;
+    notes?: string | null;
+  }): Observable<TuitionPayment> {
+    return this.http.post<TuitionPayment>(`${this.baseUrl}/admin/payments`, payload);
+  }
+
+  deleteTuitionPayment(paymentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/payments/${paymentId}`);
   }
 
   getUsers(role?: string): Observable<ManagedUser[]> {

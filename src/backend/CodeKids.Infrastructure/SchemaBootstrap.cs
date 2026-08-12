@@ -273,6 +273,19 @@ public static class SchemaBootstrap
                 CONSTRAINT "PK_TeacherSessionAttendances" PRIMARY KEY ("Id")
             );
 
+            CREATE TABLE IF NOT EXISTS "TuitionPayments" (
+                "Id" uuid NOT NULL,
+                "ParentId" uuid NULL,
+                "StudentId" uuid NULL,
+                "Year" integer NOT NULL,
+                "Month" integer NOT NULL,
+                "Amount" numeric(18,2) NOT NULL,
+                "PaymentDate" date NOT NULL,
+                "Notes" character varying(500) NOT NULL DEFAULT '',
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_TuitionPayments" PRIMARY KEY ("Id")
+            );
+
             CREATE TABLE IF NOT EXISTS "BankQuestions" (
                 "Id" uuid NOT NULL,
                 "CourseId" uuid NOT NULL,
@@ -527,6 +540,33 @@ public static class SchemaBootstrap
                 ON "TeacherSessionAttendances" ("TeacherId", "CourseId", "SessionDate");
             CREATE INDEX IF NOT EXISTS "IX_TeacherSessionAttendances_SessionDate"
                 ON "TeacherSessionAttendances" ("SessionDate");
+
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'FK_TuitionPayments_Users_ParentId'
+                ) THEN
+                    ALTER TABLE "TuitionPayments"
+                        ADD CONSTRAINT "FK_TuitionPayments_Users_ParentId"
+                        FOREIGN KEY ("ParentId") REFERENCES "Users" ("Id") ON DELETE RESTRICT;
+                END IF;
+                IF NOT EXISTS (
+                    SELECT 1 FROM pg_constraint WHERE conname = 'FK_TuitionPayments_Users_StudentId'
+                ) THEN
+                    ALTER TABLE "TuitionPayments"
+                        ADD CONSTRAINT "FK_TuitionPayments_Users_StudentId"
+                        FOREIGN KEY ("StudentId") REFERENCES "Users" ("Id") ON DELETE RESTRICT;
+                END IF;
+            END $$;
+            CREATE INDEX IF NOT EXISTS "IX_TuitionPayments_PaymentDate"
+                ON "TuitionPayments" ("PaymentDate");
+            CREATE INDEX IF NOT EXISTS "IX_TuitionPayments_Year_Month"
+                ON "TuitionPayments" ("Year", "Month");
+            CREATE INDEX IF NOT EXISTS "IX_TuitionPayments_ParentId"
+                ON "TuitionPayments" ("ParentId");
+            CREATE INDEX IF NOT EXISTS "IX_TuitionPayments_StudentId"
+                ON "TuitionPayments" ("StudentId");
+
             CREATE INDEX IF NOT EXISTS "IX_BankQuestions_CourseId_CreatedByUserId" ON "BankQuestions" ("CourseId", "CreatedByUserId");
             CREATE INDEX IF NOT EXISTS "IX_ExamAttempts_ExamId_StudentId" ON "ExamAttempts" ("ExamId", "StudentId");
             CREATE INDEX IF NOT EXISTS "IX_LessonVideos_LessonId" ON "LessonVideos" ("LessonId");

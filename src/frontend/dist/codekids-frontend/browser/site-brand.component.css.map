@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;51f58a8790b31503894259d88b4ae027309f2effd2321466b00eb13064270ba9;D:/Projects/CodeKids/src/frontend/src/app/shared/site-brand/site-brand.component.ts"],
-  "sourcesContent": ["\n    .site-brand {\n      display: flex;\n      align-items: center;\n      gap: 0.65rem;\n      min-width: 0;\n    }\n\n    .site-brand-logo {\n      width: 40px;\n      height: 40px;\n      object-fit: contain;\n      border-radius: 10px;\n      background: rgba(255, 255, 255, 0.08);\n      padding: 0.15rem;\n      flex-shrink: 0;\n    }\n\n    .compact .site-brand-logo {\n      width: 32px;\n      height: 32px;\n    }\n\n    .brand {\n      margin: 0;\n      font-family: var(--font-display);\n      font-size: 1.35rem;\n      font-weight: 800;\n      text-transform: uppercase;\n      letter-spacing: 0.05em;\n      line-height: 1.1;\n    }\n\n    .compact .brand {\n      font-size: 1.1rem;\n    }\n  "],
-  "mappings": ";AACI,CAAC;AACC,WAAS;AACT,eAAa;AACb,OAAK;AACL,aAAW;AACb;AAEA,CAAC;AACC,SAAO;AACP,UAAQ;AACR,cAAY;AACZ,iBAAe;AACf,cAAY,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AAChC,WAAS;AACT,eAAa;AACf;AAEA,CAAC,QAAQ,CAVR;AAWC,SAAO;AACP,UAAQ;AACV;AAEA,CAAC;AACC,UAAQ;AACR,eAAa,IAAI;AACjB,aAAW;AACX,eAAa;AACb,kBAAgB;AAChB,kBAAgB;AAChB,eAAa;AACf;AAEA,CAfC,QAeQ,CAVR;AAWC,aAAW;AACb;",
-  "names": []
-}

@@ -22,6 +22,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<FixedTimetableEntry> FixedTimetableEntries => Set<FixedTimetableEntry>();
     public DbSet<TeacherSessionAttendance> TeacherSessionAttendances => Set<TeacherSessionAttendance>();
+    public DbSet<TuitionPayment> TuitionPayments => Set<TuitionPayment>();
     public DbSet<TeacherCourseRate> TeacherCourseRates => Set<TeacherCourseRate>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<Classroom> Classrooms => Set<Classroom>();
@@ -275,6 +276,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasOne(x => x.Course)
                 .WithMany()
                 .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TuitionPayment>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Amount).HasPrecision(18, 2);
+            entity.Property(x => x.Notes).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => x.PaymentDate);
+            entity.HasIndex(x => new { x.Year, x.Month });
+            entity.HasIndex(x => x.ParentId);
+            entity.HasIndex(x => x.StudentId);
+            entity.HasOne(x => x.Parent)
+                .WithMany()
+                .HasForeignKey(x => x.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

@@ -7,6 +7,7 @@ using CodeKids.Application.Features.Admin;
 using CodeKids.Application.Features.Analytics;
 using CodeKids.Application.Features.Appointments;
 using CodeKids.Application.Features.Attendance;
+using CodeKids.Application.Features.Payments;
 using CodeKids.Application.Features.Timetable;
 using CodeKids.Application.Features.Assignments;
 using CodeKids.Application.Features.Auth;
@@ -121,6 +122,9 @@ builder.Services.AddScoped<IQueryHandler<ListTeacherSessionAttendanceQuery, IRea
 builder.Services.AddScoped<ICommandHandler<CreateTeacherSessionAttendanceCommand, TeacherSessionAttendanceDto>, CreateTeacherSessionAttendanceCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteTeacherSessionAttendanceCommand, bool>, DeleteTeacherSessionAttendanceCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTeacherPayrollReportQuery, TeacherPayrollReportDto>, GetTeacherPayrollReportQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListTuitionPaymentsQuery, IReadOnlyList<TuitionPaymentDto>>, ListTuitionPaymentsQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateTuitionPaymentCommand, TuitionPaymentDto>, CreateTuitionPaymentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteTuitionPaymentCommand, bool>, DeleteTuitionPaymentCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetZoomConnectUrlQuery, ZoomConnectUrlDto>, GetZoomConnectUrlQueryHandler>();
 builder.Services.AddScoped<ICommandHandler<CompleteZoomConnectCommand, ZoomConnectResultDto>, CompleteZoomConnectCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetZoomStatusQuery, ZoomConnectionStatus>, GetZoomStatusQueryHandler>();
@@ -788,6 +792,68 @@ app.MapGet("/api/admin/payroll-report", async (
         return Results.Ok(await handler.Handle(
             new GetTeacherPayrollReportQuery(fromDate, toDate, teacherId, stage, grade),
             cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapGet("/api/admin/payments", async (
+    Guid? parentId,
+    Guid? studentId,
+    DateOnly? fromDate,
+    DateOnly? toDate,
+    int? year,
+    int? month,
+    IQueryHandler<ListTuitionPaymentsQuery, IReadOnlyList<TuitionPaymentDto>> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return Results.Ok(await handler.Handle(
+            new ListTuitionPaymentsQuery(parentId, studentId, fromDate, toDate, year, month),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapPost("/api/admin/payments", async (
+    CreateTuitionPaymentRequest request,
+    ICommandHandler<CreateTuitionPaymentCommand, TuitionPaymentDto> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        return Results.Ok(await handler.Handle(
+            new CreateTuitionPaymentCommand(
+                request.ParentId,
+                request.StudentId,
+                request.Year,
+                request.Month,
+                request.Amount,
+                request.PaymentDate,
+                request.Notes),
+            cancellationToken));
+    }
+    catch (Exception ex)
+    {
+        return ProblemFromException(ex);
+    }
+}).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+app.MapDelete("/api/admin/payments/{paymentId:guid}", async (
+    Guid paymentId,
+    ICommandHandler<DeleteTuitionPaymentCommand, bool> handler,
+    CancellationToken cancellationToken) =>
+{
+    try
+    {
+        await handler.Handle(new DeleteTuitionPaymentCommand(paymentId), cancellationToken);
+        return Results.NoContent();
     }
     catch (Exception ex)
     {

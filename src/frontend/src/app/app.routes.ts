@@ -21,6 +21,7 @@ import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.com
 import { AdminTimetableComponent } from './pages/admin/admin-timetable.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
+import { AdminPaymentsComponent } from './pages/admin/admin-payments.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
 import { TeacherOverviewComponent } from './pages/teacher/teacher-overview.component';
 import { TeacherZoomComponent } from './pages/teacher/teacher-zoom.component';
@@ -113,6 +114,7 @@ export const routes: Routes = [
       { path: 'timetable', component: AdminTimetableComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
       { path: 'payroll', component: AdminPayrollComponent },
+      { path: 'payments', component: AdminPaymentsComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' }
     ]

@@ -10,70 +10,6 @@
   }
 
   <section class="block">
-    <h3>{{ (editingId() ? 'admin.timetable.edit' : 'admin.timetable.create') | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createOrSave()">
-      <label>
-        {{ 'common.teacher' | t }}
-        <select
-          [ngModel]="teacherId"
-          name="teacherId"
-          required
-          (ngModelChange)="onTeacherChange($event)"
-        >
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        {{ 'common.course' | t }}
-        <select [(ngModel)]="courseId" name="courseId" required [disabled]="!selectedTeacherId()">
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (course of availableCourses(); track course.id) {
-            <option [value]="course.id">{{ courseLabel(course) }}</option>
-          }
-        </select>
-        @if (selectedTeacherId() && availableCourses().length === 0) {
-          <span class="meta">{{ 'admin.appointments.noTeacherCourses' | t }}</span>
-        }
-      </label>
-      <label>
-        {{ 'admin.timetable.day' | t }}
-        <select [(ngModel)]="dayOfWeek" name="dayOfWeek" required>
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (d of weekDays; track d) {
-            <option [ngValue]="d">{{ dayLabel(d) }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        {{ 'admin.timetable.session' | t }}
-        <select [(ngModel)]="sessionNumber" name="sessionNumber" required>
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (n of sessionNumbers; track n) {
-            <option [ngValue]="n">{{ n }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        {{ 'admin.timetable.period' | t }}
-        <select [(ngModel)]="period" name="period" required>
-          <option value="">{{ 'common.select' | t }}</option>
-          <option value="am">{{ 'admin.timetable.am' | t }}</option>
-          <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
-        </select>
-      </label>
-      <div class="form-actions">
-        <button type="submit">{{ (editingId() ? 'common.save' : 'admin.timetable.create') | t }}</button>
-        @if (editingId()) {
-          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
-        }
-      </div>
-    </form>
-  </section>
-
-  <section class="block">
     <div class="list-filters">
       <label>
         {{ 'common.grade' | t }}
@@ -113,6 +49,9 @@
           <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
         </select>
       </label>
+      <button type="button" class="ghost-btn" (click)="openCreateDialog()">
+        {{ 'admin.timetable.create' | t }}
+      </button>
     </div>
 
     <div class="timetable-export-bar">
@@ -125,6 +64,8 @@
         {{ (exporting() ? 'admin.timetable.exporting' : 'admin.timetable.exportImage') | t }}
       </button>
     </div>
+
+    <p class="meta">{{ 'admin.timetable.dragHint' | t }}</p>
 
     <div class="timetable-wrap" dir="rtl" #timetableWrap>
       <table class="timetable">
@@ -152,12 +93,29 @@
             <tr>
               <th class="timetable-day">{{ day.label }}</th>
               @for (slot of sessionSlots(); track slot.key) {
-                <td class="timetable-cell" [class.pm]="slot.period === 'pm'">
+                <td
+                  class="timetable-cell"
+                  [class.pm]="slot.period === 'pm'"
+                  [class.drag-over]="
+                    dragOverKey() === cellKey(day.dayOfWeek, slot.period, slot.sessionNumber)
+                  "
+                  (dblclick)="onCellDoubleClick(day.dayOfWeek, slot.period, slot.sessionNumber)"
+                  (dragover)="onCellDragOver($event, day.dayOfWeek, slot.period, slot.sessionNumber)"
+                  (dragleave)="onCellDragLeave(day.dayOfWeek, slot.period, slot.sessionNumber)"
+                  (drop)="onCellDrop($event, day.dayOfWeek, slot.period, slot.sessionNumber)"
+                >
                   @for (cell of day.cells[slot.key]; track cell.entry.id) {
-                    <div class="timetable-entry" [title]="cell.entry.label">
+                    <div
+                      class="timetable-entry"
+                      draggable="true"
+                      [title]="cell.entry.label"
+                      (dragstart)="onEntryDragStart($event, cell.entry)"
+                      (dragend)="onEntryDragEnd()"
+                      (dblclick)="$event.stopPropagation()"
+                    >
                       <div class="timetable-course">{{ cell.courseLine }}</div>
                       <div class="timetable-teacher">{{ cell.teacherName }}</div>
-                      <div class="row-actions">
+                      <div class="row-actions" (mousedown)="$event.stopPropagation()">
                         <app-icon-action-button kind="edit" (action)="startEdit(cell.entry)" />
                         <app-icon-action-button
                           kind="delete"
@@ -177,3 +135,75 @@
     <p class="meta">{{ 'admin.timetable.hint' | t }}</p>
   </section>
 </div>
+
+@if (dialogOpen()) {
+  <div class="modal-backdrop" (click)="closeDialog()">
+    <div class="modal-card" dir="rtl" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h3>{{ (editingId() ? 'admin.timetable.edit' : 'admin.timetable.create') | t }}</h3>
+        <button type="button" class="ghost-btn" (click)="closeDialog()">{{ 'common.close' | t }}</button>
+      </div>
+      @if (dialogSlotLabel()) {
+        <p class="meta">{{ dialogSlotLabel() }}</p>
+      }
+      <form class="meeting-form" (ngSubmit)="createOrSave()">
+        <label>
+          {{ 'common.teacher' | t }}
+          <select
+            [ngModel]="teacherId"
+            name="teacherId"
+            required
+            (ngModelChange)="onTeacherChange($event)"
+          >
+            <option value="">{{ 'common.select' | t }}</option>
+            @for (teacher of teachers(); track teacher.id) {
+              <option [value]="teacher.id">{{ teacher.displayName }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'common.course' | t }}
+          <select [(ngModel)]="courseId" name="courseId" required [disabled]="!selectedTeacherId()">
+            <option value="">{{ 'common.select' | t }}</option>
+            @for (course of availableCourses(); track course.id) {
+              <option [value]="course.id">{{ courseLabel(course) }}</option>
+            }
+          </select>
+          @if (selectedTeacherId() && availableCourses().length === 0) {
+            <span class="meta">{{ 'admin.appointments.noTeacherCourses' | t }}</span>
+          }
+        </label>
+        <label>
+          {{ 'admin.timetable.day' | t }}
+          <select [(ngModel)]="dayOfWeek" name="dayOfWeek" required>
+            <option value="">{{ 'common.select' | t }}</option>
+            @for (d of weekDays; track d) {
+              <option [ngValue]="d">{{ dayLabel(d) }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'admin.timetable.session' | t }}
+          <select [(ngModel)]="sessionNumber" name="sessionNumber" required>
+            <option value="">{{ 'common.select' | t }}</option>
+            @for (n of sessionNumbers; track n) {
+              <option [ngValue]="n">{{ n }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          {{ 'admin.timetable.period' | t }}
+          <select [(ngModel)]="period" name="period" required>
+            <option value="">{{ 'common.select' | t }}</option>
+            <option value="am">{{ 'admin.timetable.am' | t }}</option>
+            <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
+          </select>
+        </label>
+        <div class="form-actions">
+          <button type="submit">{{ (editingId() ? 'common.save' : 'admin.timetable.create') | t }}</button>
+          <button type="button" class="ghost-btn" (click)="closeDialog()">{{ 'common.cancel' | t }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
