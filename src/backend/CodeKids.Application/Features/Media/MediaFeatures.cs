@@ -14,7 +14,15 @@ public sealed record MediaAssetDto(
     string ContentType,
     long SizeBytes,
     int? DurationSeconds,
-    DateTimeOffset CreatedAtUtc);
+    DateTimeOffset CreatedAtUtc,
+    string? ExternalUrl = null);
+
+public sealed record RegisterMediaFromUrlRequest(string Url, string? Title = null);
+
+public sealed record RegisterMediaFromUrlCommand(
+    Guid TeacherUserId,
+    string Url,
+    string? Title = null) : ICommand<MediaAssetDto>;
 
 public sealed record LessonVideoDto(
     Guid Id,
@@ -32,7 +40,8 @@ public sealed record PlaybackDto(
     DateTimeOffset ExpiresAtUtc,
     int? DurationSeconds,
     string ContentType,
-    string FileName);
+    string FileName,
+    bool IsExternalLink = false);
 
 public sealed record WatchEventInput(
     string EventType,
@@ -143,6 +152,77 @@ public static class MediaUploadRules
             throw new InvalidOperationException($"File size must be between 1 byte and {maxBytes} bytes.");
         }
     }
+
+    public static string NormalizeExternalUrl(string? url)
+    {
+        var trimmed = (url ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(trimmed))
+        {
+            throw new InvalidOperationException("Video URL is required.");
+        }
+
+        if (trimmed.Length > 1000)
+        {
+            throw new InvalidOperationException("Video URL is too long.");
+        }
+
+        if (!Uri.TryCreate(trimmed, UriKind.Absolute, out var uri)
+            || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            throw new InvalidOperationException("Video URL must be an absolute http or https link.");
+        }
+
+        return uri.AbsoluteUri;
+    }
+}
+
+public sealed class RegisterMediaFromUrlCommandHandler(IAppDbContext dbContext)
+    : ICommandHandler<RegisterMediaFromUrlCommand, MediaAssetDto>
+{
+    public async Task<MediaAssetDto> Handle(
+        RegisterMediaFromUrlCommand command,
+        CancellationToken cancellationToken)
+    {
+        var url = MediaUploadRules.NormalizeExternalUrl(command.Url);
+        var uri = new Uri(url);
+        var title = (command.Title ?? string.Empty).Trim();
+        if (title.Length > 260)
+        {
+            title = title[..260];
+        }
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            title = string.IsNullOrWhiteSpace(uri.Host)
+                ? "Video link"
+                : uri.Host;
+        }
+
+        var asset = new MediaAsset
+        {
+            Id = Guid.NewGuid(),
+            StorageKey = string.Empty,
+            ExternalUrl = url,
+            FileName = title,
+            ContentType = "video/external",
+            SizeBytes = 0,
+            DurationSeconds = null,
+            UploadedByUserId = command.TeacherUserId,
+            CreatedAtUtc = DateTimeOffset.UtcNow
+        };
+
+        dbContext.MediaAssets.Add(asset);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return new MediaAssetDto(
+            asset.Id,
+            asset.FileName,
+            asset.ContentType,
+            asset.SizeBytes,
+            asset.DurationSeconds,
+            asset.CreatedAtUtc,
+            asset.ExternalUrl);
+    }
 }
 
 public sealed class AttachLessonVideoCommandHandler(IAppDbContext dbContext)
@@ -222,7 +302,8 @@ public sealed class AttachAssignmentSolutionVideoCommandHandler(IAppDbContext db
             media.ContentType,
             media.SizeBytes,
             media.DurationSeconds,
-            media.CreatedAtUtc);
+            media.CreatedAtUtc,
+            media.ExternalUrl);
     }
 }
 
@@ -267,6 +348,20 @@ public sealed class GetPlaybackQueryHandler(
             .FirstOrDefaultAsync(x => x.Id == query.UserId, cancellationToken)
             ?? throw new InvalidOperationException("User not found.");
 
+        var watermark = $"{user.DisplayName} · {user.Email}";
+        if (!string.IsNullOrWhiteSpace(media.ExternalUrl))
+        {
+            return new PlaybackDto(
+                media.Id,
+                media.ExternalUrl!,
+                watermark,
+                DateTimeOffset.UtcNow.AddHours(12),
+                media.DurationSeconds,
+                media.ContentType,
+                media.FileName,
+                IsExternalLink: true);
+        }
+
         var lifetime = TimeSpan.FromMinutes(Math.Clamp(mediaOptions.Value.SignedUrlMinutes, 1, 120));
         var token = tokenService.CreateToken(media.Id, user.Id, lifetime);
         var expires = DateTimeOffset.UtcNow.Add(lifetime);
@@ -276,11 +371,12 @@ public sealed class GetPlaybackQueryHandler(
         return new PlaybackDto(
             media.Id,
             playbackUrl,
-            $"{user.DisplayName} · {user.Email}",
+            watermark,
             expires,
             media.DurationSeconds,
             media.ContentType,
-            media.FileName);
+            media.FileName,
+            IsExternalLink: false);
     }
 }
 

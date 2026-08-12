@@ -48,6 +48,8 @@ export class TeacherVideosComponent {
   selectedCourseId = '';
   selectedLessonId = '';
   videoTitle = '';
+  lessonVideoUrl = '';
+  solutionVideoUrl = '';
   selectedAssignmentId = '';
   selectedMediaAssetId = '';
 
@@ -239,22 +241,24 @@ export class TeacherVideosComponent {
     });
   }
 
-  async onLessonFile(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file || !this.selectedLessonId) return;
+  attachLessonVideoLink(): void {
+    const url = this.lessonVideoUrl.trim();
+    if (!url || !this.selectedLessonId) {
+      this.error.set(this.locale.t('videos.linkRequired'));
+      return;
+    }
 
     this.error.set('');
     this.info.set('');
     this.uploading.set(true);
 
-    this.api.uploadMedia(file).subscribe({
+    this.api.registerMediaFromUrl({ url, title: this.videoTitle.trim() || null }).subscribe({
       next: (asset) => {
         this.selectedMediaAssetId = asset.id;
         this.api
           .attachLessonVideo(this.selectedLessonId, {
             mediaAssetId: asset.id,
-            title: this.videoTitle || file.name,
+            title: this.videoTitle.trim() || asset.fileName,
             sortOrder: 1
           })
           .subscribe({
@@ -262,50 +266,52 @@ export class TeacherVideosComponent {
               this.uploading.set(false);
               this.info.set(this.locale.t('videos.uploadedLesson'));
               this.videoTitle = '';
-              input.value = '';
+              this.lessonVideoUrl = '';
               this.reloadLibrary();
             },
             error: (err) => {
               this.uploading.set(false);
-              this.error.set(this.locale.fromApiError(err,'videos.attachLessonFailed'));
+              this.error.set(this.locale.fromApiError(err, 'videos.attachLessonFailed'));
             }
           });
       },
       error: (err) => {
         this.uploading.set(false);
-        this.error.set(this.locale.fromApiError(err,'videos.uploadFailed'));
+        this.error.set(this.locale.fromApiError(err, 'videos.uploadFailed'));
       }
     });
   }
 
-  async onSolutionFile(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file || !this.selectedAssignmentId) return;
+  attachSolutionVideoLink(): void {
+    const url = this.solutionVideoUrl.trim();
+    if (!url || !this.selectedAssignmentId) {
+      this.error.set(this.locale.t('videos.linkRequired'));
+      return;
+    }
 
     this.error.set('');
     this.info.set('');
     this.uploading.set(true);
 
-    this.api.uploadMedia(file).subscribe({
+    this.api.registerMediaFromUrl({ url }).subscribe({
       next: (asset) => {
         this.api.attachAssignmentSolutionVideo(this.selectedAssignmentId, asset.id).subscribe({
           next: () => {
             this.uploading.set(false);
             this.info.set(this.locale.t('videos.uploadedSolution'));
-            input.value = '';
+            this.solutionVideoUrl = '';
             this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
             this.reloadLibrary();
           },
           error: (err) => {
             this.uploading.set(false);
-            this.error.set(this.locale.fromApiError(err,'videos.attachSolutionFailed'));
+            this.error.set(this.locale.fromApiError(err, 'videos.attachSolutionFailed'));
           }
         });
       },
       error: (err) => {
         this.uploading.set(false);
-        this.error.set(this.locale.fromApiError(err,'videos.uploadFailed'));
+        this.error.set(this.locale.fromApiError(err, 'videos.uploadFailed'));
       }
     });
   }

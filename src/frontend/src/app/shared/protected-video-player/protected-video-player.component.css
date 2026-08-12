@@ -24,18 +24,27 @@
   background: #0f172a;
 }
 
-.stage video {
+.stage video,
+.stage .embed-frame {
   display: block;
   width: 100%;
   max-height: 420px;
   background: #000;
 }
 
+.stage .embed-frame {
+  aspect-ratio: 16 / 9;
+  max-height: none;
+  min-height: 240px;
+  border: 0;
+}
+
 .player-shell.compact .player-head h3 {
   font-size: 0.95rem;
 }
 
-.player-shell.compact .stage video {
+.player-shell.compact .stage video,
+.player-shell.compact .stage .embed-frame {
   max-height: min(70vh, 520px);
 }
 .watermark {

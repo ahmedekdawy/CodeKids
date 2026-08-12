@@ -83,8 +83,10 @@ export function courseMatchesClassroomGrade(
   courseGrade: number | null | undefined,
   classroomGrade: number | null | undefined
 ): boolean {
+  // Null classroom grade: no restriction (caller may still require a grade elsewhere).
   if (classroomGrade == null) return true;
-  if (courseGrade == null) return false;
+  // Null course grade = all grades — available for any classroom grade.
+  if (courseGrade == null) return true;
   return Number(courseGrade) === Number(classroomGrade);
 }
 

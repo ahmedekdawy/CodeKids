@@ -122,7 +122,17 @@ public sealed class CreateFixedTimetableEntryCommandHandler(IAppDbContext dbCont
         };
 
         dbContext.FixedTimetableEntries.Add(entry);
+        try
+        {
+
+        
         await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
         return await FixedTimetableValidators.LoadDtoAsync(dbContext, entry.Id, cancellationToken);
     }
 }
@@ -216,6 +226,7 @@ internal static class FixedTimetableValidators
             .AnyAsync(
                 x => x.TeacherId == teacherId
                      && x.DayOfWeek == dayOfWeek
+                     && x.CourseId == courseId
                      && x.SessionNumber == sessionNumber
                      && x.Period == period
                      && (excludeEntryId == null || x.Id != excludeEntryId),

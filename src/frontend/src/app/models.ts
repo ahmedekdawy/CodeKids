@@ -104,6 +104,7 @@ export interface MediaAsset {
   sizeBytes: number;
   durationSeconds?: number | null;
   createdAtUtc: string;
+  externalUrl?: string | null;
 }
 
 export interface TeacherLessonVideo {
@@ -146,6 +147,7 @@ export interface PlaybackInfo {
   durationSeconds?: number | null;
   contentType: string;
   fileName: string;
+  isExternalLink?: boolean;
 }
 
 export interface WatchSession {
@@ -422,6 +424,15 @@ export interface TeacherPayrollReport {
   grandTotal: number;
 }
 
+export interface AccountReport {
+  fromDate: string;
+  toDate: string;
+  totalSalaries: number;
+  totalSubscriptions: number;
+  totalOtherExpenses: number;
+  netAmount: number;
+}
+
 export interface TuitionPayment {
   id: string;
   parentId?: string | null;
@@ -434,6 +445,15 @@ export interface TuitionPayment {
   paymentDate: string;
   notes: string;
   payerLabel: string;
+}
+
+export interface OtherExpense {
+  id: string;
+  name: string;
+  amount: number;
+  expenseDate: string;
+  notes: string;
+  createdAtUtc: string;
 }
 
 export interface CreateMeetingPayload {

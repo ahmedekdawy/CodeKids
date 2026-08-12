@@ -286,6 +286,16 @@ public static class SchemaBootstrap
                 CONSTRAINT "PK_TuitionPayments" PRIMARY KEY ("Id")
             );
 
+            CREATE TABLE IF NOT EXISTS "OtherExpenses" (
+                "Id" uuid NOT NULL,
+                "Name" character varying(200) NOT NULL,
+                "Amount" numeric(18,2) NOT NULL,
+                "ExpenseDate" date NOT NULL,
+                "Notes" character varying(500) NOT NULL DEFAULT '',
+                "CreatedAtUtc" timestamp with time zone NOT NULL,
+                CONSTRAINT "PK_OtherExpenses" PRIMARY KEY ("Id")
+            );
+
             CREATE TABLE IF NOT EXISTS "BankQuestions" (
                 "Id" uuid NOT NULL,
                 "CourseId" uuid NOT NULL,
@@ -362,6 +372,7 @@ public static class SchemaBootstrap
             CREATE TABLE IF NOT EXISTS "MediaAssets" (
                 "Id" uuid NOT NULL,
                 "StorageKey" character varying(400) NOT NULL,
+                "ExternalUrl" character varying(1000) NULL,
                 "FileName" character varying(260) NOT NULL,
                 "ContentType" character varying(120) NOT NULL,
                 "SizeBytes" bigint NOT NULL,
@@ -514,8 +525,10 @@ public static class SchemaBootstrap
             CREATE INDEX IF NOT EXISTS "IX_LiveSessions_StartsAtUtc" ON "LiveSessions" ("StartsAtUtc");
             CREATE INDEX IF NOT EXISTS "IX_Appointments_StartsAtUtc" ON "Appointments" ("StartsAtUtc");
             CREATE INDEX IF NOT EXISTS "IX_Appointments_TeacherId_StartsAtUtc" ON "Appointments" ("TeacherId", "StartsAtUtc");
-            CREATE UNIQUE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber"
-                ON "FixedTimetableEntries" ("TeacherId", "DayOfWeek", "Period", "SessionNumber");
+            DROP INDEX IF EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber";
+            DROP INDEX IF EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNum~";
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber_CourseId"
+                ON "FixedTimetableEntries" ("TeacherId", "DayOfWeek", "Period", "SessionNumber", "CourseId");
             CREATE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_DayOfWeek_Period_SessionNumber"
                 ON "FixedTimetableEntries" ("DayOfWeek", "Period", "SessionNumber");
 
@@ -567,8 +580,15 @@ public static class SchemaBootstrap
             CREATE INDEX IF NOT EXISTS "IX_TuitionPayments_StudentId"
                 ON "TuitionPayments" ("StudentId");
 
+            CREATE INDEX IF NOT EXISTS "IX_OtherExpenses_ExpenseDate"
+                ON "OtherExpenses" ("ExpenseDate");
+            CREATE INDEX IF NOT EXISTS "IX_OtherExpenses_Name"
+                ON "OtherExpenses" ("Name");
+
             CREATE INDEX IF NOT EXISTS "IX_BankQuestions_CourseId_CreatedByUserId" ON "BankQuestions" ("CourseId", "CreatedByUserId");
             CREATE INDEX IF NOT EXISTS "IX_ExamAttempts_ExamId_StudentId" ON "ExamAttempts" ("ExamId", "StudentId");
+            ALTER TABLE "MediaAssets" ADD COLUMN IF NOT EXISTS "ExternalUrl" character varying(1000) NULL;
+
             CREATE INDEX IF NOT EXISTS "IX_LessonVideos_LessonId" ON "LessonVideos" ("LessonId");
             CREATE INDEX IF NOT EXISTS "IX_VideoWatchSessions_MediaAssetId_StudentId" ON "VideoWatchSessions" ("MediaAssetId", "StudentId");
 

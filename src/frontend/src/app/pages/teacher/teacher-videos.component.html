@@ -68,7 +68,7 @@
   @if (tab() === 'lesson') {
     <section class="block">
       <h3>{{ 'videos.uploadLesson' | t }}</h3>
-      <form class="meeting-form" (submit)="$event.preventDefault()">
+      <form class="meeting-form" (ngSubmit)="attachLessonVideoLink()">
         <label>
           {{ 'common.course' | t }}
           <select [(ngModel)]="selectedCourseId" name="courseId" (ngModelChange)="onCourseChange()">
@@ -87,9 +87,18 @@
         </label>
         <label>{{ 'common.title' | t }} <input [(ngModel)]="videoTitle" name="videoTitle" [placeholder]="'videos.optionalTitle' | t" /></label>
         <label>
-          {{ 'videos.videoFile' | t }}
-          <input type="file" accept="video/mp4,video/webm,video/quicktime" (change)="onLessonFile($event)" [disabled]="uploading()" />
+          {{ 'videos.videoLink' | t }}
+          <input
+            type="url"
+            [(ngModel)]="lessonVideoUrl"
+            name="lessonVideoUrl"
+            [placeholder]="'videos.videoLinkPlaceholder' | t"
+            required
+          />
         </label>
+        <button type="submit" [disabled]="uploading()">
+          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+        </button>
       </form>
     </section>
 
@@ -132,9 +141,7 @@
               <th>{{ 'common.title' | t }}</th>
               <th>{{ 'common.course' | t }}</th>
               <th>{{ 'common.lesson' | t }}</th>
-              <th>{{ 'common.file' | t }}</th>
-              <th>{{ 'common.size' | t }}</th>
-              <th>{{ 'common.duration' | t }}</th>
+              <th>{{ 'videos.link' | t }}</th>
               <th>{{ 'common.uploaded' | t }}</th>
               <th>{{ 'common.actions' | t }}</th>
             </tr>
@@ -153,8 +160,6 @@
                 <td>{{ courseLabelById(video.courseId, video.courseTitle) }}</td>
                 <td>{{ video.lessonTitle }}</td>
                 <td class="mono">{{ video.fileName }}</td>
-                <td>{{ formatBytes(video.sizeBytes) }}</td>
-                <td>{{ formatDuration(video.durationSeconds) }}</td>
                 <td>{{ formatDate(video.createdAtUtc) }}</td>
                 <td class="row-actions-cell" (click)="$event.stopPropagation()">
                   <div class="row-actions">
@@ -166,7 +171,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="8" class="meta">{{ 'videos.noLessonMatch' | t }}</td>
+                <td colspan="6" class="meta">{{ 'videos.noLessonMatch' | t }}</td>
               </tr>
             }
           </tbody>
@@ -178,7 +183,7 @@
   @if (tab() === 'solution') {
     <section class="block">
       <h3>{{ 'videos.uploadSolution' | t }}</h3>
-      <form class="meeting-form" (submit)="$event.preventDefault()">
+      <form class="meeting-form" (ngSubmit)="attachSolutionVideoLink()">
         <label>
           {{ 'videos.assignment' | t }}
           <select [(ngModel)]="selectedAssignmentId" name="assignmentId">
@@ -192,8 +197,17 @@
         </label>
         <label>
           {{ 'videos.solutionVideo' | t }}
-          <input type="file" accept="video/mp4,video/webm,video/quicktime" (change)="onSolutionFile($event)" [disabled]="uploading()" />
+          <input
+            type="url"
+            [(ngModel)]="solutionVideoUrl"
+            name="solutionVideoUrl"
+            [placeholder]="'videos.videoLinkPlaceholder' | t"
+            required
+          />
         </label>
+        <button type="submit" [disabled]="uploading()">
+          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+        </button>
       </form>
     </section>
 
@@ -226,9 +240,7 @@
             <tr>
               <th>{{ 'videos.assignment' | t }}</th>
               <th>{{ 'common.classroom' | t }}</th>
-              <th>{{ 'common.file' | t }}</th>
-              <th>{{ 'common.size' | t }}</th>
-              <th>{{ 'common.duration' | t }}</th>
+              <th>{{ 'videos.link' | t }}</th>
               <th>{{ 'common.uploaded' | t }}</th>
               <th>{{ 'common.actions' | t }}</th>
             </tr>
@@ -246,8 +258,6 @@
                 <td><strong>{{ video.assignmentTitle }}</strong></td>
                 <td>{{ video.classroomName }}</td>
                 <td class="mono">{{ video.fileName }}</td>
-                <td>{{ formatBytes(video.sizeBytes) }}</td>
-                <td>{{ formatDuration(video.durationSeconds) }}</td>
                 <td>{{ formatDate(video.createdAtUtc) }}</td>
                 <td class="row-actions-cell" (click)="$event.stopPropagation()">
                   <div class="row-actions">
@@ -258,7 +268,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="meta">{{ 'videos.noSolutionMatch' | t }}</td>
+                <td colspan="5" class="meta">{{ 'videos.noSolutionMatch' | t }}</td>
               </tr>
             }
           </tbody>

@@ -1,4 +1,5 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, inject, input, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, computed, inject, input, signal } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LearningApiService } from '../../learning-api.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { PlaybackInfo, WatchSession } from '../../models';
@@ -12,6 +13,7 @@ import { TranslatePipe } from '../translate.pipe';
 })
 export class ProtectedVideoPlayerComponent implements OnInit, OnDestroy {
   private readonly api = inject(LearningApiService);
+  private readonly sanitizer = inject(DomSanitizer);
   readonly locale = inject(LocaleService);
   readonly mediaAssetId = input.required<string>();
   readonly lessonId = input<string | null>(null);
@@ -26,6 +28,13 @@ export class ProtectedVideoPlayerComponent implements OnInit, OnDestroy {
   readonly session = signal<WatchSession | null>(null);
   readonly error = signal('');
   readonly loading = signal(false);
+
+  readonly embedUrl = computed<SafeResourceUrl | null>(() => {
+    const info = this.playback();
+    if (!info?.isExternalLink) return null;
+    const embed = toEmbedUrl(info.playbackUrl);
+    return embed ? this.sanitizer.bypassSecurityTrustResourceUrl(embed) : null;
+  });
 
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private lastSeekFrom = 0;
@@ -138,4 +147,27 @@ export class ProtectedVideoPlayerComponent implements OnInit, OnDestroy {
         error: () => undefined
       });
   }
+}
+
+function toEmbedUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '').toLowerCase();
+    if (host === 'youtu.be') {
+      const id = u.pathname.split('/').filter(Boolean)[0];
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
+      if (u.pathname.startsWith('/embed/')) return url;
+      const id = u.searchParams.get('v') || u.pathname.split('/').filter(Boolean).pop();
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    if (host === 'vimeo.com') {
+      const id = u.pathname.split('/').filter(Boolean)[0];
+      return id ? `https://player.vimeo.com/video/${id}` : null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
 }

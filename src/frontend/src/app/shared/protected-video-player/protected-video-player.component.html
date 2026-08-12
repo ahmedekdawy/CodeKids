@@ -15,21 +15,32 @@
 
   @if (playback(); as info) {
     <div class="stage">
-      <video
-        #videoEl
-        [src]="info.playbackUrl"
-        controls
-        controlsList="nodownload noplaybackrate"
-        disablePictureInPicture
-        (canplay)="onCanPlay()"
-        (play)="onPlay()"
-        (pause)="onPause()"
-        (ended)="onEnded()"
-        (ratechange)="onRateChange()"
-        (seeking)="onSeeking()"
-        (seeked)="onSeeked()"
-        (contextmenu)="$event.preventDefault()">
-      </video>
+      @if (embedUrl(); as safeEmbed) {
+        <iframe
+          class="embed-frame"
+          [src]="safeEmbed"
+          title="{{ title() }}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+      } @else {
+        <video
+          #videoEl
+          [src]="info.playbackUrl"
+          controls
+          controlsList="nodownload noplaybackrate"
+          disablePictureInPicture
+          (canplay)="onCanPlay()"
+          (play)="onPlay()"
+          (pause)="onPause()"
+          (ended)="onEnded()"
+          (ratechange)="onRateChange()"
+          (seeking)="onSeeking()"
+          (seeked)="onSeeked()"
+          (contextmenu)="$event.preventDefault()">
+        </video>
+      }
       <div class="watermark" aria-hidden="true">{{ info.watermarkText }}</div>
     </div>
     @if (session(); as watch) {

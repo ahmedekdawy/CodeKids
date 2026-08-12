@@ -21,7 +21,9 @@ import {
   FixedTimetableEntry,
   TeacherSessionAttendance,
   TeacherPayrollReport,
+  AccountReport,
   TuitionPayment,
+  OtherExpense,
   Lesson,
   LiveSession,
   ManagedUser,
@@ -326,6 +328,18 @@ export class LearningApiService {
     );
   }
 
+  getAccountReport(filters: {
+    fromDate: string;
+    toDate: string;
+  }): Observable<AccountReport> {
+    const params = new URLSearchParams();
+    params.set('fromDate', filters.fromDate);
+    params.set('toDate', filters.toDate);
+    return this.http.get<AccountReport>(
+      `${this.baseUrl}/admin/account-report?${params.toString()}`
+    );
+  }
+
   getTuitionPayments(filters?: {
     parentId?: string;
     studentId?: string;
@@ -361,6 +375,34 @@ export class LearningApiService {
 
   deleteTuitionPayment(paymentId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/admin/payments/${paymentId}`);
+  }
+
+  getOtherExpenses(filters?: {
+    fromDate?: string;
+    toDate?: string;
+    name?: string;
+  }): Observable<OtherExpense[]> {
+    const params = new URLSearchParams();
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    if (filters?.name) params.set('name', filters.name);
+    const query = params.toString();
+    return this.http.get<OtherExpense[]>(
+      `${this.baseUrl}/admin/other-expenses${query ? `?${query}` : ''}`
+    );
+  }
+
+  createOtherExpense(payload: {
+    name: string;
+    amount: number;
+    expenseDate: string;
+    notes?: string | null;
+  }): Observable<OtherExpense> {
+    return this.http.post<OtherExpense>(`${this.baseUrl}/admin/other-expenses`, payload);
+  }
+
+  deleteOtherExpense(expenseId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/other-expenses/${expenseId}`);
   }
 
   getUsers(role?: string): Observable<ManagedUser[]> {
@@ -716,6 +758,10 @@ export class LearningApiService {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/upload`, form);
+  }
+
+  registerMediaFromUrl(payload: { url: string; title?: string | null }): Observable<MediaAsset> {
+    return this.http.post<MediaAsset>(`${this.baseUrl}/media/from-url`, payload);
   }
 
   getVideoLibrary(): Observable<TeacherVideoLibrary> {

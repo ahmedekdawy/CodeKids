@@ -23,6 +23,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<FixedTimetableEntry> FixedTimetableEntries => Set<FixedTimetableEntry>();
     public DbSet<TeacherSessionAttendance> TeacherSessionAttendances => Set<TeacherSessionAttendance>();
     public DbSet<TuitionPayment> TuitionPayments => Set<TuitionPayment>();
+    public DbSet<OtherExpense> OtherExpenses => Set<OtherExpense>();
     public DbSet<TeacherCourseRate> TeacherCourseRates => Set<TeacherCourseRate>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<Classroom> Classrooms => Set<Classroom>();
@@ -252,7 +253,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Period).HasConversion<string>().HasMaxLength(10);
-            entity.HasIndex(x => new { x.TeacherId, x.DayOfWeek, x.Period, x.SessionNumber }).IsUnique();
+            entity.HasIndex(x => new { x.TeacherId, x.DayOfWeek, x.Period, x.SessionNumber, x.CourseId }).IsUnique();
             entity.HasIndex(x => new { x.DayOfWeek, x.Period, x.SessionNumber });
             entity.HasOne(x => x.Teacher)
                 .WithMany()
@@ -296,6 +297,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(x => x.StudentId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<OtherExpense>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Amount).HasPrecision(18, 2);
+            entity.Property(x => x.Notes).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => x.ExpenseDate);
+            entity.HasIndex(x => x.Name);
         });
 
         modelBuilder.Entity<TeacherCourseRate>(entity =>
@@ -544,6 +555,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.StorageKey).HasMaxLength(400).IsRequired();
+            entity.Property(x => x.ExternalUrl).HasMaxLength(1000);
             entity.Property(x => x.FileName).HasMaxLength(260).IsRequired();
             entity.Property(x => x.ContentType).HasMaxLength(120).IsRequired();
             entity.HasOne(x => x.UploadedBy)

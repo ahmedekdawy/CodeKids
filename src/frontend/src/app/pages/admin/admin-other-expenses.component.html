@@ -1,0 +1,102 @@
+<div class="panel-page">
+  <h2>{{ 'admin.expenses.title' | t }}</h2>
+  <p class="meta">{{ 'admin.expenses.subtitle' | t }}</p>
+
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+
+  <section class="block">
+    <h3>{{ 'admin.expenses.create' | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="create()">
+      <label>
+        {{ 'admin.expenses.name' | t }}
+        <input [(ngModel)]="name" name="name" required />
+      </label>
+      <label>
+        {{ 'admin.expenses.amount' | t }}
+        <input type="number" min="0.01" step="0.01" [(ngModel)]="amount" name="amount" required />
+      </label>
+      <label>
+        {{ 'admin.expenses.expenseDate' | t }}
+        <input type="date" [(ngModel)]="expenseDate" name="expenseDate" required />
+      </label>
+      <label>
+        {{ 'common.notes' | t }}
+        <input [(ngModel)]="notes" name="notes" [placeholder]="'common.optional' | t" />
+      </label>
+      <button type="submit">{{ 'admin.expenses.create' | t }}</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'admin.expenses.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'admin.expenses.name' | t }}
+        <input
+          [(ngModel)]="filterName"
+          name="filterName"
+          (ngModelChange)="reload()"
+          [placeholder]="'admin.expenses.nameFilterPlaceholder' | t"
+        />
+      </label>
+      <label>
+        {{ 'admin.expenses.dateFrom' | t }}
+        <input
+          type="date"
+          [(ngModel)]="filterFromDate"
+          name="filterFromDate"
+          (ngModelChange)="reload()"
+        />
+      </label>
+      <label>
+        {{ 'admin.expenses.dateTo' | t }}
+        <input
+          type="date"
+          [(ngModel)]="filterToDate"
+          name="filterToDate"
+          (ngModelChange)="reload()"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+      <span class="meta">{{ 'admin.expenses.filteredTotal' | t }}: {{ moneyLabel(filteredTotal()) }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.expenses.expenseDate' | t }}</th>
+            <th>{{ 'admin.expenses.name' | t }}</th>
+            <th>{{ 'admin.expenses.amount' | t }}</th>
+            <th>{{ 'common.notes' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.expenseDate }}</td>
+              <td>{{ row.name }}</td>
+              <td>{{ moneyLabel(row.amount) }}</td>
+              <td>{{ row.notes || ('common.emDash' | t) }}</td>
+              <td>
+                <app-icon-action-button kind="delete" variant="danger" (action)="remove(row)" />
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
