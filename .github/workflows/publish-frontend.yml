@@ -1,0 +1,52 @@
+name: Publish Frontend
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - "src/frontend/**"
+      - "!src/frontend/dist/**"
+      - "!src/frontend/.angular/**"
+      - ".github/workflows/publish-frontend.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: publish-frontend
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production
+        run: npm run build -- --configuration=production
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FRONTEND_FTP_SERVER }}
+          username: ${{ secrets.FRONTEND_FTP_USERNAME }}
+          password: ${{ secrets.FRONTEND_FTP_PASSWORD }}
+          local-dir: ./src/frontend/dist/codekids-frontend/browser/
+          server-dir: ${{ secrets.FRONTEND_FTP_SERVER_DIR }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**

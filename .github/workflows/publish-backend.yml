@@ -1,0 +1,62 @@
+name: Publish Backend
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - "src/backend/**"
+      - ".github/workflows/publish-backend.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: publish-backend
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore CodeKids.Api/CodeKids.Api.csproj
+
+      - name: Publish
+        run: >
+          dotnet publish CodeKids.Api/CodeKids.Api.csproj
+          -c Release
+          -o "${{ github.workspace }}/artifacts/backend"
+          --no-restore
+
+      - name: Remove local-only config from publish output
+        shell: bash
+        run: |
+          rm -f "${{ github.workspace }}/artifacts/backend/appsettings.Development.json"
+          # Keep production appsettings on the server; do not overwrite from CI.
+          rm -f "${{ github.workspace }}/artifacts/backend/appsettings.json"
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.BACKEND_FTP_SERVER }}
+          username: ${{ secrets.BACKEND_FTP_USERNAME }}
+          password: ${{ secrets.BACKEND_FTP_PASSWORD }}
+          local-dir: ./artifacts/backend/
+          server-dir: ${{ secrets.BACKEND_FTP_SERVER_DIR }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/appsettings.json
+            **/appsettings.Development.json
+            **/App_Data/**
