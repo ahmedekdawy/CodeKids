@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /5 - Presentation/local.settings.json
 global.json
+
+# Local secrets (keep on machine only)
+connection.txt
