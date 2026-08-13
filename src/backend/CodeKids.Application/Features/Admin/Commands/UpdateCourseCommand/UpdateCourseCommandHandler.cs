@@ -29,6 +29,7 @@ public sealed class UpdateCourseCommandHandler(IAppDbContext dbContext)
         course.AgeMax = command.AgeMax is null or <= 0 ? 12 : command.AgeMax.Value;
         course.Term = CreateCourseCommandHandler.ParseTerm(command.Term);
         course.Grade = CreateCourseCommandHandler.NormalizeGrade(command.Grade);
+        course.SchoolType = CreateCourseCommandHandler.ParseSchoolType(command.SchoolType);
         course.SortOrder = command.SortOrder ?? 0;
 
         await dbContext.SaveChangesAsync(cancellationToken);

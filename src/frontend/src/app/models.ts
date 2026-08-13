@@ -1,6 +1,8 @@
 export type UserRole = 'Student' | 'Parent' | 'Teacher' | 'SuperAdmin';
 export type TeacherWorkShift = 'Am' | 'Pm' | 'Both';
 export type TeacherContractType = 'Session' | 'Monthly';
+export type StudentSchoolType = 'Arabic' | 'Language';
+export type CourseSchoolType = 'Arabic' | 'Language' | 'All';
 
 export interface TeacherCourseRate {
   courseId: string;
@@ -67,6 +69,7 @@ export interface Course {
   ageMax: number;
   term?: CourseTerm | string | null;
   grade?: number | null;
+  schoolType?: CourseSchoolType | string | null;
   sortOrder: number;
   units?: CourseUnit[];
   lessons: CourseLesson[];
@@ -484,6 +487,7 @@ export interface ManagedUser {
   role: UserRole;
   parentId?: string | null;
   grade?: number | null;
+  schoolType?: StudentSchoolType | string | null;
   totalXp: number;
   mobilePhone?: string;
   workShift?: TeacherWorkShift | string | null;
@@ -533,6 +537,7 @@ export interface ClassroomCourse {
   courseId: string;
   courseTitle: string;
   courseGrade?: number | null;
+  courseSchoolType?: CourseSchoolType | string | null;
   teacherId: string;
   teacherName: string;
 }
@@ -552,6 +557,7 @@ export interface Classroom {
   courseId?: string | null;
   courseTitle?: string | null;
   courseGrade?: number | null;
+  courseSchoolType?: CourseSchoolType | string | null;
   whatsAppGroupInviteUrl: string;
   whatsAppNotifyPhones: string;
   dailyWhatsAppReportsEnabled?: boolean;

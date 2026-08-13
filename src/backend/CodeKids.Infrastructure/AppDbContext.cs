@@ -62,6 +62,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.PasswordHash).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Role).HasConversion<string>().HasMaxLength(30);
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();
             entity.Property(x => x.ContractType).HasConversion<string>().HasMaxLength(20);
@@ -101,6 +102,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.Property(x => x.Term).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
             entity.HasMany(x => x.Units)
                 .WithOne(x => x.Course)
                 .HasForeignKey(x => x.CourseId)

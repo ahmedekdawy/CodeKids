@@ -23,18 +23,25 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
         // Students see classroom courses that match their grade (or all-grades courses).
         if (query.Role == nameof(UserRole.Student) && query.UserId is Guid studentId)
         {
-            var studentGrade = await dbContext.Users
+            var student = await dbContext.Users
                 .AsNoTracking()
                 .Where(x => x.Id == studentId)
-                .Select(x => x.Grade)
+                .Select(x => new { x.Grade, x.SchoolType })
                 .FirstOrDefaultAsync(cancellationToken);
 
             var visibleCourseIds = await StudentCourseVisibility.GetVisibleCourseIdsAsync(
                 dbContext, studentId, cancellationToken);
+            var studentGrade = student?.Grade;
+            var studentSchoolType = student?.SchoolType;
 
             coursesQuery = coursesQuery.Where(c =>
                 visibleCourseIds.Contains(c.Id)
-                && (c.Grade == null || studentGrade == null || c.Grade == studentGrade));
+                && (c.Grade == null || studentGrade == null || c.Grade == studentGrade)
+                && (c.SchoolType == null
+                    || c.SchoolType == SchoolType.All
+                    || studentSchoolType == null
+                    || studentSchoolType == SchoolType.All
+                    || c.SchoolType == studentSchoolType));
         }
         // Teachers see only courses assigned to them on classrooms.
         else if (query.Role == nameof(UserRole.Teacher) && query.UserId is Guid teacherId)
@@ -81,6 +88,7 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
                 course.AgeMax,
                 course.Term?.ToString(),
                 course.Grade,
+                course.SchoolType?.ToString() ?? nameof(SchoolType.All),
                 course.SortOrder,
                 units,
                 lessons,

@@ -90,3 +90,14 @@ export function courseMatchesClassroomGrade(
   return Number(courseGrade) === Number(classroomGrade);
 }
 
+export function matchesStudentSchoolType(
+  courseSchoolType?: string | null,
+  studentSchoolType?: string | null
+): boolean {
+  const course = (courseSchoolType || 'All').trim().toLowerCase();
+  if (!course || course === 'all') return true;
+  const student = (studentSchoolType || '').trim().toLowerCase();
+  if (!student || student === 'all') return true;
+  return course === student;
+}
+

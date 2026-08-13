@@ -9,6 +9,7 @@ public sealed record CourseDto(
     int AgeMax,
     string? Term,
     int? Grade,
+    string? SchoolType,
     int SortOrder,
     IReadOnlyList<CourseUnitDto> Units,
     IReadOnlyList<CourseLessonDto> Lessons,

@@ -18,6 +18,7 @@ public sealed record ClassroomDto(
     Guid? CourseId,
     string? CourseTitle,
     int? CourseGrade,
+    string? CourseSchoolType,
     string WhatsAppGroupInviteUrl,
     string WhatsAppNotifyPhones,
     bool DailyWhatsAppReportsEnabled,

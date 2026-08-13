@@ -66,6 +66,7 @@ public sealed class UpdateManagedUserCommandHandler(
         user.Grade = role == UserRole.Student
             ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
             : null;
+        user.SchoolType = CreateManagedUserCommandHandler.ParseSchoolType(role, command.SchoolType);
         if (!string.IsNullOrWhiteSpace(mobile)
             && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile && x.Id != user.Id, cancellationToken))
         {

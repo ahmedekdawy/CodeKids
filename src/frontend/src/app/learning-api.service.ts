@@ -419,6 +419,7 @@ export class LearningApiService {
     role: string;
     parentId?: string | null;
     grade?: number | null;
+    schoolType?: string | null;
     mobilePhone?: string | null;
     workShift?: string | null;
     stages?: number[] | null;
@@ -444,6 +445,7 @@ export class LearningApiService {
       parentId?: string | null;
       password?: string | null;
       grade?: number | null;
+      schoolType?: string | null;
       mobilePhone?: string | null;
       workShift?: string | null;
       stages?: number[] | null;
@@ -498,6 +500,7 @@ export class LearningApiService {
     ageMax?: number | null;
     term?: string | null;
     grades?: number[] | null;
+    schoolType?: string | null;
     sortOrder?: number | null;
   }): Observable<Course[]> {
     return this.http.post<Course[]>(`${this.baseUrl}/admin/courses`, payload);
@@ -513,6 +516,7 @@ export class LearningApiService {
       ageMax?: number | null;
       term?: string | null;
       grade?: number | null;
+      schoolType?: string | null;
       sortOrder?: number | null;
     }
   ): Observable<Course> {

@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Entities;
+using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Classrooms;
@@ -8,7 +9,7 @@ public static class StudentCourseVisibility
 {
     /// <summary>
     /// Per classroom: specific course enrollments if any, otherwise all classroom courses
-    /// that match the student grade (or all-grades courses).
+    /// that match the student grade and school type (or all-grades / all-school-type courses).
     /// </summary>
     public static async Task<HashSet<Guid>> GetVisibleCourseIdsAsync(
         IAppDbContext dbContext,
@@ -27,10 +28,10 @@ public static class StudentCourseVisibility
             return [];
         }
 
-        var studentGrade = await dbContext.Users
+        var student = await dbContext.Users
             .AsNoTracking()
             .Where(x => x.Id == studentId)
-            .Select(x => x.Grade)
+            .Select(x => new { x.Grade, x.SchoolType })
             .FirstOrDefaultAsync(cancellationToken);
 
         var specific = await dbContext.StudentCourseEnrollments
@@ -47,15 +48,40 @@ public static class StudentCourseVisibility
             from cc in dbContext.ClassroomCourses.AsNoTracking()
             join course in dbContext.Courses.AsNoTracking() on cc.CourseId equals course.Id
             where classroomIds.Contains(cc.ClassroomId)
-            select new { cc.ClassroomId, cc.CourseId, course.Grade }
+            select new { cc.ClassroomId, cc.CourseId, course.Grade, course.SchoolType }
         ).ToListAsync(cancellationToken);
 
         var legacy = await (
             from room in dbContext.Classrooms.AsNoTracking()
             join course in dbContext.Courses.AsNoTracking() on room.CourseId equals course.Id
             where classroomIds.Contains(room.Id) && room.CourseId != null
-            select new { ClassroomId = room.Id, CourseId = course.Id, course.Grade }
+            select new { ClassroomId = room.Id, CourseId = course.Id, course.Grade, course.SchoolType }
         ).ToListAsync(cancellationToken);
+
+        var courseMeta = assigned
+            .Concat(legacy)
+            .GroupBy(x => x.CourseId)
+            .ToDictionary(
+                g => g.Key,
+                g => (g.First().Grade, g.First().SchoolType));
+
+        var missingIds = specific
+            .Select(x => x.CourseId)
+            .Where(id => !courseMeta.ContainsKey(id))
+            .Distinct()
+            .ToList();
+        if (missingIds.Count > 0)
+        {
+            var extra = await dbContext.Courses
+                .AsNoTracking()
+                .Where(c => missingIds.Contains(c.Id))
+                .Select(c => new { c.Id, c.Grade, c.SchoolType })
+                .ToListAsync(cancellationToken);
+            foreach (var row in extra)
+            {
+                courseMeta[row.Id] = (row.Grade, row.SchoolType);
+            }
+        }
 
         var visible = new HashSet<Guid>();
         foreach (var classroomId in classroomIds)
@@ -64,7 +90,11 @@ public static class StudentCourseVisibility
             {
                 foreach (var courseId in enrolled)
                 {
-                    visible.Add(courseId);
+                    if (courseMeta.TryGetValue(courseId, out var meta)
+                        && MatchesStudent(meta.Grade, student?.Grade, meta.SchoolType, student?.SchoolType))
+                    {
+                        visible.Add(courseId);
+                    }
                 }
 
                 continue;
@@ -72,7 +102,7 @@ public static class StudentCourseVisibility
 
             foreach (var row in assigned.Where(x => x.ClassroomId == classroomId))
             {
-                if (MatchesStudentGrade(row.Grade, studentGrade))
+                if (MatchesStudent(row.Grade, student?.Grade, row.SchoolType, student?.SchoolType))
                 {
                     visible.Add(row.CourseId);
                 }
@@ -80,7 +110,7 @@ public static class StudentCourseVisibility
 
             foreach (var row in legacy.Where(x => x.ClassroomId == classroomId))
             {
-                if (MatchesStudentGrade(row.Grade, studentGrade))
+                if (MatchesStudent(row.Grade, student?.Grade, row.SchoolType, student?.SchoolType))
                 {
                     visible.Add(row.CourseId);
                 }
@@ -90,8 +120,23 @@ public static class StudentCourseVisibility
         return visible;
     }
 
+    public static bool MatchesStudent(
+        int? courseGrade,
+        int? studentGrade,
+        SchoolType? courseSchoolType,
+        SchoolType? studentSchoolType) =>
+        MatchesStudentGrade(courseGrade, studentGrade)
+        && MatchesStudentSchoolType(courseSchoolType, studentSchoolType);
+
     public static bool MatchesStudentGrade(int? courseGrade, int? studentGrade) =>
         courseGrade is null || studentGrade is null || courseGrade == studentGrade;
+
+    public static bool MatchesStudentSchoolType(SchoolType? courseSchoolType, SchoolType? studentSchoolType) =>
+        courseSchoolType is null
+        || courseSchoolType == SchoolType.All
+        || studentSchoolType is null
+        || studentSchoolType == SchoolType.All
+        || courseSchoolType == studentSchoolType;
 
     public static HashSet<Guid> EnrolledCourseIdsForClassroom(
         IEnumerable<StudentCourseEnrollment> enrollments,

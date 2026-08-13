@@ -50,6 +50,7 @@ public sealed class CreateManagedUserCommandHandler(
         var grade = role == UserRole.Student
             ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
             : null;
+        var schoolType = ParseSchoolType(role, command.SchoolType);
         var workShift = ParseWorkShift(role, command.WorkShift);
         var stages = ParseTeacherStages(role, command.Stages);
         var contract = ParseTeacherContract(role, command);
@@ -72,6 +73,7 @@ public sealed class CreateManagedUserCommandHandler(
             Role = role,
             ParentId = role == UserRole.Student ? command.ParentId : null,
             Grade = grade,
+            SchoolType = schoolType,
             AvatarId = defaultAvatar?.Id,
             MobilePhone = mobile,
             WorkShift = workShift,
@@ -93,6 +95,27 @@ public sealed class CreateManagedUserCommandHandler(
 
     internal static string NormalizeEmail(string? email) =>
         (email ?? string.Empty).Trim().ToLowerInvariant();
+
+    internal static SchoolType? ParseSchoolType(UserRole role, string? schoolType)
+    {
+        if (role != UserRole.Student)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(schoolType))
+        {
+            return null;
+        }
+
+        if (!Enum.TryParse<SchoolType>(schoolType.Trim(), true, out var parsed)
+            || parsed is not (SchoolType.Arabic or SchoolType.Language))
+        {
+            throw new InvalidOperationException("Student school type must be Arabic or Language.");
+        }
+
+        return parsed;
+    }
 
     internal static TeacherWorkShift? ParseWorkShift(UserRole role, string? workShift)
     {
@@ -280,6 +303,7 @@ public sealed class CreateManagedUserCommandHandler(
             user.Role.ToString(),
             user.ParentId,
             user.Grade,
+            user.SchoolType?.ToString(),
             user.TotalXp,
             user.MobilePhone,
             user.WorkShift?.ToString(),

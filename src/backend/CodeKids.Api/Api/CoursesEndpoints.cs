@@ -90,7 +90,9 @@ public static class CoursesEndpoints
 
                         request.Grades,
 
-                        request.SortOrder),
+                        request.SortOrder,
+
+                        request.SchoolType),
 
                     cancellationToken));
 
@@ -142,7 +144,9 @@ public static class CoursesEndpoints
 
                         request.Grade,
 
-                        request.SortOrder),
+                        request.SortOrder,
+
+                        request.SchoolType),
 
                     cancellationToken));
 

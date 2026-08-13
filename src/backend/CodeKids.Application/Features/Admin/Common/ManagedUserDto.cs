@@ -15,6 +15,7 @@ public sealed record ManagedUserDto(
     string Role,
     Guid? ParentId,
     int? Grade,
+    string? SchoolType,
     int TotalXp,
     string MobilePhone,
     string? WorkShift,

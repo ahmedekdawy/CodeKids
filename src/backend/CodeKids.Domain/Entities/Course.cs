@@ -13,6 +13,8 @@ public class Course
     public CourseTerm? Term { get; set; }
     /// <summary>KG1=-1, KG2=0, grades 1–12; null = all grades.</summary>
     public int? Grade { get; set; }
+    /// <summary>Arabic, Language, or All; null treated as All.</summary>
+    public SchoolType? SchoolType { get; set; }
     public int SortOrder { get; set; }
     public List<CourseUnit> Units { get; set; } = [];
     public List<Lesson> Lessons { get; set; } = [];

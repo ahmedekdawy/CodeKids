@@ -13,6 +13,8 @@ public class User
     public Guid? AvatarId { get; set; }
     /// <summary>Student grade: KG1=-1, KG2=0, 1–12; null when unset or not a student.</summary>
     public int? Grade { get; set; }
+    /// <summary>Student school type: Arabic or Language; null when unset or not a student.</summary>
+    public SchoolType? SchoolType { get; set; }
     public string MobilePhone { get; set; } = string.Empty;
     /// <summary>Teacher work period: Am, Pm, or Both; null for non-teachers.</summary>
     public TeacherWorkShift? WorkShift { get; set; }

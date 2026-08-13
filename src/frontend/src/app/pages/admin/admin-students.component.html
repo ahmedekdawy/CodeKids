@@ -17,6 +17,15 @@
       <label>{{ 'common.password' | t }} <input [(ngModel)]="studentPassword" name="studentPassword" type="password" required /></label>
       <label>{{ 'common.mobile' | t }} <input [(ngModel)]="studentMobile" name="studentMobile" [placeholder]="'admin.students.mobilePlaceholder' | t" /></label>
       <label>
+        {{ 'common.schoolType' | t }}
+        <app-searchable-select
+          [(ngModel)]="studentSchoolType"
+          name="studentSchoolType"
+          [emptyLabel]="'common.select' | t"
+          [options]="schoolTypeOptions()"
+        />
+      </label>
+      <label>
         {{ 'admin.users.parentOptional' | t }}
         <app-searchable-select
           [(ngModel)]="studentParentId"
@@ -60,6 +69,16 @@
         />
       </label>
       <label>
+        {{ 'common.schoolType' | t }}
+        <app-searchable-select
+          [ngModel]="filterSchoolType()"
+          name="filterSchoolType"
+          (ngModelChange)="setFilterSchoolType($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="schoolTypeOptions()"
+        />
+      </label>
+      <label>
         {{ 'admin.students.parentFilter' | t }}
         <input
           [ngModel]="filterParent()"
@@ -90,6 +109,7 @@
             <th class="sortable" (click)="setSort('displayName')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('displayName') }}</span></th>
             <th class="sortable" (click)="setSort('email')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('email') }}</span></th>
             <th class="sortable" (click)="setSort('mobilePhone')">{{ 'common.mobile' | t }} <span class="sort-mark">{{ sortMark('mobilePhone') }}</span></th>
+            <th class="sortable" (click)="setSort('schoolType')">{{ 'common.schoolType' | t }} <span class="sort-mark">{{ sortMark('schoolType') }}</span></th>
             <th class="sortable" (click)="setSort('totalXp')">{{ 'common.xp' | t }} <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
             <th>{{ 'common.parentId' | t }}</th>
             <th>{{ 'common.actions' | t }}</th>
@@ -102,6 +122,15 @@
                 <td><input [(ngModel)]="editName" [name]="'sName-' + student.id" /></td>
                 <td><input [(ngModel)]="editEmail" [name]="'sEmail-' + student.id" /></td>
                 <td><input [(ngModel)]="editMobile" [name]="'sMobile-' + student.id" [placeholder]="'admin.students.mobilePlaceholder' | t" /></td>
+                <td>
+                  <app-searchable-select
+                    [(ngModel)]="editSchoolType"
+                    [name]="'sSchool-' + student.id"
+                    [emptyLabel]="'common.select' | t"
+                    [options]="schoolTypeOptions()"
+                    [compact]="true"
+                  />
+                </td>
                 <td>{{ student.totalXp }}</td>
                 <td>
                   <app-searchable-select
@@ -123,6 +152,7 @@
                 <td>{{ student.displayName }}</td>
                 <td>{{ student.email || ('common.emDash' | t) }}</td>
                 <td>{{ student.mobilePhone || ('common.emDash' | t) }}</td>
+                <td>{{ schoolTypeLabel(student.schoolType) }}</td>
                 <td>{{ student.totalXp }}</td>
                 <td>{{ parentLabel(student.parentId) }}</td>
                 <td>
@@ -135,7 +165,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="6">{{ 'common.noData' | t }}</td>
+              <td colspan="7">{{ 'common.noData' | t }}</td>
             </tr>
           }
         </tbody>

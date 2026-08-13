@@ -17,4 +17,5 @@ public sealed record CourseSummaryDto(
     int AgeMax,
     string? Term,
     int? Grade,
-    int SortOrder);
+    int SortOrder,
+    string? SchoolType = null);

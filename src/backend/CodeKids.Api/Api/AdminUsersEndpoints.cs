@@ -66,6 +66,8 @@ public static class AdminUsersEndpoints
 
                         request.Grade,
 
+                        request.SchoolType,
+
                         request.MobilePhone,
 
                         request.WorkShift,
@@ -135,6 +137,8 @@ public static class AdminUsersEndpoints
                         request.Password,
 
                         request.Grade,
+
+                        request.SchoolType,
 
                         request.MobilePhone,
 

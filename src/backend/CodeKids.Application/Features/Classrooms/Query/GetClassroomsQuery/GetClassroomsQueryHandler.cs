@@ -39,10 +39,10 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
                 .Where(x => x.Students.Any(s => s.StudentId == query.ViewerUserId))
                 .ToList();
 
-            var studentGrade = await dbContext.Users
+            var student = await dbContext.Users
                 .AsNoTracking()
                 .Where(x => x.Id == query.ViewerUserId)
-                .Select(x => x.Grade)
+                .Select(x => new { x.Grade, x.SchoolType })
                 .FirstOrDefaultAsync(cancellationToken);
 
             foreach (var classroom in classrooms)
@@ -51,12 +51,23 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
                     classroom.CourseEnrollments, query.ViewerUserId, classroom.Id);
                 if (enrolled.Count > 0)
                 {
-                    classroom.Courses = classroom.Courses.Where(c => enrolled.Contains(c.CourseId)).ToList();
+                    classroom.Courses = classroom.Courses
+                        .Where(c => enrolled.Contains(c.CourseId)
+                            && StudentCourseVisibility.MatchesStudent(
+                                c.Course?.Grade,
+                                student?.Grade,
+                                c.Course?.SchoolType,
+                                student?.SchoolType))
+                        .ToList();
                     continue;
                 }
 
                 classroom.Courses = classroom.Courses
-                    .Where(c => StudentCourseVisibility.MatchesStudentGrade(c.Course?.Grade, studentGrade))
+                    .Where(c => StudentCourseVisibility.MatchesStudent(
+                        c.Course?.Grade,
+                        student?.Grade,
+                        c.Course?.SchoolType,
+                        student?.SchoolType))
                     .ToList();
             }
         }

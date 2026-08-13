@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Course, CourseTerm } from '../../models';
+import { Course, CourseSchoolType, CourseTerm } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import {
   MultiSelectOption,
@@ -60,6 +60,7 @@ export class AdminCoursesComponent {
   courseTerm: CourseTerm | '' = '';
   /** Empty = one course for all grades; otherwise one course per selected grade. */
   courseGrades: number[] = [];
+  courseSchoolType: CourseSchoolType = 'All';
   courseSort: number | null = 10;
 
   editTitle = '';
@@ -69,6 +70,7 @@ export class AdminCoursesComponent {
   editAgeMax: number | null = 12;
   editTerm: CourseTerm | string | '' = '';
   editGrade: number | null = null;
+  editSchoolType: CourseSchoolType = 'All';
   editSort: number | null = 0;
 
   readonly filteredCourses = computed(() => {
@@ -130,6 +132,22 @@ export class AdminCoursesComponent {
     return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
   }
 
+  schoolTypeOptions(): { value: CourseSchoolType; label: string }[] {
+    this.locale.lang();
+    return [
+      { value: 'All', label: this.locale.t('common.schoolTypeAll') },
+      { value: 'Arabic', label: this.locale.t('common.schoolTypeArabic') },
+      { value: 'Language', label: this.locale.t('common.schoolTypeLanguage') }
+    ];
+  }
+
+  schoolTypeLabel(value?: string | null): string {
+    if (!value || value === 'All') return this.locale.t('common.schoolTypeAll');
+    if (value === 'Arabic') return this.locale.t('common.schoolTypeArabic');
+    if (value === 'Language') return this.locale.t('common.schoolTypeLanguage');
+    return value;
+  }
+
   createCourse(): void {
     this.clearStatus();
     this.api
@@ -141,6 +159,7 @@ export class AdminCoursesComponent {
         ageMax: this.courseAgeMax ?? 12,
         term: this.courseTerm || null,
         grades: this.courseGrades,
+        schoolType: this.courseSchoolType,
         sortOrder: this.courseSort ?? 0
       })
       .subscribe({
@@ -154,6 +173,7 @@ export class AdminCoursesComponent {
           this.courseDescription = '';
           this.courseTerm = '';
           this.courseGrades = [];
+          this.courseSchoolType = 'All';
           this.courseAgeMin = 8;
           this.courseAgeMax = 12;
           this.courseSort = 10;
@@ -172,6 +192,8 @@ export class AdminCoursesComponent {
     this.editAgeMax = course.ageMax;
     this.editTerm = course.term || '';
     this.editGrade = course.grade ?? null;
+    this.editSchoolType =
+      course.schoolType === 'Arabic' || course.schoolType === 'Language' ? course.schoolType : 'All';
     this.editSort = course.sortOrder;
   }
 
@@ -190,6 +212,7 @@ export class AdminCoursesComponent {
         ageMax: this.editAgeMax ?? 12,
         term: this.editTerm || null,
         grade: this.editGrade,
+        schoolType: this.editSchoolType,
         sortOrder: this.editSort ?? 0
       })
       .subscribe({

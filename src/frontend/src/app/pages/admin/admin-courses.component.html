@@ -34,6 +34,14 @@
         />
         <span class="meta">{{ 'admin.courses.allHint' | t }}</span>
       </label>
+      <label>
+        {{ 'common.schoolType' | t }}
+        <app-searchable-select
+          [(ngModel)]="courseSchoolType"
+          name="courseSchoolType"
+          [options]="schoolTypeOptions()"
+        />
+      </label>
       <label>{{ 'common.ageMin' | t }} <input type="number" [(ngModel)]="courseAgeMin" name="courseAgeMin" /></label>
       <label>{{ 'common.ageMax' | t }} <input type="number" [(ngModel)]="courseAgeMax" name="courseAgeMax" /></label>
       <label>{{ 'common.sort' | t }} <input type="number" [(ngModel)]="courseSort" name="courseSort" /></label>
@@ -67,6 +75,7 @@
             <th class="sortable" (click)="setSort('theme')">{{ 'common.theme' | t }} <span class="sort-mark">{{ sortMark('theme') }}</span></th>
             <th class="sortable" (click)="setSort('term')">{{ 'common.term' | t }} <span class="sort-mark">{{ sortMark('term') }}</span></th>
             <th class="sortable" (click)="setSort('grade')">{{ 'common.grade' | t }} <span class="sort-mark">{{ sortMark('grade') }}</span></th>
+            <th class="sortable" (click)="setSort('schoolType')">{{ 'common.schoolType' | t }} <span class="sort-mark">{{ sortMark('schoolType') }}</span></th>
             <th class="sortable" (click)="setSort('ageMin')">{{ 'common.ages' | t }} <span class="sort-mark">{{ sortMark('ageMin') }}</span></th>
             <th class="sortable" (click)="setSort('sortOrder')">{{ 'common.sort' | t }} <span class="sort-mark">{{ sortMark('sortOrder') }}</span></th>
             <th>{{ 'common.actions' | t }}</th>
@@ -101,6 +110,14 @@
                   />
                 </td>
                 <td>
+                  <app-searchable-select
+                    [(ngModel)]="editSchoolType"
+                    [name]="'cSchool-' + course.id"
+                    [options]="schoolTypeOptions()"
+                    [compact]="true"
+                  />
+                </td>
+                <td>
                   <input type="number" [(ngModel)]="editAgeMin" [name]="'cMin-' + course.id" />
                   –
                   <input type="number" [(ngModel)]="editAgeMax" [name]="'cMax-' + course.id" />
@@ -120,6 +137,7 @@
                 <td>{{ course.theme }}</td>
                 <td>{{ termLabel(course.term) }}</td>
                 <td>{{ gradeLabel(course.grade) }}</td>
+                <td>{{ schoolTypeLabel(course.schoolType) }}</td>
                 <td>{{ course.ageMin }}–{{ course.ageMax }}</td>
                 <td>{{ course.sortOrder }}</td>
                 <td>

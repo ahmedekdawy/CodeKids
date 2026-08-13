@@ -20,6 +20,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         }
 
         var term = ParseTerm(command.Term);
+        var schoolType = ParseSchoolType(command.SchoolType);
         var grades = NormalizeGrades(command.Grades);
         var theme = string.IsNullOrWhiteSpace(command.Theme) ? "General" : command.Theme.Trim();
         var description = (command.Description ?? string.Empty).Trim();
@@ -37,6 +38,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             AgeMax = ageMax,
             Term = term,
             Grade = grade,
+            SchoolType = schoolType,
             SortOrder = sortOrder
         }).ToList();
 
@@ -59,6 +61,22 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         }
 
         return term;
+    }
+
+    internal static SchoolType ParseSchoolType(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return SchoolType.All;
+        }
+
+        if (!Enum.TryParse<SchoolType>(value.Trim(), true, out var parsed)
+            || parsed is not (SchoolType.Arabic or SchoolType.Language or SchoolType.All))
+        {
+            throw new InvalidOperationException("Course school type must be Arabic, Language, or All.");
+        }
+
+        return parsed;
     }
 
     /// <summary>
@@ -105,5 +123,6 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             course.AgeMax,
             course.Term?.ToString(),
             course.Grade,
-            course.SortOrder);
+            course.SortOrder,
+            course.SchoolType?.ToString() ?? nameof(SchoolType.All));
 }

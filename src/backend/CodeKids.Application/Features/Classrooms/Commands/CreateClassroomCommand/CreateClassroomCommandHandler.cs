@@ -153,6 +153,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
                 x.CourseId,
                 x.Course!.Title,
                 x.Course.Grade,
+                x.Course.SchoolType?.ToString() ?? nameof(SchoolType.All),
                 x.TeacherId,
                 x.Teacher!.DisplayName))
             .ToList();
@@ -174,6 +175,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             primary?.CourseId ?? classroom.CourseId,
             primary?.CourseTitle ?? classroom.Course?.Title,
             primary?.CourseGrade ?? classroom.Course?.Grade,
+            primary?.CourseSchoolType ?? classroom.Course?.SchoolType?.ToString() ?? nameof(SchoolType.All),
             classroom.WhatsAppGroupInviteUrl,
             classroom.WhatsAppNotifyPhones,
             classroom.DailyWhatsAppReportsEnabled,

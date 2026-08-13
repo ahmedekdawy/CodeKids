@@ -12,5 +12,6 @@ public sealed record ClassroomCourseDto(
     Guid CourseId,
     string CourseTitle,
     int? CourseGrade,
+    string? CourseSchoolType,
     Guid TeacherId,
     string TeacherName);

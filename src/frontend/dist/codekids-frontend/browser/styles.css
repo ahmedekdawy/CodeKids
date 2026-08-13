@@ -114,8 +114,7 @@ html[dir=rtl] .video-modal-head {
 html[dir=rtl] .row-actions,
 html[dir=rtl] .video-actions,
 html[dir=rtl] .topbar-actions,
-html[dir=rtl] .auth-panel-top,
-html[dir=rtl] .sidebar-tools {
+html[dir=rtl] .auth-panel-top {
   flex-direction: row-reverse;
 }
 .topbar-actions,

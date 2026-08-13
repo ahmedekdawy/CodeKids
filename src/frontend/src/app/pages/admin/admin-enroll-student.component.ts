@@ -6,7 +6,7 @@ import { Classroom, ManagedUser } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
-import { formatGradeLabel } from '../../grade.util';
+import { formatGradeLabel, matchesStudentSchoolType } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 
@@ -48,7 +48,8 @@ export class AdminEnrollStudentComponent {
     const rooms = this.classrooms();
     if (!student) return rooms;
     const grade = student.grade ?? null;
-    return rooms.filter((room) => this.classroomMatchesGrade(room, grade));
+    const schoolType = student.schoolType ?? null;
+    return rooms.filter((room) => this.classroomMatchesStudent(room, grade, schoolType));
   });
 
   readonly enrollableCourses = computed(() => {
@@ -57,19 +58,26 @@ export class AdminEnrollStudentComponent {
     const room = this.classrooms().find((c) => c.id === classroomId);
     if (!room) return [];
     const grade = student?.grade ?? null;
+    const schoolType = student?.schoolType ?? null;
     const assigned = room.courses ?? [];
     if (assigned.length) {
       return assigned.filter(
-        (c) => c.courseGrade == null || grade == null || c.courseGrade === grade
+        (c) =>
+          (c.courseGrade == null || grade == null || c.courseGrade === grade) &&
+          matchesStudentSchoolType(c.courseSchoolType, schoolType)
       );
     }
     if (room.courseId) {
-      if (room.courseGrade == null || grade == null || room.courseGrade === grade) {
+      if (
+        (room.courseGrade == null || grade == null || room.courseGrade === grade) &&
+        matchesStudentSchoolType(room.courseSchoolType, schoolType)
+      ) {
         return [
           {
             courseId: room.courseId,
             courseTitle: room.courseTitle ?? room.courseId,
             courseGrade: room.courseGrade ?? null,
+            courseSchoolType: room.courseSchoolType ?? 'All',
             teacherId: '',
             teacherName: ''
           }
@@ -121,20 +129,35 @@ export class AdminEnrollStudentComponent {
   }
 
   studentLabel(student: ManagedUser): string {
-    if (student.grade == null) return student.displayName;
-    return `${student.displayName} (${formatGradeLabel((k, p) => this.locale.t(k, p), student.grade)})`;
+    const extras: string[] = [];
+    if (student.grade != null) {
+      extras.push(formatGradeLabel((k, p) => this.locale.t(k, p), student.grade));
+    }
+    if (student.schoolType === 'Arabic') extras.push(this.locale.t('common.schoolTypeArabic'));
+    if (student.schoolType === 'Language') extras.push(this.locale.t('common.schoolTypeLanguage'));
+    if (!extras.length) return student.displayName;
+    return `${student.displayName} (${extras.join(' · ')})`;
   }
 
-  classroomMatchesGrade(room: Classroom, studentGrade: number | null): boolean {
+  classroomMatchesStudent(
+    room: Classroom,
+    studentGrade: number | null,
+    studentSchoolType: string | null
+  ): boolean {
     const courses = room.courses ?? [];
     if (!courses.length) {
       if (room.courseId) {
-        return room.courseGrade == null || studentGrade == null || room.courseGrade === studentGrade;
+        return (
+          (room.courseGrade == null || studentGrade == null || room.courseGrade === studentGrade) &&
+          matchesStudentSchoolType(room.courseSchoolType, studentSchoolType)
+        );
       }
       return true;
     }
     return courses.some(
-      (c) => c.courseGrade == null || studentGrade == null || c.courseGrade === studentGrade
+      (c) =>
+        (c.courseGrade == null || studentGrade == null || c.courseGrade === studentGrade) &&
+        matchesStudentSchoolType(c.courseSchoolType, studentSchoolType)
     );
   }
 
@@ -166,7 +189,7 @@ export class AdminEnrollStudentComponent {
     }
     const student = this.selectedStudent();
     const room = this.classrooms().find((c) => c.id === classroomId);
-    if (student && room && !this.classroomMatchesGrade(room, student.grade ?? null)) {
+    if (student && room && !this.classroomMatchesStudent(room, student.grade ?? null, student.schoolType ?? null)) {
       this.error.set(this.locale.t('admin.enroll.gradeMismatch'));
       return;
     }

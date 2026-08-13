@@ -271,6 +271,7 @@ function normalizeClassroom(room: Classroom): Classroom {
         courseId: String(link.courseId ?? link['CourseId'] ?? ''),
         courseTitle: String(link.courseTitle ?? link['CourseTitle'] ?? ''),
         courseGrade: readOptionalGrade(link.courseGrade ?? link['CourseGrade']),
+        courseSchoolType: String(link.courseSchoolType ?? link['CourseSchoolType'] ?? 'All'),
         teacherId: String(link.teacherId ?? link['TeacherId'] ?? ''),
         teacherName: String(link.teacherName ?? link['TeacherName'] ?? '')
       };

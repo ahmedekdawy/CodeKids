@@ -31,6 +31,7 @@ export class AdminStudentsComponent {
   readonly filterEmail = signal('');
   readonly filterMobile = signal('');
   readonly filterParent = signal('');
+  readonly filterSchoolType = signal('');
   readonly pageSizeOptions = [10, 25, 50];
 
   studentEmail = '';
@@ -38,12 +39,14 @@ export class AdminStudentsComponent {
   studentPassword = '';
   studentParentId = '';
   studentMobile = '';
+  studentSchoolType = '';
 
   editEmail = '';
   editName = '';
   editParentId = '';
   editPassword = '';
   editMobile = '';
+  editSchoolType = '';
 
   readonly parentOptions = computed(() =>
     this.parents()
@@ -56,11 +59,13 @@ export class AdminStudentsComponent {
     const email = this.filterEmail();
     const mobile = this.filterMobile();
     const parentQ = this.filterParent().trim().toLowerCase();
+    const schoolType = this.filterSchoolType();
 
     return this.students().filter((student) => {
       if (!includesIgnoreCase(student.displayName, name)) return false;
       if (!includesIgnoreCase(student.email, email)) return false;
       if (!includesIgnoreCase(student.mobilePhone, mobile)) return false;
+      if (schoolType && (student.schoolType || '') !== schoolType) return false;
       if (parentQ) {
         const parentLabel = this.parentLabel(student.parentId).toLowerCase();
         const parentId = (student.parentId || '').toLowerCase();
@@ -98,6 +103,21 @@ export class AdminStudentsComponent {
     return parent?.displayName || parentId;
   }
 
+  schoolTypeOptions(): { value: string; label: string }[] {
+    this.locale.lang();
+    return [
+      { value: 'Arabic', label: this.locale.t('common.schoolTypeArabic') },
+      { value: 'Language', label: this.locale.t('common.schoolTypeLanguage') }
+    ];
+  }
+
+  schoolTypeLabel(value?: string | null): string {
+    if (!value) return this.locale.t('common.emDash');
+    if (value === 'Arabic') return this.locale.t('common.schoolTypeArabic');
+    if (value === 'Language') return this.locale.t('common.schoolTypeLanguage');
+    return value;
+  }
+
   setSort(key: string): void {
     this.sortDir.set(nextSort(this.sortKey(), key, this.sortDir()));
     this.sortKey.set(key);
@@ -133,6 +153,11 @@ export class AdminStudentsComponent {
     this.onFilterChange();
   }
 
+  setFilterSchoolType(value: string): void {
+    this.filterSchoolType.set(value);
+    this.onFilterChange();
+  }
+
   setPageSize(value: string | number): void {
     this.pageSize.set(Number(value) || 10);
     this.page.set(1);
@@ -147,6 +172,7 @@ export class AdminStudentsComponent {
     this.filterEmail.set('');
     this.filterMobile.set('');
     this.filterParent.set('');
+    this.filterSchoolType.set('');
     this.page.set(1);
   }
 
@@ -155,7 +181,8 @@ export class AdminStudentsComponent {
       this.filterName().trim() ||
       this.filterEmail().trim() ||
       this.filterMobile().trim() ||
-      this.filterParent().trim()
+      this.filterParent().trim() ||
+      this.filterSchoolType()
     );
   }
 
@@ -172,6 +199,7 @@ export class AdminStudentsComponent {
         password: this.studentPassword,
         role: 'Student',
         parentId: this.studentParentId || null,
+        schoolType: this.studentSchoolType || null,
         mobilePhone: this.studentMobile || null
       })
       .subscribe({
@@ -181,6 +209,7 @@ export class AdminStudentsComponent {
           this.studentName = '';
           this.studentPassword = '';
           this.studentMobile = '';
+          this.studentSchoolType = '';
           this.studentParentId = '';
           this.reload();
         },
@@ -194,6 +223,7 @@ export class AdminStudentsComponent {
     this.editName = student.displayName;
     this.editParentId = student.parentId || '';
     this.editMobile = student.mobilePhone || '';
+    this.editSchoolType = student.schoolType || '';
     this.editPassword = '';
   }
 
@@ -214,6 +244,7 @@ export class AdminStudentsComponent {
         role: 'Student',
         parentId: this.editParentId || null,
         password: this.editPassword || null,
+        schoolType: this.editSchoolType || null,
         mobilePhone: this.editMobile || null
       })
       .subscribe({
