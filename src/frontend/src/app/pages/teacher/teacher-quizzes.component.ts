@@ -6,6 +6,7 @@ import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { Classroom, Course } from '../../models';
 import { formatCourseLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 interface OptionDraft {
   text: string;
@@ -13,7 +14,7 @@ interface OptionDraft {
 
 @Component({
   selector: 'app-teacher-quizzes',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './teacher-quizzes.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-quizzes.component.css']
 })

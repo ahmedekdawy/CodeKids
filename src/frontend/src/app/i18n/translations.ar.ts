@@ -735,7 +735,7 @@ export const AR: Record<string, string> = {
   'admin.classrooms.deleteFailed': 'تعذّر حذف الفصل.',
 
   'admin.enroll.title': 'تسجيل طالب',
-  'admin.enroll.subtitle': 'إضافة أو إزالة الطلاب من قوائم الفصول. تُصفّى الفصول حسب صف الطالب.',
+  'admin.enroll.subtitle': 'أضف الطلاب إلى فصل. يمكنك اختيار مواد مطابقة لصفه اختيارياً؛ وإلا يرى كل مواد الفصل.',
   'admin.enroll.enroll': 'تسجيل',
   'admin.enroll.list': 'التسجيلات',
   'admin.enroll.removeLabel': 'إزالة التسجيل',
@@ -747,6 +747,10 @@ export const AR: Record<string, string> = {
   'admin.enroll.enrollFailed': 'تعذّر تسجيل الطالب.',
   'admin.enroll.removeFailed': 'تعذّر إزالة الطالب.',
   'admin.enroll.gradeFilterHint': 'تظهر فقط الفصول التي لها مواد مطابقة لصف الطالب أو لكل الصفوف.',
+  'admin.enroll.coursesOptional': 'المواد (اختياري)',
+  'admin.enroll.coursesHint': 'اتركها فارغة ليصل الطالب إلى كل مواد الفصل. اختيار مواد يقيّد العرض عليها فقط.',
+  'admin.enroll.allClassroomCourses': 'كل مواد الفصل',
+  'admin.enroll.noMatchingCourses': 'لا توجد مواد في هذا الفصل مطابقة لصف الطالب.',
   'admin.enroll.gradeMismatch': 'هذا الفصل لا يحتوي مواد مناسبة لصف الطالب.',
 
   'admin.assign.title': 'تعيين مواد / معلمين',

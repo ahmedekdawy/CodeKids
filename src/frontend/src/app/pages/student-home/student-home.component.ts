@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -8,10 +9,11 @@ import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-student-home',
-  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent],
+  imports: [SearchableSelectComponent, FormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent],
   templateUrl: './student-home.component.html',
   styleUrl: './student-home.component.css'
 })
@@ -49,10 +51,16 @@ export class StudentHomeComponent {
     });
   }
 
-  onAvatarPick(event: Event): void {
-    const id = (event.target as HTMLSelectElement).value;
-    const avatar = this.avatars().find((a) => a.id === id);
+  selectAvatarById(id: string | number | null): void {
+    const avatar = this.avatars().find((a) => a.id === String(id ?? ''));
     if (avatar) this.selectAvatar(avatar);
+  }
+
+  avatarOptionLabel(option: Avatar): string {
+    const base = `${option.emoji} ${option.name}`;
+    return option.isUnlocked
+      ? base
+      : `${base} (${this.locale.t('student.needsXp', { xp: option.unlockXp })})`;
   }
 
   formatWhen(iso: string): string {

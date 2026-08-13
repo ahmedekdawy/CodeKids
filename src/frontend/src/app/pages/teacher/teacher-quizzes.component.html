@@ -16,19 +16,19 @@
       <label>{{ 'common.description' | t }} <input [(ngModel)]="quizDescription" name="quizDescription" /></label>
       <label>
         {{ 'common.course' | t }}
-        <select [(ngModel)]="quizCourseId" name="quizCourseId">
-            @for (course of courses(); track course.id) {
-            <option [value]="course.id">{{ courseLabel(course) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="quizCourseId"
+          name="quizCourseId"
+          [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
       </label>
       <label>
         {{ 'common.classroom' | t }}
-        <select [(ngModel)]="quizClassroomId" name="quizClassroomId">
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="quizClassroomId"
+          name="quizClassroomId"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
       </label>
       <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
       <label>{{ 'teacher.quizzes.question' | t }} <input [(ngModel)]="quizPrompt" name="quizPrompt" required /></label>
@@ -54,12 +54,13 @@
 
         <label>
           {{ 'common.correctAnswer' | t }}
-          <select [(ngModel)]="quizCorrect" name="quizCorrect" required>
-            <option value="">{{ 'common.selectCorrect' | t }}</option>
-            @for (opt of filledOptions(); track opt.key) {
-              <option [value]="opt.key">{{ opt.key }} — {{ opt.text }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="quizCorrect"
+            name="quizCorrect"
+            required
+            [emptyLabel]="'common.selectCorrect' | t"
+            [options]="filledOptions().map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+          />
         </label>
       </div>
 

@@ -22,6 +22,8 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
             .Include(x => x.Course)
             .Include(x => x.Students)
                 .ThenInclude(x => x.Student)
+            .Include(x => x.CourseEnrollments)
+                .ThenInclude(x => x.Course)
             .OrderBy(x => x.Name)
             .ToListAsync(cancellationToken);
 
@@ -36,6 +38,18 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
             classrooms = classrooms
                 .Where(x => x.Students.Any(s => s.StudentId == query.ViewerUserId))
                 .ToList();
+
+            foreach (var classroom in classrooms)
+            {
+                var enrolled = StudentCourseVisibility.EnrolledCourseIdsForClassroom(
+                    classroom.CourseEnrollments, query.ViewerUserId, classroom.Id);
+                if (enrolled.Count == 0)
+                {
+                    continue;
+                }
+
+                classroom.Courses = classroom.Courses.Where(c => enrolled.Contains(c.CourseId)).ToList();
+            }
         }
         else if (string.Equals(query.ViewerRole, nameof(UserRole.Parent), StringComparison.OrdinalIgnoreCase))
         {

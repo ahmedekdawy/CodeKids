@@ -15,31 +15,34 @@
       <div class="qb-row two">
         <label class="qb-field">
           <span>{{ 'common.course' | t }}</span>
-          <select [(ngModel)]="courseId" name="courseId" (ngModelChange)="onCourseChange()" required>
-            <option value="">{{ 'common.selectCourse' | t }}</option>
-            @for (course of courses(); track course.id) {
-              <option [value]="course.id">{{ courseLabel(course) }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="courseId"
+            name="courseId"
+            (ngModelChange)="onCourseChange()"
+            required
+            [emptyLabel]="'common.selectCourse' | t"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
         </label>
         <label class="qb-field">
           <span>{{ 'teacher.qbank.lessonDiagnosis' | t }}</span>
-          <select [(ngModel)]="lessonId" name="lessonId">
-            <option value="">{{ 'teacher.qbank.optionalLesson' | t }}</option>
-            @for (lesson of lessonsForCourse(); track lesson.id) {
-              <option [value]="lesson.id">{{ lesson.title }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="lessonId"
+            name="lessonId"
+            [emptyLabel]="'teacher.qbank.optionalLesson' | t"
+            [options]="lessonsForCourse().map(l => ({ value: l.id, label: l.title }))"
+          />
         </label>
       </div>
       <div class="qb-row two">
         <label class="qb-field">
           <span>{{ 'teacher.qbank.questionType' | t }}</span>
-          <select [(ngModel)]="questionType" name="questionType" (ngModelChange)="onTypeChange()">
-            @for (type of types; track type) {
-              <option [value]="type">{{ typeLabel(type) }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="questionType"
+            name="questionType"
+            (ngModelChange)="onTypeChange()"
+            [options]="types.map(t => ({ value: t, label: typeLabel(t) }))"
+          />
         </label>
       </div>
 
@@ -68,22 +71,27 @@
                 </label>
                 <label class="qb-field">
                   <span>{{ 'common.type' | t }}</span>
-                  <select [(ngModel)]="child.questionType" [name]="'cType-' + i">
-                    <option value="Choose">{{ typeLabel('Choose') }}</option>
-                    <option value="TrueFalse">{{ typeLabel('TrueFalse') }}</option>
-                    <option value="SingleChoice">{{ typeLabel('SingleChoice') }}</option>
-                    <option value="MultiChoice">{{ typeLabel('MultiChoice') }}</option>
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="child.questionType"
+                    [name]="'cType-' + i"
+                    [options]="[
+                      { value: 'Choose', label: typeLabel('Choose') },
+                      { value: 'TrueFalse', label: typeLabel('TrueFalse') },
+                      { value: 'SingleChoice', label: typeLabel('SingleChoice') },
+                      { value: 'MultiChoice', label: typeLabel('MultiChoice') }
+                    ]"
+                  />
                 </label>
               </div>
 
               @if (child.questionType === 'TrueFalse') {
                 <label class="qb-field">
                   <span>{{ 'common.correctAnswer' | t }}</span>
-                  <select [(ngModel)]="child.correctAnswer" [name]="'cCorrect-' + i">
-                    <option value="True">{{ 'common.true' | t }}</option>
-                    <option value="False">{{ 'common.false' | t }}</option>
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="child.correctAnswer"
+                    [name]="'cCorrect-' + i"
+                    [options]="[{ value: 'True', label: ('common.true' | t) }, { value: 'False', label: ('common.false' | t) }]"
+                  />
                 </label>
               } @else {
                 <div class="options-editor">
@@ -119,12 +127,12 @@
                 } @else {
                   <label class="qb-field">
                     <span>{{ 'common.correctAnswer' | t }}</span>
-                    <select [(ngModel)]="child.correctAnswer" [name]="'cCorrect-' + i">
-                      <option value="">{{ 'common.selectCorrect' | t }}</option>
-                      @for (opt of filledOptions(child.options); track opt.key) {
-                        <option [value]="opt.key">{{ opt.key }} — {{ opt.text }}</option>
-                      }
-                    </select>
+                    <app-searchable-select
+                      [(ngModel)]="child.correctAnswer"
+                      [name]="'cCorrect-' + i"
+                      [emptyLabel]="'common.selectCorrect' | t"
+                      [options]="filledOptions(child.options).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+                    />
                   </label>
                 }
               }
@@ -156,10 +164,11 @@
         <div class="qb-row two">
           <label class="qb-field">
             <span>{{ 'common.correctAnswer' | t }}</span>
-            <select [(ngModel)]="correctAnswer" name="correctAnswer">
-              <option value="True">{{ 'common.true' | t }}</option>
-              <option value="False">{{ 'common.false' | t }}</option>
-            </select>
+            <app-searchable-select
+              [(ngModel)]="correctAnswer"
+              name="correctAnswer"
+              [options]="[{ value: 'True', label: ('common.true' | t) }, { value: 'False', label: ('common.false' | t) }]"
+            />
           </label>
           <label class="qb-field">
             <span>{{ 'common.points' | t }}</span>
@@ -206,12 +215,12 @@
           } @else {
             <label class="qb-field">
               <span>{{ 'common.correctAnswer' | t }}</span>
-              <select [(ngModel)]="correctAnswer" name="correctAnswer">
-                <option value="">{{ 'common.selectCorrect' | t }}</option>
-                @for (opt of filledOptions(options); track opt.key) {
-                  <option [value]="opt.key">{{ opt.key }} — {{ opt.text }}</option>
-                }
-              </select>
+              <app-searchable-select
+                [(ngModel)]="correctAnswer"
+                name="correctAnswer"
+                [emptyLabel]="'common.selectCorrect' | t"
+                [options]="filledOptions(options).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+              />
             </label>
           }
           <label class="qb-field">

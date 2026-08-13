@@ -6,10 +6,11 @@ import { Classroom, Course, ManagedUser, TeacherSessionAttendance } from '../../
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-admin-attendance',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-attendance.component.html',
   styleUrl: './admin-panel.css'
 })

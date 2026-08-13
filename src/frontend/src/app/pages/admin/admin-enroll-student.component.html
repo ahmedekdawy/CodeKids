@@ -13,33 +13,45 @@
     <form class="meeting-form" (ngSubmit)="enrollStudent()">
       <label>
         {{ 'common.student' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="enrollStudentId()"
           name="enrollStudentId"
           (ngModelChange)="onStudentChange($event)"
-        >
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (student of students(); track student.id) {
-            <option [value]="student.id">{{ studentLabel(student) }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.select' | t"
+          [options]="students().map(s => ({ value: s.id, label: studentLabel(s) }))"
+        />
       </label>
       <label>
         {{ 'common.classroom' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="enrollClassroomId()"
           name="enrollClassroomId"
-          (ngModelChange)="enrollClassroomId.set($event)"
-        >
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (room of enrollableClassrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+          (ngModelChange)="onClassroomChange($event)"
+          [emptyLabel]="'common.select' | t"
+          [options]="enrollableClassrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
         @if (enrollStudentId()) {
           <span class="meta">{{ 'admin.enroll.gradeFilterHint' | t }}</span>
         }
       </label>
+      @if (enrollClassroomId()) {
+        <fieldset class="block">
+          <legend>{{ 'admin.enroll.coursesOptional' | t }}</legend>
+          <p class="meta">{{ 'admin.enroll.coursesHint' | t }}</p>
+          @for (course of enrollableCourses(); track course.courseId) {
+            <label class="checkbox-row">
+              <input
+                type="checkbox"
+                [checked]="isCourseSelected(course.courseId)"
+                (change)="toggleCourse(course.courseId, $any($event.target).checked)"
+              />
+              {{ course.courseTitle }}
+            </label>
+          } @empty {
+            <p class="meta">{{ 'admin.enroll.noMatchingCourses' | t }}</p>
+          }
+        </fieldset>
+      }
       <button type="submit">{{ 'admin.enroll.enroll' | t }}</button>
     </form>
   </section>
@@ -53,6 +65,7 @@
             <th class="sortable" (click)="setSort('classroomName')">{{ 'common.classroom' | t }} <span class="sort-mark">{{ sortMark('classroomName') }}</span></th>
             <th class="sortable" (click)="setSort('studentName')">{{ 'common.student' | t }} <span class="sort-mark">{{ sortMark('studentName') }}</span></th>
             <th class="sortable" (click)="setSort('studentEmail')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('studentEmail') }}</span></th>
+            <th class="sortable" (click)="setSort('coursesLabel')">{{ 'admin.enroll.coursesOptional' | t }} <span class="sort-mark">{{ sortMark('coursesLabel') }}</span></th>
             <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
@@ -62,6 +75,7 @@
               <td>{{ row.classroomName }}</td>
               <td>{{ row.studentName }}</td>
               <td>{{ row.studentEmail }}</td>
+              <td>{{ row.coursesLabel }}</td>
               <td>
                 <div class="row-actions">
                   <app-icon-action-button kind="delete" variant="danger" [label]="'admin.enroll.removeLabel' | t" (action)="removeEnrollment(row)" />
@@ -70,7 +84,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="meta">{{ 'admin.enroll.empty' | t }}</td>
+              <td colspan="5" class="meta">{{ 'admin.enroll.empty' | t }}</td>
             </tr>
           }
         </tbody>

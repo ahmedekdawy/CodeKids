@@ -12,14 +12,12 @@
   <section class="block">
     <label>
       {{ 'admin.courseTree.selectCourse' | t }}
-      <select
+      <app-searchable-select
         [ngModel]="selectedCourseId()"
         (ngModelChange)="onCourseChange($event)"
-        name="courseId">
-        @for (course of courses(); track course.id) {
-          <option [value]="course.id">{{ courseLabel(course) }}</option>
-        }
-      </select>
+        name="courseId"
+        [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+      />
     </label>
   </section>
 
@@ -94,13 +92,12 @@
                         <input type="number" min="1" max="5" [(ngModel)]="editLessonDifficulty" name="editLessonDifficulty" />
                         <input type="number" min="0" [(ngModel)]="editLessonXp" name="editLessonXp" />
                         <input type="number" [(ngModel)]="editLessonSort" name="editLessonSort" />
-                        <select [(ngModel)]="editLessonUnitId" name="editLessonUnitId">
-                          @for (u of units(); track u.id) {
-                            @if (u.id) {
-                              <option [value]="u.id">{{ u.title }}</option>
-                            }
-                          }
-                        </select>
+                        <app-searchable-select
+                          [(ngModel)]="editLessonUnitId"
+                          name="editLessonUnitId"
+                          [options]="units().filter(u => !!u.id).map(u => ({ value: u.id || '', label: u.title }))"
+                          [compact]="true"
+                        />
                         <button type="submit">{{ 'common.save' | t }}</button>
                         <button type="button" class="ghost-btn" (click)="cancelLessonEdit()">{{ 'common.cancel' | t }}</button>
                       </form>

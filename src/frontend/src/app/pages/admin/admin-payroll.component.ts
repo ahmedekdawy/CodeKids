@@ -11,10 +11,11 @@ import {
   formatStageLabel
 } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-admin-payroll',
-  imports: [FormsModule, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-payroll.component.html',
   styleUrl: './admin-panel.css'
 })

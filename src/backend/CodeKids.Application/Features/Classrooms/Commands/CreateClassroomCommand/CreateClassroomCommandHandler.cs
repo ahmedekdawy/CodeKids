@@ -114,6 +114,12 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
                 AssignedAtUtc = now
             });
         }
+
+        var allowedCourseIds = assignments.Select(x => x.CourseId).ToHashSet();
+        var staleEnrollments = await dbContext.StudentCourseEnrollments
+            .Where(x => x.ClassroomId == classroomId && !allowedCourseIds.Contains(x.CourseId))
+            .ToListAsync(cancellationToken);
+        dbContext.StudentCourseEnrollments.RemoveRange(staleEnrollments);
     }
 
     internal static async Task<ClassroomDto?> LoadDto(IAppDbContext dbContext, Guid id, CancellationToken cancellationToken)
@@ -127,6 +133,8 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             .Include(x => x.Course)
             .Include(x => x.Students)
                 .ThenInclude(x => x.Student)
+            .Include(x => x.CourseEnrollments)
+                .ThenInclude(x => x.Course)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return classroom is null ? null : Map(classroom);
@@ -171,11 +179,24 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             classroom.DailyWhatsAppReportsEnabled,
             classroom.Students
                 .Where(x => x.Student is not null)
-                .Select(x => new ClassroomStudentDto(
-                    x.StudentId,
-                    x.Student!.DisplayName,
-                    x.Student.Email,
-                    x.Student.MobilePhone))
+                .Select(x =>
+                {
+                    var enrolled = (classroom.CourseEnrollments ?? [])
+                        .Where(e => e.StudentId == x.StudentId)
+                        .ToList();
+                    return new ClassroomStudentDto(
+                        x.StudentId,
+                        x.Student!.DisplayName,
+                        x.Student.Email,
+                        x.Student.MobilePhone,
+                        enrolled.Select(e => e.CourseId).ToList(),
+                        enrolled
+                            .Select(e => e.Course?.Title)
+                            .Where(t => !string.IsNullOrWhiteSpace(t))
+                            .Cast<string>()
+                            .OrderBy(t => t)
+                            .ToList());
+                })
                 .OrderBy(x => x.DisplayName)
                 .ToList());
     }

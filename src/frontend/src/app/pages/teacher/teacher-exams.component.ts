@@ -4,10 +4,11 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { BankQuestion, Classroom, Exam, ExamAttempt } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-teacher-exams',
-  imports: [FormsModule, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-exams.component.html',
   styleUrl: './teacher-panel.css'
 })

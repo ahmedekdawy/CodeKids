@@ -19,6 +19,12 @@ public sealed class RemoveStudentFromClassroomCommandHandler(IAppDbContext dbCon
             ?? throw new InvalidOperationException("Student is not enrolled in this classroom.");
 
         dbContext.ClassroomStudents.Remove(membership);
+
+        var courseEnrollments = await dbContext.StudentCourseEnrollments
+            .Where(x => x.ClassroomId == command.ClassroomId && x.StudentId == command.StudentId)
+            .ToListAsync(cancellationToken);
+        dbContext.StudentCourseEnrollments.RemoveRange(courseEnrollments);
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return (await CreateClassroomCommandHandler.LoadDto(dbContext, command.ClassroomId, cancellationToken))!;
     }

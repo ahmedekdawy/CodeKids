@@ -16,16 +16,13 @@
       <label>{{ 'common.description' | t }} <input [(ngModel)]="classroomDescription" name="classroomDescription" /></label>
       <label>
         {{ 'admin.classrooms.gradeOptional' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="classroomGrade()"
           name="classroomGrade"
           (ngModelChange)="classroomGrade.set($event)"
-        >
-          <option value="">{{ 'common.none' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.none' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <p class="meta">{{ 'admin.classrooms.gradeHint' | t }}</p>
       <label>{{ 'admin.classrooms.whatsAppInvite' | t }} <input [(ngModel)]="classroomWhatsAppInvite" name="classroomWhatsAppInvite" /></label>
@@ -53,16 +50,14 @@
                 <td>
                   <input [(ngModel)]="editName" [name]="'rName-' + room.id" />
                   <input [(ngModel)]="editDescription" [name]="'rDesc-' + room.id" [placeholder]="'common.descriptionPlaceholder' | t" />
-                  <select
+                  <app-searchable-select
                     [ngModel]="editGrade()"
                     [name]="'rGrade-' + room.id"
                     (ngModelChange)="editGrade.set($event)"
-                  >
-                    <option value="">{{ 'admin.classrooms.gradeOptional' | t }}</option>
-                    @for (g of grades; track g) {
-                      <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-                    }
-                  </select>
+                    [emptyLabel]="'admin.classrooms.gradeOptional' | t"
+                    [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+                    [compact]="true"
+                  />
                   <input [(ngModel)]="editWhatsAppInvite" [name]="'rInvite-' + room.id" [placeholder]="'admin.classrooms.whatsAppInvite' | t" />
                   <input [(ngModel)]="editWhatsAppPhones" [name]="'rPhones-' + room.id" [placeholder]="'admin.classrooms.whatsAppPhones' | t" />
                 </td>

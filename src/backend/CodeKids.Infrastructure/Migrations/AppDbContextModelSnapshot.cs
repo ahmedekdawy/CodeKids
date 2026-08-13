@@ -486,6 +486,36 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("ClassroomStudents");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("EnrolledAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId", "ClassroomId", "CourseId")
+                        .IsUnique();
+
+                    b.ToTable("StudentCourseEnrollments");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.Course", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1786,6 +1816,33 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Classroom", "Classroom")
+                        .WithMany("CourseEnrollments")
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Classroom");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.Course", "Course")
@@ -2209,6 +2266,8 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Classroom", b =>
                 {
+                    b.Navigation("CourseEnrollments");
+
                     b.Navigation("Courses");
 
                     b.Navigation("Students");

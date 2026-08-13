@@ -21,30 +21,33 @@
       </label>
       <label>
         {{ 'common.teacher' | t }}
-        <select [(ngModel)]="filterTeacherId" name="filterTeacher" (ngModelChange)="reload()">
-          <option value="">{{ 'common.all' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="filterTeacherId"
+          name="filterTeacher"
+          (ngModelChange)="reload()"
+          [emptyLabel]="'common.all' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
       </label>
       <label>
         {{ 'common.stage' | t }}
-        <select [(ngModel)]="filterStage" name="filterStage" (ngModelChange)="reload()">
-          <option [ngValue]="''">{{ 'common.all' | t }}</option>
-          @for (stage of stages; track stage) {
-            <option [ngValue]="stage">{{ stageLabel(stage) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="filterStage"
+          name="filterStage"
+          (ngModelChange)="reload()"
+          [emptyLabel]="'common.all' | t"
+          [options]="stages.map(s => ({ value: s, label: stageLabel(s) }))"
+        />
       </label>
       <label>
         {{ 'common.grade' | t }}
-        <select [(ngModel)]="filterGrade" name="filterGrade" (ngModelChange)="reload()">
-          <option [ngValue]="''">{{ 'common.all' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="filterGrade"
+          name="filterGrade"
+          (ngModelChange)="reload()"
+          [emptyLabel]="'common.all' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
       <button type="button" class="ghost-btn" [disabled]="exporting()" (click)="exportImage()">

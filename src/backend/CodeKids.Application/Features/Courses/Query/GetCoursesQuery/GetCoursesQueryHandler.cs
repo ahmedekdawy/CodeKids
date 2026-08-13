@@ -1,5 +1,6 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,35 +29,11 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
                 .Select(x => x.Grade)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            var classroomCourseIds = await dbContext.ClassroomStudents
-                .AsNoTracking()
-                .Where(x => x.StudentId == studentId)
-                .Join(
-                    dbContext.ClassroomCourses.AsNoTracking(),
-                    cs => cs.ClassroomId,
-                    cc => cc.ClassroomId,
-                    (_, cc) => cc.CourseId)
-                .Distinct()
-                .ToListAsync(cancellationToken);
-
-            // Also include legacy classroom.CourseId links until fully migrated.
-            var legacyCourseIds = await dbContext.ClassroomStudents
-                .AsNoTracking()
-                .Where(x => x.StudentId == studentId)
-                .Join(
-                    dbContext.Classrooms.AsNoTracking(),
-                    cs => cs.ClassroomId,
-                    c => c.Id,
-                    (_, c) => c.CourseId)
-                .Where(id => id != null)
-                .Select(id => id!.Value)
-                .Distinct()
-                .ToListAsync(cancellationToken);
-
-            classroomCourseIds = classroomCourseIds.Concat(legacyCourseIds).Distinct().ToList();
+            var visibleCourseIds = await StudentCourseVisibility.GetVisibleCourseIdsAsync(
+                dbContext, studentId, cancellationToken);
 
             coursesQuery = coursesQuery.Where(c =>
-                classroomCourseIds.Contains(c.Id)
+                visibleCourseIds.Contains(c.Id)
                 && (c.Grade == null || studentGrade == null || c.Grade == studentGrade));
         }
         // Teachers see only courses assigned to them on classrooms.

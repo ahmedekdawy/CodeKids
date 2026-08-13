@@ -13,41 +13,33 @@
     <div class="list-filters">
       <label>
         {{ 'common.grade' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterGrade()"
           name="timetableGrade"
           (ngModelChange)="onFilterGradeChange($event)"
-        >
-          <option value="">{{ 'common.allGrades' | t }}</option>
-          @for (g of grades; track g) {
-            <option [value]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.allGrades' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <label>
         {{ 'common.teacher' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterTeacherId()"
           name="timetableTeacher"
           (ngModelChange)="onFilterTeacherChange($event)"
-        >
-          <option value="">{{ 'common.allTeachers' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.allTeachers' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
       </label>
       <label>
         {{ 'admin.timetable.period' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterPeriod()"
           name="timetablePeriod"
           (ngModelChange)="onFilterPeriodChange($event)"
-        >
-          <option value="">{{ 'admin.timetable.allPeriods' | t }}</option>
-          <option value="am">{{ 'admin.timetable.am' | t }}</option>
-          <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
-        </select>
+          [emptyLabel]="'admin.timetable.allPeriods' | t"
+          [options]="[{ value: 'am', label: ('admin.timetable.am' | t) }, { value: 'pm', label: ('admin.timetable.pm' | t) }]"
+        />
       </label>
       <button type="button" class="ghost-btn" (click)="openCreateDialog()">
         {{ 'admin.timetable.create' | t }}
@@ -149,55 +141,58 @@
       <form class="meeting-form" (ngSubmit)="createOrSave()">
         <label>
           {{ 'common.teacher' | t }}
-          <select
+          <app-searchable-select
             [ngModel]="teacherId"
             name="teacherId"
             required
             (ngModelChange)="onTeacherChange($event)"
-          >
-            <option value="">{{ 'common.select' | t }}</option>
-            @for (teacher of teachers(); track teacher.id) {
-              <option [value]="teacher.id">{{ teacher.displayName }}</option>
-            }
-          </select>
+            [emptyLabel]="'common.select' | t"
+            [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+          />
         </label>
         <label>
           {{ 'common.course' | t }}
-          <select [(ngModel)]="courseId" name="courseId" required [disabled]="!selectedTeacherId()">
-            <option value="">{{ 'common.select' | t }}</option>
-            @for (course of availableCourses(); track course.id) {
-              <option [value]="course.id">{{ courseLabel(course) }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="courseId"
+            name="courseId"
+            required
+            [disabled]="!selectedTeacherId()"
+            [emptyLabel]="'common.select' | t"
+            [options]="availableCourses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
           @if (selectedTeacherId() && availableCourses().length === 0) {
             <span class="meta">{{ 'admin.appointments.noTeacherCourses' | t }}</span>
           }
         </label>
         <label>
           {{ 'admin.timetable.day' | t }}
-          <select [(ngModel)]="dayOfWeek" name="dayOfWeek" required>
-            <option value="">{{ 'common.select' | t }}</option>
-            @for (d of weekDays; track d) {
-              <option [ngValue]="d">{{ dayLabel(d) }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="dayOfWeek"
+            name="dayOfWeek"
+            required
+            [emptyLabel]="'common.select' | t"
+            [options]="weekDays.map(d => ({ value: d, label: dayLabel(d) }))"
+          />
         </label>
         <label>
           {{ 'admin.timetable.session' | t }}
-          <select [(ngModel)]="sessionNumber" name="sessionNumber" required>
-            <option value="">{{ 'common.select' | t }}</option>
-            @for (n of sessionNumbers; track n) {
-              <option [ngValue]="n">{{ n }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="sessionNumber"
+            name="sessionNumber"
+            required
+            [emptyLabel]="'common.select' | t"
+            [options]="sessionNumbers.map(n => ({ value: n, label: '' + n }))"
+          />
         </label>
         <label>
           {{ 'admin.timetable.period' | t }}
-          <select [(ngModel)]="period" name="period" required>
-            <option value="">{{ 'common.select' | t }}</option>
-            <option value="am">{{ 'admin.timetable.am' | t }}</option>
-            <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
-          </select>
+          <app-searchable-select
+            [(ngModel)]="period"
+            name="period"
+            required
+            [emptyLabel]="'common.select' | t"
+            [options]="[{ value: 'am', label: ('admin.timetable.am' | t) }, { value: 'pm', label: ('admin.timetable.pm' | t) }]"
+          />
         </label>
         <div class="form-actions">
           <button type="submit">{{ (editingId() ? 'common.save' : 'admin.timetable.create') | t }}</button>

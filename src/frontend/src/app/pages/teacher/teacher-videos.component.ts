@@ -14,6 +14,7 @@ import {
   WatchSession
 } from '../../models';
 import { formatCourseLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 type VideoTab = 'lesson' | 'solution' | 'analytics';
 
@@ -25,7 +26,7 @@ interface VideoPreview {
 
 @Component({
   selector: 'app-teacher-videos',
-  imports: [FormsModule, IconActionButtonComponent, ProtectedVideoPlayerComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, ProtectedVideoPlayerComponent, TranslatePipe],
   templateUrl: './teacher-videos.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-videos.component.css']
 })
@@ -144,6 +145,12 @@ export class TeacherVideosComponent {
 
   courseLabel(course: Course): string {
     return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
+  }
+
+  assignmentOptionLabel(assignment: Assignment): string {
+    return assignment.solutionVideoMediaAssetId
+      ? `${assignment.title} (${this.locale.t('videos.hasSolution')})`
+      : assignment.title;
   }
 
   courseLabelById(courseId: string, fallbackTitle?: string | null): string {

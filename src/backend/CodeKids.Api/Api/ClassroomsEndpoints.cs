@@ -212,7 +212,7 @@ public static class ClassroomsEndpoints
 
                 return Results.Ok(await handler.Handle(
 
-                    new AddStudentToClassroomCommand(classroomId, request.StudentId),
+                    new AddStudentToClassroomCommand(classroomId, request.StudentId, request.CourseIds),
 
                     cancellationToken));
 

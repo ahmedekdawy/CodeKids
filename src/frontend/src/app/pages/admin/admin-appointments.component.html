@@ -14,31 +14,25 @@
     <form class="meeting-form" (ngSubmit)="createOrSave()">
       <label>
         {{ 'common.teacher' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="teacherId"
           name="teacherId"
           required
           (ngModelChange)="onTeacherChange($event)"
-        >
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.select' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
       </label>
       <label>
         {{ 'common.course' | t }}
-        <select
+        <app-searchable-select
           [(ngModel)]="courseId"
           name="courseId"
           required
           [disabled]="!selectedTeacherId()"
-        >
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (course of availableCourses(); track course.id) {
-            <option [value]="course.id">{{ courseLabel(course) }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.select' | t"
+          [options]="availableCourses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
         @if (selectedTeacherId() && availableCourses().length === 0) {
           <span class="meta">{{ 'admin.appointments.noTeacherCourses' | t }}</span>
         }

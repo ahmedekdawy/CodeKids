@@ -4,10 +4,11 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, Classroom } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-teacher-assignments',
-  imports: [FormsModule, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-assignments.component.html',
   styleUrl: './teacher-panel.css'
 })

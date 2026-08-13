@@ -8,4 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Classrooms;
 
-public sealed record AddStudentToClassroomCommand(Guid ClassroomId, Guid StudentId) : ICommand<EnrollStudentResultDto>;
+public sealed record AddStudentToClassroomCommand(
+    Guid ClassroomId,
+    Guid StudentId,
+    IReadOnlyList<Guid>? CourseIds = null) : ICommand<EnrollStudentResultDto>;

@@ -13,12 +13,12 @@
     <form class="meeting-form" (ngSubmit)="loadSubmissions()">
       <label>
         {{ 'videos.assignment' | t }}
-        <select [(ngModel)]="reviewAssignmentId" name="reviewAssignmentId">
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (assignment of assignments(); track assignment.id) {
-            <option [value]="assignment.id">{{ assignment.title }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="reviewAssignmentId"
+          name="reviewAssignmentId"
+          [emptyLabel]="'common.select' | t"
+          [options]="assignments().map(a => ({ value: a.id, label: a.title }))"
+        />
       </label>
       <label>{{ 'common.feedback' | t }} <input [(ngModel)]="gradeFeedback" name="gradeFeedback" /></label>
       <button type="submit">{{ 'teacher.review.load' | t }}</button>

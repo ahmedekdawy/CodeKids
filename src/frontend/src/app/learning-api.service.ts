@@ -648,8 +648,15 @@ export class LearningApiService {
     return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/assignments`, payload);
   }
 
-  addStudentToClassroom(classroomId: string, studentId: string): Observable<EnrollStudentResult> {
-    return this.http.post<EnrollStudentResult>(`${this.baseUrl}/classrooms/${classroomId}/students`, { studentId });
+  addStudentToClassroom(
+    classroomId: string,
+    studentId: string,
+    courseIds?: string[]
+  ): Observable<EnrollStudentResult> {
+    return this.http.post<EnrollStudentResult>(`${this.baseUrl}/classrooms/${classroomId}/students`, {
+      studentId,
+      courseIds: courseIds?.length ? courseIds : null
+    });
   }
 
   removeStudentFromClassroom(classroomId: string, studentId: string): Observable<Classroom> {

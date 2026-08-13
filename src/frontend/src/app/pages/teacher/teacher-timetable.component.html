@@ -13,28 +13,23 @@
     <div class="list-filters">
       <label>
         {{ 'common.grade' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterGrade()"
           name="teacherTimetableGrade"
           (ngModelChange)="onFilterGradeChange($event)"
-        >
-          <option value="">{{ 'common.allGrades' | t }}</option>
-          @for (g of grades; track g) {
-            <option [value]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.allGrades' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <label>
         {{ 'admin.timetable.period' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterPeriod()"
           name="teacherTimetablePeriod"
           (ngModelChange)="onFilterPeriodChange($event)"
-        >
-          <option value="">{{ 'admin.timetable.allPeriods' | t }}</option>
-          <option value="am">{{ 'admin.timetable.am' | t }}</option>
-          <option value="pm">{{ 'admin.timetable.pm' | t }}</option>
-        </select>
+          [emptyLabel]="'admin.timetable.allPeriods' | t"
+          [options]="[{ value: 'am', label: ('admin.timetable.am' | t) }, { value: 'pm', label: ('admin.timetable.pm' | t) }]"
+        />
       </label>
     </div>
 

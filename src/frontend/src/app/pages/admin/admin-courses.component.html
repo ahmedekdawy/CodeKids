@@ -17,12 +17,12 @@
       <label>{{ 'common.description' | t }} <input [(ngModel)]="courseDescription" name="courseDescription" /></label>
       <label>
         {{ 'common.term' | t }}
-        <select [(ngModel)]="courseTerm" name="courseTerm">
-          <option value="">{{ 'common.allTerms' | t }}</option>
-          @for (term of terms; track term) {
-            <option [value]="term">{{ termLabel(term) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="courseTerm"
+          name="courseTerm"
+          [emptyLabel]="'common.allTerms' | t"
+          [options]="terms.map(term => ({ value: term, label: termLabel(term) }))"
+        />
       </label>
       <label class="grade-multi">
         {{ 'common.grade' | t }}
@@ -46,17 +46,13 @@
     <div class="list-filters">
       <label>
         {{ 'common.grade' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterGrade()"
           name="courseFilterGrade"
           (ngModelChange)="onFilterGradeChange($event)"
-        >
-          <option value="">{{ 'common.all' | t }}</option>
-          <option value="all">{{ 'common.allGrades' | t }}</option>
-          @for (g of grades; track g) {
-            <option [value]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.all' | t"
+          [options]="filterGradeOptions()"
+        />
       </label>
       @if (filterGrade() !== '') {
         <button type="button" class="ghost-btn" (click)="clearGradeFilter()">{{ 'common.clearFilters' | t }}</button>
@@ -86,20 +82,23 @@
                 </td>
                 <td><input [(ngModel)]="editTheme" [name]="'cTheme-' + course.id" /></td>
                 <td>
-                  <select [(ngModel)]="editTerm" [name]="'cTerm-' + course.id">
-                    <option value="">{{ 'common.allTerms' | t }}</option>
-                    @for (term of terms; track term) {
-                      <option [value]="term">{{ termLabel(term) }}</option>
-                    }
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="editTerm"
+                    [name]="'cTerm-' + course.id"
+                    [emptyLabel]="'common.allTerms' | t"
+                    [options]="terms.map(term => ({ value: term, label: termLabel(term) }))"
+                    [compact]="true"
+                  />
                 </td>
                 <td>
-                  <select [(ngModel)]="editGrade" [name]="'cGrade-' + course.id">
-                    <option [ngValue]="null">{{ 'common.allGrades' | t }}</option>
-                    @for (g of grades; track g) {
-                      <option [ngValue]="g">{{ g }}</option>
-                    }
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="editGrade"
+                    [name]="'cGrade-' + course.id"
+                    [emptyLabel]="'common.allGrades' | t"
+                    [emptyValue]="null"
+                    [options]="grades.map(g => ({ value: g, label: '' + g }))"
+                    [compact]="true"
+                  />
                 </td>
                 <td>
                   <input type="number" [(ngModel)]="editAgeMin" [name]="'cMin-' + course.id" />

@@ -6,10 +6,11 @@ import { Course, CourseLesson, CourseUnit } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatGradeLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-admin-course-tree',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-course-tree.component.html',
   styleUrl: './admin-panel.css'
 })

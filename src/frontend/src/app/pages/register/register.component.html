@@ -22,10 +22,10 @@
       </label>
       <label>
         <span>{{ 'auth.role' | t }}</span>
-        <select formControlName="role">
-          <option value="Student">{{ 'role.student' | t }}</option>
-          <option value="Parent">{{ 'role.parent' | t }}</option>
-        </select>
+        <app-searchable-select
+          formControlName="role"
+          [options]="[{ value: 'Student', label: ('role.student' | t) }, { value: 'Parent', label: ('role.parent' | t) }]"
+        />
       </label>
       @if (form.controls.role.value === 'Student') {
         <label>

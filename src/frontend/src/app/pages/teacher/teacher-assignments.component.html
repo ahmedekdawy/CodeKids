@@ -16,19 +16,20 @@
       <label>{{ 'common.description' | t }} <input [(ngModel)]="assignmentDescription" name="assignmentDescription" /></label>
       <label>
         {{ 'common.classroom' | t }}
-        <select [(ngModel)]="assignmentClassroomId" name="assignmentClassroomId">
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="assignmentClassroomId"
+          name="assignmentClassroomId"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
       </label>
       <label>XP <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" /></label>
       <label>
         {{ 'common.type' | t }}
-        <select [(ngModel)]="assignmentType" name="assignmentType">
-          <option value="ShortAnswer">{{ 'assignType.shortAnswer' | t }}</option>
-          <option value="MultipleChoice">{{ 'assignType.multipleChoice' | t }}</option>
-        </select>
+        <app-searchable-select
+          [(ngModel)]="assignmentType"
+          name="assignmentType"
+          [options]="[{ value: 'ShortAnswer', label: ('assignType.shortAnswer' | t) }, { value: 'MultipleChoice', label: ('assignType.multipleChoice' | t) }]"
+        />
       </label>
       <label>{{ 'teacher.assignments.question' | t }} <input [(ngModel)]="assignmentPrompt" name="assignmentPrompt" required /></label>
       @if (assignmentType === 'MultipleChoice') {

@@ -22,6 +22,7 @@ import {
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { STAGE_CODES, formatCourseLabel, formatStageLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 type ManagedRole = Extract<UserRole, 'SuperAdmin' | 'Teacher' | 'Parent'>;
 type CourseRateRow = { courseId: string; sessionAmount: number | null; monthlySalary: number | null };
@@ -55,7 +56,7 @@ const ROLE_META: Record<
 
 @Component({
   selector: 'app-admin-users',
-  imports: [FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-panel.css'
 })

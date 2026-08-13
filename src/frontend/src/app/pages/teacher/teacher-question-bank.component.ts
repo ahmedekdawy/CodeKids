@@ -8,6 +8,7 @@ import { MathPromptEditorComponent } from '../../shared/math-prompt-editor/math-
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatCourseLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 interface OptionDraft {
   text: string;
@@ -24,7 +25,7 @@ interface ChildDraft {
 
 @Component({
   selector: 'app-teacher-question-bank',
-  imports: [FormsModule, MathPromptEditorComponent, SafeHtmlPipe, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, MathPromptEditorComponent, SafeHtmlPipe, IconActionButtonComponent, TranslatePipe],
   templateUrl: './teacher-question-bank.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-question-bank.component.css']
 })

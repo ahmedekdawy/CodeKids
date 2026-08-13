@@ -55,15 +55,12 @@
       @if (managedRole() === 'Teacher') {
         <label>
           {{ 'admin.users.workShift' | t }}
-          <select
+          <app-searchable-select
             [ngModel]="editingId() ? editWorkShift : userWorkShift"
             (ngModelChange)="editingId() ? (editWorkShift = $event) : (userWorkShift = $event)"
             name="userWorkShift"
-          >
-            @for (shift of workShifts; track shift) {
-              <option [ngValue]="shift">{{ workShiftLabel(shift) }}</option>
-            }
-          </select>
+            [options]="workShifts.map(s => ({ value: s, label: workShiftLabel(s) }))"
+          />
         </label>
         <label class="stage-multi">
           {{ 'admin.users.stages' | t }}
@@ -79,15 +76,12 @@
 
         <label>
           {{ 'admin.users.contractType' | t }}
-          <select
+          <app-searchable-select
             [ngModel]="editingId() ? editContractType : userContractType"
             (ngModelChange)="editingId() ? (editContractType = $event) : (userContractType = $event)"
             name="userContractType"
-          >
-            @for (type of contractTypes; track type) {
-              <option [ngValue]="type">{{ contractTypeLabel(type) }}</option>
-            }
-          </select>
+            [options]="contractTypes.map(t => ({ value: t, label: contractTypeLabel(t) }))"
+          />
         </label>
         <label>
           {{ 'admin.users.primaryAmount' | t }}
@@ -143,18 +137,15 @@
             <div class="course-teacher-row">
               <label>
                 {{ 'common.course' | t }}
-                <select
+                <app-searchable-select
                   [ngModel]="row.courseId"
                   [name]="'rateCourse-' + i"
                   (ngModelChange)="
                     editingId() ? onEditRateCourseChange(i, $event) : onUserRateCourseChange(i, $event)
                   "
-                >
-                  <option value="">{{ 'common.select' | t }}</option>
-                  @for (course of courseOptions(); track course.id) {
-                    <option [value]="course.id">{{ courseOptionLabel(course) }}</option>
-                  }
-                </select>
+                  [emptyLabel]="'common.select' | t"
+                  [options]="courseOptions().map(c => ({ value: c.id, label: courseOptionLabel(c) }))"
+                />
               </label>
               <label>
                 {{ 'admin.users.sessionAmount' | t }}
@@ -252,11 +243,12 @@
       }
       <label>
         {{ 'common.rowsPerPage' | t }}
-        <select [ngModel]="pageSize()" name="pageSize" (ngModelChange)="setPageSize($event)">
-          @for (size of pageSizeOptions; track size) {
-            <option [ngValue]="size">{{ size }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="pageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
+        />
       </label>
       @if (hasActiveFilters()) {
         <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>

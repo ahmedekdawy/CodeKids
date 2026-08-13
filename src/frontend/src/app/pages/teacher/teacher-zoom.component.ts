@@ -6,10 +6,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { Classroom, LiveSession, ZoomConnectionStatus, ZoomOAuthSettings } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { environment } from '../../../environments/environment';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-teacher-zoom',
-  imports: [FormsModule, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-zoom.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-zoom.component.css']
 })

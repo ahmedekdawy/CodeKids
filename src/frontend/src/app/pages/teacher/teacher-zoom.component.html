@@ -132,12 +132,13 @@
       <label>{{ 'common.description' | t }} <input type="text" [(ngModel)]="description" name="description" /></label>
       <label>
         {{ 'common.classroom' | t }}
-        <select [(ngModel)]="classroomId" name="classroomId" required>
-          <option value="">{{ 'common.selectClassroom' | t }}</option>
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="classroomId"
+          name="classroomId"
+          required
+          [emptyLabel]="'common.selectClassroom' | t"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
       </label>
       <label>{{ 'teacher.zoom.startsAt' | t }} <input type="datetime-local" [(ngModel)]="startsAtLocal" name="startsAtLocal" required /></label>
       <label>{{ 'teacher.zoom.duration' | t }} <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="15" max="240" step="15" /></label>

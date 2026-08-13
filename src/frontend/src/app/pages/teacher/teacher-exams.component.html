@@ -16,12 +16,14 @@
       <label>{{ 'common.description' | t }} <input [(ngModel)]="description" name="description" /></label>
       <label>
         {{ 'common.classroom' | t }}
-        <select [(ngModel)]="classroomId" name="classroomId" (ngModelChange)="onClassroomChange()" required>
-          <option value="">{{ 'common.selectClassroom' | t }}</option>
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="classroomId"
+          name="classroomId"
+          (ngModelChange)="onClassroomChange()"
+          required
+          [emptyLabel]="'common.selectClassroom' | t"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
       </label>
       <label>{{ 'common.xpReward' | t }} <input type="number" [(ngModel)]="xpReward" name="xpReward" min="0" /></label>
 

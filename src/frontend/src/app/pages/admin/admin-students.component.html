@@ -18,12 +18,12 @@
       <label>{{ 'common.mobile' | t }} <input [(ngModel)]="studentMobile" name="studentMobile" [placeholder]="'admin.students.mobilePlaceholder' | t" /></label>
       <label>
         {{ 'admin.users.parentOptional' | t }}
-        <select [(ngModel)]="studentParentId" name="studentParentId">
-          <option value="">{{ 'common.none' | t }}</option>
-          @for (parent of parentOptions(); track parent.id) {
-            <option [value]="parent.id">{{ parent.displayName }} ({{ parent.email || parent.mobilePhone }})</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="studentParentId"
+          name="studentParentId"
+          [emptyLabel]="'common.none' | t"
+          [options]="parentOptions().map(p => ({ value: p.id, label: p.displayName + ' (' + (p.email || p.mobilePhone) + ')' }))"
+        />
       </label>
       <button type="submit">{{ 'admin.students.create' | t }}</button>
     </form>
@@ -70,11 +70,12 @@
       </label>
       <label>
         {{ 'common.rowsPerPage' | t }}
-        <select [ngModel]="pageSize()" name="pageSize" (ngModelChange)="setPageSize($event)">
-          @for (size of pageSizeOptions; track size) {
-            <option [ngValue]="size">{{ size }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="pageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
+        />
       </label>
       @if (hasActiveFilters()) {
         <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
@@ -103,12 +104,13 @@
                 <td><input [(ngModel)]="editMobile" [name]="'sMobile-' + student.id" [placeholder]="'admin.students.mobilePlaceholder' | t" /></td>
                 <td>{{ student.totalXp }}</td>
                 <td>
-                  <select [(ngModel)]="editParentId" [name]="'sParent-' + student.id">
-                    <option value="">{{ 'common.none' | t }}</option>
-                    @for (parent of parentOptions(); track parent.id) {
-                      <option [value]="parent.id">{{ parent.displayName }}</option>
-                    }
-                  </select>
+                  <app-searchable-select
+                    [(ngModel)]="editParentId"
+                    [name]="'sParent-' + student.id"
+                    [emptyLabel]="'common.none' | t"
+                    [options]="parentOptions().map(p => ({ value: p.id, label: p.displayName }))"
+                    [compact]="true"
+                  />
                   <input [(ngModel)]="editPassword" [name]="'sPass-' + student.id" type="password" [placeholder]="'common.newPassword' | t" />
                 </td>
                 <td>

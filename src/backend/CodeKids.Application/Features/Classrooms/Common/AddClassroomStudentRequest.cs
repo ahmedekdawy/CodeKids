@@ -8,4 +8,4 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Classrooms;
 
-public sealed record AddClassroomStudentRequest(Guid StudentId);
+public sealed record AddClassroomStudentRequest(Guid StudentId, IReadOnlyList<Guid>? CourseIds = null);

@@ -28,6 +28,7 @@ public interface IAppDbContext
     DbSet<Classroom> Classrooms { get; }
     DbSet<ClassroomCourse> ClassroomCourses { get; }
     DbSet<ClassroomStudent> ClassroomStudents { get; }
+    DbSet<StudentCourseEnrollment> StudentCourseEnrollments { get; }
     DbSet<Assignment> Assignments { get; }
     DbSet<AssignmentQuestion> AssignmentQuestions { get; }
     DbSet<AssignmentSubmission> AssignmentSubmissions { get; }

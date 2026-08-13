@@ -29,3 +29,14 @@
   background: rgba(255, 214, 10, 0.18);
   color: var(--accent, #ffd60a);
 }
+
+:host-context(.shell.collapsed) .lang-switch {
+  width: 100%;
+  justify-content: center;
+}
+
+:host-context(.shell.collapsed) .lang-btn {
+  min-width: 0;
+  flex: 1;
+  padding: 0.3rem 0.35rem;
+}

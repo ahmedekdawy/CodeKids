@@ -7,6 +7,7 @@ import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { formatGradeLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 interface EnrollmentRow {
   classroomId: string;
@@ -14,11 +15,12 @@ interface EnrollmentRow {
   studentId: string;
   studentName: string;
   studentEmail: string;
+  coursesLabel: string;
 }
 
 @Component({
   selector: 'app-admin-enroll-student',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-enroll-student.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -33,6 +35,7 @@ export class AdminEnrollStudentComponent {
   readonly sortDir = signal<SortDir>('asc');
   readonly enrollStudentId = signal('');
   readonly enrollClassroomId = signal('');
+  readonly enrollCourseIds = signal<string[]>([]);
 
   readonly selectedStudent = computed(() =>
     this.students().find((s) => s.id === this.enrollStudentId()) ?? null
@@ -47,6 +50,34 @@ export class AdminEnrollStudentComponent {
     return rooms.filter((room) => this.classroomMatchesGrade(room, grade));
   });
 
+  readonly enrollableCourses = computed(() => {
+    const student = this.selectedStudent();
+    const classroomId = this.enrollClassroomId();
+    const room = this.classrooms().find((c) => c.id === classroomId);
+    if (!room) return [];
+    const grade = student?.grade ?? null;
+    const assigned = room.courses ?? [];
+    if (assigned.length) {
+      return assigned.filter(
+        (c) => c.courseGrade == null || grade == null || c.courseGrade === grade
+      );
+    }
+    if (room.courseId) {
+      if (room.courseGrade == null || grade == null || room.courseGrade === grade) {
+        return [
+          {
+            courseId: room.courseId,
+            courseTitle: room.courseTitle ?? room.courseId,
+            courseGrade: room.courseGrade ?? null,
+            teacherId: '',
+            teacherName: ''
+          }
+        ];
+      }
+    }
+    return [];
+  });
+
   readonly enrollmentRows = computed(() => {
     const rows: EnrollmentRow[] = [];
     for (const room of this.classrooms()) {
@@ -56,7 +87,11 @@ export class AdminEnrollStudentComponent {
           classroomName: room.name,
           studentId: student.studentId,
           studentName: student.displayName,
-          studentEmail: student.email
+          studentEmail: student.email,
+          coursesLabel:
+            student.enrolledCourseTitles && student.enrolledCourseTitles.length
+              ? student.enrolledCourseTitles.join(', ')
+              : this.locale.t('admin.enroll.allClassroomCourses')
         });
       }
     }
@@ -104,10 +139,31 @@ export class AdminEnrollStudentComponent {
 
   onStudentChange(studentId: string): void {
     this.enrollStudentId.set(studentId);
+    this.enrollCourseIds.set([]);
     const allowed = this.enrollableClassrooms();
     if (this.enrollClassroomId() && !allowed.some((r) => r.id === this.enrollClassroomId())) {
       this.enrollClassroomId.set('');
     }
+  }
+
+  onClassroomChange(classroomId: string): void {
+    this.enrollClassroomId.set(classroomId);
+    this.enrollCourseIds.set([]);
+  }
+
+  toggleCourse(courseId: string, checked: boolean): void {
+    const current = this.enrollCourseIds();
+    if (checked) {
+      if (!current.includes(courseId)) {
+        this.enrollCourseIds.set([...current, courseId]);
+      }
+      return;
+    }
+    this.enrollCourseIds.set(current.filter((id) => id !== courseId));
+  }
+
+  isCourseSelected(courseId: string): boolean {
+    return this.enrollCourseIds().includes(courseId);
   }
 
   enrollStudent(): void {
@@ -124,9 +180,10 @@ export class AdminEnrollStudentComponent {
       this.error.set(this.locale.t('admin.enroll.gradeMismatch'));
       return;
     }
-    this.api.addStudentToClassroom(classroomId, studentId).subscribe({
+    this.api.addStudentToClassroom(classroomId, studentId, this.enrollCourseIds()).subscribe({
       next: (result) => {
         this.message.set(this.locale.t('admin.enroll.enrolled', { status: result.whatsAppStatus }));
+        this.enrollCourseIds.set([]);
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.enroll.enrollFailed'))

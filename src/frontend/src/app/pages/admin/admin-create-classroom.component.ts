@@ -7,12 +7,13 @@ import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 type ClassroomRow = Classroom & { gradeLabel: string };
 
 @Component({
   selector: 'app-admin-create-classroom',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-create-classroom.component.html',
   styleUrl: './admin-panel.css'
 })

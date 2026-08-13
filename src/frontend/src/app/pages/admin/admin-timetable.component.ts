@@ -7,6 +7,7 @@ import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import {
   SESSION_NUMBERS,
   TimetablePeriodFilter,
@@ -35,7 +36,7 @@ type SlotTarget = {
 
 @Component({
   selector: 'app-admin-timetable',
-  imports: [FormsModule, TranslatePipe, IconActionButtonComponent],
+  imports: [SearchableSelectComponent, FormsModule, TranslatePipe, IconActionButtonComponent],
   templateUrl: './admin-timetable.component.html',
   styleUrl: './admin-panel.css'
 })

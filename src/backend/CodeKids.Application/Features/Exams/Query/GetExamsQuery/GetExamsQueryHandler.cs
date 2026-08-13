@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -40,8 +41,22 @@ public sealed class GetExamsQueryHandler(IAppDbContext dbContext)
         }
         else if (isStudent)
         {
+            var visibleCourseIds = await StudentCourseVisibility.GetVisibleCourseIdsAsync(
+                dbContext, query.ViewerUserId, cancellationToken);
+            var specificClassroomIds = await dbContext.StudentCourseEnrollments
+                .AsNoTracking()
+                .Where(x => x.StudentId == query.ViewerUserId)
+                .Select(x => x.ClassroomId)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+            var specificSet = specificClassroomIds.ToHashSet();
+
             exams = exams
                 .Where(x => x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true)
+                .Where(x =>
+                    !specificSet.Contains(x.ClassroomId)
+                    || x.CourseId is null
+                    || visibleCourseIds.Contains(x.CourseId.Value))
                 .ToList();
         }
         else if (!isAdmin)

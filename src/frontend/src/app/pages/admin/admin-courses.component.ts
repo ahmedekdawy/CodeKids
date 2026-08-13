@@ -11,10 +11,11 @@ import {
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 
 @Component({
   selector: 'app-admin-courses',
-  imports: [FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
   templateUrl: './admin-courses.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -38,6 +39,17 @@ export class AdminCoursesComponent {
       value: g,
       label: formatGradeLabel((k, p) => this.locale.t(k, p), g)
     }));
+  });
+
+  readonly filterGradeOptions = computed(() => {
+    this.locale.lang();
+    return [
+      { value: 'all' as const, label: this.locale.t('common.allGrades') },
+      ...this.grades.map((g) => ({
+        value: g as string | number,
+        label: formatGradeLabel((k, p) => this.locale.t(k, p), g)
+      }))
+    ];
   });
 
   courseTitle = '';

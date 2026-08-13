@@ -14,21 +14,23 @@
     <form class="meeting-form" (ngSubmit)="create()">
       <label>
         {{ 'common.grade' | t }}
-        <select [ngModel]="formGrade()" name="grade" (ngModelChange)="onGradeChange($event)">
-          <option [ngValue]="''">{{ 'common.all' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="formGrade()"
+          name="grade"
+          (ngModelChange)="onGradeChange($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <label>
         {{ 'common.course' | t }}
-        <select [(ngModel)]="courseId" name="courseId" required>
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (course of availableCourses(); track course.id) {
-            <option [value]="course.id">{{ courseLabel(course) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="courseId"
+          name="courseId"
+          required
+          [emptyLabel]="'common.select' | t"
+          [options]="availableCourses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
       </label>
       <label>
         {{ 'common.date' | t }}
@@ -46,12 +48,13 @@
     <div class="list-filters">
       <label>
         {{ 'common.grade' | t }}
-        <select [ngModel]="filterGrade()" name="filterGrade" (ngModelChange)="filterGrade.set($event); reload()">
-          <option [ngValue]="''">{{ 'common.all' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="filterGrade()"
+          name="filterGrade"
+          (ngModelChange)="filterGrade.set($event); reload()"
+          [emptyLabel]="'common.all' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <label>
         {{ 'teacher.attendance.dateFrom' | t }}

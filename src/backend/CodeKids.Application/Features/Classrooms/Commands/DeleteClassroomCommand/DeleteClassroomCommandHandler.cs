@@ -26,6 +26,11 @@ public sealed class DeleteClassroomCommandHandler(IAppDbContext dbContext)
             .ToListAsync(cancellationToken);
         dbContext.ClassroomStudents.RemoveRange(memberships);
 
+        var courseEnrollments = await dbContext.StudentCourseEnrollments
+            .Where(x => x.ClassroomId == classroom.Id)
+            .ToListAsync(cancellationToken);
+        dbContext.StudentCourseEnrollments.RemoveRange(courseEnrollments);
+
         var sessions = await dbContext.LiveSessions
             .Where(x => x.ClassroomId == classroom.Id)
             .ToListAsync(cancellationToken);

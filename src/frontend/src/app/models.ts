@@ -520,6 +520,8 @@ export interface ClassroomStudent {
   displayName: string;
   email: string;
   mobilePhone?: string;
+  enrolledCourseIds?: string[];
+  enrolledCourseTitles?: string[];
 }
 
 export interface ClassroomTeacher {

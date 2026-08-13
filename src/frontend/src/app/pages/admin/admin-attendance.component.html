@@ -14,30 +14,36 @@
     <form class="meeting-form" (ngSubmit)="create()">
       <label>
         {{ 'common.teacher' | t }}
-        <select [ngModel]="teacherId" name="teacherId" (ngModelChange)="onTeacherChange($event)" required>
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="teacherId"
+          name="teacherId"
+          (ngModelChange)="onTeacherChange($event)"
+          required
+          [emptyLabel]="'common.select' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
       </label>
       <label>
         {{ 'common.grade' | t }}
-        <select [ngModel]="formGrade()" name="grade" (ngModelChange)="onGradeChange($event)" [disabled]="!selectedTeacherId()">
-          <option [ngValue]="''">{{ 'common.all' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="formGrade()"
+          name="grade"
+          (ngModelChange)="onGradeChange($event)"
+          [disabled]="!selectedTeacherId()"
+          [emptyLabel]="'common.all' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <label>
         {{ 'common.course' | t }}
-        <select [(ngModel)]="courseId" name="courseId" [disabled]="!selectedTeacherId()" required>
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (course of availableCourses(); track course.id) {
-            <option [value]="course.id">{{ courseLabel(course) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="courseId"
+          name="courseId"
+          [disabled]="!selectedTeacherId()"
+          required
+          [emptyLabel]="'common.select' | t"
+          [options]="availableCourses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
       </label>
       <label>
         {{ 'common.date' | t }}
@@ -55,21 +61,23 @@
     <div class="list-filters">
       <label>
         {{ 'common.teacher' | t }}
-        <select [ngModel]="filterTeacherId()" name="filterTeacher" (ngModelChange)="filterTeacherId.set($event); reload()">
-          <option value="">{{ 'common.all' | t }}</option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.displayName }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="filterTeacherId()"
+          name="filterTeacher"
+          (ngModelChange)="filterTeacherId.set($event); reload()"
+          [emptyLabel]="'common.all' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
       </label>
       <label>
         {{ 'common.grade' | t }}
-        <select [ngModel]="filterGrade()" name="filterGrade" (ngModelChange)="filterGrade.set($event); reload()">
-          <option [ngValue]="''">{{ 'common.all' | t }}</option>
-          @for (g of grades; track g) {
-            <option [ngValue]="g">{{ gradeLabel(g) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [ngModel]="filterGrade()"
+          name="filterGrade"
+          (ngModelChange)="filterGrade.set($event); reload()"
+          [emptyLabel]="'common.all' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
       </label>
       <label>
         {{ 'admin.attendance.dateFrom' | t }}

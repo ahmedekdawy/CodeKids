@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslatePipe } from '../translate.pipe';
+import { dropdownPanelStyle } from '../dropdown-panel.util';
 
 export interface MultiSelectOption {
   value: string | number;
@@ -164,43 +165,9 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  /** Escape overflow clipping (tables / panel scroll) by pinning the menu to the viewport. */
   private positionPanel(): void {
     const trigger = this.hostEl.nativeElement.querySelector('.ms-trigger') as HTMLElement | null;
     if (!trigger) return;
-
-    const rect = trigger.getBoundingClientRect();
-    const gap = 6;
-    const minWidth = this.compact() ? 14 * 16 : 16 * 16;
-    const width = Math.max(rect.width, minWidth);
-    const maxPanel = 22 * 16;
-    const spaceBelow = window.innerHeight - rect.bottom - gap;
-    const spaceAbove = rect.top - gap;
-    const openUp = spaceBelow < 10 * 16 && spaceAbove > spaceBelow;
-    const maxHeight = Math.max(8 * 16, Math.min(maxPanel, openUp ? spaceAbove : spaceBelow));
-
-    let left = rect.left;
-    if (left + width > window.innerWidth - 8) {
-      left = Math.max(8, window.innerWidth - width - 8);
-    }
-
-    const style: Record<string, string> = {
-      position: 'fixed',
-      left: `${left}px`,
-      right: 'auto',
-      width: `${width}px`,
-      zIndex: '1200',
-      maxHeight: `${maxHeight}px`
-    };
-
-    if (openUp) {
-      style['bottom'] = `${window.innerHeight - rect.top + gap}px`;
-      style['top'] = 'auto';
-    } else {
-      style['top'] = `${rect.bottom + gap}px`;
-      style['bottom'] = 'auto';
-    }
-
-    this.panelStyle.set(style);
+    this.panelStyle.set(dropdownPanelStyle(trigger, this.compact()));
   }
 }

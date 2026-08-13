@@ -71,19 +71,20 @@
       <form class="meeting-form" (ngSubmit)="attachLessonVideoLink()">
         <label>
           {{ 'common.course' | t }}
-          <select [(ngModel)]="selectedCourseId" name="courseId" (ngModelChange)="onCourseChange()">
-            @for (course of courses(); track course.id) {
-              <option [value]="course.id">{{ courseLabel(course) }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="selectedCourseId"
+            name="courseId"
+            (ngModelChange)="onCourseChange()"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
         </label>
         <label>
           {{ 'common.lesson' | t }}
-          <select [(ngModel)]="selectedLessonId" name="lessonId">
-            @for (lesson of lessonsForCourse(); track lesson.id) {
-              <option [value]="lesson.id">{{ lesson.title }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="selectedLessonId"
+            name="lessonId"
+            [options]="lessonsForCourse().map(l => ({ value: l.id, label: l.title }))"
+          />
         </label>
         <label>{{ 'common.title' | t }} <input [(ngModel)]="videoTitle" name="videoTitle" [placeholder]="'videos.optionalTitle' | t" /></label>
         <label>
@@ -111,21 +112,22 @@
       <div class="video-filters">
         <label>
           {{ 'common.course' | t }}
-          <select [(ngModel)]="lessonFilterCourseId" name="lessonFilterCourse" (ngModelChange)="onLessonFilterCourseChange()">
-            <option value="">{{ 'videos.allCourses' | t }}</option>
-            @for (course of courses(); track course.id) {
-              <option [value]="course.id">{{ courseLabel(course) }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="lessonFilterCourseId"
+            name="lessonFilterCourse"
+            (ngModelChange)="onLessonFilterCourseChange()"
+            [emptyLabel]="'videos.allCourses' | t"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
         </label>
         <label>
           {{ 'common.lesson' | t }}
-          <select [(ngModel)]="lessonFilterLessonId" name="lessonFilterLesson">
-            <option value="">{{ 'videos.allLessons' | t }}</option>
-            @for (lesson of lessonFilterOptions(); track lesson.id) {
-              <option [value]="lesson.id">{{ lesson.title }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="lessonFilterLessonId"
+            name="lessonFilterLesson"
+            [emptyLabel]="'videos.allLessons' | t"
+            [options]="lessonFilterOptions().map(l => ({ value: l.id, label: l.title }))"
+          />
         </label>
         <label>
           {{ 'common.search' | t }}
@@ -186,14 +188,11 @@
       <form class="meeting-form" (ngSubmit)="attachSolutionVideoLink()">
         <label>
           {{ 'videos.assignment' | t }}
-          <select [(ngModel)]="selectedAssignmentId" name="assignmentId">
-            @for (assignment of assignments(); track assignment.id) {
-              <option [value]="assignment.id">
-                {{ assignment.title }}
-                @if (assignment.solutionVideoMediaAssetId) { ({{ 'videos.hasSolution' | t }}) }
-              </option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="selectedAssignmentId"
+            name="assignmentId"
+            [options]="assignments().map(a => ({ value: a.id, label: assignmentOptionLabel(a) }))"
+          />
         </label>
         <label>
           {{ 'videos.solutionVideo' | t }}
@@ -220,12 +219,12 @@
       <div class="video-filters">
         <label>
           {{ 'common.classroom' | t }}
-          <select [(ngModel)]="solutionFilterClassroomId" name="solutionFilterClassroom">
-            <option value="">{{ 'videos.allClassrooms' | t }}</option>
-            @for (room of classroomFilterOptions(); track room.id) {
-              <option [value]="room.id">{{ room.name }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="solutionFilterClassroomId"
+            name="solutionFilterClassroom"
+            [emptyLabel]="'videos.allClassrooms' | t"
+            [options]="classroomFilterOptions().map(r => ({ value: r.id, label: r.name }))"
+          />
         </label>
         <label>
           {{ 'common.search' | t }}

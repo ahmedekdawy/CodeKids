@@ -1,5 +1,4 @@
 using CodeKids.Application.Abstractions;
-using CodeKids.Application.Features.Admin;
 using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -14,7 +13,10 @@ public sealed class AddStudentToClassroomCommandHandler(
 {
     public async Task<EnrollStudentResultDto> Handle(AddStudentToClassroomCommand command, CancellationToken cancellationToken)
     {
-        var classroom = await dbContext.Classrooms.FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
+        var classroom = await dbContext.Classrooms
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Course)
+            .FirstOrDefaultAsync(x => x.Id == command.ClassroomId, cancellationToken)
             ?? throw new InvalidOperationException("Classroom not found.");
 
         var student = await dbContext.Users.FirstOrDefaultAsync(
@@ -32,6 +34,67 @@ public sealed class AddStudentToClassroomCommandHandler(
                 StudentId = student.Id,
                 JoinedAtUtc = DateTimeOffset.UtcNow
             });
+        }
+
+        var requestedCourseIds = (command.CourseIds ?? [])
+            .Where(id => id != Guid.Empty)
+            .Distinct()
+            .ToList();
+
+        if (requestedCourseIds.Count > 0)
+        {
+            var classroomCourseIds = classroom.Courses.Select(x => x.CourseId).ToHashSet();
+            if (classroom.CourseId is Guid legacyCourseId)
+            {
+                classroomCourseIds.Add(legacyCourseId);
+            }
+
+            foreach (var courseId in requestedCourseIds)
+            {
+                if (!classroomCourseIds.Contains(courseId))
+                {
+                    throw new InvalidOperationException("One or more courses are not assigned to this classroom.");
+                }
+            }
+
+            var courses = await dbContext.Courses
+                .AsNoTracking()
+                .Where(x => requestedCourseIds.Contains(x.Id))
+                .Select(x => new { x.Id, x.Grade })
+                .ToListAsync(cancellationToken);
+
+            if (courses.Count != requestedCourseIds.Count)
+            {
+                throw new InvalidOperationException("One or more courses were not found.");
+            }
+
+            if (courses.Any(c => c.Grade is not null && student.Grade is not null && c.Grade != student.Grade))
+            {
+                throw new InvalidOperationException("One or more courses do not match the student grade.");
+            }
+
+            var existingCourseIds = await dbContext.StudentCourseEnrollments
+                .Where(x => x.ClassroomId == classroom.Id && x.StudentId == student.Id)
+                .Select(x => x.CourseId)
+                .ToListAsync(cancellationToken);
+            var existingSet = existingCourseIds.ToHashSet();
+
+            foreach (var courseId in requestedCourseIds)
+            {
+                if (existingSet.Contains(courseId))
+                {
+                    continue;
+                }
+
+                dbContext.StudentCourseEnrollments.Add(new StudentCourseEnrollment
+                {
+                    Id = Guid.NewGuid(),
+                    StudentId = student.Id,
+                    ClassroomId = classroom.Id,
+                    CourseId = courseId,
+                    EnrolledAtUtc = DateTimeOffset.UtcNow
+                });
+            }
         }
 
         var whatsAppStatus = "No student mobile on file.";

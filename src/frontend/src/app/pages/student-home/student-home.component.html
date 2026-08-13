@@ -19,16 +19,12 @@
             <strong class="avatar-name">{{ avatar.name }}</strong>
             <label class="avatar-select-label">
               <span class="sr-only">{{ 'student.selectAvatar' | t }}</span>
-              <select class="avatar-select" [value]="avatar.id" (change)="onAvatarPick($event)">
-                @for (option of avatars(); track option.id) {
-                  <option [value]="option.id" [disabled]="!option.isUnlocked">
-                    {{ option.emoji }} {{ option.name }}
-                    @if (!option.isUnlocked) {
-                      ({{ 'student.needsXp' | t: { xp: option.unlockXp } }})
-                    }
-                  </option>
-                }
-              </select>
+              <app-searchable-select
+                class="avatar-select"
+                [ngModel]="avatar.id"
+                (ngModelChange)="selectAvatarById($event)"
+                [options]="avatars().map(o => ({ value: o.id, label: avatarOptionLabel(o), disabled: !o.isUnlocked }))"
+              />
             </label>
           </div>
         } @else {

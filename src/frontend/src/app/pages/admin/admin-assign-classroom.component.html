@@ -13,16 +13,13 @@
     <form class="meeting-form" (ngSubmit)="assignClassroom()">
       <label>
         {{ 'common.classroom' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="assignClassroomId()"
           name="assignClassroomId"
           (ngModelChange)="onClassroomChange($event)"
-        >
-          <option value="">{{ 'common.select' | t }}</option>
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+          [emptyLabel]="'common.select' | t"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
       </label>
 
       @if (selectedClassroom(); as room) {
@@ -59,31 +56,25 @@
           <div class="course-teacher-row">
             <label>
               {{ 'common.course' | t }}
-              <select
+              <app-searchable-select
                 [ngModel]="row.courseId"
                 [name]="'aCourse-' + i"
                 [disabled]="!assignClassroomId() || !hasGradeFilter()"
                 (ngModelChange)="onRowCourseChange(i, $event)"
-              >
-                <option value="">{{ 'common.select' | t }}</option>
-                @for (course of courseOptions(); track course.id) {
-                  <option [value]="course.id">{{ courseOptionLabel(course) }}</option>
-                }
-              </select>
+                [emptyLabel]="'common.select' | t"
+                [options]="courseOptions().map(c => ({ value: c.id, label: courseOptionLabel(c) }))"
+              />
             </label>
             <label>
               {{ 'common.teacher' | t }}
-              <select
+              <app-searchable-select
                 [ngModel]="row.teacherId"
                 [name]="'aTeacher-' + i"
                 [disabled]="!assignClassroomId() || !hasGradeFilter()"
                 (ngModelChange)="onRowTeacherChange(i, $event)"
-              >
-                <option value="">{{ 'common.select' | t }}</option>
-                @for (teacher of teachers(); track teacher.id) {
-                  <option [value]="teacher.id">{{ teacher.displayName }}</option>
-                }
-              </select>
+                [emptyLabel]="'common.select' | t"
+                [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+              />
             </label>
             <button
               type="button"

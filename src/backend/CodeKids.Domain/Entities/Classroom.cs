@@ -17,4 +17,5 @@ public class Classroom
     public Course? Course { get; set; }
     public List<ClassroomCourse> Courses { get; set; } = [];
     public List<ClassroomStudent> Students { get; set; } = [];
+    public List<StudentCourseEnrollment> CourseEnrollments { get; set; } = [];
 }

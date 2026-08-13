@@ -1,0 +1,36 @@
+<div class="ss">
+  <button type="button" class="ss-trigger" (click)="toggleOpen()" [disabled]="isDisabled()" [attr.aria-expanded]="open()">
+    <span class="ss-summary" [class.ss-summary--placeholder]="isPlaceholder()">{{ selectedLabel() }}</span>
+    <span class="ss-caret" aria-hidden="true"></span>
+  </button>
+
+  @if (open()) {
+    <div class="ss-panel" role="listbox" [ngStyle]="panelStyle()">
+      <input
+        class="ss-search"
+        type="search"
+        [value]="query()"
+        (input)="onQueryInput($event)"
+        [placeholder]="searchPlaceholder() || ('common.search' | t)"
+        autocomplete="off"
+      />
+      <div class="ss-options">
+        @for (opt of filteredOptions(); track $index + ':' + opt.value) {
+          <button
+            type="button"
+            class="ss-option"
+            role="option"
+            [disabled]="!!opt.disabled"
+            [attr.aria-selected]="isSelected(opt.value)"
+            [class.ss-option--selected]="isSelected(opt.value)"
+            (click)="selectOption(opt)"
+          >
+            <span class="ss-label">{{ opt.label }}</span>
+          </button>
+        } @empty {
+          <p class="ss-empty">{{ 'common.none' | t }}</p>
+        }
+      </div>
+    </div>
+  }
+</div>

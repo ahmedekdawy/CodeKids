@@ -40,6 +40,11 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
             .ToListAsync(cancellationToken);
         dbContext.ClassroomStudents.RemoveRange(memberships);
 
+        var courseEnrollments = await dbContext.StudentCourseEnrollments
+            .Where(x => x.StudentId == user.Id)
+            .ToListAsync(cancellationToken);
+        dbContext.StudentCourseEnrollments.RemoveRange(courseEnrollments);
+
         var children = await dbContext.Users.Where(x => x.ParentId == user.Id).ToListAsync(cancellationToken);
         foreach (var child in children)
         {

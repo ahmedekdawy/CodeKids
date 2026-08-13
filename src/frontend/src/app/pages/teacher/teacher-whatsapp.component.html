@@ -13,12 +13,14 @@
     <form class="meeting-form" (ngSubmit)="send()">
       <label>
         {{ 'common.classroom' | t }}
-        <select [(ngModel)]="classroomId" name="classroomId" (ngModelChange)="onClassroomChange()" required>
-          <option value="">{{ 'common.selectClassroom' | t }}</option>
-          @for (room of classrooms(); track room.id) {
-            <option [value]="room.id">{{ room.name }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="classroomId"
+          name="classroomId"
+          (ngModelChange)="onClassroomChange()"
+          required
+          [emptyLabel]="'common.selectClassroom' | t"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
       </label>
 
       @if (selectedClassroom(); as room) {

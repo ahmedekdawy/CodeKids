@@ -14,31 +14,35 @@
     <form class="meeting-form" (ngSubmit)="create()">
       <label>
         {{ 'admin.payments.payerType' | t }}
-        <select [ngModel]="payerKind" name="payerKind" (ngModelChange)="onPayerKindChange($event)">
-          <option value="parent">{{ 'common.parent' | t }}</option>
-          <option value="student">{{ 'admin.payments.orphanStudent' | t }}</option>
-        </select>
+        <app-searchable-select
+          [ngModel]="payerKind"
+          name="payerKind"
+          (ngModelChange)="onPayerKindChange($event)"
+          [options]="[{ value: 'parent', label: ('common.parent' | t) }, { value: 'student', label: ('admin.payments.orphanStudent' | t) }]"
+        />
       </label>
 
       @if (payerKind === 'parent') {
         <label>
           {{ 'common.parent' | t }}
-          <select [(ngModel)]="parentId" name="parentId" required>
-            <option value="">{{ 'common.select' | t }}</option>
-            @for (parent of parents(); track parent.id) {
-              <option [value]="parent.id">{{ parent.displayName }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="parentId"
+            name="parentId"
+            required
+            [emptyLabel]="'common.select' | t"
+            [options]="parents().map(p => ({ value: p.id, label: p.displayName }))"
+          />
         </label>
       } @else {
         <label>
           {{ 'common.student' | t }}
-          <select [(ngModel)]="studentId" name="studentId" required>
-            <option value="">{{ 'common.select' | t }}</option>
-            @for (student of orphanStudents(); track student.id) {
-              <option [value]="student.id">{{ student.displayName }}</option>
-            }
-          </select>
+          <app-searchable-select
+            [(ngModel)]="studentId"
+            name="studentId"
+            required
+            [emptyLabel]="'common.select' | t"
+            [options]="orphanStudents().map(s => ({ value: s.id, label: s.displayName }))"
+          />
         </label>
         @if (orphanStudents().length === 0) {
           <p class="meta">{{ 'admin.payments.noOrphanStudents' | t }}</p>
@@ -47,19 +51,21 @@
 
       <label>
         {{ 'admin.payments.year' | t }}
-        <select [(ngModel)]="year" name="year" required>
-          @for (y of years; track y) {
-            <option [ngValue]="y">{{ y }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="year"
+          name="year"
+          required
+          [options]="years.map(y => ({ value: y, label: '' + y }))"
+        />
       </label>
       <label>
         {{ 'admin.payments.month' | t }}
-        <select [(ngModel)]="month" name="month" required>
-          @for (m of months; track m) {
-            <option [ngValue]="m">{{ monthLabel(m) }}</option>
-          }
-        </select>
+        <app-searchable-select
+          [(ngModel)]="month"
+          name="month"
+          required
+          [options]="months.map(m => ({ value: m, label: monthLabel(m) }))"
+        />
       </label>
       <label>
         {{ 'admin.payments.amount' | t }}
@@ -82,46 +88,38 @@
     <div class="list-filters">
       <label>
         {{ 'admin.payments.payerType' | t }}
-        <select
+        <app-searchable-select
           [ngModel]="filterPayerKind"
           name="filterPayerKind"
           (ngModelChange)="onFilterPayerKindChange($event)"
-        >
-          <option value="">{{ 'common.all' | t }}</option>
-          <option value="parent">{{ 'common.parent' | t }}</option>
-          <option value="student">{{ 'admin.payments.orphanStudent' | t }}</option>
-        </select>
+          [emptyLabel]="'common.all' | t"
+          [options]="[{ value: 'parent', label: ('common.parent' | t) }, { value: 'student', label: ('admin.payments.orphanStudent' | t) }]"
+        />
       </label>
 
       @if (filterPayerKind === 'parent') {
         <label>
           {{ 'common.parent' | t }}
-          <select
+          <app-searchable-select
             [(ngModel)]="filterParentId"
             name="filterParentId"
             (ngModelChange)="reload()"
-          >
-            <option value="">{{ 'common.all' | t }}</option>
-            @for (parent of parents(); track parent.id) {
-              <option [value]="parent.id">{{ parent.displayName }}</option>
-            }
-          </select>
+            [emptyLabel]="'common.all' | t"
+            [options]="parents().map(p => ({ value: p.id, label: p.displayName }))"
+          />
         </label>
       }
 
       @if (filterPayerKind === 'student') {
         <label>
           {{ 'common.student' | t }}
-          <select
+          <app-searchable-select
             [(ngModel)]="filterStudentId"
             name="filterStudentId"
             (ngModelChange)="reload()"
-          >
-            <option value="">{{ 'common.all' | t }}</option>
-            @for (student of orphanStudents(); track student.id) {
-              <option [value]="student.id">{{ student.displayName }}</option>
-            }
-          </select>
+            [emptyLabel]="'common.all' | t"
+            [options]="orphanStudents().map(s => ({ value: s.id, label: s.displayName }))"
+          />
         </label>
       }
 
