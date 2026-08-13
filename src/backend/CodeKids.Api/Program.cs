@@ -421,12 +421,6 @@ using (var scope = app.Services.CreateScope())
 
     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
-    // Legacy schema (EnsureCreated + additive SQL) for existing tables.
-
-    await SchemaBootstrap.EnsureAsync(dbContext);
-
-    // New schema changes ship as EF Core migrations (e.g. PasswordResetTokens).
-
     await dbContext.Database.MigrateAsync();
 
     await DataSeeder.SeedAsync(dbContext, passwordHasher);

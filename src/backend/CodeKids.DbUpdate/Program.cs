@@ -26,7 +26,6 @@ await using var scope = provider.CreateAsyncScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
-await SchemaBootstrap.EnsureAsync(db);
 await db.Database.MigrateAsync();
 await DataSeeder.SeedAsync(db, hasher);
 
