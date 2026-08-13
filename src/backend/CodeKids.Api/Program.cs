@@ -120,17 +120,17 @@ builder.Services.AddCors(options =>
 
 {
 
-    var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-
-        ?? ["http://localhost:4200"];
+    var allowed = CorsOrigins.Resolve(builder.Configuration);
 
     options.AddPolicy("frontend", policy =>
 
-        policy.WithOrigins(origins)
+        policy.SetIsOriginAllowed(origin => CorsOrigins.IsAllowed(allowed, origin))
 
             .AllowAnyHeader()
 
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+
+            .SetPreflightMaxAge(TimeSpan.FromHours(1)));
 
 });
 
@@ -403,11 +403,11 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
+app.UseCors("frontend");
+
 app.UseSwagger();
 
 app.UseSwaggerUI();
-
-app.UseCors("frontend");
 
 app.UseAuthentication();
 
