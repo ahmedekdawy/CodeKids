@@ -26,7 +26,11 @@ public sealed class ListFixedTimetableEntriesQueryHandler(IAppDbContext dbContex
 
         if (query.CourseGrade.HasValue)
         {
-            entries = entries.Where(x => x.Course != null && x.Course.Grade == query.CourseGrade.Value);
+            var grade = query.CourseGrade.Value;
+            entries = entries.Where(x =>
+                x.Course == null
+                || x.Course.Grade == null
+                || x.Course.Grade == grade);
         }
 
         if (query.Period.HasValue)
