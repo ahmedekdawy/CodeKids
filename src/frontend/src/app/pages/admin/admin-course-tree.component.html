@@ -11,9 +11,13 @@
         [ngModel]="selectedCourseId()"
         (ngModelChange)="onCourseChange($event)"
         name="courseId"
+        [emptyLabel]="'common.selectCourse' | t"
         [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
       />
     </label>
+    @if (!courses().length) {
+      <p class="meta">{{ 'admin.courseTree.noAssignedCourses' | t }}</p>
+    }
   </section>
 
   @if (selectedCourse(); as course) {

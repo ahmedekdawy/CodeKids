@@ -7,7 +7,7 @@
   <section class="block qb-form-card">
     <h3>{{ 'teacher.qbank.add' | t }}</h3>
     <form class="qb-form" (ngSubmit)="createQuestion()">
-      <div class="qb-row two">
+      <div class="qb-row three">
         <label class="qb-field">
           <span>{{ 'common.course' | t }}</span>
           <app-searchable-select
@@ -20,12 +20,22 @@
           />
         </label>
         <label class="qb-field">
+          <span>{{ 'common.unit' | t }}</span>
+          <app-searchable-select
+            [(ngModel)]="unitId"
+            name="unitId"
+            (ngModelChange)="onUnitChange()"
+            [emptyLabel]="'common.selectUnit' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label class="qb-field">
           <span>{{ 'teacher.qbank.lessonDiagnosis' | t }}</span>
           <app-searchable-select
             [(ngModel)]="lessonId"
             name="lessonId"
             [emptyLabel]="'teacher.qbank.optionalLesson' | t"
-            [options]="lessonsForCourse().map(l => ({ value: l.id, label: l.title }))"
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
           />
         </label>
       </div>

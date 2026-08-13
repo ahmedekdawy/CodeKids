@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { BankQuestion, BankQuestionType, Course } from '../../models';
+import { BankQuestion, BankQuestionType, Course, CourseLesson, CourseUnit } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { MathPromptEditorComponent } from '../../shared/math-prompt-editor/math-prompt-editor.component';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
@@ -39,6 +39,7 @@ export class TeacherQuestionBankComponent {
   readonly info = signal('');
 
   courseId = '';
+  unitId = '';
   lessonId = '';
   questionType: BankQuestionType = 'SingleChoice';
   prompt = '';
@@ -89,12 +90,33 @@ export class TeacherQuestionBankComponent {
   }
 
   onCourseChange(): void {
+    this.unitId = '';
     this.lessonId = '';
     this.reload();
   }
 
-  lessonsForCourse() {
-    return this.courses().find((c) => c.id === this.courseId)?.lessons || [];
+  onUnitChange(): void {
+    this.lessonId = '';
+  }
+
+  unitsForCourse(): CourseUnit[] {
+    const units = [...(this.courses().find((c) => c.id === this.courseId)?.units ?? [])];
+    return units.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+
+  lessonsForUnit(): CourseLesson[] {
+    const course = this.courses().find((c) => c.id === this.courseId);
+    if (!course) return [];
+    const units = this.unitsForCourse();
+    if (!units.length) {
+      return [...(course.lessons ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+    }
+    if (!this.unitId) return [];
+    const fromUnit = course.units?.find((u) => u.id === this.unitId)?.lessons;
+    const lessons = fromUnit?.length
+      ? fromUnit
+      : (course.lessons ?? []).filter((l) => l.unitId === this.unitId);
+    return [...lessons].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
   }
 
   isParagraph(type: BankQuestionType = this.questionType): boolean {

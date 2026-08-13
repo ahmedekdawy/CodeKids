@@ -18,11 +18,10 @@ export class TeacherShellComponent {
   readonly navItems: PanelNavItem[] = [
     { labelKey: 'nav.teacher.overview', path: '/teacher/overview', icon: 'O' },
     { labelKey: 'nav.teacher.videos', path: '/teacher/videos', icon: 'V' },
-    { labelKey: 'nav.teacher.zoom', path: '/teacher/zoom', icon: 'Z' },
+    { labelKey: 'nav.teacher.courseTree', path: '/teacher/course-tree', icon: 'U' },
     { labelKey: 'nav.teacher.appointments', path: '/teacher/appointments', icon: 'K' },
     { labelKey: 'nav.teacher.timetable', path: '/teacher/timetable', icon: 'H' },
     { labelKey: 'nav.teacher.attendance', path: '/teacher/attendance', icon: 'N' },
-    { labelKey: 'nav.teacher.whatsapp', path: '/teacher/whatsapp', icon: 'W' },
     { labelKey: 'nav.teacher.questionBank', path: '/teacher/question-bank', icon: 'B' },
     { labelKey: 'nav.teacher.exams', path: '/teacher/exams', icon: 'E' },
     { labelKey: 'nav.teacher.quizzes', path: '/teacher/quizzes', icon: 'Q' },

@@ -9,6 +9,7 @@ import {
   Assignment,
   Course,
   CourseLesson,
+  CourseUnit,
   TeacherLessonVideo,
   TeacherSolutionVideo,
   WatchSession
@@ -48,6 +49,7 @@ export class TeacherVideosComponent {
   readonly previewKey = signal(0);
 
   selectedCourseId = '';
+  selectedUnitId = '';
   selectedLessonId = '';
   videoTitle = '';
   lessonVideoUrl = '';
@@ -56,6 +58,7 @@ export class TeacherVideosComponent {
   selectedMediaAssetId = '';
 
   lessonFilterCourseId = '';
+  lessonFilterUnitId = '';
   lessonFilterLessonId = '';
   lessonSearch = '';
 
@@ -68,6 +71,10 @@ export class TeacherVideosComponent {
     let list = this.lessonVideos();
     if (this.lessonFilterCourseId) {
       list = list.filter((v) => v.courseId === this.lessonFilterCourseId);
+    }
+    if (this.lessonFilterUnitId) {
+      const lessonIds = new Set(this.lessonsForUnit(this.lessonFilterCourseId, this.lessonFilterUnitId).map((l) => l.id));
+      list = list.filter((v) => lessonIds.has(v.lessonId));
     }
     if (this.lessonFilterLessonId) {
       list = list.filter((v) => v.lessonId === this.lessonFilterLessonId);
@@ -124,7 +131,7 @@ export class TeacherVideosComponent {
       this.courses.set(courses);
       if (courses[0]) {
         this.selectedCourseId = courses[0].id;
-        this.selectedLessonId = courses[0].lessons[0]?.id || '';
+        this.selectFirstUnitAndLesson(courses[0].id);
       }
     });
     this.api.getAssignments().subscribe((assignments) => {
@@ -140,8 +147,30 @@ export class TeacherVideosComponent {
     this.info.set('');
   }
 
-  lessonsForCourse(courseId = this.selectedCourseId): CourseLesson[] {
-    return this.courses().find((c) => c.id === courseId)?.lessons || [];
+  unitsForCourse(courseId = this.selectedCourseId): CourseUnit[] {
+    const units = [...(this.courses().find((c) => c.id === courseId)?.units ?? [])];
+    return units.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+
+  lessonsForUnit(courseId = this.selectedCourseId, unitId = this.selectedUnitId): CourseLesson[] {
+    const course = this.courses().find((c) => c.id === courseId);
+    if (!course) return [];
+    const units = this.unitsForCourse(courseId);
+    if (!units.length) {
+      return [...(course.lessons ?? [])].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+    }
+    if (!unitId) return [];
+    const fromUnit = course.units?.find((u) => u.id === unitId)?.lessons;
+    const lessons = fromUnit?.length
+      ? fromUnit
+      : (course.lessons ?? []).filter((l) => l.unitId === unitId);
+    return [...lessons].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+
+  private selectFirstUnitAndLesson(courseId: string): void {
+    const units = this.unitsForCourse(courseId);
+    this.selectedUnitId = units[0]?.id || '';
+    this.selectedLessonId = this.lessonsForUnit(courseId, this.selectedUnitId)[0]?.id || '';
   }
 
   courseLabel(course: Course): string {
@@ -170,19 +199,35 @@ export class TeacherVideosComponent {
         .map(([id, title]) => ({ id, title }))
         .sort((a, b) => a.title.localeCompare(b.title));
     }
-    return this.lessonsForCourse(this.lessonFilterCourseId).map((l) => ({ id: l.id, title: l.title }));
+    if (this.lessonFilterUnitId) {
+      return this.lessonsForUnit(this.lessonFilterCourseId, this.lessonFilterUnitId).map((l) => ({
+        id: l.id,
+        title: l.title
+      }));
+    }
+    return [];
   }
 
   onCourseChange(): void {
-    this.selectedLessonId = this.lessonsForCourse()[0]?.id || '';
+    this.selectFirstUnitAndLesson(this.selectedCourseId);
+  }
+
+  onUnitChange(): void {
+    this.selectedLessonId = this.lessonsForUnit()[0]?.id || '';
   }
 
   onLessonFilterCourseChange(): void {
+    this.lessonFilterUnitId = '';
+    this.lessonFilterLessonId = '';
+  }
+
+  onLessonFilterUnitChange(): void {
     this.lessonFilterLessonId = '';
   }
 
   clearLessonFilters(): void {
     this.lessonFilterCourseId = '';
+    this.lessonFilterUnitId = '';
     this.lessonFilterLessonId = '';
     this.lessonSearch = '';
   }

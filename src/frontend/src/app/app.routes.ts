@@ -85,6 +85,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
+      { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'zoom', component: TeacherZoomComponent },
       { path: 'appointments', component: TeacherAppointmentsComponent },
       { path: 'timetable', component: TeacherTimetableComponent },

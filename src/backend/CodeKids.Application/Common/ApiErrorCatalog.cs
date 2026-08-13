@@ -112,6 +112,7 @@ public static class ApiErrorCatalog
         ["Start time must be in the future."] = "api.errors.meeting.startInFuture",
         ["Teacher account not found."] = "api.errors.teacher.accountNotFound",
         ["You can only schedule Zoom meetings for classrooms assigned to you."] = "api.errors.meeting.teacherOnlySchedule",
+        ["You can only edit the course tree for courses assigned to you."] = "api.errors.courseTree.teacherOnlyEdit",
         ["Zoom OAuth code and state are required."] = "api.errors.zoom.oauthRequired",
         ["Invalid or expired Zoom OAuth state."] = "api.errors.zoom.oauthStateInvalid",
         ["Zoom OAuth Client ID is required."] = "api.errors.zoom.clientIdRequired",

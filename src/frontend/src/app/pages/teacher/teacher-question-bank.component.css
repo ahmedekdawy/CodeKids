@@ -17,6 +17,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.qb-row.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .qb-row.four {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -153,6 +157,7 @@
 
 @media (max-width: 820px) {
   .qb-row.two,
+  .qb-row.three,
   .qb-row.four {
     grid-template-columns: 1fr;
   }

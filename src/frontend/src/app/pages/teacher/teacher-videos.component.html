@@ -74,11 +74,22 @@
           />
         </label>
         <label>
+          {{ 'common.unit' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedUnitId"
+            name="unitId"
+            (ngModelChange)="onUnitChange()"
+            [emptyLabel]="'common.selectUnit' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label>
           {{ 'common.lesson' | t }}
           <app-searchable-select
             [(ngModel)]="selectedLessonId"
             name="lessonId"
-            [options]="lessonsForCourse().map(l => ({ value: l.id, label: l.title }))"
+            [emptyLabel]="'common.lesson' | t"
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
           />
         </label>
         <label>{{ 'common.title' | t }} <input [(ngModel)]="videoTitle" name="videoTitle" [placeholder]="'videos.optionalTitle' | t" /></label>
@@ -113,6 +124,16 @@
             (ngModelChange)="onLessonFilterCourseChange()"
             [emptyLabel]="'videos.allCourses' | t"
             [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.unit' | t }}
+          <app-searchable-select
+            [(ngModel)]="lessonFilterUnitId"
+            name="lessonFilterUnit"
+            (ngModelChange)="onLessonFilterUnitChange()"
+            [emptyLabel]="'videos.allUnits' | t"
+            [options]="unitsForCourse(lessonFilterCourseId).map(u => ({ value: u.id, label: u.title }))"
           />
         </label>
         <label>
