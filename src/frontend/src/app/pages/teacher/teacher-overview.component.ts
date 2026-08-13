@@ -3,7 +3,7 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Classroom, ClassroomDiagnosis, TeacherDashboard } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
-import { formatCourseLabel, formatGradeLabel } from '../../grade.util';
+import { formatGradeLabel } from '../../grade.util';
 
 type GradeStudentGroup = {
   grade: number | null;
@@ -89,20 +89,6 @@ export class TeacherOverviewComponent {
       this.classrooms.set(classrooms);
       if (classrooms[0]) this.loadDiagnosis(classrooms[0].id);
     });
-  }
-
-  courseDisplay(room: Classroom): string {
-    const list = room.courses ?? [];
-    if (list.length) {
-      return list
-        .map((c) => {
-          const label = formatCourseLabel((k, p) => this.locale.t(k, p), c.courseTitle, c.courseGrade);
-          return `${label} (${c.teacherName})`;
-        })
-        .join(', ');
-    }
-    if (!room.courseTitle) return this.locale.t('common.noCourse');
-    return formatCourseLabel((k, p) => this.locale.t(k, p), room.courseTitle, room.courseGrade);
   }
 
   loadDiagnosis(classroomId: string): void {

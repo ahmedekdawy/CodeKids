@@ -67,20 +67,6 @@
     </section>
   }
 
-  <section class="block">
-    <h3>{{ 'teacher.overview.yourClassrooms' | t }}</h3>
-    @for (room of classrooms(); track room.id) {
-      <button type="button" class="meeting-row link-row" (click)="loadDiagnosis(room.id)">
-        <div>
-          <strong>{{ room.name }}</strong>
-          <p class="meta">{{ courseDisplay(room) }} · {{ 'teacher.overview.studentsCount' | t:{ count: room.students.length } }}</p>
-        </div>
-      </button>
-    } @empty {
-      <p class="meta">{{ 'teacher.overview.noClassrooms' | t }}</p>
-    }
-  </section>
-
   @if (diagnosis(); as d) {
     <section class="block">
       <h3>{{ 'teacher.overview.diagnosis' | t:{ name: d.classroomName } }}</h3>
