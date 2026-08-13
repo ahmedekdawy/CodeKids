@@ -735,7 +735,7 @@ export const EN: Record<string, string> = {
   'admin.classrooms.deleteFailed': 'Could not delete classroom.',
 
   'admin.enroll.title': 'Enroll student',
-  'admin.enroll.subtitle': 'Add students to a classroom. Optionally pick grade-matching courses; otherwise the student sees every course in that classroom.',
+  'admin.enroll.subtitle': 'Add students to a classroom. You can select one or more courses for the student grade. Leave courses empty to enroll them in all courses for that grade.',
   'admin.enroll.enroll': 'Enroll',
   'admin.enroll.list': 'Enrollments',
   'admin.enroll.removeLabel': 'Remove enrollment',
@@ -748,8 +748,9 @@ export const EN: Record<string, string> = {
   'admin.enroll.removeFailed': 'Could not remove student.',
   'admin.enroll.gradeFilterHint': 'Only classrooms with matching grade courses (or all-grades) are listed.',
   'admin.enroll.coursesOptional': 'Courses (optional)',
-  'admin.enroll.coursesHint': 'Leave empty to give access to all classroom courses. Selecting courses limits the student to those courses.',
-  'admin.enroll.allClassroomCourses': 'All classroom courses',
+  'admin.enroll.coursesHint': 'Leave empty to enroll in all courses for this grade. Selecting courses limits the student to those courses.',
+  'admin.enroll.allClassroomCourses': 'All grade courses',
+  'admin.enroll.allGradeCourses': 'All courses for this grade',
   'admin.enroll.noMatchingCourses': 'No courses in this classroom match the student grade.',
   'admin.enroll.gradeMismatch': 'This classroom has no courses for the student grade.',
 

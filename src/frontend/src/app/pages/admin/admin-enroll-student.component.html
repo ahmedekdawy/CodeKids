@@ -35,22 +35,21 @@
         }
       </label>
       @if (enrollClassroomId()) {
-        <fieldset class="block">
-          <legend>{{ 'admin.enroll.coursesOptional' | t }}</legend>
-          <p class="meta">{{ 'admin.enroll.coursesHint' | t }}</p>
-          @for (course of enrollableCourses(); track course.courseId) {
-            <label class="checkbox-row">
-              <input
-                type="checkbox"
-                [checked]="isCourseSelected(course.courseId)"
-                (change)="toggleCourse(course.courseId, $any($event.target).checked)"
-              />
-              {{ course.courseTitle }}
-            </label>
-          } @empty {
-            <p class="meta">{{ 'admin.enroll.noMatchingCourses' | t }}</p>
+        <label>
+          {{ 'admin.enroll.coursesOptional' | t }}
+          @if (enrollableCourses().length) {
+            <app-searchable-multi-select
+              [ngModel]="enrollCourseIds()"
+              name="enrollCourseIds"
+              (ngModelChange)="onCoursesChange($event)"
+              [placeholder]="'admin.enroll.allGradeCourses' | t"
+              [options]="enrollableCourses().map(c => ({ value: c.courseId, label: c.courseTitle }))"
+            />
+            <span class="meta">{{ 'admin.enroll.coursesHint' | t }}</span>
+          } @else {
+            <span class="meta">{{ 'admin.enroll.noMatchingCourses' | t }}</span>
           }
-        </fieldset>
+        </label>
       }
       <button type="submit">{{ 'admin.enroll.enroll' | t }}</button>
     </form>

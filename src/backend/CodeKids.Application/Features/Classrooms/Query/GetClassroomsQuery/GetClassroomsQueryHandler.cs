@@ -39,16 +39,25 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
                 .Where(x => x.Students.Any(s => s.StudentId == query.ViewerUserId))
                 .ToList();
 
+            var studentGrade = await dbContext.Users
+                .AsNoTracking()
+                .Where(x => x.Id == query.ViewerUserId)
+                .Select(x => x.Grade)
+                .FirstOrDefaultAsync(cancellationToken);
+
             foreach (var classroom in classrooms)
             {
                 var enrolled = StudentCourseVisibility.EnrolledCourseIdsForClassroom(
                     classroom.CourseEnrollments, query.ViewerUserId, classroom.Id);
-                if (enrolled.Count == 0)
+                if (enrolled.Count > 0)
                 {
+                    classroom.Courses = classroom.Courses.Where(c => enrolled.Contains(c.CourseId)).ToList();
                     continue;
                 }
 
-                classroom.Courses = classroom.Courses.Where(c => enrolled.Contains(c.CourseId)).ToList();
+                classroom.Courses = classroom.Courses
+                    .Where(c => StudentCourseVisibility.MatchesStudentGrade(c.Course?.Grade, studentGrade))
+                    .ToList();
             }
         }
         else if (string.Equals(query.ViewerRole, nameof(UserRole.Parent), StringComparison.OrdinalIgnoreCase))

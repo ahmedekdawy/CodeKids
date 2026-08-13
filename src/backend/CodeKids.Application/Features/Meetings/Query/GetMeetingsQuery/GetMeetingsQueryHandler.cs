@@ -38,19 +38,11 @@ public sealed class GetMeetingsQueryHandler(IAppDbContext dbContext)
         {
             var visibleCourseIds = await StudentCourseVisibility.GetVisibleCourseIdsAsync(
                 dbContext, query.ViewerUserId, cancellationToken);
-            var specificClassroomIds = await dbContext.StudentCourseEnrollments
-                .AsNoTracking()
-                .Where(x => x.StudentId == query.ViewerUserId)
-                .Select(x => x.ClassroomId)
-                .Distinct()
-                .ToListAsync(cancellationToken);
-            var specificSet = specificClassroomIds.ToHashSet();
 
             sessions = sessions
                 .Where(x => x.ClassroomId is null || x.Classroom!.Students.Any(s => s.StudentId == query.ViewerUserId))
                 .Where(x =>
                     x.ClassroomId is null
-                    || !specificSet.Contains(x.ClassroomId.Value)
                     || x.CourseId is null
                     || visibleCourseIds.Contains(x.CourseId.Value))
                 .ToList();

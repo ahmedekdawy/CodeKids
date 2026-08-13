@@ -8,6 +8,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 
 interface EnrollmentRow {
   classroomId: string;
@@ -20,7 +21,7 @@ interface EnrollmentRow {
 
 @Component({
   selector: 'app-admin-enroll-student',
-  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SearchableSelectComponent, SearchableMultiSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-enroll-student.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -91,7 +92,7 @@ export class AdminEnrollStudentComponent {
           coursesLabel:
             student.enrolledCourseTitles && student.enrolledCourseTitles.length
               ? student.enrolledCourseTitles.join(', ')
-              : this.locale.t('admin.enroll.allClassroomCourses')
+              : this.locale.t('admin.enroll.allGradeCourses')
         });
       }
     }
@@ -151,19 +152,8 @@ export class AdminEnrollStudentComponent {
     this.enrollCourseIds.set([]);
   }
 
-  toggleCourse(courseId: string, checked: boolean): void {
-    const current = this.enrollCourseIds();
-    if (checked) {
-      if (!current.includes(courseId)) {
-        this.enrollCourseIds.set([...current, courseId]);
-      }
-      return;
-    }
-    this.enrollCourseIds.set(current.filter((id) => id !== courseId));
-  }
-
-  isCourseSelected(courseId: string): boolean {
-    return this.enrollCourseIds().includes(courseId);
+  onCoursesChange(ids: (string | number)[] | null): void {
+    this.enrollCourseIds.set((ids ?? []).map(String));
   }
 
   enrollStudent(): void {
