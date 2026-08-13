@@ -308,17 +308,19 @@ import {
   ɵɵnamespaceSVG,
   ɵɵresetView,
   ɵɵrestoreView
-} from "./chunk-O7GWECDV.js";
+} from "./chunk-I4X55X3J.js";
 import {
   Subject,
   Subscription,
+  map
+} from "./chunk-RSS3ODKE.js";
+import {
   __async,
   __objRest,
   __spreadProps,
   __spreadValues,
-  __yieldStar,
-  map
-} from "./chunk-MTKG5SJP.js";
+  __yieldStar
+} from "./chunk-FMGVFGPW.js";
 
 // node_modules/@angular/core/fesm2022/_attribute-chunk.mjs
 var Attribute = {
@@ -23802,4 +23804,4 @@ export {
   declareExperimentalWebMcpTool,
   provideExperimentalWebMcpTools
 };
-//# sourceMappingURL=chunk-FXNMDNDQ.js.map
+//# sourceMappingURL=chunk-6KMMVRKF.js.map

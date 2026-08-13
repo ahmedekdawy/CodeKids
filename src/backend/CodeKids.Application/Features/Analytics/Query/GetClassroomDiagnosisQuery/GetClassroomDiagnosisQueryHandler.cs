@@ -41,7 +41,7 @@ public sealed class GetClassroomDiagnosisQueryHandler(IAppDbContext dbContext)
             .OrderByDescending(x => x.TotalXp)
             .Take(5)
             .Select(x => x.DisplayName)
-            .ToList();
+            .ToList(); 
 
         return new ClassroomDiagnosisDto(
             classroom.Id,
