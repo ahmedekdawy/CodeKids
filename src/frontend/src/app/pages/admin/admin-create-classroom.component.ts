@@ -8,12 +8,13 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 type ClassroomRow = Classroom & { gradeLabel: string };
 
 @Component({
   selector: 'app-admin-create-classroom',
-  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-create-classroom.component.html',
   styleUrl: './admin-panel.css'
 })

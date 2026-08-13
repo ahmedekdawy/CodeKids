@@ -7,6 +7,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import {
   TimetablePeriodFilter,
   WEEKDAY_INDEXES,
@@ -27,7 +28,7 @@ type TimetableDayRow = {
 
 @Component({
   selector: 'app-teacher-timetable',
-  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-timetable.component.html',
   styleUrl: '../admin/admin-panel.css'
 })

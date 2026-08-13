@@ -274,7 +274,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Period).HasConversion<string>().HasMaxLength(10);
-            entity.HasIndex(x => new { x.TeacherId, x.DayOfWeek, x.Period, x.SessionNumber, x.CourseId }).IsUnique();
+            entity.HasIndex(x => new { x.TeacherId, x.DayOfWeek, x.Period, x.SessionNumber }).IsUnique();
             entity.HasIndex(x => new { x.DayOfWeek, x.Period, x.SessionNumber });
             entity.HasOne(x => x.Teacher)
                 .WithMany()

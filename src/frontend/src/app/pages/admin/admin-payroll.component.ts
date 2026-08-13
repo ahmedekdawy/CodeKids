@@ -12,10 +12,11 @@ import {
 } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-admin-payroll',
-  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-payroll.component.html',
   styleUrl: './admin-panel.css'
 })

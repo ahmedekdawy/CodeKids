@@ -5,10 +5,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { OtherExpense } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-admin-other-expenses',
-  imports: [FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-other-expenses.component.html',
   styleUrl: './admin-panel.css'
 })

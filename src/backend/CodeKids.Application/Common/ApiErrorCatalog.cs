@@ -39,6 +39,7 @@ public static class ApiErrorCatalog
         ["Session number must be between 1 and 6."] = "api.errors.timetable.sessionInvalid",
         ["Period must be am or pm."] = "api.errors.timetable.periodInvalid",
         ["Teacher already has a timetable session in this slot."] = "api.errors.timetable.overlap",
+        ["A course with the same school type (or All) is already in this timetable slot."] = "api.errors.timetable.schoolTypeOverlap",
         ["Session attendance not found."] = "api.errors.attendance.notFound",
         ["Session date is required."] = "api.errors.attendance.dateRequired",
         ["Attendance for this teacher, course, and date already exists."] = "api.errors.attendance.duplicate",

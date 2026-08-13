@@ -4,6 +4,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { Appointment } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatGradeLabel } from '../../grade.util';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 const HOUR_START = 8;
 const HOUR_END = 22;
@@ -21,7 +22,7 @@ interface CalendarBlock {
 
 @Component({
   selector: 'app-teacher-appointments',
-  imports: [TranslatePipe],
+  imports: [PageFeedbackComponent, TranslatePipe],
   templateUrl: './teacher-appointments.component.html',
   styleUrl: '../admin/admin-panel.css'
 })

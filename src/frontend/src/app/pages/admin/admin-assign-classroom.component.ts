@@ -5,6 +5,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { Classroom, ClassroomCourseAssignment, Course, ManagedUser } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import {
   courseMatchesClassroomGrade,
   formatGradeLabel,
@@ -15,7 +16,7 @@ type CourseTeacherRow = { courseId: string; teacherId: string };
 
 @Component({
   selector: 'app-admin-assign-classroom',
-  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-assign-classroom.component.html',
   styleUrl: './admin-panel.css'
 })

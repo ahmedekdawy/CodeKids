@@ -2,12 +2,7 @@
   <h2>{{ 'admin.appointments.title' | t }}</h2>
   <p class="meta">{{ 'admin.appointments.subtitle' | t }}</p>
 
-  @if (message()) {
-    <p class="feedback ok">{{ message() }}</p>
-  }
-  @if (error()) {
-    <p class="feedback">{{ error() }}</p>
-  }
+  <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
     <h3>{{ (editingId() ? 'admin.appointments.edit' : 'admin.appointments.create') | t }}</h3>

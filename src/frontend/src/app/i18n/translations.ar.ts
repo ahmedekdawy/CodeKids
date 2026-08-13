@@ -1017,6 +1017,7 @@ export const AR: Record<string, string> = {
   'api.errors.timetable.sessionInvalid': 'رقم الحصة يجب أن يكون بين ١ و ٦.',
   'api.errors.timetable.periodInvalid': 'الفترة يجب أن تكون صباحًا أو مساءً.',
   'api.errors.timetable.overlap': 'المعلم لديه حصة بالفعل في هذا الوقت.',
+  'api.errors.timetable.schoolTypeOverlap': 'توجد مادة بنفس نوع المدرسة (أو الكل) في هذا الوقت.',
   'api.errors.attendance.notFound': 'لم يُعثر على سجل الحضور.',
   'api.errors.attendance.dateRequired': 'تاريخ الحصة مطلوب.',
   'api.errors.attendance.duplicate': 'الحضور لهذا المعلم والمادة والتاريخ موجود بالفعل.',

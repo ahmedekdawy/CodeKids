@@ -6,12 +6,13 @@ import { ManagedUser, TuitionPayment } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 type PayerKind = 'parent' | 'student';
 
 @Component({
   selector: 'app-admin-payments',
-  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-payments.component.html',
   styleUrl: './admin-panel.css'
 })

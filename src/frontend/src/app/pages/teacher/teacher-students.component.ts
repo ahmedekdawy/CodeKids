@@ -3,10 +3,11 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { TeacherDashboard, TeacherStudentDetail } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-teacher-students',
-  imports: [TranslatePipe],
+  imports: [PageFeedbackComponent, TranslatePipe],
   templateUrl: './teacher-students.component.html',
   styleUrl: './teacher-panel.css'
 })

@@ -15,6 +15,7 @@ import {
 } from '../../models';
 import { formatCourseLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 type VideoTab = 'lesson' | 'solution' | 'analytics';
 
@@ -26,7 +27,7 @@ interface VideoPreview {
 
 @Component({
   selector: 'app-teacher-videos',
-  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, ProtectedVideoPlayerComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, ProtectedVideoPlayerComponent, TranslatePipe],
   templateUrl: './teacher-videos.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-videos.component.css']
 })

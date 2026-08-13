@@ -7,6 +7,7 @@ import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 /** Working hours on the appointment calendar. */
 const HOUR_START = 8;
@@ -26,7 +27,7 @@ interface CalendarBlock {
 
 @Component({
   selector: 'app-admin-appointments',
-  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-appointments.component.html',
   styleUrl: './admin-panel.css'
 })

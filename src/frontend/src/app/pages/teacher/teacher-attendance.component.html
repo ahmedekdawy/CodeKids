@@ -2,12 +2,7 @@
   <h2>{{ 'teacher.attendance.title' | t }}</h2>
   <p class="meta">{{ 'teacher.attendance.subtitle' | t }}</p>
 
-  @if (message()) {
-    <p class="feedback ok">{{ message() }}</p>
-  }
-  @if (error()) {
-    <p class="feedback">{{ error() }}</p>
-  }
+  <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
     <h3>{{ 'teacher.attendance.create' | t }}</h3>

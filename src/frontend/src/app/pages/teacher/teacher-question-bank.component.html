@@ -2,12 +2,7 @@
   <h2>{{ 'teacher.qbank.title' | t }}</h2>
   <p class="meta">{{ 'teacher.qbank.subtitle' | t }}</p>
 
-  @if (info()) {
-    <p class="feedback ok">{{ info() }}</p>
-  }
-  @if (error()) {
-    <p class="feedback">{{ error() }}</p>
-  }
+  <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block qb-form-card">
     <h3>{{ 'teacher.qbank.add' | t }}</h3>

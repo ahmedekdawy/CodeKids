@@ -2,12 +2,7 @@
   <h2>{{ 'admin.assign.title' | t }}</h2>
   <p class="meta">{{ 'admin.assign.subtitle' | t }}</p>
 
-  @if (message()) {
-    <p class="feedback ok">{{ message() }}</p>
-  }
-  @if (error()) {
-    <p class="feedback">{{ error() }}</p>
-  }
+  <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
     <form class="meeting-form" (ngSubmit)="assignClassroom()">

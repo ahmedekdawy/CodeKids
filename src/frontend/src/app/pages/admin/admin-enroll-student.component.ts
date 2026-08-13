@@ -9,6 +9,7 @@ import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { formatGradeLabel, matchesStudentSchoolType } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 interface EnrollmentRow {
   classroomId: string;
@@ -21,7 +22,7 @@ interface EnrollmentRow {
 
 @Component({
   selector: 'app-admin-enroll-student',
-  imports: [SearchableSelectComponent, SearchableMultiSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, SearchableMultiSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-enroll-student.component.html',
   styleUrl: './admin-panel.css'
 })

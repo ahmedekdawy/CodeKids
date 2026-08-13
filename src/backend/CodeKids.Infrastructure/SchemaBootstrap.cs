@@ -527,8 +527,9 @@ public static class SchemaBootstrap
             CREATE INDEX IF NOT EXISTS "IX_Appointments_TeacherId_StartsAtUtc" ON "Appointments" ("TeacherId", "StartsAtUtc");
             DROP INDEX IF EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber";
             DROP INDEX IF EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNum~";
-            CREATE UNIQUE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber_CourseId"
-                ON "FixedTimetableEntries" ("TeacherId", "DayOfWeek", "Period", "SessionNumber", "CourseId");
+            DROP INDEX IF EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber_CourseId";
+            CREATE UNIQUE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_TeacherId_DayOfWeek_Period_SessionNumber"
+                ON "FixedTimetableEntries" ("TeacherId", "DayOfWeek", "Period", "SessionNumber");
             CREATE INDEX IF NOT EXISTS "IX_FixedTimetableEntries_DayOfWeek_Period_SessionNumber"
                 ON "FixedTimetableEntries" ("DayOfWeek", "Period", "SessionNumber");
 

@@ -7,10 +7,11 @@ import { Classroom, LiveSession, ZoomConnectionStatus, ZoomOAuthSettings } from 
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { environment } from '../../../environments/environment';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-teacher-zoom',
-  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-zoom.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-zoom.component.css']
 })

@@ -2,12 +2,7 @@
   <h2>{{ 'teacher.assignments.title' | t }}</h2>
   <p class="meta">{{ 'teacher.assignments.subtitle' | t }}</p>
 
-  @if (info()) {
-    <p class="feedback ok">{{ info() }}</p>
-  }
-  @if (error()) {
-    <p class="feedback">{{ error() }}</p>
-  }
+  <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block">
     <h3>{{ 'teacher.assignments.create' | t }}</h3>

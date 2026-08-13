@@ -794,7 +794,7 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("DayOfWeek", "Period", "SessionNumber");
 
-                    b.HasIndex("TeacherId", "DayOfWeek", "Period", "SessionNumber", "CourseId")
+                    b.HasIndex("TeacherId", "DayOfWeek", "Period", "SessionNumber")
                         .IsUnique();
 
                     b.ToTable("FixedTimetableEntries");

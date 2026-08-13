@@ -4,10 +4,11 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { AccountReport } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-admin-account-report',
-  imports: [FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-account-report.component.html',
   styleUrl: './admin-panel.css'
 })

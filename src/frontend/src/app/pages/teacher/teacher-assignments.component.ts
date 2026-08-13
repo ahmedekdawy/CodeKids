@@ -5,10 +5,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { Assignment, Classroom } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-teacher-assignments',
-  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-assignments.component.html',
   styleUrl: './teacher-panel.css'
 })

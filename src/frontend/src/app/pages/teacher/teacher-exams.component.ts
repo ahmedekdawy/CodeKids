@@ -5,10 +5,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { BankQuestion, Classroom, Exam, ExamAttempt } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-teacher-exams',
-  imports: [SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-exams.component.html',
   styleUrl: './teacher-panel.css'
 })

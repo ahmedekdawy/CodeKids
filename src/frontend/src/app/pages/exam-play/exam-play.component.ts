@@ -7,10 +7,11 @@ import { ChoiceOption, Exam, ExamAttempt, ExamQuestion } from '../../models';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-exam-play',
-  imports: [FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent],
   templateUrl: './exam-play.component.html',
   styleUrl: './exam-play.component.css'
 })

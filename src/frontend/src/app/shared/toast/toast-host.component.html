@@ -1,0 +1,12 @@
+<div class="toast-stack" aria-live="polite" aria-relevant="additions">
+  @for (item of toasts.items(); track item.id) {
+    <button
+      type="button"
+      class="toast"
+      [class.ok]="item.kind === 'success'"
+      (click)="toasts.dismiss(item.id)"
+    >
+      {{ item.text }}
+    </button>
+  }
+</div>

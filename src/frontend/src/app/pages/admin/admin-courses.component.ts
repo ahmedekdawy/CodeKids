@@ -12,10 +12,11 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-admin-courses',
-  imports: [SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
   templateUrl: './admin-courses.component.html',
   styleUrl: './admin-panel.css'
 })

@@ -7,10 +7,11 @@ import { Assignment, AssignmentSubmission } from '../../models';
 import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })

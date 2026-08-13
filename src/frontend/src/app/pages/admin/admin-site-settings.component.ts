@@ -5,10 +5,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { SiteSettings } from '../../models';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 @Component({
   selector: 'app-admin-site-settings',
-  imports: [FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-site-settings.component.html',
   styleUrl: './admin-panel.css'
 })

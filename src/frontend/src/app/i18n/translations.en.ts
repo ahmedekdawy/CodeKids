@@ -1017,6 +1017,7 @@ export const EN: Record<string, string> = {
   'api.errors.timetable.sessionInvalid': 'Session number must be between 1 and 6.',
   'api.errors.timetable.periodInvalid': 'Period must be AM or PM.',
   'api.errors.timetable.overlap': 'Teacher already has a timetable session in this slot.',
+  'api.errors.timetable.schoolTypeOverlap': 'A course with the same school type (or All) is already in this slot.',
   'api.errors.attendance.notFound': 'Session attendance not found.',
   'api.errors.attendance.dateRequired': 'Session date is required.',
   'api.errors.attendance.duplicate': 'Attendance for this teacher, course, and date already exists.',

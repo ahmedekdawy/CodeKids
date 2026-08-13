@@ -38,26 +38,43 @@ internal static class FixedTimetableValidators
             throw new InvalidOperationException("Selected user must be a teacher.");
         }
 
-        _ = await dbContext.Courses
+        var course = await dbContext.Courses
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == courseId, cancellationToken)
             ?? throw new InvalidOperationException("Course not found.");
 
-        var overlap = await dbContext.FixedTimetableEntries
+        var slotEntries = await dbContext.FixedTimetableEntries
             .AsNoTracking()
-            .AnyAsync(
-                x => x.TeacherId == teacherId
-                     && x.DayOfWeek == dayOfWeek
-                     && x.CourseId == courseId
-                     && x.SessionNumber == sessionNumber
-                     && x.Period == period
-                     && (excludeEntryId == null || x.Id != excludeEntryId),
-                cancellationToken);
+            .Include(x => x.Course)
+            .Where(x =>
+                x.DayOfWeek == dayOfWeek
+                && x.SessionNumber == sessionNumber
+                && x.Period == period
+                && (excludeEntryId == null || x.Id != excludeEntryId))
+            .ToListAsync(cancellationToken);
 
-        if (overlap)
+        if (slotEntries.Any(x => x.TeacherId == teacherId))
         {
             throw new InvalidOperationException("Teacher already has a timetable session in this slot.");
         }
+
+        if (slotEntries.Any(x => SchoolTypesConflict(course.SchoolType, x.Course?.SchoolType)))
+        {
+            throw new InvalidOperationException(
+                "A course with the same school type (or All) is already in this timetable slot.");
+        }
+    }
+
+    internal static bool SchoolTypesConflict(SchoolType? left, SchoolType? right)
+    {
+        var a = left ?? SchoolType.All;
+        var b = right ?? SchoolType.All;
+        if (a == SchoolType.All || b == SchoolType.All)
+        {
+            return true;
+        }
+
+        return a == b;
     }
 
     public static async Task<FixedTimetableEntryDto> LoadDtoAsync(
