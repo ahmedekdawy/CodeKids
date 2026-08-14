@@ -58,7 +58,7 @@ internal static class FixedTimetableValidators
             throw new InvalidOperationException("Teacher already has a timetable session in this slot.");
         }
 
-        if (slotEntries.Any(x => SchoolTypesConflict(course.SchoolType, x.Course?.SchoolType)))
+        if (slotEntries.Any(x => course.Grade==x.Course?.Grade&& SchoolTypesConflict(course.SchoolType, x.Course?.SchoolType)))
         {
             throw new InvalidOperationException(
                 "A course with the same school type (or All) is already in this timetable slot.");
