@@ -3,7 +3,7 @@ namespace CodeKids.Domain.Entities;
 /// <summary>
 /// Tuition/fee payment recorded for a parent, or for a student who has no parent.
 /// </summary>
-public class TuitionPayment
+public class TuitionPayment : TenantEntity
 {
     public Guid Id { get; set; }
     /// <summary>Set when the payer is a parent.</summary>

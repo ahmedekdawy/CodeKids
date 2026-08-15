@@ -3,7 +3,7 @@ namespace CodeKids.Domain.Entities;
 /// <summary>
 /// Ad-hoc expense recorded by Super Admin (name, amount, date).
 /// </summary>
-public class OtherExpense
+public class OtherExpense : TenantEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

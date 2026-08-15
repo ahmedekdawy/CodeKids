@@ -1,0 +1,58 @@
+<section class="auth-shell">
+  <div class="auth-panel">
+    <div class="auth-panel-top">
+      <app-site-brand />
+      <app-language-switcher />
+    </div>
+    <h1>{{ 'auth.tenant.title' | t }}</h1>
+    <p class="supporting">{{ 'auth.tenant.subtitle' | t }}</p>
+
+    @if (success()) {
+      <p class="hint">{{ success() }}</p>
+      <div class="auth-links">
+        <a routerLink="/login">{{ 'auth.forgot.backToLogin' | t }}</a>
+      </div>
+    } @else {
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+        <label>
+          <span>{{ 'auth.tenant.name' | t }}</span>
+          <input formControlName="tenantName" autocomplete="organization" />
+        </label>
+        <label>
+          <span>{{ 'auth.displayName' | t }}</span>
+          <input formControlName="displayName" autocomplete="nickname" />
+        </label>
+        <label>
+          <span>{{ 'auth.tenant.email' | t }}</span>
+          <input formControlName="email" type="email" autocomplete="email" />
+        </label>
+        <label>
+          <span>{{ 'auth.password' | t }}</span>
+          <input formControlName="password" type="password" autocomplete="new-password" />
+        </label>
+
+        <button type="submit" [disabled]="loading() || form.invalid">{{ 'auth.tenant.submit' | t }}</button>
+      </form>
+
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+
+      <div class="auth-links">
+        <a routerLink="/login">{{ 'auth.forgot.backToLogin' | t }}</a>
+      </div>
+    }
+  </div>
+
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">
+    @if (brand.bannerUrl(); as banner) {
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />
+    } @else {
+      <div class="glow"></div>
+      <div class="code-card">
+        <span>NEW TENANT</span>
+        <span>VERIFY EMAIL</span>
+      </div>
+    }
+  </div>
+</section>

@@ -22,6 +22,7 @@ export interface AuthUser {
   totalXp: number;
   mobilePhone?: string;
   workShift?: TeacherWorkShift | string | null;
+  tenantId?: string | null;
 }
 
 export interface AuthResponse {

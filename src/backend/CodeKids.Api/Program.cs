@@ -14,6 +14,8 @@ using CodeKids.Application.Features.Attendance;
 
 using CodeKids.Application.Features.Auth;
 
+using CodeKids.Application.Features.Tenants;
+
 using CodeKids.Application.Features.Avatars;
 
 using CodeKids.Application.Features.Badges;
@@ -53,6 +55,7 @@ using CodeKids.Application.Features.ZoomConnect;
 using CodeKids.Domain.Abstractions;
 
 using CodeKids.Infrastructure;
+using CodeKids.Infrastructure.Tenancy;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -116,11 +119,19 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton<TenantCatalog>();
+
+builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
+
 builder.Services.AddCors(options =>
 
 {
 
-    var allowed = CorsOrigins.Resolve(builder.Configuration);
+    var catalog = new TenantCatalog(builder.Configuration);
+
+    var allowed = CorsOrigins.Resolve(builder.Configuration, catalog);
 
     options.AddPolicy("frontend", policy =>
 
@@ -134,9 +145,19 @@ builder.Services.AddCors(options =>
 
 });
 
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+
+    var catalog = sp.GetRequiredService<TenantCatalog>();
+
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+
+    var tenant = TenantRequest.Resolve(http, catalog);
+
+    options.UseNpgsql(tenant.ConnectionString);
+
+});
 
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
@@ -159,6 +180,10 @@ builder.Services.AddScoped<ICommandHandler<LoginCommand, AuthResponse>, LoginCom
 builder.Services.AddScoped<ICommandHandler<ForgotPasswordCommand, ForgotPasswordResult>, ForgotPasswordCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<ResetPasswordCommand, bool>, ResetPasswordCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<RegisterTenantCommand, RegisterTenantResult>, RegisterTenantCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<VerifyTenantCommand, VerifyTenantResult>, VerifyTenantCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
 
@@ -413,19 +438,33 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-using (var scope = app.Services.CreateScope())
+//using (var scope = app.Services.CreateScope())
 
-{
+//{
 
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    var catalog = scope.ServiceProvider.GetRequiredService<TenantCatalog>();
 
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+//    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 
-    await dbContext.Database.MigrateAsync();
+//    foreach (var tenant in catalog.All)
 
-    await DataSeeder.SeedAsync(dbContext, passwordHasher);
+//    {
 
-}
+//        var options = new DbContextOptionsBuilder<AppDbContext>()
+
+//            .UseNpgsql(tenant.ConnectionString)
+
+//            .Options;
+
+//        await using var dbContext = new AppDbContext(options);
+
+//        await TenantSchema.EnsureAsync(dbContext);
+
+//        await DataSeeder.SeedAsync(dbContext, passwordHasher);
+
+//    }
+
+//}
 
 app.MapAccountReportEndpoints();
 
@@ -438,6 +477,8 @@ app.MapAssignmentsEndpoints();
 app.MapAttendanceEndpoints();
 
 app.MapAuthEndpoints();
+
+app.MapTenantEndpoints();
 
 app.MapAvatarsEndpoints();
 

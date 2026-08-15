@@ -2,7 +2,7 @@ using CodeKids.Domain.Enums;
 
 namespace CodeKids.Domain.Entities;
 
-public class FixedTimetableEntry
+public class FixedTimetableEntry : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid TeacherId { get; set; }

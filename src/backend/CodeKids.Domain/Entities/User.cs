@@ -2,7 +2,7 @@ using CodeKids.Domain.Enums;
 
 namespace CodeKids.Domain.Entities;
 
-public class User
+public class User : TenantEntity
 {
     public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;

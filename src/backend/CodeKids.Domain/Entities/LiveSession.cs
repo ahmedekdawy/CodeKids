@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class LiveSession
+public class LiveSession : TenantEntity
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;

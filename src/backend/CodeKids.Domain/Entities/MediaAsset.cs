@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class MediaAsset
+public class MediaAsset : TenantEntity
 {
     public Guid Id { get; set; }
     public string StorageKey { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ public class MediaAsset
     public User? UploadedBy { get; set; }
 }
 
-public class LessonVideo
+public class LessonVideo : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid LessonId { get; set; }
@@ -29,7 +29,7 @@ public class LessonVideo
     public MediaAsset? MediaAsset { get; set; }
 }
 
-public class VideoWatchSession
+public class VideoWatchSession : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid MediaAssetId { get; set; }
@@ -47,7 +47,7 @@ public class VideoWatchSession
     public Lesson? Lesson { get; set; }
 }
 
-public class WhatsAppReportLog
+public class WhatsAppReportLog : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid? ClassroomId { get; set; }

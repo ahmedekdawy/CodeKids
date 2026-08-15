@@ -1,0 +1,34 @@
+<section class="auth-shell">
+  <div class="auth-panel">
+    <div class="auth-panel-top">
+      <app-site-brand />
+      <app-language-switcher />
+    </div>
+    <h1>{{ 'auth.tenant.verifyTitle' | t }}</h1>
+    <p class="supporting">{{ 'auth.tenant.verifySubtitle' | t }}</p>
+
+    @if (loading()) {
+      <p class="hint">{{ 'common.loading' | t }}</p>
+    } @else if (success()) {
+      <p class="hint">{{ success() }}</p>
+    } @else if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <div class="auth-links">
+      <a routerLink="/login" [queryParams]="tenantId() ? { tenant: tenantId() } : {}">{{ 'auth.forgot.backToLogin' | t }}</a>
+    </div>
+  </div>
+
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">
+    @if (brand.bannerUrl(); as banner) {
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />
+    } @else {
+      <div class="glow"></div>
+      <div class="code-card">
+        <span>EMAIL CHECK</span>
+        <span>TENANT READY</span>
+      </div>
+    }
+  </div>
+</section>
