@@ -201,6 +201,7 @@ export const AR: Record<string, string> = {
   'auth.tenant.subtitle': 'سنرسل رابط تحقق إلى البريد. يُنشأ المستأجر فقط بعد تأكيد العنوان.',
   'auth.tenant.name': 'اسم المدرسة / المستأجر',
   'auth.tenant.email': 'بريد المستأجر',
+  'auth.tenant.mobilePlaceholder': 'اختياري — يمكن استخدامه لتسجيل الدخول',
   'auth.tenant.submit': 'إرسال رسالة التحقق',
   'auth.tenant.checkEmail': 'تحقق من بريدك لتأكيد العنوان. سيُنشأ المستأجر بعد فتح الرابط.',
   'auth.tenant.registerFailed': 'تعذّر بدء تسجيل المستأجر.',

@@ -38,6 +38,12 @@ public sealed class VerifyTenantCommandHandler(
             throw new InvalidOperationException("An account with that email already exists.");
         }
 
+        if (!string.IsNullOrWhiteSpace(signup.MobilePhone)
+            && await dbContext.Users.IgnoreQueryFilters().AnyAsync(x => x.MobilePhone == signup.MobilePhone, cancellationToken))
+        {
+            throw new InvalidOperationException("An account with that mobile number already exists.");
+        }
+
         signup.VerifiedAtUtc = DateTimeOffset.UtcNow;
         signup.TenantId = signup.TenantSlug;
 
@@ -45,6 +51,7 @@ public sealed class VerifyTenantCommandHandler(
         {
             Id = Guid.NewGuid(),
             Email = signup.Email,
+            MobilePhone = signup.MobilePhone,
             DisplayName = signup.DisplayName,
             PasswordHash = signup.PasswordHash,
             Role = UserRole.SuperAdmin,

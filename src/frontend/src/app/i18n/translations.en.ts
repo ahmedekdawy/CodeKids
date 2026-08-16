@@ -201,6 +201,7 @@ export const EN: Record<string, string> = {
   'auth.tenant.subtitle': 'We will email a verification link. The tenant is created only after you confirm the address.',
   'auth.tenant.name': 'School / tenant name',
   'auth.tenant.email': 'Tenant email',
+  'auth.tenant.mobilePlaceholder': 'Optional — can be used to sign in',
   'auth.tenant.submit': 'Send verification email',
   'auth.tenant.checkEmail': 'Check your email to verify the address. The tenant will be created after you open the link.',
   'auth.tenant.registerFailed': 'Could not start tenant registration.',

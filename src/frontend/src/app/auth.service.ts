@@ -41,6 +41,7 @@ export class AuthService {
     email: string;
     displayName: string;
     password: string;
+    mobilePhone?: string;
   }): Observable<{ accepted: boolean; message: string }> {
     return this.http.post<{ accepted: boolean; message: string }>(
       `${environment.apiBaseUrl}/tenants/register`,

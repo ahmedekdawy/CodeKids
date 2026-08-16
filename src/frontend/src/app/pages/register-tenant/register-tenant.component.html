@@ -27,6 +27,10 @@
           <input formControlName="email" type="email" autocomplete="email" />
         </label>
         <label>
+          <span>{{ 'common.mobile' | t }}</span>
+          <input formControlName="mobilePhone" type="tel" autocomplete="tel" [placeholder]="'auth.tenant.mobilePlaceholder' | t" />
+        </label>
+        <label>
           <span>{{ 'auth.password' | t }}</span>
           <input formControlName="password" type="password" autocomplete="new-password" />
         </label>

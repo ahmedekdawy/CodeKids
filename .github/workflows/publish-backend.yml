@@ -2,7 +2,7 @@ name: Publish Backend
 
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, multitenant]
     paths:
       - "src/backend/**"
       - ".github/workflows/publish-backend.yml"
@@ -10,12 +10,18 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: publish-backend
+  group: publish-backend-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'multitenant' && 'multitenant' || 'production' }}
+    env:
+      FTP_SERVER: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_BACKEND_FTP_SERVER || secrets.BACKEND_FTP_SERVER }}
+      FTP_USERNAME: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_BACKEND_FTP_USERNAME || secrets.BACKEND_FTP_USERNAME }}
+      FTP_PASSWORD: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_BACKEND_FTP_PASSWORD || secrets.BACKEND_FTP_PASSWORD }}
+      FTP_SERVER_DIR: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_BACKEND_FTP_SERVER_DIR || secrets.BACKEND_FTP_SERVER_DIR }}
     defaults:
       run:
         working-directory: src/backend
@@ -48,21 +54,21 @@ jobs:
 
       - name: Take site offline
         env:
-          FTP_SERVER: ${{ secrets.BACKEND_FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.BACKEND_FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.BACKEND_FTP_PASSWORD }}
-          FTP_SERVER_DIR: ${{ secrets.BACKEND_FTP_SERVER_DIR }}
+          FTP_SERVER: ${{ env.FTP_SERVER }}
+          FTP_USERNAME: ${{ env.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ env.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ env.FTP_SERVER_DIR }}
         working-directory: ${{ github.workspace }}
         run: python .github/scripts/ftp-app-offline.py put
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.BACKEND_FTP_SERVER }}
-          username: ${{ secrets.BACKEND_FTP_USERNAME }}
-          password: ${{ secrets.BACKEND_FTP_PASSWORD }}
+          server: ${{ env.FTP_SERVER }}
+          username: ${{ env.FTP_USERNAME }}
+          password: ${{ env.FTP_PASSWORD }}
           local-dir: ./artifacts/backend/
-          server-dir: ${{ secrets.BACKEND_FTP_SERVER_DIR }}
+          server-dir: ${{ env.FTP_SERVER_DIR }}
           dangerous-clean-slate: false
           timeout: 600000
           exclude: |
@@ -76,9 +82,9 @@ jobs:
       - name: Bring site online
         if: always()
         env:
-          FTP_SERVER: ${{ secrets.BACKEND_FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.BACKEND_FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.BACKEND_FTP_PASSWORD }}
-          FTP_SERVER_DIR: ${{ secrets.BACKEND_FTP_SERVER_DIR }}
+          FTP_SERVER: ${{ env.FTP_SERVER }}
+          FTP_USERNAME: ${{ env.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ env.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ env.FTP_SERVER_DIR }}
         working-directory: ${{ github.workspace }}
         run: python .github/scripts/ftp-app-offline.py delete

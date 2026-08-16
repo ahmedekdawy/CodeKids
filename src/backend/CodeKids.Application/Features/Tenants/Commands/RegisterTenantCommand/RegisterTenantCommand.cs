@@ -6,7 +6,8 @@ public sealed record RegisterTenantRequest(
     string TenantName,
     string Email,
     string DisplayName,
-    string Password);
+    string Password,
+    string? MobilePhone = null);
 
 public sealed record RegisterTenantResult(bool Accepted, string Message);
 
@@ -14,4 +15,5 @@ public sealed record RegisterTenantCommand(
     string TenantName,
     string Email,
     string DisplayName,
-    string Password) : ICommand<RegisterTenantResult>;
+    string Password,
+    string? MobilePhone = null) : ICommand<RegisterTenantResult>;

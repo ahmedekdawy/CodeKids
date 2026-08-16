@@ -25,6 +25,7 @@ export class RegisterTenantComponent {
     tenantName: ['', Validators.required],
     displayName: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
+    mobilePhone: [''],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
   readonly loading = signal(false);
@@ -46,6 +47,7 @@ export class RegisterTenantComponent {
         tenantName: value.tenantName.trim(),
         displayName: value.displayName.trim(),
         email: value.email.trim(),
+        mobilePhone: value.mobilePhone.trim(),
         password: value.password
       })
       .subscribe({

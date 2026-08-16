@@ -6,6 +6,7 @@ public class TenantSignup : TenantEntity
     public string TenantName { get; set; } = string.Empty;
     public string TenantSlug { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+    public string MobilePhone { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string TokenHash { get; set; } = string.Empty;

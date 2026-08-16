@@ -677,6 +677,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.TenantName).HasMaxLength(120).IsRequired();
             entity.Property(x => x.TenantSlug).HasMaxLength(64).IsRequired();
             entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.DisplayName).HasMaxLength(80).IsRequired();
             entity.Property(x => x.PasswordHash).HasMaxLength(200).IsRequired();
             entity.Property(x => x.TokenHash).HasMaxLength(128).IsRequired();

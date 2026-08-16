@@ -26,6 +26,7 @@ public sealed class RegisterTenantCommandHandler(
         var tenantName = (command.TenantName ?? string.Empty).Trim();
         var displayName = (command.DisplayName ?? string.Empty).Trim();
         var password = command.Password ?? string.Empty;
+        var mobile = RegisterCommandHandler.NormalizePhone(command.MobilePhone);
 
         if (string.IsNullOrWhiteSpace(tenantName))
         {
@@ -55,6 +56,14 @@ public sealed class RegisterTenantCommandHandler(
             throw new InvalidOperationException("An account with that email already exists.");
         }
 
+        if (!string.IsNullOrWhiteSpace(mobile)
+            && (await dbContext.Users.IgnoreQueryFilters().AnyAsync(x => x.MobilePhone == mobile, cancellationToken)
+                || await dbContext.TenantSignups.IgnoreQueryFilters()
+                    .AnyAsync(x => x.MobilePhone == mobile && x.VerifiedAtUtc != null, cancellationToken)))
+        {
+            throw new InvalidOperationException("An account with that mobile number already exists.");
+        }
+
         var slug = await UniqueSlugAsync(tenantName, cancellationToken);
         var pending = await dbContext.TenantSignups.IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Email == email && x.VerifiedAtUtc == null, cancellationToken);
@@ -72,6 +81,7 @@ public sealed class RegisterTenantCommandHandler(
                 TenantName = tenantName,
                 TenantSlug = slug,
                 Email = email,
+                MobilePhone = mobile,
                 DisplayName = displayName,
                 PasswordHash = passwordHasher.Hash(password),
                 TokenHash = ForgotPasswordCommandHandler.HashToken(rawToken),
@@ -86,6 +96,7 @@ public sealed class RegisterTenantCommandHandler(
             pending.TenantName = tenantName;
             pending.TenantSlug = slug;
             pending.DisplayName = displayName;
+            pending.MobilePhone = mobile;
             pending.PasswordHash = passwordHasher.Hash(password);
             pending.TokenHash = ForgotPasswordCommandHandler.HashToken(rawToken);
             pending.ExpiresAtUtc = DateTimeOffset.UtcNow.Add(TokenLifetime);
