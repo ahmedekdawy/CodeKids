@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
-  apiBaseUrl: '__API_BASE_URL__',
-  appBaseUrl: '__APP_BASE_URL__',
-  zoomCallbackUrl: '__API_BASE_URL__/zoom/callback',
-  zoomFrontendRedirectUrl: '__APP_BASE_URL__/teacher/zoom',
+  apiBaseUrl: 'http://abakera.runasp.net/api',
+  appBaseUrl: 'http://schoolacadmy.runasp.net',
+  zoomCallbackUrl: 'http://abakera.runasp.net/api/zoom/callback',
+  zoomFrontendRedirectUrl: 'http://schoolacadmy.runasp.net/teacher/zoom',
   defaultTenant: 'esraa',
   tenantHosts: {
     localhost: 'esraa',
