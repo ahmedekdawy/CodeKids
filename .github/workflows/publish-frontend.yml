@@ -41,8 +41,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Point schoolacadmy build at its own API
+        if: github.ref_name == 'multitenant'
+        env:
+          API_BASE_URL: ${{ secrets.MULTITENANT_API_BASE_URL }}
+          APP_BASE_URL: ${{ secrets.MULTITENANT_APP_BASE_URL }}
+        run: |
+          set -euo pipefail
+          APP_BASE_URL="${APP_BASE_URL:-http://schoolacadmy.runasp.net}"
+          if [ -z "${API_BASE_URL}" ]; then
+            echo "::error::Set repository secret MULTITENANT_API_BASE_URL to the new backend, for example http://your-api.runasp.net/api. The schoolacadmy site is currently built against http://abakera.runasp.net, which does not allow this origin."
+            exit 1
+          fi
+          API_BASE_URL="${API_BASE_URL%/}"
+          sed -i "s|__API_BASE_URL__|${API_BASE_URL}|g" src/environments/environment.multitenant.ts
+          sed -i "s|__APP_BASE_URL__|${APP_BASE_URL}|g" src/environments/environment.multitenant.ts
+
       - name: Build production
-        run: npm run build -- --configuration=production
+        run: npm run build -- --configuration=${{ github.ref_name == 'multitenant' && 'multitenant' || 'production' }}
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5

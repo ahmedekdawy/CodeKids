@@ -56,7 +56,7 @@ public sealed class TenantCatalog
             var esraa = configuration.GetConnectionString("EsraaConnection");
             if (!string.IsNullOrWhiteSpace(esraa))
             {
-                items.Add(new TenantInfo("esraa", esraa, []));
+                items.Add(new TenantInfo("esraa", esraa, ["schoolacadmy.runasp.net", "www.schoolacadmy.runasp.net"]));
             }
         }
 
