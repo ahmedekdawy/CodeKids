@@ -15,7 +15,11 @@ internal static class CorsOrigins
         "http://abakeraadmin.runasp.net",
         "https://abakeraadmin.runasp.net",
         "http://www.abakeraadmin.runasp.net",
-        "https://www.abakeraadmin.runasp.net"
+        "https://www.abakeraadmin.runasp.net",
+        "http://schoolacadmy.runasp.net",
+        "https://schoolacadmy.runasp.net",
+        "http://www.schoolacadmy.runasp.net",
+        "https://www.schoolacadmy.runasp.net"
     ];
 
     public static HashSet<string> Resolve(IConfiguration configuration, TenantCatalog? catalog = null)
