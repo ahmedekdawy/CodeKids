@@ -46977,8 +46977,47 @@ var environment = {
   apiBaseUrl: "http://localhost:5078/api",
   appBaseUrl: "http://localhost:4200",
   zoomCallbackUrl: "http://localhost:5078/api/zoom/callback",
-  zoomFrontendRedirectUrl: "http://localhost:4200/teacher/zoom"
+  zoomFrontendRedirectUrl: "http://localhost:4200/teacher/zoom",
+  defaultTenant: "abakera",
+  tenantHosts: {
+    localhost: "abakera",
+    "abakeraadmin.runasp.net": "abakera",
+    "www.abakeraadmin.runasp.net": "abakera"
+  }
 };
+
+// src/app/tenant.ts
+var TENANT_KEY = "codekids_tenant";
+function setCurrentTenantId(tenantId) {
+  const value = (tenantId ?? "").trim();
+  if (value) {
+    localStorage.setItem(TENANT_KEY, value);
+  }
+}
+function tenantFromQueryString() {
+  try {
+    const value = new URL(globalThis.location?.href ?? "", "http://localhost").searchParams.get("tenant");
+    const trimmed = value?.trim();
+    return trimmed ? trimmed : null;
+  } catch (e) {
+    return null;
+  }
+}
+function currentTenantId() {
+  const fromQuery = tenantFromQueryString();
+  if (fromQuery) {
+    setCurrentTenantId(fromQuery);
+    return fromQuery;
+  }
+  const stored = (localStorage.getItem(TENANT_KEY) ?? "").trim();
+  if (stored)
+    return stored;
+  const host = (globalThis.location?.hostname ?? "").toLowerCase();
+  const mapped = environment.tenantHosts?.[host];
+  if (mapped)
+    return mapped;
+  return environment.defaultTenant;
+}
 
 // src/app/auth.service.ts
 var TOKEN_KEY = "codekids_token";
@@ -47009,6 +47048,12 @@ var AuthService = class _AuthService {
   register(payload) {
     return this.http.post(`${this.baseUrl}/register`, payload).pipe(tap((response) => this.persist(response)));
   }
+  registerTenant(payload) {
+    return this.http.post(`${environment.apiBaseUrl}/tenants/register`, payload);
+  }
+  verifyTenant(token) {
+    return this.http.post(`${environment.apiBaseUrl}/tenants/verify`, { token }).pipe(tap((result) => setCurrentTenantId(result.tenantId)));
+  }
   forgotPassword(email) {
     return this.http.post(`${this.baseUrl}/forgot-password`, { email });
   }
@@ -47038,6 +47083,7 @@ var AuthService = class _AuthService {
   persist(response) {
     localStorage.setItem(TOKEN_KEY, response.token);
     localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    setCurrentTenantId(response.user.tenantId);
     this.token.set(response.token);
     this.user.set(response.user);
   }
@@ -52110,6 +52156,7 @@ var AR = {
   "common.sort": "\u062A\u0631\u062A\u064A\u0628",
   "common.ages": "\u0627\u0644\u0623\u0639\u0645\u0627\u0631",
   "common.course": "\u0627\u0644\u0645\u0627\u062F\u0629",
+  "common.unit": "\u0627\u0644\u0648\u062D\u062F\u0629",
   "common.lesson": "\u0627\u0644\u062F\u0631\u0633",
   "common.classroom": "\u0627\u0644\u0641\u0635\u0644",
   "common.all": "\u0627\u0644\u0643\u0644",
@@ -52124,6 +52171,7 @@ var AR = {
   "common.select": "\u0627\u062E\u062A\u0631",
   "common.selectClassroom": "\u0627\u062E\u062A\u0631 \u0627\u0644\u0641\u0635\u0644",
   "common.selectCourse": "\u0627\u062E\u062A\u0631 \u0627\u0644\u0645\u0627\u062F\u0629",
+  "common.selectUnit": "\u0627\u062E\u062A\u0631 \u0627\u0644\u0648\u062D\u062F\u0629",
   "common.none": "\u0644\u0627 \u064A\u0648\u062C\u062F",
   "common.unassigned": "\u063A\u064A\u0631 \u0645\u0639\u064A\u0651\u0646",
   "common.name": "\u0627\u0644\u0627\u0633\u0645",
@@ -52211,6 +52259,7 @@ var AR = {
   "shell.admin.subtitle": "\u0625\u062F\u0627\u0631\u0629 \u0627\u0644\u0645\u0646\u0635\u0629",
   "nav.teacher.overview": "\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629",
   "nav.teacher.videos": "\u0627\u0644\u0641\u064A\u062F\u064A\u0648\u0647\u0627\u062A",
+  "nav.teacher.courseTree": "\u0634\u062C\u0631\u0629 \u0627\u0644\u0645\u0627\u062F\u0629",
   "nav.teacher.zoom": "\u0632\u0648\u0645",
   "nav.teacher.appointments": "\u0627\u0644\u0645\u0648\u0627\u0639\u064A\u062F",
   "nav.teacher.timetable": "\u062C\u062F\u0648\u0644 \u0627\u0644\u062D\u0635\u0635",
@@ -52247,6 +52296,19 @@ var AR = {
   "auth.password": "\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631",
   "auth.signIn": "\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644",
   "auth.createAccount": "\u0625\u0646\u0634\u0627\u0621 \u062D\u0633\u0627\u0628",
+  "auth.tenant.registerLink": "\u062A\u0633\u062C\u064A\u0644 \u0645\u0633\u062A\u0623\u062C\u0631 \u062C\u062F\u064A\u062F",
+  "auth.tenant.title": "\u0633\u062C\u0651\u0644 \u0645\u0633\u062A\u0623\u062C\u0631 \u0645\u062F\u0631\u0633\u062A\u0643.",
+  "auth.tenant.subtitle": "\u0633\u0646\u0631\u0633\u0644 \u0631\u0627\u0628\u0637 \u062A\u062D\u0642\u0642 \u0625\u0644\u0649 \u0627\u0644\u0628\u0631\u064A\u062F. \u064A\u064F\u0646\u0634\u0623 \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631 \u0641\u0642\u0637 \u0628\u0639\u062F \u062A\u0623\u0643\u064A\u062F \u0627\u0644\u0639\u0646\u0648\u0627\u0646.",
+  "auth.tenant.name": "\u0627\u0633\u0645 \u0627\u0644\u0645\u062F\u0631\u0633\u0629 / \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631",
+  "auth.tenant.email": "\u0628\u0631\u064A\u062F \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631",
+  "auth.tenant.submit": "\u0625\u0631\u0633\u0627\u0644 \u0631\u0633\u0627\u0644\u0629 \u0627\u0644\u062A\u062D\u0642\u0642",
+  "auth.tenant.checkEmail": "\u062A\u062D\u0642\u0642 \u0645\u0646 \u0628\u0631\u064A\u062F\u0643 \u0644\u062A\u0623\u0643\u064A\u062F \u0627\u0644\u0639\u0646\u0648\u0627\u0646. \u0633\u064A\u064F\u0646\u0634\u0623 \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631 \u0628\u0639\u062F \u0641\u062A\u062D \u0627\u0644\u0631\u0627\u0628\u0637.",
+  "auth.tenant.registerFailed": "\u062A\u0639\u0630\u0651\u0631 \u0628\u062F\u0621 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631.",
+  "auth.tenant.verifyTitle": "\u062A\u0623\u0643\u064A\u062F \u0628\u0631\u064A\u062F \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631.",
+  "auth.tenant.verifySubtitle": "\u062C\u0627\u0631\u064D \u062A\u0623\u0643\u064A\u062F \u0627\u0644\u0628\u0631\u064A\u062F \u0648\u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631.",
+  "auth.tenant.missingToken": "\u0631\u0627\u0628\u0637 \u0627\u0644\u062A\u062D\u0642\u0642 \u0644\u0627 \u064A\u062D\u062A\u0648\u064A \u0639\u0644\u0649 \u0631\u0645\u0632.",
+  "auth.tenant.verified": "\u062A\u0645 \u062A\u0623\u0643\u064A\u062F \u0627\u0644\u0628\u0631\u064A\u062F. \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631 \u062C\u0627\u0647\u0632. \u0633\u062C\u0651\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0644\u0644\u0645\u062A\u0627\u0628\u0639\u0629.",
+  "auth.tenant.verifyFailed": "\u062A\u0639\u0630\u0651\u0631 \u062A\u0623\u0643\u064A\u062F \u0628\u0631\u064A\u062F \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631.",
   "auth.demoStudent": "\u062A\u062C\u0631\u064A\u0628\u064A: student@codekids.local / Student123!",
   "auth.demoOthers": "\u0623\u064A\u0636\u0627\u064B parent@codekids.local / Parent123! \u0648 teacher@codekids.local / Teacher123!",
   "auth.register.title": "\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0641\u0631\u064A\u0642 \u0627\u0644\u0628\u0631\u0645\u062C\u0629.",
@@ -52388,6 +52450,7 @@ var AR = {
   "videos.hasSolution": "\u064A\u0648\u062C\u062F \u062D\u0644",
   "videos.solutionVideo": "\u0641\u064A\u062F\u064A\u0648 \u0627\u0644\u062D\u0644",
   "videos.allCourses": "\u0643\u0644 \u0627\u0644\u0645\u0648\u0627\u062F",
+  "videos.allUnits": "\u0643\u0644 \u0627\u0644\u0648\u062D\u062F\u0627\u062A",
   "videos.allLessons": "\u0643\u0644 \u0627\u0644\u062F\u0631\u0648\u0633",
   "videos.allClassrooms": "\u0643\u0644 \u0627\u0644\u0641\u0635\u0648\u0644",
   "videos.searchLesson": "\u0627\u0644\u0639\u0646\u0648\u0627\u0646\u060C \u0627\u0644\u0645\u0644\u0641\u060C \u0627\u0644\u0645\u0627\u062F\u0629\u2026",
@@ -52465,6 +52528,7 @@ var AR = {
   "admin.courseTree.xpReward": "\u0645\u0643\u0627\u0641\u0623\u0629 XP",
   "admin.courseTree.unassigned": "\u062F\u0631\u0648\u0633 \u063A\u064A\u0631 \u0645\u0639\u064A\u0651\u0646\u0629",
   "admin.courseTree.loadFailed": "\u062A\u0639\u0630\u0651\u0631 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0645\u0648\u0627\u062F.",
+  "admin.courseTree.noAssignedCourses": "\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0648\u0627\u062F \u0645\u0639\u064A\u0651\u0646\u0629 \u0628\u0639\u062F. \u0627\u0637\u0644\u0628 \u0645\u0646 \u0627\u0644\u0645\u0634\u0631\u0641 \u062A\u0639\u064A\u064A\u0646\u0643 \u0639\u0644\u0649 \u0645\u0627\u062F\u0629 \u0641\u064A \u0641\u0635\u0644.",
   "admin.courseTree.unitTitleRequired": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u0648\u062D\u062F\u0629 \u0645\u0637\u0644\u0648\u0628.",
   "admin.courseTree.lessonTitleRequired": "\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u062F\u0631\u0633 \u0645\u0637\u0644\u0648\u0628.",
   "admin.courseTree.createUnitFirst": "\u0623\u0646\u0634\u0626 \u0648\u062D\u062F\u0629 \u0642\u0628\u0644 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u062F\u0631\u0648\u0633.",
@@ -52987,6 +53051,10 @@ var AR = {
   "editor.formattingToolbar": "\u062A\u0646\u0633\u064A\u0642 \u0627\u0644\u0646\u0635",
   "api.errors.unknown": "\u062D\u062F\u062B \u062E\u0637\u0623 \u0645\u0627. \u064A\u0631\u062C\u0649 \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
   "api.errors.auth.emailExists": "\u064A\u0648\u062C\u062F \u062D\u0633\u0627\u0628 \u0628\u0647\u0630\u0627 \u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A \u0628\u0627\u0644\u0641\u0639\u0644.",
+  "api.errors.tenant.nameRequired": "\u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631 \u0645\u0637\u0644\u0648\u0628.",
+  "api.errors.tenant.emailRequired": "\u0628\u0631\u064A\u062F \u0627\u0644\u0645\u0633\u062A\u0623\u062C\u0631 \u0635\u0627\u0644\u062D \u0645\u0637\u0644\u0648\u0628.",
+  "api.errors.tenant.displayNameRequired": "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0638\u0627\u0647\u0631 \u0645\u0637\u0644\u0648\u0628.",
+  "api.errors.tenant.verifyTokenInvalid": "\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u063A\u064A\u0631 \u0635\u0627\u0644\u062D \u0623\u0648 \u0645\u0646\u062A\u0647\u064D.",
   "api.errors.auth.mobileExists": "\u064A\u0648\u062C\u062F \u062D\u0633\u0627\u0628 \u0628\u0647\u0630\u0627 \u0627\u0644\u0631\u0642\u0645 \u0628\u0627\u0644\u0641\u0639\u0644.",
   "api.errors.auth.emailOrMobileRequired": "\u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A \u0623\u0648 \u0627\u0644\u062C\u0648\u0627\u0644 \u0645\u0637\u0644\u0648\u0628.",
   "api.errors.auth.registrationRoleLimited": "\u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0639\u0627\u0645 \u0645\u062D\u062F\u0648\u062F \u0644\u0644\u0637\u0627\u0644\u0628 \u0648\u0648\u0644\u064A \u0627\u0644\u0623\u0645\u0631. \u0627\u0644\u0645\u0639\u0644\u0645\u0648\u0646 \u064A\u064F\u0646\u0634\u064E\u0624\u0648\u0646 \u0628\u0648\u0627\u0633\u0637\u0629 \u0645\u062F\u064A\u0631 \u0627\u0644\u0646\u0638\u0627\u0645.",
@@ -53095,6 +53163,7 @@ var AR = {
   "api.errors.meeting.durationRange": "\u064A\u062C\u0628 \u0623\u0646 \u062A\u0643\u0648\u0646 \u0627\u0644\u0645\u062F\u0629 \u0628\u064A\u0646 15 \u0648 240 \u062F\u0642\u064A\u0642\u0629.",
   "api.errors.meeting.startInFuture": "\u064A\u062C\u0628 \u0623\u0646 \u064A\u0643\u0648\u0646 \u0648\u0642\u062A \u0627\u0644\u0628\u062F\u0621 \u0641\u064A \u0627\u0644\u0645\u0633\u062A\u0642\u0628\u0644.",
   "api.errors.meeting.teacherOnlySchedule": "\u064A\u0645\u0643\u0646\u0643 \u062C\u062F\u0648\u0644\u0629 \u0627\u062C\u062A\u0645\u0627\u0639\u0627\u062A \u0632\u0648\u0645 \u0644\u0644\u0641\u0635\u0648\u0644 \u0627\u0644\u0645\u0639\u064A\u0651\u0646\u0629 \u0644\u0643 \u0641\u0642\u0637.",
+  "api.errors.courseTree.teacherOnlyEdit": "\u064A\u0645\u0643\u0646\u0643 \u062A\u0639\u062F\u064A\u0644 \u0634\u062C\u0631\u0629 \u0627\u0644\u0645\u0627\u062F\u0629 \u0644\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u0645\u0639\u064A\u0651\u0646\u0629 \u0644\u0643 \u0641\u0642\u0637.",
   "api.errors.zoom.oauthRequired": "\u0631\u0645\u0632 \u0648\u062D\u0627\u0644\u0629 OAuth \u0644\u0632\u0648\u0645 \u0645\u0637\u0644\u0648\u0628\u0627\u0646.",
   "api.errors.zoom.oauthStateInvalid": "\u062D\u0627\u0644\u0629 OAuth \u0644\u0632\u0648\u0645 \u063A\u064A\u0631 \u0635\u0627\u0644\u062D\u0629 \u0623\u0648 \u0645\u0646\u062A\u0647\u064A\u0629.",
   "api.errors.zoom.clientIdRequired": "\u0645\u0639\u0631\u0651\u0641 \u0639\u0645\u064A\u0644 OAuth \u0644\u0632\u0648\u0645 \u0645\u0637\u0644\u0648\u0628.",
@@ -53178,6 +53247,7 @@ var EN = {
   "common.sort": "Sort",
   "common.ages": "Ages",
   "common.course": "Course",
+  "common.unit": "Unit",
   "common.lesson": "Lesson",
   "common.classroom": "Classroom",
   "common.all": "All",
@@ -53192,6 +53262,7 @@ var EN = {
   "common.select": "Select",
   "common.selectClassroom": "Select classroom",
   "common.selectCourse": "Select course",
+  "common.selectUnit": "Select unit",
   "common.none": "None",
   "common.unassigned": "Unassigned",
   "common.name": "Name",
@@ -53279,6 +53350,7 @@ var EN = {
   "shell.admin.subtitle": "Platform control",
   "nav.teacher.overview": "Overview",
   "nav.teacher.videos": "Videos",
+  "nav.teacher.courseTree": "Course tree",
   "nav.teacher.zoom": "Zoom",
   "nav.teacher.appointments": "Appointments",
   "nav.teacher.timetable": "Timetable",
@@ -53315,6 +53387,19 @@ var EN = {
   "auth.password": "Password",
   "auth.signIn": "Sign in",
   "auth.createAccount": "Create an account",
+  "auth.tenant.registerLink": "Register a new tenant",
+  "auth.tenant.title": "Register your school tenant.",
+  "auth.tenant.subtitle": "We will email a verification link. The tenant is created only after you confirm the address.",
+  "auth.tenant.name": "School / tenant name",
+  "auth.tenant.email": "Tenant email",
+  "auth.tenant.submit": "Send verification email",
+  "auth.tenant.checkEmail": "Check your email to verify the address. The tenant will be created after you open the link.",
+  "auth.tenant.registerFailed": "Could not start tenant registration.",
+  "auth.tenant.verifyTitle": "Verify tenant email.",
+  "auth.tenant.verifySubtitle": "Confirming your email and creating the tenant.",
+  "auth.tenant.missingToken": "This verification link is missing a token.",
+  "auth.tenant.verified": "Email verified. Your tenant is ready. Sign in to continue.",
+  "auth.tenant.verifyFailed": "Could not verify the tenant email.",
   "auth.demoStudent": "Demo: student@codekids.local / Student123!",
   "auth.demoOthers": "Also parent@codekids.local / Parent123! and teacher@codekids.local / Teacher123!",
   "auth.register.title": "Join the coding crew.",
@@ -53456,6 +53541,7 @@ var EN = {
   "videos.hasSolution": "has solution",
   "videos.solutionVideo": "Solution video",
   "videos.allCourses": "All courses",
+  "videos.allUnits": "All units",
   "videos.allLessons": "All lessons",
   "videos.allClassrooms": "All classrooms",
   "videos.searchLesson": "Title, file, course\u2026",
@@ -53533,6 +53619,7 @@ var EN = {
   "admin.courseTree.xpReward": "XP reward",
   "admin.courseTree.unassigned": "Unassigned lessons",
   "admin.courseTree.loadFailed": "Could not load courses.",
+  "admin.courseTree.noAssignedCourses": "No assigned courses yet. Ask an admin to assign you to a classroom course.",
   "admin.courseTree.unitTitleRequired": "Unit title is required.",
   "admin.courseTree.lessonTitleRequired": "Lesson title is required.",
   "admin.courseTree.createUnitFirst": "Create a unit before adding lessons.",
@@ -54055,6 +54142,10 @@ var EN = {
   "editor.formattingToolbar": "Prompt formatting",
   "api.errors.unknown": "Something went wrong. Please try again.",
   "api.errors.auth.emailExists": "An account with that email already exists.",
+  "api.errors.tenant.nameRequired": "Tenant name is required.",
+  "api.errors.tenant.emailRequired": "A valid tenant email is required.",
+  "api.errors.tenant.displayNameRequired": "Display name is required.",
+  "api.errors.tenant.verifyTokenInvalid": "Verification token is invalid or has expired.",
   "api.errors.auth.mobileExists": "An account with that mobile number already exists.",
   "api.errors.auth.emailOrMobileRequired": "Email or mobile is required.",
   "api.errors.auth.registrationRoleLimited": "Public registration is limited to Student or Parent. Teachers are created by Super Admin.",
@@ -54163,6 +54254,7 @@ var EN = {
   "api.errors.meeting.durationRange": "Duration must be between 15 and 240 minutes.",
   "api.errors.meeting.startInFuture": "Start time must be in the future.",
   "api.errors.meeting.teacherOnlySchedule": "You can only schedule Zoom meetings for classrooms assigned to you.",
+  "api.errors.courseTree.teacherOnlyEdit": "You can only edit the course tree for courses assigned to you.",
   "api.errors.zoom.oauthRequired": "Zoom OAuth code and state are required.",
   "api.errors.zoom.oauthStateInvalid": "Invalid or expired Zoom OAuth state.",
   "api.errors.zoom.clientIdRequired": "Zoom OAuth Client ID is required.",
@@ -55008,19 +55100,19 @@ function LoginComponent_Conditional_26_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r0.error());
   }
 }
-function LoginComponent_Conditional_35_Template(rf, ctx) {
+function LoginComponent_Conditional_38_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "img", 13);
+    \u0275\u0275element(0, "img", 14);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275property("src", ctx, \u0275\u0275sanitizeUrl)("alt", ctx_r0.brand.siteName());
   }
 }
-function LoginComponent_Conditional_36_Template(rf, ctx) {
+function LoginComponent_Conditional_39_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "div", 14);
-    \u0275\u0275elementStart(1, "div", 15)(2, "span");
+    \u0275\u0275element(0, "div", 15);
+    \u0275\u0275elementStart(1, "div", 16)(2, "span");
     \u0275\u0275text(3, "LOOP 3 FORWARD");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "span");
@@ -55032,6 +55124,7 @@ var LoginComponent = class _LoginComponent {
   constructor() {
     this.auth = inject2(AuthService);
     this.router = inject2(Router);
+    this.route = inject2(ActivatedRoute);
     this.fb = inject2(FormBuilder);
     this.locale = inject2(LocaleService);
     this.brand = inject2(SiteBrandService);
@@ -55053,6 +55146,12 @@ var LoginComponent = class _LoginComponent {
         []
       )
     );
+  }
+  ngOnInit() {
+    const tenant = (this.route.snapshot.queryParamMap.get("tenant") ?? "").trim();
+    if (tenant) {
+      setCurrentTenantId(tenant);
+    }
   }
   submit() {
     if (this.form.invalid) {
@@ -55079,7 +55178,7 @@ var LoginComponent = class _LoginComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LoginComponent, selectors: [["app-login"]], decls: 37, vars: 30, consts: [[1, "auth-shell"], [1, "auth-panel"], [1, "auth-panel-top"], [1, "supporting"], [1, "auth-form", 3, "ngSubmit", "formGroup"], ["formControlName", "login", "type", "text", "placeholder", "", "autocomplete", "username"], ["formControlName", "password", "type", "password", "autocomplete", "current-password", 3, "placeholder"], ["type", "submit", 3, "disabled"], [1, "error"], [1, "auth-links"], ["routerLink", "/forgot-password"], ["routerLink", "/register"], ["aria-hidden", "true", 1, "auth-visual"], [1, "auth-banner-img", 3, "src", "alt"], [1, "glow"], [1, "code-card"]], template: function LoginComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LoginComponent, selectors: [["app-login"]], decls: 40, vars: 33, consts: [[1, "auth-shell"], [1, "auth-panel"], [1, "auth-panel-top"], [1, "supporting"], [1, "auth-form", 3, "ngSubmit", "formGroup"], ["formControlName", "login", "type", "text", "placeholder", "", "autocomplete", "username"], ["formControlName", "password", "type", "password", "autocomplete", "current-password", 3, "placeholder"], ["type", "submit", 3, "disabled"], [1, "error"], [1, "auth-links"], ["routerLink", "/forgot-password"], ["routerLink", "/register-tenant"], ["routerLink", "/register"], ["aria-hidden", "true", 1, "auth-visual"], [1, "auth-banner-img", 3, "src", "alt"], [1, "glow"], [1, "code-card"]], template: function LoginComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "section", 0)(1, "div", 1)(2, "div", 2);
         \u0275\u0275element(3, "app-site-brand")(4, "app-language-switcher");
@@ -55123,42 +55222,48 @@ var LoginComponent = class _LoginComponent {
         \u0275\u0275elementStart(31, "a", 11);
         \u0275\u0275text(32);
         \u0275\u0275pipe(33, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(34, "a", 12);
+        \u0275\u0275text(35);
+        \u0275\u0275pipe(36, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(34, "div", 12);
-        \u0275\u0275conditionalCreate(35, LoginComponent_Conditional_35_Template, 1, 2, "img", 13)(36, LoginComponent_Conditional_36_Template, 6, 0);
+        \u0275\u0275elementStart(37, "div", 13);
+        \u0275\u0275conditionalCreate(38, LoginComponent_Conditional_38_Template, 1, 2, "img", 14)(39, LoginComponent_Conditional_39_Template, 6, 0);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
-        let tmp_14_0;
+        let tmp_15_0;
         \u0275\u0275advance(6);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 14, "auth.login.title"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 15, "auth.login.title"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 16, "auth.login.subtitle"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 17, "auth.login.subtitle"));
         \u0275\u0275advance(2);
         \u0275\u0275property("formGroup", ctx.form);
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(15, 18, "auth.loginOrMobile"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(15, 19, "auth.loginOrMobile"));
         \u0275\u0275advance(2);
         \u0275\u0275control();
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(20, 20, "auth.password"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(20, 21, "auth.password"));
         \u0275\u0275advance(2);
-        \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(22, 22, "auth.passwordPlaceholder"));
+        \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(22, 23, "auth.passwordPlaceholder"));
         \u0275\u0275control();
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.loading() || ctx.form.invalid);
         \u0275\u0275advance();
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(25, 24, "auth.signIn"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(25, 25, "auth.signIn"));
         \u0275\u0275advance(2);
         \u0275\u0275conditional(ctx.error() ? 26 : -1);
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 26, "auth.forgot.link"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 27, "auth.forgot.link"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(33, 28, "auth.createAccount"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(33, 29, "auth.tenant.registerLink"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(36, 31, "auth.createAccount"));
         \u0275\u0275advance(2);
         \u0275\u0275classProp("has-banner", !!ctx.brand.bannerUrl());
         \u0275\u0275advance();
-        \u0275\u0275conditional((tmp_14_0 = ctx.brand.bannerUrl()) ? 35 : 36, tmp_14_0);
+        \u0275\u0275conditional((tmp_15_0 = ctx.brand.bannerUrl()) ? 38 : 39, tmp_15_0);
       }
     }, dependencies: [CommonModule, ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, FormGroupDirective, FormControlName, RouterLink, LanguageSwitcherComponent, SiteBrandComponent, TranslatePipe], styles: ['\n.auth-shell[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);\n  background:\n    radial-gradient(\n      circle at 12% 18%,\n      rgba(255, 214, 10, 0.22),\n      transparent 26%),\n    radial-gradient(\n      circle at 80% 80%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    linear-gradient(\n      145deg,\n      #07111f 0%,\n      #0a2744 48%,\n      #145a8f 100%);\n  color: #fff;\n}\n.auth-panel[_ngcontent-%COMP%] {\n  padding: clamp(2rem, 5vw, 4.5rem);\n  display: grid;\n  align-content: center;\n  gap: 1.1rem;\n  max-width: 28rem;\n  width: 100%;\n  margin-inline: auto;\n}\n.auth-panel[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(2.2rem, 5vw, 3.4rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.03em;\n  line-height: 0.95;\n}\n.auth-panel[_ngcontent-%COMP%]   app-site-brand[_ngcontent-%COMP%]   .site-brand-logo[_ngcontent-%COMP%] {\n  width: 56px;\n  height: 56px;\n  border-radius: 14px;\n}\n.auth-panel[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.7rem, 3.4vw, 2.5rem);\n  line-height: 1.1;\n}\n.supporting[_ngcontent-%COMP%], \n.hint[_ngcontent-%COMP%], \n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  color: rgba(255, 255, 255, 0.78);\n}\n.supporting[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1rem;\n  line-height: 1.45;\n}\n.auth-form[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.9rem;\n  margin-top: 0.35rem;\n  padding: 1.25rem;\n  border-radius: 22px;\n  background: rgba(7, 17, 31, 0.42);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n}\n.auth-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  font-size: 0.88rem;\n  font-weight: 650;\n  color: rgba(255, 255, 255, 0.8);\n}\n.auth-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  letter-spacing: 0.02em;\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.auth-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  background: rgba(5, 12, 26, 0.72);\n  color: white;\n  padding: 0.9rem 1rem;\n  font: inherit;\n  border-radius: 14px;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.4);\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:hover, \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.3);\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.7);\n  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.28);\n  background: rgba(8, 18, 34, 0.92);\n}\n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  margin-top: 0.25rem;\n  border: none;\n  border-radius: 999px;\n  padding: 0.95rem 1.35rem;\n  background:\n    linear-gradient(\n      135deg,\n      #ffd60a,\n      #ff9f1c);\n  color: #08203c;\n  font: inherit;\n  font-weight: 800;\n  cursor: pointer;\n  box-shadow: 0 10px 24px rgba(255, 159, 28, 0.22);\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 14px 28px rgba(255, 159, 28, 0.3);\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\n.error[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.75rem 0.9rem;\n  border-radius: 12px;\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.28);\n  color: #ffd0d0;\n}\n.hint[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.86rem;\n  line-height: 1.4;\n}\n.auth-links[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n}\n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  font-weight: 650;\n  text-decoration: none;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.28);\n  transition: color 0.15s ease, border-color 0.15s ease;\n}\n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  color: #fff;\n  border-color: rgba(255, 214, 10, 0.7);\n}\n.auth-visual[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  display: grid;\n  place-items: center;\n  min-height: 100%;\n  padding: 0;\n}\n.auth-visual[_ngcontent-%COMP%]:not(.has-banner) {\n  padding: clamp(2rem, 5vw, 4.5rem);\n}\n.auth-banner-img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n  display: block;\n}\n.auth-visual.has-banner[_ngcontent-%COMP%]::before {\n  display: none;\n}\n.auth-visual.has-banner[_ngcontent-%COMP%]   .glow[_ngcontent-%COMP%] {\n  display: none;\n}\n.glow[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 16% 14% auto auto;\n  width: min(20rem, 50vw);\n  height: min(20rem, 50vw);\n  border-radius: 50%;\n  background:\n    radial-gradient(\n      circle at 30% 30%,\n      #fff4a3,\n      #ff7b00 58%,\n      #d1495b);\n  filter: blur(2px);\n  animation: _ngcontent-%COMP%_drift 8s ease-in-out infinite;\n}\n.auth-visual[_ngcontent-%COMP%]::before {\n  content: "";\n  position: absolute;\n  inset: 12%;\n  border-radius: 36px;\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  background:\n    linear-gradient(\n      160deg,\n      rgba(255, 255, 255, 0.05),\n      transparent 55%);\n}\n.code-card[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 1;\n  display: grid;\n  gap: 0.75rem;\n  width: min(22rem, 78%);\n  padding: 1.5rem 1.4rem;\n  border-radius: 24px;\n  background: rgba(5, 12, 28, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);\n  transform: rotate(-4deg);\n  animation: _ngcontent-%COMP%_floatUp 6s ease-in-out infinite;\n}\n.code-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #8ce99a;\n  font-weight: 700;\n  font-size: 1.1rem;\n  font-family: var(--font-body);\n}\n@keyframes _ngcontent-%COMP%_drift {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-14px);\n  }\n}\n@keyframes _ngcontent-%COMP%_floatUp {\n  0%, 100% {\n    transform: rotate(-4deg) translateY(0);\n  }\n  50% {\n    transform: rotate(-2deg) translateY(-10px);\n  }\n}\n@media (max-width: 900px) {\n  .auth-shell[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .auth-visual[_ngcontent-%COMP%] {\n    min-height: 16rem;\n    order: -1;\n  }\n  .auth-visual[_ngcontent-%COMP%]:not(.has-banner) {\n    padding-bottom: 1rem;\n  }\n  .auth-panel[_ngcontent-%COMP%] {\n    max-width: 32rem;\n  }\n}\n\n\n/*# sourceMappingURL=login.component.css.map */'] });
   }
@@ -55194,6 +55299,7 @@ var LoginComponent = class _LoginComponent {
 \r
     <div class="auth-links">\r
       <a routerLink="/forgot-password">{{ 'auth.forgot.link' | t }}</a>\r
+      <a routerLink="/register-tenant">{{ 'auth.tenant.registerLink' | t }}</a>\r
       <a routerLink="/register">{{ 'auth.createAccount' | t }}</a>\r
     </div>\r
   </div>\r
@@ -55214,7 +55320,7 @@ var LoginComponent = class _LoginComponent {
   }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LoginComponent, { className: "LoginComponent", filePath: "src/app/pages/login/login.component.ts", lineNumber: 19 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LoginComponent, { className: "LoginComponent", filePath: "src/app/pages/login/login.component.ts", lineNumber: 20 });
 })();
 
 // src/app/shared/dropdown-panel.util.ts
@@ -55971,6 +56077,510 @@ var RegisterComponent = class _RegisterComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(RegisterComponent, { className: "RegisterComponent", filePath: "src/app/pages/register/register.component.ts", lineNumber: 20 });
 })();
 
+// src/app/pages/register-tenant/register-tenant.component.ts
+function RegisterTenantComponent_Conditional_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 6);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(2, "div", 7)(3, "a", 8);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r0.success());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 2, "auth.forgot.backToLogin"));
+  }
+}
+function RegisterTenantComponent_Conditional_12_Conditional_24_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 15);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r0.error());
+  }
+}
+function RegisterTenantComponent_Conditional_12_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "form", 9);
+    \u0275\u0275listener("ngSubmit", function RegisterTenantComponent_Conditional_12_Template_form_ngSubmit_0_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.submit());
+    });
+    \u0275\u0275elementStart(1, "label")(2, "span");
+    \u0275\u0275text(3);
+    \u0275\u0275pipe(4, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(5, "input", 10);
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "label")(7, "span");
+    \u0275\u0275text(8);
+    \u0275\u0275pipe(9, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(10, "input", 11);
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "label")(12, "span");
+    \u0275\u0275text(13);
+    \u0275\u0275pipe(14, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(15, "input", 12);
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "label")(17, "span");
+    \u0275\u0275text(18);
+    \u0275\u0275pipe(19, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(20, "input", 13);
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(21, "button", 14);
+    \u0275\u0275text(22);
+    \u0275\u0275pipe(23, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275conditionalCreate(24, RegisterTenantComponent_Conditional_12_Conditional_24_Template, 2, 1, "p", 15);
+    \u0275\u0275elementStart(25, "div", 7)(26, "a", 8);
+    \u0275\u0275text(27);
+    \u0275\u0275pipe(28, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("formGroup", ctx_r0.form);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 9, "auth.tenant.name"));
+    \u0275\u0275advance(2);
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 11, "auth.displayName"));
+    \u0275\u0275advance(2);
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(14, 13, "auth.tenant.email"));
+    \u0275\u0275advance(2);
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(19, 15, "auth.password"));
+    \u0275\u0275advance(2);
+    \u0275\u0275control();
+    \u0275\u0275advance();
+    \u0275\u0275property("disabled", ctx_r0.loading() || ctx_r0.form.invalid);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(23, 17, "auth.tenant.submit"));
+    \u0275\u0275advance(2);
+    \u0275\u0275conditional(ctx_r0.error() ? 24 : -1);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(28, 19, "auth.forgot.backToLogin"));
+  }
+}
+function RegisterTenantComponent_Conditional_14_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "img", 5);
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("src", ctx, \u0275\u0275sanitizeUrl)("alt", ctx_r0.brand.siteName());
+  }
+}
+function RegisterTenantComponent_Conditional_15_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "div", 16);
+    \u0275\u0275elementStart(1, "div", 17)(2, "span");
+    \u0275\u0275text(3, "NEW TENANT");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span");
+    \u0275\u0275text(5, "VERIFY EMAIL");
+    \u0275\u0275elementEnd()();
+  }
+}
+var RegisterTenantComponent = class _RegisterTenantComponent {
+  constructor() {
+    this.auth = inject2(AuthService);
+    this.fb = inject2(FormBuilder);
+    this.locale = inject2(LocaleService);
+    this.brand = inject2(SiteBrandService);
+    this.form = this.fb.nonNullable.group({
+      tenantName: ["", Validators.required],
+      displayName: ["", Validators.required],
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required, Validators.minLength(6)]]
+    });
+    this.loading = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "loading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.error = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "error" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.success = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "success" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+  }
+  submit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const value = this.form.getRawValue();
+    this.loading.set(true);
+    this.error.set("");
+    this.success.set("");
+    this.auth.registerTenant({
+      tenantName: value.tenantName.trim(),
+      displayName: value.displayName.trim(),
+      email: value.email.trim(),
+      password: value.password
+    }).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.success.set(this.locale.t("auth.tenant.checkEmail"));
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(this.locale.fromApiError(err, "auth.tenant.registerFailed"));
+      }
+    });
+  }
+  static {
+    this.\u0275fac = function RegisterTenantComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _RegisterTenantComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _RegisterTenantComponent, selectors: [["app-register-tenant"]], decls: 16, vars: 10, consts: [[1, "auth-shell"], [1, "auth-panel"], [1, "auth-panel-top"], [1, "supporting"], ["aria-hidden", "true", 1, "auth-visual"], [1, "auth-banner-img", 3, "src", "alt"], [1, "hint"], [1, "auth-links"], ["routerLink", "/login"], [1, "auth-form", 3, "ngSubmit", "formGroup"], ["formControlName", "tenantName", "autocomplete", "organization"], ["formControlName", "displayName", "autocomplete", "nickname"], ["formControlName", "email", "type", "email", "autocomplete", "email"], ["formControlName", "password", "type", "password", "autocomplete", "new-password"], ["type", "submit", 3, "disabled"], [1, "error"], [1, "glow"], [1, "code-card"]], template: function RegisterTenantComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "section", 0)(1, "div", 1)(2, "div", 2);
+        \u0275\u0275element(3, "app-site-brand")(4, "app-language-switcher");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(5, "h1");
+        \u0275\u0275text(6);
+        \u0275\u0275pipe(7, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "p", 3);
+        \u0275\u0275text(9);
+        \u0275\u0275pipe(10, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(11, RegisterTenantComponent_Conditional_11_Template, 6, 4)(12, RegisterTenantComponent_Conditional_12_Template, 29, 21);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(13, "div", 4);
+        \u0275\u0275conditionalCreate(14, RegisterTenantComponent_Conditional_14_Template, 1, 2, "img", 5)(15, RegisterTenantComponent_Conditional_15_Template, 6, 0);
+        \u0275\u0275elementEnd()();
+      }
+      if (rf & 2) {
+        let tmp_4_0;
+        \u0275\u0275advance(6);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 6, "auth.tenant.title"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 8, "auth.tenant.subtitle"));
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional(ctx.success() ? 11 : 12);
+        \u0275\u0275advance(2);
+        \u0275\u0275classProp("has-banner", !!ctx.brand.bannerUrl());
+        \u0275\u0275advance();
+        \u0275\u0275conditional((tmp_4_0 = ctx.brand.bannerUrl()) ? 14 : 15, tmp_4_0);
+      }
+    }, dependencies: [ReactiveFormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, FormGroupDirective, FormControlName, RouterLink, LanguageSwitcherComponent, SiteBrandComponent, TranslatePipe], styles: ['\n.auth-shell[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);\n  background:\n    radial-gradient(\n      circle at 12% 18%,\n      rgba(255, 214, 10, 0.22),\n      transparent 26%),\n    radial-gradient(\n      circle at 80% 80%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    linear-gradient(\n      145deg,\n      #07111f 0%,\n      #0a2744 48%,\n      #145a8f 100%);\n  color: #fff;\n}\n.auth-panel[_ngcontent-%COMP%] {\n  padding: clamp(2rem, 5vw, 4.5rem);\n  display: grid;\n  align-content: center;\n  gap: 1.1rem;\n  max-width: 28rem;\n  width: 100%;\n  margin-inline: auto;\n}\n.auth-panel[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(2.2rem, 5vw, 3.4rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.03em;\n  line-height: 0.95;\n}\n.auth-panel[_ngcontent-%COMP%]   app-site-brand[_ngcontent-%COMP%]   .site-brand-logo[_ngcontent-%COMP%] {\n  width: 56px;\n  height: 56px;\n  border-radius: 14px;\n}\n.auth-panel[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.7rem, 3.4vw, 2.5rem);\n  line-height: 1.1;\n}\n.supporting[_ngcontent-%COMP%], \n.hint[_ngcontent-%COMP%], \n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  color: rgba(255, 255, 255, 0.78);\n}\n.supporting[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1rem;\n  line-height: 1.45;\n}\n.auth-form[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.9rem;\n  margin-top: 0.35rem;\n  padding: 1.25rem;\n  border-radius: 22px;\n  background: rgba(7, 17, 31, 0.42);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n}\n.auth-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  font-size: 0.88rem;\n  font-weight: 650;\n  color: rgba(255, 255, 255, 0.8);\n}\n.auth-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  letter-spacing: 0.02em;\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.auth-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  background: rgba(5, 12, 26, 0.72);\n  color: white;\n  padding: 0.9rem 1rem;\n  font: inherit;\n  border-radius: 14px;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.4);\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:hover, \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.3);\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.7);\n  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.28);\n  background: rgba(8, 18, 34, 0.92);\n}\n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  margin-top: 0.25rem;\n  border: none;\n  border-radius: 999px;\n  padding: 0.95rem 1.35rem;\n  background:\n    linear-gradient(\n      135deg,\n      #ffd60a,\n      #ff9f1c);\n  color: #08203c;\n  font: inherit;\n  font-weight: 800;\n  cursor: pointer;\n  box-shadow: 0 10px 24px rgba(255, 159, 28, 0.22);\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 14px 28px rgba(255, 159, 28, 0.3);\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\n.error[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.75rem 0.9rem;\n  border-radius: 12px;\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.28);\n  color: #ffd0d0;\n}\n.hint[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.86rem;\n  line-height: 1.4;\n}\n.auth-links[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n}\n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  font-weight: 650;\n  text-decoration: none;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.28);\n  transition: color 0.15s ease, border-color 0.15s ease;\n}\n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  color: #fff;\n  border-color: rgba(255, 214, 10, 0.7);\n}\n.auth-visual[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  display: grid;\n  place-items: center;\n  min-height: 100%;\n  padding: 0;\n}\n.auth-visual[_ngcontent-%COMP%]:not(.has-banner) {\n  padding: clamp(2rem, 5vw, 4.5rem);\n}\n.auth-banner-img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n  display: block;\n}\n.auth-visual.has-banner[_ngcontent-%COMP%]::before {\n  display: none;\n}\n.auth-visual.has-banner[_ngcontent-%COMP%]   .glow[_ngcontent-%COMP%] {\n  display: none;\n}\n.glow[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 16% 14% auto auto;\n  width: min(20rem, 50vw);\n  height: min(20rem, 50vw);\n  border-radius: 50%;\n  background:\n    radial-gradient(\n      circle at 30% 30%,\n      #fff4a3,\n      #ff7b00 58%,\n      #d1495b);\n  filter: blur(2px);\n  animation: _ngcontent-%COMP%_drift 8s ease-in-out infinite;\n}\n.auth-visual[_ngcontent-%COMP%]::before {\n  content: "";\n  position: absolute;\n  inset: 12%;\n  border-radius: 36px;\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  background:\n    linear-gradient(\n      160deg,\n      rgba(255, 255, 255, 0.05),\n      transparent 55%);\n}\n.code-card[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 1;\n  display: grid;\n  gap: 0.75rem;\n  width: min(22rem, 78%);\n  padding: 1.5rem 1.4rem;\n  border-radius: 24px;\n  background: rgba(5, 12, 28, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);\n  transform: rotate(-4deg);\n  animation: _ngcontent-%COMP%_floatUp 6s ease-in-out infinite;\n}\n.code-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #8ce99a;\n  font-weight: 700;\n  font-size: 1.1rem;\n  font-family: var(--font-body);\n}\n@keyframes _ngcontent-%COMP%_drift {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-14px);\n  }\n}\n@keyframes _ngcontent-%COMP%_floatUp {\n  0%, 100% {\n    transform: rotate(-4deg) translateY(0);\n  }\n  50% {\n    transform: rotate(-2deg) translateY(-10px);\n  }\n}\n@media (max-width: 900px) {\n  .auth-shell[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .auth-visual[_ngcontent-%COMP%] {\n    min-height: 16rem;\n    order: -1;\n  }\n  .auth-visual[_ngcontent-%COMP%]:not(.has-banner) {\n    padding-bottom: 1rem;\n  }\n  .auth-panel[_ngcontent-%COMP%] {\n    max-width: 32rem;\n  }\n}\n\n\n/*# sourceMappingURL=forgot-password.component.css.map */'] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(RegisterTenantComponent, [{
+    type: Component,
+    args: [{ selector: "app-register-tenant", standalone: true, imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent], template: `<section class="auth-shell">\r
+  <div class="auth-panel">\r
+    <div class="auth-panel-top">\r
+      <app-site-brand />\r
+      <app-language-switcher />\r
+    </div>\r
+    <h1>{{ 'auth.tenant.title' | t }}</h1>\r
+    <p class="supporting">{{ 'auth.tenant.subtitle' | t }}</p>\r
+\r
+    @if (success()) {\r
+      <p class="hint">{{ success() }}</p>\r
+      <div class="auth-links">\r
+        <a routerLink="/login">{{ 'auth.forgot.backToLogin' | t }}</a>\r
+      </div>\r
+    } @else {\r
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">\r
+        <label>\r
+          <span>{{ 'auth.tenant.name' | t }}</span>\r
+          <input formControlName="tenantName" autocomplete="organization" />\r
+        </label>\r
+        <label>\r
+          <span>{{ 'auth.displayName' | t }}</span>\r
+          <input formControlName="displayName" autocomplete="nickname" />\r
+        </label>\r
+        <label>\r
+          <span>{{ 'auth.tenant.email' | t }}</span>\r
+          <input formControlName="email" type="email" autocomplete="email" />\r
+        </label>\r
+        <label>\r
+          <span>{{ 'auth.password' | t }}</span>\r
+          <input formControlName="password" type="password" autocomplete="new-password" />\r
+        </label>\r
+\r
+        <button type="submit" [disabled]="loading() || form.invalid">{{ 'auth.tenant.submit' | t }}</button>\r
+      </form>\r
+\r
+      @if (error()) {\r
+        <p class="error">{{ error() }}</p>\r
+      }\r
+\r
+      <div class="auth-links">\r
+        <a routerLink="/login">{{ 'auth.forgot.backToLogin' | t }}</a>\r
+      </div>\r
+    }\r
+  </div>\r
+\r
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">\r
+    @if (brand.bannerUrl(); as banner) {\r
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />\r
+    } @else {\r
+      <div class="glow"></div>\r
+      <div class="code-card">\r
+        <span>NEW TENANT</span>\r
+        <span>VERIFY EMAIL</span>\r
+      </div>\r
+    }\r
+  </div>\r
+</section>\r
+`, styles: ['/* src/app/styles/auth-shared.css */\n.auth-shell {\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);\n  background:\n    radial-gradient(\n      circle at 12% 18%,\n      rgba(255, 214, 10, 0.22),\n      transparent 26%),\n    radial-gradient(\n      circle at 80% 80%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    linear-gradient(\n      145deg,\n      #07111f 0%,\n      #0a2744 48%,\n      #145a8f 100%);\n  color: #fff;\n}\n.auth-panel {\n  padding: clamp(2rem, 5vw, 4.5rem);\n  display: grid;\n  align-content: center;\n  gap: 1.1rem;\n  max-width: 28rem;\n  width: 100%;\n  margin-inline: auto;\n}\n.auth-panel .brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(2.2rem, 5vw, 3.4rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.03em;\n  line-height: 0.95;\n}\n.auth-panel app-site-brand .site-brand-logo {\n  width: 56px;\n  height: 56px;\n  border-radius: 14px;\n}\n.auth-panel h1 {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.7rem, 3.4vw, 2.5rem);\n  line-height: 1.1;\n}\n.supporting,\n.hint,\n.auth-panel a {\n  color: rgba(255, 255, 255, 0.78);\n}\n.supporting {\n  margin: 0;\n  font-size: 1rem;\n  line-height: 1.45;\n}\n.auth-form {\n  display: grid;\n  gap: 0.9rem;\n  margin-top: 0.35rem;\n  padding: 1.25rem;\n  border-radius: 22px;\n  background: rgba(7, 17, 31, 0.42);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n}\n.auth-form label {\n  display: grid;\n  gap: 0.4rem;\n  font-size: 0.88rem;\n  font-weight: 650;\n  color: rgba(255, 255, 255, 0.8);\n}\n.auth-form label span {\n  letter-spacing: 0.02em;\n}\n.auth-form input,\n.auth-form select,\n.auth-form textarea {\n  width: 100%;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  background: rgba(5, 12, 26, 0.72);\n  color: white;\n  padding: 0.9rem 1rem;\n  font: inherit;\n  border-radius: 14px;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.auth-form input::placeholder {\n  color: rgba(255, 255, 255, 0.4);\n}\n.auth-form input:hover,\n.auth-form select:hover {\n  border-color: rgba(255, 255, 255, 0.3);\n}\n.auth-form input:focus,\n.auth-form select:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.7);\n  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.28);\n  background: rgba(8, 18, 34, 0.92);\n}\n.auth-form select option {\n  background: #0c1a2e;\n  color: #fff;\n}\n.auth-form button[type=submit] {\n  margin-top: 0.25rem;\n  border: none;\n  border-radius: 999px;\n  padding: 0.95rem 1.35rem;\n  background:\n    linear-gradient(\n      135deg,\n      #ffd60a,\n      #ff9f1c);\n  color: #08203c;\n  font: inherit;\n  font-weight: 800;\n  cursor: pointer;\n  box-shadow: 0 10px 24px rgba(255, 159, 28, 0.22);\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n}\n.auth-form button[type=submit]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 14px 28px rgba(255, 159, 28, 0.3);\n}\n.auth-form button[type=submit]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\n.error {\n  margin: 0;\n  padding: 0.75rem 0.9rem;\n  border-radius: 12px;\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.28);\n  color: #ffd0d0;\n}\n.hint {\n  margin: 0;\n  font-size: 0.86rem;\n  line-height: 1.4;\n}\n.auth-links {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n}\n.auth-panel a {\n  font-weight: 650;\n  text-decoration: none;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.28);\n  transition: color 0.15s ease, border-color 0.15s ease;\n}\n.auth-panel a:hover {\n  color: #fff;\n  border-color: rgba(255, 214, 10, 0.7);\n}\n.auth-visual {\n  position: relative;\n  overflow: hidden;\n  display: grid;\n  place-items: center;\n  min-height: 100%;\n  padding: 0;\n}\n.auth-visual:not(.has-banner) {\n  padding: clamp(2rem, 5vw, 4.5rem);\n}\n.auth-banner-img {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n  display: block;\n}\n.auth-visual.has-banner::before {\n  display: none;\n}\n.auth-visual.has-banner .glow {\n  display: none;\n}\n.glow {\n  position: absolute;\n  inset: 16% 14% auto auto;\n  width: min(20rem, 50vw);\n  height: min(20rem, 50vw);\n  border-radius: 50%;\n  background:\n    radial-gradient(\n      circle at 30% 30%,\n      #fff4a3,\n      #ff7b00 58%,\n      #d1495b);\n  filter: blur(2px);\n  animation: drift 8s ease-in-out infinite;\n}\n.auth-visual::before {\n  content: "";\n  position: absolute;\n  inset: 12%;\n  border-radius: 36px;\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  background:\n    linear-gradient(\n      160deg,\n      rgba(255, 255, 255, 0.05),\n      transparent 55%);\n}\n.code-card {\n  position: relative;\n  z-index: 1;\n  display: grid;\n  gap: 0.75rem;\n  width: min(22rem, 78%);\n  padding: 1.5rem 1.4rem;\n  border-radius: 24px;\n  background: rgba(5, 12, 28, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);\n  transform: rotate(-4deg);\n  animation: floatUp 6s ease-in-out infinite;\n}\n.code-card span {\n  color: #8ce99a;\n  font-weight: 700;\n  font-size: 1.1rem;\n  font-family: var(--font-body);\n}\n@keyframes drift {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-14px);\n  }\n}\n@keyframes floatUp {\n  0%, 100% {\n    transform: rotate(-4deg) translateY(0);\n  }\n  50% {\n    transform: rotate(-2deg) translateY(-10px);\n  }\n}\n@media (max-width: 900px) {\n  .auth-shell {\n    grid-template-columns: 1fr;\n  }\n  .auth-visual {\n    min-height: 16rem;\n    order: -1;\n  }\n  .auth-visual:not(.has-banner) {\n    padding-bottom: 1rem;\n  }\n  .auth-panel {\n    max-width: 32rem;\n  }\n}\n\n/* src/app/pages/forgot-password/forgot-password.component.css */\n/*# sourceMappingURL=forgot-password.component.css.map */\n'] }]
+  }], null, null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(RegisterTenantComponent, { className: "RegisterTenantComponent", filePath: "src/app/pages/register-tenant/register-tenant.component.ts", lineNumber: 18 });
+})();
+
+// src/app/pages/verify-tenant/verify-tenant.component.ts
+var _c02 = (a0) => ({ tenant: a0 });
+var _c12 = () => ({});
+function VerifyTenantComponent_Conditional_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "common.loading"));
+  }
+}
+function VerifyTenantComponent_Conditional_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 4);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r0.success());
+  }
+}
+function VerifyTenantComponent_Conditional_13_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 5);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r0.error());
+  }
+}
+function VerifyTenantComponent_Conditional_19_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "img", 9);
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275property("src", ctx, \u0275\u0275sanitizeUrl)("alt", ctx_r0.brand.siteName());
+  }
+}
+function VerifyTenantComponent_Conditional_20_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "div", 10);
+    \u0275\u0275elementStart(1, "div", 11)(2, "span");
+    \u0275\u0275text(3, "EMAIL CHECK");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span");
+    \u0275\u0275text(5, "TENANT READY");
+    \u0275\u0275elementEnd()();
+  }
+}
+var VerifyTenantComponent = class _VerifyTenantComponent {
+  constructor() {
+    this.auth = inject2(AuthService);
+    this.route = inject2(ActivatedRoute);
+    this.router = inject2(Router);
+    this.locale = inject2(LocaleService);
+    this.brand = inject2(SiteBrandService);
+    this.loading = signal(
+      true,
+      ...ngDevMode ? [{ debugName: "loading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.error = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "error" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.success = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "success" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.tenantId = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "tenantId" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+  }
+  ngOnInit() {
+    const token = (this.route.snapshot.queryParamMap.get("token") ?? "").trim();
+    if (!token) {
+      this.loading.set(false);
+      this.error.set(this.locale.t("auth.tenant.missingToken"));
+      return;
+    }
+    this.auth.verifyTenant(token).subscribe({
+      next: (result) => {
+        const tenant = (result.tenantId ?? "").trim();
+        setCurrentTenantId(tenant);
+        this.tenantId.set(tenant);
+        this.loading.set(false);
+        this.success.set(result.message || this.locale.t("auth.tenant.verified"));
+        void this.router.navigate(["/login"], { queryParams: tenant ? { tenant } : {} });
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(this.locale.fromApiError(err, "auth.tenant.verifyFailed"));
+      }
+    });
+  }
+  static {
+    this.\u0275fac = function VerifyTenantComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _VerifyTenantComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VerifyTenantComponent, selectors: [["app-verify-tenant"]], decls: 21, vars: 17, consts: [[1, "auth-shell"], [1, "auth-panel"], [1, "auth-panel-top"], [1, "supporting"], [1, "hint"], [1, "error"], [1, "auth-links"], ["routerLink", "/login", 3, "queryParams"], ["aria-hidden", "true", 1, "auth-visual"], [1, "auth-banner-img", 3, "src", "alt"], [1, "glow"], [1, "code-card"]], template: function VerifyTenantComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "section", 0)(1, "div", 1)(2, "div", 2);
+        \u0275\u0275element(3, "app-site-brand")(4, "app-language-switcher");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(5, "h1");
+        \u0275\u0275text(6);
+        \u0275\u0275pipe(7, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "p", 3);
+        \u0275\u0275text(9);
+        \u0275\u0275pipe(10, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(11, VerifyTenantComponent_Conditional_11_Template, 3, 3, "p", 4)(12, VerifyTenantComponent_Conditional_12_Template, 2, 1, "p", 4)(13, VerifyTenantComponent_Conditional_13_Template, 2, 1, "p", 5);
+        \u0275\u0275elementStart(14, "div", 6)(15, "a", 7);
+        \u0275\u0275text(16);
+        \u0275\u0275pipe(17, "t");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(18, "div", 8);
+        \u0275\u0275conditionalCreate(19, VerifyTenantComponent_Conditional_19_Template, 1, 2, "img", 9)(20, VerifyTenantComponent_Conditional_20_Template, 6, 0);
+        \u0275\u0275elementEnd()();
+      }
+      if (rf & 2) {
+        let tmp_6_0;
+        \u0275\u0275advance(6);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 8, "auth.tenant.verifyTitle"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 10, "auth.tenant.verifySubtitle"));
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional(ctx.loading() ? 11 : ctx.success() ? 12 : ctx.error() ? 13 : -1);
+        \u0275\u0275advance(4);
+        \u0275\u0275property("queryParams", ctx.tenantId() ? \u0275\u0275pureFunction1(14, _c02, ctx.tenantId()) : \u0275\u0275pureFunction0(16, _c12));
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 12, "auth.forgot.backToLogin"));
+        \u0275\u0275advance(2);
+        \u0275\u0275classProp("has-banner", !!ctx.brand.bannerUrl());
+        \u0275\u0275advance();
+        \u0275\u0275conditional((tmp_6_0 = ctx.brand.bannerUrl()) ? 19 : 20, tmp_6_0);
+      }
+    }, dependencies: [RouterLink, LanguageSwitcherComponent, SiteBrandComponent, TranslatePipe], styles: ['\n.auth-shell[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);\n  background:\n    radial-gradient(\n      circle at 12% 18%,\n      rgba(255, 214, 10, 0.22),\n      transparent 26%),\n    radial-gradient(\n      circle at 80% 80%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    linear-gradient(\n      145deg,\n      #07111f 0%,\n      #0a2744 48%,\n      #145a8f 100%);\n  color: #fff;\n}\n.auth-panel[_ngcontent-%COMP%] {\n  padding: clamp(2rem, 5vw, 4.5rem);\n  display: grid;\n  align-content: center;\n  gap: 1.1rem;\n  max-width: 28rem;\n  width: 100%;\n  margin-inline: auto;\n}\n.auth-panel[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(2.2rem, 5vw, 3.4rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.03em;\n  line-height: 0.95;\n}\n.auth-panel[_ngcontent-%COMP%]   app-site-brand[_ngcontent-%COMP%]   .site-brand-logo[_ngcontent-%COMP%] {\n  width: 56px;\n  height: 56px;\n  border-radius: 14px;\n}\n.auth-panel[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.7rem, 3.4vw, 2.5rem);\n  line-height: 1.1;\n}\n.supporting[_ngcontent-%COMP%], \n.hint[_ngcontent-%COMP%], \n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  color: rgba(255, 255, 255, 0.78);\n}\n.supporting[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1rem;\n  line-height: 1.45;\n}\n.auth-form[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.9rem;\n  margin-top: 0.35rem;\n  padding: 1.25rem;\n  border-radius: 22px;\n  background: rgba(7, 17, 31, 0.42);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n}\n.auth-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  font-size: 0.88rem;\n  font-weight: 650;\n  color: rgba(255, 255, 255, 0.8);\n}\n.auth-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  letter-spacing: 0.02em;\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.auth-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  background: rgba(5, 12, 26, 0.72);\n  color: white;\n  padding: 0.9rem 1rem;\n  font: inherit;\n  border-radius: 14px;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.4);\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:hover, \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.3);\n}\n.auth-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.7);\n  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.28);\n  background: rgba(8, 18, 34, 0.92);\n}\n.auth-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%] {\n  margin-top: 0.25rem;\n  border: none;\n  border-radius: 999px;\n  padding: 0.95rem 1.35rem;\n  background:\n    linear-gradient(\n      135deg,\n      #ffd60a,\n      #ff9f1c);\n  color: #08203c;\n  font: inherit;\n  font-weight: 800;\n  cursor: pointer;\n  box-shadow: 0 10px 24px rgba(255, 159, 28, 0.22);\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 14px 28px rgba(255, 159, 28, 0.3);\n}\n.auth-form[_ngcontent-%COMP%]   button[type=submit][_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\n.error[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.75rem 0.9rem;\n  border-radius: 12px;\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.28);\n  color: #ffd0d0;\n}\n.hint[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.86rem;\n  line-height: 1.4;\n}\n.auth-links[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n}\n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  font-weight: 650;\n  text-decoration: none;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.28);\n  transition: color 0.15s ease, border-color 0.15s ease;\n}\n.auth-panel[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  color: #fff;\n  border-color: rgba(255, 214, 10, 0.7);\n}\n.auth-visual[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  display: grid;\n  place-items: center;\n  min-height: 100%;\n  padding: 0;\n}\n.auth-visual[_ngcontent-%COMP%]:not(.has-banner) {\n  padding: clamp(2rem, 5vw, 4.5rem);\n}\n.auth-banner-img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n  display: block;\n}\n.auth-visual.has-banner[_ngcontent-%COMP%]::before {\n  display: none;\n}\n.auth-visual.has-banner[_ngcontent-%COMP%]   .glow[_ngcontent-%COMP%] {\n  display: none;\n}\n.glow[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 16% 14% auto auto;\n  width: min(20rem, 50vw);\n  height: min(20rem, 50vw);\n  border-radius: 50%;\n  background:\n    radial-gradient(\n      circle at 30% 30%,\n      #fff4a3,\n      #ff7b00 58%,\n      #d1495b);\n  filter: blur(2px);\n  animation: _ngcontent-%COMP%_drift 8s ease-in-out infinite;\n}\n.auth-visual[_ngcontent-%COMP%]::before {\n  content: "";\n  position: absolute;\n  inset: 12%;\n  border-radius: 36px;\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  background:\n    linear-gradient(\n      160deg,\n      rgba(255, 255, 255, 0.05),\n      transparent 55%);\n}\n.code-card[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 1;\n  display: grid;\n  gap: 0.75rem;\n  width: min(22rem, 78%);\n  padding: 1.5rem 1.4rem;\n  border-radius: 24px;\n  background: rgba(5, 12, 28, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);\n  transform: rotate(-4deg);\n  animation: _ngcontent-%COMP%_floatUp 6s ease-in-out infinite;\n}\n.code-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #8ce99a;\n  font-weight: 700;\n  font-size: 1.1rem;\n  font-family: var(--font-body);\n}\n@keyframes _ngcontent-%COMP%_drift {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-14px);\n  }\n}\n@keyframes _ngcontent-%COMP%_floatUp {\n  0%, 100% {\n    transform: rotate(-4deg) translateY(0);\n  }\n  50% {\n    transform: rotate(-2deg) translateY(-10px);\n  }\n}\n@media (max-width: 900px) {\n  .auth-shell[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .auth-visual[_ngcontent-%COMP%] {\n    min-height: 16rem;\n    order: -1;\n  }\n  .auth-visual[_ngcontent-%COMP%]:not(.has-banner) {\n    padding-bottom: 1rem;\n  }\n  .auth-panel[_ngcontent-%COMP%] {\n    max-width: 32rem;\n  }\n}\n\n\n/*# sourceMappingURL=forgot-password.component.css.map */'] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(VerifyTenantComponent, [{
+    type: Component,
+    args: [{ selector: "app-verify-tenant", standalone: true, imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent], template: `<section class="auth-shell">\r
+  <div class="auth-panel">\r
+    <div class="auth-panel-top">\r
+      <app-site-brand />\r
+      <app-language-switcher />\r
+    </div>\r
+    <h1>{{ 'auth.tenant.verifyTitle' | t }}</h1>\r
+    <p class="supporting">{{ 'auth.tenant.verifySubtitle' | t }}</p>\r
+\r
+    @if (loading()) {\r
+      <p class="hint">{{ 'common.loading' | t }}</p>\r
+    } @else if (success()) {\r
+      <p class="hint">{{ success() }}</p>\r
+    } @else if (error()) {\r
+      <p class="error">{{ error() }}</p>\r
+    }\r
+\r
+    <div class="auth-links">\r
+      <a routerLink="/login" [queryParams]="tenantId() ? { tenant: tenantId() } : {}">{{ 'auth.forgot.backToLogin' | t }}</a>\r
+    </div>\r
+  </div>\r
+\r
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">\r
+    @if (brand.bannerUrl(); as banner) {\r
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />\r
+    } @else {\r
+      <div class="glow"></div>\r
+      <div class="code-card">\r
+        <span>EMAIL CHECK</span>\r
+        <span>TENANT READY</span>\r
+      </div>\r
+    }\r
+  </div>\r
+</section>\r
+`, styles: ['/* src/app/styles/auth-shared.css */\n.auth-shell {\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);\n  background:\n    radial-gradient(\n      circle at 12% 18%,\n      rgba(255, 214, 10, 0.22),\n      transparent 26%),\n    radial-gradient(\n      circle at 80% 80%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    linear-gradient(\n      145deg,\n      #07111f 0%,\n      #0a2744 48%,\n      #145a8f 100%);\n  color: #fff;\n}\n.auth-panel {\n  padding: clamp(2rem, 5vw, 4.5rem);\n  display: grid;\n  align-content: center;\n  gap: 1.1rem;\n  max-width: 28rem;\n  width: 100%;\n  margin-inline: auto;\n}\n.auth-panel .brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(2.2rem, 5vw, 3.4rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.03em;\n  line-height: 0.95;\n}\n.auth-panel app-site-brand .site-brand-logo {\n  width: 56px;\n  height: 56px;\n  border-radius: 14px;\n}\n.auth-panel h1 {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.7rem, 3.4vw, 2.5rem);\n  line-height: 1.1;\n}\n.supporting,\n.hint,\n.auth-panel a {\n  color: rgba(255, 255, 255, 0.78);\n}\n.supporting {\n  margin: 0;\n  font-size: 1rem;\n  line-height: 1.45;\n}\n.auth-form {\n  display: grid;\n  gap: 0.9rem;\n  margin-top: 0.35rem;\n  padding: 1.25rem;\n  border-radius: 22px;\n  background: rgba(7, 17, 31, 0.42);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n}\n.auth-form label {\n  display: grid;\n  gap: 0.4rem;\n  font-size: 0.88rem;\n  font-weight: 650;\n  color: rgba(255, 255, 255, 0.8);\n}\n.auth-form label span {\n  letter-spacing: 0.02em;\n}\n.auth-form input,\n.auth-form select,\n.auth-form textarea {\n  width: 100%;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  background: rgba(5, 12, 26, 0.72);\n  color: white;\n  padding: 0.9rem 1rem;\n  font: inherit;\n  border-radius: 14px;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.auth-form input::placeholder {\n  color: rgba(255, 255, 255, 0.4);\n}\n.auth-form input:hover,\n.auth-form select:hover {\n  border-color: rgba(255, 255, 255, 0.3);\n}\n.auth-form input:focus,\n.auth-form select:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.7);\n  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.28);\n  background: rgba(8, 18, 34, 0.92);\n}\n.auth-form select option {\n  background: #0c1a2e;\n  color: #fff;\n}\n.auth-form button[type=submit] {\n  margin-top: 0.25rem;\n  border: none;\n  border-radius: 999px;\n  padding: 0.95rem 1.35rem;\n  background:\n    linear-gradient(\n      135deg,\n      #ffd60a,\n      #ff9f1c);\n  color: #08203c;\n  font: inherit;\n  font-weight: 800;\n  cursor: pointer;\n  box-shadow: 0 10px 24px rgba(255, 159, 28, 0.22);\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n}\n.auth-form button[type=submit]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 14px 28px rgba(255, 159, 28, 0.3);\n}\n.auth-form button[type=submit]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\n.error {\n  margin: 0;\n  padding: 0.75rem 0.9rem;\n  border-radius: 12px;\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.28);\n  color: #ffd0d0;\n}\n.hint {\n  margin: 0;\n  font-size: 0.86rem;\n  line-height: 1.4;\n}\n.auth-links {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n}\n.auth-panel a {\n  font-weight: 650;\n  text-decoration: none;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.28);\n  transition: color 0.15s ease, border-color 0.15s ease;\n}\n.auth-panel a:hover {\n  color: #fff;\n  border-color: rgba(255, 214, 10, 0.7);\n}\n.auth-visual {\n  position: relative;\n  overflow: hidden;\n  display: grid;\n  place-items: center;\n  min-height: 100%;\n  padding: 0;\n}\n.auth-visual:not(.has-banner) {\n  padding: clamp(2rem, 5vw, 4.5rem);\n}\n.auth-banner-img {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n  display: block;\n}\n.auth-visual.has-banner::before {\n  display: none;\n}\n.auth-visual.has-banner .glow {\n  display: none;\n}\n.glow {\n  position: absolute;\n  inset: 16% 14% auto auto;\n  width: min(20rem, 50vw);\n  height: min(20rem, 50vw);\n  border-radius: 50%;\n  background:\n    radial-gradient(\n      circle at 30% 30%,\n      #fff4a3,\n      #ff7b00 58%,\n      #d1495b);\n  filter: blur(2px);\n  animation: drift 8s ease-in-out infinite;\n}\n.auth-visual::before {\n  content: "";\n  position: absolute;\n  inset: 12%;\n  border-radius: 36px;\n  border: 1px solid rgba(255, 255, 255, 0.08);\n  background:\n    linear-gradient(\n      160deg,\n      rgba(255, 255, 255, 0.05),\n      transparent 55%);\n}\n.code-card {\n  position: relative;\n  z-index: 1;\n  display: grid;\n  gap: 0.75rem;\n  width: min(22rem, 78%);\n  padding: 1.5rem 1.4rem;\n  border-radius: 24px;\n  background: rgba(5, 12, 28, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);\n  transform: rotate(-4deg);\n  animation: floatUp 6s ease-in-out infinite;\n}\n.code-card span {\n  color: #8ce99a;\n  font-weight: 700;\n  font-size: 1.1rem;\n  font-family: var(--font-body);\n}\n@keyframes drift {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-14px);\n  }\n}\n@keyframes floatUp {\n  0%, 100% {\n    transform: rotate(-4deg) translateY(0);\n  }\n  50% {\n    transform: rotate(-2deg) translateY(-10px);\n  }\n}\n@media (max-width: 900px) {\n  .auth-shell {\n    grid-template-columns: 1fr;\n  }\n  .auth-visual {\n    min-height: 16rem;\n    order: -1;\n  }\n  .auth-visual:not(.has-banner) {\n    padding-bottom: 1rem;\n  }\n  .auth-panel {\n    max-width: 32rem;\n  }\n}\n\n/* src/app/pages/forgot-password/forgot-password.component.css */\n/*# sourceMappingURL=forgot-password.component.css.map */\n'] }]
+  }], null, null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VerifyTenantComponent, { className: "VerifyTenantComponent", filePath: "src/app/pages/verify-tenant/verify-tenant.component.ts", lineNumber: 18 });
+})();
+
 // src/app/pages/forgot-password/forgot-password.component.ts
 function ForgotPasswordComponent_Conditional_20_Template(rf, ctx) {
   if (rf & 1) {
@@ -56562,8 +57172,8 @@ function matchesStudentSchoolType(courseSchoolType, studentSchoolType) {
 }
 
 // src/app/pages/student-home/student-home.component.ts
-var _c02 = (a0) => ({ name: a0 });
-var _c12 = (a0, a1) => ({ steps: a0, xp: a1 });
+var _c03 = (a0) => ({ name: a0 });
+var _c13 = (a0, a1) => ({ steps: a0, xp: a1 });
 var _c22 = (a0, a1) => ({ min: a0, max: a1 });
 var _c3 = (a0) => ({ count: a0 });
 var _c4 = (a0) => ["/lessons", a0];
@@ -56839,7 +57449,7 @@ function StudentHomeComponent_For_93_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate3(" ", ctx_r0.formatWhen(meeting_r8.startsAtUtc), " \xB7 ", meeting_r8.durationMinutes, " ", \u0275\u0275pipeBind1(6, 8, "student.minutes"), " ");
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(9, 10, "student.withHost", \u0275\u0275pureFunction1(15, _c02, meeting_r8.hostName)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(9, 10, "student.withHost", \u0275\u0275pureFunction1(15, _c03, meeting_r8.hostName)), " ");
     \u0275\u0275advance(2);
     \u0275\u0275conditional(meeting_r8.classroomName ? 10 : -1);
     \u0275\u0275advance();
@@ -57176,7 +57786,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
       if (rf & 2) {
         let tmp_2_0;
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(6, 30, "student.greeting", \u0275\u0275pureFunction1(68, _c02, ctx.auth.user()?.displayName || "")));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(6, 30, "student.greeting", \u0275\u0275pureFunction1(68, _c03, ctx.auth.user()?.displayName || "")));
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(11, 33, "common.signOut"));
         \u0275\u0275advance(5);
@@ -57186,7 +57796,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(23, 37, "student.heroTitle"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(26, 39, "student.stepsXp", \u0275\u0275pureFunction2(70, _c12, ctx.summary()?.totalCompletedSteps || 0, ctx.summary()?.totalXp || 0)), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(26, 39, "student.stepsXp", \u0275\u0275pureFunction2(70, _c13, ctx.summary()?.totalCompletedSteps || 0, ctx.summary()?.totalXp || 0)), " ");
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(ctx.summary()?.totalXp || 0);
         \u0275\u0275advance(6);
@@ -57481,8 +58091,8 @@ var StudentHomeComponent = class _StudentHomeComponent {
 })();
 
 // src/app/shared/protected-video-player/protected-video-player.component.ts
-var _c03 = ["videoEl"];
-var _c13 = (a0) => ({ seconds: a0 });
+var _c04 = ["videoEl"];
+var _c14 = (a0) => ({ seconds: a0 });
 function ProtectedVideoPlayerComponent_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -57608,7 +58218,7 @@ function ProtectedVideoPlayerComponent_Conditional_7_Conditional_5_Template(rf, 
   if (rf & 2) {
     const watch_r5 = ctx;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(2, 3, "player.watched", \u0275\u0275pureFunction1(6, _c13, watch_r5.actualWatchSeconds)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(2, 3, "player.watched", \u0275\u0275pureFunction1(6, _c14, watch_r5.actualWatchSeconds)), " ");
     \u0275\u0275advance(2);
     \u0275\u0275conditional(watch_r5.usedSpeedUp ? 3 : -1);
     \u0275\u0275advance();
@@ -57832,7 +58442,7 @@ var ProtectedVideoPlayerComponent = class _ProtectedVideoPlayerComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ProtectedVideoPlayerComponent, selectors: [["app-protected-video-player"]], viewQuery: function ProtectedVideoPlayerComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c03, 5);
+        \u0275\u0275viewQuery(_c04, 5);
       }
       if (rf & 2) {
         let _t;
@@ -57958,8 +58568,8 @@ function toEmbedUrl(url) {
 }
 
 // src/app/pages/lesson-play/lesson-play.component.ts
-var _c04 = (a0) => ({ theme: a0 });
-var _c14 = (a0, a1) => ({ n: a0, title: a1 });
+var _c05 = (a0) => ({ theme: a0 });
+var _c15 = (a0, a1) => ({ n: a0, title: a1 });
 var _c23 = (a0, a1) => ({ earned: a0, total: a1 });
 var _forTrack03 = ($index, $item) => $item.id;
 function LessonPlayComponent_Conditional_4_Conditional_12_For_3_Template(rf, ctx) {
@@ -58028,7 +58638,7 @@ function LessonPlayComponent_Conditional_4_For_19_Template(rf, ctx) {
     const ctx_r2 = \u0275\u0275nextContext(2);
     \u0275\u0275classProp("active", ctx_r2.selectedStep()?.id === step_r7.id);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(2, 3, "play.stepN", \u0275\u0275pureFunction2(6, _c14, step_r7.stepNumber, step_r7.title)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(2, 3, "play.stepN", \u0275\u0275pureFunction2(6, _c15, step_r7.stepNumber, step_r7.title)), " ");
   }
 }
 function LessonPlayComponent_Conditional_4_Conditional_20_Conditional_11_Conditional_7_Template(rf, ctx) {
@@ -58162,7 +58772,7 @@ function LessonPlayComponent_Conditional_4_Template(rf, ctx) {
     const current_r5 = ctx;
     const ctx_r2 = \u0275\u0275nextContext();
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(4, 8, "play.lessonEyebrow", \u0275\u0275pureFunction1(15, _c04, current_r5.theme)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(4, 8, "play.lessonEyebrow", \u0275\u0275pureFunction1(15, _c05, current_r5.theme)));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(current_r5.title);
     \u0275\u0275advance(2);
@@ -58373,7 +58983,7 @@ var LessonPlayComponent = class _LessonPlayComponent {
 })();
 
 // src/app/pages/quiz-play/quiz-play.component.ts
-var _c05 = (a0, a1) => ({ earned: a0, total: a1 });
+var _c06 = (a0, a1) => ({ earned: a0, total: a1 });
 var _forTrack04 = ($index, $item) => $item.id;
 var _forTrack1 = ($index, $item) => $item.key;
 function QuizPlayComponent_Conditional_4_Conditional_13_For_2_For_4_Template(rf, ctx) {
@@ -58474,7 +59084,7 @@ function QuizPlayComponent_Conditional_4_Conditional_14_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(ctx_r1.feedbackText(response_r6));
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 5, "play.xpEarned", \u0275\u0275pureFunction2(8, _c05, response_r6.earnedXp, response_r6.totalXp)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 5, "play.xpEarned", \u0275\u0275pureFunction2(8, _c06, response_r6.earnedXp, response_r6.totalXp)));
     \u0275\u0275advance(2);
     \u0275\u0275conditional(response_r6.newlyAwardedBadges.length ? 8 : -1);
   }
@@ -59142,8 +59752,8 @@ var AssignmentPlayComponent = class _AssignmentPlayComponent {
 })();
 
 // src/app/pages/parent-dashboard/parent-dashboard.component.ts
-var _c06 = (a0) => ({ name: a0 });
-var _c15 = () => [];
+var _c07 = (a0) => ({ name: a0 });
+var _c16 = () => [];
 var _c24 = (a0, a1, a2) => ({ xp: a0, steps: a1, quizzes: a2 });
 var _forTrack06 = ($index, $item) => $item.id;
 var _forTrack12 = ($index, $item) => $item.studentId;
@@ -59343,7 +59953,7 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(14, 12, "parent.familyProgress"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(17, 14, "parent.greeting", \u0275\u0275pureFunction1(21, _c06, ctx.dashboard()?.parentName || "")));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(17, 14, "parent.greeting", \u0275\u0275pureFunction1(21, _c07, ctx.dashboard()?.parentName || "")));
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(20, 17, "parent.subtitle"));
         \u0275\u0275advance(4);
@@ -59351,7 +59961,7 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
         \u0275\u0275advance(2);
         \u0275\u0275repeater(ctx.meetings());
         \u0275\u0275advance(4);
-        \u0275\u0275repeater(ctx.dashboard()?.children || \u0275\u0275pureFunction0(23, _c15));
+        \u0275\u0275repeater(ctx.dashboard()?.children || \u0275\u0275pureFunction0(23, _c16));
       }
     }, dependencies: [SiteBrandComponent, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: #fff;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: #f4f7fb !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: center;\n  padding: 0.9rem 0;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.08);\n}\n@media (max-width: 700px) {\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n/*# sourceMappingURL=parent-dashboard.component.css.map */"] });
   }
@@ -59425,7 +60035,7 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
 })();
 
 // src/app/layouts/panel-shell/panel-shell.component.ts
-var _c07 = ["*"];
+var _c08 = ["*"];
 var _forTrack07 = ($index, $item) => $item.path;
 function PanelShellComponent_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
@@ -59539,7 +60149,7 @@ var PanelShellComponent = class _PanelShellComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PanelShellComponent, selectors: [["app-panel-shell"]], inputs: { titleKey: "titleKey", subtitleKey: "subtitleKey", navItems: "navItems" }, ngContentSelectors: _c07, decls: 22, vars: 11, consts: [[1, "shell"], [1, "sidebar"], [1, "sidebar-top"], [1, "sidebar-brand"], [1, "brand-logo", 3, "src", "alt"], [1, "brand"], [1, "sidebar-tools"], ["type", "button", 1, "collapse-btn", 3, "click", "title"], ["viewBox", "0 0 24 24", "aria-hidden", "true", 1, "collapse-icon"], ["d", "M15.5 5.5 9 12l6.5 6.5", "fill", "none", "stroke", "currentColor", "stroke-width", "2.2", "stroke-linecap", "round", "stroke-linejoin", "round"], [1, "side-nav"], ["routerLinkActive", "active", 3, "routerLink", "title"], ["type", "button", 1, "logout", 3, "click", "title"], [1, "shell-main"], [1, "nav-icon"], [1, "nav-label"]], template: function PanelShellComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _PanelShellComponent, selectors: [["app-panel-shell"]], inputs: { titleKey: "titleKey", subtitleKey: "subtitleKey", navItems: "navItems" }, ngContentSelectors: _c08, decls: 22, vars: 11, consts: [[1, "shell"], [1, "sidebar"], [1, "sidebar-top"], [1, "sidebar-brand"], [1, "brand-logo", 3, "src", "alt"], [1, "brand"], [1, "sidebar-tools"], ["type", "button", 1, "collapse-btn", 3, "click", "title"], ["viewBox", "0 0 24 24", "aria-hidden", "true", 1, "collapse-icon"], ["d", "M15.5 5.5 9 12l6.5 6.5", "fill", "none", "stroke", "currentColor", "stroke-width", "2.2", "stroke-linecap", "round", "stroke-linejoin", "round"], [1, "side-nav"], ["routerLinkActive", "active", 3, "routerLink", "title"], ["type", "button", 1, "logout", 3, "click", "title"], [1, "shell-main"], [1, "nav-icon"], [1, "nav-label"]], template: function PanelShellComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275projectionDef();
         \u0275\u0275elementStart(0, "div", 0)(1, "aside", 1)(2, "div", 2)(3, "div", 3);
@@ -60396,8 +61006,8 @@ function nextSort(currentKey, nextKey, currentDir) {
 }
 
 // src/app/pages/admin/admin-users.component.ts
-var _c08 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c16 = (a0, a1) => ({ page: a0, pages: a1 });
+var _c09 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c17 = (a0, a1) => ({ page: a0, pages: a1 });
 var _forTrack09 = ($index, $item) => $item.id;
 var arrowFn02 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 var arrowFn1 = (ctx, view) => (s) => {
@@ -61581,7 +62191,7 @@ var AdminUsersComponent = class _AdminUsersComponent {
         \u0275\u0275advance();
         \u0275\u0275conditional(ctx.hasActiveFilters() ? 63 : -1);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(66, 89, "common.ofShown", \u0275\u0275pureFunction2(107, _c08, ctx.pagedUsers().length, ctx.totalFiltered())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(66, 89, "common.ofShown", \u0275\u0275pureFunction2(107, _c09, ctx.pagedUsers().length, ctx.totalFiltered())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(73, 92, "common.name"), " ");
         \u0275\u0275advance(3);
@@ -61605,7 +62215,7 @@ var AdminUsersComponent = class _AdminUsersComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(97, 100, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(100, 102, "common.pageOf", \u0275\u0275pureFunction2(110, _c16, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(100, 102, "common.pageOf", \u0275\u0275pureFunction2(110, _c17, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -61953,8 +62563,8 @@ function toRateRows(rates) {
 }
 
 // src/app/pages/admin/admin-students.component.ts
-var _c09 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c17 = (a0, a1) => ({ page: a0, pages: a1 });
+var _c010 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c18 = (a0, a1) => ({ page: a0, pages: a1 });
 var _forTrack010 = ($index, $item) => $item.id;
 var arrowFn03 = (ctx, view) => (p) => ({ value: p.id, label: p.displayName + " (" + (p.email || p.mobilePhone) + ")" });
 var arrowFn12 = (ctx, view) => (s) => ({ value: s, label: "" + s });
@@ -62857,7 +63467,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
         \u0275\u0275advance();
         \u0275\u0275conditional(ctx.hasActiveFilters() ? 78 : -1);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(81, 118, "common.ofShown", \u0275\u0275pureFunction2(142, _c09, ctx.pagedStudents().length, ctx.totalFiltered())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(81, 118, "common.ofShown", \u0275\u0275pureFunction2(142, _c010, ctx.pagedStudents().length, ctx.totalFiltered())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(88, 121, "common.name"), " ");
         \u0275\u0275advance(3);
@@ -62889,7 +63499,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(124, 135, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(127, 137, "common.pageOf", \u0275\u0275pureFunction2(145, _c17, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(127, 137, "common.pageOf", \u0275\u0275pureFunction2(145, _c18, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -63089,7 +63699,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
 })();
 
 // src/app/pages/admin/admin-courses.component.ts
-var _c010 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c011 = (a0, a1) => ({ shown: a0, total: a1 });
 var _forTrack011 = ($index, $item) => $item.id;
 var arrowFn04 = (ctx, view) => (term) => ({ value: term, label: ctx.termLabel(term) });
 var arrowFn13 = (ctx, view) => (term) => {
@@ -63910,7 +64520,7 @@ var AdminCoursesComponent = class _AdminCoursesComponent {
         \u0275\u0275advance(2);
         \u0275\u0275conditional(ctx.filterGrade() !== "" ? 67 : -1);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(70, 91, "common.ofShown", \u0275\u0275pureFunction2(110, _c010, ctx.sortedCourses().length, ctx.courses().length)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(70, 91, "common.ofShown", \u0275\u0275pureFunction2(110, _c011, ctx.sortedCourses().length, ctx.courses().length)));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(77, 94, "common.title"), " ");
         \u0275\u0275advance(3);
@@ -64114,7 +64724,19 @@ var _forTrack012 = ($index, $item) => $item.id || "orphan";
 var _forTrack13 = ($index, $item) => $item.id;
 var arrowFn14 = (ctx, view) => (u2) => !!u2.id;
 var arrowFn24 = (ctx, view) => (u2) => ({ value: u2.id || "", label: u2.title });
-function AdminCourseTreeComponent_Conditional_13_Conditional_25_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_14_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 1);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "admin.courseTree.noAssignedCourses"));
+  }
+}
+function AdminCourseTreeComponent_Conditional_15_Conditional_25_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
     \u0275\u0275text(1);
@@ -64126,17 +64748,17 @@ function AdminCourseTreeComponent_Conditional_13_Conditional_25_Template(rf, ctx
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "admin.courseTree.empty"));
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r5 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "form", 16);
-    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template_form_ngSubmit_0_listener() {
+    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template_form_ngSubmit_0_listener() {
       \u0275\u0275restoreView(_r5);
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.saveUnit());
     });
     \u0275\u0275elementStart(1, "input", 17);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template_input_ngModelChange_1_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template_input_ngModelChange_1_listener($event) {
       \u0275\u0275restoreView(_r5);
       const ctx_r1 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r1.editUnitTitle, $event) || (ctx_r1.editUnitTitle = $event);
@@ -64146,7 +64768,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template(r
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(2, "input", 18);
     \u0275\u0275pipe(3, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template_input_ngModelChange_2_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template_input_ngModelChange_2_listener($event) {
       \u0275\u0275restoreView(_r5);
       const ctx_r1 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r1.editUnitDescription, $event) || (ctx_r1.editUnitDescription = $event);
@@ -64155,7 +64777,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template(r
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(4, "input", 19);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template_input_ngModelChange_4_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template_input_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r5);
       const ctx_r1 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r1.editUnitSort, $event) || (ctx_r1.editUnitSort = $event);
@@ -64168,7 +64790,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template(r
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(8, "button", 20);
-    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template_button_click_8_listener() {
+    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template_button_click_8_listener() {
       \u0275\u0275restoreView(_r5);
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.cancelUnitEdit());
@@ -64195,7 +64817,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template(r
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 10, "common.cancel"));
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditional_6_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 1);
     \u0275\u0275text(1);
@@ -64207,11 +64829,11 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditiona
     \u0275\u0275textInterpolate1("\u2014 ", unit_r4.description);
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditional_7_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 22)(1, "app-icon-action-button", 23);
-    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditional_7_Template_app_icon_action_button_clicked_1_listener() {
+    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Conditional_7_Template_app_icon_action_button_clicked_1_listener() {
       \u0275\u0275restoreView(_r6);
       const unit_r4 = \u0275\u0275nextContext(2).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -64219,7 +64841,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditiona
     });
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(2, "app-icon-action-button", 24);
-    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditional_7_Template_app_icon_action_button_clicked_2_listener() {
+    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Conditional_7_Template_app_icon_action_button_clicked_2_listener() {
       \u0275\u0275restoreView(_r6);
       const unit_r4 = \u0275\u0275nextContext(2).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -64228,7 +64850,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditiona
     \u0275\u0275elementEnd()();
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 21)(1, "strong");
     \u0275\u0275text(2);
@@ -64237,9 +64859,9 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Template(r
     \u0275\u0275text(4);
     \u0275\u0275pipe(5, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(6, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditional_6_Template, 2, 1, "span", 1);
+    \u0275\u0275conditionalCreate(6, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Conditional_6_Template, 2, 1, "span", 1);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(7, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Conditional_7_Template, 3, 0, "div", 22);
+    \u0275\u0275conditionalCreate(7, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Conditional_7_Template, 3, 0, "div", 22);
   }
   if (rf & 2) {
     const unit_r4 = \u0275\u0275nextContext().$implicit;
@@ -64253,17 +64875,17 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Template(r
     \u0275\u0275conditional(unit_r4.id ? 7 : -1);
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     const _r7 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "form", 16);
-    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_form_ngSubmit_0_listener() {
+    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_form_ngSubmit_0_listener() {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       return \u0275\u0275resetView(ctx_r1.saveLesson());
     });
     \u0275\u0275elementStart(1, "input", 26);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_1_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_1_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonTitle, $event) || (ctx_r1.editLessonTitle = $event);
@@ -64272,7 +64894,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(2, "input", 27);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_2_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_2_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonTheme, $event) || (ctx_r1.editLessonTheme = $event);
@@ -64282,7 +64904,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(3, "input", 28);
     \u0275\u0275pipe(4, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_3_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_3_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonDescription, $event) || (ctx_r1.editLessonDescription = $event);
@@ -64291,7 +64913,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(5, "input", 29);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_5_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_5_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonDifficulty, $event) || (ctx_r1.editLessonDifficulty = $event);
@@ -64300,7 +64922,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(6, "input", 30);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_6_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_6_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonXp, $event) || (ctx_r1.editLessonXp = $event);
@@ -64309,7 +64931,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(7, "input", 31);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_7_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_input_ngModelChange_7_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonSort, $event) || (ctx_r1.editLessonSort = $event);
@@ -64318,7 +64940,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementStart(8, "app-searchable-select", 32);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_app_searchable_select_ngModelChange_8_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_app_searchable_select_ngModelChange_8_listener($event) {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.editLessonUnitId, $event) || (ctx_r1.editLessonUnitId = $event);
@@ -64331,7 +64953,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(12, "button", 20);
-    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template_button_click_12_listener() {
+    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template_button_click_12_listener() {
       \u0275\u0275restoreView(_r7);
       const ctx_r1 = \u0275\u0275nextContext(5);
       return \u0275\u0275resetView(ctx_r1.cancelLessonEdit());
@@ -64371,7 +64993,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(14, 18, "common.cancel"));
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_2_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r8 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 33)(1, "span");
@@ -64382,7 +65004,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275pipe(5, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(6, "div", 22)(7, "app-icon-action-button", 23);
-    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_2_Template_app_icon_action_button_clicked_7_listener() {
+    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_2_Template_app_icon_action_button_clicked_7_listener() {
       \u0275\u0275restoreView(_r8);
       const lesson_r9 = \u0275\u0275nextContext().$implicit;
       const unit_r4 = \u0275\u0275nextContext(2).$implicit;
@@ -64391,7 +65013,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     });
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(8, "app-icon-action-button", 24);
-    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_2_Template_app_icon_action_button_clicked_8_listener() {
+    \u0275\u0275listener("clicked", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_2_Template_app_icon_action_button_clicked_8_listener() {
       \u0275\u0275restoreView(_r8);
       const lesson_r9 = \u0275\u0275nextContext().$implicit;
       const ctx_r1 = \u0275\u0275nextContext(4);
@@ -64407,10 +65029,10 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Cond
     \u0275\u0275textInterpolate4(" \xB7 ", lesson_r9.theme, " \xB7 XP ", lesson_r9.xpReward, " \xB7 ", \u0275\u0275pipeBind1(5, 6, "admin.courseTree.difficulty"), " ", lesson_r9.difficulty, " ");
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 25);
-    \u0275\u0275conditionalCreate(1, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_1_Template, 15, 20, "form", 14)(2, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Conditional_2_Template, 9, 8);
+    \u0275\u0275conditionalCreate(1, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_1_Template, 15, 20, "form", 14)(2, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Conditional_2_Template, 9, 8);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -64420,11 +65042,11 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Temp
     \u0275\u0275conditional(ctx_r1.editingLessonId() === lesson_r9.id ? 1 : 2);
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r10 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "form", 36);
-    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_form_ngSubmit_0_listener() {
+    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_form_ngSubmit_0_listener() {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       return \u0275\u0275resetView(ctx_r1.createLesson());
@@ -64437,7 +65059,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementStart(7, "input", 37);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_7_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_7_listener($event) {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.lessonTitle, $event) || (ctx_r1.lessonTitle = $event);
@@ -64450,7 +65072,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementStart(11, "input", 38);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_11_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_11_listener($event) {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.lessonTheme, $event) || (ctx_r1.lessonTheme = $event);
@@ -64464,7 +65086,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275pipe(14, "t");
     \u0275\u0275elementStart(15, "input", 39);
     \u0275\u0275pipe(16, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_15_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_15_listener($event) {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.lessonDescription, $event) || (ctx_r1.lessonDescription = $event);
@@ -64477,7 +65099,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275text(18);
     \u0275\u0275pipe(19, "t");
     \u0275\u0275elementStart(20, "input", 40);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_20_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_20_listener($event) {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.lessonDifficulty, $event) || (ctx_r1.lessonDifficulty = $event);
@@ -64490,7 +65112,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275text(22);
     \u0275\u0275pipe(23, "t");
     \u0275\u0275elementStart(24, "input", 41);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_24_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_24_listener($event) {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.lessonXp, $event) || (ctx_r1.lessonXp = $event);
@@ -64503,7 +65125,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275text(26);
     \u0275\u0275pipe(27, "t");
     \u0275\u0275elementStart(28, "input", 42);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_28_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_input_ngModelChange_28_listener($event) {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       \u0275\u0275twoWayBindingSet(ctx_r1.lessonSort, $event) || (ctx_r1.lessonSort = $event);
@@ -64517,7 +65139,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275pipe(31, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(32, "button", 20);
-    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template_button_click_32_listener() {
+    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template_button_click_32_listener() {
       \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(5);
       return \u0275\u0275resetView(ctx_r1.cancelAddLesson());
@@ -64567,11 +65189,11 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(34, 34, "common.cancel"));
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_1_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     const _r11 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "button", 20);
-    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_1_Template_button_click_0_listener() {
+    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_1_Template_button_click_0_listener() {
       \u0275\u0275restoreView(_r11);
       const unit_r4 = \u0275\u0275nextContext(3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -64586,9 +65208,9 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275textInterpolate1(" + ", \u0275\u0275pipeBind1(2, 1, "admin.courseTree.addLesson"), " ");
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275conditionalCreate(0, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_0_Template, 35, 36, "form", 34)(1, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Conditional_1_Template, 3, 3, "button", 35);
+    \u0275\u0275conditionalCreate(0, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_0_Template, 35, 36, "form", 34)(1, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Conditional_1_Template, 3, 3, "button", 35);
   }
   if (rf & 2) {
     const unit_r4 = \u0275\u0275nextContext(2).$implicit;
@@ -64596,11 +65218,11 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditiona
     \u0275\u0275conditional(ctx_r1.addingLessonForUnitId() === unit_r4.id ? 0 : 1);
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 15);
-    \u0275\u0275repeaterCreate(1, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_For_2_Template, 3, 1, "div", 25, _forTrack13);
-    \u0275\u0275conditionalCreate(3, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Conditional_3_Template, 2, 1);
+    \u0275\u0275repeaterCreate(1, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_For_2_Template, 3, 1, "div", 25, _forTrack13);
+    \u0275\u0275conditionalCreate(3, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Conditional_3_Template, 2, 1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -64611,20 +65233,20 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Template(r
     \u0275\u0275conditional(unit_r4.id ? 3 : -1);
   }
 }
-function AdminCourseTreeComponent_Conditional_13_For_28_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_For_28_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 11)(1, "div", 12)(2, "button", 13);
-    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_13_For_28_Template_button_click_2_listener() {
+    \u0275\u0275listener("click", function AdminCourseTreeComponent_Conditional_15_For_28_Template_button_click_2_listener() {
       const unit_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r1.toggleUnit(unit_r4.id || "orphan"));
     });
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(4, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_4_Template, 11, 12, "form", 14)(5, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_5_Template, 8, 7);
+    \u0275\u0275conditionalCreate(4, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_4_Template, 11, 12, "form", 14)(5, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_5_Template, 8, 7);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(6, AdminCourseTreeComponent_Conditional_13_For_28_Conditional_6_Template, 4, 1, "div", 15);
+    \u0275\u0275conditionalCreate(6, AdminCourseTreeComponent_Conditional_15_For_28_Conditional_6_Template, 4, 1, "div", 15);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -64638,7 +65260,7 @@ function AdminCourseTreeComponent_Conditional_13_For_28_Template(rf, ctx) {
     \u0275\u0275conditional(ctx_r1.isExpanded(unit_r4.id || "orphan") ? 6 : -1);
   }
 }
-function AdminCourseTreeComponent_Conditional_13_Template(rf, ctx) {
+function AdminCourseTreeComponent_Conditional_15_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "section", 3)(1, "h3");
@@ -64646,7 +65268,7 @@ function AdminCourseTreeComponent_Conditional_13_Template(rf, ctx) {
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "form", 5);
-    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_13_Template_form_ngSubmit_4_listener() {
+    \u0275\u0275listener("ngSubmit", function AdminCourseTreeComponent_Conditional_15_Template_form_ngSubmit_4_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.createUnit());
@@ -64655,7 +65277,7 @@ function AdminCourseTreeComponent_Conditional_13_Template(rf, ctx) {
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementStart(8, "input", 6);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_Template_input_ngModelChange_8_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_Template_input_ngModelChange_8_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.unitTitle, $event) || (ctx_r1.unitTitle = $event);
@@ -64669,7 +65291,7 @@ function AdminCourseTreeComponent_Conditional_13_Template(rf, ctx) {
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementStart(12, "input", 7);
     \u0275\u0275pipe(13, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_Template_input_ngModelChange_12_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_Template_input_ngModelChange_12_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.unitDescription, $event) || (ctx_r1.unitDescription = $event);
@@ -64682,7 +65304,7 @@ function AdminCourseTreeComponent_Conditional_13_Template(rf, ctx) {
     \u0275\u0275text(15);
     \u0275\u0275pipe(16, "t");
     \u0275\u0275elementStart(17, "input", 8);
-    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_13_Template_input_ngModelChange_17_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function AdminCourseTreeComponent_Conditional_15_Template_input_ngModelChange_17_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.unitSort, $event) || (ctx_r1.unitSort = $event);
@@ -64699,9 +65321,9 @@ function AdminCourseTreeComponent_Conditional_13_Template(rf, ctx) {
     \u0275\u0275text(23);
     \u0275\u0275pipe(24, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(25, AdminCourseTreeComponent_Conditional_13_Conditional_25_Template, 3, 3, "p", 1);
+    \u0275\u0275conditionalCreate(25, AdminCourseTreeComponent_Conditional_15_Conditional_25_Template, 3, 3, "p", 1);
     \u0275\u0275elementStart(26, "div", 10);
-    \u0275\u0275repeaterCreate(27, AdminCourseTreeComponent_Conditional_13_For_28_Template, 7, 3, "div", 11, _forTrack012);
+    \u0275\u0275repeaterCreate(27, AdminCourseTreeComponent_Conditional_15_For_28_Template, 7, 3, "div", 11, _forTrack012);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65039,7 +65661,7 @@ var AdminCourseTreeComponent = class _AdminCourseTreeComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminCourseTreeComponent, selectors: [["app-admin-course-tree"]], decls: 14, vars: 15, consts: [[1, "panel-page"], [1, "meta"], [3, "ok", "error"], [1, "block"], ["name", "courseId", 3, "ngModelChange", "ngModel", "options"], [1, "meeting-form", 3, "ngSubmit"], ["name", "unitTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "unitDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "name", "unitSort", 3, "ngModelChange", "ngModel"], ["type", "submit"], [1, "course-tree"], [1, "tree-unit"], [1, "tree-unit-head"], ["type", "button", 1, "ghost-btn", "tree-toggle", 3, "click"], [1, "meeting-form", "tree-inline-form"], [1, "tree-unit-body"], [1, "meeting-form", "tree-inline-form", 3, "ngSubmit"], ["name", "editUnitTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "editUnitDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "name", "editUnitSort", 3, "ngModelChange", "ngModel"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "tree-unit-title"], [1, "row-actions"], ["kind", "edit", 3, "clicked"], ["kind", "delete", 3, "clicked"], [1, "tree-lesson"], ["name", "editLessonTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "editLessonTheme", 3, "ngModelChange", "ngModel"], ["name", "editLessonDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "min", "1", "max", "5", "name", "editLessonDifficulty", 3, "ngModelChange", "ngModel"], ["type", "number", "min", "0", "name", "editLessonXp", 3, "ngModelChange", "ngModel"], ["type", "number", "name", "editLessonSort", 3, "ngModelChange", "ngModel"], ["name", "editLessonUnitId", 3, "ngModelChange", "ngModel", "options", "compact"], [1, "tree-lesson-title"], [1, "meeting-form", "tree-add-lesson"], ["type", "button", 1, "ghost-btn"], [1, "meeting-form", "tree-add-lesson", 3, "ngSubmit"], ["name", "lessonTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "lessonTheme", 3, "ngModelChange", "ngModel"], ["name", "lessonDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "min", "1", "max", "5", "name", "lessonDifficulty", 3, "ngModelChange", "ngModel"], ["type", "number", "min", "0", "name", "lessonXp", 3, "ngModelChange", "ngModel"], ["type", "number", "name", "lessonSort", 3, "ngModelChange", "ngModel"]], template: function AdminCourseTreeComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminCourseTreeComponent, selectors: [["app-admin-course-tree"]], decls: 16, vars: 19, consts: [[1, "panel-page"], [1, "meta"], [3, "ok", "error"], [1, "block"], ["name", "courseId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], [1, "meeting-form", 3, "ngSubmit"], ["name", "unitTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "unitDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "name", "unitSort", 3, "ngModelChange", "ngModel"], ["type", "submit"], [1, "course-tree"], [1, "tree-unit"], [1, "tree-unit-head"], ["type", "button", 1, "ghost-btn", "tree-toggle", 3, "click"], [1, "meeting-form", "tree-inline-form"], [1, "tree-unit-body"], [1, "meeting-form", "tree-inline-form", 3, "ngSubmit"], ["name", "editUnitTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "editUnitDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "name", "editUnitSort", 3, "ngModelChange", "ngModel"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "tree-unit-title"], [1, "row-actions"], ["kind", "edit", 3, "clicked"], ["kind", "delete", 3, "clicked"], [1, "tree-lesson"], ["name", "editLessonTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "editLessonTheme", 3, "ngModelChange", "ngModel"], ["name", "editLessonDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "min", "1", "max", "5", "name", "editLessonDifficulty", 3, "ngModelChange", "ngModel"], ["type", "number", "min", "0", "name", "editLessonXp", 3, "ngModelChange", "ngModel"], ["type", "number", "name", "editLessonSort", 3, "ngModelChange", "ngModel"], ["name", "editLessonUnitId", 3, "ngModelChange", "ngModel", "options", "compact"], [1, "tree-lesson-title"], [1, "meeting-form", "tree-add-lesson"], ["type", "button", 1, "ghost-btn"], [1, "meeting-form", "tree-add-lesson", 3, "ngSubmit"], ["name", "lessonTitle", "required", "", 3, "ngModelChange", "ngModel"], ["name", "lessonTheme", 3, "ngModelChange", "ngModel"], ["name", "lessonDescription", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "min", "1", "max", "5", "name", "lessonDifficulty", 3, "ngModelChange", "ngModel"], ["type", "number", "min", "0", "name", "lessonXp", 3, "ngModelChange", "ngModel"], ["type", "number", "name", "lessonSort", 3, "ngModelChange", "ngModel"]], template: function AdminCourseTreeComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "h2");
         \u0275\u0275text(2);
@@ -65054,30 +65676,35 @@ var AdminCourseTreeComponent = class _AdminCourseTreeComponent {
         \u0275\u0275text(10);
         \u0275\u0275pipe(11, "t");
         \u0275\u0275elementStart(12, "app-searchable-select", 4);
+        \u0275\u0275pipe(13, "t");
         \u0275\u0275listener("ngModelChange", function AdminCourseTreeComponent_Template_app_searchable_select_ngModelChange_12_listener($event) {
           return ctx.onCourseChange($event);
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
-        \u0275\u0275elementEnd()();
-        \u0275\u0275conditionalCreate(13, AdminCourseTreeComponent_Conditional_13_Template, 29, 26);
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(14, AdminCourseTreeComponent_Conditional_14_Template, 3, 3, "p", 1);
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(15, AdminCourseTreeComponent_Conditional_15_Template, 29, 26);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
-        let tmp_8_0;
+        let tmp_10_0;
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 8, "admin.courseTree.title"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 10, "admin.courseTree.title"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 10, "admin.courseTree.subtitle"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 12, "admin.courseTree.subtitle"));
         \u0275\u0275advance(2);
         \u0275\u0275property("ok", ctx.message())("error", ctx.error());
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(11, 12, "admin.courseTree.selectCourse"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(11, 14, "admin.courseTree.selectCourse"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.selectedCourseId())("options", ctx.courses().map(\u0275\u0275arrowFunction(14, arrowFn05, ctx)));
+        \u0275\u0275property("ngModel", ctx.selectedCourseId())("emptyLabel", \u0275\u0275pipeBind1(13, 16, "common.selectCourse"))("options", ctx.courses().map(\u0275\u0275arrowFunction(18, arrowFn05, ctx)));
         \u0275\u0275control();
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional(!ctx.courses().length ? 14 : -1);
         \u0275\u0275advance();
-        \u0275\u0275conditional((tmp_8_0 = ctx.selectedCourse()) ? 13 : -1, tmp_8_0);
+        \u0275\u0275conditional((tmp_10_0 = ctx.selectedCourse()) ? 15 : -1, tmp_10_0);
       }
     }, dependencies: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, MaxValidator, NgModel, NgForm, IconActionButtonComponent, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: #fff;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: #f4f7fb !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.user-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%]:hover {\n  color: var(--accent);\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%]   .sort-mark[_ngcontent-%COMP%] {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.035);\n}\n.data-table[_ngcontent-%COMP%]   tr.total-row[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border-top: 2px solid var(--border);\n  background: rgba(255, 255, 255, 0.06);\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n}\n.row-actions[_ngcontent-%COMP%]   button.danger[_ngcontent-%COMP%] {\n  background: rgba(255, 107, 107, 0.22);\n  color: #fff;\n  box-shadow: none;\n}\n.row-actions[_ngcontent-%COMP%]   button.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview[_ngcontent-%COMP%] {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.04);\n  object-fit: contain;\n}\n.brand-preview.logo[_ngcontent-%COMP%] {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner[_ngcontent-%COMP%] {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: rgba(7, 17, 31, 0.55);\n}\n.login-preview-form[_ngcontent-%COMP%], \n.login-preview-visual[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.login-preview-visual[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form[_ngcontent-%COMP%] {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: rgba(95, 211, 188, 0.16);\n  color: #fff;\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.list-filters[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus, \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.list-pager[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]    + input[_ngcontent-%COMP%] {\n  margin-top: 0.4rem;\n}\n.grade-multi[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.grade-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.data-table[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  max-width: 36rem;\n}\n.course-teacher-block[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.course-teacher-block.compact[_ngcontent-%COMP%] {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.calendar-nav[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: rgba(255, 255, 255, 0.04);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active[_ngcontent-%COMP%] {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab[_ngcontent-%COMP%]   .day-count[_ngcontent-%COMP%] {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.02);\n}\n.day-hour[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed rgba(255, 255, 255, 0.08);\n  pointer-events: none;\n}\n.calendar-event[_ngcontent-%COMP%] {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label[_ngcontent-%COMP%] {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  margin-top: auto;\n}\n.calendar-empty[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar[_ngcontent-%COMP%] {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap[_ngcontent-%COMP%] {\n  overflow: auto;\n  max-height: min(75vh, 48rem);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  direction: rtl;\n}\n.timetable-page[_ngcontent-%COMP%] {\n  direction: rtl;\n  text-align: right;\n}\n.timetable[_ngcontent-%COMP%] {\n  width: max-content;\n  min-width: 100%;\n  border-collapse: separate;\n  border-spacing: 0;\n  font-size: 0.82rem;\n  direction: rtl;\n}\n.timetable[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border-bottom: 1px solid var(--border);\n  border-left: 1px solid var(--border);\n  border-right: none;\n  vertical-align: top;\n}\n.timetable-day-col[_ngcontent-%COMP%], \n.timetable-day[_ngcontent-%COMP%] {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 6.5rem;\n  max-width: 8rem;\n  background: rgba(7, 17, 31, 0.96);\n  text-align: right;\n  padding: 0.65rem 0.7rem;\n  font-weight: 700;\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background: rgba(10, 24, 42, 0.98);\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n  padding: 0.45rem 0.35rem;\n  text-align: center;\n  white-space: nowrap;\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%] {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.12) !important;\n  color: #fff !important;\n  font-weight: 750;\n}\n.timetable-shift.pm[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.14) !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%] {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day[_ngcontent-%COMP%] {\n  position: static !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: none !important;\n}\n.timetable-export-bar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period[_ngcontent-%COMP%] {\n  min-width: 6.2rem;\n  white-space: nowrap;\n}\n.timetable-session-id[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-size: 0.95rem;\n  color: #fff;\n}\n.timetable-session-time[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  font-weight: 600;\n  letter-spacing: 0;\n  text-transform: none;\n  color: rgba(255, 255, 255, 0.8);\n  margin-top: 0.15rem;\n}\n.timetable-cell[_ngcontent-%COMP%] {\n  min-width: 6.2rem;\n  max-width: 8.5rem;\n  height: auto;\n  min-height: 4.6rem;\n  padding: 0.25rem;\n  background: rgba(255, 255, 255, 0.02);\n  vertical-align: top;\n  cursor: cell;\n  transition: background 0.15s ease, outline 0.15s ease;\n}\n.timetable-cell.pm[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.04);\n}\n.timetable-cell.drag-over[_ngcontent-%COMP%] {\n  outline: 2px dashed var(--accent);\n  background: rgba(255, 214, 10, 0.12);\n}\n.timetable-entry[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.15rem;\n  padding: 0.35rem 0.4rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.28);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.16),\n      rgba(20, 90, 143, 0.35));\n  color: #fff;\n  margin-bottom: 0.25rem;\n  cursor: grab;\n}\n.timetable-entry[_ngcontent-%COMP%]:active {\n  cursor: grabbing;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  margin-top: 0.2rem;\n  cursor: default;\n}\n.modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card[_ngcontent-%COMP%] {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background:\n    linear-gradient(\n      165deg,\n      rgba(14, 28, 48, 0.98),\n      rgba(8, 16, 30, 0.98));\n  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);\n}\n.modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.timetable-course[_ngcontent-%COMP%] {\n  font-weight: 700;\n  line-height: 1.25;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  -webkit-box-orient: vertical;\n}\n.timetable-teacher[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  color: rgba(255, 255, 255, 0.85);\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.course-tree[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: rgba(255, 255, 255, 0.35);\n}\n.tree-unit-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle[_ngcontent-%COMP%] {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title[_ngcontent-%COMP%], \n.tree-lesson-title[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 12rem;\n}\n.tree-unit-body[_ngcontent-%COMP%] {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: rgba(0, 0, 0, 0.03);\n}\n.tree-inline-form[_ngcontent-%COMP%], \n.tree-add-lesson[_ngcontent-%COMP%] {\n  width: 100%;\n}\n/*# sourceMappingURL=admin-panel.css.map */"] });
   }
@@ -65098,9 +65725,13 @@ var AdminCourseTreeComponent = class _AdminCourseTreeComponent {
         [ngModel]="selectedCourseId()"\r
         (ngModelChange)="onCourseChange($event)"\r
         name="courseId"\r
+        [emptyLabel]="'common.selectCourse' | t"\r
         [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"\r
       />\r
     </label>\r
+    @if (!courses().length) {\r
+      <p class="meta">{{ 'admin.courseTree.noAssignedCourses' | t }}</p>\r
+    }\r
   </section>\r
 \r
   @if (selectedCourse(); as course) {\r
@@ -67592,7 +68223,7 @@ function toDateInputValue(date) {
 }
 
 // src/app/pages/admin/admin-appointments.component.ts
-var _c011 = (a0) => ({ minutes: a0 });
+var _c012 = (a0) => ({ minutes: a0 });
 var _forTrack015 = ($index, $item) => $item.key;
 var _forTrack14 = ($index, $item) => $item.appointment.id;
 var arrowFn09 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
@@ -68372,7 +69003,7 @@ var AdminAppointmentsComponent = class _AdminAppointmentsComponent {
         \u0275\u0275twoWayProperty("ngModel", ctx.endsAtLocal);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(34, 54, "admin.appointments.sessionHint", \u0275\u0275pureFunction1(71, _c011, ctx.sessionMinutes)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(34, 54, "admin.appointments.sessionHint", \u0275\u0275pureFunction1(71, _c012, ctx.sessionMinutes)));
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(37, 57, "common.description"), " ");
         \u0275\u0275advance(2);
@@ -68812,8 +69443,8 @@ function arabicWeekdayName(dayOfWeek) {
 }
 
 // src/app/pages/admin/admin-timetable.component.ts
-var _c012 = ["timetableWrap"];
-var _c18 = (a0) => ({ value: "am", label: a0 });
+var _c013 = ["timetableWrap"];
+var _c19 = (a0) => ({ value: "am", label: a0 });
 var _c25 = (a0) => ({ value: "pm", label: a0 });
 var _c32 = (a0, a1) => [a0, a1];
 var _forTrack016 = ($index, $item) => $item.key;
@@ -69158,7 +69789,7 @@ function AdminTimetableComponent_Conditional_56_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(34, 51, "admin.timetable.period"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.period);
-    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(36, 53, "common.select"))("options", \u0275\u0275pureFunction2(67, _c32, \u0275\u0275pureFunction1(63, _c18, \u0275\u0275pipeBind1(37, 55, "admin.timetable.am")), \u0275\u0275pureFunction1(65, _c25, \u0275\u0275pipeBind1(38, 57, "admin.timetable.pm"))));
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(36, 53, "common.select"))("options", \u0275\u0275pureFunction2(67, _c32, \u0275\u0275pureFunction1(63, _c19, \u0275\u0275pipeBind1(37, 55, "admin.timetable.am")), \u0275\u0275pureFunction1(65, _c25, \u0275\u0275pipeBind1(38, 57, "admin.timetable.pm"))));
     \u0275\u0275control();
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(42, 59, ctx_r0.editingId() ? "common.save" : "admin.timetable.create"));
@@ -69647,7 +70278,7 @@ var AdminTimetableComponent = class _AdminTimetableComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminTimetableComponent, selectors: [["app-admin-timetable"]], viewQuery: function AdminTimetableComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c012, 5);
+        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c013, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -69755,7 +70386,7 @@ var AdminTimetableComponent = class _AdminTimetableComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(22, 39, "admin.timetable.period"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(24, 41, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(61, _c32, \u0275\u0275pureFunction1(57, _c18, \u0275\u0275pipeBind1(25, 43, "admin.timetable.am")), \u0275\u0275pureFunction1(59, _c25, \u0275\u0275pipeBind1(26, 45, "admin.timetable.pm"))));
+        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(24, 41, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(61, _c32, \u0275\u0275pureFunction1(57, _c19, \u0275\u0275pipeBind1(25, 43, "admin.timetable.am")), \u0275\u0275pureFunction1(59, _c25, \u0275\u0275pipeBind1(26, 45, "admin.timetable.pm"))));
         \u0275\u0275control();
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(29, 47, "admin.timetable.create"), " ");
@@ -70671,7 +71302,7 @@ function toLocalDateString(d) {
 }
 
 // src/app/pages/admin/admin-payroll.component.ts
-var _c013 = ["reportTable"];
+var _c014 = ["reportTable"];
 var arrowFn012 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var arrowFn111 = (ctx, view) => (s) => ({ value: s, label: ctx.stageLabel(s) });
 var arrowFn29 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
@@ -70893,7 +71524,7 @@ var AdminPayrollComponent = class _AdminPayrollComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminPayrollComponent, selectors: [["app-admin-payroll"]], viewQuery: function AdminPayrollComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.reportEl, _c013, 5);
+        \u0275\u0275viewQuerySignal(ctx.reportEl, _c014, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -71547,8 +72178,8 @@ function toLocalDateString3(d) {
 }
 
 // src/app/pages/admin/admin-payments.component.ts
-var _c014 = (a0) => ({ value: "parent", label: a0 });
-var _c19 = (a0) => ({ value: "student", label: a0 });
+var _c015 = (a0) => ({ value: "parent", label: a0 });
+var _c110 = (a0) => ({ value: "student", label: a0 });
 var _c26 = (a0, a1) => [a0, a1];
 var _forTrack019 = ($index, $item) => $item.id;
 var arrowFn013 = (ctx, view) => (y) => ({ value: y, label: "" + y });
@@ -72118,7 +72749,7 @@ var AdminPaymentsComponent = class _AdminPaymentsComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(15, 51, "admin.payments.payerType"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.payerKind)("options", \u0275\u0275pureFunction2(109, _c26, \u0275\u0275pureFunction1(105, _c014, \u0275\u0275pipeBind1(17, 53, "common.parent")), \u0275\u0275pureFunction1(107, _c19, \u0275\u0275pipeBind1(18, 55, "admin.payments.orphanStudent"))));
+        \u0275\u0275property("ngModel", ctx.payerKind)("options", \u0275\u0275pureFunction2(109, _c26, \u0275\u0275pureFunction1(105, _c015, \u0275\u0275pipeBind1(17, 53, "common.parent")), \u0275\u0275pureFunction1(107, _c110, \u0275\u0275pipeBind1(18, 55, "admin.payments.orphanStudent"))));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275conditional(ctx.payerKind === "parent" ? 19 : 20);
@@ -72157,7 +72788,7 @@ var AdminPaymentsComponent = class _AdminPaymentsComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(52, 75, "admin.payments.payerType"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterPayerKind)("emptyLabel", \u0275\u0275pipeBind1(54, 77, "common.all"))("options", \u0275\u0275pureFunction2(116, _c26, \u0275\u0275pureFunction1(112, _c014, \u0275\u0275pipeBind1(55, 79, "common.parent")), \u0275\u0275pureFunction1(114, _c19, \u0275\u0275pipeBind1(56, 81, "admin.payments.orphanStudent"))));
+        \u0275\u0275property("ngModel", ctx.filterPayerKind)("emptyLabel", \u0275\u0275pipeBind1(54, 77, "common.all"))("options", \u0275\u0275pureFunction2(116, _c26, \u0275\u0275pureFunction1(112, _c015, \u0275\u0275pipeBind1(55, 79, "common.parent")), \u0275\u0275pureFunction1(114, _c110, \u0275\u0275pipeBind1(56, 81, "admin.payments.orphanStudent"))));
         \u0275\u0275control();
         \u0275\u0275advance(4);
         \u0275\u0275conditional(ctx.filterPayerKind === "parent" ? 57 : -1);
@@ -72924,11 +73555,10 @@ var TeacherShellComponent = class _TeacherShellComponent {
     this.navItems = [
       { labelKey: "nav.teacher.overview", path: "/teacher/overview", icon: "O" },
       { labelKey: "nav.teacher.videos", path: "/teacher/videos", icon: "V" },
-      { labelKey: "nav.teacher.zoom", path: "/teacher/zoom", icon: "Z" },
+      { labelKey: "nav.teacher.courseTree", path: "/teacher/course-tree", icon: "U" },
       { labelKey: "nav.teacher.appointments", path: "/teacher/appointments", icon: "K" },
       { labelKey: "nav.teacher.timetable", path: "/teacher/timetable", icon: "H" },
       { labelKey: "nav.teacher.attendance", path: "/teacher/attendance", icon: "N" },
-      { labelKey: "nav.teacher.whatsapp", path: "/teacher/whatsapp", icon: "W" },
       { labelKey: "nav.teacher.questionBank", path: "/teacher/question-bank", icon: "B" },
       { labelKey: "nav.teacher.exams", path: "/teacher/exams", icon: "E" },
       { labelKey: "nav.teacher.quizzes", path: "/teacher/quizzes", icon: "Q" },
@@ -72977,16 +73607,15 @@ var TeacherShellComponent = class _TeacherShellComponent {
 })();
 
 // src/app/pages/teacher/teacher-overview.component.ts
-var _c015 = (a0) => ({ name: a0 });
-var _c110 = (a0, a1, a2, a3) => ({ students: a0, classrooms: a1, xp: a2, behind: a3 });
+var _c016 = (a0) => ({ name: a0 });
+var _c111 = (a0, a1, a2, a3) => ({ students: a0, classrooms: a1, xp: a2, behind: a3 });
 var _c27 = (a0) => ({ count: a0 });
 var _c33 = (a0) => ({ list: a0 });
 var _c42 = () => [];
 var _c52 = (a0, a1) => ({ lesson: a0, percent: a1 });
 var _forTrack021 = ($index, $item) => $item.gradeLabel;
-var _forTrack16 = ($index, $item) => $item.id;
-var _forTrack22 = ($index, $item) => $item.studentId;
-var _forTrack3 = ($index, $item) => $item.lessonId;
+var _forTrack16 = ($index, $item) => $item.studentId;
+var _forTrack22 = ($index, $item) => $item.lessonId;
 function TeacherOverviewComponent_For_45_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "p", 6);
@@ -73026,7 +73655,7 @@ function TeacherOverviewComponent_For_45_ForEmpty_11_Template(rf, ctx) {
 }
 function TeacherOverviewComponent_For_45_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275domElementStart(0, "div", 7)(1, "div", 9)(2, "strong");
+    \u0275\u0275domElementStart(0, "div", 7)(1, "div", 8)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275domElementEnd();
     \u0275\u0275domElementStart(4, "span", 6);
@@ -73034,8 +73663,8 @@ function TeacherOverviewComponent_For_45_Template(rf, ctx) {
     \u0275\u0275pipe(6, "t");
     \u0275\u0275domElementEnd()();
     \u0275\u0275conditionalCreate(7, TeacherOverviewComponent_For_45_Conditional_7_Template, 3, 6, "p", 6);
-    \u0275\u0275domElementStart(8, "ul", 10);
-    \u0275\u0275repeaterCreate(9, TeacherOverviewComponent_For_45_For_10_Template, 2, 1, "li", null, _forTrack22, false, TeacherOverviewComponent_For_45_ForEmpty_11_Template, 3, 3, "li", 6);
+    \u0275\u0275domElementStart(8, "ul", 9);
+    \u0275\u0275repeaterCreate(9, TeacherOverviewComponent_For_45_For_10_Template, 2, 1, "li", null, _forTrack16, false, TeacherOverviewComponent_For_45_ForEmpty_11_Template, 3, 3, "li", 6);
     \u0275\u0275domElementEnd()();
   }
   if (rf & 2) {
@@ -73091,33 +73720,7 @@ function TeacherOverviewComponent_Conditional_47_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r3.dashboard()?.topWeakLessons || \u0275\u0275pureFunction0(3, _c42));
   }
 }
-function TeacherOverviewComponent_For_53_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r5 = \u0275\u0275getCurrentView();
-    \u0275\u0275domElementStart(0, "button", 11);
-    \u0275\u0275domListener("click", function TeacherOverviewComponent_For_53_Template_button_click_0_listener() {
-      const room_r6 = \u0275\u0275restoreView(_r5).$implicit;
-      const ctx_r3 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r3.loadDiagnosis(room_r6.id));
-    });
-    \u0275\u0275domElementStart(1, "div")(2, "strong");
-    \u0275\u0275text(3);
-    \u0275\u0275domElementEnd();
-    \u0275\u0275domElementStart(4, "p", 6);
-    \u0275\u0275text(5);
-    \u0275\u0275pipe(6, "t");
-    \u0275\u0275domElementEnd()()();
-  }
-  if (rf & 2) {
-    const room_r6 = ctx.$implicit;
-    const ctx_r3 = \u0275\u0275nextContext();
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(room_r6.name);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", ctx_r3.courseDisplay(room_r6), " \xB7 ", \u0275\u0275pipeBind2(6, 3, "teacher.overview.studentsCount", \u0275\u0275pureFunction1(6, _c27, room_r6.students.length)));
-  }
-}
-function TeacherOverviewComponent_ForEmpty_54_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_48_For_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "p", 6);
     \u0275\u0275text(1);
@@ -73125,24 +73728,12 @@ function TeacherOverviewComponent_ForEmpty_54_Template(rf, ctx) {
     \u0275\u0275domElementEnd();
   }
   if (rf & 2) {
+    const weak_r5 = ctx.$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "teacher.overview.noClassrooms"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "teacher.overview.weakLine", \u0275\u0275pureFunction2(4, _c52, weak_r5.lessonTitle, weak_r5.accuracyPercent)));
   }
 }
-function TeacherOverviewComponent_Conditional_55_For_13_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275domElementStart(0, "p", 6);
-    \u0275\u0275text(1);
-    \u0275\u0275pipe(2, "t");
-    \u0275\u0275domElementEnd();
-  }
-  if (rf & 2) {
-    const weak_r7 = ctx.$implicit;
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "teacher.overview.weakLine", \u0275\u0275pureFunction2(4, _c52, weak_r7.lessonTitle, weak_r7.accuracyPercent)));
-  }
-}
-function TeacherOverviewComponent_Conditional_55_ForEmpty_14_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_48_ForEmpty_14_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "p", 6);
     \u0275\u0275text(1);
@@ -73154,7 +73745,7 @@ function TeacherOverviewComponent_Conditional_55_ForEmpty_14_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "teacher.overview.noWeak"));
   }
 }
-function TeacherOverviewComponent_Conditional_55_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_48_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "section", 5)(1, "h3");
     \u0275\u0275text(2);
@@ -73170,19 +73761,19 @@ function TeacherOverviewComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275pipe(10, "t");
     \u0275\u0275pipe(11, "t");
     \u0275\u0275domElementEnd();
-    \u0275\u0275repeaterCreate(12, TeacherOverviewComponent_Conditional_55_For_13_Template, 3, 7, "p", 6, _forTrack3, false, TeacherOverviewComponent_Conditional_55_ForEmpty_14_Template, 3, 3, "p", 6);
+    \u0275\u0275repeaterCreate(12, TeacherOverviewComponent_Conditional_48_For_13_Template, 3, 7, "p", 6, _forTrack22, false, TeacherOverviewComponent_Conditional_48_ForEmpty_14_Template, 3, 3, "p", 6);
     \u0275\u0275domElementEnd();
   }
   if (rf & 2) {
-    const d_r8 = ctx;
+    const d_r6 = ctx;
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 4, "teacher.overview.diagnosis", \u0275\u0275pureFunction1(17, _c015, d_r8.classroomName)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 4, "teacher.overview.diagnosis", \u0275\u0275pureFunction1(17, _c016, d_r6.classroomName)));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 9, "teacher.overview.behind", \u0275\u0275pureFunction1(19, _c33, d_r8.behindStudents.join(", ") || \u0275\u0275pipeBind1(6, 7, "common.emDash"))));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 9, "teacher.overview.behind", \u0275\u0275pureFunction1(19, _c33, d_r6.behindStudents.join(", ") || \u0275\u0275pipeBind1(6, 7, "common.emDash"))));
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(11, 14, "teacher.overview.strong", \u0275\u0275pureFunction1(21, _c33, d_r8.strongStudents.join(", ") || \u0275\u0275pipeBind1(10, 12, "common.emDash"))));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(11, 14, "teacher.overview.strong", \u0275\u0275pureFunction1(21, _c33, d_r6.strongStudents.join(", ") || \u0275\u0275pipeBind1(10, 12, "common.emDash"))));
     \u0275\u0275advance(3);
-    \u0275\u0275repeater(d_r8.weakLessons);
+    \u0275\u0275repeater(d_r6.weakLessons);
   }
 }
 var TeacherOverviewComponent = class _TeacherOverviewComponent {
@@ -73269,18 +73860,6 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
         this.loadDiagnosis(classrooms[0].id);
     });
   }
-  courseDisplay(room) {
-    const list = room.courses ?? [];
-    if (list.length) {
-      return list.map((c) => {
-        const label = formatCourseLabel((k, p) => this.locale.t(k, p), c.courseTitle, c.courseGrade);
-        return `${label} (${c.teacherName})`;
-      }).join(", ");
-    }
-    if (!room.courseTitle)
-      return this.locale.t("common.noCourse");
-    return formatCourseLabel((k, p) => this.locale.t(k, p), room.courseTitle, room.courseGrade);
-  }
   loadDiagnosis(classroomId) {
     this.api.getClassroomDiagnosis(classroomId).subscribe({
       next: (diagnosis) => this.diagnosis.set(diagnosis),
@@ -73293,7 +73872,7 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherOverviewComponent, selectors: [["app-teacher-overview"]], decls: 56, vars: 47, consts: [[1, "panel-page"], [1, "hero-strip"], [1, "eyebrow"], [1, "stat-row"], [1, "stat-card"], [1, "block"], [1, "meta"], [1, "grade-roster"], ["type", "button", 1, "meeting-row", "link-row"], [1, "grade-roster-head"], [1, "student-name-list"], ["type", "button", 1, "meeting-row", "link-row", 3, "click"]], template: function TeacherOverviewComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherOverviewComponent, selectors: [["app-teacher-overview"]], decls: 49, vars: 43, consts: [[1, "panel-page"], [1, "hero-strip"], [1, "eyebrow"], [1, "stat-row"], [1, "stat-card"], [1, "block"], [1, "meta"], [1, "grade-roster"], [1, "grade-roster-head"], [1, "student-name-list"]], template: function TeacherOverviewComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275domElementStart(0, "div", 0)(1, "section", 1)(2, "div")(3, "p", 2);
         \u0275\u0275text(4);
@@ -73346,53 +73925,43 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
         \u0275\u0275repeaterCreate(44, TeacherOverviewComponent_For_45_Template, 12, 9, "div", 7, _forTrack021, false, TeacherOverviewComponent_ForEmpty_46_Template, 3, 3, "p", 6);
         \u0275\u0275domElementEnd();
         \u0275\u0275conditionalCreate(47, TeacherOverviewComponent_Conditional_47_Template, 6, 4, "section", 5);
-        \u0275\u0275domElementStart(48, "section", 5)(49, "h3");
-        \u0275\u0275text(50);
-        \u0275\u0275pipe(51, "t");
-        \u0275\u0275domElementEnd();
-        \u0275\u0275repeaterCreate(52, TeacherOverviewComponent_For_53_Template, 7, 8, "button", 8, _forTrack16, false, TeacherOverviewComponent_ForEmpty_54_Template, 3, 3, "p", 6);
-        \u0275\u0275domElementEnd();
-        \u0275\u0275conditionalCreate(55, TeacherOverviewComponent_Conditional_55_Template, 15, 23, "section", 5);
+        \u0275\u0275conditionalCreate(48, TeacherOverviewComponent_Conditional_48_Template, 15, 23, "section", 5);
         \u0275\u0275domElementEnd();
       }
       if (rf & 2) {
-        let tmp_17_0;
+        let tmp_15_0;
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 18, "teacher.overview.eyebrow"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 16, "teacher.overview.eyebrow"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(8, 20, "teacher.overview.welcome", \u0275\u0275pureFunction1(40, _c015, ctx.dashboard()?.teacherName || "")));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(8, 18, "teacher.overview.welcome", \u0275\u0275pureFunction1(36, _c016, ctx.dashboard()?.teacherName || "")));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(11, 23, "teacher.overview.summary", \u0275\u0275pureFunction4(42, _c110, ctx.dashboard()?.studentCount || 0, ctx.classrooms().length, ctx.dashboard()?.averageXp || 0, ctx.dashboard()?.behindCount || 0)), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(11, 21, "teacher.overview.summary", \u0275\u0275pureFunction4(38, _c111, ctx.dashboard()?.studentCount || 0, ctx.classrooms().length, ctx.dashboard()?.averageXp || 0, ctx.dashboard()?.behindCount || 0)), " ");
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(ctx.dashboard()?.studentCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(18, 26, "common.students"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(18, 24, "common.students"));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.classrooms().length);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(24, 28, "common.classroom"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(24, 26, "common.classroom"));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.dashboard()?.averageXp || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 30, "teacher.overview.avgXp"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 28, "teacher.overview.avgXp"));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.dashboard()?.behindCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(36, 32, "teacher.overview.needAttention"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(36, 30, "teacher.overview.needAttention"));
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(40, 34, "teacher.overview.studentsByGrade"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(40, 32, "teacher.overview.studentsByGrade"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(43, 36, "teacher.overview.studentsByGradeHint"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(43, 34, "teacher.overview.studentsByGradeHint"));
         \u0275\u0275advance(2);
         \u0275\u0275repeater(ctx.studentsByGrade());
         \u0275\u0275advance(3);
         \u0275\u0275conditional(ctx.dashboard()?.topWeakLessons?.length ? 47 : -1);
-        \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(51, 38, "teacher.overview.yourClassrooms"));
-        \u0275\u0275advance(2);
-        \u0275\u0275repeater(ctx.classrooms());
-        \u0275\u0275advance(3);
-        \u0275\u0275conditional((tmp_17_0 = ctx.diagnosis()) ? 55 : -1, tmp_17_0);
+        \u0275\u0275advance();
+        \u0275\u0275conditional((tmp_15_0 = ctx.diagnosis()) ? 48 : -1, tmp_15_0);
       }
     }, dependencies: [TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: #fff;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: #f4f7fb !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.link-row[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row[_ngcontent-%COMP%]:hover, \n.meeting-row.link-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.meeting-form[_ngcontent-%COMP%], \n.qb-form[_ngcontent-%COMP%], \n.form-card[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  gap: 1rem;\n}\n.panel-page[_ngcontent-%COMP%]   .block[_ngcontent-%COMP%]   form[_ngcontent-%COMP%], \n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%] {\n  padding: 0.15rem 0;\n}\n.grade-roster[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.grade-roster-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n/*# sourceMappingURL=teacher-panel.css.map */"] });
   }
@@ -73469,20 +74038,6 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
     </section>\r
   }\r
 \r
-  <section class="block">\r
-    <h3>{{ 'teacher.overview.yourClassrooms' | t }}</h3>\r
-    @for (room of classrooms(); track room.id) {\r
-      <button type="button" class="meeting-row link-row" (click)="loadDiagnosis(room.id)">\r
-        <div>\r
-          <strong>{{ room.name }}</strong>\r
-          <p class="meta">{{ courseDisplay(room) }} \xB7 {{ 'teacher.overview.studentsCount' | t:{ count: room.students.length } }}</p>\r
-        </div>\r
-      </button>\r
-    } @empty {\r
-      <p class="meta">{{ 'teacher.overview.noClassrooms' | t }}</p>\r
-    }\r
-  </section>\r
-\r
   @if (diagnosis(); as d) {\r
     <section class="block">\r
       <h3>{{ 'teacher.overview.diagnosis' | t:{ name: d.classroomName } }}</h3>\r
@@ -73504,7 +74059,7 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
 })();
 
 // src/app/pages/teacher/teacher-zoom.component.ts
-var _c016 = (a0) => ({ email: a0 });
+var _c017 = (a0) => ({ email: a0 });
 var _forTrack022 = ($index, $item) => $item.id;
 var arrowFn014 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 function TeacherZoomComponent_Conditional_8_Conditional_18_Template(rf, ctx) {
@@ -73872,7 +74427,7 @@ function TeacherZoomComponent_Conditional_14_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind2(3, 6, "teacher.zoom.connectedAs", \u0275\u0275pureFunction1(15, _c016, ctx_r1.zoomStatus()?.email || \u0275\u0275pipeBind1(2, 4, "teacher.zoom.zoomAccount"))), ". ", \u0275\u0275pipeBind1(4, 9, "teacher.zoom.personalActive"), " ");
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind2(3, 6, "teacher.zoom.connectedAs", \u0275\u0275pureFunction1(15, _c017, ctx_r1.zoomStatus()?.email || \u0275\u0275pipeBind1(2, 4, "teacher.zoom.zoomAccount"))), ". ", \u0275\u0275pipeBind1(4, 9, "teacher.zoom.personalActive"), " ");
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(8, 11, "teacher.zoom.disconnect"));
     \u0275\u0275advance(3);
@@ -75031,8 +75586,8 @@ var TeacherQuizzesComponent = class _TeacherQuizzesComponent {
 })();
 
 // src/app/pages/teacher/teacher-assignments.component.ts
-var _c017 = (a0) => ({ value: "ShortAnswer", label: a0 });
-var _c111 = (a0) => ({ value: "MultipleChoice", label: a0 });
+var _c018 = (a0) => ({ value: "ShortAnswer", label: a0 });
+var _c112 = (a0) => ({ value: "MultipleChoice", label: a0 });
 var _c28 = (a0, a1) => [a0, a1];
 var _forTrack023 = ($index, $item) => $item.id;
 var arrowFn016 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
@@ -75348,7 +75903,7 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(30, 37, "common.type"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.assignmentType);
-        \u0275\u0275property("options", \u0275\u0275pureFunction2(55, _c28, \u0275\u0275pureFunction1(51, _c017, \u0275\u0275pipeBind1(32, 39, "assignType.shortAnswer")), \u0275\u0275pureFunction1(53, _c111, \u0275\u0275pipeBind1(33, 41, "assignType.multipleChoice"))));
+        \u0275\u0275property("options", \u0275\u0275pureFunction2(55, _c28, \u0275\u0275pureFunction1(51, _c018, \u0275\u0275pipeBind1(32, 39, "assignType.shortAnswer")), \u0275\u0275pureFunction1(53, _c112, \u0275\u0275pipeBind1(33, 41, "assignType.multipleChoice"))));
         \u0275\u0275control();
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(36, 43, "teacher.assignments.question"), " ");
@@ -75436,7 +75991,7 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
 })();
 
 // src/app/pages/teacher/teacher-review.component.ts
-var _c018 = (a0, a1) => ({ score: a0, max: a1 });
+var _c019 = (a0, a1) => ({ score: a0, max: a1 });
 var _forTrack024 = ($index, $item) => $item.id;
 var arrowFn017 = (ctx, view) => (a) => ({ value: a.id, label: a.title });
 var _forTrack17 = ($index, $item) => $item.questionId;
@@ -75517,7 +76072,7 @@ function TeacherReviewComponent_For_23_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(submission_r4.studentName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", submission_r4.status, " \xB7 ", \u0275\u0275pipeBind2(7, 8, "teacher.review.scoreLine", \u0275\u0275pureFunction2(13, _c018, submission_r4.score ?? \u0275\u0275pipeBind1(5, 4, "common.emDash"), submission_r4.maxScore ?? \u0275\u0275pipeBind1(6, 6, "common.emDash"))));
+    \u0275\u0275textInterpolate2("", submission_r4.status, " \xB7 ", \u0275\u0275pipeBind2(7, 8, "teacher.review.scoreLine", \u0275\u0275pureFunction2(13, _c019, submission_r4.score ?? \u0275\u0275pipeBind1(5, 4, "common.emDash"), submission_r4.maxScore ?? \u0275\u0275pipeBind1(6, 6, "common.emDash"))));
     \u0275\u0275advance(4);
     \u0275\u0275repeater(submission_r4.answers);
     \u0275\u0275advance(3);
@@ -75724,8 +76279,8 @@ var TeacherReviewComponent = class _TeacherReviewComponent {
 })();
 
 // src/app/pages/teacher/teacher-students.component.ts
-var _c019 = () => [];
-var _c112 = (a0, a1, a2, a3) => ({ n: a0, name: a1, xp: a2, pct: a3 });
+var _c020 = () => [];
+var _c113 = (a0, a1, a2, a3) => ({ n: a0, name: a1, xp: a2, pct: a3 });
 var _c29 = (a0, a1, a2, a3) => ({ lesson: a0, pct: a1, wrong: a2, total: a3 });
 var _c34 = (a0, a1, a2, a3, a4) => ({ lesson: a0, pct: a1, done: a2, total: a3, sec: a4 });
 var _forTrack025 = ($index, $item) => $item.studentId;
@@ -75943,7 +76498,7 @@ function TeacherStudentsComponent_Conditional_31_Template(rf, ctx) {
     \u0275\u0275advance(4);
     \u0275\u0275textInterpolate(student_r5.displayName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(7, 12, "teacher.students.levelDetail", \u0275\u0275pureFunction4(27, _c112, student_r5.level.levelNumber, student_r5.level.name, student_r5.totalXp, student_r5.level.progressPercent)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(7, 12, "teacher.students.levelDetail", \u0275\u0275pureFunction4(27, _c113, student_r5.level.levelNumber, student_r5.level.name, student_r5.totalXp, student_r5.level.progressPercent)), " ");
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(10, 15, "teacher.students.parent"), " ", student_r5.parentName || \u0275\u0275pipeBind1(11, 17, "common.emDash"), " ");
     \u0275\u0275advance(3);
@@ -76068,7 +76623,7 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(27, 22, "teacher.students.signal"));
         \u0275\u0275advance(2);
-        \u0275\u0275repeater(ctx.dashboard()?.students || \u0275\u0275pureFunction0(24, _c019));
+        \u0275\u0275repeater(ctx.dashboard()?.students || \u0275\u0275pureFunction0(24, _c020));
         \u0275\u0275advance(3);
         \u0275\u0275conditional((tmp_9_0 = ctx.detail()) ? 31 : -1, tmp_9_0);
       }
@@ -76160,7 +76715,7 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
 })();
 
 // src/app/shared/math-prompt-editor/math-prompt-editor.component.ts
-var _c020 = ["editor"];
+var _c021 = ["editor"];
 function MathPromptEditorComponent_For_29_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -76245,7 +76800,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _MathPromptEditorComponent, selectors: [["app-math-prompt-editor"]], viewQuery: function MathPromptEditorComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c020, 7);
+        \u0275\u0275viewQuery(_c021, 7);
       }
       if (rf & 2) {
         let _t;
@@ -76427,8 +76982,8 @@ var SafeHtmlPipe = class _SafeHtmlPipe {
 })();
 
 // src/app/pages/teacher/teacher-question-bank.component.ts
-var _c021 = (a0) => ({ value: "Choose", label: a0 });
-var _c113 = (a0) => ({ value: "TrueFalse", label: a0 });
+var _c022 = (a0) => ({ value: "Choose", label: a0 });
+var _c114 = (a0) => ({ value: "TrueFalse", label: a0 });
 var _c210 = (a0) => ({ value: "SingleChoice", label: a0 });
 var _c35 = (a0) => ({ value: "MultiChoice", label: a0 });
 var _c43 = (a0, a1, a2, a3) => [a0, a1, a2, a3];
@@ -76437,21 +76992,22 @@ var _c62 = (a0) => ({ value: "False", label: a0 });
 var _c72 = (a0, a1) => [a0, a1];
 var _forTrack026 = ($index, $item) => $item.id;
 var arrowFn018 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
-var arrowFn114 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
-var arrowFn212 = (ctx, view) => (t) => ({ value: t, label: ctx.typeLabel(t) });
+var arrowFn114 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
+var arrowFn212 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
+var arrowFn34 = (ctx, view) => (t) => ({ value: t, label: ctx.typeLabel(t) });
 var _forTrack19 = ($index, $item) => $item.key;
-var arrowFn34 = (ctx, view) => (o) => ({ value: o.key, label: o.key + " \u2014 " + o.text });
-function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_12_Template(rf, ctx) {
+var arrowFn42 = (ctx, view) => (o) => ({ value: o.key, label: o.key + " \u2014 " + o.text });
+function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_12_Template(rf, ctx) {
   if (rf & 1) {
     const _r5 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "label", 6)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "app-searchable-select", 21);
+    \u0275\u0275elementStart(4, "app-searchable-select", 23);
     \u0275\u0275pipe(5, "t");
     \u0275\u0275pipe(6, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_12_Template_app_searchable_select_ngModelChange_4_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_12_Template_app_searchable_select_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r5);
       const child_r4 = \u0275\u0275nextContext().$implicit;
       \u0275\u0275twoWayBindingSet(child_r4.correctAnswer, $event) || (child_r4.correctAnswer = $event);
@@ -76464,62 +77020,62 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_12_Templ
   if (rf & 2) {
     const ctx_r5 = \u0275\u0275nextContext();
     const child_r4 = ctx_r5.$implicit;
-    const \u0275$index_81_r7 = ctx_r5.$index;
+    const \u0275$index_90_r7 = ctx_r5.$index;
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 4, "common.correctAnswer"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", child_r4.correctAnswer);
-    \u0275\u0275property("name", "cCorrect-" + \u0275$index_81_r7)("options", \u0275\u0275pureFunction2(14, _c72, \u0275\u0275pureFunction1(10, _c53, \u0275\u0275pipeBind1(5, 6, "common.true")), \u0275\u0275pureFunction1(12, _c62, \u0275\u0275pipeBind1(6, 8, "common.false"))));
+    \u0275\u0275property("name", "cCorrect-" + \u0275$index_90_r7)("options", \u0275\u0275pureFunction2(14, _c72, \u0275\u0275pureFunction1(10, _c53, \u0275\u0275pipeBind1(5, 6, "common.true")), \u0275\u0275pureFunction1(12, _c62, \u0275\u0275pipeBind1(6, 8, "common.false"))));
     \u0275\u0275control();
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_For_9_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_For_9_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 25)(1, "span", 27);
+    \u0275\u0275elementStart(0, "div", 27)(1, "span", 29);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "input", 28);
+    \u0275\u0275elementStart(3, "input", 30);
     \u0275\u0275pipe(4, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_For_9_Template_input_ngModelChange_3_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_For_9_Template_input_ngModelChange_3_listener($event) {
       const opt_r10 = \u0275\u0275restoreView(_r9).$implicit;
       \u0275\u0275twoWayBindingSet(opt_r10.text, $event) || (opt_r10.text = $event);
       return \u0275\u0275resetView($event);
     });
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
-    \u0275\u0275elementStart(5, "app-icon-action-button", 29);
+    \u0275\u0275elementStart(5, "app-icon-action-button", 31);
     \u0275\u0275pipe(6, "t");
-    \u0275\u0275listener("action", function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_For_9_Template_app_icon_action_button_action_5_listener() {
-      const \u0275$index_126_r11 = \u0275\u0275restoreView(_r9).$index;
+    \u0275\u0275listener("action", function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_For_9_Template_app_icon_action_button_action_5_listener() {
+      const \u0275$index_135_r11 = \u0275\u0275restoreView(_r9).$index;
       const child_r4 = \u0275\u0275nextContext(2).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r1.removeChildOption(child_r4, \u0275$index_126_r11));
+      return \u0275\u0275resetView(ctx_r1.removeChildOption(child_r4, \u0275$index_135_r11));
     });
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const opt_r10 = ctx.$implicit;
-    const \u0275$index_126_r11 = ctx.$index;
+    const \u0275$index_135_r11 = ctx.$index;
     const ctx_r5 = \u0275\u0275nextContext(2);
     const child_r4 = ctx_r5.$implicit;
-    const \u0275$index_81_r7 = ctx_r5.$index;
+    const \u0275$index_90_r7 = ctx_r5.$index;
     const ctx_r1 = \u0275\u0275nextContext(2);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(ctx_r1.optionLabel(\u0275$index_126_r11));
+    \u0275\u0275textInterpolate(ctx_r1.optionLabel(\u0275$index_135_r11));
     \u0275\u0275advance();
     \u0275\u0275twoWayProperty("ngModel", opt_r10.text);
-    \u0275\u0275property("name", "cOpt-" + \u0275$index_81_r7 + "-" + \u0275$index_126_r11)("placeholder", \u0275\u0275pipeBind1(4, 6, "common.optionText"));
+    \u0275\u0275property("name", "cOpt-" + \u0275$index_90_r7 + "-" + \u0275$index_135_r11)("placeholder", \u0275\u0275pipeBind1(4, 6, "common.optionText"));
     \u0275\u0275control();
     \u0275\u0275advance(2);
     \u0275\u0275property("label", \u0275\u0275pipeBind1(6, 8, "common.removeOption"))("disabled", child_r4.options.length <= 2);
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_10_For_5_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_10_For_5_Template(rf, ctx) {
   if (rf & 1) {
     const _r12 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "label", 30)(1, "input", 31);
-    \u0275\u0275listener("change", function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_10_For_5_Template_input_change_1_listener() {
+    \u0275\u0275elementStart(0, "label", 32)(1, "input", 33);
+    \u0275\u0275listener("change", function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_10_For_5_Template_input_change_1_listener() {
       const opt_r13 = \u0275\u0275restoreView(_r12).$implicit;
       const child_r4 = \u0275\u0275nextContext(3).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -76538,13 +77094,13 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Condi
     \u0275\u0275textInterpolate2(" ", opt_r13.key, " \u2014 ", opt_r13.text, " ");
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_10_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 26)(1, "span");
+    \u0275\u0275elementStart(0, "div", 28)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_10_For_5_Template, 3, 3, "label", 30, _forTrack19);
+    \u0275\u0275repeaterCreate(4, TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_10_For_5_Template, 3, 3, "label", 32, _forTrack19);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -76556,16 +77112,16 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Condi
     \u0275\u0275repeater(ctx_r1.filledOptions(child_r4.options));
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_11_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_11_Template(rf, ctx) {
   if (rf & 1) {
     const _r14 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "label", 6)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "app-searchable-select", 32);
+    \u0275\u0275elementStart(4, "app-searchable-select", 34);
     \u0275\u0275pipe(5, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_11_Template_app_searchable_select_ngModelChange_4_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_11_Template_app_searchable_select_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r14);
       const child_r4 = \u0275\u0275nextContext(2).$implicit;
       \u0275\u0275twoWayBindingSet(child_r4.correctAnswer, $event) || (child_r4.correctAnswer = $event);
@@ -76578,25 +77134,25 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Condi
   if (rf & 2) {
     const ctx_r5 = \u0275\u0275nextContext(2);
     const child_r4 = ctx_r5.$implicit;
-    const \u0275$index_81_r7 = ctx_r5.$index;
+    const \u0275$index_90_r7 = ctx_r5.$index;
     const ctx_r1 = \u0275\u0275nextContext(2);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 5, "common.correctAnswer"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", child_r4.correctAnswer);
-    \u0275\u0275property("name", "cCorrect-" + \u0275$index_81_r7)("emptyLabel", \u0275\u0275pipeBind1(5, 7, "common.selectCorrect"))("options", ctx_r1.filledOptions(child_r4.options).map(\u0275\u0275arrowFunction(9, arrowFn34, ctx)));
+    \u0275\u0275property("name", "cCorrect-" + \u0275$index_90_r7)("emptyLabel", \u0275\u0275pipeBind1(5, 7, "common.selectCorrect"))("options", ctx_r1.filledOptions(child_r4.options).map(\u0275\u0275arrowFunction(9, arrowFn42, ctx)));
     \u0275\u0275control();
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Template(rf, ctx) {
   if (rf & 1) {
     const _r8 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 24)(1, "div", 17)(2, "h4");
+    \u0275\u0275elementStart(0, "div", 26)(1, "div", 19)(2, "h4");
     \u0275\u0275text(3);
     \u0275\u0275pipe(4, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "button", 18);
-    \u0275\u0275listener("click", function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Template_button_click_5_listener() {
+    \u0275\u0275elementStart(5, "button", 20);
+    \u0275\u0275listener("click", function TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Template_button_click_5_listener() {
       \u0275\u0275restoreView(_r8);
       const child_r4 = \u0275\u0275nextContext().$implicit;
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -76605,9 +77161,9 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Templ
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(8, TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_For_9_Template, 7, 10, "div", 25, \u0275\u0275repeaterTrackByIndex);
+    \u0275\u0275repeaterCreate(8, TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_For_9_Template, 7, 10, "div", 27, \u0275\u0275repeaterTrackByIndex);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(10, TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_10_Template, 6, 3, "div", 26)(11, TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Conditional_11_Template, 6, 10, "label", 6);
+    \u0275\u0275conditionalCreate(10, TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_10_Template, 6, 3, "div", 28)(11, TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Conditional_11_Template, 6, 10, "label", 6);
   }
   if (rf & 2) {
     const child_r4 = \u0275\u0275nextContext().$implicit;
@@ -76621,15 +77177,15 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Templ
     \u0275\u0275conditional(child_r4.questionType === "MultiChoice" ? 10 : 11);
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_For_15_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_For_15_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 19)(1, "div", 5)(2, "label", 6)(3, "span");
+    \u0275\u0275elementStart(0, "div", 21)(1, "div", 10)(2, "label", 6)(3, "span");
     \u0275\u0275text(4);
     \u0275\u0275pipe(5, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "input", 20);
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_For_15_Template_input_ngModelChange_6_listener($event) {
+    \u0275\u0275elementStart(6, "input", 22);
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_For_15_Template_input_ngModelChange_6_listener($event) {
       const child_r4 = \u0275\u0275restoreView(_r3).$implicit;
       \u0275\u0275twoWayBindingSet(child_r4.prompt, $event) || (child_r4.prompt = $event);
       return \u0275\u0275resetView($event);
@@ -76641,8 +77197,8 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Template(rf, ctx) {
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "app-searchable-select", 21);
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_For_15_Template_app_searchable_select_ngModelChange_11_listener($event) {
+    \u0275\u0275elementStart(11, "app-searchable-select", 23);
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_For_15_Template_app_searchable_select_ngModelChange_11_listener($event) {
       const child_r4 = \u0275\u0275restoreView(_r3).$implicit;
       \u0275\u0275twoWayBindingSet(child_r4.questionType, $event) || (child_r4.questionType = $event);
       return \u0275\u0275resetView($event);
@@ -76650,13 +77206,13 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd()();
-    \u0275\u0275conditionalCreate(12, TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_12_Template, 7, 17, "label", 6)(13, TeacherQuestionBankComponent_Conditional_37_For_15_Conditional_13_Template, 12, 7);
+    \u0275\u0275conditionalCreate(12, TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_12_Template, 7, 17, "label", 6)(13, TeacherQuestionBankComponent_Conditional_43_For_15_Conditional_13_Template, 12, 7);
     \u0275\u0275elementStart(14, "label", 6)(15, "span");
     \u0275\u0275text(16);
     \u0275\u0275pipe(17, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(18, "input", 22);
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_For_15_Template_input_ngModelChange_18_listener($event) {
+    \u0275\u0275elementStart(18, "input", 24);
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_For_15_Template_input_ngModelChange_18_listener($event) {
       const child_r4 = \u0275\u0275restoreView(_r3).$implicit;
       \u0275\u0275twoWayBindingSet(child_r4.points, $event) || (child_r4.points = $event);
       return \u0275\u0275resetView($event);
@@ -76664,30 +77220,30 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(19, "app-icon-action-button", 23);
+    \u0275\u0275elementStart(19, "app-icon-action-button", 25);
     \u0275\u0275pipe(20, "t");
-    \u0275\u0275listener("action", function TeacherQuestionBankComponent_Conditional_37_For_15_Template_app_icon_action_button_action_19_listener() {
-      const \u0275$index_81_r7 = \u0275\u0275restoreView(_r3).$index;
+    \u0275\u0275listener("action", function TeacherQuestionBankComponent_Conditional_43_For_15_Template_app_icon_action_button_action_19_listener() {
+      const \u0275$index_90_r7 = \u0275\u0275restoreView(_r3).$index;
       const ctx_r1 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r1.removeChild(\u0275$index_81_r7));
+      return \u0275\u0275resetView(ctx_r1.removeChild(\u0275$index_90_r7));
     });
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const child_r4 = ctx.$implicit;
-    const \u0275$index_81_r7 = ctx.$index;
+    const \u0275$index_90_r7 = ctx.$index;
     const ctx_r1 = \u0275\u0275nextContext(2);
     \u0275\u0275advance(4);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 12, "teacher.qbank.childPrompt"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", child_r4.prompt);
-    \u0275\u0275property("name", "cPrompt-" + \u0275$index_81_r7);
+    \u0275\u0275property("name", "cPrompt-" + \u0275$index_90_r7);
     \u0275\u0275control();
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 14, "common.type"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", child_r4.questionType);
-    \u0275\u0275property("name", "cType-" + \u0275$index_81_r7)("options", \u0275\u0275pureFunction4(28, _c43, \u0275\u0275pureFunction1(20, _c021, ctx_r1.typeLabel("Choose")), \u0275\u0275pureFunction1(22, _c113, ctx_r1.typeLabel("TrueFalse")), \u0275\u0275pureFunction1(24, _c210, ctx_r1.typeLabel("SingleChoice")), \u0275\u0275pureFunction1(26, _c35, ctx_r1.typeLabel("MultiChoice"))));
+    \u0275\u0275property("name", "cType-" + \u0275$index_90_r7)("options", \u0275\u0275pureFunction4(28, _c43, \u0275\u0275pureFunction1(20, _c022, ctx_r1.typeLabel("Choose")), \u0275\u0275pureFunction1(22, _c114, ctx_r1.typeLabel("TrueFalse")), \u0275\u0275pureFunction1(24, _c210, ctx_r1.typeLabel("SingleChoice")), \u0275\u0275pureFunction1(26, _c35, ctx_r1.typeLabel("MultiChoice"))));
     \u0275\u0275control();
     \u0275\u0275advance();
     \u0275\u0275conditional(child_r4.questionType === "TrueFalse" ? 12 : 13);
@@ -76695,22 +77251,22 @@ function TeacherQuestionBankComponent_Conditional_37_For_15_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 16, "common.points"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", child_r4.points);
-    \u0275\u0275property("name", "cPts-" + \u0275$index_81_r7);
+    \u0275\u0275property("name", "cPts-" + \u0275$index_90_r7);
     \u0275\u0275control();
     \u0275\u0275advance();
     \u0275\u0275property("label", \u0275\u0275pipeBind1(20, 18, "teacher.qbank.removeChild"));
   }
 }
-function TeacherQuestionBankComponent_Conditional_37_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_43_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "label", 6)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "textarea", 15);
+    \u0275\u0275elementStart(4, "textarea", 17);
     \u0275\u0275pipe(5, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_37_Template_textarea_ngModelChange_4_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_43_Template_textarea_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.passageText, $event) || (ctx_r1.passageText = $event);
@@ -76719,12 +77275,12 @@ function TeacherQuestionBankComponent_Conditional_37_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "div", 16)(7, "div", 17)(8, "h4");
+    \u0275\u0275elementStart(6, "div", 18)(7, "div", 19)(8, "h4");
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "button", 18);
-    \u0275\u0275listener("click", function TeacherQuestionBankComponent_Conditional_37_Template_button_click_11_listener() {
+    \u0275\u0275elementStart(11, "button", 20);
+    \u0275\u0275listener("click", function TeacherQuestionBankComponent_Conditional_43_Template_button_click_11_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.addChild());
@@ -76732,7 +77288,7 @@ function TeacherQuestionBankComponent_Conditional_37_Template(rf, ctx) {
     \u0275\u0275text(12);
     \u0275\u0275pipe(13, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(14, TeacherQuestionBankComponent_Conditional_37_For_15_Template, 21, 33, "div", 19, \u0275\u0275repeaterTrackByIndex);
+    \u0275\u0275repeaterCreate(14, TeacherQuestionBankComponent_Conditional_43_For_15_Template, 21, 33, "div", 21, \u0275\u0275repeaterTrackByIndex);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -76751,16 +77307,16 @@ function TeacherQuestionBankComponent_Conditional_37_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r1.children);
   }
 }
-function TeacherQuestionBankComponent_Conditional_38_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_44_Template(rf, ctx) {
   if (rf & 1) {
     const _r15 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "label", 6)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "textarea", 33);
+    \u0275\u0275elementStart(4, "textarea", 35);
     \u0275\u0275pipe(5, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_38_Template_textarea_ngModelChange_4_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_44_Template_textarea_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r15);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.passageText, $event) || (ctx_r1.passageText = $event);
@@ -76769,13 +77325,13 @@ function TeacherQuestionBankComponent_Conditional_38_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "div", 5)(7, "label", 6)(8, "span");
+    \u0275\u0275elementStart(6, "div", 10)(7, "label", 6)(8, "span");
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "input", 34);
+    \u0275\u0275elementStart(11, "input", 36);
     \u0275\u0275pipe(12, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_38_Template_input_ngModelChange_11_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_44_Template_input_ngModelChange_11_listener($event) {
       \u0275\u0275restoreView(_r15);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.correctAnswer, $event) || (ctx_r1.correctAnswer = $event);
@@ -76788,8 +77344,8 @@ function TeacherQuestionBankComponent_Conditional_38_Template(rf, ctx) {
     \u0275\u0275text(15);
     \u0275\u0275pipe(16, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(17, "input", 35);
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_38_Template_input_ngModelChange_17_listener($event) {
+    \u0275\u0275elementStart(17, "input", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_44_Template_input_ngModelChange_17_listener($event) {
       \u0275\u0275restoreView(_r15);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.points, $event) || (ctx_r1.points = $event);
@@ -76820,17 +77376,17 @@ function TeacherQuestionBankComponent_Conditional_38_Template(rf, ctx) {
     \u0275\u0275control();
   }
 }
-function TeacherQuestionBankComponent_Conditional_39_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_45_Template(rf, ctx) {
   if (rf & 1) {
     const _r16 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 5)(1, "label", 6)(2, "span");
+    \u0275\u0275elementStart(0, "div", 10)(1, "label", 6)(2, "span");
     \u0275\u0275text(3);
     \u0275\u0275pipe(4, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "app-searchable-select", 36);
+    \u0275\u0275elementStart(5, "app-searchable-select", 38);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275pipe(7, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_39_Template_app_searchable_select_ngModelChange_5_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_45_Template_app_searchable_select_ngModelChange_5_listener($event) {
       \u0275\u0275restoreView(_r16);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.correctAnswer, $event) || (ctx_r1.correctAnswer = $event);
@@ -76843,8 +77399,8 @@ function TeacherQuestionBankComponent_Conditional_39_Template(rf, ctx) {
     \u0275\u0275text(10);
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "input", 35);
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_39_Template_input_ngModelChange_12_listener($event) {
+    \u0275\u0275elementStart(12, "input", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_45_Template_input_ngModelChange_12_listener($event) {
       \u0275\u0275restoreView(_r16);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.points, $event) || (ctx_r1.points = $event);
@@ -76869,54 +77425,54 @@ function TeacherQuestionBankComponent_Conditional_39_Template(rf, ctx) {
     \u0275\u0275control();
   }
 }
-function TeacherQuestionBankComponent_Conditional_40_For_9_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_46_For_9_Template(rf, ctx) {
   if (rf & 1) {
     const _r18 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 25)(1, "span", 27);
+    \u0275\u0275elementStart(0, "div", 27)(1, "span", 29);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "input", 28);
+    \u0275\u0275elementStart(3, "input", 30);
     \u0275\u0275pipe(4, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_40_For_9_Template_input_ngModelChange_3_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_46_For_9_Template_input_ngModelChange_3_listener($event) {
       const opt_r19 = \u0275\u0275restoreView(_r18).$implicit;
       \u0275\u0275twoWayBindingSet(opt_r19.text, $event) || (opt_r19.text = $event);
       return \u0275\u0275resetView($event);
     });
-    \u0275\u0275listener("ngModelChange", function TeacherQuestionBankComponent_Conditional_40_For_9_Template_input_ngModelChange_3_listener() {
+    \u0275\u0275listener("ngModelChange", function TeacherQuestionBankComponent_Conditional_46_For_9_Template_input_ngModelChange_3_listener() {
       \u0275\u0275restoreView(_r18);
       const ctx_r1 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r1.syncCorrectAfterOptionChange());
     });
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
-    \u0275\u0275elementStart(5, "app-icon-action-button", 29);
+    \u0275\u0275elementStart(5, "app-icon-action-button", 31);
     \u0275\u0275pipe(6, "t");
-    \u0275\u0275listener("action", function TeacherQuestionBankComponent_Conditional_40_For_9_Template_app_icon_action_button_action_5_listener() {
-      const \u0275$index_235_r20 = \u0275\u0275restoreView(_r18).$index;
+    \u0275\u0275listener("action", function TeacherQuestionBankComponent_Conditional_46_For_9_Template_app_icon_action_button_action_5_listener() {
+      const \u0275$index_244_r20 = \u0275\u0275restoreView(_r18).$index;
       const ctx_r1 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r1.removeOption(\u0275$index_235_r20));
+      return \u0275\u0275resetView(ctx_r1.removeOption(\u0275$index_244_r20));
     });
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const opt_r19 = ctx.$implicit;
-    const \u0275$index_235_r20 = ctx.$index;
+    const \u0275$index_244_r20 = ctx.$index;
     const ctx_r1 = \u0275\u0275nextContext(2);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(ctx_r1.optionLabel(\u0275$index_235_r20));
+    \u0275\u0275textInterpolate(ctx_r1.optionLabel(\u0275$index_244_r20));
     \u0275\u0275advance();
     \u0275\u0275twoWayProperty("ngModel", opt_r19.text);
-    \u0275\u0275property("name", "opt-" + \u0275$index_235_r20)("placeholder", \u0275\u0275pipeBind1(4, 6, "common.optionText"));
+    \u0275\u0275property("name", "opt-" + \u0275$index_244_r20)("placeholder", \u0275\u0275pipeBind1(4, 6, "common.optionText"));
     \u0275\u0275control();
     \u0275\u0275advance(2);
     \u0275\u0275property("label", \u0275\u0275pipeBind1(6, 8, "common.removeOption"))("disabled", ctx_r1.options.length <= 2);
   }
 }
-function TeacherQuestionBankComponent_Conditional_40_Conditional_11_For_5_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_46_Conditional_11_For_5_Template(rf, ctx) {
   if (rf & 1) {
     const _r21 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "label", 30)(1, "input", 31);
-    \u0275\u0275listener("change", function TeacherQuestionBankComponent_Conditional_40_Conditional_11_For_5_Template_input_change_1_listener() {
+    \u0275\u0275elementStart(0, "label", 32)(1, "input", 33);
+    \u0275\u0275listener("change", function TeacherQuestionBankComponent_Conditional_46_Conditional_11_For_5_Template_input_change_1_listener() {
       const opt_r22 = \u0275\u0275restoreView(_r21).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.toggleCorrectKey(opt_r22.key));
@@ -76934,13 +77490,13 @@ function TeacherQuestionBankComponent_Conditional_40_Conditional_11_For_5_Templa
     \u0275\u0275textInterpolate2(" ", opt_r22.key, " \u2014 ", opt_r22.text, " ");
   }
 }
-function TeacherQuestionBankComponent_Conditional_40_Conditional_11_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_46_Conditional_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 26)(1, "span");
+    \u0275\u0275elementStart(0, "div", 28)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, TeacherQuestionBankComponent_Conditional_40_Conditional_11_For_5_Template, 3, 3, "label", 30, _forTrack19);
+    \u0275\u0275repeaterCreate(4, TeacherQuestionBankComponent_Conditional_46_Conditional_11_For_5_Template, 3, 3, "label", 32, _forTrack19);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -76951,16 +77507,16 @@ function TeacherQuestionBankComponent_Conditional_40_Conditional_11_Template(rf,
     \u0275\u0275repeater(ctx_r1.filledOptions(ctx_r1.options));
   }
 }
-function TeacherQuestionBankComponent_Conditional_40_Conditional_12_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_46_Conditional_12_Template(rf, ctx) {
   if (rf & 1) {
     const _r23 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "label", 6)(1, "span");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "app-searchable-select", 37);
+    \u0275\u0275elementStart(4, "app-searchable-select", 39);
     \u0275\u0275pipe(5, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_40_Conditional_12_Template_app_searchable_select_ngModelChange_4_listener($event) {
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_46_Conditional_12_Template_app_searchable_select_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r23);
       const ctx_r1 = \u0275\u0275nextContext(2);
       \u0275\u0275twoWayBindingSet(ctx_r1.correctAnswer, $event) || (ctx_r1.correctAnswer = $event);
@@ -76976,19 +77532,19 @@ function TeacherQuestionBankComponent_Conditional_40_Conditional_12_Template(rf,
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 4, "common.correctAnswer"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.correctAnswer);
-    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(5, 6, "common.selectCorrect"))("options", ctx_r1.filledOptions(ctx_r1.options).map(\u0275\u0275arrowFunction(8, arrowFn34, ctx)));
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(5, 6, "common.selectCorrect"))("options", ctx_r1.filledOptions(ctx_r1.options).map(\u0275\u0275arrowFunction(8, arrowFn42, ctx)));
     \u0275\u0275control();
   }
 }
-function TeacherQuestionBankComponent_Conditional_40_Template(rf, ctx) {
+function TeacherQuestionBankComponent_Conditional_46_Template(rf, ctx) {
   if (rf & 1) {
     const _r17 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 24)(1, "div", 17)(2, "h4");
+    \u0275\u0275elementStart(0, "div", 26)(1, "div", 19)(2, "h4");
     \u0275\u0275text(3);
     \u0275\u0275pipe(4, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "button", 18);
-    \u0275\u0275listener("click", function TeacherQuestionBankComponent_Conditional_40_Template_button_click_5_listener() {
+    \u0275\u0275elementStart(5, "button", 20);
+    \u0275\u0275listener("click", function TeacherQuestionBankComponent_Conditional_46_Template_button_click_5_listener() {
       \u0275\u0275restoreView(_r17);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.addOption());
@@ -76996,16 +77552,16 @@ function TeacherQuestionBankComponent_Conditional_40_Template(rf, ctx) {
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(8, TeacherQuestionBankComponent_Conditional_40_For_9_Template, 7, 10, "div", 25, \u0275\u0275repeaterTrackByIndex);
+    \u0275\u0275repeaterCreate(8, TeacherQuestionBankComponent_Conditional_46_For_9_Template, 7, 10, "div", 27, \u0275\u0275repeaterTrackByIndex);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "div", 5);
-    \u0275\u0275conditionalCreate(11, TeacherQuestionBankComponent_Conditional_40_Conditional_11_Template, 6, 3, "div", 26)(12, TeacherQuestionBankComponent_Conditional_40_Conditional_12_Template, 6, 9, "label", 6);
+    \u0275\u0275elementStart(10, "div", 10);
+    \u0275\u0275conditionalCreate(11, TeacherQuestionBankComponent_Conditional_46_Conditional_11_Template, 6, 3, "div", 28)(12, TeacherQuestionBankComponent_Conditional_46_Conditional_12_Template, 6, 9, "label", 6);
     \u0275\u0275elementStart(13, "label", 6)(14, "span");
     \u0275\u0275text(15);
     \u0275\u0275pipe(16, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(17, "input", 35);
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_40_Template_input_ngModelChange_17_listener($event) {
+    \u0275\u0275elementStart(17, "input", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Conditional_46_Template_input_ngModelChange_17_listener($event) {
       \u0275\u0275restoreView(_r17);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.points, $event) || (ctx_r1.points = $event);
@@ -77032,7 +77588,7 @@ function TeacherQuestionBankComponent_Conditional_40_Template(rf, ctx) {
     \u0275\u0275control();
   }
 }
-function TeacherQuestionBankComponent_For_50_Conditional_7_Template(rf, ctx) {
+function TeacherQuestionBankComponent_For_56_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275text(0);
     \u0275\u0275pipe(1, "t");
@@ -77043,7 +77599,7 @@ function TeacherQuestionBankComponent_For_50_Conditional_7_Template(rf, ctx) {
     \u0275\u0275textInterpolate4(" \xB7 ", question_r25.options.length, " ", \u0275\u0275pipeBind1(1, 4, "common.options"), " \xB7 ", \u0275\u0275pipeBind1(2, 6, "common.correctAnswer"), " ", question_r25.correctAnswer, " ");
   }
 }
-function TeacherQuestionBankComponent_For_50_Conditional_8_Template(rf, ctx) {
+function TeacherQuestionBankComponent_For_56_Conditional_8_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
     \u0275\u0275text(1);
@@ -77055,7 +77611,7 @@ function TeacherQuestionBankComponent_For_50_Conditional_8_Template(rf, ctx) {
     \u0275\u0275textInterpolate(question_r25.passageText);
   }
 }
-function TeacherQuestionBankComponent_For_50_Conditional_9_For_2_Template(rf, ctx) {
+function TeacherQuestionBankComponent_For_56_Conditional_9_For_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "li");
     \u0275\u0275text(1);
@@ -77068,10 +77624,10 @@ function TeacherQuestionBankComponent_For_50_Conditional_9_For_2_Template(rf, ct
     \u0275\u0275textInterpolate2("", child_r26.prompt, " (", ctx_r1.typeLabel(child_r26.questionType), ")");
   }
 }
-function TeacherQuestionBankComponent_For_50_Conditional_9_Template(rf, ctx) {
+function TeacherQuestionBankComponent_For_56_Conditional_9_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "ul");
-    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_50_Conditional_9_For_2_Template, 2, 2, "li", null, _forTrack026);
+    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_56_Conditional_9_For_2_Template, 2, 2, "li", null, _forTrack026);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -77080,23 +77636,23 @@ function TeacherQuestionBankComponent_For_50_Conditional_9_Template(rf, ctx) {
     \u0275\u0275repeater(question_r25.children);
   }
 }
-function TeacherQuestionBankComponent_For_50_Template(rf, ctx) {
+function TeacherQuestionBankComponent_For_56_Template(rf, ctx) {
   if (rf & 1) {
     const _r24 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 14)(1, "div");
-    \u0275\u0275element(2, "div", 38);
+    \u0275\u0275elementStart(0, "div", 16)(1, "div");
+    \u0275\u0275element(2, "div", 40);
     \u0275\u0275pipe(3, "safeHtml");
     \u0275\u0275elementStart(4, "p", 1);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
-    \u0275\u0275conditionalCreate(7, TeacherQuestionBankComponent_For_50_Conditional_7_Template, 3, 8);
+    \u0275\u0275conditionalCreate(7, TeacherQuestionBankComponent_For_56_Conditional_7_Template, 3, 8);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(8, TeacherQuestionBankComponent_For_50_Conditional_8_Template, 2, 1, "p", 1);
-    \u0275\u0275conditionalCreate(9, TeacherQuestionBankComponent_For_50_Conditional_9_Template, 3, 0, "ul");
+    \u0275\u0275conditionalCreate(8, TeacherQuestionBankComponent_For_56_Conditional_8_Template, 2, 1, "p", 1);
+    \u0275\u0275conditionalCreate(9, TeacherQuestionBankComponent_For_56_Conditional_9_Template, 3, 0, "ul");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "app-icon-action-button", 39);
+    \u0275\u0275elementStart(10, "app-icon-action-button", 41);
     \u0275\u0275pipe(11, "t");
-    \u0275\u0275listener("action", function TeacherQuestionBankComponent_For_50_Template_app_icon_action_button_action_10_listener() {
+    \u0275\u0275listener("action", function TeacherQuestionBankComponent_For_56_Template_app_icon_action_button_action_10_listener() {
       const question_r25 = \u0275\u0275restoreView(_r24).$implicit;
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.deleteQuestion(question_r25));
@@ -77120,7 +77676,7 @@ function TeacherQuestionBankComponent_For_50_Template(rf, ctx) {
     \u0275\u0275property("label", \u0275\u0275pipeBind1(11, 13, "common.delete"));
   }
 }
-function TeacherQuestionBankComponent_ForEmpty_51_Template(rf, ctx) {
+function TeacherQuestionBankComponent_ForEmpty_57_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
     \u0275\u0275text(1);
@@ -77165,6 +77721,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
       )
     );
     this.courseId = "";
+    this.unitId = "";
     this.lessonId = "";
     this.questionType = "SingleChoice";
     this.prompt = "";
@@ -77210,11 +77767,30 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
     return formatCourseLabel((k, p) => this.locale.t(k, p), fallbackTitle, null);
   }
   onCourseChange() {
+    this.unitId = "";
     this.lessonId = "";
     this.reload();
   }
-  lessonsForCourse() {
-    return this.courses().find((c) => c.id === this.courseId)?.lessons || [];
+  onUnitChange() {
+    this.lessonId = "";
+  }
+  unitsForCourse() {
+    const units = [...this.courses().find((c) => c.id === this.courseId)?.units ?? []];
+    return units.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+  lessonsForUnit() {
+    const course = this.courses().find((c) => c.id === this.courseId);
+    if (!course)
+      return [];
+    const units = this.unitsForCourse();
+    if (!units.length) {
+      return [...course.lessons ?? []].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+    }
+    if (!this.unitId)
+      return [];
+    const fromUnit = course.units?.find((u2) => u2.id === this.unitId)?.lessons;
+    const lessons = fromUnit?.length ? fromUnit : (course.lessons ?? []).filter((l) => l.unitId === this.unitId);
+    return [...lessons].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
   }
   isParagraph(type = this.questionType) {
     return type === "Paragraph";
@@ -77410,7 +77986,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherQuestionBankComponent, selectors: [["app-teacher-question-bank"]], decls: 52, vars: 47, consts: [[1, "panel-page"], [1, "meta"], [3, "ok", "error"], [1, "block", "qb-form-card"], [1, "qb-form", 3, "ngSubmit"], [1, "qb-row", "two"], [1, "qb-field"], ["name", "courseId", "required", "", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "questionType", 3, "ngModelChange", "ngModel", "options"], ["name", "prompt", 3, "ngModelChange", "ngModel"], [1, "qb-actions"], ["type", "submit"], [1, "block"], [1, "meeting-row"], ["name", "passageText", "rows", "5", 3, "ngModelChange", "ngModel", "placeholder"], [1, "qb-children"], [1, "qb-children-head"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "qb-child"], [3, "ngModelChange", "ngModel", "name"], [3, "ngModelChange", "ngModel", "name", "options"], ["type", "number", "min", "1", 3, "ngModelChange", "ngModel", "name"], ["kind", "delete", "variant", "ghost", 3, "action", "label"], [1, "options-editor"], [1, "option-row"], [1, "correct-multi"], [1, "option-key"], [3, "ngModelChange", "ngModel", "name", "placeholder"], ["kind", "delete", "variant", "ghost", 3, "action", "label", "disabled"], [1, "checkbox"], ["type", "checkbox", 3, "change", "checked"], [3, "ngModelChange", "ngModel", "name", "emptyLabel", "options"], ["name", "passageText", "rows", "4", 3, "ngModelChange", "ngModel", "placeholder"], ["name", "correctAnswer", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "name", "points", "min", "1", 3, "ngModelChange", "ngModel"], ["name", "correctAnswer", 3, "ngModelChange", "ngModel", "options"], ["name", "correctAnswer", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], [1, "prompt-html", 3, "innerHTML"], ["kind", "delete", "variant", "danger", 3, "action", "label"]], template: function TeacherQuestionBankComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherQuestionBankComponent, selectors: [["app-teacher-question-bank"]], decls: 58, vars: 56, consts: [[1, "panel-page"], [1, "meta"], [3, "ok", "error"], [1, "block", "qb-form-card"], [1, "qb-form", 3, "ngSubmit"], [1, "qb-row", "three"], [1, "qb-field"], ["name", "courseId", "required", "", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "unitId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], [1, "qb-row", "two"], ["name", "questionType", 3, "ngModelChange", "ngModel", "options"], ["name", "prompt", 3, "ngModelChange", "ngModel"], [1, "qb-actions"], ["type", "submit"], [1, "block"], [1, "meeting-row"], ["name", "passageText", "rows", "5", 3, "ngModelChange", "ngModel", "placeholder"], [1, "qb-children"], [1, "qb-children-head"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "qb-child"], [3, "ngModelChange", "ngModel", "name"], [3, "ngModelChange", "ngModel", "name", "options"], ["type", "number", "min", "1", 3, "ngModelChange", "ngModel", "name"], ["kind", "delete", "variant", "ghost", 3, "action", "label"], [1, "options-editor"], [1, "option-row"], [1, "correct-multi"], [1, "option-key"], [3, "ngModelChange", "ngModel", "name", "placeholder"], ["kind", "delete", "variant", "ghost", 3, "action", "label", "disabled"], [1, "checkbox"], ["type", "checkbox", 3, "change", "checked"], [3, "ngModelChange", "ngModel", "name", "emptyLabel", "options"], ["name", "passageText", "rows", "4", 3, "ngModelChange", "ngModel", "placeholder"], ["name", "correctAnswer", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "number", "name", "points", "min", "1", 3, "ngModelChange", "ngModel"], ["name", "correctAnswer", 3, "ngModelChange", "ngModel", "options"], ["name", "correctAnswer", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], [1, "prompt-html", 3, "innerHTML"], ["kind", "delete", "variant", "danger", 3, "action", "label"]], template: function TeacherQuestionBankComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "h2");
         \u0275\u0275text(2);
@@ -77452,93 +78028,115 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
         \u0275\u0275elementStart(24, "app-searchable-select", 8);
         \u0275\u0275pipe(25, "t");
         \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_24_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.unitId, $event) || (ctx.unitId = $event);
+          return $event;
+        });
+        \u0275\u0275listener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_24_listener() {
+          return ctx.onUnitChange();
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(26, "label", 6)(27, "span");
+        \u0275\u0275text(28);
+        \u0275\u0275pipe(29, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(30, "app-searchable-select", 9);
+        \u0275\u0275pipe(31, "t");
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_30_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.lessonId, $event) || (ctx.lessonId = $event);
           return $event;
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(26, "div", 5)(27, "label", 6)(28, "span");
-        \u0275\u0275text(29);
-        \u0275\u0275pipe(30, "t");
+        \u0275\u0275elementStart(32, "div", 10)(33, "label", 6)(34, "span");
+        \u0275\u0275text(35);
+        \u0275\u0275pipe(36, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(31, "app-searchable-select", 9);
-        \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_31_listener($event) {
+        \u0275\u0275elementStart(37, "app-searchable-select", 11);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_37_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.questionType, $event) || (ctx.questionType = $event);
           return $event;
         });
-        \u0275\u0275listener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_31_listener() {
+        \u0275\u0275listener("ngModelChange", function TeacherQuestionBankComponent_Template_app_searchable_select_ngModelChange_37_listener() {
           return ctx.onTypeChange();
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(32, "div", 6)(33, "span");
-        \u0275\u0275text(34);
-        \u0275\u0275pipe(35, "t");
+        \u0275\u0275elementStart(38, "div", 6)(39, "span");
+        \u0275\u0275text(40);
+        \u0275\u0275pipe(41, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(36, "app-math-prompt-editor", 10);
-        \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Template_app_math_prompt_editor_ngModelChange_36_listener($event) {
+        \u0275\u0275elementStart(42, "app-math-prompt-editor", 12);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherQuestionBankComponent_Template_app_math_prompt_editor_ngModelChange_42_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.prompt, $event) || (ctx.prompt = $event);
           return $event;
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(37, TeacherQuestionBankComponent_Conditional_37_Template, 16, 13)(38, TeacherQuestionBankComponent_Conditional_38_Template, 18, 18)(39, TeacherQuestionBankComponent_Conditional_39_Template, 13, 20, "div", 5)(40, TeacherQuestionBankComponent_Conditional_40_Template, 18, 11);
-        \u0275\u0275elementStart(41, "div", 11)(42, "button", 12);
-        \u0275\u0275text(43);
-        \u0275\u0275pipe(44, "t");
+        \u0275\u0275conditionalCreate(43, TeacherQuestionBankComponent_Conditional_43_Template, 16, 13)(44, TeacherQuestionBankComponent_Conditional_44_Template, 18, 18)(45, TeacherQuestionBankComponent_Conditional_45_Template, 13, 20, "div", 10)(46, TeacherQuestionBankComponent_Conditional_46_Template, 18, 11);
+        \u0275\u0275elementStart(47, "div", 13)(48, "button", 14);
+        \u0275\u0275text(49);
+        \u0275\u0275pipe(50, "t");
         \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(45, "section", 13)(46, "h3");
-        \u0275\u0275text(47);
-        \u0275\u0275pipe(48, "t");
+        \u0275\u0275elementStart(51, "section", 15)(52, "h3");
+        \u0275\u0275text(53);
+        \u0275\u0275pipe(54, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(49, TeacherQuestionBankComponent_For_50_Template, 12, 15, "div", 14, _forTrack026, false, TeacherQuestionBankComponent_ForEmpty_51_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(55, TeacherQuestionBankComponent_For_56_Template, 12, 15, "div", 16, _forTrack026, false, TeacherQuestionBankComponent_ForEmpty_57_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 22, "teacher.qbank.title"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 26, "teacher.qbank.title"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 24, "teacher.qbank.subtitle"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 28, "teacher.qbank.subtitle"));
         \u0275\u0275advance(2);
         \u0275\u0275property("ok", ctx.info())("error", ctx.error());
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(11, 26, "teacher.qbank.add"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(11, 30, "teacher.qbank.add"));
         \u0275\u0275advance(6);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 28, "common.course"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 32, "common.course"));
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.courseId);
-        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(19, 30, "common.selectCourse"))("options", ctx.courses().map(\u0275\u0275arrowFunction(32, arrowFn018, ctx)));
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(19, 34, "common.selectCourse"))("options", ctx.courses().map(\u0275\u0275arrowFunction(36, arrowFn018, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(23, 33, "teacher.qbank.lessonDiagnosis"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(23, 37, "common.unit"));
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.unitId);
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(25, 39, "common.selectUnit"))("options", ctx.unitsForCourse().map(\u0275\u0275arrowFunction(41, arrowFn114, ctx)));
+        \u0275\u0275control();
+        \u0275\u0275advance(4);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(29, 42, "teacher.qbank.lessonDiagnosis"));
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.lessonId);
-        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(25, 35, "teacher.qbank.optionalLesson"))("options", ctx.lessonsForCourse().map(\u0275\u0275arrowFunction(37, arrowFn114, ctx)));
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(31, 44, "teacher.qbank.optionalLesson"))("options", ctx.lessonsForUnit().map(\u0275\u0275arrowFunction(46, arrowFn212, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 38, "teacher.qbank.questionType"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(36, 47, "teacher.qbank.questionType"));
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.questionType);
-        \u0275\u0275property("options", ctx.types.map(\u0275\u0275arrowFunction(40, arrowFn212, ctx)));
+        \u0275\u0275property("options", ctx.types.map(\u0275\u0275arrowFunction(49, arrowFn34, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(35, 41, "teacher.qbank.prompt"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(41, 50, "teacher.qbank.prompt"));
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.prompt);
         \u0275\u0275control();
         \u0275\u0275advance();
-        \u0275\u0275conditional(ctx.isParagraph() ? 37 : ctx.questionType === "Underline" ? 38 : ctx.questionType === "TrueFalse" ? 39 : 40);
+        \u0275\u0275conditional(ctx.isParagraph() ? 43 : ctx.questionType === "Underline" ? 44 : ctx.questionType === "TrueFalse" ? 45 : 46);
         \u0275\u0275advance(6);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(44, 43, "teacher.qbank.addToBank"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(50, 52, "teacher.qbank.addToBank"));
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(48, 45, "teacher.qbank.list"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(54, 54, "teacher.qbank.list"));
         \u0275\u0275advance(2);
         \u0275\u0275repeater(ctx.questions());
       }
-    }, dependencies: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, NgModel, NgForm, MathPromptEditorComponent, IconActionButtonComponent, SafeHtmlPipe, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: #fff;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: #f4f7fb !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.link-row[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row[_ngcontent-%COMP%]:hover, \n.meeting-row.link-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.meeting-form[_ngcontent-%COMP%], \n.qb-form[_ngcontent-%COMP%], \n.form-card[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  gap: 1rem;\n}\n.panel-page[_ngcontent-%COMP%]   .block[_ngcontent-%COMP%]   form[_ngcontent-%COMP%], \n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%] {\n  padding: 0.15rem 0;\n}\n.grade-roster[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.grade-roster-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n/*# sourceMappingURL=teacher-panel.css.map */", "\n.qb-form-card[_ngcontent-%COMP%] {\n  max-width: 980px;\n}\n.qb-form[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1.05rem;\n}\n.qb-row[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.9rem;\n}\n.qb-row.two[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}\n.qb-row.four[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n}\n.qb-field[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.4rem;\n  margin: 0;\n}\n.qb-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n  letter-spacing: 0.02em;\n}\n.qb-field[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.qb-field[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.qb-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 0.9rem;\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.qb-field[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.qb-field[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus, \n.qb-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n  background: rgba(8, 18, 34, 0.92);\n}\n.qb-field[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\n.qb-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  resize: vertical;\n  min-height: 6rem;\n  line-height: 1.45;\n}\n.qb-children[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n  padding: 1rem;\n  border-radius: var(--radius-lg);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.qb-children-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.qb-children-head[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.qb-child[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 0.95rem;\n  border-radius: var(--radius-md);\n  background: rgba(7, 17, 31, 0.45);\n  border: 1px solid var(--border);\n}\n.qb-actions[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 0.65rem;\n  padding-top: 0.25rem;\n}\n.options-editor[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.option-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 2.2rem 1fr auto;\n  gap: 0.55rem;\n  align-items: center;\n}\n.option-key[_ngcontent-%COMP%] {\n  font-weight: 800;\n  color: var(--accent);\n  text-align: center;\n}\n.correct-multi[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.correct-multi[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.danger-text[_ngcontent-%COMP%] {\n  align-self: flex-start;\n  color: var(--danger) !important;\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: #fff;\n  line-height: 1.45;\n}\n@media (max-width: 820px) {\n  .qb-row.two[_ngcontent-%COMP%], \n   .qb-row.four[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .option-row[_ngcontent-%COMP%] {\n    grid-template-columns: 2rem 1fr;\n  }\n}\n/*# sourceMappingURL=teacher-question-bank.component.css.map */"] });
+    }, dependencies: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NumberValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinValidator, NgModel, NgForm, MathPromptEditorComponent, IconActionButtonComponent, SafeHtmlPipe, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: #fff;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: #f4f7fb !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.link-row[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row[_ngcontent-%COMP%]:hover, \n.meeting-row.link-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.meeting-form[_ngcontent-%COMP%], \n.qb-form[_ngcontent-%COMP%], \n.form-card[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  gap: 1rem;\n}\n.panel-page[_ngcontent-%COMP%]   .block[_ngcontent-%COMP%]   form[_ngcontent-%COMP%], \n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%] {\n  padding: 0.15rem 0;\n}\n.grade-roster[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.grade-roster-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n/*# sourceMappingURL=teacher-panel.css.map */", "\n.qb-form-card[_ngcontent-%COMP%] {\n  max-width: 980px;\n}\n.qb-form[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1.05rem;\n}\n.qb-row[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.9rem;\n}\n.qb-row.two[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}\n.qb-row.three[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n}\n.qb-row.four[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n}\n.qb-field[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.4rem;\n  margin: 0;\n}\n.qb-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n  letter-spacing: 0.02em;\n}\n.qb-field[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.qb-field[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.qb-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 0.9rem;\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.qb-field[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.qb-field[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus, \n.qb-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n  background: rgba(8, 18, 34, 0.92);\n}\n.qb-field[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #0c1a2e;\n  color: #fff;\n}\n.qb-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  resize: vertical;\n  min-height: 6rem;\n  line-height: 1.45;\n}\n.qb-children[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n  padding: 1rem;\n  border-radius: var(--radius-lg);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.qb-children-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.qb-children-head[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #fff;\n}\n.qb-child[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 0.95rem;\n  border-radius: var(--radius-md);\n  background: rgba(7, 17, 31, 0.45);\n  border: 1px solid var(--border);\n}\n.qb-actions[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-end;\n  gap: 0.65rem;\n  padding-top: 0.25rem;\n}\n.options-editor[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.option-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 2.2rem 1fr auto;\n  gap: 0.55rem;\n  align-items: center;\n}\n.option-key[_ngcontent-%COMP%] {\n  font-weight: 800;\n  color: var(--accent);\n  text-align: center;\n}\n.correct-multi[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.correct-multi[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.danger-text[_ngcontent-%COMP%] {\n  align-self: flex-start;\n  color: var(--danger) !important;\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: #fff;\n  line-height: 1.45;\n}\n@media (max-width: 820px) {\n  .qb-row.two[_ngcontent-%COMP%], \n   .qb-row.three[_ngcontent-%COMP%], \n   .qb-row.four[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .option-row[_ngcontent-%COMP%] {\n    grid-template-columns: 2rem 1fr;\n  }\n}\n/*# sourceMappingURL=teacher-question-bank.component.css.map */"] });
   }
 };
 (() => {
@@ -77553,7 +78151,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
   <section class="block qb-form-card">\r
     <h3>{{ 'teacher.qbank.add' | t }}</h3>\r
     <form class="qb-form" (ngSubmit)="createQuestion()">\r
-      <div class="qb-row two">\r
+      <div class="qb-row three">\r
         <label class="qb-field">\r
           <span>{{ 'common.course' | t }}</span>\r
           <app-searchable-select\r
@@ -77566,12 +78164,22 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
           />\r
         </label>\r
         <label class="qb-field">\r
+          <span>{{ 'common.unit' | t }}</span>\r
+          <app-searchable-select\r
+            [(ngModel)]="unitId"\r
+            name="unitId"\r
+            (ngModelChange)="onUnitChange()"\r
+            [emptyLabel]="'common.selectUnit' | t"\r
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"\r
+          />\r
+        </label>\r
+        <label class="qb-field">\r
           <span>{{ 'teacher.qbank.lessonDiagnosis' | t }}</span>\r
           <app-searchable-select\r
             [(ngModel)]="lessonId"\r
             name="lessonId"\r
             [emptyLabel]="'teacher.qbank.optionalLesson' | t"\r
-            [options]="lessonsForCourse().map(l => ({ value: l.id, label: l.title }))"\r
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"\r
           />\r
         </label>\r
       </div>\r
@@ -77807,7 +78415,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
     }\r
   </section>\r
 </div>\r
-`, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: #fff;\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: #fff;\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html,\n.prompt-html * {\n  color: #f4f7fb !important;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: #fff;\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n/* src/app/pages/teacher/teacher-panel.css */\n.link-row {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row:hover,\n.meeting-row.link-row:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.meeting-form,\n.qb-form,\n.form-card form {\n  gap: 1rem;\n}\n.panel-page .block form,\n.panel-page .meeting-form {\n  padding: 0.15rem 0;\n}\n.grade-roster {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.grade-roster-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list li {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n/*# sourceMappingURL=teacher-panel.css.map */\n", "/* src/app/pages/teacher/teacher-question-bank.component.css */\n.qb-form-card {\n  max-width: 980px;\n}\n.qb-form {\n  display: flex;\n  flex-direction: column;\n  gap: 1.05rem;\n}\n.qb-row {\n  display: grid;\n  gap: 0.9rem;\n}\n.qb-row.two {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}\n.qb-row.four {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n}\n.qb-field {\n  display: flex;\n  flex-direction: column;\n  gap: 0.4rem;\n  margin: 0;\n}\n.qb-field > span {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n  letter-spacing: 0.02em;\n}\n.qb-field input,\n.qb-field select,\n.qb-field textarea {\n  width: 100%;\n  box-sizing: border-box;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 0.9rem;\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.qb-field input:focus,\n.qb-field select:focus,\n.qb-field textarea:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n  background: rgba(8, 18, 34, 0.92);\n}\n.qb-field select option {\n  background: #0c1a2e;\n  color: #fff;\n}\n.qb-field textarea {\n  resize: vertical;\n  min-height: 6rem;\n  line-height: 1.45;\n}\n.qb-children {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n  padding: 1rem;\n  border-radius: var(--radius-lg);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.qb-children-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.qb-children-head h4 {\n  margin: 0;\n  color: #fff;\n}\n.qb-child {\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 0.95rem;\n  border-radius: var(--radius-md);\n  background: rgba(7, 17, 31, 0.45);\n  border: 1px solid var(--border);\n}\n.qb-actions {\n  display: flex;\n  justify-content: flex-end;\n  gap: 0.65rem;\n  padding-top: 0.25rem;\n}\n.options-editor {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.option-row {\n  display: grid;\n  grid-template-columns: 2.2rem 1fr auto;\n  gap: 0.55rem;\n  align-items: center;\n}\n.option-key {\n  font-weight: 800;\n  color: var(--accent);\n  text-align: center;\n}\n.correct-multi {\n  display: grid;\n  gap: 0.45rem;\n}\n.correct-multi > span {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.danger-text {\n  align-self: flex-start;\n  color: var(--danger) !important;\n}\n.prompt-html {\n  color: #fff;\n  line-height: 1.45;\n}\n@media (max-width: 820px) {\n  .qb-row.two,\n  .qb-row.four {\n    grid-template-columns: 1fr;\n  }\n  .option-row {\n    grid-template-columns: 2rem 1fr;\n  }\n}\n/*# sourceMappingURL=teacher-question-bank.component.css.map */\n"] }]
+`, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      rgba(95, 211, 188, 0.16),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 10, 0.08),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: #fff;\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: #fff;\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(9, 32, 63, 0.95),\n      rgba(23, 104, 172, 0.92));\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: var(--shadow-sm);\n  color: #fff;\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: #fff;\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: #fff;\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: #fff;\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: rgba(255, 214, 10, 0.14);\n  border: 1px solid rgba(255, 214, 10, 0.18);\n  color: #fff;\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: rgba(255, 214, 10, 0.22);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: #fff;\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: rgba(255, 255, 255, 0.34);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: rgba(8, 18, 34, 0.92);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: #0c1a2e;\n  color: #fff;\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 107, 107, 0.14);\n  border: 1px solid rgba(255, 143, 143, 0.25);\n  color: #ffe3e3;\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: #d8f8de;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html,\n.prompt-html * {\n  color: #f4f7fb !important;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: #fff;\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: #fff;\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n/* src/app/pages/teacher/teacher-panel.css */\n.link-row {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row:hover,\n.meeting-row.link-row:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.meeting-form,\n.qb-form,\n.form-card form {\n  gap: 1rem;\n}\n.panel-page .block form,\n.panel-page .meeting-form {\n  padding: 0.15rem 0;\n}\n.grade-roster {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: rgba(255, 255, 255, 0.03);\n}\n.grade-roster-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list li {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n/*# sourceMappingURL=teacher-panel.css.map */\n", "/* src/app/pages/teacher/teacher-question-bank.component.css */\n.qb-form-card {\n  max-width: 980px;\n}\n.qb-form {\n  display: flex;\n  flex-direction: column;\n  gap: 1.05rem;\n}\n.qb-row {\n  display: grid;\n  gap: 0.9rem;\n}\n.qb-row.two {\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n}\n.qb-row.three {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n}\n.qb-row.four {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n}\n.qb-field {\n  display: flex;\n  flex-direction: column;\n  gap: 0.4rem;\n  margin: 0;\n}\n.qb-field > span {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n  letter-spacing: 0.02em;\n}\n.qb-field input,\n.qb-field select,\n.qb-field textarea {\n  width: 100%;\n  box-sizing: border-box;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 0.9rem;\n  background: rgba(6, 14, 28, 0.72);\n  color: #fff;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    box-shadow 0.15s ease,\n    background 0.15s ease;\n}\n.qb-field input:focus,\n.qb-field select:focus,\n.qb-field textarea:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n  background: rgba(8, 18, 34, 0.92);\n}\n.qb-field select option {\n  background: #0c1a2e;\n  color: #fff;\n}\n.qb-field textarea {\n  resize: vertical;\n  min-height: 6rem;\n  line-height: 1.45;\n}\n.qb-children {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n  padding: 1rem;\n  border-radius: var(--radius-lg);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.qb-children-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.qb-children-head h4 {\n  margin: 0;\n  color: #fff;\n}\n.qb-child {\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 0.95rem;\n  border-radius: var(--radius-md);\n  background: rgba(7, 17, 31, 0.45);\n  border: 1px solid var(--border);\n}\n.qb-actions {\n  display: flex;\n  justify-content: flex-end;\n  gap: 0.65rem;\n  padding-top: 0.25rem;\n}\n.options-editor {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.04);\n  border: 1px solid var(--border);\n}\n.option-row {\n  display: grid;\n  grid-template-columns: 2.2rem 1fr auto;\n  gap: 0.55rem;\n  align-items: center;\n}\n.option-key {\n  font-weight: 800;\n  color: var(--accent);\n  text-align: center;\n}\n.correct-multi {\n  display: grid;\n  gap: 0.45rem;\n}\n.correct-multi > span {\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.danger-text {\n  align-self: flex-start;\n  color: var(--danger) !important;\n}\n.prompt-html {\n  color: #fff;\n  line-height: 1.45;\n}\n@media (max-width: 820px) {\n  .qb-row.two,\n  .qb-row.three,\n  .qb-row.four {\n    grid-template-columns: 1fr;\n  }\n  .option-row {\n    grid-template-columns: 2rem 1fr;\n  }\n}\n/*# sourceMappingURL=teacher-question-bank.component.css.map */\n"] }]
   }], () => [], null);
 })();
 (() => {
@@ -78312,34 +78920,35 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
 })();
 
 // src/app/pages/teacher/teacher-videos.component.ts
-var _c022 = (a0) => [a0];
+var _c023 = (a0) => [a0];
 var _forTrack028 = ($index, $item) => $item.id;
 var arrowFn020 = (ctx, view) => (c) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
   return \u0275\u0275resetView({ value: c.id, label: ctx_r0.courseLabel(c) });
 };
-var arrowFn115 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
+var arrowFn115 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
+var arrowFn213 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
 var _forTrack110 = ($index, $item) => $item.assignmentId;
-var arrowFn213 = (ctx, view) => (a) => {
+var arrowFn35 = (ctx, view) => (a) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
   return \u0275\u0275resetView({ value: a.id, label: ctx_r0.assignmentOptionLabel(a) });
 };
-var arrowFn35 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
-function TeacherVideosComponent_Conditional_53_For_76_Template(rf, ctx) {
+var arrowFn43 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
+function TeacherVideosComponent_Conditional_53_For_87_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "tr", 38);
-    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_For_76_Template_tr_click_0_listener() {
+    \u0275\u0275elementStart(0, "tr", 40);
+    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_For_87_Template_tr_click_0_listener() {
       const video_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.playLessonVideo(video_r4));
-    })("keydown.enter", function TeacherVideosComponent_Conditional_53_For_76_Template_tr_keydown_enter_0_listener() {
+    })("keydown.enter", function TeacherVideosComponent_Conditional_53_For_87_Template_tr_keydown_enter_0_listener() {
       const video_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.playLessonVideo(video_r4));
-    })("keydown.space", function TeacherVideosComponent_Conditional_53_For_76_Template_tr_keydown_space_0_listener($event) {
+    })("keydown.space", function TeacherVideosComponent_Conditional_53_For_87_Template_tr_keydown_space_0_listener($event) {
       const video_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
       $event.preventDefault();
@@ -78354,26 +78963,26 @@ function TeacherVideosComponent_Conditional_53_For_76_Template(rf, ctx) {
     \u0275\u0275elementStart(6, "td");
     \u0275\u0275text(7);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "td", 39);
+    \u0275\u0275elementStart(8, "td", 41);
     \u0275\u0275text(9);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(10, "td");
     \u0275\u0275text(11);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "td", 40);
-    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_For_76_Template_td_click_12_listener($event) {
+    \u0275\u0275elementStart(12, "td", 42);
+    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_For_87_Template_td_click_12_listener($event) {
       return $event.stopPropagation();
     });
-    \u0275\u0275elementStart(13, "div", 41)(14, "app-icon-action-button", 42);
+    \u0275\u0275elementStart(13, "div", 43)(14, "app-icon-action-button", 44);
     \u0275\u0275pipe(15, "t");
-    \u0275\u0275listener("action", function TeacherVideosComponent_Conditional_53_For_76_Template_app_icon_action_button_action_14_listener() {
+    \u0275\u0275listener("action", function TeacherVideosComponent_Conditional_53_For_87_Template_app_icon_action_button_action_14_listener() {
       const video_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.playLessonVideo(video_r4));
     });
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(16, "button", 43);
-    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_For_76_Template_button_click_16_listener() {
+    \u0275\u0275elementStart(16, "button", 45);
+    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_For_87_Template_button_click_16_listener() {
       const video_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.inspectWatch(video_r4.mediaAssetId));
@@ -78381,9 +78990,9 @@ function TeacherVideosComponent_Conditional_53_For_76_Template(rf, ctx) {
     \u0275\u0275text(17);
     \u0275\u0275pipe(18, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(19, "app-icon-action-button", 44);
+    \u0275\u0275elementStart(19, "app-icon-action-button", 46);
     \u0275\u0275pipe(20, "t");
-    \u0275\u0275listener("action", function TeacherVideosComponent_Conditional_53_For_76_Template_app_icon_action_button_action_19_listener() {
+    \u0275\u0275listener("action", function TeacherVideosComponent_Conditional_53_For_87_Template_app_icon_action_button_action_19_listener() {
       const video_r4 = \u0275\u0275restoreView(_r3).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r0.deleteLessonVideo(video_r4));
@@ -78412,9 +79021,9 @@ function TeacherVideosComponent_Conditional_53_For_76_Template(rf, ctx) {
     \u0275\u0275property("label", \u0275\u0275pipeBind1(20, 13, "videos.deleteLesson"));
   }
 }
-function TeacherVideosComponent_Conditional_53_ForEmpty_77_Template(rf, ctx) {
+function TeacherVideosComponent_Conditional_53_ForEmpty_88_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr")(1, "td", 45);
+    \u0275\u0275elementStart(0, "tr")(1, "td", 47);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd()();
@@ -78459,7 +79068,27 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275text(10);
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementStart(12, "app-searchable-select", 25);
+    \u0275\u0275pipe(13, "t");
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_12_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r0 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r0.selectedUnitId, $event) || (ctx_r0.selectedUnitId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275listener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_12_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.onUnitChange());
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "label");
+    \u0275\u0275text(15);
+    \u0275\u0275pipe(16, "t");
+    \u0275\u0275elementStart(17, "app-searchable-select", 26);
+    \u0275\u0275pipe(18, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_17_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.selectedLessonId, $event) || (ctx_r0.selectedLessonId = $event);
@@ -78468,12 +79097,12 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "label");
-    \u0275\u0275text(14);
-    \u0275\u0275pipe(15, "t");
-    \u0275\u0275elementStart(16, "input", 26);
-    \u0275\u0275pipe(17, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_input_ngModelChange_16_listener($event) {
+    \u0275\u0275elementStart(19, "label");
+    \u0275\u0275text(20);
+    \u0275\u0275pipe(21, "t");
+    \u0275\u0275elementStart(22, "input", 27);
+    \u0275\u0275pipe(23, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_input_ngModelChange_22_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.videoTitle, $event) || (ctx_r0.videoTitle = $event);
@@ -78482,12 +79111,12 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(18, "label");
-    \u0275\u0275text(19);
-    \u0275\u0275pipe(20, "t");
-    \u0275\u0275elementStart(21, "input", 27);
-    \u0275\u0275pipe(22, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_input_ngModelChange_21_listener($event) {
+    \u0275\u0275elementStart(24, "label");
+    \u0275\u0275text(25);
+    \u0275\u0275pipe(26, "t");
+    \u0275\u0275elementStart(27, "input", 28);
+    \u0275\u0275pipe(28, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_input_ngModelChange_27_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.lessonVideoUrl, $event) || (ctx_r0.lessonVideoUrl = $event);
@@ -78496,29 +79125,29 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(23, "button", 28);
-    \u0275\u0275text(24);
-    \u0275\u0275pipe(25, "t");
+    \u0275\u0275elementStart(29, "button", 29);
+    \u0275\u0275text(30);
+    \u0275\u0275pipe(31, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(26, "section", 21)(27, "div", 29)(28, "h3");
-    \u0275\u0275text(29);
-    \u0275\u0275pipe(30, "t");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(31, "p", 1);
-    \u0275\u0275text(32);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(33, "div", 30)(34, "label");
+    \u0275\u0275elementStart(32, "section", 21)(33, "div", 30)(34, "h3");
     \u0275\u0275text(35);
     \u0275\u0275pipe(36, "t");
-    \u0275\u0275elementStart(37, "app-searchable-select", 31);
-    \u0275\u0275pipe(38, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_37_listener($event) {
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(37, "p", 1);
+    \u0275\u0275text(38);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(39, "div", 31)(40, "label");
+    \u0275\u0275text(41);
+    \u0275\u0275pipe(42, "t");
+    \u0275\u0275elementStart(43, "app-searchable-select", 32);
+    \u0275\u0275pipe(44, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_43_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.lessonFilterCourseId, $event) || (ctx_r0.lessonFilterCourseId = $event);
       return \u0275\u0275resetView($event);
     });
-    \u0275\u0275listener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_37_listener() {
+    \u0275\u0275listener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_43_listener() {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.onLessonFilterCourseChange());
@@ -78526,12 +79155,31 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(39, "label");
-    \u0275\u0275text(40);
-    \u0275\u0275pipe(41, "t");
-    \u0275\u0275elementStart(42, "app-searchable-select", 32);
-    \u0275\u0275pipe(43, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_42_listener($event) {
+    \u0275\u0275elementStart(45, "label");
+    \u0275\u0275text(46);
+    \u0275\u0275pipe(47, "t");
+    \u0275\u0275elementStart(48, "app-searchable-select", 33);
+    \u0275\u0275pipe(49, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_48_listener($event) {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r0 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r0.lessonFilterUnitId, $event) || (ctx_r0.lessonFilterUnitId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275listener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_48_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.onLessonFilterUnitChange());
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(50, "label");
+    \u0275\u0275text(51);
+    \u0275\u0275pipe(52, "t");
+    \u0275\u0275elementStart(53, "app-searchable-select", 34);
+    \u0275\u0275pipe(54, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_app_searchable_select_ngModelChange_53_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.lessonFilterLessonId, $event) || (ctx_r0.lessonFilterLessonId = $event);
@@ -78540,12 +79188,12 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(44, "label");
-    \u0275\u0275text(45);
-    \u0275\u0275pipe(46, "t");
-    \u0275\u0275elementStart(47, "input", 33);
-    \u0275\u0275pipe(48, "t");
-    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_input_ngModelChange_47_listener($event) {
+    \u0275\u0275elementStart(55, "label");
+    \u0275\u0275text(56);
+    \u0275\u0275pipe(57, "t");
+    \u0275\u0275elementStart(58, "input", 35);
+    \u0275\u0275pipe(59, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_53_Template_input_ngModelChange_58_listener($event) {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r0.lessonSearch, $event) || (ctx_r0.lessonSearch = $event);
@@ -78554,111 +79202,123 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(49, "button", 34);
-    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_Template_button_click_49_listener() {
+    \u0275\u0275elementStart(60, "button", 36);
+    \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_53_Template_button_click_60_listener() {
       \u0275\u0275restoreView(_r2);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.clearLessonFilters());
     });
-    \u0275\u0275text(50);
-    \u0275\u0275pipe(51, "t");
+    \u0275\u0275text(61);
+    \u0275\u0275pipe(62, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(52, "div", 35)(53, "table", 36)(54, "thead")(55, "tr")(56, "th");
-    \u0275\u0275text(57);
-    \u0275\u0275pipe(58, "t");
+    \u0275\u0275elementStart(63, "div", 37)(64, "table", 38)(65, "thead")(66, "tr")(67, "th");
+    \u0275\u0275text(68);
+    \u0275\u0275pipe(69, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(59, "th");
-    \u0275\u0275text(60);
-    \u0275\u0275pipe(61, "t");
+    \u0275\u0275elementStart(70, "th");
+    \u0275\u0275text(71);
+    \u0275\u0275pipe(72, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(62, "th");
-    \u0275\u0275text(63);
-    \u0275\u0275pipe(64, "t");
+    \u0275\u0275elementStart(73, "th");
+    \u0275\u0275text(74);
+    \u0275\u0275pipe(75, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(65, "th");
-    \u0275\u0275text(66);
-    \u0275\u0275pipe(67, "t");
+    \u0275\u0275elementStart(76, "th");
+    \u0275\u0275text(77);
+    \u0275\u0275pipe(78, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(68, "th");
-    \u0275\u0275text(69);
-    \u0275\u0275pipe(70, "t");
+    \u0275\u0275elementStart(79, "th");
+    \u0275\u0275text(80);
+    \u0275\u0275pipe(81, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(71, "th");
-    \u0275\u0275text(72);
-    \u0275\u0275pipe(73, "t");
+    \u0275\u0275elementStart(82, "th");
+    \u0275\u0275text(83);
+    \u0275\u0275pipe(84, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(74, "tbody");
-    \u0275\u0275repeaterCreate(75, TeacherVideosComponent_Conditional_53_For_76_Template, 21, 15, "tr", 37, _forTrack028, false, TeacherVideosComponent_Conditional_53_ForEmpty_77_Template, 4, 3, "tr");
+    \u0275\u0275elementStart(85, "tbody");
+    \u0275\u0275repeaterCreate(86, TeacherVideosComponent_Conditional_53_For_87_Template, 21, 15, "tr", 39, _forTrack028, false, TeacherVideosComponent_Conditional_53_ForEmpty_88_Template, 4, 3, "tr");
     \u0275\u0275elementEnd()()()();
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 36, "videos.uploadLesson"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 45, "videos.uploadLesson"));
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(7, 38, "common.course"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(7, 47, "common.course"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.selectedCourseId);
-    \u0275\u0275property("options", ctx_r0.courses().map(\u0275\u0275arrowFunction(40, arrowFn020, ctx)));
+    \u0275\u0275property("options", ctx_r0.courses().map(\u0275\u0275arrowFunction(49, arrowFn020, ctx)));
     \u0275\u0275control();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(11, 41, "common.lesson"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(11, 50, "common.unit"), " ");
     \u0275\u0275advance(2);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r0.selectedLessonId);
-    \u0275\u0275property("options", ctx_r0.lessonsForCourse().map(\u0275\u0275arrowFunction(43, arrowFn115, ctx)));
-    \u0275\u0275control();
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(15, 44, "common.title"), " ");
-    \u0275\u0275advance(2);
-    \u0275\u0275twoWayProperty("ngModel", ctx_r0.videoTitle);
-    \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(17, 46, "videos.optionalTitle"));
+    \u0275\u0275twoWayProperty("ngModel", ctx_r0.selectedUnitId);
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(13, 52, "common.selectUnit"))("options", ctx_r0.unitsForCourse().map(\u0275\u0275arrowFunction(54, arrowFn115, ctx)));
     \u0275\u0275control();
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(20, 48, "videos.videoLink"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(16, 55, "common.lesson"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r0.selectedLessonId);
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(18, 57, "common.lesson"))("options", ctx_r0.lessonsForUnit().map(\u0275\u0275arrowFunction(59, arrowFn213, ctx)));
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(21, 60, "common.title"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r0.videoTitle);
+    \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(23, 62, "videos.optionalTitle"));
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(26, 64, "videos.videoLink"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.lessonVideoUrl);
-    \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(22, 50, "videos.videoLinkPlaceholder"));
+    \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(28, 66, "videos.videoLinkPlaceholder"));
     \u0275\u0275control();
     \u0275\u0275advance(2);
     \u0275\u0275property("disabled", ctx_r0.uploading());
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(25, 52, ctx_r0.uploading() ? "videos.attaching" : "videos.attachLink"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(31, 68, ctx_r0.uploading() ? "videos.attaching" : "videos.attachLink"), " ");
     \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 54, "videos.lessonList"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(36, 70, "videos.lessonList"));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(ctx_r0.shownLabel(ctx_r0.filteredLessonVideos().length, ctx_r0.lessonVideos().length));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(36, 56, "common.course"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(42, 72, "common.course"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.lessonFilterCourseId);
-    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(38, 58, "videos.allCourses"))("options", ctx_r0.courses().map(\u0275\u0275arrowFunction(60, arrowFn020, ctx)));
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(44, 74, "videos.allCourses"))("options", ctx_r0.courses().map(\u0275\u0275arrowFunction(76, arrowFn020, ctx)));
     \u0275\u0275control();
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(41, 61, "common.lesson"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(47, 77, "common.unit"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r0.lessonFilterUnitId);
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(49, 79, "videos.allUnits"))("options", ctx_r0.unitsForCourse(ctx_r0.lessonFilterCourseId).map(\u0275\u0275arrowFunction(81, arrowFn115, ctx)));
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(52, 82, "common.lesson"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.lessonFilterLessonId);
-    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(43, 63, "videos.allLessons"))("options", ctx_r0.lessonFilterOptions().map(\u0275\u0275arrowFunction(65, arrowFn115, ctx)));
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(54, 84, "videos.allLessons"))("options", ctx_r0.lessonFilterOptions().map(\u0275\u0275arrowFunction(86, arrowFn213, ctx)));
     \u0275\u0275control();
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(46, 66, "common.search"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(57, 87, "common.search"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.lessonSearch);
-    \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(48, 68, "videos.searchLesson"));
+    \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(59, 89, "videos.searchLesson"));
     \u0275\u0275control();
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(51, 70, "common.clearFilters"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(62, 91, "common.clearFilters"));
     \u0275\u0275advance(7);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(58, 72, "common.title"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 93, "common.title"));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(61, 74, "common.course"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(72, 95, "common.course"));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(64, 76, "common.lesson"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(75, 97, "common.lesson"));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(67, 78, "videos.link"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(78, 99, "videos.link"));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(70, 80, "common.uploaded"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(81, 101, "common.uploaded"));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(73, 82, "common.actions"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(84, 103, "common.actions"));
     \u0275\u0275advance(3);
     \u0275\u0275repeater(ctx_r0.filteredLessonVideos());
   }
@@ -78666,7 +79326,7 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
 function TeacherVideosComponent_Conditional_54_For_59_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "tr", 38);
+    \u0275\u0275elementStart(0, "tr", 40);
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_54_For_59_Template_tr_click_0_listener() {
       const video_r7 = \u0275\u0275restoreView(_r6).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(2);
@@ -78687,17 +79347,17 @@ function TeacherVideosComponent_Conditional_54_For_59_Template(rf, ctx) {
     \u0275\u0275elementStart(4, "td");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "td", 39);
+    \u0275\u0275elementStart(6, "td", 41);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(8, "td");
     \u0275\u0275text(9);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "td", 40);
+    \u0275\u0275elementStart(10, "td", 42);
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_54_For_59_Template_td_click_10_listener($event) {
       return $event.stopPropagation();
     });
-    \u0275\u0275elementStart(11, "div", 41)(12, "app-icon-action-button", 42);
+    \u0275\u0275elementStart(11, "div", 43)(12, "app-icon-action-button", 44);
     \u0275\u0275pipe(13, "t");
     \u0275\u0275listener("action", function TeacherVideosComponent_Conditional_54_For_59_Template_app_icon_action_button_action_12_listener() {
       const video_r7 = \u0275\u0275restoreView(_r6).$implicit;
@@ -78705,7 +79365,7 @@ function TeacherVideosComponent_Conditional_54_For_59_Template(rf, ctx) {
       return \u0275\u0275resetView(ctx_r0.playSolutionVideo(video_r7));
     });
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "app-icon-action-button", 44);
+    \u0275\u0275elementStart(14, "app-icon-action-button", 46);
     \u0275\u0275pipe(15, "t");
     \u0275\u0275listener("action", function TeacherVideosComponent_Conditional_54_For_59_Template_app_icon_action_button_action_14_listener() {
       const video_r7 = \u0275\u0275restoreView(_r6).$implicit;
@@ -78734,7 +79394,7 @@ function TeacherVideosComponent_Conditional_54_For_59_Template(rf, ctx) {
 }
 function TeacherVideosComponent_Conditional_54_ForEmpty_60_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr")(1, "td", 50);
+    \u0275\u0275elementStart(0, "tr")(1, "td", 52);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd()();
@@ -78760,7 +79420,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275elementStart(5, "label");
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
-    \u0275\u0275elementStart(8, "app-searchable-select", 46);
+    \u0275\u0275elementStart(8, "app-searchable-select", 48);
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_54_Template_app_searchable_select_ngModelChange_8_listener($event) {
       \u0275\u0275restoreView(_r5);
       const ctx_r0 = \u0275\u0275nextContext();
@@ -78773,7 +79433,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275elementStart(9, "label");
     \u0275\u0275text(10);
     \u0275\u0275pipe(11, "t");
-    \u0275\u0275elementStart(12, "input", 47);
+    \u0275\u0275elementStart(12, "input", 49);
     \u0275\u0275pipe(13, "t");
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_54_Template_input_ngModelChange_12_listener($event) {
       \u0275\u0275restoreView(_r5);
@@ -78784,21 +79444,21 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "button", 28);
+    \u0275\u0275elementStart(14, "button", 29);
     \u0275\u0275text(15);
     \u0275\u0275pipe(16, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(17, "section", 21)(18, "div", 29)(19, "h3");
+    \u0275\u0275elementStart(17, "section", 21)(18, "div", 30)(19, "h3");
     \u0275\u0275text(20);
     \u0275\u0275pipe(21, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(22, "p", 1);
     \u0275\u0275text(23);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(24, "div", 30)(25, "label");
+    \u0275\u0275elementStart(24, "div", 31)(25, "label");
     \u0275\u0275text(26);
     \u0275\u0275pipe(27, "t");
-    \u0275\u0275elementStart(28, "app-searchable-select", 48);
+    \u0275\u0275elementStart(28, "app-searchable-select", 50);
     \u0275\u0275pipe(29, "t");
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_54_Template_app_searchable_select_ngModelChange_28_listener($event) {
       \u0275\u0275restoreView(_r5);
@@ -78812,7 +79472,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275elementStart(30, "label");
     \u0275\u0275text(31);
     \u0275\u0275pipe(32, "t");
-    \u0275\u0275elementStart(33, "input", 49);
+    \u0275\u0275elementStart(33, "input", 51);
     \u0275\u0275pipe(34, "t");
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_54_Template_input_ngModelChange_33_listener($event) {
       \u0275\u0275restoreView(_r5);
@@ -78823,7 +79483,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(35, "button", 34);
+    \u0275\u0275elementStart(35, "button", 36);
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_54_Template_button_click_35_listener() {
       \u0275\u0275restoreView(_r5);
       const ctx_r0 = \u0275\u0275nextContext();
@@ -78832,7 +79492,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275text(36);
     \u0275\u0275pipe(37, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(38, "div", 35)(39, "table", 36)(40, "thead")(41, "tr")(42, "th");
+    \u0275\u0275elementStart(38, "div", 37)(39, "table", 38)(40, "thead")(41, "tr")(42, "th");
     \u0275\u0275text(43);
     \u0275\u0275pipe(44, "t");
     \u0275\u0275elementEnd();
@@ -78853,7 +79513,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275pipe(56, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(57, "tbody");
-    \u0275\u0275repeaterCreate(58, TeacherVideosComponent_Conditional_54_For_59_Template, 16, 11, "tr", 37, _forTrack110, false, TeacherVideosComponent_Conditional_54_ForEmpty_60_Template, 4, 3, "tr");
+    \u0275\u0275repeaterCreate(58, TeacherVideosComponent_Conditional_54_For_59_Template, 16, 11, "tr", 39, _forTrack110, false, TeacherVideosComponent_Conditional_54_ForEmpty_60_Template, 4, 3, "tr");
     \u0275\u0275elementEnd()()()();
   }
   if (rf & 2) {
@@ -78864,7 +79524,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(7, 27, "videos.assignment"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.selectedAssignmentId);
-    \u0275\u0275property("options", ctx_r0.assignments().map(\u0275\u0275arrowFunction(29, arrowFn213, ctx)));
+    \u0275\u0275property("options", ctx_r0.assignments().map(\u0275\u0275arrowFunction(29, arrowFn35, ctx)));
     \u0275\u0275control();
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(11, 30, "videos.solutionVideo"), " ");
@@ -78884,7 +79544,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(27, 38, "common.classroom"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r0.solutionFilterClassroomId);
-    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(29, 40, "videos.allClassrooms"))("options", ctx_r0.classroomFilterOptions().map(\u0275\u0275arrowFunction(42, arrowFn35, ctx)));
+    \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(29, 40, "videos.allClassrooms"))("options", ctx_r0.classroomFilterOptions().map(\u0275\u0275arrowFunction(42, arrowFn43, ctx)));
     \u0275\u0275control();
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(32, 43, "common.search"), " ");
@@ -78986,7 +79646,7 @@ function TeacherVideosComponent_Conditional_55_Conditional_13_For_30_Template(rf
 }
 function TeacherVideosComponent_Conditional_55_Conditional_13_ForEmpty_31_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr")(1, "td", 45);
+    \u0275\u0275elementStart(0, "tr")(1, "td", 47);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd()();
@@ -78999,10 +79659,10 @@ function TeacherVideosComponent_Conditional_55_Conditional_13_ForEmpty_31_Templa
 function TeacherVideosComponent_Conditional_55_Conditional_13_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 30)(1, "label");
+    \u0275\u0275elementStart(0, "div", 31)(1, "label");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
-    \u0275\u0275elementStart(4, "input", 54);
+    \u0275\u0275elementStart(4, "input", 56);
     \u0275\u0275pipe(5, "t");
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_55_Conditional_13_Template_input_ngModelChange_4_listener($event) {
       \u0275\u0275restoreView(_r9);
@@ -79013,7 +79673,7 @@ function TeacherVideosComponent_Conditional_55_Conditional_13_Template(rf, ctx) 
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(6, "div", 35)(7, "table", 36)(8, "thead")(9, "tr")(10, "th");
+    \u0275\u0275elementStart(6, "div", 37)(7, "table", 38)(8, "thead")(9, "tr")(10, "th");
     \u0275\u0275text(11);
     \u0275\u0275pipe(12, "t");
     \u0275\u0275elementEnd();
@@ -79084,14 +79744,14 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "form", 51);
+    \u0275\u0275elementStart(4, "form", 53);
     \u0275\u0275listener("submit", function TeacherVideosComponent_Conditional_55_Template_form_submit_4_listener($event) {
       return $event.preventDefault();
     });
     \u0275\u0275elementStart(5, "label");
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
-    \u0275\u0275elementStart(8, "input", 52);
+    \u0275\u0275elementStart(8, "input", 54);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275twoWayListener("ngModelChange", function TeacherVideosComponent_Conditional_55_Template_input_ngModelChange_8_listener($event) {
       \u0275\u0275restoreView(_r8);
@@ -79102,7 +79762,7 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "button", 53);
+    \u0275\u0275elementStart(10, "button", 55);
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_55_Template_button_click_10_listener() {
       \u0275\u0275restoreView(_r8);
       const ctx_r0 = \u0275\u0275nextContext();
@@ -79132,7 +79792,7 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
 }
 function TeacherVideosComponent_Conditional_56_For_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "app-protected-video-player", 59);
+    \u0275\u0275element(0, "app-protected-video-player", 61);
   }
   if (rf & 2) {
     const item_r12 = \u0275\u0275nextContext();
@@ -79142,20 +79802,20 @@ function TeacherVideosComponent_Conditional_56_For_9_Template(rf, ctx) {
 function TeacherVideosComponent_Conditional_56_Template(rf, ctx) {
   if (rf & 1) {
     const _r11 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 55);
+    \u0275\u0275elementStart(0, "div", 57);
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_56_Template_div_click_0_listener() {
       \u0275\u0275restoreView(_r11);
       const ctx_r0 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r0.closePreview());
     });
-    \u0275\u0275elementStart(1, "div", 56);
+    \u0275\u0275elementStart(1, "div", 58);
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_56_Template_div_click_1_listener($event) {
       return $event.stopPropagation();
     });
-    \u0275\u0275elementStart(2, "header", 57)(3, "h3");
+    \u0275\u0275elementStart(2, "header", 59)(3, "h3");
     \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "button", 58);
+    \u0275\u0275elementStart(5, "button", 60);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275listener("click", function TeacherVideosComponent_Conditional_56_Template_button_click_5_listener() {
       \u0275\u0275restoreView(_r11);
@@ -79164,7 +79824,7 @@ function TeacherVideosComponent_Conditional_56_Template(rf, ctx) {
     });
     \u0275\u0275text(7, "\xD7");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(8, TeacherVideosComponent_Conditional_56_For_9_Template, 1, 6, "app-protected-video-player", 59, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275repeaterCreate(8, TeacherVideosComponent_Conditional_56_For_9_Template, 1, 6, "app-protected-video-player", 61, \u0275\u0275repeaterTrackByIdentity);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -79174,7 +79834,7 @@ function TeacherVideosComponent_Conditional_56_Template(rf, ctx) {
     \u0275\u0275advance();
     \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(6, 2, "videos.close"));
     \u0275\u0275advance(3);
-    \u0275\u0275repeater(\u0275\u0275pureFunction1(4, _c022, ctx_r0.previewKey()));
+    \u0275\u0275repeater(\u0275\u0275pureFunction1(4, _c023, ctx_r0.previewKey()));
   }
 }
 var TeacherVideosComponent = class _TeacherVideosComponent {
@@ -79259,6 +79919,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
       )
     );
     this.selectedCourseId = "";
+    this.selectedUnitId = "";
     this.selectedLessonId = "";
     this.videoTitle = "";
     this.lessonVideoUrl = "";
@@ -79266,6 +79927,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
     this.selectedAssignmentId = "";
     this.selectedMediaAssetId = "";
     this.lessonFilterCourseId = "";
+    this.lessonFilterUnitId = "";
     this.lessonFilterLessonId = "";
     this.lessonSearch = "";
     this.solutionFilterClassroomId = "";
@@ -79276,6 +79938,10 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
         let list = this.lessonVideos();
         if (this.lessonFilterCourseId) {
           list = list.filter((v) => v.courseId === this.lessonFilterCourseId);
+        }
+        if (this.lessonFilterUnitId) {
+          const lessonIds = new Set(this.lessonsForUnit(this.lessonFilterCourseId, this.lessonFilterUnitId).map((l) => l.id));
+          list = list.filter((v) => lessonIds.has(v.lessonId));
         }
         if (this.lessonFilterLessonId) {
           list = list.filter((v) => v.lessonId === this.lessonFilterLessonId);
@@ -79338,7 +80004,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
       this.courses.set(courses);
       if (courses[0]) {
         this.selectedCourseId = courses[0].id;
-        this.selectedLessonId = courses[0].lessons[0]?.id || "";
+        this.selectFirstUnitAndLesson(courses[0].id);
       }
     });
     this.api.getAssignments().subscribe((assignments) => {
@@ -79353,8 +80019,28 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
     this.error.set("");
     this.info.set("");
   }
-  lessonsForCourse(courseId = this.selectedCourseId) {
-    return this.courses().find((c) => c.id === courseId)?.lessons || [];
+  unitsForCourse(courseId = this.selectedCourseId) {
+    const units = [...this.courses().find((c) => c.id === courseId)?.units ?? []];
+    return units.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+  lessonsForUnit(courseId = this.selectedCourseId, unitId = this.selectedUnitId) {
+    const course = this.courses().find((c) => c.id === courseId);
+    if (!course)
+      return [];
+    const units = this.unitsForCourse(courseId);
+    if (!units.length) {
+      return [...course.lessons ?? []].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+    }
+    if (!unitId)
+      return [];
+    const fromUnit = course.units?.find((u2) => u2.id === unitId)?.lessons;
+    const lessons = fromUnit?.length ? fromUnit : (course.lessons ?? []).filter((l) => l.unitId === unitId);
+    return [...lessons].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+  selectFirstUnitAndLesson(courseId) {
+    const units = this.unitsForCourse(courseId);
+    this.selectedUnitId = units[0]?.id || "";
+    this.selectedLessonId = this.lessonsForUnit(courseId, this.selectedUnitId)[0]?.id || "";
   }
   courseLabel(course) {
     return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
@@ -79376,16 +80062,30 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
       }
       return [...map2.entries()].map(([id, title]) => ({ id, title })).sort((a, b) => a.title.localeCompare(b.title));
     }
-    return this.lessonsForCourse(this.lessonFilterCourseId).map((l) => ({ id: l.id, title: l.title }));
+    if (this.lessonFilterUnitId) {
+      return this.lessonsForUnit(this.lessonFilterCourseId, this.lessonFilterUnitId).map((l) => ({
+        id: l.id,
+        title: l.title
+      }));
+    }
+    return [];
   }
   onCourseChange() {
-    this.selectedLessonId = this.lessonsForCourse()[0]?.id || "";
+    this.selectFirstUnitAndLesson(this.selectedCourseId);
+  }
+  onUnitChange() {
+    this.selectedLessonId = this.lessonsForUnit()[0]?.id || "";
   }
   onLessonFilterCourseChange() {
+    this.lessonFilterUnitId = "";
+    this.lessonFilterLessonId = "";
+  }
+  onLessonFilterUnitChange() {
     this.lessonFilterLessonId = "";
   }
   clearLessonFilters() {
     this.lessonFilterCourseId = "";
+    this.lessonFilterUnitId = "";
     this.lessonFilterLessonId = "";
     this.lessonSearch = "";
   }
@@ -79564,7 +80264,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherVideosComponent, selectors: [["app-teacher-videos"]], decls: 57, vars: 41, consts: [[1, "panel-page"], [1, "meta"], [3, "ok", "error"], [1, "video-tabs-shell"], ["role", "tablist", "aria-label", "Video library sections", 1, "video-tabs"], ["type", "button", "role", "tab", 1, "video-tab", 3, "click"], ["aria-hidden", "true", 1, "tab-icon"], ["viewBox", "0 0 24 24"], ["d", "M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6"], ["d", "m10 9 5 3-5 3V9Z", "fill", "currentColor"], [1, "tab-copy"], [1, "tab-label"], [1, "tab-hint"], [1, "tab-count"], ["d", "M9 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M13 5h6v6", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M11 13 19 5", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M4 19V5", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M4 19h16", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M8 15V11M12 15V8M16 15v-4", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], [1, "video-tab-panel"], [1, "block"], ["role", "dialog", "aria-modal", "true", "aria-label", "Video player", 1, "video-modal-backdrop"], [1, "meeting-form", 3, "ngSubmit"], ["name", "courseId", 3, "ngModelChange", "ngModel", "options"], ["name", "lessonId", 3, "ngModelChange", "ngModel", "options"], ["name", "videoTitle", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "url", "name", "lessonVideoUrl", "required", "", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "submit", 3, "disabled"], [1, "video-table-head"], [1, "video-filters"], ["name", "lessonFilterCourse", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonFilterLesson", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonSearch", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "table-wrap"], [1, "data-table", "video-table"], ["tabindex", "0", 1, "video-row-clickable"], ["tabindex", "0", 1, "video-row-clickable", 3, "click", "keydown.enter", "keydown.space"], [1, "mono"], [1, "row-actions-cell", 3, "click"], [1, "row-actions"], ["kind", "play", 3, "action", "label"], ["type", "button", 1, "ghost-btn", "small-btn", 3, "click"], ["kind", "delete", "variant", "danger", 3, "action", "label"], ["colspan", "6", 1, "meta"], ["name", "assignmentId", 3, "ngModelChange", "ngModel", "options"], ["type", "url", "name", "solutionVideoUrl", "required", "", 3, "ngModelChange", "ngModel", "placeholder"], ["name", "solutionFilterClassroom", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "solutionSearch", 3, "ngModelChange", "ngModel", "placeholder"], ["colspan", "5", 1, "meta"], [1, "meeting-form", 3, "submit"], ["name", "mediaAssetId", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "button", 3, "click"], ["name", "analyticsSearch", 3, "ngModelChange", "ngModel", "placeholder"], ["role", "dialog", "aria-modal", "true", "aria-label", "Video player", 1, "video-modal-backdrop", 3, "click"], [1, "video-modal", 3, "click"], [1, "video-modal-head"], ["type", "button", 1, "modal-close", 3, "click"], [3, "mediaAssetId", "lessonId", "title", "autoLoad", "autoplay", "compact"]], template: function TeacherVideosComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherVideosComponent, selectors: [["app-teacher-videos"]], decls: 57, vars: 41, consts: [[1, "panel-page"], [1, "meta"], [3, "ok", "error"], [1, "video-tabs-shell"], ["role", "tablist", "aria-label", "Video library sections", 1, "video-tabs"], ["type", "button", "role", "tab", 1, "video-tab", 3, "click"], ["aria-hidden", "true", 1, "tab-icon"], ["viewBox", "0 0 24 24"], ["d", "M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6"], ["d", "m10 9 5 3-5 3V9Z", "fill", "currentColor"], [1, "tab-copy"], [1, "tab-label"], [1, "tab-hint"], [1, "tab-count"], ["d", "M9 5H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M13 5h6v6", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M11 13 19 5", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M4 19V5", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M4 19h16", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], ["d", "M8 15V11M12 15V8M16 15v-4", "fill", "none", "stroke", "currentColor", "stroke-width", "1.6", "stroke-linecap", "round"], [1, "video-tab-panel"], [1, "block"], ["role", "dialog", "aria-modal", "true", "aria-label", "Video player", 1, "video-modal-backdrop"], [1, "meeting-form", 3, "ngSubmit"], ["name", "courseId", 3, "ngModelChange", "ngModel", "options"], ["name", "unitId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "videoTitle", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "url", "name", "lessonVideoUrl", "required", "", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "submit", 3, "disabled"], [1, "video-table-head"], [1, "video-filters"], ["name", "lessonFilterCourse", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonFilterUnit", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonFilterLesson", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "lessonSearch", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "table-wrap"], [1, "data-table", "video-table"], ["tabindex", "0", 1, "video-row-clickable"], ["tabindex", "0", 1, "video-row-clickable", 3, "click", "keydown.enter", "keydown.space"], [1, "mono"], [1, "row-actions-cell", 3, "click"], [1, "row-actions"], ["kind", "play", 3, "action", "label"], ["type", "button", 1, "ghost-btn", "small-btn", 3, "click"], ["kind", "delete", "variant", "danger", 3, "action", "label"], ["colspan", "6", 1, "meta"], ["name", "assignmentId", 3, "ngModelChange", "ngModel", "options"], ["type", "url", "name", "solutionVideoUrl", "required", "", 3, "ngModelChange", "ngModel", "placeholder"], ["name", "solutionFilterClassroom", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "solutionSearch", 3, "ngModelChange", "ngModel", "placeholder"], ["colspan", "5", 1, "meta"], [1, "meeting-form", 3, "submit"], ["name", "mediaAssetId", 3, "ngModelChange", "ngModel", "placeholder"], ["type", "button", 3, "click"], ["name", "analyticsSearch", 3, "ngModelChange", "ngModel", "placeholder"], ["role", "dialog", "aria-modal", "true", "aria-label", "Video player", 1, "video-modal-backdrop", 3, "click"], [1, "video-modal", 3, "click"], [1, "video-modal-head"], ["type", "button", 1, "modal-close", 3, "click"], [3, "mediaAssetId", "lessonId", "title", "autoLoad", "autoplay", "compact"]], template: function TeacherVideosComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "h2");
         \u0275\u0275text(2);
@@ -79636,7 +80336,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
         \u0275\u0275pipe(51, "t");
         \u0275\u0275elementEnd()()()()();
         \u0275\u0275elementStart(52, "div", 20);
-        \u0275\u0275conditionalCreate(53, TeacherVideosComponent_Conditional_53_Template, 78, 84);
+        \u0275\u0275conditionalCreate(53, TeacherVideosComponent_Conditional_53_Template, 89, 105);
         \u0275\u0275conditionalCreate(54, TeacherVideosComponent_Conditional_54_Template, 61, 59);
         \u0275\u0275conditionalCreate(55, TeacherVideosComponent_Conditional_55_Template, 15, 14, "section", 21);
         \u0275\u0275elementEnd()();
@@ -79766,11 +80466,22 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
           />\r
         </label>\r
         <label>\r
+          {{ 'common.unit' | t }}\r
+          <app-searchable-select\r
+            [(ngModel)]="selectedUnitId"\r
+            name="unitId"\r
+            (ngModelChange)="onUnitChange()"\r
+            [emptyLabel]="'common.selectUnit' | t"\r
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"\r
+          />\r
+        </label>\r
+        <label>\r
           {{ 'common.lesson' | t }}\r
           <app-searchable-select\r
             [(ngModel)]="selectedLessonId"\r
             name="lessonId"\r
-            [options]="lessonsForCourse().map(l => ({ value: l.id, label: l.title }))"\r
+            [emptyLabel]="'common.lesson' | t"\r
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"\r
           />\r
         </label>\r
         <label>{{ 'common.title' | t }} <input [(ngModel)]="videoTitle" name="videoTitle" [placeholder]="'videos.optionalTitle' | t" /></label>\r
@@ -79805,6 +80516,16 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
             (ngModelChange)="onLessonFilterCourseChange()"\r
             [emptyLabel]="'videos.allCourses' | t"\r
             [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"\r
+          />\r
+        </label>\r
+        <label>\r
+          {{ 'common.unit' | t }}\r
+          <app-searchable-select\r
+            [(ngModel)]="lessonFilterUnitId"\r
+            name="lessonFilterUnit"\r
+            (ngModelChange)="onLessonFilterUnitChange()"\r
+            [emptyLabel]="'videos.allUnits' | t"\r
+            [options]="unitsForCourse(lessonFilterCourseId).map(u => ({ value: u.id, label: u.title }))"\r
           />\r
         </label>\r
         <label>\r
@@ -80051,7 +80772,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
   }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherVideosComponent, { className: "TeacherVideosComponent", filePath: "src/app/pages/teacher/teacher-videos.component.ts", lineNumber: 34 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherVideosComponent, { className: "TeacherVideosComponent", filePath: "src/app/pages/teacher/teacher-videos.component.ts", lineNumber: 35 });
 })();
 
 // src/app/pages/teacher/teacher-whatsapp.component.ts
@@ -81149,8 +81870,8 @@ function formatDayLabel2(date, lang) {
 }
 
 // src/app/pages/teacher/teacher-timetable.component.ts
-var _c023 = ["timetableWrap"];
-var _c114 = (a0) => ({ value: "am", label: a0 });
+var _c024 = ["timetableWrap"];
+var _c115 = (a0) => ({ value: "am", label: a0 });
 var _c211 = (a0) => ({ value: "pm", label: a0 });
 var _c36 = (a0, a1) => [a0, a1];
 var _forTrack031 = ($index, $item) => $item.key;
@@ -81421,7 +82142,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherTimetableComponent, selectors: [["app-teacher-timetable"]], viewQuery: function TeacherTimetableComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c023, 5);
+        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c024, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -81501,7 +82222,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(17, 27, "admin.timetable.period"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(19, 29, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(45, _c36, \u0275\u0275pureFunction1(41, _c114, \u0275\u0275pipeBind1(20, 31, "admin.timetable.am")), \u0275\u0275pureFunction1(43, _c211, \u0275\u0275pipeBind1(21, 33, "admin.timetable.pm"))));
+        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(19, 29, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(45, _c36, \u0275\u0275pureFunction1(41, _c115, \u0275\u0275pipeBind1(20, 31, "admin.timetable.am")), \u0275\u0275pureFunction1(43, _c211, \u0275\u0275pipeBind1(21, 33, "admin.timetable.pm"))));
         \u0275\u0275control();
         \u0275\u0275advance(5);
         \u0275\u0275property("disabled", ctx.exporting());
@@ -82189,7 +82910,7 @@ function toLocalDateString6(d) {
 }
 
 // src/app/pages/exam-play/exam-play.component.ts
-var _c024 = (a0) => ({ seconds: a0 });
+var _c025 = (a0) => ({ seconds: a0 });
 var _forTrack033 = ($index, $item) => $item.questionId;
 var _forTrack113 = ($index, $item) => $item.id;
 var _forTrack25 = ($index, $item) => $item.key;
@@ -82200,7 +82921,7 @@ function ExamPlayComponent_Conditional_11_Conditional_10_Template(rf, ctx) {
   }
   if (rf & 2) {
     const attempt_r1 = \u0275\u0275nextContext();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "play.timeSeconds", \u0275\u0275pureFunction1(4, _c024, attempt_r1.durationSeconds)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "play.timeSeconds", \u0275\u0275pureFunction1(4, _c025, attempt_r1.durationSeconds)), " ");
   }
 }
 function ExamPlayComponent_Conditional_11_For_12_Conditional_7_Template(rf, ctx) {
@@ -82870,6 +83591,8 @@ var routes = [
   { path: "", pathMatch: "full", redirectTo: "login" },
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
+  { path: "register-tenant", component: RegisterTenantComponent },
+  { path: "verify-tenant", component: VerifyTenantComponent },
   { path: "forgot-password", component: ForgotPasswordComponent },
   { path: "reset-password", component: ResetPasswordComponent },
   {
@@ -82910,6 +83633,7 @@ var routes = [
       { path: "", pathMatch: "full", redirectTo: "overview" },
       { path: "overview", component: TeacherOverviewComponent },
       { path: "videos", component: TeacherVideosComponent },
+      { path: "course-tree", component: AdminCourseTreeComponent },
       { path: "zoom", component: TeacherZoomComponent },
       { path: "appointments", component: TeacherAppointmentsComponent },
       { path: "timetable", component: TeacherTimetableComponent },
@@ -82957,14 +83681,13 @@ var routes = [
 var authInterceptor = (req, next) => {
   const auth = inject2(AuthService);
   const token = auth.token();
-  if (!token) {
-    return next(req);
+  const headers = {
+    "X-Tenant-Id": currentTenantId()
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
-  return next(req.clone({
-    setHeaders: {
-      Authorization: `Bearer ${token}`
-    }
-  }));
+  return next(req.clone({ setHeaders: headers }));
 };
 
 // src/app/app.config.ts

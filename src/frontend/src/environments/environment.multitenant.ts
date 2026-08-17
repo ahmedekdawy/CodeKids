@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://abakera.runasp.net/api',
+  apiBaseUrl: 'http://schoolacadmyapi.runasp.net/api',
   appBaseUrl: 'http://schoolacadmy.runasp.net',
   zoomCallbackUrl: 'http://abakera.runasp.net/api/zoom/callback',
   zoomFrontendRedirectUrl: 'http://schoolacadmy.runasp.net/teacher/zoom',
