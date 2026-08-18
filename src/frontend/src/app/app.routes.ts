@@ -39,6 +39,7 @@ import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.compo
 import { TeacherAppointmentsComponent } from './pages/teacher/teacher-appointments.component';
 import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.component';
 import { TeacherAttendanceComponent } from './pages/teacher/teacher-attendance.component';
+import { TeacherWeeklyReportsComponent } from './pages/teacher/teacher-weekly-reports.component';
 import { ExamPlayComponent } from './pages/exam-play/exam-play.component';
 
 export const routes: Routes = [
@@ -90,6 +91,7 @@ export const routes: Routes = [
       { path: 'appointments', component: TeacherAppointmentsComponent },
       { path: 'timetable', component: TeacherTimetableComponent },
       { path: 'attendance', component: TeacherAttendanceComponent },
+      { path: 'weekly-reports', component: TeacherWeeklyReportsComponent },
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
       { path: 'question-bank', component: TeacherQuestionBankComponent },
       { path: 'exams', component: TeacherExamsComponent },

@@ -8,6 +8,8 @@ namespace CodeKids.Application.Features.Reports;
 public sealed record AccountReportDto(
     DateOnly FromDate,
     DateOnly ToDate,
+    decimal TotalPayrollSalaries,
+    decimal TotalManualSalaries,
     decimal TotalSalaries,
     decimal TotalSubscriptions,
     decimal TotalOtherExpenses,

@@ -28,6 +28,8 @@ public class User
     public decimal? PrepAmount { get; set; }
     /// <summary>Default secondary session amount.</summary>
     public decimal? SecondaryAmount { get; set; }
+    /// <summary>Teacher monthly base salary; applied per calendar month in payroll range.</summary>
+    public decimal? MonthlySalary { get; set; }
     public string ZoomAccessToken { get; set; } = string.Empty;
     public string ZoomRefreshToken { get; set; } = string.Empty;
     public DateTimeOffset? ZoomTokenExpiresAt { get; set; }

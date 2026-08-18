@@ -109,6 +109,7 @@ export class AdminUsersComponent {
   userPrimaryAmount: number | null = null;
   userPrepAmount: number | null = null;
   userSecondaryAmount: number | null = null;
+  userMonthlySalary: number | null = null;
   readonly userCourseRates = signal<CourseRateRow[]>([]);
 
   editEmail = '';
@@ -121,6 +122,7 @@ export class AdminUsersComponent {
   editPrimaryAmount: number | null = null;
   editPrepAmount: number | null = null;
   editSecondaryAmount: number | null = null;
+  editMonthlySalary: number | null = null;
   readonly editCourseRates = signal<CourseRateRow[]>([]);
 
   readonly filteredUsers = computed(() => {
@@ -376,6 +378,7 @@ export class AdminUsersComponent {
         primaryAmount: role === 'Teacher' ? this.userPrimaryAmount : null,
         prepAmount: role === 'Teacher' ? this.userPrepAmount : null,
         secondaryAmount: role === 'Teacher' ? this.userSecondaryAmount : null,
+        monthlySalary: role === 'Teacher' ? this.userMonthlySalary : null,
         courseRates: rates
       })
       .subscribe({
@@ -400,6 +403,7 @@ export class AdminUsersComponent {
     this.editPrimaryAmount = user.primaryAmount ?? null;
     this.editPrepAmount = user.prepAmount ?? null;
     this.editSecondaryAmount = user.secondaryAmount ?? null;
+    this.editMonthlySalary = user.monthlySalary ?? null;
     this.editCourseRates.set(toRateRows(user.courseRates));
     this.clearStatus();
   }
@@ -437,6 +441,7 @@ export class AdminUsersComponent {
         primaryAmount: role === 'Teacher' ? this.editPrimaryAmount : null,
         prepAmount: role === 'Teacher' ? this.editPrepAmount : null,
         secondaryAmount: role === 'Teacher' ? this.editSecondaryAmount : null,
+        monthlySalary: role === 'Teacher' ? this.editMonthlySalary : null,
         courseRates: rates,
         password: this.editPassword || null
       })
@@ -473,6 +478,7 @@ export class AdminUsersComponent {
     this.userPrimaryAmount = null;
     this.userPrepAmount = null;
     this.userSecondaryAmount = null;
+    this.userMonthlySalary = null;
     this.userCourseRates.set([]);
   }
 

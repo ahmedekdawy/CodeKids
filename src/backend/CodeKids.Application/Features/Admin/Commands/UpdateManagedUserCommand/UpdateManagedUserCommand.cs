@@ -23,6 +23,7 @@ public sealed record UpdateManagedUserRequest(
     decimal? PrimaryAmount = null,
     decimal? PrepAmount = null,
     decimal? SecondaryAmount = null,
+    decimal? MonthlySalary = null,
     IReadOnlyList<TeacherCourseRateInput>? CourseRates = null);
 
 public sealed record UpdateManagedUserCommand(
@@ -42,4 +43,5 @@ public sealed record UpdateManagedUserCommand(
     decimal? PrimaryAmount = null,
     decimal? PrepAmount = null,
     decimal? SecondaryAmount = null,
+    decimal? MonthlySalary = null,
     IReadOnlyList<TeacherCourseRateInput>? CourseRates = null) : ICommand<ManagedUserDto>;

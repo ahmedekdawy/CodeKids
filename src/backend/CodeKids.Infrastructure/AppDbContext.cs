@@ -23,8 +23,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<FixedTimetableEntry> FixedTimetableEntries => Set<FixedTimetableEntry>();
     public DbSet<TeacherSessionAttendance> TeacherSessionAttendances => Set<TeacherSessionAttendance>();
+    public DbSet<StudentWeeklyReport> StudentWeeklyReports => Set<StudentWeeklyReport>();
     public DbSet<TuitionPayment> TuitionPayments => Set<TuitionPayment>();
     public DbSet<OtherExpense> OtherExpenses => Set<OtherExpense>();
+    public DbSet<TeacherPayrollAdjustment> TeacherPayrollAdjustments => Set<TeacherPayrollAdjustment>();
     public DbSet<TeacherCourseRate> TeacherCourseRates => Set<TeacherCourseRate>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
     public DbSet<Classroom> Classrooms => Set<Classroom>();
@@ -69,6 +71,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.PrimaryAmount).HasPrecision(18, 2);
             entity.Property(x => x.PrepAmount).HasPrecision(18, 2);
             entity.Property(x => x.SecondaryAmount).HasPrecision(18, 2);
+            entity.Property(x => x.MonthlySalary).HasPrecision(18, 2);
             entity.Property(x => x.ZoomAccessToken).HasMaxLength(2000).IsRequired();
             entity.HasMany(x => x.CourseRates)
                 .WithOne(x => x.Teacher)
@@ -301,6 +304,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
+        modelBuilder.Entity<StudentWeeklyReport>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.InteractionDuringSession).HasMaxLength(200).IsRequired();
+            entity.HasIndex(x => new { x.TeacherId, x.StudentId, x.WeekStartDate }).IsUnique();
+            entity.HasIndex(x => x.WeekStartDate);
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
         modelBuilder.Entity<TuitionPayment>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -328,6 +347,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Notes).HasMaxLength(500).IsRequired();
             entity.HasIndex(x => x.ExpenseDate);
             entity.HasIndex(x => x.Name);
+        });
+
+        modelBuilder.Entity<TeacherPayrollAdjustment>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Amount).HasPrecision(18, 2);
+            entity.Property(x => x.Notes).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => x.AdjustmentDate);
+            entity.HasIndex(x => x.TeacherId);
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<TeacherCourseRate>(entity =>

@@ -82,6 +82,7 @@ public sealed class CreateManagedUserCommandHandler(
             PrimaryAmount = contract.PrimaryAmount,
             PrepAmount = contract.PrepAmount,
             SecondaryAmount = contract.SecondaryAmount,
+            MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary),
             TotalXp = 0
         };
 
@@ -314,6 +315,7 @@ public sealed class CreateManagedUserCommandHandler(
             user.PrimaryAmount,
             user.PrepAmount,
             user.SecondaryAmount,
+            user.MonthlySalary,
             rates);
     }
 }

@@ -22,7 +22,11 @@ import {
   ExamAttempt,
   FixedTimetableEntry,
   TeacherSessionAttendance,
+  StudentWeeklyReportGridRow,
+  StudentWeeklyReport,
+  SaveWeeklyReportEntry,
   TeacherPayrollReport,
+  TeacherPayrollAdjustment,
   AccountReport,
   TuitionPayment,
   OtherExpense,
@@ -312,6 +316,33 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/session-attendance/${attendanceId}`);
   }
 
+  getWeeklyReportGrid(filters: { weekStart: string; grade?: number }): Observable<StudentWeeklyReportGridRow[]> {
+    const params = new URLSearchParams();
+    params.set('weekStart', filters.weekStart);
+    if (filters.grade != null) params.set('grade', String(filters.grade));
+    return this.http.get<StudentWeeklyReportGridRow[]>(`${this.baseUrl}/weekly-reports/grid?${params}`);
+  }
+
+  listWeeklyReports(filters?: {
+    grade?: number;
+    fromDate?: string;
+    toDate?: string;
+  }): Observable<StudentWeeklyReport[]> {
+    const params = new URLSearchParams();
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    const query = params.toString();
+    return this.http.get<StudentWeeklyReport[]>(`${this.baseUrl}/weekly-reports${query ? `?${query}` : ''}`);
+  }
+
+  saveWeeklyReports(payload: {
+    weekStartDate: string;
+    entries: SaveWeeklyReportEntry[];
+  }): Observable<StudentWeeklyReportGridRow[]> {
+    return this.http.put<StudentWeeklyReportGridRow[]>(`${this.baseUrl}/weekly-reports`, payload);
+  }
+
   getPayrollReport(filters: {
     fromDate: string;
     toDate: string;
@@ -328,6 +359,34 @@ export class LearningApiService {
     return this.http.get<TeacherPayrollReport>(
       `${this.baseUrl}/admin/payroll-report?${params.toString()}`
     );
+  }
+
+  getPayrollAdjustments(filters?: {
+    fromDate?: string;
+    toDate?: string;
+    teacherId?: string;
+  }): Observable<TeacherPayrollAdjustment[]> {
+    const params = new URLSearchParams();
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    if (filters?.teacherId) params.set('teacherId', filters.teacherId);
+    const query = params.toString();
+    return this.http.get<TeacherPayrollAdjustment[]>(
+      `${this.baseUrl}/admin/payroll-adjustments${query ? `?${query}` : ''}`
+    );
+  }
+
+  createPayrollAdjustment(payload: {
+    teacherId: string;
+    amount: number;
+    adjustmentDate: string;
+    notes?: string;
+  }): Observable<TeacherPayrollAdjustment> {
+    return this.http.post<TeacherPayrollAdjustment>(`${this.baseUrl}/admin/payroll-adjustments`, payload);
+  }
+
+  deletePayrollAdjustment(adjustmentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/payroll-adjustments/${adjustmentId}`);
   }
 
   getAccountReport(filters: {
@@ -427,6 +486,7 @@ export class LearningApiService {
     primaryAmount?: number | null;
     prepAmount?: number | null;
     secondaryAmount?: number | null;
+    monthlySalary?: number | null;
     courseRates?: Array<{
       courseId: string;
       sessionAmount?: number | null;
@@ -453,6 +513,7 @@ export class LearningApiService {
       primaryAmount?: number | null;
       prepAmount?: number | null;
       secondaryAmount?: number | null;
+      monthlySalary?: number | null;
       courseRates?: Array<{
         courseId: string;
         sessionAmount?: number | null;

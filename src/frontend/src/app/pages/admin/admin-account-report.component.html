@@ -43,8 +43,16 @@
               <td>{{ moneyLabel(r.totalSubscriptions) }}</td>
             </tr>
             <tr>
-              <td>{{ 'admin.accountReport.totalSalaries' | t }}</td>
-              <td>{{ moneyLabel(r.totalSalaries) }}</td>
+              <td>{{ 'admin.accountReport.payrollSalaries' | t }}</td>
+              <td>{{ moneyLabel(r.totalPayrollSalaries) }}</td>
+            </tr>
+            <tr>
+              <td>{{ 'admin.accountReport.manualSalaries' | t }}</td>
+              <td>{{ moneyLabel(r.totalManualSalaries) }}</td>
+            </tr>
+            <tr>
+              <td><strong>{{ 'admin.accountReport.totalSalaries' | t }}</strong></td>
+              <td><strong>{{ moneyLabel(r.totalSalaries) }}</strong></td>
             </tr>
             <tr>
               <td>{{ 'admin.accountReport.totalOtherExpenses' | t }}</td>

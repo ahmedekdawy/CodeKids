@@ -13,7 +13,8 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var connectionString = configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string DefaultConnection is missing.");
+    ?? configuration.GetConnectionString("EsraaConnection")
+    ?? throw new InvalidOperationException("Connection string DefaultConnection or EsraaConnection is missing.");
 
 Console.WriteLine($"Updating database using {apiDir}\\appsettings.json");
 
@@ -29,12 +30,23 @@ var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
 await db.Database.MigrateAsync();
 await DataSeeder.SeedAsync(db, hasher);
 
+var appliedMigrations = await db.Database.GetAppliedMigrationsAsync();
+var weeklyReportTableExists = await db.Database.SqlQueryRaw<int>(
+        """
+        SELECT COUNT(*)::int AS "Value"
+        FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_name = 'StudentWeeklyReports'
+        """)
+    .SingleAsync();
+
 var classroomCount = await db.Classrooms.CountAsync();
 var userCount = await db.Users.CountAsync();
 var assignmentCount = await db.Assignments.CountAsync();
 var liveSessionCount = await db.LiveSessions.CountAsync();
 
 Console.WriteLine("Database updated successfully.");
+Console.WriteLine($"Applied migrations: {appliedMigrations.Count()} (latest: {appliedMigrations.LastOrDefault() ?? "none"})");
+Console.WriteLine($"StudentWeeklyReports table: {(weeklyReportTableExists > 0 ? "exists" : "MISSING")}");
 Console.WriteLine($"Users: {userCount}");
 Console.WriteLine($"Classrooms: {classroomCount}");
 Console.WriteLine($"Assignments: {assignmentCount}");

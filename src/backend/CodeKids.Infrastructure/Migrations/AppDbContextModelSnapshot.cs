@@ -1055,6 +1055,39 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("OtherExpenses");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherPayrollAdjustment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateOnly>("AdjustmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdjustmentDate");
+
+                    b.HasIndex("TeacherId");
+
+                    b.ToTable("TeacherPayrollAdjustments");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.PasswordResetToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1376,6 +1409,56 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("TeacherSessionAttendances");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentWeeklyReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("AttendancePercent")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("HomeworkPercent")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("InteractionDuringSession")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool?>("OpenCamera")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("PerformancePercent")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("WeekStartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("WeekStartDate");
+
+                    b.HasIndex("TeacherId", "StudentId", "WeekStartDate")
+                        .IsUnique();
+
+                    b.ToTable("StudentWeeklyReports");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1482,6 +1565,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("character varying(20)");
 
                     b.Property<decimal?>("SecondaryAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal?>("MonthlySalary")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
 
@@ -2157,6 +2244,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherPayrollAdjustment", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Teacher");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TeacherSessionAttendance", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.Course", "Course")
@@ -2172,6 +2270,25 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentWeeklyReport", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
 
                     b.Navigation("Teacher");
                 });

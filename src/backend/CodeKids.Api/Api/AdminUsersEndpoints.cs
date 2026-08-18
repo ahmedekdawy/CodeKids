@@ -82,6 +82,8 @@ public static class AdminUsersEndpoints
 
                         request.SecondaryAmount,
 
+                        request.MonthlySalary,
+
                         request.CourseRates),
 
                     cancellationToken));
@@ -153,6 +155,8 @@ public static class AdminUsersEndpoints
                         request.PrepAmount,
 
                         request.SecondaryAmount,
+
+                        request.MonthlySalary,
 
                         request.CourseRates),
 

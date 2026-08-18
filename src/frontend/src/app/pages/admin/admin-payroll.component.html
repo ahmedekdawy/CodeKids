@@ -4,15 +4,42 @@
 
   <app-page-feedback [ok]="message()" [error]="error()" />
 
-  <section class="block">
+  <section class="block" #reportTable>
+    <h3>
+      {{ 'admin.payroll.list' | t }}
+      @if (report(); as r) {
+        <span class="meta">
+          ({{ monthLabel(filterMonth) }} {{ filterYear }} · {{ r.fromDate }} – {{ r.toDate }})
+        </span>
+      }
+    </h3>
+
     <div class="list-filters">
       <label>
+        {{ 'admin.payroll.year' | t }}
+        <app-searchable-select
+          [(ngModel)]="filterYear"
+          name="filterYear"
+          (ngModelChange)="onFilterMonthYearChange()"
+          [options]="years.map(y => ({ value: y, label: '' + y }))"
+        />
+      </label>
+      <label>
+        {{ 'admin.payroll.month' | t }}
+        <app-searchable-select
+          [(ngModel)]="filterMonth"
+          name="filterMonth"
+          (ngModelChange)="onFilterMonthYearChange()"
+          [options]="months.map(m => ({ value: m, label: monthLabel(m) }))"
+        />
+      </label>
+      <label>
         {{ 'admin.payroll.dateFrom' | t }}
-        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reload()" />
+        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="onDateRangeChange()" />
       </label>
       <label>
         {{ 'admin.payroll.dateTo' | t }}
-        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reload()" />
+        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="onDateRangeChange()" />
       </label>
       <label>
         {{ 'common.teacher' | t }}
@@ -49,17 +76,6 @@
         {{ (exporting() ? 'admin.payroll.exporting' : 'admin.payroll.exportImage') | t }}
       </button>
     </div>
-  </section>
-
-  <section class="block" #reportTable>
-    <h3>
-      {{ 'admin.payroll.list' | t }}
-      @if (report(); as r) {
-        <span class="meta">
-          ({{ r.fromDate }} – {{ r.toDate }})
-        </span>
-      }
-    </h3>
 
     <div class="table-wrap">
       <table class="data-table">
@@ -69,6 +85,9 @@
             <th>{{ 'admin.payroll.primarySessions' | t }}</th>
             <th>{{ 'admin.payroll.prepSessions' | t }}</th>
             <th>{{ 'admin.payroll.secondarySessions' | t }}</th>
+            <th>{{ 'admin.payroll.sessionAmount' | t }}</th>
+            <th>{{ 'admin.payroll.monthlySalary' | t }}</th>
+            <th>{{ 'admin.payroll.manualAmount' | t }}</th>
             <th>{{ 'admin.payroll.totalAmount' | t }}</th>
           </tr>
         </thead>
@@ -80,20 +99,134 @@
                 <td>{{ row.primarySessions }}</td>
                 <td>{{ row.prepSessions }}</td>
                 <td>{{ row.secondarySessions }}</td>
+                <td>{{ moneyLabel(row.sessionAmount) }}</td>
+                <td>{{ moneyLabel(row.monthlySalary) }}</td>
+                <td>{{ moneyLabel(row.manualAmount) }}</td>
                 <td>{{ moneyLabel(row.totalAmount) }}</td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="5">{{ 'common.noData' | t }}</td>
+                <td colspan="8">{{ 'common.noData' | t }}</td>
               </tr>
             }
             <tr class="total-row">
-              <td colspan="4"><strong>{{ 'admin.payroll.grandTotal' | t }}</strong></td>
+              <td colspan="7"><strong>{{ 'admin.payroll.grandTotal' | t }}</strong></td>
               <td><strong>{{ moneyLabel(r.grandTotal) }}</strong></td>
             </tr>
           } @else {
             <tr>
-              <td colspan="5">{{ 'common.noData' | t }}</td>
+              <td colspan="8">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'admin.payroll.manualTitle' | t }}</h3>
+    <p class="meta">{{ 'admin.payroll.manualSubtitle' | t }}</p>
+    <form class="meeting-form" (ngSubmit)="createManualAdjustment()">
+      <label>
+        {{ 'common.teacher' | t }}
+        <app-searchable-select
+          [(ngModel)]="manualTeacherId"
+          name="manualTeacherId"
+          required
+          [emptyLabel]="'common.select' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
+      </label>
+      <label>
+        {{ 'admin.payroll.manualAmount' | t }}
+        <input type="number" step="0.01" [(ngModel)]="manualAmount" name="manualAmount" required />
+      </label>
+      <label>
+        {{ 'admin.payroll.year' | t }}
+        <app-searchable-select
+          [(ngModel)]="manualYear"
+          name="manualYear"
+          required
+          [options]="years.map(y => ({ value: y, label: '' + y }))"
+        />
+      </label>
+      <label>
+        {{ 'admin.payroll.month' | t }}
+        <app-searchable-select
+          [(ngModel)]="manualMonth"
+          name="manualMonth"
+          required
+          [options]="months.map(m => ({ value: m, label: monthLabel(m) }))"
+        />
+      </label>
+      <label>
+        {{ 'common.notes' | t }}
+        <input type="text" [(ngModel)]="manualNotes" name="manualNotes" />
+      </label>
+      <button type="submit">{{ 'admin.payroll.addManual' | t }}</button>
+    </form>
+
+    <div class="list-filters">
+      <label>
+        {{ 'admin.payroll.year' | t }}
+        <app-searchable-select
+          [(ngModel)]="manualFilterYear"
+          name="manualFilterYear"
+          (ngModelChange)="onManualFilterChange()"
+          [options]="years.map(y => ({ value: y, label: '' + y }))"
+        />
+      </label>
+      <label>
+        {{ 'admin.payroll.month' | t }}
+        <app-searchable-select
+          [(ngModel)]="manualFilterMonth"
+          name="manualFilterMonth"
+          (ngModelChange)="onManualFilterChange()"
+          [options]="months.map(m => ({ value: m, label: monthLabel(m) }))"
+        />
+      </label>
+      <label>
+        {{ 'admin.payroll.teacherName' | t }}
+        <app-searchable-select
+          [(ngModel)]="manualFilterTeacherId"
+          name="manualFilterTeacherId"
+          (ngModelChange)="onManualFilterChange()"
+          [emptyLabel]="'common.all' | t"
+          [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetManualFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.payroll.year' | t }}</th>
+            <th>{{ 'admin.payroll.month' | t }}</th>
+            <th>{{ 'common.teacher' | t }}</th>
+            <th>{{ 'admin.payroll.manualAmount' | t }}</th>
+            <th>{{ 'common.notes' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of adjustments(); track row.id) {
+            <tr>
+              <td>{{ adjustmentYear(row) }}</td>
+              <td>{{ monthLabel(adjustmentMonth(row)) }}</td>
+              <td>{{ row.teacherName }}</td>
+              <td>{{ moneyLabel(row.amount) }}</td>
+              <td>{{ row.notes || ('common.emDash' | t) }}</td>
+              <td>
+                <app-icon-action-button kind="delete" variant="danger" (action)="removeAdjustment(row)" />
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6">{{ 'common.noData' | t }}</td>
             </tr>
           }
         </tbody>

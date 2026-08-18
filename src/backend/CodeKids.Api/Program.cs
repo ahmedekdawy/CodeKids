@@ -48,6 +48,8 @@ using CodeKids.Application.Features.SiteSettings;
 
 using CodeKids.Application.Features.Timetable;
 
+using CodeKids.Application.Features.WeeklyReports;
+
 using CodeKids.Application.Features.ZoomConnect;
 
 using CodeKids.Domain.Abstractions;
@@ -241,6 +243,12 @@ builder.Services.AddScoped<ICommandHandler<DeleteTeacherSessionAttendanceCommand
 
 builder.Services.AddScoped<IQueryHandler<GetTeacherPayrollReportQuery, TeacherPayrollReportDto>, GetTeacherPayrollReportQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListTeacherPayrollAdjustmentsQuery, IReadOnlyList<TeacherPayrollAdjustmentDto>>, ListTeacherPayrollAdjustmentsQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<CreateTeacherPayrollAdjustmentCommand, TeacherPayrollAdjustmentDto>, CreateTeacherPayrollAdjustmentCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteTeacherPayrollAdjustmentCommand, bool>, DeleteTeacherPayrollAdjustmentCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetAccountReportQuery, AccountReportDto>, GetAccountReportQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListTuitionPaymentsQuery, IReadOnlyList<TuitionPaymentDto>>, ListTuitionPaymentsQueryHandler>();
@@ -346,6 +354,12 @@ builder.Services.AddScoped<IQueryHandler<GetPlaybackQuery, PlaybackDto>, GetPlay
 builder.Services.AddScoped<ICommandHandler<RecordWatchEventsCommand, WatchSessionDto>, RecordWatchEventsCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetWatchSessionsQuery, IReadOnlyList<WatchSessionDto>>, GetWatchSessionsQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetWeeklyReportGridQuery, IReadOnlyList<StudentWeeklyReportGridRowDto>>, GetWeeklyReportGridQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListStudentWeeklyReportsQuery, IReadOnlyList<StudentWeeklyReportDto>>, ListStudentWeeklyReportsQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyList<StudentWeeklyReportGridRowDto>>, SaveWeeklyReportsCommandHandler>();
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
 
@@ -473,6 +487,8 @@ app.MapReportsEndpoints();
 app.MapSiteSettingsEndpoints();
 
 app.MapTimetableEndpoints();
+
+app.MapWeeklyReportsEndpoints();
 
 app.MapZoomEndpoints();
 

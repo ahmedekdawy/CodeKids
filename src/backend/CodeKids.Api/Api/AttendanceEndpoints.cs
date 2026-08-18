@@ -270,6 +270,62 @@ public static class AttendanceEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+        app.MapGet("/api/admin/payroll-adjustments", async (
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            Guid? teacherId,
+            IQueryHandler<ListTeacherPayrollAdjustmentsQuery, IReadOnlyList<TeacherPayrollAdjustmentDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                return Results.Ok(await handler.Handle(
+                    new ListTeacherPayrollAdjustmentsQuery(fromDate, toDate, teacherId),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapPost("/api/admin/payroll-adjustments", async (
+            CreateTeacherPayrollAdjustmentRequest request,
+            ICommandHandler<CreateTeacherPayrollAdjustmentCommand, TeacherPayrollAdjustmentDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                return Results.Ok(await handler.Handle(
+                    new CreateTeacherPayrollAdjustmentCommand(
+                        request.TeacherId,
+                        request.Amount,
+                        request.AdjustmentDate,
+                        request.Notes),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapDelete("/api/admin/payroll-adjustments/{adjustmentId:guid}", async (
+            Guid adjustmentId,
+            ICommandHandler<DeleteTeacherPayrollAdjustmentCommand, bool> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                await handler.Handle(new DeleteTeacherPayrollAdjustmentCommand(adjustmentId), cancellationToken);
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         return app;
 
     }

@@ -33,7 +33,22 @@ public sealed class GetAccountReportQueryHandler(
             .Where(x => x.ExpenseDate >= query.FromDate && x.ExpenseDate <= query.ToDate)
             .SumAsync(x => (decimal?)x.Amount, cancellationToken) ?? 0m;
 
-        var totalSalaries = payroll.GrandTotal;
+        var totalPayrollSalaries = Math.Round(
+            payroll.Rows.Sum(x => x.SessionAmount + x.MonthlySalary),
+            2,
+            MidpointRounding.AwayFromZero);
+
+        var totalManualSalaries = await dbContext.TeacherPayrollAdjustments
+            .AsNoTracking()
+            .Where(x => x.AdjustmentDate >= query.FromDate && x.AdjustmentDate <= query.ToDate)
+            .SumAsync(x => (decimal?)x.Amount, cancellationToken) ?? 0m;
+        totalManualSalaries = Math.Round(totalManualSalaries, 2, MidpointRounding.AwayFromZero);
+
+        var totalSalaries = Math.Round(
+            totalPayrollSalaries + totalManualSalaries,
+            2,
+            MidpointRounding.AwayFromZero);
+
         var netAmount = Math.Round(
             totalSubscriptions - totalSalaries - totalOtherExpenses,
             2,
@@ -42,6 +57,8 @@ public sealed class GetAccountReportQueryHandler(
         return new AccountReportDto(
             query.FromDate,
             query.ToDate,
+            totalPayrollSalaries,
+            totalManualSalaries,
             totalSalaries,
             Math.Round(totalSubscriptions, 2, MidpointRounding.AwayFromZero),
             Math.Round(totalOtherExpenses, 2, MidpointRounding.AwayFromZero),

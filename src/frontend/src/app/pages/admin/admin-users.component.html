@@ -111,6 +111,17 @@
             name="userSecondaryAmount"
           />
         </label>
+        <label>
+          {{ 'admin.users.teacherMonthlySalary' | t }}
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            [ngModel]="editingId() ? editMonthlySalary : userMonthlySalary"
+            (ngModelChange)="editingId() ? (editMonthlySalary = $event) : (userMonthlySalary = $event)"
+            name="userMonthlySalary"
+          />
+        </label>
 
         <div class="course-teacher-block">
           <div class="course-teacher-head">

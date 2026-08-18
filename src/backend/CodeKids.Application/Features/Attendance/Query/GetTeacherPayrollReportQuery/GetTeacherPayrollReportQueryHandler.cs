@@ -39,15 +39,54 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
             attendance = attendance.Where(x => x.Course != null && x.Course.Grade == query.Grade.Value);
         }
 
-        var rows = await attendance.ToListAsync(cancellationToken);
+        var attendanceRows = await attendance.ToListAsync(cancellationToken);
         if (query.Stage.HasValue)
         {
-            rows = rows
+            attendanceRows = attendanceRows
                 .Where(x => GradeStageHelper.StageCodeForGrade(x.Course?.Grade) == query.Stage.Value)
                 .ToList();
         }
 
-        var teacherIds = rows.Select(x => x.TeacherId).Distinct().ToList();
+        var teacherIds = attendanceRows.Select(x => x.TeacherId).Distinct().ToList();
+
+        var adjustmentsQuery = dbContext.TeacherPayrollAdjustments
+            .AsNoTracking()
+            .Where(x => x.AdjustmentDate >= query.FromDate && x.AdjustmentDate <= query.ToDate);
+        if (query.TeacherId.HasValue)
+        {
+            adjustmentsQuery = adjustmentsQuery.Where(x => x.TeacherId == query.TeacherId.Value);
+        }
+
+        var adjustments = await adjustmentsQuery.ToListAsync(cancellationToken);
+        teacherIds = teacherIds
+            .Concat(adjustments.Select(x => x.TeacherId))
+            .Distinct()
+            .ToList();
+
+        var teachersQuery = dbContext.Users
+            .AsNoTracking()
+            .Where(x => x.Role == UserRole.Teacher);
+
+        if (query.TeacherId.HasValue)
+        {
+            teachersQuery = teachersQuery.Where(x => x.Id == query.TeacherId.Value);
+        }
+        else if (teacherIds.Count > 0)
+        {
+            teachersQuery = teachersQuery.Where(x =>
+                teacherIds.Contains(x.Id) || (x.MonthlySalary != null && x.MonthlySalary > 0));
+        }
+        else
+        {
+            teachersQuery = teachersQuery.Where(x => x.MonthlySalary != null && x.MonthlySalary > 0);
+        }
+
+        var teachers = await teachersQuery.ToListAsync(cancellationToken);
+        teacherIds = teachers.Select(x => x.Id)
+            .Concat(teacherIds)
+            .Distinct()
+            .ToList();
+
         var rates = await dbContext.TeacherCourseRates
             .AsNoTracking()
             .Where(x => teacherIds.Contains(x.TeacherId))
@@ -59,56 +98,89 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
                 g => g.Key,
                 g => g.ToDictionary(x => x.CourseId, x => x));
 
-        var reportRows = rows
+        var sessionByTeacher = attendanceRows
             .GroupBy(x => x.TeacherId)
-            .Select(g =>
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var manualByTeacher = adjustments
+            .GroupBy(x => x.TeacherId)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.Amount));
+
+        var monthsInRange = CountMonths(query.FromDate, query.ToDate);
+        var teacherLookup = teachers.ToDictionary(x => x.Id);
+
+        var reportRows = teacherIds
+            .Select(teacherId =>
             {
-                var teacher = g.First().Teacher;
-                var teacherName = teacher?.DisplayName ?? string.Empty;
-                var teacherRates = rateLookup.GetValueOrDefault(g.Key);
+                teacherLookup.TryGetValue(teacherId, out var teacher);
+                var teacherName = teacher?.DisplayName
+                    ?? attendanceRows.FirstOrDefault(x => x.TeacherId == teacherId)?.Teacher?.DisplayName
+                    ?? string.Empty;
+
                 var primary = 0;
                 var prep = 0;
                 var secondary = 0;
-                decimal total = 0m;
+                decimal sessionAmount = 0m;
 
-                foreach (var row in g)
+                if (sessionByTeacher.TryGetValue(teacherId, out var sessions))
                 {
-                    var stage = GradeStageHelper.StageForGrade(row.Course?.Grade);
-                    var amount = ResolveSessionAmount(
-                        teacher,
-                        row.CourseId,
-                        stage,
-                        teacherRates);
-
-                    switch (stage)
+                    var teacherRates = rateLookup.GetValueOrDefault(teacherId);
+                    foreach (var row in sessions)
                     {
-                        case GradeStage.Primary:
-                            primary++;
-                            total += amount;
-                            break;
-                        case GradeStage.Middle:
-                            prep++;
-                            total += amount;
-                            break;
-                        case GradeStage.Secondary:
-                            secondary++;
-                            total += amount;
-                            break;
-                        default:
-                            // KG / unknown: count not shown in stage columns; still add amount if any override.
-                            total += amount;
-                            break;
+                        var stage = GradeStageHelper.StageForGrade(row.Course?.Grade);
+                        var amount = ResolveSessionAmount(
+                            teacher ?? row.Teacher,
+                            row.CourseId,
+                            stage,
+                            teacherRates);
+
+                        switch (stage)
+                        {
+                            case GradeStage.Primary:
+                                primary++;
+                                sessionAmount += amount;
+                                break;
+                            case GradeStage.Middle:
+                                prep++;
+                                sessionAmount += amount;
+                                break;
+                            case GradeStage.Secondary:
+                                secondary++;
+                                sessionAmount += amount;
+                                break;
+                            default:
+                                sessionAmount += amount;
+                                break;
+                        }
                     }
                 }
 
+                var monthlySalary = Math.Round(
+                    (teacher?.MonthlySalary ?? 0m) * monthsInRange,
+                    2,
+                    MidpointRounding.AwayFromZero);
+                var manualAmount = Math.Round(
+                    manualByTeacher.GetValueOrDefault(teacherId),
+                    2,
+                    MidpointRounding.AwayFromZero);
+                sessionAmount = Math.Round(sessionAmount, 2, MidpointRounding.AwayFromZero);
+                var totalAmount = Math.Round(
+                    sessionAmount + monthlySalary + manualAmount,
+                    2,
+                    MidpointRounding.AwayFromZero);
+
                 return new TeacherPayrollRowDto(
-                    g.Key,
+                    teacherId,
                     teacherName,
                     primary,
                     prep,
                     secondary,
-                    Math.Round(total, 2, MidpointRounding.AwayFromZero));
+                    sessionAmount,
+                    monthlySalary,
+                    manualAmount,
+                    totalAmount);
             })
+            .Where(x => x.SessionAmount != 0 || x.MonthlySalary != 0 || x.ManualAmount != 0)
             .OrderBy(x => x.TeacherName)
             .ToList();
 
@@ -119,6 +191,9 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
 
         return new TeacherPayrollReportDto(query.FromDate, query.ToDate, reportRows, grandTotal);
     }
+
+    private static int CountMonths(DateOnly fromDate, DateOnly toDate) =>
+        (toDate.Year - fromDate.Year) * 12 + (toDate.Month - fromDate.Month) + 1;
 
     private static decimal ResolveSessionAmount(
         Domain.Entities.User? teacher,

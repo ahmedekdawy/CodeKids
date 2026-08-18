@@ -86,6 +86,7 @@ public sealed class UpdateManagedUserCommandHandler(
         user.PrimaryAmount = contract.PrimaryAmount;
         user.PrepAmount = contract.PrepAmount;
         user.SecondaryAmount = contract.SecondaryAmount;
+        user.MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary);
         if (!string.IsNullOrWhiteSpace(command.Password))
         {
             user.PasswordHash = passwordHasher.Hash(command.Password);

@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, signal, viewChild } from '@angular/core'
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { ManagedUser, TeacherPayrollReport } from '../../models';
+import { ManagedUser, TeacherPayrollAdjustment, TeacherPayrollReport } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import {
   GRADE_CODES,
@@ -13,10 +13,17 @@ import {
 import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 
 @Component({
   selector: 'app-admin-payroll',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [
+    PageFeedbackComponent,
+    SearchableSelectComponent,
+    FormsModule,
+    TranslatePipe,
+    IconActionButtonComponent
+  ],
   templateUrl: './admin-payroll.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -27,18 +34,33 @@ export class AdminPayrollComponent {
 
   readonly teachers = signal<ManagedUser[]>([]);
   readonly report = signal<TeacherPayrollReport | null>(null);
+  readonly adjustments = signal<TeacherPayrollAdjustment[]>([]);
   readonly message = signal('');
   readonly error = signal('');
   readonly exporting = signal(false);
 
   readonly grades = GRADE_CODES;
   readonly stages = STAGE_CODES;
+  readonly months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  readonly years = yearOptions();
 
+  filterYear = new Date().getFullYear();
+  filterMonth = new Date().getMonth() + 1;
   filterFromDate = startOfMonthLocal();
   filterToDate = endOfMonthLocal();
   filterTeacherId = '';
   filterStage: number | '' = '';
   filterGrade: number | '' = '';
+
+  manualTeacherId = '';
+  manualAmount: number | null = null;
+  manualYear = new Date().getFullYear();
+  manualMonth = new Date().getMonth() + 1;
+  manualNotes = '';
+
+  manualFilterYear = new Date().getFullYear();
+  manualFilterMonth = new Date().getMonth() + 1;
+  manualFilterTeacherId = '';
 
   constructor() {
     this.api.getUsers('Teacher').subscribe({
@@ -46,6 +68,19 @@ export class AdminPayrollComponent {
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.payroll.loadFailed'))
     });
     this.reload();
+    this.loadAdjustments();
+  }
+
+  monthLabel(month: number): string {
+    return this.locale.t(`admin.payments.month${month}`);
+  }
+
+  adjustmentMonth(row: TeacherPayrollAdjustment): number {
+    return parseMonthYear(row.adjustmentDate).month;
+  }
+
+  adjustmentYear(row: TeacherPayrollAdjustment): number {
+    return parseMonthYear(row.adjustmentDate).year;
   }
 
   gradeLabel(grade: number): string {
@@ -64,12 +99,34 @@ export class AdminPayrollComponent {
   }
 
   resetFilters(): void {
-    this.filterFromDate = startOfMonthLocal();
-    this.filterToDate = endOfMonthLocal();
+    const now = new Date();
+    this.filterYear = now.getFullYear();
+    this.filterMonth = now.getMonth() + 1;
+    this.applyMonthYearFilter();
     this.filterTeacherId = '';
     this.filterStage = '';
     this.filterGrade = '';
     this.reload();
+  }
+
+  onFilterMonthYearChange(): void {
+    this.applyMonthYearFilter();
+    this.reload();
+  }
+
+  onDateRangeChange(): void {
+    if (this.filterFromDate) {
+      const parsed = parseMonthYear(this.filterFromDate);
+      this.filterYear = parsed.year;
+      this.filterMonth = parsed.month;
+    }
+    this.reload();
+  }
+
+  private applyMonthYearFilter(): void {
+    const range = monthRange(this.filterYear, this.filterMonth);
+    this.filterFromDate = range.from;
+    this.filterToDate = range.to;
   }
 
   reload(): void {
@@ -78,6 +135,7 @@ export class AdminPayrollComponent {
       this.error.set(this.locale.t('admin.payroll.dateRequired'));
       return;
     }
+
     this.api
       .getPayrollReport({
         fromDate: this.filterFromDate,
@@ -90,6 +148,74 @@ export class AdminPayrollComponent {
         next: (report) => this.report.set(report),
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.payroll.loadFailed'))
       });
+  }
+
+  onManualFilterChange(): void {
+    this.loadAdjustments();
+  }
+
+  resetManualFilters(): void {
+    const now = new Date();
+    this.manualFilterYear = now.getFullYear();
+    this.manualFilterMonth = now.getMonth() + 1;
+    this.manualFilterTeacherId = '';
+    this.loadAdjustments();
+  }
+
+  loadAdjustments(): void {
+    const range = monthRange(this.manualFilterYear, this.manualFilterMonth);
+    this.api
+      .getPayrollAdjustments({
+        fromDate: range.from,
+        toDate: range.to,
+        teacherId: this.manualFilterTeacherId || undefined
+      })
+      .subscribe({
+        next: (rows) => this.adjustments.set(rows ?? []),
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.payroll.adjustmentsLoadFailed'))
+      });
+  }
+
+  createManualAdjustment(): void {
+    this.clearStatus();
+    const amount = Number(this.manualAmount);
+    if (!this.manualTeacherId || !this.manualYear || !this.manualMonth || !Number.isFinite(amount) || amount === 0) {
+      this.error.set(this.locale.t('admin.payroll.manualRequired'));
+      return;
+    }
+
+    const adjustmentDate = monthRange(this.manualYear, this.manualMonth).from;
+
+    this.api
+      .createPayrollAdjustment({
+        teacherId: this.manualTeacherId,
+        amount,
+        adjustmentDate,
+        notes: this.manualNotes.trim()
+      })
+      .subscribe({
+        next: () => {
+          this.message.set(this.locale.t('admin.payroll.manualCreated'));
+          this.manualAmount = null;
+          this.manualNotes = '';
+          this.reload();
+          this.loadAdjustments();
+        },
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.payroll.manualCreateFailed'))
+      });
+  }
+
+  removeAdjustment(row: TeacherPayrollAdjustment): void {
+    if (!confirm(this.locale.t('admin.payroll.confirmDeleteManual', { label: row.teacherName }))) return;
+    this.clearStatus();
+    this.api.deletePayrollAdjustment(row.id).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('admin.payroll.manualDeleted'));
+        this.reload();
+        this.loadAdjustments();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.payroll.manualDeleteFailed'))
+    });
   }
 
   async exportImage(): Promise<void> {
@@ -113,6 +239,23 @@ export class AdminPayrollComponent {
     this.message.set('');
     this.error.set('');
   }
+}
+
+function yearOptions(): number[] {
+  const current = new Date().getFullYear();
+  return Array.from({ length: 6 }, (_, i) => current - 2 + i);
+}
+
+function monthRange(year: number, month: number): { from: string; to: string } {
+  return {
+    from: toLocalDateString(new Date(year, month - 1, 1)),
+    to: toLocalDateString(new Date(year, month, 0))
+  };
+}
+
+function parseMonthYear(dateStr: string): { month: number; year: number } {
+  const d = new Date(`${dateStr}T00:00:00`);
+  return { month: d.getMonth() + 1, year: d.getFullYear() };
 }
 
 function startOfMonthLocal(): string {

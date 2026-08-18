@@ -422,13 +422,62 @@ export interface TeacherSessionAttendance {
   label: string;
 }
 
+export interface StudentWeeklyReportGridRow {
+  reportId?: string | null;
+  studentId: string;
+  studentName: string;
+  studentGrade?: number | null;
+  weekStartDate: string;
+  performancePercent?: number | null;
+  attendancePercent?: number | null;
+  homeworkPercent?: number | null;
+  interactionDuringSession: string;
+  openCamera?: boolean | null;
+}
+
+export interface StudentWeeklyReport {
+  id: string;
+  teacherId: string;
+  studentId: string;
+  studentName: string;
+  studentGrade?: number | null;
+  weekStartDate: string;
+  performancePercent?: number | null;
+  attendancePercent?: number | null;
+  homeworkPercent?: number | null;
+  interactionDuringSession: string;
+  openCamera?: boolean | null;
+}
+
+export interface SaveWeeklyReportEntry {
+  studentId: string;
+  performancePercent?: number | null;
+  attendancePercent?: number | null;
+  homeworkPercent?: number | null;
+  interactionDuringSession: string;
+  openCamera?: boolean | null;
+}
+
 export interface TeacherPayrollRow {
   teacherId: string;
   teacherName: string;
   primarySessions: number;
   prepSessions: number;
   secondarySessions: number;
+  sessionAmount: number;
+  monthlySalary: number;
+  manualAmount: number;
   totalAmount: number;
+}
+
+export interface TeacherPayrollAdjustment {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  amount: number;
+  adjustmentDate: string;
+  notes: string;
+  createdAtUtc: string;
 }
 
 export interface TeacherPayrollReport {
@@ -441,6 +490,8 @@ export interface TeacherPayrollReport {
 export interface AccountReport {
   fromDate: string;
   toDate: string;
+  totalPayrollSalaries: number;
+  totalManualSalaries: number;
   totalSalaries: number;
   totalSubscriptions: number;
   totalOtherExpenses: number;
@@ -496,6 +547,7 @@ export interface ManagedUser {
   primaryAmount?: number | null;
   prepAmount?: number | null;
   secondaryAmount?: number | null;
+  monthlySalary?: number | null;
   courseRates?: TeacherCourseRate[];
 }
 
