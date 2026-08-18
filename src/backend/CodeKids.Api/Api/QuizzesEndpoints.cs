@@ -136,6 +136,47 @@ public static class QuizzesEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Student" });
 
+        app.MapGet("/api/teacher/quizzes", async (
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            int? grade,
+            Guid? courseId,
+            HttpContext httpContext,
+            IQueryHandler<GetTeacherQuizzesQuery, IReadOnlyList<TeacherQuizListDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new GetTeacherQuizzesQuery(userId, fromDate, toDate, grade, courseId),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapGet("/api/teacher/quizzes/{quizId:guid}/attempts", async (
+            Guid quizId,
+            HttpContext httpContext,
+            IQueryHandler<GetQuizAttemptsQuery, IReadOnlyList<QuizAttemptReviewDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new GetQuizAttemptsQuery(userId, quizId),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
         return app;
 
     }

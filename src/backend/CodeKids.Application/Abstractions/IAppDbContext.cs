@@ -15,6 +15,7 @@ public interface IAppDbContext
     DbSet<Quiz> Quizzes { get; }
     DbSet<QuizQuestion> QuizQuestions { get; }
     DbSet<QuizAttempt> QuizAttempts { get; }
+    DbSet<QuizAttemptAnswer> QuizAttemptAnswers { get; }
     DbSet<Badge> Badges { get; }
     DbSet<UserBadge> UserBadges { get; }
     DbSet<LiveSession> LiveSessions { get; }

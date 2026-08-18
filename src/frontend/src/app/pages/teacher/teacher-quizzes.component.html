@@ -5,6 +5,104 @@
   <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block">
+    <h3>{{ 'teacher.quizzes.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'teacher.quizzes.dateFrom' | t }}
+        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reloadQuizzes()" />
+      </label>
+      <label>
+        {{ 'teacher.quizzes.dateTo' | t }}
+        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reloadQuizzes()" />
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <app-searchable-select
+          [(ngModel)]="filterGrade"
+          name="filterGrade"
+          (ngModelChange)="reloadQuizzes()"
+          [emptyLabel]="'common.allGrades' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
+      </label>
+      <label>
+        {{ 'teacher.quizzes.subject' | t }}
+        <app-searchable-select
+          [(ngModel)]="filterCourseId"
+          name="filterCourseId"
+          (ngModelChange)="reloadQuizzes()"
+          [emptyLabel]="'teacher.quizzes.allSubjects' | t"
+          [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+
+    @for (quiz of quizzes(); track quiz.id) {
+      <div class="meeting-row">
+        <div>
+          <strong>{{ quiz.title }}</strong>
+          <p class="meta">
+            {{ quiz.courseTitle }}
+            · {{ gradeLabel(quiz.courseGrade) }}
+            @if (quiz.classroomName) { · {{ quiz.classroomName }} }
+            · {{ quiz.questionCount }} {{ 'common.questions' | t }}
+            · {{ quiz.attemptCount }} {{ 'teacher.quizzes.attemptsCount' | t }}
+            · {{ dateLabel(quiz.createdAtUtc) }}
+          </p>
+        </div>
+        <button type="button" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
+      </div>
+    } @empty {
+      <p class="meta">{{ 'teacher.quizzes.empty' | t }}</p>
+    }
+  </section>
+
+  @if (reviewQuizId) {
+    <section class="block">
+      <h3>{{ 'teacher.quizzes.attempts' | t }} — {{ reviewQuizTitle() }}</h3>
+      @for (attempt of attempts(); track attempt.id) {
+        <div class="meeting-row">
+          <div>
+            <strong>{{ attempt.studentName }}</strong>
+            <p class="meta">
+              {{ attempt.score }}/{{ attempt.totalQuestions }}
+              · {{ attempt.earnedXp }} XP
+              · {{ dateLabel(attempt.completedAtUtc) }}
+            </p>
+          </div>
+          <button type="button" class="ghost-btn" (click)="toggleAttempt(attempt.id)">
+            {{ (expandedAttemptId === attempt.id ? 'teacher.quizzes.hideAnswers' : 'teacher.quizzes.viewAnswers') | t }}
+          </button>
+        </div>
+        @if (expandedAttemptId === attempt.id) {
+          <div class="answers-review">
+            @for (answer of attempt.answers; track answer.questionId) {
+              <div class="answer-row" [class.correct]="answer.isCorrect" [class.wrong]="!answer.isCorrect">
+                <strong>{{ answer.sortOrder }}. {{ answer.prompt }}</strong>
+                <p class="meta">
+                  {{ 'teacher.quizzes.studentAnswer' | t }}:
+                  {{ answer.selectedText || ('common.emDash' | t) }}
+                </p>
+                <p class="meta">
+                  {{ 'common.correctAnswer' | t }}:
+                  {{ answer.correctText || ('common.emDash' | t) }}
+                </p>
+              </div>
+            } @empty {
+              <p class="meta">{{ 'teacher.quizzes.noSavedAnswers' | t }}</p>
+            }
+          </div>
+        }
+      } @empty {
+        <p class="meta">{{ 'teacher.quizzes.noAttempts' | t }}</p>
+      }
+    </section>
+  }
+
+  <section class="block">
     <h3>{{ 'teacher.quizzes.create' | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createQuiz()">
       <label>{{ 'common.title' | t }} <input [(ngModel)]="quizTitle" name="quizTitle" required /></label>
@@ -26,38 +124,67 @@
         />
       </label>
       <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
-      <label>{{ 'teacher.quizzes.question' | t }} <input [(ngModel)]="quizPrompt" name="quizPrompt" required /></label>
 
-      <div class="options-editor">
-        <div class="options-head">
-          <h4>{{ 'teacher.quizzes.options' | t }}</h4>
-          <button type="button" class="ghost-btn" (click)="addOption()">{{ 'common.addOption' | t }}</button>
-        </div>
-        @for (opt of options; track $index; let i = $index) {
-          <div class="option-row">
-            <span class="option-key">{{ optionLabel(i) }}</span>
-            <input [(ngModel)]="opt.text" [name]="'quizOpt-' + i" [placeholder]="'common.optionText' | t" (ngModelChange)="onOptionTextChange()" />
+      <div class="questions-head">
+        <h4>{{ 'teacher.quizzes.questions' | t }}</h4>
+        <button type="button" class="ghost-btn" (click)="addQuestion()">{{ 'teacher.quizzes.addQuestion' | t }}</button>
+      </div>
+
+      @for (question of questions; track $index; let qi = $index) {
+        <div class="question-card">
+          <div class="question-card-head">
+            <strong>{{ 'teacher.quizzes.questionNumber' | t:{ n: qi + 1 } }}</strong>
             <app-icon-action-button
               kind="delete"
               variant="ghost"
-              [label]="'common.removeOption' | t"
-              [disabled]="options.length <= 2"
-              (action)="removeOption(i)"
+              [label]="'teacher.quizzes.removeQuestion' | t"
+              [disabled]="questions.length <= 1"
+              (action)="removeQuestion(qi)"
             />
           </div>
-        }
 
-        <label>
-          {{ 'common.correctAnswer' | t }}
-          <app-searchable-select
-            [(ngModel)]="quizCorrect"
-            name="quizCorrect"
-            required
-            [emptyLabel]="'common.selectCorrect' | t"
-            [options]="filledOptions().map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
-          />
-        </label>
-      </div>
+          <label>
+            {{ 'teacher.quizzes.question' | t }}
+            <input [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" required />
+          </label>
+
+          <div class="options-editor">
+            <div class="options-head">
+              <h4>{{ 'teacher.quizzes.options' | t }}</h4>
+              <button type="button" class="ghost-btn" (click)="addOption(qi)">{{ 'common.addOption' | t }}</button>
+            </div>
+            @for (opt of question.options; track $index; let oi = $index) {
+              <div class="option-row">
+                <span class="option-key">{{ optionLabel(oi) }}</span>
+                <input
+                  [(ngModel)]="opt.text"
+                  [name]="'quizOpt-' + qi + '-' + oi"
+                  [placeholder]="'common.optionText' | t"
+                  (ngModelChange)="onOptionTextChange(question)"
+                />
+                <app-icon-action-button
+                  kind="delete"
+                  variant="ghost"
+                  [label]="'common.removeOption' | t"
+                  [disabled]="question.options.length <= 2"
+                  (action)="removeOption(qi, oi)"
+                />
+              </div>
+            }
+
+            <label>
+              {{ 'common.correctAnswer' | t }}
+              <app-searchable-select
+                [(ngModel)]="question.correct"
+                [name]="'quizCorrect-' + qi"
+                required
+                [emptyLabel]="'common.selectCorrect' | t"
+                [options]="filledOptions(question).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+              />
+            </label>
+          </div>
+        </div>
+      }
 
       <button type="submit">{{ 'teacher.quizzes.create' | t }}</button>
     </form>

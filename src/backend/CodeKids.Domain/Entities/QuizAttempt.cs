@@ -11,5 +11,6 @@ public class QuizAttempt
     public DateTimeOffset CompletedAtUtc { get; set; }
     public User? User { get; set; }
     public Quiz? Quiz { get; set; }
+    public List<QuizAttemptAnswer> Answers { get; set; } = [];
 }
 

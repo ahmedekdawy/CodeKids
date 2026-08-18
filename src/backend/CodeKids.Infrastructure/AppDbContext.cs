@@ -17,6 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Quiz> Quizzes => Set<Quiz>();
     public DbSet<QuizQuestion> QuizQuestions => Set<QuizQuestion>();
     public DbSet<QuizAttempt> QuizAttempts => Set<QuizAttempt>();
+    public DbSet<QuizAttemptAnswer> QuizAttemptAnswers => Set<QuizAttemptAnswer>();
     public DbSet<Badge> Badges => Set<Badge>();
     public DbSet<UserBadge> UserBadges => Set<UserBadge>();
     public DbSet<LiveSession> LiveSessions => Set<LiveSession>();
@@ -172,6 +173,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(400).IsRequired();
+            entity.HasIndex(x => x.CreatedAtUtc);
             entity.HasMany(x => x.Questions)
                 .WithOne(x => x.Quiz)
                 .HasForeignKey(x => x.QuizId)
@@ -207,6 +209,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasOne(x => x.Quiz)
                 .WithMany()
                 .HasForeignKey(x => x.QuizId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.Answers)
+                .WithOne(x => x.Attempt)
+                .HasForeignKey(x => x.AttemptId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<QuizAttemptAnswer>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.SelectedOption).HasMaxLength(40).IsRequired();
+            entity.HasIndex(x => new { x.AttemptId, x.QuestionId }).IsUnique();
+            entity.HasOne(x => x.Question)
+                .WithMany()
+                .HasForeignKey(x => x.QuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

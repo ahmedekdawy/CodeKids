@@ -37,6 +37,8 @@ import {
   ParentDashboard,
   PlaybackInfo,
   Quiz,
+  QuizAttemptReview,
+  TeacherQuizListItem,
   SendClassroomWhatsAppResult,
   StudentSummary,
   SubmitQuizResponse,
@@ -106,6 +108,27 @@ export class LearningApiService {
     }[];
   }): Observable<Quiz> {
     return this.http.post<Quiz>(`${this.baseUrl}/quizzes`, payload);
+  }
+
+  getTeacherQuizzes(filters?: {
+    fromDate?: string;
+    toDate?: string;
+    grade?: number;
+    courseId?: string;
+  }): Observable<TeacherQuizListItem[]> {
+    const params = new URLSearchParams();
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.courseId) params.set('courseId', filters.courseId);
+    const query = params.toString();
+    return this.http.get<TeacherQuizListItem[]>(
+      `${this.baseUrl}/teacher/quizzes${query ? `?${query}` : ''}`
+    );
+  }
+
+  getQuizAttempts(quizId: string): Observable<QuizAttemptReview[]> {
+    return this.http.get<QuizAttemptReview[]>(`${this.baseUrl}/teacher/quizzes/${quizId}/attempts`);
   }
 
   submitQuiz(payload: {

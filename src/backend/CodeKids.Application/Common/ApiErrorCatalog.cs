@@ -87,6 +87,7 @@ public static class ApiErrorCatalog
         ["Teacher must be assigned to a classroom before creating quizzes."] = "api.errors.quiz.teacherNeedsClassroom",
         ["Each quiz question needs at least two options."] = "api.errors.quiz.minOptions",
         ["Correct option must match one of the listed choices."] = "api.errors.quiz.correctOptionRequired",
+        ["Only the quiz teacher can review attempts."] = "api.errors.quiz.teacherOnlyReview",
         ["Question prompt is required."] = "api.errors.questionBank.promptRequired",
         ["Underline questions require the sentence/text to underline in."] = "api.errors.questionBank.underlineTextRequired",
         ["Underline questions require the correct underlined phrase."] = "api.errors.questionBank.underlinePhraseRequired",

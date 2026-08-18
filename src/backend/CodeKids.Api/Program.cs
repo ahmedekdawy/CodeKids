@@ -199,6 +199,10 @@ builder.Services.AddScoped<ICommandHandler<SubmitQuizCommand, SubmitQuizResponse
 
 builder.Services.AddScoped<ICommandHandler<CreateQuizCommand, QuizDto>, CreateQuizCommandHandler>();
 
+builder.Services.AddScoped<IQueryHandler<GetTeacherQuizzesQuery, IReadOnlyList<TeacherQuizListDto>>, GetTeacherQuizzesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetQuizAttemptsQuery, IReadOnlyList<QuizAttemptReviewDto>>, GetQuizAttemptsQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetBadgesQuery, IReadOnlyList<BadgeDto>>, GetBadgesQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetAvatarsQuery, IReadOnlyList<AvatarDto>>, GetAvatarsQueryHandler>();

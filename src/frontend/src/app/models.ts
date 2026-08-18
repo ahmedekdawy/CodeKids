@@ -221,6 +221,44 @@ export interface Quiz {
   questions: QuizQuestion[];
 }
 
+export interface TeacherQuizListItem {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  courseGrade?: number | null;
+  classroomId?: string | null;
+  classroomName?: string | null;
+  title: string;
+  description: string;
+  xpReward: number;
+  questionCount: number;
+  attemptCount: number;
+  createdAtUtc: string;
+}
+
+export interface QuizAnswerReview {
+  questionId: string;
+  prompt: string;
+  sortOrder: number;
+  selectedOption: string;
+  selectedText: string;
+  correctOption: string;
+  correctText: string;
+  isCorrect: boolean;
+}
+
+export interface QuizAttemptReview {
+  id: string;
+  quizId: string;
+  studentId: string;
+  studentName: string;
+  score: number;
+  totalQuestions: number;
+  earnedXp: number;
+  completedAtUtc: string;
+  answers: QuizAnswerReview[];
+}
+
 export interface SubmitQuizResponse {
   score: number;
   totalQuestions: number;

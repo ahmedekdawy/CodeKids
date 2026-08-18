@@ -35,7 +35,7 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
         var ratio = total == 0 ? 0 : (double)score / total;
         var earnedXp = ratio >= 0.7 ? quiz.XpReward : Math.Max(5, quiz.XpReward / 3);
 
-        dbContext.QuizAttempts.Add(new QuizAttempt
+        var attempt = new QuizAttempt
         {
             Id = Guid.NewGuid(),
             UserId = user.Id,
@@ -44,7 +44,22 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             TotalQuestions = total,
             EarnedXp = earnedXp,
             CompletedAtUtc = DateTimeOffset.UtcNow
-        });
+        };
+
+        foreach (var question in quiz.Questions.OrderBy(x => x.SortOrder))
+        {
+            var answer = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
+            var selected = answer?.SelectedOption?.Trim() ?? string.Empty;
+            attempt.Answers.Add(new QuizAttemptAnswer
+            {
+                Id = Guid.NewGuid(),
+                QuestionId = question.Id,
+                SelectedOption = selected,
+                IsCorrect = string.Equals(selected, question.CorrectOption, StringComparison.OrdinalIgnoreCase)
+            });
+        }
+
+        dbContext.QuizAttempts.Add(attempt);
 
         user.TotalXp += earnedXp;
         await dbContext.SaveChangesAsync(cancellationToken);

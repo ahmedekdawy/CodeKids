@@ -53,7 +53,8 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
             CreatedByUserId = command.TeacherUserId,
             Title = command.Title.Trim(),
             Description = (command.Description ?? string.Empty).Trim(),
-            XpReward = Math.Max(5, command.XpReward)
+            XpReward = Math.Max(5, command.XpReward),
+            CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
         var order = 1;

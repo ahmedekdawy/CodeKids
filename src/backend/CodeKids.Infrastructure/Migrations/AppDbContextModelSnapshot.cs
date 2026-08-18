@@ -1133,6 +1133,9 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uuid");
 
@@ -1156,6 +1159,8 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("CreatedAtUtc");
 
                     b.ToTable("Quizzes");
                 });
@@ -1191,6 +1196,36 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("QuizAttempts");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttemptAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AttemptId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SelectedOption")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("AttemptId", "QuestionId")
+                        .IsUnique();
+
+                    b.ToTable("QuizAttemptAnswers");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizQuestion", b =>
@@ -2176,6 +2211,25 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttemptAnswer", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.QuizAttempt", "Attempt")
+                        .WithMany("Answers")
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.QuizQuestion", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attempt");
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizQuestion", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.Quiz", "Quiz")
@@ -2439,6 +2493,11 @@ namespace CodeKids.Infrastructure.Migrations
             modelBuilder.Entity("CodeKids.Domain.Entities.Quiz", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttempt", b =>
+                {
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.User", b =>
