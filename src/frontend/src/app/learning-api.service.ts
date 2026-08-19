@@ -34,6 +34,7 @@ import {
   LiveSession,
   ManagedUser,
   MediaAsset,
+  ParentChildOverview,
   ParentDashboard,
   PlaybackInfo,
   Quiz,
@@ -152,6 +153,10 @@ export class LearningApiService {
 
   getParentDashboard(): Observable<ParentDashboard> {
     return this.http.get<ParentDashboard>(`${this.baseUrl}/dashboard/parent`);
+  }
+
+  getParentChildOverview(childId: string): Observable<ParentChildOverview> {
+    return this.http.get<ParentChildOverview>(`${this.baseUrl}/parent/children/${childId}`);
   }
 
   getTeacherDashboard(): Observable<TeacherDashboard> {

@@ -291,14 +291,69 @@ export interface Avatar {
   isSelected: boolean;
 }
 
+export interface ChildEvaluationSummary {
+  weekStartDate: string;
+  teacherName?: string | null;
+  performancePercent?: number | null;
+  attendancePercent?: number | null;
+  homeworkPercent?: number | null;
+  interactionDuringSession: string;
+  openCamera?: boolean | null;
+}
+
 export interface ChildProgress {
   studentId: string;
   displayName: string;
+  grade?: number | null;
   totalXp: number;
   completedSteps: number;
   quizAttempts: number;
   avatarId?: string | null;
   badges: string[];
+  latestEvaluation?: ChildEvaluationSummary | null;
+}
+
+export interface ParentAssessmentItem {
+  id: string;
+  title: string;
+  description: string;
+  dueAtUtc?: string | null;
+  status: string;
+  score?: number | null;
+  maxScore?: number | null;
+  teacherFeedback?: string | null;
+  completedAtUtc?: string | null;
+}
+
+export interface ParentQuizItem {
+  id: string;
+  title: string;
+  description: string;
+  xpReward: number;
+  totalQuestions: number;
+  score?: number | null;
+  earnedXp?: number | null;
+  completedAtUtc?: string | null;
+}
+
+export interface ParentChildCourse {
+  courseId: string;
+  title: string;
+  theme: string;
+  description: string;
+  grade?: number | null;
+  term?: string | null;
+  assignments: ParentAssessmentItem[];
+  exams: ParentAssessmentItem[];
+  quizzes: ParentQuizItem[];
+}
+
+export interface ParentChildOverview {
+  studentId: string;
+  displayName: string;
+  grade?: number | null;
+  evaluations: ChildEvaluationSummary[];
+  courses: ParentChildCourse[];
 }
 
 export interface ParentDashboard {

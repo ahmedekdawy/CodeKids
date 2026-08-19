@@ -141,6 +141,7 @@ public static class ApiErrorCatalog
         ["You cannot delete your own account."] = "api.errors.admin.cannotDeleteSelf",
         ["Cannot delete the last Super Admin."] = "api.errors.admin.cannotDeleteLastSuperAdmin",
         ["Parent account not found."] = "api.errors.parent.notFound",
+        ["This student is not linked to your account."] = "api.errors.parent.childNotLinked",
         ["Student is not in your classrooms."] = "api.errors.analytics.studentNotInClassrooms"
     };
 

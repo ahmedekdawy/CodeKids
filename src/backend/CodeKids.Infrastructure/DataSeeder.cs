@@ -298,6 +298,7 @@ public static class DataSeeder
                     Role = UserRole.Student,
                     ParentId = parentId,
                     AvatarId = defaultAvatarId,
+                    Grade = 3,
                     TotalXp = 0
                 });
         }
@@ -334,6 +335,7 @@ public static class DataSeeder
                     Id = classroomId,
                     Name = "Rocket Room A",
                     Description = "Starter coding classroom",
+                    Grade = 3,
                     CourseId = courseExists ? starterCourseId : null,
                     WhatsAppGroupInviteUrl = "",
                     WhatsAppNotifyPhones = "",

@@ -211,6 +211,8 @@ builder.Services.AddScoped<ICommandHandler<SelectAvatarCommand, AvatarDto>, Sele
 
 builder.Services.AddScoped<IQueryHandler<GetParentDashboardQuery, ParentDashboardDto>, GetParentDashboardQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<GetParentChildOverviewQuery, ParentChildOverviewDto>, GetParentChildOverviewQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetTeacherDashboardQuery, TeacherDashboardDto>, GetTeacherDashboardQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetTeacherStudentDetailQuery, TeacherStudentDetailDto>, GetTeacherStudentDetailQueryHandler>();
@@ -467,6 +469,8 @@ app.MapCoursesEndpoints();
 app.MapCourseTreeEndpoints();
 
 app.MapDashboardEndpoints();
+
+app.MapParentEndpoints();
 
 app.MapExamsEndpoints();
 

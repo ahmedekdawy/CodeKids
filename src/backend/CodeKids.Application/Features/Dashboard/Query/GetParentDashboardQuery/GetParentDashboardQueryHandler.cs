@@ -1,7 +1,7 @@
-using CodeKids.Application.Features.Analytics;
+using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Enums;
-using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Dashboard;
@@ -24,6 +24,11 @@ public sealed class GetParentDashboardQueryHandler(IAppDbContext dbContext)
             .ToListAsync(cancellationToken);
 
         var childIds = children.Select(x => x.Id).ToList();
+        var grades = await StudentGradeResolver.ResolveAsync(
+            dbContext,
+            children.Select(x => (x.Id, x.Grade)),
+            cancellationToken);
+
         var progressCounts = await dbContext.StudentProgress
             .Where(x => childIds.Contains(x.UserId) && x.IsCompleted)
             .GroupBy(x => x.UserId)
@@ -36,16 +41,44 @@ public sealed class GetParentDashboardQueryHandler(IAppDbContext dbContext)
             .Select(g => new { UserId = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.UserId, x => x.Count, cancellationToken);
 
+        var latestEvaluations = childIds.Count == 0
+            ? new Dictionary<Guid, ChildEvaluationSummaryDto>()
+            : (await dbContext.StudentWeeklyReports
+                .AsNoTracking()
+                .Include(x => x.Teacher)
+                .Where(x => childIds.Contains(x.StudentId))
+                .ToListAsync(cancellationToken))
+                .GroupBy(x => x.StudentId)
+                .ToDictionary(
+                    g => g.Key,
+                    g =>
+                    {
+                        var latest = g
+                            .OrderByDescending(x => x.WeekStartDate)
+                            .ThenByDescending(x => x.UpdatedAtUtc)
+                            .First();
+                        return new ChildEvaluationSummaryDto(
+                            latest.WeekStartDate,
+                            latest.Teacher?.DisplayName,
+                            latest.PerformancePercent,
+                            latest.AttendancePercent,
+                            latest.HomeworkPercent,
+                            latest.InteractionDuringSession,
+                            latest.OpenCamera);
+                    });
+
         return new ParentDashboardDto(
             parent.Id,
             parent.DisplayName,
             children.Select(child => new ChildProgressDto(
                 child.Id,
                 child.DisplayName,
+                grades.GetValueOrDefault(child.Id) ?? child.Grade,
                 child.TotalXp,
                 progressCounts.GetValueOrDefault(child.Id),
                 quizCounts.GetValueOrDefault(child.Id),
                 child.AvatarId,
-                child.Badges.Select(x => x.Badge!.Name).ToList())).ToList());
+                child.Badges.Select(x => x.Badge!.Name).ToList(),
+                latestEvaluations.GetValueOrDefault(child.Id))).ToList());
     }
 }

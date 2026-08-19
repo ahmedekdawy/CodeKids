@@ -1,10 +1,13 @@
-<div class="page">
+<div class="page parent-page">
   <header class="topbar">
     <div>
       <app-site-brand />
       <h1>{{ 'parent.title' | t }}</h1>
     </div>
-    <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    <div class="topbar-actions">
+      <app-language-switcher />
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    </div>
   </header>
 
   <section class="hero-strip">
@@ -15,44 +18,247 @@
     </div>
   </section>
 
-  <section class="block">
-    <h3>{{ 'parent.zoomTitle' | t }}</h3>
-    @for (meeting of meetings(); track meeting.id) {
-      <div class="meeting-row">
-        <div>
-          <strong>{{ meeting.title }}</strong>
-          <p class="meta">
-            {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.durationMinutes }} {{ 'common.min' | t }} · {{ meeting.hostName }}
-          </p>
-        </div>
-        <a class="chip quiz" [href]="meeting.joinUrl" target="_blank" rel="noopener">{{ 'parent.openJoin' | t }}</a>
-      </div>
-    } @empty {
-      <p class="meta">{{ 'parent.noMeetings' | t }}</p>
-    }
-  </section>
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
 
-  <section class="grid-cards">
-    @for (child of dashboard()?.children || []; track child.studentId) {
-      <article class="block">
-        <h3>{{ child.displayName }}</h3>
-        <p>{{ 'parent.childSummary' | t:{ xp: child.totalXp, steps: child.completedSteps, quizzes: child.quizAttempts } }}</p>
-        <p class="meta">{{ 'parent.studentId' | t }} {{ child.studentId }}</p>
-        <div class="chip-row">
-          @for (badge of child.badges; track badge) {
-            <span class="chip">{{ badge }}</span>
-          }
-          @if (!child.badges.length) {
-            <span class="meta">{{ 'parent.noBadges' | t }}</span>
-          }
+  @if (!selectedChildId()) {
+    <section class="block">
+      <h3>{{ 'parent.zoomTitle' | t }}</h3>
+      @for (meeting of meetings(); track meeting.id) {
+        <div class="meeting-row">
+          <div>
+            <strong>{{ meeting.title }}</strong>
+            <p class="meta">
+              {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.durationMinutes }} {{ 'common.min' | t }} · {{ meeting.hostName }}
+            </p>
+          </div>
+          <a class="chip quiz" [href]="meeting.joinUrl" target="_blank" rel="noopener">{{ 'parent.openJoin' | t }}</a>
         </div>
-      </article>
-    } @empty {
-      <article class="block">
-        <h3>{{ 'parent.noChildren' | t }}</h3>
-        <p>{{ 'parent.noChildrenHint' | t }}</p>
-        <p class="meta">{{ 'parent.yourId' | t }} {{ auth.user()?.id }}</p>
-      </article>
+      } @empty {
+        <p class="meta">{{ 'parent.noMeetings' | t }}</p>
+      }
+    </section>
+
+    <section>
+      <header class="section-head">
+        <h2>{{ 'parent.childrenTitle' | t }}</h2>
+      </header>
+      <div class="grid-cards">
+        @for (child of dashboard()?.children || []; track child.studentId) {
+          <button type="button" class="block child-card" (click)="selectChild(child)">
+            <h3>{{ child.displayName }}</h3>
+            <p class="grade-line">{{ 'common.grade' | t }}: {{ gradeLabel(child.grade) }}</p>
+            <p class="meta">{{ evaluationLine(child.latestEvaluation) }}</p>
+            <p>{{ 'parent.childSummary' | t:{ xp: child.totalXp, steps: child.completedSteps, quizzes: child.quizAttempts } }}</p>
+            <div class="chip-row">
+              @for (badge of child.badges; track badge) {
+                <span class="chip">{{ badge }}</span>
+              }
+              @if (!child.badges.length) {
+                <span class="meta">{{ 'parent.noBadges' | t }}</span>
+              }
+            </div>
+            <span class="action-ghost">{{ 'parent.viewCourses' | t }}</span>
+          </button>
+        } @empty {
+          <article class="block">
+            <h3>{{ 'parent.noChildren' | t }}</h3>
+            <p>{{ 'parent.noChildrenHint' | t }}</p>
+            <p class="meta">{{ 'parent.yourId' | t }} {{ auth.user()?.id }}</p>
+          </article>
+        }
+      </div>
+    </section>
+  } @else {
+    <div class="drill-nav">
+      <button type="button" class="ghost" (click)="backToChildren()">{{ 'parent.backToChildren' | t }}</button>
+      @if (selectedCourseId()) {
+        <button type="button" class="ghost" (click)="backToCourses()">{{ 'parent.backToCourses' | t }}</button>
+      }
+    </div>
+
+    <section class="block child-header">
+      <div>
+        <p class="eyebrow">{{ 'common.student' | t }}</p>
+        <h2>{{ selectedChild()?.displayName || overview()?.displayName }}</h2>
+        <p class="grade-line">{{ 'common.grade' | t }}: {{ gradeLabel(selectedChild()?.grade ?? overview()?.grade) }}</p>
+        <p class="meta">{{ evaluationLine(latestEvaluation()) }}</p>
+      </div>
+      <p class="meta">
+        {{ 'parent.childSummary' | t:{
+          xp: selectedChild()?.totalXp || 0,
+          steps: selectedChild()?.completedSteps || 0,
+          quizzes: selectedChild()?.quizAttempts || 0
+        } }}
+      </p>
+    </section>
+
+    @if (loadingChild()) {
+      <p class="meta">{{ 'common.loading' | t }}</p>
     }
-  </section>
+
+    @if (overview(); as childOverview) {
+      @if (!selectedCourseId()) {
+        <section class="block">
+          <h3>{{ 'parent.evaluationsTitle' | t }}</h3>
+          @if (childOverview.evaluations.length) {
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>{{ 'teacher.weeklyReports.weekStart' | t }}</th>
+                    <th>{{ 'teacher.weeklyReports.performance' | t }}</th>
+                    <th>{{ 'teacher.weeklyReports.attendance' | t }}</th>
+                    <th>{{ 'teacher.weeklyReports.homework' | t }}</th>
+                    <th>{{ 'teacher.weeklyReports.interaction' | t }}</th>
+                    <th>{{ 'teacher.weeklyReports.openCamera' | t }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of childOverview.evaluations; track row.weekStartDate + (row.teacherName || '')) {
+                    <tr>
+                      <td>
+                        {{ formatDate(row.weekStartDate) }}
+                        @if (row.teacherName) {
+                          <span class="meta"> · {{ row.teacherName }}</span>
+                        }
+                      </td>
+                      <td>{{ percent(row.performancePercent) }}</td>
+                      <td>{{ percent(row.attendancePercent) }}</td>
+                      <td>{{ percent(row.homeworkPercent) }}</td>
+                      <td>{{ interactionLabel(row.interactionDuringSession) }}</td>
+                      <td>{{ cameraLabel(row.openCamera) }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <p class="meta">{{ 'parent.noEvaluations' | t }}</p>
+          }
+        </section>
+      }
+
+      @if (selectedCourse(); as course) {
+        <section class="block">
+          <header class="section-head">
+            <div>
+              <h2>{{ 'parent.courseResults' | t:{ course: course.title } }}</h2>
+              <p class="section-hint">{{ course.description }}</p>
+            </div>
+          </header>
+
+          <div class="task-group">
+            <p class="group-label">{{ 'student.assignments' | t }}</p>
+            <div class="item-list">
+              @for (assignment of course.assignments; track assignment.id) {
+                <article class="item-row">
+                  <div class="item-body">
+                    <strong>{{ assignment.title }}</strong>
+                    <p class="meta">
+                      {{ statusLabel(assignment.status) }}
+                      @if (assignment.dueAtUtc) {
+                        · {{ 'parent.due' | t:{ date: formatWhen(assignment.dueAtUtc) } }}
+                      }
+                    </p>
+                    @if (assignment.teacherFeedback) {
+                      <p class="meta">{{ 'parent.teacherFeedback' | t }}: {{ assignment.teacherFeedback }}</p>
+                    }
+                  </div>
+                  <span class="score-chip" [class.done]="assignment.score != null">{{ scoreLabel(assignment) }}</span>
+                </article>
+              } @empty {
+                <p class="meta empty-state">{{ 'parent.noAssignments' | t }}</p>
+              }
+            </div>
+          </div>
+
+          <div class="task-group">
+            <p class="group-label">{{ 'student.exams' | t }}</p>
+            <div class="item-list">
+              @for (exam of course.exams; track exam.id) {
+                <article class="item-row">
+                  <div class="item-body">
+                    <strong>{{ exam.title }}</strong>
+                    <p class="meta">
+                      {{ statusLabel(exam.status) }}
+                      @if (exam.dueAtUtc) {
+                        · {{ 'parent.due' | t:{ date: formatWhen(exam.dueAtUtc) } }}
+                      }
+                    </p>
+                    @if (exam.teacherFeedback) {
+                      <p class="meta">{{ 'parent.teacherFeedback' | t }}: {{ exam.teacherFeedback }}</p>
+                    }
+                  </div>
+                  <span class="score-chip" [class.done]="exam.score != null">{{ scoreLabel(exam) }}</span>
+                </article>
+              } @empty {
+                <p class="meta empty-state">{{ 'parent.noExams' | t }}</p>
+              }
+            </div>
+          </div>
+
+          <div class="task-group">
+            <p class="group-label">{{ 'student.quizzes' | t }}</p>
+            <div class="item-list">
+              @for (quiz of course.quizzes; track quiz.id) {
+                <article class="item-row">
+                  <div class="item-body">
+                    <strong>{{ quiz.title }}</strong>
+                    <p class="meta">
+                      @if (quiz.completedAtUtc) {
+                        {{ 'parent.completed' | t:{ date: formatWhen(quiz.completedAtUtc) } }}
+                      } @else {
+                        {{ 'parent.resultNotStarted' | t }}
+                      }
+                      · {{ 'student.xpLabel' | t:{ xp: quiz.xpReward } }}
+                    </p>
+                  </div>
+                  <span class="score-chip" [class.done]="quiz.score != null">
+                    {{ quizScoreLabel(quiz.score, quiz.totalQuestions) }}
+                  </span>
+                </article>
+              } @empty {
+                <p class="meta empty-state">{{ 'parent.noQuizzes' | t }}</p>
+              }
+            </div>
+          </div>
+        </section>
+      } @else {
+        <section>
+          <header class="section-head">
+            <div>
+              <h2>{{ 'parent.coursesTitle' | t }}</h2>
+              <p class="section-hint">{{ 'parent.coursesHint' | t }}</p>
+            </div>
+          </header>
+          <div class="course-grid">
+            @for (item of childOverview.courses; track item.courseId) {
+              <button type="button" class="course-card" (click)="selectCourse(item)">
+                <header class="course-head">
+                  <div>
+                    <h3>{{ item.title }}</h3>
+                    <p class="course-desc">{{ item.description }}</p>
+                  </div>
+                  @if (item.theme) {
+                    <span class="theme-tag">{{ item.theme }}</span>
+                  }
+                </header>
+                <p class="meta">{{ gradeLabel(item.grade) }} · {{ termLabel(item.term) }}</p>
+                <div class="course-counts">
+                  <span>{{ 'student.assignments' | t }} {{ item.assignments.length }}</span>
+                  <span>{{ 'student.exams' | t }} {{ item.exams.length }}</span>
+                  <span>{{ 'student.quizzes' | t }} {{ item.quizzes.length }}</span>
+                </div>
+                <span class="action-ghost">{{ 'parent.viewResults' | t }}</span>
+              </button>
+            } @empty {
+              <p class="meta empty-state">{{ 'parent.noCourses' | t }}</p>
+            }
+          </div>
+        </section>
+      }
+    }
+  }
 </div>
