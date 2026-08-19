@@ -17,6 +17,7 @@ public sealed record WeeklyStudyPlanWeekDto(
 public sealed record WeeklyStudyPlanDto(
     Guid Id,
     Guid TeacherId,
+    string TeacherName,
     Guid CourseId,
     string CourseName,
     int? CourseGrade,

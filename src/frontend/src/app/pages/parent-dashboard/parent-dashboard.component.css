@@ -39,17 +39,41 @@
 }
 
 .child-card {
+  display: grid;
+  gap: 0.85rem;
   text-align: start;
-  cursor: pointer;
   width: 100%;
   font: inherit;
   color: inherit;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
+.child-card-main {
+  display: grid;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.child-card-main h3 {
+  margin: 0;
+}
+
 .child-card:hover {
   transform: translateY(-2px);
   border-color: rgba(95, 211, 188, 0.35);
+}
+
+.child-header-actions {
+  display: grid;
+  gap: 0.65rem;
+  justify-items: end;
 }
 
 .grade-line {

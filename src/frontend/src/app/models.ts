@@ -304,6 +304,8 @@ export interface ChildEvaluationSummary {
 export interface ChildProgress {
   studentId: string;
   displayName: string;
+  email: string;
+  mobilePhone?: string | null;
   grade?: number | null;
   totalXp: number;
   completedSteps: number;
@@ -359,7 +361,17 @@ export interface ParentChildOverview {
 export interface ParentDashboard {
   parentId: string;
   parentName: string;
+  parentEmail: string;
+  parentMobilePhone: string;
   children: ChildProgress[];
+}
+
+export interface ParentManagedAccount {
+  userId: string;
+  displayName: string;
+  role: string;
+  email: string;
+  mobilePhone: string;
 }
 
 export interface TeacherStudent {
@@ -570,6 +582,7 @@ export interface WeeklyStudyPlanWeek {
 export interface WeeklyStudyPlan {
   id: string;
   teacherId: string;
+  teacherName: string;
   courseId: string;
   courseName: string;
   courseGrade?: number | null;

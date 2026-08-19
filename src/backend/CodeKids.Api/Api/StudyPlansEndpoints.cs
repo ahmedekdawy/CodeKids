@@ -2,6 +2,7 @@ using CodeKids.Application.Features.StudyPlans;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CodeKids.Api;
 
@@ -12,6 +13,8 @@ public static class StudyPlansEndpoints
         app.MapGet("/api/study-plans", async (
             HttpContext httpContext,
             Guid? courseId,
+            Guid? teacherId,
+            Guid? studentId,
             DateOnly? fromDate,
             DateOnly? toDate,
             IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>> handler,
@@ -19,16 +22,17 @@ public static class StudyPlansEndpoints
         {
             try
             {
-                var teacherId = CurrentUser.GetUserId(httpContext.User);
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
                 return Results.Ok(await handler.Handle(
-                    new ListWeeklyStudyPlansQuery(teacherId, courseId, fromDate, toDate),
+                    new ListWeeklyStudyPlansQuery(userId, role, teacherId, courseId, studentId, fromDate, toDate),
                     cancellationToken));
             }
             catch (Exception ex)
             {
                 return ApiResults.ProblemFromException(ex);
             }
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,Student,Parent,SuperAdmin" });
 
         app.MapPut("/api/study-plans", async (
             HttpContext httpContext,

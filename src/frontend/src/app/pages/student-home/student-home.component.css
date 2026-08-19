@@ -8,6 +8,13 @@
   margin-bottom: var(--space-4);
 }
 
+.student-topbar .topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .brand-block {
   display: grid;
   gap: 0.15rem;

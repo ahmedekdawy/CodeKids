@@ -5,6 +5,7 @@
       <p class="greeting">{{ 'student.greeting' | t: { name: auth.user()?.displayName || '' } }}</p>
     </div>
     <div class="topbar-actions">
+      <a routerLink="/student/study-plans" class="chip">{{ 'student.studyPlans' | t }}</a>
       <app-language-switcher />
       <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
     </div>

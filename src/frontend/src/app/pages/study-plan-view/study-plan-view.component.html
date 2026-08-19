@@ -1,0 +1,32 @@
+<div class="page study-plan-page">
+  <header class="topbar">
+    <div>
+      <app-site-brand />
+      <h1>{{ titleKey() | t }}</h1>
+      @if (childName()) {
+        <p class="meta">{{ childName() }}</p>
+      }
+    </div>
+    <div class="topbar-actions">
+      <app-language-switcher />
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    </div>
+  </header>
+
+  <a class="back" [routerLink]="homeLink()">{{ backKey() | t }}</a>
+
+  <section class="block">
+    <p class="section-hint">{{ hintKey() | t }}</p>
+    @if (error()) {
+      <p class="feedback">{{ error() }}</p>
+    } @else if (loading()) {
+      <p class="meta">{{ 'common.loading' | t }}</p>
+    } @else {
+      <app-study-plan-viewer
+        [plans]="plans()"
+        [showTeacher]="true"
+        [emptyKey]="emptyKey()"
+      />
+    }
+  </section>
+</div>

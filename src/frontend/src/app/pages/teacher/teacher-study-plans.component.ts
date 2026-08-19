@@ -10,6 +10,7 @@ import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { normalizeStudyPlan, normalizeStudyPlans } from '../../shared/study-plan-sheet/study-plan.util';
 
 type EditableTopic = {
   title: string;
@@ -212,7 +213,7 @@ export class TeacherStudyPlansComponent {
         toDate: this.filterToDate() || undefined
       })
       .subscribe({
-        next: (rows) => this.plans.set(normalizePlans(rows)),
+        next: (rows) => this.plans.set(normalizeStudyPlans(rows)),
         error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.studyPlans.loadFailed'))
       });
   }
@@ -261,7 +262,7 @@ export class TeacherStudyPlansComponent {
       })
       .subscribe({
         next: (plan) => {
-          this.applyPlan(normalizePlan(plan));
+          this.applyPlan(normalizeStudyPlan(plan));
           this.saving.set(false);
           this.loadPlans();
           this.message.set(this.locale.t('teacher.studyPlans.saved'));
@@ -321,7 +322,7 @@ export class TeacherStudyPlansComponent {
       .subscribe({
         next: (rows) => {
           if (seq !== this.editorLoadSeq) return;
-          const match = normalizePlans(rows).find(
+          const match = normalizeStudyPlans(rows).find(
             (plan) => plan.courseId === this.courseId && plan.fromDate === this.fromDate
           );
           if (match) this.applyPlan(match);
@@ -471,54 +472,3 @@ function toLocalDateString(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-function normalizePlans(items: WeeklyStudyPlan[] | null | undefined): WeeklyStudyPlan[] {
-  if (!Array.isArray(items)) return [];
-  return items.map(normalizePlan);
-}
-
-function normalizePlan(item: WeeklyStudyPlan): WeeklyStudyPlan {
-  const raw = item as WeeklyStudyPlan & Record<string, unknown>;
-  const weeks = Array.isArray(raw.weeks)
-    ? raw.weeks
-    : Array.isArray(raw['Weeks'])
-      ? (raw['Weeks'] as WeeklyStudyPlan['weeks'])
-      : [];
-  return {
-    id: String(raw.id ?? raw['Id'] ?? ''),
-    teacherId: String(raw.teacherId ?? raw['TeacherId'] ?? ''),
-    courseId: String(raw.courseId ?? raw['CourseId'] ?? ''),
-    courseName: String(raw.courseName ?? raw['CourseName'] ?? ''),
-    courseGrade:
-      raw.courseGrade == null && raw['CourseGrade'] == null
-        ? null
-        : Number(raw.courseGrade ?? raw['CourseGrade']),
-    courseTerm: String(raw.courseTerm ?? raw['CourseTerm'] ?? '') || null,
-    fromDate: String(raw.fromDate ?? raw['FromDate'] ?? ''),
-    toDate: String(raw.toDate ?? raw['ToDate'] ?? ''),
-    notes: String(raw.notes ?? raw['Notes'] ?? ''),
-    weeks: weeks.map((week, index) => {
-      const weekRaw = week as WeeklyStudyPlan['weeks'][number] & Record<string, unknown>;
-      const topics = Array.isArray(weekRaw.topics)
-        ? weekRaw.topics
-        : Array.isArray(weekRaw['Topics'])
-          ? (weekRaw['Topics'] as WeeklyStudyPlan['weeks'][number]['topics'])
-          : [];
-      return {
-        id: String(weekRaw.id ?? weekRaw['Id'] ?? ''),
-        weekNumber: Number(weekRaw.weekNumber ?? weekRaw['WeekNumber'] ?? index + 1),
-        fromDate: String(weekRaw.fromDate ?? weekRaw['FromDate'] ?? ''),
-        toDate: String(weekRaw.toDate ?? weekRaw['ToDate'] ?? ''),
-        sortOrder: Number(weekRaw.sortOrder ?? weekRaw['SortOrder'] ?? index),
-        topics: topics.map((topic, topicIndex) => {
-          const topicRaw = topic as WeeklyStudyPlan['weeks'][number]['topics'][number] & Record<string, unknown>;
-          return {
-            id: String(topicRaw.id ?? topicRaw['Id'] ?? ''),
-            title: String(topicRaw.title ?? topicRaw['Title'] ?? ''),
-            highlight: Boolean(topicRaw.highlight ?? topicRaw['Highlight']),
-            sortOrder: Number(topicRaw.sortOrder ?? topicRaw['SortOrder'] ?? topicIndex)
-          };
-        })
-      };
-    })
-  };
-}

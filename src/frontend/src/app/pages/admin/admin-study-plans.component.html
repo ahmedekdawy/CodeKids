@@ -1,0 +1,95 @@
+<div class="panel-page">
+  <h2>{{ 'admin.studyPlans.title' | t }}</h2>
+  <p class="meta">{{ 'admin.studyPlans.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <h3>{{ 'teacher.studyPlans.listTitle' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.teacher' | t }}
+        <app-searchable-select
+          [ngModel]="filterTeacherId()"
+          name="filterTeacherId"
+          (ngModelChange)="filterTeacherId.set($event); loadPlans()"
+          [emptyLabel]="'common.all' | t"
+          [options]="teacherOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [ngModel]="filterCourseId()"
+          name="filterCourseId"
+          (ngModelChange)="filterCourseId.set($event); loadPlans()"
+          [emptyLabel]="'common.all' | t"
+          [options]="courseOptions()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input
+          type="date"
+          [ngModel]="filterFromDate()"
+          name="filterFromDate"
+          (ngModelChange)="filterFromDate.set($event); loadPlans()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input
+          type="date"
+          [ngModel]="filterToDate()"
+          name="filterToDate"
+          (ngModelChange)="filterToDate.set($event); loadPlans()"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'common.teacher' | t }}</th>
+            <th>{{ 'common.course' | t }}</th>
+            <th>{{ 'teacher.attendance.dateFrom' | t }}</th>
+            <th>{{ 'teacher.attendance.dateTo' | t }}</th>
+            <th>{{ 'teacher.studyPlans.weeksCount' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (plan of plans(); track plan.id) {
+            <tr
+              class="clickable-row"
+              [class.selected]="selectedPlanId() === plan.id"
+              (click)="selectPlan(plan)"
+            >
+              <td>{{ plan.teacherName || ('common.emDash' | t) }}</td>
+              <td>{{ planCourseLabel(plan) }}</td>
+              <td>{{ plan.fromDate }}</td>
+              <td>{{ plan.toDate }}</td>
+              <td>{{ plan.weeks.length }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5">{{ 'admin.studyPlans.noPlans' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (selectedPlan(); as plan) {
+    <section class="block">
+      <h3>{{ planCourseLabel(plan) }}</h3>
+      <div class="study-plan-embed">
+        <app-study-plan-sheet [plan]="plan" [showTeacher]="true" />
+      </div>
+    </section>
+  }
+</div>

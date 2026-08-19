@@ -55,6 +55,14 @@ export class AuthService {
     return !!this.token();
   }
 
+  patchUser(partial: Partial<AuthUser>): void {
+    const current = this.user();
+    if (!current) return;
+    const next = { ...current, ...partial };
+    localStorage.setItem(USER_KEY, JSON.stringify(next));
+    this.user.set(next);
+  }
+
   roleHome(): string {
     const role = this.user()?.role;
     if (role === 'Parent') return '/parent';

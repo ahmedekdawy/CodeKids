@@ -1,4 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -18,7 +20,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })
@@ -33,7 +35,19 @@ export class ParentDashboardComponent {
   readonly overview = signal<ParentChildOverview | null>(null);
   readonly selectedCourseId = signal<string | null>(null);
   readonly loadingChild = signal(false);
+  readonly savingParent = signal(false);
+  readonly savingChild = signal(false);
+  readonly message = signal('');
   readonly error = signal('');
+
+  parentEmail = '';
+  parentMobile = '';
+  parentPassword = '';
+  parentPasswordConfirm = '';
+  childEmail = '';
+  childMobile = '';
+  childPassword = '';
+  childPasswordConfirm = '';
 
   readonly selectedChild = computed(() => {
     const id = this.selectedChildId();
@@ -50,7 +64,7 @@ export class ParentDashboardComponent {
   );
 
   constructor() {
-    this.api.getParentDashboard().subscribe((dashboard) => this.dashboard.set(dashboard));
+    this.reloadDashboard();
     this.api.getMeetings().subscribe((meetings) => this.meetings.set(meetings));
   }
 
@@ -61,9 +75,11 @@ export class ParentDashboardComponent {
     }
 
     this.error.set('');
+    this.message.set('');
     this.selectedChildId.set(child.studentId);
     this.selectedCourseId.set(null);
     this.overview.set(null);
+    this.fillChildForm(child);
     this.loadingChild.set(true);
     this.api.getParentChildOverview(child.studentId).subscribe({
       next: (overview) => {
@@ -85,7 +101,114 @@ export class ParentDashboardComponent {
     this.selectedChildId.set(null);
     this.selectedCourseId.set(null);
     this.overview.set(null);
+    this.message.set('');
     this.error.set('');
+    this.clearParentPassword();
+    this.clearChildPassword();
+  }
+
+  saveParentAccount(): void {
+    const dashboard = this.dashboard();
+    if (!dashboard) return;
+    this.saveAccount(dashboard.parentId, {
+      email: this.parentEmail,
+      mobilePhone: this.parentMobile,
+      password: this.parentPassword,
+      confirmPassword: this.parentPasswordConfirm
+    }, 'self');
+  }
+
+  saveChildAccount(): void {
+    const childId = this.selectedChildId();
+    if (!childId) return;
+    this.saveAccount(childId, {
+      email: this.childEmail,
+      mobilePhone: this.childMobile,
+      password: this.childPassword,
+      confirmPassword: this.childPasswordConfirm
+    }, 'child');
+  }
+
+  private saveAccount(
+    userId: string,
+    form: { email: string; mobilePhone: string; password: string; confirmPassword: string },
+    kind: 'self' | 'child'
+  ): void {
+    this.error.set('');
+    this.message.set('');
+    if (!form.email.trim() && !form.mobilePhone.trim()) {
+      this.error.set(this.locale.t('admin.users.emailOrMobileRequired'));
+      return;
+    }
+    if (form.password || form.confirmPassword) {
+      if (form.password !== form.confirmPassword) {
+        this.error.set(this.locale.t('auth.reset.mismatch'));
+        return;
+      }
+      if (form.password.trim().length < 6) {
+        this.error.set(this.locale.t('api.errors.auth.passwordTooShort'));
+        return;
+      }
+    }
+
+    const saving = kind === 'self' ? this.savingParent : this.savingChild;
+    saving.set(true);
+    this.api
+      .updateParentManagedAccount(userId, {
+        email: form.email.trim() || null,
+        mobilePhone: form.mobilePhone.trim() || null,
+        password: form.password.trim() || null
+      })
+      .subscribe({
+        next: (account) => {
+          saving.set(false);
+          if (kind === 'self') {
+            this.clearParentPassword();
+            this.auth.patchUser({ email: account.email, mobilePhone: account.mobilePhone });
+            this.message.set(this.locale.t('parent.accountSaved'));
+          } else {
+            this.clearChildPassword();
+            this.message.set(this.locale.t('parent.childAccountSaved'));
+          }
+          this.reloadDashboard(kind === 'child' ? userId : undefined);
+        },
+        error: (err) => {
+          saving.set(false);
+          this.error.set(this.locale.fromApiError(err, 'parent.accountSaveFailed'));
+        }
+      });
+  }
+
+  private reloadDashboard(keepChildId?: string): void {
+    this.api.getParentDashboard().subscribe({
+      next: (dashboard) => {
+        this.dashboard.set(dashboard);
+        this.parentEmail = dashboard.parentEmail ?? '';
+        this.parentMobile = dashboard.parentMobilePhone ?? '';
+        const childId = keepChildId ?? this.selectedChildId();
+        if (childId) {
+          const child = dashboard.children.find((c) => c.studentId === childId);
+          if (child) this.fillChildForm(child);
+        }
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'parent.loadChildFailed'))
+    });
+  }
+
+  private fillChildForm(child: ChildProgress): void {
+    this.childEmail = child.email ?? '';
+    this.childMobile = child.mobilePhone ?? '';
+    this.clearChildPassword();
+  }
+
+  private clearParentPassword(): void {
+    this.parentPassword = '';
+    this.parentPasswordConfirm = '';
+  }
+
+  private clearChildPassword(): void {
+    this.childPassword = '';
+    this.childPasswordConfirm = '';
   }
 
   backToCourses(): void {

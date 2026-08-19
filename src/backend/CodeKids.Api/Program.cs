@@ -215,6 +215,8 @@ builder.Services.AddScoped<IQueryHandler<GetParentDashboardQuery, ParentDashboar
 
 builder.Services.AddScoped<IQueryHandler<GetParentChildOverviewQuery, ParentChildOverviewDto>, GetParentChildOverviewQueryHandler>();
 
+builder.Services.AddScoped<ICommandHandler<UpdateParentManagedAccountCommand, ParentManagedAccountDto>, UpdateParentManagedAccountCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetTeacherDashboardQuery, TeacherDashboardDto>, GetTeacherDashboardQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetTeacherStudentDetailQuery, TeacherStudentDetailDto>, GetTeacherStudentDetailQueryHandler>();

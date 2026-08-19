@@ -9,6 +9,7 @@ import { LessonPlayComponent } from './pages/lesson-play/lesson-play.component';
 import { QuizPlayComponent } from './pages/quiz-play/quiz-play.component';
 import { AssignmentPlayComponent } from './pages/assignment-play/assignment-play.component';
 import { ParentDashboardComponent } from './pages/parent-dashboard/parent-dashboard.component';
+import { StudyPlanViewComponent } from './pages/study-plan-view/study-plan-view.component';
 import { AdminShellComponent } from './pages/admin/admin-shell.component';
 import { AdminUsersComponent } from './pages/admin/admin-users.component';
 import { AdminStudentsComponent } from './pages/admin/admin-students.component';
@@ -20,6 +21,7 @@ import { AdminEnrollStudentComponent } from './pages/admin/admin-enroll-student.
 import { AdminSiteSettingsComponent } from './pages/admin/admin-site-settings.component';
 import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.component';
 import { AdminTimetableComponent } from './pages/admin/admin-timetable.component';
+import { AdminStudyPlansComponent } from './pages/admin/admin-study-plans.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
 import { AdminAccountReportComponent } from './pages/admin/admin-account-report.component';
@@ -55,6 +57,11 @@ export const routes: Routes = [
     component: StudentHomeComponent
   },
   {
+    path: 'student/study-plans',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudyPlanViewComponent
+  },
+  {
     path: 'lessons/:lessonId',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: LessonPlayComponent
@@ -78,6 +85,16 @@ export const routes: Routes = [
     path: 'parent',
     canActivate: [authGuard, roleGuard(['Parent'])],
     component: ParentDashboardComponent
+  },
+  {
+    path: 'parent/study-plans',
+    canActivate: [authGuard, roleGuard(['Parent'])],
+    component: StudyPlanViewComponent
+  },
+  {
+    path: 'parent/study-plans/:studentId',
+    canActivate: [authGuard, roleGuard(['Parent'])],
+    component: StudyPlanViewComponent
   },
   {
     path: 'teacher',
@@ -121,6 +138,7 @@ export const routes: Routes = [
       { path: 'enroll-student', component: AdminEnrollStudentComponent },
       { path: 'appointments', component: AdminAppointmentsComponent },
       { path: 'timetable', component: AdminTimetableComponent },
+      { path: 'study-plans', component: AdminStudyPlansComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
       { path: 'payroll', component: AdminPayrollComponent },
       { path: 'account-report', component: AdminAccountReportComponent },

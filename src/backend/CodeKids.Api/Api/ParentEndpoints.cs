@@ -28,6 +28,31 @@ public static class ParentEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Parent" });
 
+        app.MapPut("/api/parent/accounts/{userId:guid}", async (
+            Guid userId,
+            HttpContext httpContext,
+            UpdateParentManagedAccountRequest request,
+            ICommandHandler<UpdateParentManagedAccountCommand, ParentManagedAccountDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var parentId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new UpdateParentManagedAccountCommand(
+                        parentId,
+                        userId,
+                        request.Email,
+                        request.MobilePhone,
+                        request.Password),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Parent" });
+
         return app;
     }
 }

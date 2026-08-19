@@ -38,6 +38,7 @@ import {
   MediaAsset,
   ParentChildOverview,
   ParentDashboard,
+  ParentManagedAccount,
   PlaybackInfo,
   Quiz,
   QuizAttemptReview,
@@ -159,6 +160,13 @@ export class LearningApiService {
 
   getParentChildOverview(childId: string): Observable<ParentChildOverview> {
     return this.http.get<ParentChildOverview>(`${this.baseUrl}/parent/children/${childId}`);
+  }
+
+  updateParentManagedAccount(
+    userId: string,
+    payload: { email?: string | null; mobilePhone?: string | null; password?: string | null }
+  ): Observable<ParentManagedAccount> {
+    return this.http.put<ParentManagedAccount>(`${this.baseUrl}/parent/accounts/${userId}`, payload);
   }
 
   getTeacherDashboard(): Observable<TeacherDashboard> {
@@ -375,11 +383,15 @@ export class LearningApiService {
 
   listStudyPlans(filters?: {
     courseId?: string;
+    teacherId?: string;
+    studentId?: string;
     fromDate?: string;
     toDate?: string;
   }): Observable<WeeklyStudyPlan[]> {
     const params = new URLSearchParams();
     if (filters?.courseId) params.set('courseId', filters.courseId);
+    if (filters?.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters?.studentId) params.set('studentId', filters.studentId);
     if (filters?.fromDate) params.set('fromDate', filters.fromDate);
     if (filters?.toDate) params.set('toDate', filters.toDate);
     const query = params.toString();

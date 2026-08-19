@@ -1,0 +1,12 @@
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row.selected,
+.clickable-row.selected td {
+  background: rgba(31, 138, 138, 0.16);
+}
+
+.study-plan-embed {
+  overflow-x: auto;
+}

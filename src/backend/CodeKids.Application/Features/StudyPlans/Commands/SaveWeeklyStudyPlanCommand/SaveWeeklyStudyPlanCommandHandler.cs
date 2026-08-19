@@ -128,6 +128,7 @@ public sealed class SaveWeeklyStudyPlanCommandHandler(IAppDbContext dbContext)
         var saved = await dbContext.WeeklyStudyPlans
             .AsNoTracking()
             .Include(x => x.Course)
+            .Include(x => x.Teacher)
             .Include(x => x.Items)
                 .ThenInclude(x => x.Topics)
             .FirstAsync(x => x.Id == plan.Id, cancellationToken);

@@ -21,8 +21,41 @@
   @if (error()) {
     <p class="feedback">{{ error() }}</p>
   }
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
 
   @if (!selectedChildId()) {
+    <section class="block">
+      <header class="section-head">
+        <div>
+          <h2>{{ 'parent.accountTitle' | t }}</h2>
+          <p class="section-hint">{{ 'parent.accountHint' | t }}</p>
+        </div>
+      </header>
+      <form class="meeting-form" (ngSubmit)="saveParentAccount()">
+        <label>
+          {{ 'common.email' | t }}
+          <input [(ngModel)]="parentEmail" name="parentEmail" type="email" autocomplete="email" />
+        </label>
+        <label>
+          {{ 'common.mobile' | t }}
+          <input [(ngModel)]="parentMobile" name="parentMobile" autocomplete="tel" />
+        </label>
+        <label>
+          {{ 'common.newPasswordOptional' | t }}
+          <input [(ngModel)]="parentPassword" name="parentPassword" type="password" autocomplete="new-password" />
+        </label>
+        <label>
+          {{ 'auth.reset.confirmPassword' | t }}
+          <input [(ngModel)]="parentPasswordConfirm" name="parentPasswordConfirm" type="password" autocomplete="new-password" />
+        </label>
+        <button type="submit" [disabled]="savingParent()">
+          {{ savingParent() ? ('common.saving' | t) : ('common.save' | t) }}
+        </button>
+      </form>
+    </section>
+
     <section class="block">
       <h3>{{ 'parent.zoomTitle' | t }}</h3>
       @for (meeting of meetings(); track meeting.id) {
@@ -46,21 +79,28 @@
       </header>
       <div class="grid-cards">
         @for (child of dashboard()?.children || []; track child.studentId) {
-          <button type="button" class="block child-card" (click)="selectChild(child)">
-            <h3>{{ child.displayName }}</h3>
-            <p class="grade-line">{{ 'common.grade' | t }}: {{ gradeLabel(child.grade) }}</p>
-            <p class="meta">{{ evaluationLine(child.latestEvaluation) }}</p>
-            <p>{{ 'parent.childSummary' | t:{ xp: child.totalXp, steps: child.completedSteps, quizzes: child.quizAttempts } }}</p>
-            <div class="chip-row">
-              @for (badge of child.badges; track badge) {
-                <span class="chip">{{ badge }}</span>
-              }
-              @if (!child.badges.length) {
-                <span class="meta">{{ 'parent.noBadges' | t }}</span>
-              }
-            </div>
-            <span class="action-ghost">{{ 'parent.viewCourses' | t }}</span>
-          </button>
+          <article class="block child-card">
+            <button type="button" class="child-card-main" (click)="selectChild(child)">
+              <h3>{{ child.displayName }}</h3>
+              <p class="grade-line">{{ 'common.grade' | t }}: {{ gradeLabel(child.grade) }}</p>
+              <p class="meta">{{ 'common.email' | t }}: {{ child.email || ('common.emDash' | t) }}</p>
+              <p class="meta">{{ 'common.mobile' | t }}: {{ child.mobilePhone || ('common.emDash' | t) }}</p>
+              <p class="meta">{{ evaluationLine(child.latestEvaluation) }}</p>
+              <p>{{ 'parent.childSummary' | t:{ xp: child.totalXp, steps: child.completedSteps, quizzes: child.quizAttempts } }}</p>
+              <div class="chip-row">
+                @for (badge of child.badges; track badge) {
+                  <span class="chip">{{ badge }}</span>
+                }
+                @if (!child.badges.length) {
+                  <span class="meta">{{ 'parent.noBadges' | t }}</span>
+                }
+              </div>
+              <span class="action-ghost">{{ 'parent.viewCourses' | t }}</span>
+            </button>
+            <a class="chip quiz" [routerLink]="['/parent/study-plans', child.studentId]">
+              {{ 'parent.openStudyPlan' | t }}
+            </a>
+          </article>
         } @empty {
           <article class="block">
             <h3>{{ 'parent.noChildren' | t }}</h3>
@@ -83,15 +123,22 @@
         <p class="eyebrow">{{ 'common.student' | t }}</p>
         <h2>{{ selectedChild()?.displayName || overview()?.displayName }}</h2>
         <p class="grade-line">{{ 'common.grade' | t }}: {{ gradeLabel(selectedChild()?.grade ?? overview()?.grade) }}</p>
+        <p class="meta">{{ 'common.email' | t }}: {{ selectedChild()?.email || ('common.emDash' | t) }}</p>
+        <p class="meta">{{ 'common.mobile' | t }}: {{ selectedChild()?.mobilePhone || ('common.emDash' | t) }}</p>
         <p class="meta">{{ evaluationLine(latestEvaluation()) }}</p>
       </div>
-      <p class="meta">
-        {{ 'parent.childSummary' | t:{
-          xp: selectedChild()?.totalXp || 0,
-          steps: selectedChild()?.completedSteps || 0,
-          quizzes: selectedChild()?.quizAttempts || 0
-        } }}
-      </p>
+      <div class="child-header-actions">
+        <a class="chip quiz" [routerLink]="['/parent/study-plans', selectedChildId()]">
+          {{ 'parent.openStudyPlan' | t }}
+        </a>
+        <p class="meta">
+          {{ 'parent.childSummary' | t:{
+            xp: selectedChild()?.totalXp || 0,
+            steps: selectedChild()?.completedSteps || 0,
+            quizzes: selectedChild()?.quizAttempts || 0
+          } }}
+        </p>
+      </div>
     </section>
 
     @if (loadingChild()) {
@@ -100,6 +147,36 @@
 
     @if (overview(); as childOverview) {
       @if (!selectedCourseId()) {
+        <section class="block">
+          <header class="section-head">
+            <div>
+              <h2>{{ 'parent.childAccountTitle' | t }}</h2>
+              <p class="section-hint">{{ 'parent.childAccountHint' | t }}</p>
+            </div>
+          </header>
+          <form class="meeting-form" (ngSubmit)="saveChildAccount()">
+            <label>
+              {{ 'common.email' | t }}
+              <input [(ngModel)]="childEmail" name="childEmail" type="email" autocomplete="email" />
+            </label>
+            <label>
+              {{ 'common.mobile' | t }}
+              <input [(ngModel)]="childMobile" name="childMobile" autocomplete="tel" />
+            </label>
+            <label>
+              {{ 'common.newPasswordOptional' | t }}
+              <input [(ngModel)]="childPassword" name="childPassword" type="password" autocomplete="new-password" />
+            </label>
+            <label>
+              {{ 'auth.reset.confirmPassword' | t }}
+              <input [(ngModel)]="childPasswordConfirm" name="childPasswordConfirm" type="password" autocomplete="new-password" />
+            </label>
+            <button type="submit" [disabled]="savingChild()">
+              {{ savingChild() ? ('common.saving' | t) : ('common.save' | t) }}
+            </button>
+          </form>
+        </section>
+
         <section class="block">
           <h3>{{ 'parent.evaluationsTitle' | t }}</h3>
           @if (childOverview.evaluations.length) {
@@ -147,6 +224,13 @@
               <h2>{{ 'parent.courseResults' | t:{ course: course.title } }}</h2>
               <p class="section-hint">{{ course.description }}</p>
             </div>
+            <a
+              class="chip quiz"
+              [routerLink]="['/parent/study-plans', selectedChildId()]"
+              [queryParams]="{ courseId: course.courseId }"
+            >
+              {{ 'parent.openStudyPlan' | t }}
+            </a>
           </header>
 
           <div class="task-group">

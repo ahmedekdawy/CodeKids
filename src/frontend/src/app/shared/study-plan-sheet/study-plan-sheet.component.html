@@ -1,0 +1,61 @@
+<div class="study-plan-viewer">
+  @if (exportable()) {
+    <div class="sheet-toolbar">
+      <button type="button" class="sheet-export-btn" [disabled]="exporting()" (click)="exportAsImage()">
+        {{ (exporting() ? 'teacher.studyPlans.exporting' : 'teacher.studyPlans.exportImage') | t }}
+      </button>
+      @if (message()) {
+        <span class="sheet-status ok">{{ message() }}</span>
+      }
+      @if (error()) {
+        <span class="sheet-status err">{{ error() }}</span>
+      }
+    </div>
+  }
+
+  <div class="study-plan-sheet" #planWrap [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+    <div class="study-plan-banner">
+      <div class="study-plan-brand">
+        @if (brand.logoUrl()) {
+          <img [src]="brand.logoUrl()!" [alt]="brand.siteName()" />
+        }
+        <span>{{ brand.siteName() }}</span>
+      </div>
+      <h3>{{ sheetTitle() }}</h3>
+    </div>
+    <div class="study-plan-meta" [class.with-teacher]="showTeacher() && plan().teacherName">
+      <span>{{ subjectLine() }}</span>
+      <span>{{ termLine() }}</span>
+      @if (showTeacher() && plan().teacherName) {
+        <span>{{ 'teacher.studyPlans.teacherLine' | t: { name: plan().teacherName } }}</span>
+      }
+    </div>
+
+    @if (plan().weeks.length === 0) {
+      <p class="sheet-empty">{{ 'teacher.studyPlans.noItems' | t }}</p>
+    } @else {
+      <div class="study-plan-grid">
+        @for (week of plan().weeks; track week.id || week.weekNumber) {
+          <article class="study-week">
+            <header class="study-week-name">{{ weekLabel(week.weekNumber) }}</header>
+            <div class="study-week-dates">{{ formatRange(week.fromDate, week.toDate) }}</div>
+            <div class="study-week-topics">
+              @for (topic of week.topics; track topic.id || $index) {
+                @if (topic.title.trim()) {
+                  <p class="study-topic-text" [class.highlight]="topic.highlight">{{ topic.title }}</p>
+                }
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+    @if (plan().notes.trim()) {
+      <div class="study-plan-notes">
+        <strong>{{ 'teacher.studyPlans.weekNotes' | t }}</strong>
+        <p>{{ plan().notes }}</p>
+      </div>
+    }
+  </div>
+</div>

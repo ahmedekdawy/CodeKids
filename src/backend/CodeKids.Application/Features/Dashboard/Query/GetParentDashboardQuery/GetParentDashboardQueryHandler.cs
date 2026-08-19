@@ -70,9 +70,13 @@ public sealed class GetParentDashboardQueryHandler(IAppDbContext dbContext)
         return new ParentDashboardDto(
             parent.Id,
             parent.DisplayName,
+            parent.Email,
+            parent.MobilePhone,
             children.Select(child => new ChildProgressDto(
                 child.Id,
                 child.DisplayName,
+                child.Email,
+                child.MobilePhone,
                 grades.GetValueOrDefault(child.Id) ?? child.Grade,
                 child.TotalXp,
                 progressCounts.GetValueOrDefault(child.Id),

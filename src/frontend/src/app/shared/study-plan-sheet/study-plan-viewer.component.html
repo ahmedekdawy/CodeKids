@@ -1,0 +1,21 @@
+@if (plans().length === 0) {
+  <p class="meta empty-state">{{ emptyKey() | t }}</p>
+} @else {
+  <div class="plan-picker">
+    @for (plan of plans(); track plan.id) {
+      <button
+        type="button"
+        class="plan-chip"
+        [class.active]="isSelected(plan)"
+        (click)="select(plan)"
+      >
+        {{ planLabel(plan) }}
+      </button>
+    }
+  </div>
+  @if (selected(); as plan) {
+    <div class="study-plan-embed">
+      <app-study-plan-sheet [plan]="plan" [showTeacher]="showTeacher()" />
+    </div>
+  }
+}

@@ -86,6 +86,7 @@ internal static class StudyPlanAccess
         new(
             plan.Id,
             plan.TeacherId,
+            plan.Teacher?.DisplayName ?? string.Empty,
             plan.CourseId,
             plan.Course?.Title ?? string.Empty,
             plan.Course?.Grade,

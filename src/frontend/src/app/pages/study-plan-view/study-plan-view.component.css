@@ -1,0 +1,16 @@
+@import '../../styles/dashboard-shared.css';
+
+.study-plan-page {
+  animation: pageIn 0.4s ease;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-hint {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+}

@@ -1,0 +1,36 @@
+.plan-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.plan-chip {
+  max-width: 100%;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(31, 138, 138, 0.35);
+  background: rgba(31, 138, 138, 0.12);
+  color: inherit;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  text-align: start;
+  cursor: pointer;
+}
+
+.plan-chip.active {
+  background: #1f8a8a;
+  border-color: #1f8a8a;
+  color: #fff;
+  font-weight: 700;
+}
+
+.study-plan-embed {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.meta {
+  margin: 0;
+  opacity: 0.8;
+}
