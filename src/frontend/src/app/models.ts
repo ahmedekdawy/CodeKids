@@ -551,6 +551,47 @@ export interface SaveWeeklyReportEntry {
   openCamera?: boolean | null;
 }
 
+export interface WeeklyStudyPlanTopic {
+  id: string;
+  title: string;
+  highlight: boolean;
+  sortOrder: number;
+}
+
+export interface WeeklyStudyPlanWeek {
+  id: string;
+  weekNumber: number;
+  fromDate: string;
+  toDate: string;
+  sortOrder: number;
+  topics: WeeklyStudyPlanTopic[];
+}
+
+export interface WeeklyStudyPlan {
+  id: string;
+  teacherId: string;
+  courseId: string;
+  courseName: string;
+  courseGrade?: number | null;
+  courseTerm?: string | null;
+  fromDate: string;
+  toDate: string;
+  notes: string;
+  weeks: WeeklyStudyPlanWeek[];
+}
+
+export interface SaveWeeklyStudyPlanTopic {
+  title: string;
+  highlight: boolean;
+}
+
+export interface SaveWeeklyStudyPlanWeek {
+  weekNumber: number;
+  fromDate: string;
+  toDate: string;
+  topics: SaveWeeklyStudyPlanTopic[];
+}
+
 export interface TeacherPayrollRow {
   teacherId: string;
   teacherName: string;

@@ -25,6 +25,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<FixedTimetableEntry> FixedTimetableEntries => Set<FixedTimetableEntry>();
     public DbSet<TeacherSessionAttendance> TeacherSessionAttendances => Set<TeacherSessionAttendance>();
     public DbSet<StudentWeeklyReport> StudentWeeklyReports => Set<StudentWeeklyReport>();
+    public DbSet<WeeklyStudyPlan> WeeklyStudyPlans => Set<WeeklyStudyPlan>();
+    public DbSet<WeeklyStudyPlanItem> WeeklyStudyPlanItems => Set<WeeklyStudyPlanItem>();
+    public DbSet<WeeklyStudyPlanTopic> WeeklyStudyPlanTopics => Set<WeeklyStudyPlanTopic>();
     public DbSet<TuitionPayment> TuitionPayments => Set<TuitionPayment>();
     public DbSet<OtherExpense> OtherExpenses => Set<OtherExpense>();
     public DbSet<TeacherPayrollAdjustment> TeacherPayrollAdjustments => Set<TeacherPayrollAdjustment>();
@@ -335,6 +338,44 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(x => x.StudentId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<WeeklyStudyPlan>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Notes).HasMaxLength(1000).IsRequired();
+            entity.HasIndex(x => new { x.TeacherId, x.CourseId, x.FromDate }).IsUnique();
+            entity.HasIndex(x => x.FromDate);
+            entity.HasIndex(x => x.ToDate);
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasMany(x => x.Items)
+                .WithOne(x => x.Plan)
+                .HasForeignKey(x => x.WeeklyStudyPlanId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WeeklyStudyPlanItem>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.WeeklyStudyPlanId, x.WeekNumber }).IsUnique();
+            entity.HasMany(x => x.Topics)
+                .WithOne(x => x.Week)
+                .HasForeignKey(x => x.WeeklyStudyPlanItemId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WeeklyStudyPlanTopic>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            entity.HasIndex(x => new { x.WeeklyStudyPlanItemId, x.SortOrder });
         });
 
         modelBuilder.Entity<TuitionPayment>(entity =>

@@ -1,0 +1,203 @@
+<div class="panel-page">
+  <h2>{{ 'teacher.studyPlans.title' | t }}</h2>
+  <p class="meta">{{ 'teacher.studyPlans.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <h3>{{ 'teacher.studyPlans.editorTitle' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [ngModel]="courseId"
+          name="editorCourseId"
+          (ngModelChange)="onEditorCourseChange($event)"
+          [emptyLabel]="'common.select' | t"
+          [options]="courseOptions()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input
+          type="date"
+          [ngModel]="fromDate"
+          name="editorFromDate"
+          (ngModelChange)="onFromDateChange($event)"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input
+          type="date"
+          [ngModel]="toDate"
+          name="editorToDate"
+          (ngModelChange)="onToDateChange($event)"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="thisTerm()">
+        {{ 'teacher.studyPlans.thisTerm' | t }}
+      </button>
+      <button type="button" class="ghost-btn" (click)="newPlan()">
+        {{ 'teacher.studyPlans.newPlan' | t }}
+      </button>
+    </div>
+
+    @if (courses().length === 0) {
+      <p class="meta">{{ 'teacher.studyPlans.noCourses' | t }}</p>
+    }
+
+    <div class="timetable-export-bar">
+      <button type="button" [disabled]="saving() || !courseId" (click)="save()">
+        {{ saving() ? ('common.saving' | t) : ('teacher.studyPlans.save' | t) }}
+      </button>
+      <button
+        type="button"
+        class="ghost-btn"
+        [disabled]="exporting() || weeks().length === 0"
+        (click)="exportAsImage()"
+      >
+        {{ (exporting() ? 'teacher.studyPlans.exporting' : 'teacher.studyPlans.exportImage') | t }}
+      </button>
+    </div>
+    <p class="meta">{{ 'teacher.studyPlans.exportHint' | t }}</p>
+
+    <div class="study-plan-sheet" #planWrap [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+      <div class="study-plan-banner">
+        <div class="study-plan-brand">
+          @if (brand.logoUrl()) {
+            <img [src]="brand.logoUrl()!" [alt]="brand.siteName()" />
+          }
+          <span>{{ brand.siteName() }}</span>
+        </div>
+        <h3>{{ sheetTitle() }}</h3>
+      </div>
+      <div class="study-plan-meta">
+        <span>{{ subjectLine() }}</span>
+        <span>{{ termLine() }}</span>
+      </div>
+
+      @if (weeks().length === 0) {
+        <p class="meta">{{ 'teacher.studyPlans.noItems' | t }}</p>
+      } @else {
+        <div class="study-plan-grid">
+          @for (week of weeks(); track week.weekNumber) {
+            <article class="study-week">
+              <header class="study-week-name">{{ weekLabel(week.weekNumber) }}</header>
+              <div class="study-week-dates">{{ formatRange(week.fromDate, week.toDate) }}</div>
+              <div class="study-week-topics">
+                @for (topic of week.topics; track $index) {
+                  <div class="study-topic" [class.highlight]="topic.highlight">
+                    <textarea
+                      rows="3"
+                      [(ngModel)]="topic.title"
+                      [name]="'topic-' + week.weekNumber + '-' + $index"
+                      [placeholder]="'teacher.studyPlans.topicPlaceholder' | t"
+                      (input)="onTopicInput($event)"
+                    ></textarea>
+                    <button
+                      type="button"
+                      class="ghost-btn tiny-btn no-export"
+                      [class.active]="topic.highlight"
+                      (click)="topic.highlight = !topic.highlight"
+                      [attr.title]="'teacher.studyPlans.highlight' | t"
+                    >
+                      !
+                    </button>
+                    <button
+                      type="button"
+                      class="ghost-btn tiny-btn no-export"
+                      (click)="removeTopic(week, $index)"
+                      [attr.title]="'common.delete' | t"
+                    >
+                      ×
+                    </button>
+                  </div>
+                }
+                <button type="button" class="ghost-btn add-topic no-export" (click)="addTopic(week)">
+                  {{ 'teacher.studyPlans.addTopic' | t }}
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+
+      <label class="study-plan-notes no-export">
+        {{ 'teacher.studyPlans.weekNotes' | t }}
+        <textarea rows="2" [(ngModel)]="notes" name="weekNotes"></textarea>
+      </label>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'teacher.studyPlans.listTitle' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [ngModel]="filterCourseId()"
+          name="filterCourseId"
+          (ngModelChange)="filterCourseId.set($event); loadPlans()"
+          [emptyLabel]="'common.all' | t"
+          [options]="courseOptions()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input
+          type="date"
+          [ngModel]="filterFromDate()"
+          name="filterFromDate"
+          (ngModelChange)="filterFromDate.set($event); loadPlans()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input
+          type="date"
+          [ngModel]="filterToDate()"
+          name="filterToDate"
+          (ngModelChange)="filterToDate.set($event); loadPlans()"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'common.course' | t }}</th>
+            <th>{{ 'teacher.attendance.dateFrom' | t }}</th>
+            <th>{{ 'teacher.attendance.dateTo' | t }}</th>
+            <th>{{ 'teacher.studyPlans.weeksCount' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (plan of plans(); track plan.id) {
+            <tr>
+              <td>{{ planCourseLabel(plan) }}</td>
+              <td>{{ plan.fromDate }}</td>
+              <td>{{ plan.toDate }}</td>
+              <td>{{ plan.weeks.length }}</td>
+              <td>
+                <div class="row-actions">
+                  <app-icon-action-button kind="edit" (action)="editPlan(plan)" />
+                  <app-icon-action-button kind="delete" variant="danger" (action)="remove(plan)" />
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

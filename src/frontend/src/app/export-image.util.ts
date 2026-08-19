@@ -3,7 +3,8 @@ import html2canvas from 'html2canvas';
 /** Capture an element as a PNG download, including content that is scrolled out of view. */
 export async function downloadElementAsPng(
   element: HTMLElement,
-  fileName: string
+  fileName: string,
+  options?: { backgroundColor?: string }
 ): Promise<void> {
   element.classList.add('exporting');
   const clone = element.cloneNode(true) as HTMLElement;
@@ -28,7 +29,7 @@ export async function downloadElementAsPng(
     const captureHeight = Math.max(clone.scrollHeight, height);
     const captureWidth = Math.max(clone.scrollWidth, width);
     const canvas = await html2canvas(clone, {
-      backgroundColor: '#0a182a',
+      backgroundColor: options?.backgroundColor ?? '#0a182a',
       scale: Math.min(2, window.devicePixelRatio || 1),
       useCORS: true,
       logging: false,

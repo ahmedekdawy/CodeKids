@@ -142,7 +142,13 @@ public static class ApiErrorCatalog
         ["Cannot delete the last Super Admin."] = "api.errors.admin.cannotDeleteLastSuperAdmin",
         ["Parent account not found."] = "api.errors.parent.notFound",
         ["This student is not linked to your account."] = "api.errors.parent.childNotLinked",
-        ["Student is not in your classrooms."] = "api.errors.analytics.studentNotInClassrooms"
+        ["Student is not in your classrooms."] = "api.errors.analytics.studentNotInClassrooms",
+        ["Study plan not found."] = "api.errors.studyPlan.notFound",
+        ["From and to dates are required."] = "api.errors.studyPlan.datesRequired",
+        ["Study plan range cannot exceed 14 days."] = "api.errors.studyPlan.rangeTooLong",
+        ["Study plan cannot exceed 20 weeks."] = "api.errors.studyPlan.rangeTooLong",
+        ["A study plan already exists for this course and start date."] = "api.errors.studyPlan.duplicate",
+        ["Course is not assigned to this teacher."] = "api.errors.studyPlan.courseNotAssigned"
     };
 
     private static readonly (Regex Pattern, string Code)[] Patterns =

@@ -23,6 +23,7 @@ export class TeacherShellComponent {
     { labelKey: 'nav.teacher.timetable', path: '/teacher/timetable', icon: 'H' },
     { labelKey: 'nav.teacher.attendance', path: '/teacher/attendance', icon: 'N' },
     { labelKey: 'nav.teacher.weeklyReports', path: '/teacher/weekly-reports', icon: 'W' },
+    { labelKey: 'nav.teacher.studyPlans', path: '/teacher/study-plans', icon: 'P' },
     { labelKey: 'nav.teacher.questionBank', path: '/teacher/question-bank', icon: 'B' },
     { labelKey: 'nav.teacher.exams', path: '/teacher/exams', icon: 'E' },
     { labelKey: 'nav.teacher.quizzes', path: '/teacher/quizzes', icon: 'Q' },

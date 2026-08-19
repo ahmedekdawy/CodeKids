@@ -23,6 +23,9 @@ public interface IAppDbContext
     DbSet<FixedTimetableEntry> FixedTimetableEntries { get; }
     DbSet<TeacherSessionAttendance> TeacherSessionAttendances { get; }
     DbSet<StudentWeeklyReport> StudentWeeklyReports { get; }
+    DbSet<WeeklyStudyPlan> WeeklyStudyPlans { get; }
+    DbSet<WeeklyStudyPlanItem> WeeklyStudyPlanItems { get; }
+    DbSet<WeeklyStudyPlanTopic> WeeklyStudyPlanTopics { get; }
     DbSet<TuitionPayment> TuitionPayments { get; }
     DbSet<OtherExpense> OtherExpenses { get; }
     DbSet<TeacherPayrollAdjustment> TeacherPayrollAdjustments { get; }

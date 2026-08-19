@@ -25,6 +25,8 @@ import {
   StudentWeeklyReportGridRow,
   StudentWeeklyReport,
   SaveWeeklyReportEntry,
+  WeeklyStudyPlan,
+  SaveWeeklyStudyPlanWeek,
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
@@ -369,6 +371,34 @@ export class LearningApiService {
     entries: SaveWeeklyReportEntry[];
   }): Observable<StudentWeeklyReportGridRow[]> {
     return this.http.put<StudentWeeklyReportGridRow[]>(`${this.baseUrl}/weekly-reports`, payload);
+  }
+
+  listStudyPlans(filters?: {
+    courseId?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Observable<WeeklyStudyPlan[]> {
+    const params = new URLSearchParams();
+    if (filters?.courseId) params.set('courseId', filters.courseId);
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    const query = params.toString();
+    return this.http.get<WeeklyStudyPlan[]>(`${this.baseUrl}/study-plans${query ? `?${query}` : ''}`);
+  }
+
+  saveStudyPlan(payload: {
+    id?: string | null;
+    courseId: string;
+    fromDate: string;
+    toDate: string;
+    notes?: string;
+    weeks: SaveWeeklyStudyPlanWeek[];
+  }): Observable<WeeklyStudyPlan> {
+    return this.http.put<WeeklyStudyPlan>(`${this.baseUrl}/study-plans`, payload);
+  }
+
+  deleteStudyPlan(planId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/study-plans/${planId}`);
   }
 
   getPayrollReport(filters: {

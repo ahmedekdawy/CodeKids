@@ -46,6 +46,8 @@ using CodeKids.Application.Features.Reports;
 
 using CodeKids.Application.Features.SiteSettings;
 
+using CodeKids.Application.Features.StudyPlans;
+
 using CodeKids.Application.Features.Timetable;
 
 using CodeKids.Application.Features.WeeklyReports;
@@ -367,6 +369,12 @@ builder.Services.AddScoped<IQueryHandler<ListStudentWeeklyReportsQuery, IReadOnl
 
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyList<StudentWeeklyReportGridRowDto>>, SaveWeeklyReportsCommandHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<SaveWeeklyStudyPlanCommand, WeeklyStudyPlanDto>, SaveWeeklyStudyPlanCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteWeeklyStudyPlanCommand, bool>, DeleteWeeklyStudyPlanCommandHandler>();
+
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
 
 builder.Services
@@ -497,6 +505,8 @@ app.MapSiteSettingsEndpoints();
 app.MapTimetableEndpoints();
 
 app.MapWeeklyReportsEndpoints();
+
+app.MapStudyPlansEndpoints();
 
 app.MapZoomEndpoints();
 

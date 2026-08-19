@@ -1494,6 +1494,105 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("StudentWeeklyReports");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("FromDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("ToDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("FromDate");
+
+                    b.HasIndex("ToDate");
+
+                    b.HasIndex("TeacherId", "CourseId", "FromDate")
+                        .IsUnique();
+
+                    b.ToTable("WeeklyStudyPlans");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("FromDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("ToDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("WeekNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("WeeklyStudyPlanId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WeeklyStudyPlanId", "WeekNumber")
+                        .IsUnique();
+
+                    b.ToTable("WeeklyStudyPlanItems");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanTopic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Highlight")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<Guid>("WeeklyStudyPlanItemId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WeeklyStudyPlanItemId", "SortOrder");
+
+                    b.ToTable("WeeklyStudyPlanTopics");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2347,6 +2446,47 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.WeeklyStudyPlan", "Plan")
+                        .WithMany("Items")
+                        .HasForeignKey("WeeklyStudyPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanTopic", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.WeeklyStudyPlanItem", "Week")
+                        .WithMany("Topics")
+                        .HasForeignKey("WeeklyStudyPlanItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Week");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.User", "Parent")
@@ -2498,6 +2638,16 @@ namespace CodeKids.Infrastructure.Migrations
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttempt", b =>
                 {
                     b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
+                {
+                    b.Navigation("Topics");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.User", b =>

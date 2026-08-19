@@ -1,0 +1,225 @@
+.study-plan-sheet {
+  --plan-navy: #12355b;
+  --plan-teal: #1f8a8a;
+  --plan-line: #1f4e78;
+  --plan-paper: #ffffff;
+  --plan-ink: #12355b;
+  padding: 1rem 1.1rem 1.15rem;
+  border: 2px solid var(--plan-navy);
+  background: var(--plan-paper);
+  color: var(--plan-ink);
+}
+
+.study-plan-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.55rem;
+}
+
+.study-plan-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 800;
+  color: var(--plan-teal);
+}
+
+.study-plan-brand img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.study-plan-banner h3 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  color: var(--plan-navy);
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+
+.study-plan-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.75rem;
+  background: var(--plan-teal);
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.study-plan-meta span {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.study-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+  border: 1px solid var(--plan-line);
+}
+
+.study-week {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 16.5rem;
+  height: 100%;
+  border: 1px solid var(--plan-line);
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.study-week-name,
+.study-week-dates {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.15rem;
+  padding: 0.35rem 0.4rem;
+  text-align: center;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+
+.study-week-name {
+  background: var(--plan-navy);
+}
+
+.study-week-dates {
+  background: var(--plan-teal);
+  font-weight: 700;
+}
+
+.study-week-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.4rem;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.study-topic {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.study-topic textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 3.4em;
+  border: 1px dashed rgba(18, 53, 91, 0.28);
+  background: transparent;
+  color: var(--plan-ink);
+  padding: 0.25rem 0.35rem;
+  font: inherit;
+  line-height: 1.35;
+  text-align: center;
+  resize: none;
+  overflow: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.study-topic.highlight textarea {
+  color: #c1121f;
+  font-weight: 800;
+}
+
+.tiny-btn {
+  padding: 0.1rem 0.35rem;
+  min-width: 1.5rem;
+  line-height: 1.2;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.tiny-btn.active {
+  background: #c1121f;
+  color: #fff;
+  border-color: #c1121f;
+}
+
+.add-topic {
+  align-self: stretch;
+  margin-top: auto;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.8rem;
+}
+
+.study-plan-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+  color: inherit;
+}
+
+.study-plan-notes textarea {
+  width: 100%;
+  resize: vertical;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+}
+
+.study-plan-sheet.exporting .no-export,
+.study-plan-sheet.exporting .tiny-btn {
+  display: none !important;
+}
+
+.study-plan-sheet.exporting .study-week-topics {
+  overflow: hidden;
+}
+
+.study-plan-sheet.exporting .study-topic textarea {
+  border: none;
+  padding: 0.1rem 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.study-plan-sheet.exporting .study-topic:has(textarea:placeholder-shown) {
+  display: none;
+}
+
+.timetable-export-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0.35rem;
+}
+
+@media (max-width: 1100px) {
+  .study-plan-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .study-plan-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .study-plan-banner,
+  .study-plan-meta {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    text-align: center;
+  }
+}
