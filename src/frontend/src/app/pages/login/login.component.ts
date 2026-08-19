@@ -24,8 +24,8 @@ export class LoginComponent {
   readonly brand = inject(SiteBrandService);
 
   readonly form = this.fb.nonNullable.group({
-    login: ['student@codekids.local', Validators.required],
-    password: ['Student123!', Validators.required]
+    login: ['', Validators.required],
+    password: ['', Validators.required]
   });
   readonly loading = signal(false);
   readonly error = signal('');

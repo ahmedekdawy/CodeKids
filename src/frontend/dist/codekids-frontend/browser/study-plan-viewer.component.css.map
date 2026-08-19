@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/study-plan-sheet/study-plan-viewer.component.css"],
+  "sourcesContent": [".plan-picker {\r\n  display: flex;\r\n  flex-wrap: wrap;\r\n  gap: 0.5rem;\r\n}\r\n\r\n.plan-chip {\r\n  max-width: 100%;\r\n  padding: 0.45rem 0.85rem;\r\n  border-radius: 999px;\r\n  border: 1px solid rgba(31, 138, 138, 0.35);\r\n  background: rgba(31, 138, 138, 0.12);\r\n  color: inherit;\r\n  font: inherit;\r\n  font-size: 0.88rem;\r\n  line-height: 1.35;\r\n  text-align: start;\r\n  cursor: pointer;\r\n}\r\n\r\n.plan-chip.active {\r\n  background: #1f8a8a;\r\n  border-color: #1f8a8a;\r\n  color: #fff;\r\n  font-weight: 700;\r\n}\r\n\r\n.study-plan-embed {\r\n  overflow-x: auto;\r\n  margin-top: 1rem;\r\n}\r\n\r\n.meta {\r\n  margin: 0;\r\n  opacity: 0.8;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,aAAW;AACX,OAAK;AACP;AAEA,CAAC;AACC,aAAW;AACX,WAAS,QAAQ;AACjB,iBAAe;AACf,UAAQ,IAAI,MAAM,KAAK,EAAE,EAAE,GAAG,EAAE,GAAG,EAAE;AACrC,cAAY,KAAK,EAAE,EAAE,GAAG,EAAE,GAAG,EAAE;AAC/B,SAAO;AACP,QAAM;AACN,aAAW;AACX,eAAa;AACb,cAAY;AACZ,UAAQ;AACV;AAEA,CAdC,SAcS,CAAC;AACT,cAAY;AACZ,gBAAc;AACd,SAAO;AACP,eAAa;AACf;AAEA,CAAC;AACC,cAAY;AACZ,cAAY;AACd;AAEA,CAAC;AACC,UAAQ;AACR,WAAS;AACX;",
+  "names": []
+}

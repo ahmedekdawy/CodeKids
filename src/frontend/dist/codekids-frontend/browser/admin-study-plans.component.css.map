@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/admin/admin-study-plans.component.css"],
+  "sourcesContent": [".clickable-row {\r\n  cursor: pointer;\r\n}\r\n\r\n.clickable-row.selected,\r\n.clickable-row.selected td {\r\n  background: rgba(31, 138, 138, 0.16);\r\n}\r\n\r\n.study-plan-embed {\r\n  overflow-x: auto;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,UAAQ;AACV;AAEA,CAJC,aAIa,CAAC;AACf,CALC,aAKa,CADC,SACS;AACtB,cAAY,KAAK,EAAE,EAAE,GAAG,EAAE,GAAG,EAAE;AACjC;AAEA,CAAC;AACC,cAAY;AACd;",
+  "names": []
+}
