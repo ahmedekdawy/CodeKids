@@ -1,9 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Classroom, ClassroomDiagnosis, TeacherDashboard } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatGradeLabel } from '../../grade.util';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
 type GradeStudentGroup = {
   grade: number | null;
@@ -14,16 +17,25 @@ type GradeStudentGroup = {
 
 @Component({
   selector: 'app-teacher-overview',
-  imports: [TranslatePipe],
+  imports: [FormsModule, TranslatePipe, PageFeedbackComponent],
   templateUrl: './teacher-overview.component.html',
   styleUrl: './teacher-panel.css'
 })
 export class TeacherOverviewComponent {
+  readonly auth = inject(AuthService);
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
   readonly dashboard = signal<TeacherDashboard | null>(null);
   readonly classrooms = signal<Classroom[]>([]);
   readonly diagnosis = signal<ClassroomDiagnosis | null>(null);
+  readonly savingAccount = signal(false);
+  readonly message = signal('');
+  readonly error = signal('');
+
+  email = this.auth.user()?.email ?? '';
+  mobilePhone = this.auth.user()?.mobilePhone ?? '';
+  password = '';
+  passwordConfirm = '';
 
   readonly studentsByGrade = computed<GradeStudentGroup[]>(() => {
     this.locale.lang();
@@ -89,6 +101,47 @@ export class TeacherOverviewComponent {
       this.classrooms.set(classrooms);
       if (classrooms[0]) this.loadDiagnosis(classrooms[0].id);
     });
+  }
+
+  saveAccount(): void {
+    this.error.set('');
+    this.message.set('');
+    if (!this.email.trim() && !this.mobilePhone.trim()) {
+      this.error.set(this.locale.t('admin.users.emailOrMobileRequired'));
+      return;
+    }
+    if (this.password || this.passwordConfirm) {
+      if (this.password !== this.passwordConfirm) {
+        this.error.set(this.locale.t('auth.reset.mismatch'));
+        return;
+      }
+      if (this.password.trim().length < 6) {
+        this.error.set(this.locale.t('api.errors.auth.passwordTooShort'));
+        return;
+      }
+    }
+
+    this.savingAccount.set(true);
+    this.auth
+      .updateAccount({
+        email: this.email.trim() || null,
+        mobilePhone: this.mobilePhone.trim() || null,
+        password: this.password.trim() || null
+      })
+      .subscribe({
+        next: (user) => {
+          this.savingAccount.set(false);
+          this.email = user.email ?? '';
+          this.mobilePhone = user.mobilePhone ?? '';
+          this.password = '';
+          this.passwordConfirm = '';
+          this.message.set(this.locale.t('teacher.account.saved'));
+        },
+        error: (err) => {
+          this.savingAccount.set(false);
+          this.error.set(this.locale.fromApiError(err, 'teacher.account.saveFailed'));
+        }
+      });
   }
 
   loadDiagnosis(classroomId: string): void {

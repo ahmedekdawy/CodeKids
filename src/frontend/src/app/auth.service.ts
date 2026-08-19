@@ -43,6 +43,16 @@ export class AuthService {
     return this.http.post<{ accepted: boolean }>(`${this.baseUrl}/reset-password`, { token, newPassword });
   }
 
+  updateAccount(payload: {
+    email?: string | null;
+    mobilePhone?: string | null;
+    password?: string | null;
+  }): Observable<AuthUser> {
+    return this.http.put<AuthUser>(`${this.baseUrl}/account`, payload).pipe(
+      tap((user) => this.patchUser(user))
+    );
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);

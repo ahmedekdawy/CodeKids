@@ -944,6 +944,10 @@ export const EN: Record<string, string> = {
   'teacher.overview.strong': 'Strong: {list}',
   'teacher.overview.weakLine': '{lesson} · {percent}% accuracy',
   'teacher.overview.noWeak': 'No weak lessons detected yet.',
+  'teacher.account.title': 'Your account',
+  'teacher.account.hint': 'Update your email, mobile number, or password.',
+  'teacher.account.saved': 'Your account was updated.',
+  'teacher.account.saveFailed': 'Could not update your account.',
 
   'teacher.students.title': 'Students',
   'teacher.students.subtitle': 'Classroom-scoped levels, mastery signals, and weak lessons.',

@@ -164,6 +164,8 @@ builder.Services.AddScoped<ICommandHandler<ForgotPasswordCommand, ForgotPassword
 
 builder.Services.AddScoped<ICommandHandler<ResetPasswordCommand, bool>, ResetPasswordCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<UpdateOwnAccountCommand, AuthUserDto>, UpdateOwnAccountCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetSiteSettingsQuery, SiteSettingsDto>, GetSiteSettingsQueryHandler>();

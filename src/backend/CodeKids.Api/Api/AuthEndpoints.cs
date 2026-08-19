@@ -1,6 +1,7 @@
 using CodeKids.Application.Features.Auth;
-
 using CodeKids.Domain.Abstractions;
+using CodeKids.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CodeKids.Api;
 
@@ -135,6 +136,25 @@ public static class AuthEndpoints
             }
 
         });
+
+        app.MapPut("/api/auth/account", async (
+            HttpContext httpContext,
+            UpdateOwnAccountRequest request,
+            ICommandHandler<UpdateOwnAccountCommand, AuthUserDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new UpdateOwnAccountCommand(userId, request.Email, request.MobilePhone, request.Password),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
         return app;
 

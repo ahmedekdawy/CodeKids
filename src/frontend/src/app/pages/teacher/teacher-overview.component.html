@@ -1,4 +1,6 @@
 <div class="panel-page">
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
   <section class="hero-strip">
     <div>
       <p class="eyebrow">{{ 'teacher.overview.eyebrow' | t }}</p>
@@ -12,6 +14,32 @@
         } }}
       </p>
     </div>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'teacher.account.title' | t }}</h3>
+    <p class="meta">{{ 'teacher.account.hint' | t }}</p>
+    <form class="meeting-form" (ngSubmit)="saveAccount()">
+      <label>
+        {{ 'common.email' | t }}
+        <input [(ngModel)]="email" name="teacherEmail" type="email" autocomplete="email" />
+      </label>
+      <label>
+        {{ 'common.mobile' | t }}
+        <input [(ngModel)]="mobilePhone" name="teacherMobile" autocomplete="tel" />
+      </label>
+      <label>
+        {{ 'common.newPasswordOptional' | t }}
+        <input [(ngModel)]="password" name="teacherPassword" type="password" autocomplete="new-password" />
+      </label>
+      <label>
+        {{ 'auth.reset.confirmPassword' | t }}
+        <input [(ngModel)]="passwordConfirm" name="teacherPasswordConfirm" type="password" autocomplete="new-password" />
+      </label>
+      <button type="submit" [disabled]="savingAccount()">
+        {{ savingAccount() ? ('common.saving' | t) : ('common.save' | t) }}
+      </button>
+    </form>
   </section>
 
   <section class="stat-row">

@@ -944,6 +944,10 @@ export const AR: Record<string, string> = {
   'teacher.overview.strong': 'قوي: {list}',
   'teacher.overview.weakLine': '{lesson} · {percent}% دقة',
   'teacher.overview.noWeak': 'لم تُكتشف دروس ضعيفة بعد.',
+  'teacher.account.title': 'حسابك',
+  'teacher.account.hint': 'حدّث بريدك أو رقم الجوال أو كلمة المرور.',
+  'teacher.account.saved': 'تم تحديث حسابك.',
+  'teacher.account.saveFailed': 'تعذّر تحديث الحساب.',
 
   'teacher.students.title': 'الطلاب',
   'teacher.students.subtitle': 'مستويات على مستوى الفصل، إشارات الإتقان، والدروس الضعيفة.',
