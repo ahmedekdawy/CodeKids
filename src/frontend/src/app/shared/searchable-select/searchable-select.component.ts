@@ -1,4 +1,3 @@
-import { NgStyle } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -8,11 +7,16 @@ import {
   forwardRef,
   inject,
   input,
-  signal
+  signal,
+  viewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslatePipe } from '../translate.pipe';
-import { dropdownPanelStyle } from '../dropdown-panel.util';
+import {
+  applyDropdownPanelStyle,
+  attachDropdownPanelToBody,
+  isInsideDropdown
+} from '../dropdown-panel.util';
 
 export interface SelectOption {
   value: string | number | null;
@@ -22,7 +26,7 @@ export interface SelectOption {
 
 @Component({
   selector: 'app-searchable-select',
-  imports: [TranslatePipe, NgStyle],
+  imports: [TranslatePipe],
   templateUrl: './searchable-select.component.html',
   styleUrl: './searchable-select.component.css',
   host: {
@@ -41,6 +45,7 @@ export interface SelectOption {
 export class SearchableSelectComponent implements ControlValueAccessor {
   private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
 
   readonly options = input<SelectOption[]>([]);
   readonly placeholder = input('');
@@ -54,7 +59,6 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   readonly query = signal('');
   readonly selected = signal<string | number | null>('');
   readonly cvaDisabled = signal(false);
-  readonly panelStyle = signal<Record<string, string>>({});
 
   readonly isDisabled = computed(() => this.disabled() || this.cvaDisabled());
 
@@ -94,19 +98,21 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     if (this.open()) this.positionPanel();
   };
 
+  private readonly onPointerDown = (event: PointerEvent): void => {
+    if (!this.open()) return;
+    if (isInsideDropdown(event.target, this.hostEl.nativeElement, this.panel()?.nativeElement)) {
+      return;
+    }
+    this.close();
+  };
+
   constructor() {
     document.addEventListener('scroll', this.onScrollReposition, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
     this.destroyRef.onDestroy(() => {
       document.removeEventListener('scroll', this.onScrollReposition, true);
+      document.removeEventListener('pointerdown', this.onPointerDown, true);
     });
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.open()) return;
-    if (!this.hostEl.nativeElement.contains(event.target as Node)) {
-      this.close();
-    }
   }
 
   @HostListener('document:keydown.escape')
@@ -145,8 +151,7 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     this.open.set(true);
     requestAnimationFrame(() => {
       this.positionPanel();
-      const search = this.hostEl.nativeElement.querySelector('.ss-search') as HTMLInputElement | null;
-      search?.focus();
+      this.panel()?.nativeElement.querySelector<HTMLInputElement>('.ss-search')?.focus();
     });
   }
 
@@ -177,13 +182,16 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   private close(): void {
     this.open.set(false);
     this.query.set('');
-    this.panelStyle.set({});
     this.onTouched();
   }
 
   private positionPanel(): void {
+    const panel =
+      this.panel()?.nativeElement ??
+      (this.hostEl.nativeElement.querySelector('.ss-panel') as HTMLElement | null);
     const trigger = this.hostEl.nativeElement.querySelector('.ss-trigger') as HTMLElement | null;
-    if (!trigger) return;
-    this.panelStyle.set(dropdownPanelStyle(trigger, this.compact()));
+    if (!panel || !trigger) return;
+    attachDropdownPanelToBody(panel);
+    applyDropdownPanelStyle(panel, trigger, this.compact());
   }
 }

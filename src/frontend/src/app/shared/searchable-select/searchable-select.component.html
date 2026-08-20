@@ -5,7 +5,7 @@
   </button>
 
   @if (open()) {
-    <div class="ss-panel" role="listbox" [ngStyle]="panelStyle()">
+    <div #panel class="ss-panel ss-panel--overlay" role="listbox">
       <input
         class="ss-search"
         type="search"

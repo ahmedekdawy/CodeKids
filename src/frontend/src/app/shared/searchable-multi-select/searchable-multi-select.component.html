@@ -9,7 +9,7 @@
   </button>
 
   @if (open()) {
-    <div class="ms-panel" role="listbox" aria-multiselectable="true" [ngStyle]="panelStyle()">
+    <div #panel class="ms-panel ms-panel--overlay" role="listbox" aria-multiselectable="true">
       <input
         class="ms-search"
         type="search"

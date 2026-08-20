@@ -1,4 +1,3 @@
-import { NgStyle } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -8,11 +7,16 @@ import {
   forwardRef,
   inject,
   input,
-  signal
+  signal,
+  viewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslatePipe } from '../translate.pipe';
-import { dropdownPanelStyle } from '../dropdown-panel.util';
+import {
+  applyDropdownPanelStyle,
+  attachDropdownPanelToBody,
+  isInsideDropdown
+} from '../dropdown-panel.util';
 
 export interface MultiSelectOption {
   value: string | number;
@@ -21,7 +25,7 @@ export interface MultiSelectOption {
 
 @Component({
   selector: 'app-searchable-multi-select',
-  imports: [TranslatePipe, NgStyle],
+  imports: [TranslatePipe],
   templateUrl: './searchable-multi-select.component.html',
   styleUrl: './searchable-multi-select.component.css',
   host: {
@@ -40,6 +44,7 @@ export interface MultiSelectOption {
 export class SearchableMultiSelectComponent implements ControlValueAccessor {
   private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
 
   readonly options = input.required<MultiSelectOption[]>();
   readonly placeholder = input('');
@@ -50,7 +55,6 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
   readonly query = signal('');
   readonly selected = signal<(string | number)[]>([]);
   readonly disabled = signal(false);
-  readonly panelStyle = signal<Record<string, string>>({});
 
   readonly filteredOptions = computed(() => {
     const q = this.query().trim().toLowerCase();
@@ -80,19 +84,21 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
     if (this.open()) this.positionPanel();
   };
 
+  private readonly onPointerDown = (event: PointerEvent): void => {
+    if (!this.open()) return;
+    if (isInsideDropdown(event.target, this.hostEl.nativeElement, this.panel()?.nativeElement)) {
+      return;
+    }
+    this.close();
+  };
+
   constructor() {
     document.addEventListener('scroll', this.onScrollReposition, true);
+    document.addEventListener('pointerdown', this.onPointerDown, true);
     this.destroyRef.onDestroy(() => {
       document.removeEventListener('scroll', this.onScrollReposition, true);
+      document.removeEventListener('pointerdown', this.onPointerDown, true);
     });
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.open()) return;
-    if (!this.hostEl.nativeElement.contains(event.target as Node)) {
-      this.close();
-    }
   }
 
   @HostListener('document:keydown.escape')
@@ -129,7 +135,10 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
     }
     this.query.set('');
     this.open.set(true);
-    requestAnimationFrame(() => this.positionPanel());
+    requestAnimationFrame(() => {
+      this.positionPanel();
+      this.panel()?.nativeElement.querySelector<HTMLInputElement>('.ms-search')?.focus();
+    });
   }
 
   isSelected(value: string | number): boolean {
@@ -161,13 +170,16 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
   private close(): void {
     this.open.set(false);
     this.query.set('');
-    this.panelStyle.set({});
     this.onTouched();
   }
 
   private positionPanel(): void {
+    const panel =
+      this.panel()?.nativeElement ??
+      (this.hostEl.nativeElement.querySelector('.ms-panel') as HTMLElement | null);
     const trigger = this.hostEl.nativeElement.querySelector('.ms-trigger') as HTMLElement | null;
-    if (!trigger) return;
-    this.panelStyle.set(dropdownPanelStyle(trigger, this.compact()));
+    if (!panel || !trigger) return;
+    attachDropdownPanelToBody(panel);
+    applyDropdownPanelStyle(panel, trigger, this.compact());
   }
 }
