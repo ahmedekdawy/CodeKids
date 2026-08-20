@@ -81,6 +81,8 @@ export interface SiteSettings {
   logoUrl?: string | null;
   bannerUrl?: string | null;
   timetableWeekStartUtc?: string | null;
+  amSessionCount: number;
+  pmSessionCount: number;
   updatedAtUtc: string;
 }
 

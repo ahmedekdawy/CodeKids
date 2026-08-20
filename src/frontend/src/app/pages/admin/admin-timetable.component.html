@@ -176,15 +176,16 @@
             name="sessionNumber"
             required
             [emptyLabel]="'common.select' | t"
-            [options]="sessionNumbers.map(n => ({ value: n, label: '' + n }))"
+            [options]="sessionNumberOptions().map(n => ({ value: n, label: '' + n }))"
           />
         </label>
         <label>
           {{ 'admin.timetable.period' | t }}
           <app-searchable-select
-            [(ngModel)]="period"
+            [ngModel]="period"
             name="period"
             required
+            (ngModelChange)="onPeriodChange($event)"
             [emptyLabel]="'common.select' | t"
             [options]="[{ value: 'am', label: ('admin.timetable.am' | t) }, { value: 'pm', label: ('admin.timetable.pm' | t) }]"
           />

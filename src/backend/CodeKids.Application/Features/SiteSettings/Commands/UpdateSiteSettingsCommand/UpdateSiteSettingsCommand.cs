@@ -10,7 +10,9 @@ public sealed record UpdateSiteSettingsRequest(
     bool? ClearLogo = null,
     bool? ClearBanner = null,
     DateTimeOffset? TimetableWeekStartUtc = null,
-    bool? ClearTimetableWeek = null);
+    bool? ClearTimetableWeek = null,
+    int? AmSessionCount = null,
+    int? PmSessionCount = null);
 
 public sealed record UpdateSiteSettingsCommand(
     Guid AdminUserId,
@@ -18,4 +20,6 @@ public sealed record UpdateSiteSettingsCommand(
     bool ClearLogo,
     bool ClearBanner,
     DateTimeOffset? TimetableWeekStartUtc,
-    bool ClearTimetableWeek) : ICommand<SiteSettingsDto>;
+    bool ClearTimetableWeek,
+    int? AmSessionCount,
+    int? PmSessionCount) : ICommand<SiteSettingsDto>;

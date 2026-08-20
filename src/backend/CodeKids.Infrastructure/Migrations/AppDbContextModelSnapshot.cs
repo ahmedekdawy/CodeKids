@@ -1283,6 +1283,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("AmSessionCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(6);
+
                     b.Property<string>("BannerContentType")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -1302,6 +1307,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
+
+                    b.Property<int>("PmSessionCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(6);
 
                     b.Property<string>("SiteName")
                         .IsRequired()

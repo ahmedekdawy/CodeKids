@@ -6,6 +6,12 @@ import { SiteSettings } from '../../models';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import {
+  DEFAULT_SESSION_COUNT,
+  MAX_SESSION_COUNT,
+  MIN_SESSION_COUNT,
+  normalizeSessionCount
+} from '../../fixed-timetable.util';
 
 @Component({
   selector: 'app-admin-site-settings',
@@ -27,6 +33,10 @@ export class AdminSiteSettingsComponent {
   siteName = 'CodeKids';
   timetableWeekLocal = '';
   useCurrentTimetableWeek = true;
+  amSessionCount = DEFAULT_SESSION_COUNT;
+  pmSessionCount = DEFAULT_SESSION_COUNT;
+  readonly minSessionCount = MIN_SESSION_COUNT;
+  readonly maxSessionCount = MAX_SESSION_COUNT;
 
   constructor() {
     this.reload();
@@ -38,6 +48,7 @@ export class AdminSiteSettingsComponent {
         this.settings.set(settings);
         this.siteName = settings.siteName;
         this.applyTimetableWeek(settings);
+        this.applySessionCounts(settings);
         this.brand.apply(settings);
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.site.loadFailed'))
@@ -72,12 +83,23 @@ export class AdminSiteSettingsComponent {
       return;
     }
 
+    if (!this.sessionCountsValid()) {
+      this.error.set(
+        this.locale.t('admin.site.sessionCountInvalid', {
+          min: MIN_SESSION_COUNT,
+          max: MAX_SESSION_COUNT
+        })
+      );
+      return;
+    }
+
     this.saving.set(true);
     this.api.updateSiteSettings(this.buildSavePayload()).subscribe({
       next: (settings) => {
         this.saving.set(false);
         this.settings.set(settings);
         this.applyTimetableWeek(settings);
+        this.applySessionCounts(settings);
         this.brand.apply(settings);
         this.message.set(this.locale.t('admin.site.saved'));
       },
@@ -124,6 +146,7 @@ export class AdminSiteSettingsComponent {
         next: (settings) => {
           this.settings.set(settings);
           this.applyTimetableWeek(settings);
+          this.applySessionCounts(settings);
           this.brand.apply(settings);
           this.message.set(this.locale.t('admin.site.saved'));
         },
@@ -135,18 +158,26 @@ export class AdminSiteSettingsComponent {
     siteName: string;
     timetableWeekStartUtc?: string;
     clearTimetableWeek?: boolean;
+    amSessionCount: number;
+    pmSessionCount: number;
   } {
+    const counts = {
+      amSessionCount: normalizeSessionCount(this.amSessionCount),
+      pmSessionCount: normalizeSessionCount(this.pmSessionCount)
+    };
     if (this.useCurrentTimetableWeek) {
       return {
         siteName: this.siteName.trim(),
-        clearTimetableWeek: true
+        clearTimetableWeek: true,
+        ...counts
       };
     }
 
     const weekStart = startOfWeekSunday(new Date(`${this.timetableWeekLocal}T00:00:00`));
     return {
       siteName: this.siteName.trim(),
-      timetableWeekStartUtc: weekStart.toISOString()
+      timetableWeekStartUtc: weekStart.toISOString(),
+      ...counts
     };
   }
 
@@ -161,6 +192,24 @@ export class AdminSiteSettingsComponent {
     }
     this.useCurrentTimetableWeek = true;
     this.timetableWeekLocal = '';
+  }
+
+  private applySessionCounts(settings: SiteSettings): void {
+    this.amSessionCount = normalizeSessionCount(settings.amSessionCount);
+    this.pmSessionCount = normalizeSessionCount(settings.pmSessionCount);
+  }
+
+  private sessionCountsValid(): boolean {
+    const am = Number(this.amSessionCount);
+    const pm = Number(this.pmSessionCount);
+    return (
+      Number.isInteger(am) &&
+      Number.isInteger(pm) &&
+      am >= MIN_SESSION_COUNT &&
+      am <= MAX_SESSION_COUNT &&
+      pm >= MIN_SESSION_COUNT &&
+      pm <= MAX_SESSION_COUNT
+    );
   }
 }
 

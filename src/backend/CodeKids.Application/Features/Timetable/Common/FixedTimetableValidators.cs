@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.SiteSettings;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -23,9 +24,13 @@ internal static class FixedTimetableValidators
             throw new InvalidOperationException("Day of week must be between 0 (Sunday) and 6 (Saturday).");
         }
 
-        if (sessionNumber is < 1 or > 6)
+        var settings = await GetSiteSettingsQueryHandler.EnsureAsync(dbContext, cancellationToken);
+        var maxSession = period == TimetablePeriod.Pm
+            ? Domain.Entities.SiteSettings.NormalizeSessionCount(settings.PmSessionCount)
+            : Domain.Entities.SiteSettings.NormalizeSessionCount(settings.AmSessionCount);
+        if (sessionNumber < 1 || sessionNumber > maxSession)
         {
-            throw new InvalidOperationException("Session number must be between 1 and 6.");
+            throw new InvalidOperationException($"Session number must be between 1 and {maxSession}.");
         }
 
         var teacher = await dbContext.Users

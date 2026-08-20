@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { LearningApiService } from './learning-api.service';
 import { SiteSettings } from './models';
+import { DEFAULT_SESSION_COUNT, normalizeSessionCount } from './fixed-timetable.util';
 
 @Injectable({ providedIn: 'root' })
 export class SiteBrandService {
@@ -9,6 +10,8 @@ export class SiteBrandService {
   readonly siteName = signal('CodeKids');
   readonly logoUrl = signal<string | null>(null);
   readonly bannerUrl = signal<string | null>(null);
+  readonly amSessionCount = signal(DEFAULT_SESSION_COUNT);
+  readonly pmSessionCount = signal(DEFAULT_SESSION_COUNT);
   readonly loaded = signal(false);
 
   load(): void {
@@ -25,6 +28,8 @@ export class SiteBrandService {
     const banner = this.api.siteAssetUrl(settings.bannerUrl);
     this.logoUrl.set(logo ? `${logo}?v=${stamp}` : null);
     this.bannerUrl.set(banner ? `${banner}?v=${stamp}` : null);
+    this.amSessionCount.set(normalizeSessionCount(settings.amSessionCount));
+    this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
     document.title = this.siteName();
     this.loaded.set(true);
   }

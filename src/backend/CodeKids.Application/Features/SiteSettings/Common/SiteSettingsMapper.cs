@@ -13,5 +13,7 @@ public static class SiteSettingsMapper
             string.IsNullOrWhiteSpace(settings.LogoStorageKey) ? null : "/api/site-settings/logo",
             string.IsNullOrWhiteSpace(settings.BannerStorageKey) ? null : "/api/site-settings/banner",
             settings.TimetableWeekStartUtc,
+            Domain.Entities.SiteSettings.NormalizeSessionCount(settings.AmSessionCount),
+            Domain.Entities.SiteSettings.NormalizeSessionCount(settings.PmSessionCount),
             settings.UpdatedAtUtc);
 }

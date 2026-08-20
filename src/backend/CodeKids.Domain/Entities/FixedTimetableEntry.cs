@@ -9,7 +9,7 @@ public class FixedTimetableEntry
     public Guid CourseId { get; set; }
     /// <summary>0 = Sunday … 6 = Saturday.</summary>
     public int DayOfWeek { get; set; }
-    /// <summary>Session number within the period (1–6).</summary>
+    /// <summary>Session number within the period (1–N, configured per AM/PM).</summary>
     public int SessionNumber { get; set; }
     public TimetablePeriod Period { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;

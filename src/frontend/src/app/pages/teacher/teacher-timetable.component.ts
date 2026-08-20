@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { FixedTimetableEntry } from '../../models';
+import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
@@ -35,6 +36,7 @@ type TimetableDayRow = {
 export class TeacherTimetableComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly brand = inject(SiteBrandService);
 
   readonly entries = signal<FixedTimetableEntry[]>([]);
   readonly filterGrade = signal<number | ''>('');
@@ -49,7 +51,9 @@ export class TeacherTimetableComponent {
   readonly grades = GRADE_CODES;
   readonly weekDays = WEEKDAY_INDEXES;
 
-  readonly sessionSlots = computed(() => visibleSessionSlots(this.filterPeriod()));
+  readonly sessionSlots = computed(() =>
+    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount())
+  );
   readonly amSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'am'));
   readonly pmSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'pm'));
 

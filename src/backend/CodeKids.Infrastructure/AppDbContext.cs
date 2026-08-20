@@ -742,6 +742,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.LogoContentType).HasMaxLength(120).IsRequired();
             entity.Property(x => x.BannerStorageKey).HasMaxLength(400).IsRequired();
             entity.Property(x => x.BannerContentType).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.AmSessionCount).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultSessionCount);
+            entity.Property(x => x.PmSessionCount).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultSessionCount);
         });
     }
 }

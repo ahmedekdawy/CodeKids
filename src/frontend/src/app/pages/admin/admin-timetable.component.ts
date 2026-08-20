@@ -4,16 +4,17 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Classroom, Course, FixedTimetableEntry, ManagedUser } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import {
-  SESSION_NUMBERS,
   TimetablePeriodFilter,
   WEEKDAY_INDEXES,
   arabicWeekdayName,
+  sessionNumbers,
   visibleSessionSlots
 } from '../../fixed-timetable.util';
 
@@ -44,6 +45,7 @@ type SlotTarget = {
 export class AdminTimetableComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly brand = inject(SiteBrandService);
 
   readonly teachers = signal<ManagedUser[]>([]);
   readonly courses = signal<Course[]>([]);
@@ -64,7 +66,6 @@ export class AdminTimetableComponent {
   readonly timetableWrap = viewChild<ElementRef<HTMLElement>>('timetableWrap');
 
   readonly grades = GRADE_CODES;
-  readonly sessionNumbers = SESSION_NUMBERS;
   readonly weekDays = WEEKDAY_INDEXES;
 
   teacherId = '';
@@ -72,6 +73,7 @@ export class AdminTimetableComponent {
   dayOfWeek: number | '' = '';
   sessionNumber: number | '' = '';
   period: 'am' | 'pm' | '' = '';
+  readonly formPeriod = signal<'am' | 'pm' | ''>('');
 
   readonly selectedTeacherId = signal('');
   private dragEntryId: string | null = null;
@@ -103,7 +105,20 @@ export class AdminTimetableComponent {
       });
   });
 
-  readonly sessionSlots = computed(() => visibleSessionSlots(this.filterPeriod()));
+  readonly sessionSlots = computed(() =>
+    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount())
+  );
+
+  readonly sessionNumberOptions = computed(() => {
+    const period = this.formPeriod();
+    const count =
+      period === 'pm'
+        ? this.brand.pmSessionCount()
+        : period === 'am'
+          ? this.brand.amSessionCount()
+          : Math.max(this.brand.amSessionCount(), this.brand.pmSessionCount());
+    return sessionNumbers(count);
+  });
 
   readonly amSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'am'));
   readonly pmSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'pm'));
@@ -215,6 +230,10 @@ export class AdminTimetableComponent {
     this.reload();
   }
 
+  onPeriodChange(value: string): void {
+    this.setPeriod(value === 'am' || value === 'pm' ? value : '');
+  }
+
   gradeLabel(grade: number): string {
     return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
   }
@@ -240,7 +259,7 @@ export class AdminTimetableComponent {
     this.resetFormFields();
     const filterPeriod = this.filterPeriod();
     if (filterPeriod === 'am' || filterPeriod === 'pm') {
-      this.period = filterPeriod;
+      this.setPeriod(filterPeriod);
     }
     this.dialogOpen.set(true);
     this.clearStatus();
@@ -251,7 +270,7 @@ export class AdminTimetableComponent {
     this.resetFormFields();
     this.dayOfWeek = dayOfWeek;
     this.sessionNumber = sessionNumber;
-    this.period = period;
+    this.setPeriod(period);
     this.dialogOpen.set(true);
     this.clearStatus();
   }
@@ -267,7 +286,7 @@ export class AdminTimetableComponent {
     this.courseId = entry.courseId;
     this.dayOfWeek = entry.dayOfWeek;
     this.sessionNumber = entry.sessionNumber;
-    this.period = normalizePeriod(entry.period);
+    this.setPeriod(normalizePeriod(entry.period));
     this.dialogOpen.set(true);
     this.clearStatus();
   }
@@ -431,7 +450,15 @@ export class AdminTimetableComponent {
     this.courseId = '';
     this.dayOfWeek = '';
     this.sessionNumber = '';
-    this.period = '';
+    this.setPeriod('');
+  }
+
+  private setPeriod(value: 'am' | 'pm' | ''): void {
+    this.period = value;
+    this.formPeriod.set(value);
+    if (this.sessionNumber === '') return;
+    const max = this.sessionNumberOptions().at(-1) ?? 0;
+    if (Number(this.sessionNumber) > max) this.sessionNumber = '';
   }
 
   private clearStatus(): void {

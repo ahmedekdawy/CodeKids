@@ -114,7 +114,11 @@ public static class SiteSettingsEndpoints
 
                         request.TimetableWeekStartUtc,
 
-                        request.ClearTimetableWeek == true),
+                        request.ClearTimetableWeek == true,
+
+                        request.AmSessionCount,
+
+                        request.PmSessionCount),
 
                     cancellationToken));
 

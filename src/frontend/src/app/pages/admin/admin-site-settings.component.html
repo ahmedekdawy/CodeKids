@@ -30,6 +30,32 @@
         </label>
       }
 
+      <label>
+        {{ 'admin.site.amSessionCount' | t }}
+        <input
+          type="number"
+          [(ngModel)]="amSessionCount"
+          name="amSessionCount"
+          required
+          [min]="minSessionCount"
+          [max]="maxSessionCount"
+          step="1"
+        />
+      </label>
+      <label>
+        {{ 'admin.site.pmSessionCount' | t }}
+        <input
+          type="number"
+          [(ngModel)]="pmSessionCount"
+          name="pmSessionCount"
+          required
+          [min]="minSessionCount"
+          [max]="maxSessionCount"
+          step="1"
+        />
+        <span class="meta">{{ 'admin.site.sessionCountHint' | t: { min: minSessionCount, max: maxSessionCount } }}</span>
+      </label>
+
       <button type="submit" [disabled]="saving()">
         {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}
       </button>

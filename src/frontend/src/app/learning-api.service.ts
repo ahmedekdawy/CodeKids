@@ -717,6 +717,8 @@ export class LearningApiService {
     clearBanner?: boolean;
     timetableWeekStartUtc?: string | null;
     clearTimetableWeek?: boolean;
+    amSessionCount?: number;
+    pmSessionCount?: number;
   }): Observable<SiteSettings> {
     return this.http
       .put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload)
@@ -1021,6 +1023,8 @@ function normalizeSiteSettings(raw: SiteSettings | Record<string, unknown>): Sit
     logoUrl: (item.logoUrl ?? item['LogoUrl'] ?? null) as string | null,
     bannerUrl: (item.bannerUrl ?? item['BannerUrl'] ?? null) as string | null,
     timetableWeekStartUtc: timetableWeek == null ? null : String(timetableWeek),
+    amSessionCount: Number(item.amSessionCount ?? item['AmSessionCount'] ?? 6) || 6,
+    pmSessionCount: Number(item.pmSessionCount ?? item['PmSessionCount'] ?? 6) || 6,
     updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? '')
   };
 }

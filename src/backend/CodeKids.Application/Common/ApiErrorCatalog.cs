@@ -36,7 +36,6 @@ public static class ApiErrorCatalog
         ["Weekly recurrence exceeds the maximum number of sessions."] = "api.errors.appointment.repeatTooMany",
         ["Timetable entry not found."] = "api.errors.timetable.notFound",
         ["Day of week must be between 0 (Sunday) and 6 (Saturday)."] = "api.errors.timetable.dayInvalid",
-        ["Session number must be between 1 and 6."] = "api.errors.timetable.sessionInvalid",
         ["Period must be am or pm."] = "api.errors.timetable.periodInvalid",
         ["Teacher already has a timetable session in this slot."] = "api.errors.timetable.overlap",
         ["A course with the same school type (or All) is already in this timetable slot."] = "api.errors.timetable.schoolTypeOverlap",
@@ -154,7 +153,11 @@ public static class ApiErrorCatalog
     private static readonly (Regex Pattern, string Code)[] Patterns =
     [
         (new Regex("^Question '(.+)' belongs to a different course\\.$", RegexOptions.Compiled), "api.errors.exam.questionWrongCourse"),
-        (new Regex("^File size must be between 1 byte and (\\d+) bytes\\.$", RegexOptions.Compiled), "api.errors.media.fileSizeInvalid")
+        (new Regex("^File size must be between 1 byte and (\\d+) bytes\\.$", RegexOptions.Compiled), "api.errors.media.fileSizeInvalid"),
+        (new Regex("^Session number must be between 1 and (\\d+)\\.$", RegexOptions.Compiled), "api.errors.timetable.sessionInvalid"),
+        (new Regex("^Timetable session count must be between (\\d+) and (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.sessionCountInvalid"),
+        (new Regex("^Cannot reduce AM sessions while timetable entries exist beyond session (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.amSessionCountInUse"),
+        (new Regex("^Cannot reduce PM sessions while timetable entries exist beyond session (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.pmSessionCountInUse")
     ];
 
     public static (string Code, Dictionary<string, string> Args)? TryResolve(string message)
@@ -174,6 +177,15 @@ public static class ApiErrorCatalog
                 args["prompt"] = match.Groups[1].Value;
             if (patternCode == "api.errors.media.fileSizeInvalid" && match.Groups.Count > 1)
                 args["maxBytes"] = match.Groups[1].Value;
+            if (patternCode == "api.errors.timetable.sessionInvalid" && match.Groups.Count > 1)
+                args["max"] = match.Groups[1].Value;
+            if (patternCode == "api.errors.site.sessionCountInvalid" && match.Groups.Count > 2)
+            {
+                args["min"] = match.Groups[1].Value;
+                args["max"] = match.Groups[2].Value;
+            }
+            if ((patternCode is "api.errors.site.amSessionCountInUse" or "api.errors.site.pmSessionCountInUse") && match.Groups.Count > 1)
+                args["max"] = match.Groups[1].Value;
 
             return (patternCode, args);
         }

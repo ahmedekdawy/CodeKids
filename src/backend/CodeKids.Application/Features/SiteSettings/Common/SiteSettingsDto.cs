@@ -10,4 +10,6 @@ public sealed record SiteSettingsDto(
     string? LogoUrl,
     string? BannerUrl,
     DateTimeOffset? TimetableWeekStartUtc,
+    int AmSessionCount,
+    int PmSessionCount,
     DateTimeOffset UpdatedAtUtc);
