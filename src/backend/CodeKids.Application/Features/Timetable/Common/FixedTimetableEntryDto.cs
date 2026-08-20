@@ -13,6 +13,7 @@ public sealed record FixedTimetableEntryDto(
     Guid CourseId,
     string CourseName,
     int? CourseGrade,
+    int? CourseStageId,
     int DayOfWeek,
     int SessionNumber,
     string Period,

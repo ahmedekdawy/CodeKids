@@ -35,7 +35,7 @@ export class StudyPlanViewerComponent {
   }
 
   planLabel(plan: WeeklyStudyPlan): string {
-    const course = formatCourseLabel((k, p) => this.locale.t(k, p), plan.courseName, plan.courseGrade);
+    const course = formatCourseLabel((k, p) => this.locale.t(k, p), plan.courseName, plan.courseGrade, 'common.allGrades', plan.courseStageId);
     const range = `${plan.fromDate} – ${plan.toDate}`;
     return this.showTeacher() && plan.teacherName ? `${course} · ${plan.teacherName} · ${range}` : `${course} · ${range}`;
   }

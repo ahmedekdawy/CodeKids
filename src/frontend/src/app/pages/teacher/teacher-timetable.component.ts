@@ -76,7 +76,9 @@ export class TeacherTimetableComponent {
           courseLine: formatCourseLabel(
             (k, p) => this.locale.t(k, p),
             entry.courseName,
-            entry.courseGrade
+            entry.courseGrade,
+            'common.allGrades',
+            entry.courseStageId
           )
         });
       }
@@ -174,6 +176,10 @@ function normalizeEntries(items: FixedTimetableEntry[] | null | undefined): Fixe
         raw.courseGrade == null && raw['CourseGrade'] == null
           ? null
           : Number(raw.courseGrade ?? raw['CourseGrade']),
+      courseStageId:
+        raw.courseStageId == null && raw['CourseStageId'] == null
+          ? null
+          : Number(raw.courseStageId ?? raw['CourseStageId']),
       dayOfWeek: Number(raw.dayOfWeek ?? raw['DayOfWeek'] ?? 0),
       sessionNumber: Number(raw.sessionNumber ?? raw['SessionNumber'] ?? 0),
       period: normalizePeriod(String(raw.period ?? raw['Period'] ?? 'am')),

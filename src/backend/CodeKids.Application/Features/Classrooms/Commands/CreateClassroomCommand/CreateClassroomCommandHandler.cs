@@ -59,7 +59,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
         var matchedCourses = await dbContext.Courses
             .AsNoTracking()
             .Where(x => courseIds.Contains(x.Id))
-            .Select(x => new { x.Id, x.Grade })
+            .Select(x => new { x.Id, x.Grade, x.StageId })
             .ToListAsync(cancellationToken);
         if (matchedCourses.Count != courseIds.Count)
         {
@@ -67,7 +67,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
         }
 
         if (classroomGrade is not null
-            && matchedCourses.Any(c => !GradeStageHelper.CourseMatchesClassroomGrade(c.Grade, classroomGrade)))
+            && matchedCourses.Any(c => !GradeStageHelper.CourseCoversGrade(c.Grade, c.StageId, classroomGrade)))
         {
             throw new InvalidOperationException("One or more courses do not match the classroom grade.");
         }
@@ -153,6 +153,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
                 x.CourseId,
                 x.Course!.Title,
                 x.Course.Grade,
+                x.Course.StageId,
                 x.Course.SchoolType?.ToString() ?? nameof(SchoolType.All),
                 x.TeacherId,
                 x.Teacher!.DisplayName))
@@ -175,6 +176,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             primary?.CourseId ?? classroom.CourseId,
             primary?.CourseTitle ?? classroom.Course?.Title,
             primary?.CourseGrade ?? classroom.Course?.Grade,
+            primary?.CourseStageId ?? classroom.Course?.StageId,
             primary?.CourseSchoolType ?? classroom.Course?.SchoolType?.ToString() ?? nameof(SchoolType.All),
             classroom.WhatsAppGroupInviteUrl,
             classroom.WhatsAppNotifyPhones,

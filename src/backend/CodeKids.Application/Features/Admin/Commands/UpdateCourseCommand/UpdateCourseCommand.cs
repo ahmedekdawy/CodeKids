@@ -16,6 +16,7 @@ public sealed record UpdateCourseRequest(
     int? AgeMax,
     string? Term,
     int? Grade,
+    int? StageId,
     int? SortOrder,
     string? SchoolType = null);
 
@@ -28,5 +29,6 @@ public sealed record UpdateCourseCommand(
     int? AgeMax,
     string? Term,
     int? Grade,
+    int? StageId,
     int? SortOrder,
     string? SchoolType = null) : ICommand<CourseSummaryDto>;

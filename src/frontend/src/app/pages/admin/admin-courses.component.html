@@ -19,6 +19,16 @@
           [options]="terms.map(term => ({ value: term, label: termLabel(term) }))"
         />
       </label>
+      <label>
+        {{ 'common.stage' | t }}
+        <app-searchable-select
+          [ngModel]="courseStageId"
+          name="courseStageId"
+          (ngModelChange)="onCreateStageChange($event)"
+          [emptyLabel]="'common.allStages' | t"
+          [options]="stageOptions()"
+        />
+      </label>
       <label class="grade-multi">
         {{ 'common.grade' | t }}
         <app-searchable-multi-select
@@ -48,17 +58,36 @@
     <h3>{{ 'admin.courses.list' | t }}</h3>
     <div class="list-filters">
       <label>
+        {{ 'common.title' | t }}
+        <input
+          [ngModel]="filterName()"
+          name="courseFilterName"
+          (ngModelChange)="setFilterName($event)"
+          [placeholder]="'common.search' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.stage' | t }}
+        <app-searchable-select
+          [ngModel]="filterStage()"
+          name="courseFilterStage"
+          (ngModelChange)="onFilterStageChange($event)"
+          [emptyLabel]="'common.allStages' | t"
+          [options]="stageOptions()"
+        />
+      </label>
+      <label>
         {{ 'common.grade' | t }}
         <app-searchable-select
           [ngModel]="filterGrade()"
           name="courseFilterGrade"
           (ngModelChange)="onFilterGradeChange($event)"
-          [emptyLabel]="'common.all' | t"
+          [emptyLabel]="'common.allGrades' | t"
           [options]="filterGradeOptions()"
         />
       </label>
-      @if (filterGrade() !== '') {
-        <button type="button" class="ghost-btn" (click)="clearGradeFilter()">{{ 'common.clearFilters' | t }}</button>
+      @if (hasActiveFilters()) {
+        <button type="button" class="ghost-btn" (click)="clearFilters()">{{ 'common.clearFilters' | t }}</button>
       }
       <span class="meta">{{ 'common.ofShown' | t: { shown: sortedCourses().length, total: courses().length } }}</span>
     </div>
@@ -96,11 +125,20 @@
                 </td>
                 <td>
                   <app-searchable-select
+                    [ngModel]="editStageId"
+                    [name]="'cStage-' + course.id"
+                    [emptyLabel]="'common.allStages' | t"
+                    [emptyValue]="''"
+                    [options]="stageOptions()"
+                    [compact]="true"
+                    (ngModelChange)="onEditStageChange($event)"
+                  />
+                  <app-searchable-select
                     [(ngModel)]="editGrade"
                     [name]="'cGrade-' + course.id"
                     [emptyLabel]="'common.allGrades' | t"
                     [emptyValue]="null"
-                    [options]="grades.map(g => ({ value: g, label: '' + g }))"
+                    [options]="editGradeOptions()"
                     [compact]="true"
                   />
                 </td>
@@ -131,7 +169,7 @@
                 </td>
                 <td>{{ course.theme }}</td>
                 <td>{{ termLabel(course.term) }}</td>
-                <td>{{ gradeLabel(course.grade) }}</td>
+                <td>{{ gradeLabel(course.grade, course.stageId) }}</td>
                 <td>{{ schoolTypeLabel(course.schoolType) }}</td>
                 <td>{{ course.ageMin }}–{{ course.ageMax }}</td>
                 <td>{{ course.sortOrder }}</td>

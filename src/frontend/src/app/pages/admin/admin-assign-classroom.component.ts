@@ -61,7 +61,7 @@ export class AdminAssignClassroomComponent {
     if (grade == null) return [];
 
     return this.allCourses()
-      .filter((c) => courseMatchesClassroomGrade(c.grade, grade))
+      .filter((c) => courseMatchesClassroomGrade(c.grade, grade, c.stageId))
       .slice()
       .sort((a, b) => {
         const ga = a.grade ?? 999;
@@ -196,7 +196,7 @@ export class AdminAssignClassroomComponent {
     const grade = readOptionalGrade(room.grade);
     const allowedCourseIds = new Set(
       this.allCourses()
-        .filter((c) => courseMatchesClassroomGrade(c.grade, grade))
+        .filter((c) => courseMatchesClassroomGrade(c.grade, grade, c.stageId))
         .map((c) => c.id)
     );
 
@@ -272,6 +272,7 @@ function normalizeClassroom(room: Classroom): Classroom {
         courseId: String(link.courseId ?? link['CourseId'] ?? ''),
         courseTitle: String(link.courseTitle ?? link['CourseTitle'] ?? ''),
         courseGrade: readOptionalGrade(link.courseGrade ?? link['CourseGrade']),
+        courseStageId: readOptionalGrade(link.courseStageId ?? link['CourseStageId']),
         courseSchoolType: String(link.courseSchoolType ?? link['CourseSchoolType'] ?? 'All'),
         teacherId: String(link.teacherId ?? link['TeacherId'] ?? ''),
         teacherName: String(link.teacherName ?? link['TeacherName'] ?? '')

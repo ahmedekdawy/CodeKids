@@ -22,6 +22,10 @@ export function normalizeStudyPlan(item: WeeklyStudyPlan): WeeklyStudyPlan {
       raw.courseGrade == null && raw['CourseGrade'] == null
         ? null
         : Number(raw.courseGrade ?? raw['CourseGrade']),
+    courseStageId:
+      raw.courseStageId == null && raw['CourseStageId'] == null
+        ? null
+        : Number(raw.courseStageId ?? raw['CourseStageId']),
     courseTerm: String(raw.courseTerm ?? raw['CourseTerm'] ?? '') || null,
     fromDate: String(raw.fromDate ?? raw['FromDate'] ?? ''),
     toDate: String(raw.toDate ?? raw['ToDate'] ?? ''),

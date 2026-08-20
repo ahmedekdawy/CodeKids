@@ -21,6 +21,7 @@ import {
   Exam,
   ExamAttempt,
   FixedTimetableEntry,
+  Grade,
   TeacherSessionAttendance,
   StudentWeeklyReportGridRow,
   StudentWeeklyReport,
@@ -52,7 +53,8 @@ import {
   WatchSession,
   ZoomConnectionStatus,
   ZoomOAuthSettings,
-  SiteSettings
+  SiteSettings,
+  Stage
 } from './models';
 import { environment } from '../environments/environment';
 
@@ -63,6 +65,15 @@ export class LearningApiService {
 
   getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.baseUrl}/courses`);
+  }
+
+  getStages(): Observable<Stage[]> {
+    return this.http.get<Stage[]>(`${this.baseUrl}/stages`);
+  }
+
+  getGrades(stageId?: number | null): Observable<Grade[]> {
+    const query = stageId == null ? '' : `?stageId=${stageId}`;
+    return this.http.get<Grade[]>(`${this.baseUrl}/grades${query}`);
   }
 
   getLessons(courseId?: string): Observable<Lesson[]> {
@@ -631,6 +642,7 @@ export class LearningApiService {
     ageMax?: number | null;
     term?: string | null;
     grades?: number[] | null;
+    stageId?: number | null;
     schoolType?: string | null;
     sortOrder?: number | null;
   }): Observable<Course[]> {
@@ -647,6 +659,7 @@ export class LearningApiService {
       ageMax?: number | null;
       term?: string | null;
       grade?: number | null;
+      stageId?: number | null;
       schoolType?: string | null;
       sortOrder?: number | null;
     }

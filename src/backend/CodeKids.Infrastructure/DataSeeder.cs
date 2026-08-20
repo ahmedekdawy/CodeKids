@@ -12,6 +12,34 @@ public static class DataSeeder
         IPasswordHasher passwordHasher,
         CancellationToken cancellationToken = default)
     {
+        if (!await dbContext.Stages.AnyAsync(cancellationToken))
+        {
+            dbContext.Stages.AddRange(
+                new Stage { Id = 0, Name = "رياض الأطفال", NameEn = "Kindergarten" },
+                new Stage { Id = 1, Name = "المرحلة الابتدائية", NameEn = "Primary" },
+                new Stage { Id = 2, Name = "المرحلة الإعدادية", NameEn = "Preparatory" },
+                new Stage { Id = 3, Name = "المرحلة الثانوية", NameEn = "Secondary" });
+        }
+
+        if (!await dbContext.Grades.AnyAsync(cancellationToken))
+        {
+            dbContext.Grades.AddRange(
+                new Grade { Id = -1, Name = "KG1", NameEn = "KG1", StageId = 0 },
+                new Grade { Id = 0, Name = "KG2", NameEn = "KG2", StageId = 0 },
+                new Grade { Id = 1, Name = "الصف 1", NameEn = "Grade 1", StageId = 1 },
+                new Grade { Id = 2, Name = "الصف 2", NameEn = "Grade 2", StageId = 1 },
+                new Grade { Id = 3, Name = "الصف 3", NameEn = "Grade 3", StageId = 1 },
+                new Grade { Id = 4, Name = "الصف 4", NameEn = "Grade 4", StageId = 1 },
+                new Grade { Id = 5, Name = "الصف 5", NameEn = "Grade 5", StageId = 1 },
+                new Grade { Id = 6, Name = "الصف 6", NameEn = "Grade 6", StageId = 1 },
+                new Grade { Id = 7, Name = "الصف 7", NameEn = "Grade 7", StageId = 2 },
+                new Grade { Id = 8, Name = "الصف 8", NameEn = "Grade 8", StageId = 2 },
+                new Grade { Id = 9, Name = "الصف 9", NameEn = "Grade 9", StageId = 2 },
+                new Grade { Id = 10, Name = "الصف 10", NameEn = "Grade 10", StageId = 3 },
+                new Grade { Id = 11, Name = "الصف 11", NameEn = "Grade 11", StageId = 3 },
+                new Grade { Id = 12, Name = "الصف 12", NameEn = "Grade 12", StageId = 3 });
+        }
+
         if (!await dbContext.Avatars.AnyAsync(cancellationToken))
         {
             dbContext.Avatars.AddRange(
@@ -49,6 +77,7 @@ public static class DataSeeder
                     AgeMax = 10,
                     Term = CourseTerm.FirstTerm,
                     Grade = 3,
+                    StageId = 1,
                     SortOrder = 1,
                     Units =
                     [
@@ -177,6 +206,7 @@ public static class DataSeeder
                     AgeMax = 12,
                     Term = CourseTerm.FullYear,
                     Grade = 5,
+                    StageId = 1,
                     SortOrder = 2,
                     Units =
                     [

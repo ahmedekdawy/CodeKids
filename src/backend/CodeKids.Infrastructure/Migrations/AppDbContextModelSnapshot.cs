@@ -513,6 +513,9 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("StageId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Term")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
@@ -528,6 +531,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("character varying(120)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StageId");
 
                     b.ToTable("Courses");
                 });
@@ -798,6 +803,31 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("FixedTimetableEntries");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Grade", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int>("StageId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StageId");
+
+                    b.ToTable("Grades");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Lesson", b =>
@@ -1327,6 +1357,26 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SiteSettings");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Stage", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stages");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
@@ -2055,6 +2105,16 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.Course", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
+                        .WithMany()
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Stage");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.Course", "Course")
@@ -2608,7 +2668,20 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Navigation("Quizzes");
 
+                    b.Navigation("Stage");
+
                     b.Navigation("Units");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Grade", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
+                        .WithMany("Grades")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Stage");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
@@ -2643,6 +2716,11 @@ namespace CodeKids.Infrastructure.Migrations
             modelBuilder.Entity("CodeKids.Domain.Entities.Quiz", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Stage", b =>
+                {
+                    b.Navigation("Grades");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttempt", b =>

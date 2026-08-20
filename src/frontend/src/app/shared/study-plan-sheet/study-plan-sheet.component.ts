@@ -3,7 +3,7 @@ import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
 import { WeeklyStudyPlan } from '../../models';
 import { TranslatePipe } from '../translate.pipe';
-import { formatGradeLabel } from '../../grade.util';
+import { formatCourseAudienceLabel } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
 import { academicYearFromRange, formatStudyPlanRange } from './study-plan.util';
 
@@ -40,7 +40,7 @@ export class StudyPlanSheetComponent {
     const plan = this.plan();
     return this.locale.t('teacher.studyPlans.subjectLine', {
       course: plan.courseName || this.locale.t('common.emDash'),
-      grade: this.gradeLabel(plan.courseGrade)
+      grade: this.gradeLabel(plan.courseGrade, plan.courseStageId)
     });
   });
 
@@ -88,9 +88,9 @@ export class StudyPlanSheetComponent {
     }
   }
 
-  private gradeLabel(grade?: number | null): string {
-    if (grade == null) return this.locale.t('common.emDash');
-    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  private gradeLabel(grade?: number | null, stageId?: number | null): string {
+    if (grade == null && stageId == null) return this.locale.t('common.emDash');
+    return formatCourseAudienceLabel((k, p) => this.locale.t(k, p), grade, stageId);
   }
 
   private termLabel(term?: string | null): string {

@@ -16,6 +16,7 @@ public sealed record CreateCourseRequest(
     int? AgeMax,
     string? Term,
     IReadOnlyList<int>? Grades,
+    int? StageId,
     int? SortOrder,
     string? SchoolType = null);
 
@@ -27,5 +28,6 @@ public sealed record CreateCourseCommand(
     int? AgeMax,
     string? Term,
     IReadOnlyList<int>? Grades,
+    int? StageId,
     int? SortOrder,
     string? SchoolType = null) : ICommand<IReadOnlyList<CourseSummaryDto>>;

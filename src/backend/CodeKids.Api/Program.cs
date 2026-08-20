@@ -28,6 +28,8 @@ using CodeKids.Application.Features.Exams;
 
 using CodeKids.Application.Features.Expenses;
 
+using CodeKids.Application.Features.Grades;
+
 using CodeKids.Application.Features.Lessons;
 
 using CodeKids.Application.Features.Media;
@@ -167,6 +169,10 @@ builder.Services.AddScoped<ICommandHandler<ResetPasswordCommand, bool>, ResetPas
 builder.Services.AddScoped<ICommandHandler<UpdateOwnAccountCommand, AuthUserDto>, UpdateOwnAccountCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListStagesQuery, IReadOnlyList<StageDto>>, ListStagesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListGradesQuery, IReadOnlyList<GradeDto>>, ListGradesQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetSiteSettingsQuery, SiteSettingsDto>, GetSiteSettingsQueryHandler>();
 
@@ -479,6 +485,7 @@ app.MapClassroomsEndpoints();
 
 app.MapCoursesEndpoints();
 app.MapCourseTreeEndpoints();
+app.MapGradesEndpoints();
 
 app.MapDashboardEndpoints();
 

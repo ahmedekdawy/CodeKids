@@ -87,14 +87,59 @@ public static class GradeStageHelper
         return ParseStages(teacherStages).Contains(stage.Value);
     }
 
-    public static bool CourseMatchesClassroomGrade(int? courseGrade, int? classroomGrade)
+    public static bool CourseMatchesClassroomGrade(int? courseGrade, int? classroomGrade) =>
+        CourseCoversGrade(courseGrade, courseStageId: null, classroomGrade);
+
+    /// <summary>
+    /// Specific grade matches that grade only. Stage without a grade covers every grade in the stage.
+    /// Neither set covers all grades.
+    /// </summary>
+    public static bool CourseCoversGrade(int? courseGrade, int? courseStageId, int? targetGrade)
     {
-        if (classroomGrade is null)
+        if (targetGrade is null)
         {
             return true;
         }
 
-        // Null course grade = all grades; otherwise exact match.
-        return courseGrade is null || courseGrade == classroomGrade;
+        if (courseGrade is not null)
+        {
+            return courseGrade == targetGrade;
+        }
+
+        if (courseStageId is null)
+        {
+            return true;
+        }
+
+        return GradeMatchesStage(targetGrade, courseStageId.Value);
+    }
+
+    public static bool CourseAudiencesOverlap(
+        int? leftGrade,
+        int? leftStageId,
+        int? rightGrade,
+        int? rightStageId)
+    {
+        if ((leftGrade is null && leftStageId is null) || (rightGrade is null && rightStageId is null))
+        {
+            return true;
+        }
+
+        if (leftGrade is not null && rightGrade is not null)
+        {
+            return leftGrade == rightGrade;
+        }
+
+        if (leftGrade is not null)
+        {
+            return CourseCoversGrade(rightGrade, rightStageId, leftGrade);
+        }
+
+        if (rightGrade is not null)
+        {
+            return CourseCoversGrade(leftGrade, leftStageId, rightGrade);
+        }
+
+        return leftStageId == rightStageId;
     }
 }

@@ -36,7 +36,12 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
 
             coursesQuery = coursesQuery.Where(c =>
                 visibleCourseIds.Contains(c.Id)
-                && (c.Grade == null || studentGrade == null || c.Grade == studentGrade)
+                && (studentGrade == null
+                    || c.Grade == studentGrade
+                    || (c.Grade == null && c.StageId == null)
+                    || (c.Grade == null
+                        && c.StageId != null
+                        && dbContext.Grades.Any(g => g.Id == studentGrade && g.StageId == c.StageId)))
                 && (c.SchoolType == null
                     || c.SchoolType == SchoolType.All
                     || studentSchoolType == null
@@ -88,6 +93,7 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
                 course.AgeMax,
                 course.Term?.ToString(),
                 course.Grade,
+                course.StageId,
                 course.SchoolType?.ToString() ?? nameof(SchoolType.All),
                 course.SortOrder,
                 units,

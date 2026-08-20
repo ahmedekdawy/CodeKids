@@ -21,6 +21,7 @@ public sealed record WeeklyStudyPlanDto(
     Guid CourseId,
     string CourseName,
     int? CourseGrade,
+    int? CourseStageId,
     string? CourseTerm,
     DateOnly FromDate,
     DateOnly ToDate,

@@ -90,6 +90,8 @@ public static class CoursesEndpoints
 
                         request.Grades,
 
+                        request.StageId,
+
                         request.SortOrder,
 
                         request.SchoolType),
@@ -143,6 +145,8 @@ public static class CoursesEndpoints
                         request.Term,
 
                         request.Grade,
+
+                        request.StageId,
 
                         request.SortOrder,
 

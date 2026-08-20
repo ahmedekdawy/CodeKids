@@ -6,7 +6,7 @@ import { Classroom, ManagedUser } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
-import { formatGradeLabel, matchesStudentSchoolType } from '../../grade.util';
+import { courseMatchesClassroomGrade, formatGradeLabel, matchesStudentSchoolType } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
@@ -64,13 +64,13 @@ export class AdminEnrollStudentComponent {
     if (assigned.length) {
       return assigned.filter(
         (c) =>
-          (c.courseGrade == null || grade == null || c.courseGrade === grade) &&
+          courseMatchesClassroomGrade(c.courseGrade ?? null, grade, c.courseStageId ?? null) &&
           matchesStudentSchoolType(c.courseSchoolType, schoolType)
       );
     }
     if (room.courseId) {
       if (
-        (room.courseGrade == null || grade == null || room.courseGrade === grade) &&
+        courseMatchesClassroomGrade(room.courseGrade ?? null, grade, room.courseStageId ?? null) &&
         matchesStudentSchoolType(room.courseSchoolType, schoolType)
       ) {
         return [
@@ -78,6 +78,7 @@ export class AdminEnrollStudentComponent {
             courseId: room.courseId,
             courseTitle: room.courseTitle ?? room.courseId,
             courseGrade: room.courseGrade ?? null,
+            courseStageId: room.courseStageId ?? null,
             courseSchoolType: room.courseSchoolType ?? 'All',
             teacherId: '',
             teacherName: ''
@@ -149,7 +150,7 @@ export class AdminEnrollStudentComponent {
     if (!courses.length) {
       if (room.courseId) {
         return (
-          (room.courseGrade == null || studentGrade == null || room.courseGrade === studentGrade) &&
+          courseMatchesClassroomGrade(room.courseGrade ?? null, studentGrade, room.courseStageId ?? null) &&
           matchesStudentSchoolType(room.courseSchoolType, studentSchoolType)
         );
       }
@@ -157,7 +158,7 @@ export class AdminEnrollStudentComponent {
     }
     return courses.some(
       (c) =>
-        (c.courseGrade == null || studentGrade == null || c.courseGrade === studentGrade) &&
+        courseMatchesClassroomGrade(c.courseGrade ?? null, studentGrade, c.courseStageId ?? null) &&
         matchesStudentSchoolType(c.courseSchoolType, studentSchoolType)
     );
   }

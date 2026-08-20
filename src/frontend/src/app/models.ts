@@ -69,11 +69,25 @@ export interface Course {
   ageMax: number;
   term?: CourseTerm | string | null;
   grade?: number | null;
+  stageId?: number | null;
   schoolType?: CourseSchoolType | string | null;
   sortOrder: number;
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
+}
+
+export interface Stage {
+  id: number;
+  name: string;
+  nameEn: string;
+}
+
+export interface Grade {
+  id: number;
+  name: string;
+  nameEn: string;
+  stageId: number;
 }
 
 export interface SiteSettings {
@@ -512,6 +526,7 @@ export interface FixedTimetableEntry {
   courseId: string;
   courseName: string;
   courseGrade?: number | null;
+  courseStageId?: number | null;
   dayOfWeek: number;
   sessionNumber: number;
   period: 'am' | 'pm' | string;
@@ -588,6 +603,7 @@ export interface WeeklyStudyPlan {
   courseId: string;
   courseName: string;
   courseGrade?: number | null;
+  courseStageId?: number | null;
   courseTerm?: string | null;
   fromDate: string;
   toDate: string;
@@ -738,6 +754,7 @@ export interface ClassroomCourse {
   courseId: string;
   courseTitle: string;
   courseGrade?: number | null;
+  courseStageId?: number | null;
   courseSchoolType?: CourseSchoolType | string | null;
   teacherId: string;
   teacherName: string;
@@ -758,6 +775,7 @@ export interface Classroom {
   courseId?: string | null;
   courseTitle?: string | null;
   courseGrade?: number | null;
+  courseStageId?: number | null;
   courseSchoolType?: CourseSchoolType | string | null;
   whatsAppGroupInviteUrl: string;
   whatsAppNotifyPhones: string;

@@ -21,14 +21,14 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
 
         var term = ParseTerm(command.Term);
         var schoolType = ParseSchoolType(command.SchoolType);
-        var grades = NormalizeGrades(command.Grades);
+        var audiences = await ResolveAudiencesAsync(dbContext, command.Grades, command.StageId, cancellationToken);
         var theme = string.IsNullOrWhiteSpace(command.Theme) ? "General" : command.Theme.Trim();
         var description = (command.Description ?? string.Empty).Trim();
         var ageMin = command.AgeMin is null or <= 0 ? 8 : command.AgeMin.Value;
         var ageMax = command.AgeMax is null or <= 0 ? 12 : command.AgeMax.Value;
         var sortOrder = command.SortOrder ?? 0;
 
-        var courses = grades.Select(grade => new Course
+        var courses = audiences.Select(audience => new Course
         {
             Id = Guid.NewGuid(),
             Title = title,
@@ -37,7 +37,8 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             AgeMin = ageMin,
             AgeMax = ageMax,
             Term = term,
-            Grade = grade,
+            Grade = audience.Grade,
+            StageId = audience.StageId,
             SchoolType = schoolType,
             SortOrder = sortOrder
         }).ToList();
@@ -80,20 +81,47 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
     }
 
     /// <summary>
-    /// Empty/null grades → one course for all grades (null).
-    /// Otherwise one course per distinct grade (KG1=-1, KG2=0, or 1–12).
+    /// Empty grades + no stage → one course for all grades.
+    /// Empty grades + stage → one course covering every grade in that stage.
+    /// Otherwise one course per distinct grade.
     /// </summary>
-    internal static IReadOnlyList<int?> NormalizeGrades(IReadOnlyList<int>? grades)
+    internal static async Task<IReadOnlyList<(int? Grade, int? StageId)>> ResolveAudiencesAsync(
+        IAppDbContext dbContext,
+        IReadOnlyList<int>? grades,
+        int? stageId,
+        CancellationToken cancellationToken)
     {
         if (grades is null || grades.Count == 0)
         {
-            return [null];
+            if (stageId is null)
+            {
+                return [(null, null)];
+            }
+
+            var stage = await dbContext.Stages.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == stageId.Value, cancellationToken)
+                ?? throw new InvalidOperationException("Stage was not found.");
+            return [(null, stage.Id)];
         }
 
-        return grades
-            .Select(g => NormalizeGrade(g))
-            .Distinct()
-            .OrderBy(g => g ?? 999)
+        var requested = grades.Distinct().ToList();
+        var matched = await dbContext.Grades.AsNoTracking()
+            .Where(x => requested.Contains(x.Id))
+            .Select(x => new { x.Id, x.StageId })
+            .ToListAsync(cancellationToken);
+        if (matched.Count != requested.Count)
+        {
+            throw new InvalidOperationException("Grade must be KG1, KG2, or between 1 and 12.");
+        }
+
+        if (stageId is not null && matched.Any(g => g.StageId != stageId.Value))
+        {
+            throw new InvalidOperationException("Selected grades must belong to the chosen stage.");
+        }
+
+        return matched
+            .OrderBy(g => g.Id)
+            .Select(g => ((int?)g.Id, (int?)g.StageId))
             .ToList();
     }
 
@@ -113,6 +141,20 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
         return grade;
     }
 
+    internal static async Task<(int? Grade, int? StageId)> ResolveAudienceAsync(
+        IAppDbContext dbContext,
+        int? grade,
+        int? stageId,
+        CancellationToken cancellationToken)
+    {
+        var audiences = await ResolveAudiencesAsync(
+            dbContext,
+            grade is null ? [] : [grade.Value],
+            stageId,
+            cancellationToken);
+        return audiences[0];
+    }
+
     internal static CourseSummaryDto ToSummary(Course course) =>
         new(
             course.Id,
@@ -123,6 +165,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             course.AgeMax,
             course.Term?.ToString(),
             course.Grade,
+            course.StageId,
             course.SortOrder,
             course.SchoolType?.ToString() ?? nameof(SchoolType.All));
 }

@@ -62,11 +62,23 @@ export function formatCourseLabel(
   t: (key: string, params?: Record<string, string | number>) => string,
   title: string | null | undefined,
   grade?: number | null,
-  allKey = 'common.allGrades'
+  allKey = 'common.allGrades',
+  stageId?: number | null
 ): string {
   const name = (title || '').trim();
   if (!name) return '';
-  return `${formatGradeLabel(t, grade, allKey)} - ${name}`;
+  return `${formatCourseAudienceLabel(t, grade, stageId, allKey)} - ${name}`;
+}
+
+export function formatCourseAudienceLabel(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  grade?: number | null,
+  stageId?: number | null,
+  allKey = 'common.allGrades'
+): string {
+  if (grade != null) return formatGradeLabel(t, grade, allKey);
+  if (stageId != null) return formatStageLabel(t, stageId);
+  return t(allKey);
 }
 
 export function teacherCoversGrade(
@@ -81,13 +93,13 @@ export function teacherCoversGrade(
 
 export function courseMatchesClassroomGrade(
   courseGrade: number | null | undefined,
-  classroomGrade: number | null | undefined
+  classroomGrade: number | null | undefined,
+  courseStageId?: number | null
 ): boolean {
-  // Null classroom grade: no restriction (caller may still require a grade elsewhere).
   if (classroomGrade == null) return true;
-  // Null course grade = all grades — available for any classroom grade.
-  if (courseGrade == null) return true;
-  return Number(courseGrade) === Number(classroomGrade);
+  if (courseGrade != null) return Number(courseGrade) === Number(classroomGrade);
+  if (courseStageId == null) return true;
+  return gradeToStage(classroomGrade) === Number(courseStageId);
 }
 
 export function matchesStudentSchoolType(

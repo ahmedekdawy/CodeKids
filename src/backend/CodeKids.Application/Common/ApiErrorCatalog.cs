@@ -133,6 +133,8 @@ public static class ApiErrorCatalog
         ["Course title is required."] = "api.errors.course.titleRequired",
         ["Term must be FirstTerm, SecondTerm, or FullYear."] = "api.errors.course.termInvalid",
         ["Grade must be KG1, KG2, or between 1 and 12."] = "api.errors.course.gradeInvalid",
+        ["Stage was not found."] = "api.errors.course.stageNotFound",
+        ["Selected grades must belong to the chosen stage."] = "api.errors.course.gradeStageMismatch",
         ["Course school type must be Arabic, Language, or All."] = "api.errors.course.schoolTypeInvalid",
         ["Super Admin account not found."] = "api.errors.admin.superAdminNotFound",
         ["User not found."] = "api.errors.admin.userNotFound",

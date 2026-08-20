@@ -26,7 +26,13 @@ public sealed class ListTeacherSessionAttendanceQueryHandler(IAppDbContext dbCon
 
         if (query.CourseGrade.HasValue)
         {
-            rows = rows.Where(x => x.Course != null && x.Course.Grade == query.CourseGrade.Value);
+            rows = rows.Where(x =>
+                x.Course != null
+                && (x.Course.Grade == query.CourseGrade.Value
+                    || (x.Course.Grade == null && x.Course.StageId == null)
+                    || (x.Course.Grade == null
+                        && x.Course.StageId != null
+                        && dbContext.Grades.Any(g => g.Id == query.CourseGrade.Value && g.StageId == x.Course.StageId))));
         }
 
         if (query.SessionDate.HasValue)

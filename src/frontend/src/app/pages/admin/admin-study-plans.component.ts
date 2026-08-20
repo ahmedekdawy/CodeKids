@@ -75,11 +75,11 @@ export class AdminStudyPlansComponent {
   }
 
   courseLabel(course: Course): string {
-    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade, 'common.allGrades', course.stageId);
   }
 
   planCourseLabel(plan: WeeklyStudyPlan): string {
-    return formatCourseLabel((k, p) => this.locale.t(k, p), plan.courseName, plan.courseGrade);
+    return formatCourseLabel((k, p) => this.locale.t(k, p), plan.courseName, plan.courseGrade, 'common.allGrades', plan.courseStageId);
   }
 
   loadPlans(): void {

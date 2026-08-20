@@ -37,7 +37,13 @@ public sealed class GetTeacherQuizzesQueryHandler(IAppDbContext dbContext)
 
         if (query.Grade is int grade)
         {
-            quizzesQuery = quizzesQuery.Where(x => x.Course != null && x.Course.Grade == grade);
+            quizzesQuery = quizzesQuery.Where(x =>
+                x.Course != null
+                && (x.Course.Grade == grade
+                    || (x.Course.Grade == null && x.Course.StageId == null)
+                    || (x.Course.Grade == null
+                        && x.Course.StageId != null
+                        && dbContext.Grades.Any(g => g.Id == grade && g.StageId == x.Course.StageId))));
         }
 
         if (query.CourseId is Guid courseId)

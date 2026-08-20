@@ -36,14 +36,23 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
 
         if (query.Grade.HasValue)
         {
-            attendance = attendance.Where(x => x.Course != null && x.Course.Grade == query.Grade.Value);
+            attendance = attendance.Where(x =>
+                x.Course != null
+                && (x.Course.Grade == query.Grade.Value
+                    || (x.Course.Grade == null && x.Course.StageId == null)
+                    || (x.Course.Grade == null
+                        && x.Course.StageId != null
+                        && dbContext.Grades.Any(g => g.Id == query.Grade.Value && g.StageId == x.Course.StageId))));
         }
 
         var attendanceRows = await attendance.ToListAsync(cancellationToken);
         if (query.Stage.HasValue)
         {
             attendanceRows = attendanceRows
-                .Where(x => GradeStageHelper.StageCodeForGrade(x.Course?.Grade) == query.Stage.Value)
+                .Where(x =>
+                    x.Course?.StageId == query.Stage.Value
+                    || GradeStageHelper.StageCodeForGrade(x.Course?.Grade) == query.Stage.Value
+                    || (x.Course?.Grade == null && x.Course?.StageId == null))
                 .ToList();
         }
 

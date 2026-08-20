@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Domain;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -48,14 +49,14 @@ public static class StudentCourseVisibility
             from cc in dbContext.ClassroomCourses.AsNoTracking()
             join course in dbContext.Courses.AsNoTracking() on cc.CourseId equals course.Id
             where classroomIds.Contains(cc.ClassroomId)
-            select new { cc.ClassroomId, cc.CourseId, course.Grade, course.SchoolType }
+            select new { cc.ClassroomId, cc.CourseId, course.Grade, course.StageId, course.SchoolType }
         ).ToListAsync(cancellationToken);
 
         var legacy = await (
             from room in dbContext.Classrooms.AsNoTracking()
             join course in dbContext.Courses.AsNoTracking() on room.CourseId equals course.Id
             where classroomIds.Contains(room.Id) && room.CourseId != null
-            select new { ClassroomId = room.Id, CourseId = course.Id, course.Grade, course.SchoolType }
+            select new { ClassroomId = room.Id, CourseId = course.Id, course.Grade, course.StageId, course.SchoolType }
         ).ToListAsync(cancellationToken);
 
         var courseMeta = assigned
@@ -63,7 +64,7 @@ public static class StudentCourseVisibility
             .GroupBy(x => x.CourseId)
             .ToDictionary(
                 g => g.Key,
-                g => (g.First().Grade, g.First().SchoolType));
+                g => (g.First().Grade, g.First().StageId, g.First().SchoolType));
 
         var missingIds = specific
             .Select(x => x.CourseId)
@@ -75,11 +76,11 @@ public static class StudentCourseVisibility
             var extra = await dbContext.Courses
                 .AsNoTracking()
                 .Where(c => missingIds.Contains(c.Id))
-                .Select(c => new { c.Id, c.Grade, c.SchoolType })
+                .Select(c => new { c.Id, c.Grade, c.StageId, c.SchoolType })
                 .ToListAsync(cancellationToken);
             foreach (var row in extra)
             {
-                courseMeta[row.Id] = (row.Grade, row.SchoolType);
+                courseMeta[row.Id] = (row.Grade, row.StageId, row.SchoolType);
             }
         }
 
@@ -91,7 +92,7 @@ public static class StudentCourseVisibility
                 foreach (var courseId in enrolled)
                 {
                     if (courseMeta.TryGetValue(courseId, out var meta)
-                        && MatchesStudent(meta.Grade, student?.Grade, meta.SchoolType, student?.SchoolType))
+                        && MatchesStudent(meta.Grade, meta.StageId, student?.Grade, meta.SchoolType, student?.SchoolType))
                     {
                         visible.Add(courseId);
                     }
@@ -102,7 +103,7 @@ public static class StudentCourseVisibility
 
             foreach (var row in assigned.Where(x => x.ClassroomId == classroomId))
             {
-                if (MatchesStudent(row.Grade, student?.Grade, row.SchoolType, student?.SchoolType))
+                if (MatchesStudent(row.Grade, row.StageId, student?.Grade, row.SchoolType, student?.SchoolType))
                 {
                     visible.Add(row.CourseId);
                 }
@@ -110,7 +111,7 @@ public static class StudentCourseVisibility
 
             foreach (var row in legacy.Where(x => x.ClassroomId == classroomId))
             {
-                if (MatchesStudent(row.Grade, student?.Grade, row.SchoolType, student?.SchoolType))
+                if (MatchesStudent(row.Grade, row.StageId, student?.Grade, row.SchoolType, student?.SchoolType))
                 {
                     visible.Add(row.CourseId);
                 }
@@ -122,14 +123,15 @@ public static class StudentCourseVisibility
 
     public static bool MatchesStudent(
         int? courseGrade,
+        int? courseStageId,
         int? studentGrade,
         SchoolType? courseSchoolType,
         SchoolType? studentSchoolType) =>
-        MatchesStudentGrade(courseGrade, studentGrade)
+        GradeStageHelper.CourseCoversGrade(courseGrade, courseStageId, studentGrade)
         && MatchesStudentSchoolType(courseSchoolType, studentSchoolType);
 
     public static bool MatchesStudentGrade(int? courseGrade, int? studentGrade) =>
-        courseGrade is null || studentGrade is null || courseGrade == studentGrade;
+        GradeStageHelper.CourseCoversGrade(courseGrade, null, studentGrade);
 
     public static bool MatchesStudentSchoolType(SchoolType? courseSchoolType, SchoolType? studentSchoolType) =>
         courseSchoolType is null

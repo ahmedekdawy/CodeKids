@@ -55,6 +55,7 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
                         .Where(c => enrolled.Contains(c.CourseId)
                             && StudentCourseVisibility.MatchesStudent(
                                 c.Course?.Grade,
+                                c.Course?.StageId,
                                 student?.Grade,
                                 c.Course?.SchoolType,
                                 student?.SchoolType))
@@ -65,6 +66,7 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
                 classroom.Courses = classroom.Courses
                     .Where(c => StudentCourseVisibility.MatchesStudent(
                         c.Course?.Grade,
+                        c.Course?.StageId,
                         student?.Grade,
                         c.Course?.SchoolType,
                         student?.SchoolType))

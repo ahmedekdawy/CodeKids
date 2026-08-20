@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.SiteSettings;
+using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -63,7 +64,13 @@ internal static class FixedTimetableValidators
             throw new InvalidOperationException("Teacher already has a timetable session in this slot.");
         }
 
-        if (slotEntries.Any(x => course.Grade==x.Course?.Grade&& SchoolTypesConflict(course.SchoolType, x.Course?.SchoolType)))
+        if (slotEntries.Any(x =>
+            GradeStageHelper.CourseAudiencesOverlap(
+                course.Grade,
+                course.StageId,
+                x.Course?.Grade,
+                x.Course?.StageId)
+            && SchoolTypesConflict(course.SchoolType, x.Course?.SchoolType)))
         {
             throw new InvalidOperationException(
                 "A course with the same school type (or All) is already in this timetable slot.");
@@ -100,12 +107,21 @@ internal static class FixedTimetableValidators
         var teacherName = entry.Teacher?.DisplayName ?? string.Empty;
         var courseName = entry.Course?.Title ?? string.Empty;
         var courseGrade = entry.Course?.Grade;
+        var courseStageId = entry.Course?.StageId;
         var gradeLabel = courseGrade switch
         {
-            null => "All",
             -1 => "KG1",
             0 => "KG2",
-            _ => $"Grade {courseGrade}"
+            not null => $"Grade {courseGrade}",
+            null when courseStageId is int stage => stage switch
+            {
+                0 => "KG",
+                1 => "Primary",
+                2 => "Preparatory",
+                3 => "Secondary",
+                _ => $"Stage {stage}"
+            },
+            _ => "All"
         };
         var label = string.Join(
             " - ",
@@ -117,6 +133,7 @@ internal static class FixedTimetableValidators
             entry.CourseId,
             courseName,
             courseGrade,
+            courseStageId,
             entry.DayOfWeek,
             entry.SessionNumber,
             entry.Period == TimetablePeriod.Pm ? "pm" : "am",

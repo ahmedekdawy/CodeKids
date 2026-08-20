@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users => Set<User>();
     public DbSet<Avatar> Avatars => Set<Avatar>();
     public DbSet<Course> Courses => Set<Course>();
+    public DbSet<Stage> Stages => Set<Stage>();
+    public DbSet<Grade> Grades => Set<Grade>();
     public DbSet<CourseUnit> CourseUnits => Set<CourseUnit>();
     public DbSet<Lesson> Lessons => Set<Lesson>();
     public DbSet<LessonStep> LessonSteps => Set<LessonStep>();
@@ -102,6 +104,27 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Emoji).HasMaxLength(16).IsRequired();
         });
 
+        modelBuilder.Entity<Stage>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.Name).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.NameEn).HasMaxLength(80).IsRequired();
+            entity.HasMany(x => x.Grades)
+                .WithOne(x => x.Stage)
+                .HasForeignKey(x => x.StageId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Grade>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.Name).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.NameEn).HasMaxLength(80).IsRequired();
+            entity.HasIndex(x => x.StageId);
+        });
+
         modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(x => x.Id);
@@ -110,6 +133,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.Property(x => x.Term).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
+            entity.HasOne(x => x.Stage)
+                .WithMany()
+                .HasForeignKey(x => x.StageId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(x => x.StageId);
             entity.HasMany(x => x.Units)
                 .WithOne(x => x.Course)
                 .HasForeignKey(x => x.CourseId)

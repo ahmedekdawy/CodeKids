@@ -80,7 +80,7 @@ export class TeacherQuestionBankComponent {
   }
 
   courseLabel(course: Course): string {
-    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade);
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade, 'common.allGrades', course.stageId);
   }
 
   courseLabelById(courseId: string, fallbackTitle?: string | null): string {
