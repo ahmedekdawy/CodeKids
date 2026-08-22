@@ -175,6 +175,8 @@ builder.Services.AddWhatsAppIntegration(builder.Configuration);
 
 builder.Services.AddEmailSender(builder.Configuration);
 
+builder.Services.AddStudyPlanAi(builder.Configuration);
+
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
@@ -407,6 +409,8 @@ builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyLi
 builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyStudyPlanCommand, WeeklyStudyPlanDto>, SaveWeeklyStudyPlanCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<GenerateWeeklyStudyPlanCommand, GenerateWeeklyStudyPlanResult>, GenerateWeeklyStudyPlanCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteWeeklyStudyPlanCommand, bool>, DeleteWeeklyStudyPlanCommandHandler>();
 

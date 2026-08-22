@@ -840,7 +840,7 @@ export const AR: Record<string, string> = {
 
   'teacher.studyPlans.title': 'الخطة الدراسية الأسبوعية',
   'teacher.studyPlans.subtitle':
-    'أنشئ توزيع أسابيع المادة. أضف قائمة موضوعات داخل كل أسبوع، صفِّ حسب التاريخ والمادة، ثم صدّر الخطة كصورة.',
+    'أنشئ توزيع أسابيع المادة. يمكن توليد مسودة بالذكاء الاصطناعي، ثم تعديل الموضوعات وحفظها أو تصديرها كصورة.',
   'teacher.studyPlans.editorTitle': 'توزيع أسابيع المادة',
   'teacher.studyPlans.listTitle': 'الخطط المحفوظة',
   'teacher.studyPlans.sheetTitle': 'توزيع أسابيع الترم {year}',
@@ -855,6 +855,11 @@ export const AR: Record<string, string> = {
   'teacher.studyPlans.weekNotes': 'ملاحظات الخطة',
   'teacher.studyPlans.thisTerm': 'هذا الترم (18 أسبوعاً)',
   'teacher.studyPlans.newPlan': 'خطة جديدة',
+  'teacher.studyPlans.generate': 'توليد بالذكاء الاصطناعي',
+  'teacher.studyPlans.generating': 'جاري التوليد…',
+  'teacher.studyPlans.generated': 'تم توليد مسودة الخطة. راجع الموضوعات ثم احفظ.',
+  'teacher.studyPlans.generateFailed': 'تعذّر توليد الخطة الدراسية.',
+  'teacher.studyPlans.confirmGenerate': 'استبدال موضوعات الأسابيع الحالية بمسودة الذكاء الاصطناعي؟',
   'teacher.studyPlans.save': 'حفظ الخطة',
   'teacher.studyPlans.saved': 'تم حفظ الخطة الدراسية.',
   'teacher.studyPlans.deleted': 'تم حذف الخطة الدراسية.',
@@ -1334,6 +1339,7 @@ export const AR: Record<string, string> = {
   'api.errors.studyPlan.rangeTooLong': 'لا يمكن أن تتجاوز الخطة الدراسية 20 أسبوعاً.',
   'api.errors.studyPlan.duplicate': 'توجد خطة دراسية مسبقاً لهذه المادة وتاريخ البداية.',
   'api.errors.studyPlan.courseNotAssigned': 'هذه المادة غير معيّنة لهذا المعلم.',
+  'api.errors.studyPlan.generateFailed': 'تعذّر توليد الخطة الدراسية.',
 
   'api.feedback.stepNotFound': 'لم نجد خطوة التحدي هذه.',
   'api.feedback.stepIncorrect': 'ليس بعد. حاول مطابقة المثال بعناية.',

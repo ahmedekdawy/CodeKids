@@ -28,6 +28,7 @@ import {
   SaveWeeklyReportEntry,
   WeeklyStudyPlan,
   SaveWeeklyStudyPlanWeek,
+  GeneratedStudyPlan,
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
@@ -420,6 +421,15 @@ export class LearningApiService {
     weeks: SaveWeeklyStudyPlanWeek[];
   }): Observable<WeeklyStudyPlan> {
     return this.http.put<WeeklyStudyPlan>(`${this.baseUrl}/study-plans`, payload);
+  }
+
+  generateStudyPlan(payload: {
+    courseId: string;
+    fromDate: string;
+    toDate: string;
+    language?: string;
+  }): Observable<GeneratedStudyPlan> {
+    return this.http.post<GeneratedStudyPlan>(`${this.baseUrl}/study-plans/generate`, payload);
   }
 
   deleteStudyPlan(planId: string): Observable<void> {

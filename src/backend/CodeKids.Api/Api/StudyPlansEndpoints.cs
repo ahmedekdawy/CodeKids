@@ -60,6 +60,30 @@ public static class StudyPlansEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapPost("/api/study-plans/generate", async (
+            HttpContext httpContext,
+            GenerateWeeklyStudyPlanRequest request,
+            ICommandHandler<GenerateWeeklyStudyPlanCommand, GenerateWeeklyStudyPlanResult> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var teacherId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new GenerateWeeklyStudyPlanCommand(
+                        teacherId,
+                        request.CourseId,
+                        request.FromDate,
+                        request.ToDate,
+                        request.Language),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
         app.MapDelete("/api/study-plans/{planId:guid}", async (
             HttpContext httpContext,
             Guid planId,

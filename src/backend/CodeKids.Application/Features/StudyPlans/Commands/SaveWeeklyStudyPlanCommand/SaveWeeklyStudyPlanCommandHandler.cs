@@ -104,7 +104,7 @@ public sealed class SaveWeeklyStudyPlanCommandHandler(IAppDbContext dbContext)
             var topicOrder = 0;
             foreach (var topic in week.Topics)
             {
-                var title = StudyPlanAccess.Clamp(topic.Title, 300);
+                var title = StudyPlanAccess.Clamp(topic.Title, StudyPlanAccess.TopicTitleMax);
                 if (string.IsNullOrWhiteSpace(title))
                 {
                     continue;
@@ -161,9 +161,30 @@ public sealed class SaveWeeklyStudyPlanCommandHandler(IAppDbContext dbContext)
                 weekFrom,
                 weekTo,
                 week.WeekNumber - 1,
-                match?.Topics ?? []));
+                CombineTopics(match?.Topics)));
         }
 
         return result;
+    }
+
+    private static IReadOnlyList<SaveWeeklyStudyPlanTopicDto> CombineTopics(
+        IReadOnlyList<SaveWeeklyStudyPlanTopicDto>? topics)
+    {
+        var list = topics ?? [];
+        var titles = list
+            .Select(topic => StudyPlanAccess.Clamp(topic.Title, StudyPlanAccess.TopicTitleMax).Trim())
+            .Where(title => title.Length > 0)
+            .ToList();
+        if (titles.Count == 0)
+        {
+            return [];
+        }
+
+        return
+        [
+            new SaveWeeklyStudyPlanTopicDto(
+                StudyPlanAccess.Clamp(string.Join("\n", titles), StudyPlanAccess.TopicTitleMax),
+                list.Any(topic => topic.Highlight))
+        ];
     }
 }

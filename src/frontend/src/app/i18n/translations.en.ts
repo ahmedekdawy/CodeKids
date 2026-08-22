@@ -840,7 +840,7 @@ export const EN: Record<string, string> = {
 
   'teacher.studyPlans.title': 'Weekly study plans',
   'teacher.studyPlans.subtitle':
-    'Create a course study plan as a grid of weeks. Add a list of topics in each week, filter by date and course, then export as an image.',
+    'Create a course study plan as a grid of weeks. Auto-generate a draft with AI, edit topics, then save or export as an image.',
   'teacher.studyPlans.editorTitle': 'Course week distribution',
   'teacher.studyPlans.listTitle': 'Saved plans',
   'teacher.studyPlans.sheetTitle': 'Distribution of semester weeks {year}',
@@ -855,6 +855,11 @@ export const EN: Record<string, string> = {
   'teacher.studyPlans.weekNotes': 'Plan notes',
   'teacher.studyPlans.thisTerm': 'This term (18 weeks)',
   'teacher.studyPlans.newPlan': 'New plan',
+  'teacher.studyPlans.generate': 'Generate with AI',
+  'teacher.studyPlans.generating': 'Generating…',
+  'teacher.studyPlans.generated': 'Draft plan generated. Review the topics, then save.',
+  'teacher.studyPlans.generateFailed': 'Could not generate a study plan.',
+  'teacher.studyPlans.confirmGenerate': 'Replace the current week topics with an AI draft?',
   'teacher.studyPlans.save': 'Save plan',
   'teacher.studyPlans.saved': 'Study plan saved.',
   'teacher.studyPlans.deleted': 'Study plan deleted.',
@@ -1334,6 +1339,7 @@ export const EN: Record<string, string> = {
   'api.errors.studyPlan.rangeTooLong': 'Study plan cannot exceed 20 weeks.',
   'api.errors.studyPlan.duplicate': 'A study plan already exists for this course and start date.',
   'api.errors.studyPlan.courseNotAssigned': 'Course is not assigned to this teacher.',
+  'api.errors.studyPlan.generateFailed': 'Could not generate a study plan.',
 
   'api.feedback.stepNotFound': "We couldn't find that challenge step.",
   'api.feedback.stepIncorrect': 'Not quite yet. Try matching the example carefully.',

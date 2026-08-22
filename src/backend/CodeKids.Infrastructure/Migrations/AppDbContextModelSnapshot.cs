@@ -1644,8 +1644,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<Guid>("WeeklyStudyPlanItemId")
                         .HasColumnType("uuid");

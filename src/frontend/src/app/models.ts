@@ -625,6 +625,11 @@ export interface SaveWeeklyStudyPlanWeek {
   topics: SaveWeeklyStudyPlanTopic[];
 }
 
+export interface GeneratedStudyPlan {
+  notes: string;
+  weeks: SaveWeeklyStudyPlanWeek[];
+}
+
 export interface TeacherPayrollRow {
   teacherId: string;
   teacherName: string;

@@ -153,7 +153,8 @@ public static class ApiErrorCatalog
         ["Study plan range cannot exceed 14 days."] = "api.errors.studyPlan.rangeTooLong",
         ["Study plan cannot exceed 20 weeks."] = "api.errors.studyPlan.rangeTooLong",
         ["A study plan already exists for this course and start date."] = "api.errors.studyPlan.duplicate",
-        ["Course is not assigned to this teacher."] = "api.errors.studyPlan.courseNotAssigned"
+        ["Course is not assigned to this teacher."] = "api.errors.studyPlan.courseNotAssigned",
+        ["Could not generate a study plan."] = "api.errors.studyPlan.generateFailed"
     };
 
     private static readonly (Regex Pattern, string Code)[] Patterns =

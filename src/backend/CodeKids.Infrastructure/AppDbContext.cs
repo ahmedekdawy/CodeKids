@@ -420,7 +420,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<WeeklyStudyPlanTopic>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Title).HasMaxLength(1000).IsRequired();
             entity.HasIndex(x => new { x.WeeklyStudyPlanItemId, x.SortOrder });
         });
 
