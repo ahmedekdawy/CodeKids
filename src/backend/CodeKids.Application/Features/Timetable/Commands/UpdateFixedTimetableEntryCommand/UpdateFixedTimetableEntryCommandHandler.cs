@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -25,6 +26,7 @@ public sealed class UpdateFixedTimetableEntryCommandHandler(IAppDbContext dbCont
             command.SessionNumber,
             command.Period,
             excludeEntryId: command.EntryId,
+            command.CombinedGrades,
             cancellationToken);
 
         entry.TeacherId = command.TeacherId;
@@ -32,6 +34,7 @@ public sealed class UpdateFixedTimetableEntryCommandHandler(IAppDbContext dbCont
         entry.DayOfWeek = command.DayOfWeek;
         entry.SessionNumber = command.SessionNumber;
         entry.Period = command.Period;
+        entry.CombinedGrades = GradeStageHelper.SerializeGradeCodes(command.CombinedGrades);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return await FixedTimetableValidators.LoadDtoAsync(dbContext, entry.Id, cancellationToken);

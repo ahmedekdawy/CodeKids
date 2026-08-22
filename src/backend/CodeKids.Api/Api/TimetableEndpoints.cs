@@ -78,7 +78,9 @@ public static class TimetableEndpoints
 
                         request.SessionNumber,
 
-                        TimetablePeriodParser.Parse(request.Period)),
+                        TimetablePeriodParser.Parse(request.Period),
+
+                        request.CombinedGrades),
 
                     cancellationToken));
 
@@ -124,7 +126,9 @@ public static class TimetableEndpoints
 
                         request.SessionNumber,
 
-                        TimetablePeriodParser.Parse(request.Period)),
+                        TimetablePeriodParser.Parse(request.Period),
+
+                        request.CombinedGrades),
 
                     cancellationToken));
 

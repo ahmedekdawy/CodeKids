@@ -70,6 +70,26 @@ export function formatCourseLabel(
   return `${formatCourseAudienceLabel(t, grade, stageId, allKey)} - ${name}`;
 }
 
+/** Timetable cell label; combined grades override the course audience. */
+export function formatTimetableCourseLine(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  title: string | null | undefined,
+  grade?: number | null,
+  stageId?: number | null,
+  combinedGrades?: number[] | null
+): string {
+  const grades = [...(combinedGrades ?? [])]
+    .map((g) => Number(g))
+    .filter((g) => Number.isFinite(g))
+    .sort((a, b) => a - b);
+  if (grades.length > 0) {
+    const name = (title || '').trim();
+    const names = grades.map((g) => formatGradeLabel(t, g)).join('، ');
+    return name ? `${names} - ${name}` : names;
+  }
+  return formatCourseLabel(t, title, grade, 'common.allGrades', stageId);
+}
+
 export function formatCourseAudienceLabel(
   t: (key: string, params?: Record<string, string | number>) => string,
   grade?: number | null,
@@ -89,6 +109,19 @@ export function teacherCoversGrade(
   if (stage == null) return true;
   const list = stages?.length ? stages : STAGE_CODES;
   return list.includes(stage);
+}
+
+export function teacherCoversCourse(
+  stages: number[] | null | undefined,
+  grade?: number | null,
+  stageId?: number | null
+): boolean {
+  if (grade != null) return teacherCoversGrade(stages, grade);
+  if (stageId != null) {
+    const list = stages?.length ? stages : STAGE_CODES;
+    return list.includes(Number(stageId));
+  }
+  return true;
 }
 
 export function courseMatchesClassroomGrade(

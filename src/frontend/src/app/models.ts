@@ -527,6 +527,7 @@ export interface FixedTimetableEntry {
   courseName: string;
   courseGrade?: number | null;
   courseStageId?: number | null;
+  combinedGrades?: number[];
   dayOfWeek: number;
   sessionNumber: number;
   period: 'am' | 'pm' | string;

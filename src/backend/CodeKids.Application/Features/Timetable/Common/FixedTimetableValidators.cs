@@ -18,6 +18,7 @@ internal static class FixedTimetableValidators
         int sessionNumber,
         TimetablePeriod period,
         Guid? excludeEntryId,
+        IReadOnlyList<int>? combinedGrades,
         CancellationToken cancellationToken)
     {
         if (dayOfWeek is < 0 or > 6)
@@ -59,17 +60,20 @@ internal static class FixedTimetableValidators
                 && (excludeEntryId == null || x.Id != excludeEntryId))
             .ToListAsync(cancellationToken);
 
+        var coveredGrades = GradeStageHelper.CoveredGrades(
+            course.Grade,
+            course.StageId,
+            GradeStageHelper.SerializeGradeCodes(combinedGrades));
+
         if (slotEntries.Any(x => x.TeacherId == teacherId))
         {
             throw new InvalidOperationException("Teacher already has a timetable session in this slot.");
         }
 
         if (slotEntries.Any(x =>
-            GradeStageHelper.CourseAudiencesOverlap(
-                course.Grade,
-                course.StageId,
-                x.Course?.Grade,
-                x.Course?.StageId)
+            GradeStageHelper.CoveredGradesOverlap(
+                coveredGrades,
+                GradeStageHelper.CoveredGrades(x.Course?.Grade, x.Course?.StageId, x.CombinedGrades))
             && SchoolTypesConflict(course.SchoolType, x.Course?.SchoolType)))
         {
             throw new InvalidOperationException(
@@ -108,7 +112,10 @@ internal static class FixedTimetableValidators
         var courseName = entry.Course?.Title ?? string.Empty;
         var courseGrade = entry.Course?.Grade;
         var courseStageId = entry.Course?.StageId;
-        var gradeLabel = courseGrade switch
+        var combinedGrades = GradeStageHelper.ParseGradeCodes(entry.CombinedGrades);
+        var gradeLabel = combinedGrades.Count > 0
+            ? string.Join(", ", combinedGrades.Select(GradeLabel))
+            : courseGrade switch
         {
             -1 => "KG1",
             0 => "KG2",
@@ -134,9 +141,17 @@ internal static class FixedTimetableValidators
             courseName,
             courseGrade,
             courseStageId,
+            combinedGrades,
             entry.DayOfWeek,
             entry.SessionNumber,
             entry.Period == TimetablePeriod.Pm ? "pm" : "am",
             label);
     }
+
+    private static string GradeLabel(int grade) => grade switch
+    {
+        -1 => "KG1",
+        0 => "KG2",
+        _ => $"Grade {grade}"
+    };
 }

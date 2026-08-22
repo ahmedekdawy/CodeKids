@@ -148,16 +148,27 @@
         <label>
           {{ 'common.course' | t }}
           <app-searchable-select
-            [(ngModel)]="courseId"
+            [ngModel]="courseId"
             name="courseId"
             required
             [disabled]="!selectedTeacherId()"
             [emptyLabel]="'common.select' | t"
             [options]="availableCourses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+            (ngModelChange)="onCourseChange($event)"
           />
           @if (selectedTeacherId() && availableCourses().length === 0) {
             <span class="meta">{{ 'admin.appointments.noTeacherCourses' | t }}</span>
           }
+        </label>
+        <label>
+          {{ 'admin.timetable.combinedGrades' | t }}
+          <app-searchable-multi-select
+            [(ngModel)]="combinedGrades"
+            name="combinedGrades"
+            [disabled]="!courseId"
+            [options]="combinedGradeOptions()"
+            [placeholder]="'admin.timetable.combinedGradesHint' | t"
+          />
         </label>
         <label>
           {{ 'admin.timetable.day' | t }}

@@ -5,7 +5,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { FixedTimetableEntry } from '../../models';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
-import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
+import { GRADE_CODES, formatGradeLabel, formatTimetableCourseLine } from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
@@ -73,12 +73,12 @@ export class TeacherTimetableComponent {
         if (!cells[key]) continue;
         cells[key].push({
           entry,
-          courseLine: formatCourseLabel(
+          courseLine: formatTimetableCourseLine(
             (k, p) => this.locale.t(k, p),
             entry.courseName,
             entry.courseGrade,
-            'common.allGrades',
-            entry.courseStageId
+            entry.courseStageId,
+            entry.combinedGrades
           )
         });
       }
@@ -180,10 +180,18 @@ function normalizeEntries(items: FixedTimetableEntry[] | null | undefined): Fixe
         raw.courseStageId == null && raw['CourseStageId'] == null
           ? null
           : Number(raw.courseStageId ?? raw['CourseStageId']),
+      combinedGrades: readGradeList(raw.combinedGrades ?? raw['CombinedGrades']),
       dayOfWeek: Number(raw.dayOfWeek ?? raw['DayOfWeek'] ?? 0),
       sessionNumber: Number(raw.sessionNumber ?? raw['SessionNumber'] ?? 0),
       period: normalizePeriod(String(raw.period ?? raw['Period'] ?? 'am')),
       label: String(raw.label ?? raw['Label'] ?? '')
     };
   });
+}
+
+function readGradeList(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => Number(item))
+    .filter((n) => Number.isFinite(n));
 }

@@ -6,9 +6,20 @@ import { Classroom, Course, FixedTimetableEntry, ManagedUser } from '../../model
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
-import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
+import {
+  GRADE_CODES,
+  formatCourseLabel,
+  formatGradeLabel,
+  formatTimetableCourseLine,
+  gradesForStage,
+  teacherCoversCourse
+} from '../../grade.util';
 import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import {
+  MultiSelectOption,
+  SearchableMultiSelectComponent
+} from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import {
   TimetablePeriodFilter,
@@ -38,7 +49,14 @@ type SlotTarget = {
 
 @Component({
   selector: 'app-admin-timetable',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe, IconActionButtonComponent],
+  imports: [
+    PageFeedbackComponent,
+    SearchableSelectComponent,
+    SearchableMultiSelectComponent,
+    FormsModule,
+    TranslatePipe,
+    IconActionButtonComponent
+  ],
   templateUrl: './admin-timetable.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -70,6 +88,7 @@ export class AdminTimetableComponent {
 
   teacherId = '';
   courseId = '';
+  combinedGrades: number[] = [];
   dayOfWeek: number | '' = '';
   sessionNumber: number | '' = '';
   period: 'am' | 'pm' | '' = '';
@@ -78,26 +97,45 @@ export class AdminTimetableComponent {
   readonly selectedTeacherId = signal('');
   private dragEntryId: string | null = null;
 
+  readonly assignedCourseIds = computed(() => {
+    const ids = new Set<string>();
+    for (const room of this.classrooms()) {
+      for (const link of room.courses ?? []) {
+        if (link.courseId) ids.add(link.courseId);
+      }
+    }
+    return ids;
+  });
+
   readonly availableCourses = computed(() => {
     const teacherId = this.selectedTeacherId();
     if (!teacherId) return [];
-    const courseIds = new Set(
+    const teacher = this.teachers().find((t) => t.id === teacherId);
+    const teacherCourseIds = new Set(
       this.classrooms()
         .flatMap((room) => room.courses ?? [])
         .filter((link) => link.teacherId === teacherId)
         .map((link) => link.courseId)
     );
+    const assignedIds = this.assignedCourseIds();
     const editingId = this.editingId();
     if (editingId) {
       const current = this.entries().find((e) => e.id === editingId);
       if (current?.teacherId === teacherId && current.courseId) {
-        courseIds.add(current.courseId);
+        teacherCourseIds.add(current.courseId);
       }
     }
     return this.courses()
-      .filter((course) => courseIds.has(course.id))
+      .filter((course) => {
+        if (teacherCourseIds.has(course.id)) return true;
+        if (assignedIds.has(course.id)) return false;
+        return teacherCoversCourse(teacher?.stages, course.grade, course.stageId);
+      })
       .slice()
       .sort((a, b) => {
+        const assignedA = assignedIds.has(a.id) ? 1 : 0;
+        const assignedB = assignedIds.has(b.id) ? 1 : 0;
+        if (assignedA !== assignedB) return assignedA - assignedB;
         const ga = a.grade ?? 999;
         const gb = b.grade ?? 999;
         if (ga !== gb) return ga - gb;
@@ -139,13 +177,7 @@ export class AdminTimetableComponent {
         if (!cells[key]) continue;
         cells[key].push({
           entry,
-          courseLine: formatCourseLabel(
-            (k, p) => this.locale.t(k, p),
-            entry.courseName,
-            entry.courseGrade,
-            'common.allGrades',
-            entry.courseStageId
-          ),
+          courseLine: this.entryCourseLine(entry),
           teacherName: entry.teacherName || ''
         });
       }
@@ -214,7 +246,14 @@ export class AdminTimetableComponent {
     this.selectedTeacherId.set(teacherId);
     if (this.courseId && !this.availableCourses().some((c) => c.id === this.courseId)) {
       this.courseId = '';
+      this.combinedGrades = [];
     }
+  }
+
+  onCourseChange(courseId: string): void {
+    const changed = this.courseId !== courseId;
+    this.courseId = courseId;
+    if (changed) this.combinedGrades = this.defaultCombinedGrades(courseId);
   }
 
   onFilterGradeChange(value: string): void {
@@ -240,8 +279,32 @@ export class AdminTimetableComponent {
     return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
   }
 
+  combinedGradeOptions(): MultiSelectOption[] {
+    this.locale.lang();
+    return GRADE_CODES.map((g) => ({
+      value: g,
+      label: formatGradeLabel((k, p) => this.locale.t(k, p), g)
+    }));
+  }
+
+  entryCourseLine(entry: FixedTimetableEntry): string {
+    return formatTimetableCourseLine(
+      (k, p) => this.locale.t(k, p),
+      entry.courseName,
+      entry.courseGrade,
+      entry.courseStageId,
+      entry.combinedGrades
+    );
+  }
+
   courseLabel(course: Course): string {
-    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade, 'common.allGrades', course.stageId);
+    return formatCourseLabel(
+      (k, p) => this.locale.t(k, p),
+      course.title,
+      course.grade,
+      'common.allGrades',
+      course.stageId
+    );
   }
 
   dayLabel(dayOfWeek: number): string {
@@ -286,6 +349,8 @@ export class AdminTimetableComponent {
     this.teacherId = entry.teacherId;
     this.selectedTeacherId.set(entry.teacherId);
     this.courseId = entry.courseId;
+    this.combinedGrades =
+      entry.combinedGrades?.length ? [...entry.combinedGrades] : this.defaultCombinedGrades(entry.courseId);
     this.dayOfWeek = entry.dayOfWeek;
     this.sessionNumber = entry.sessionNumber;
     this.setPeriod(normalizePeriod(entry.period));
@@ -379,7 +444,8 @@ export class AdminTimetableComponent {
       courseId: this.courseId,
       dayOfWeek: Number(this.dayOfWeek),
       sessionNumber: Number(this.sessionNumber),
-      period: this.period
+      period: this.period,
+      combinedGrades: payloadCombinedGrades(this.combinedGrades)
     };
 
     const editingId = this.editingId();
@@ -431,7 +497,8 @@ export class AdminTimetableComponent {
         courseId: entry.courseId,
         dayOfWeek: target.dayOfWeek,
         sessionNumber: target.sessionNumber,
-        period: target.period
+        period: target.period,
+        combinedGrades: payloadCombinedGrades(entry.combinedGrades)
       })
       .subscribe({
         next: () => {
@@ -446,10 +513,19 @@ export class AdminTimetableComponent {
       });
   }
 
+  private defaultCombinedGrades(courseId: string): number[] {
+    const course = this.courses().find((c) => c.id === courseId);
+    if (!course) return [];
+    if (course.grade != null) return [course.grade];
+    if (course.stageId != null) return gradesForStage(course.stageId);
+    return [];
+  }
+
   private resetFormFields(): void {
     this.teacherId = '';
     this.selectedTeacherId.set('');
     this.courseId = '';
+    this.combinedGrades = [];
     this.dayOfWeek = '';
     this.sessionNumber = '';
     this.setPeriod('');
@@ -497,10 +573,23 @@ function normalizeEntries(items: FixedTimetableEntry[] | null | undefined): Fixe
         raw.courseStageId == null && raw['CourseStageId'] == null
           ? null
           : Number(raw.courseStageId ?? raw['CourseStageId']),
+      combinedGrades: readGradeList(raw.combinedGrades ?? raw['CombinedGrades']),
       dayOfWeek: Number(raw.dayOfWeek ?? raw['DayOfWeek'] ?? 0),
       sessionNumber: Number(raw.sessionNumber ?? raw['SessionNumber'] ?? 0),
       period: normalizePeriod(String(raw.period ?? raw['Period'] ?? 'am')),
       label: String(raw.label ?? raw['Label'] ?? '')
     };
   });
+}
+
+function readGradeList(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return payloadCombinedGrades(value);
+}
+
+function payloadCombinedGrades(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => Number(item))
+    .filter((n) => Number.isFinite(n));
 }

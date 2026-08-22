@@ -142,4 +142,81 @@ public static class GradeStageHelper
 
         return leftStageId == rightStageId;
     }
+
+    public static readonly IReadOnlyList<int> AllGradeCodes = [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+    public static IReadOnlyList<int> GradesForStage(int stage) =>
+        stage switch
+        {
+            0 => [-1, 0],
+            1 => [1, 2, 3, 4, 5, 6],
+            2 => [7, 8, 9],
+            3 => [10, 11, 12],
+            _ => []
+        };
+
+    public static IReadOnlyList<int> ParseGradeCodes(string? grades)
+    {
+        if (string.IsNullOrWhiteSpace(grades))
+        {
+            return [];
+        }
+
+        return grades
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(s => int.TryParse(s, out var n) ? n : (int?)null)
+            .Where(n => n is >= -1 and <= 12)
+            .Select(n => n!.Value)
+            .Distinct()
+            .OrderBy(n => n)
+            .ToList();
+    }
+
+    public static string? SerializeGradeCodes(IReadOnlyList<int>? grades)
+    {
+        if (grades is null || grades.Count == 0)
+        {
+            return null;
+        }
+
+        var normalized = grades
+            .Where(g => g is >= -1 and <= 12)
+            .Distinct()
+            .OrderBy(g => g)
+            .ToList();
+        return normalized.Count == 0 ? null : string.Join(',', normalized);
+    }
+
+    public static IReadOnlyList<int> CoveredGrades(int? courseGrade, int? courseStageId, string? combinedGrades)
+    {
+        var combined = ParseGradeCodes(combinedGrades);
+        if (combined.Count > 0)
+        {
+            return combined;
+        }
+
+        if (courseGrade is not null)
+        {
+            return [courseGrade.Value];
+        }
+
+        if (courseStageId is not null)
+        {
+            return GradesForStage(courseStageId.Value);
+        }
+
+        return AllGradeCodes;
+    }
+
+    public static bool CoveredGradesOverlap(
+        IReadOnlyList<int> left,
+        IReadOnlyList<int> right)
+    {
+        if (left.Count == 0 || right.Count == 0)
+        {
+            return true;
+        }
+
+        return left.Any(right.Contains);
+    }
 }

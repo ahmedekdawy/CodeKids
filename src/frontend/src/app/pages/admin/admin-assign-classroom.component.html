@@ -17,17 +17,6 @@
         />
       </label>
 
-      @if (selectedClassroom(); as room) {
-        <p class="meta">
-          {{ 'common.grade' | t }}: {{ gradeLabel(room.grade) }}
-          @if (room.grade != null) {
-            — {{ 'admin.assign.coursesForGrade' | t }}
-          } @else {
-            — {{ 'admin.assign.setGradeFirst' | t }}
-          }
-        </p>
-      }
-
       <div class="course-teacher-block">
         <div class="course-teacher-head">
           <strong>{{ 'admin.classrooms.coursesTeachers' | t }}</strong>
@@ -35,17 +24,14 @@
             type="button"
             class="ghost-btn"
             (click)="addCourseRow()"
-            [disabled]="!assignClassroomId() || !hasGradeFilter()"
+            [disabled]="!assignClassroomId()"
           >
             {{ 'admin.classrooms.addCourse' | t }}
           </button>
         </div>
         <p class="meta">{{ 'admin.classrooms.coursesTeachersHint' | t }}</p>
-        @if (assignClassroomId() && !hasGradeFilter()) {
-          <p class="meta">{{ 'admin.assign.setGradeFirst' | t }}</p>
-        }
-        @if (assignClassroomId() && hasGradeFilter() && courseOptions().length === 0) {
-          <p class="meta">{{ 'admin.assign.noCoursesForGrade' | t }}</p>
+        @if (assignClassroomId() && courseOptions().length === 0) {
+          <p class="meta">{{ 'admin.assign.noCoursesForFilter' | t }}</p>
         }
         @for (row of courseRows(); track $index; let i = $index) {
           <div class="course-teacher-row">
@@ -54,7 +40,7 @@
               <app-searchable-select
                 [ngModel]="row.courseId"
                 [name]="'aCourse-' + i"
-                [disabled]="!assignClassroomId() || !hasGradeFilter()"
+                [disabled]="!assignClassroomId()"
                 (ngModelChange)="onRowCourseChange(i, $event)"
                 [emptyLabel]="'common.select' | t"
                 [options]="courseOptions().map(c => ({ value: c.id, label: courseOptionLabel(c) }))"
@@ -65,7 +51,7 @@
               <app-searchable-select
                 [ngModel]="row.teacherId"
                 [name]="'aTeacher-' + i"
-                [disabled]="!assignClassroomId() || !hasGradeFilter()"
+                [disabled]="!assignClassroomId()"
                 (ngModelChange)="onRowTeacherChange(i, $event)"
                 [emptyLabel]="'common.select' | t"
                 [options]="teachers().map(t => ({ value: t.id, label: t.displayName }))"
@@ -75,7 +61,7 @@
               type="button"
               class="ghost-btn"
               (click)="removeCourseRow(i)"
-              [disabled]="!assignClassroomId() || !hasGradeFilter()"
+              [disabled]="!assignClassroomId()"
             >
               {{ 'common.remove' | t }}
             </button>
@@ -83,7 +69,7 @@
         }
       </div>
 
-      <button type="submit" [disabled]="!assignClassroomId() || !hasGradeFilter()">
+      <button type="submit" [disabled]="!assignClassroomId()">
         {{ 'admin.assign.save' | t }}
       </button>
     </form>

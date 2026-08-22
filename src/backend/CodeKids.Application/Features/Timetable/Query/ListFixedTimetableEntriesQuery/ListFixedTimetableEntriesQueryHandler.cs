@@ -27,13 +27,18 @@ public sealed class ListFixedTimetableEntriesQueryHandler(IAppDbContext dbContex
         if (query.CourseGrade.HasValue)
         {
             var grade = query.CourseGrade.Value;
+            var gradeToken = $",{grade},";
             entries = entries.Where(x =>
-                x.Course == null
-                || x.Course.Grade == grade
-                || (x.Course.Grade == null && x.Course.StageId == null)
-                || (x.Course.Grade == null
-                    && x.Course.StageId != null
-                    && dbContext.Grades.Any(g => g.Id == grade && g.StageId == x.Course.StageId)));
+                (x.CombinedGrades != null
+                    && x.CombinedGrades.Length > 0
+                    && ("," + x.CombinedGrades + ",").Contains(gradeToken))
+                || ((x.CombinedGrades == null || x.CombinedGrades.Length == 0)
+                    && (x.Course == null
+                        || x.Course.Grade == grade
+                        || (x.Course.Grade == null && x.Course.StageId == null)
+                        || (x.Course.Grade == null
+                            && x.Course.StageId != null
+                            && dbContext.Grades.Any(g => g.Id == grade && g.StageId == x.Course.StageId)))));
         }
 
         if (query.Period.HasValue)

@@ -624,7 +624,7 @@
 }
 
 .timetable-period {
-  min-width: 6.2rem;
+  min-width: 8.5rem;
   white-space: nowrap;
 }
 
@@ -644,8 +644,8 @@
 }
 
 .timetable-cell {
-  min-width: 6.2rem;
-  max-width: 8.5rem;
+  min-width: 8.5rem;
+  max-width: 14rem;
   height: auto;
   min-height: 4.6rem;
   padding: 0.25rem;
@@ -723,19 +723,18 @@
 
 .timetable-course {
   font-weight: 700;
-  line-height: 1.25;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.3;
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
 }
 
 .timetable-teacher {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.85);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
 }
 
 .course-tree {

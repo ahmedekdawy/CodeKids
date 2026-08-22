@@ -1,8 +1,7 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Timetable;
 
@@ -21,6 +20,7 @@ public sealed class CreateFixedTimetableEntryCommandHandler(IAppDbContext dbCont
             command.SessionNumber,
             command.Period,
             excludeEntryId: null,
+            command.CombinedGrades,
             cancellationToken);
 
         var entry = new FixedTimetableEntry
@@ -31,21 +31,12 @@ public sealed class CreateFixedTimetableEntryCommandHandler(IAppDbContext dbCont
             DayOfWeek = command.DayOfWeek,
             SessionNumber = command.SessionNumber,
             Period = command.Period,
+            CombinedGrades = GradeStageHelper.SerializeGradeCodes(command.CombinedGrades),
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
         dbContext.FixedTimetableEntries.Add(entry);
-        try
-        {
-
-        
         await dbContext.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-
-            throw ex;
-        }
         return await FixedTimetableValidators.LoadDtoAsync(dbContext, entry.Id, cancellationToken);
     }
 }

@@ -285,6 +285,7 @@ export class LearningApiService {
     dayOfWeek: number;
     sessionNumber: number;
     period: string;
+    combinedGrades?: number[];
   }): Observable<FixedTimetableEntry> {
     return this.http.post<FixedTimetableEntry>(`${this.baseUrl}/admin/timetable-entries`, payload);
   }
@@ -297,6 +298,7 @@ export class LearningApiService {
       dayOfWeek: number;
       sessionNumber: number;
       period: string;
+      combinedGrades?: number[];
     }
   ): Observable<FixedTimetableEntry> {
     return this.http.put<FixedTimetableEntry>(`${this.baseUrl}/admin/timetable-entries/${entryId}`, payload);

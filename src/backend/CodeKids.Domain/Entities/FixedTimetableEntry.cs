@@ -12,6 +12,8 @@ public class FixedTimetableEntry
     /// <summary>Session number within the period (1–N, configured per AM/PM).</summary>
     public int SessionNumber { get; set; }
     public TimetablePeriod Period { get; set; }
+    /// <summary>Optional comma-separated grade codes this session is shared across. Empty = use the course audience.</summary>
+    public string? CombinedGrades { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public User? Teacher { get; set; }

@@ -11,11 +11,13 @@ public sealed record CreateFixedTimetableEntryRequest(
     Guid CourseId,
     int DayOfWeek,
     int SessionNumber,
-    string Period);
+    string Period,
+    IReadOnlyList<int>? CombinedGrades = null);
 
 public sealed record CreateFixedTimetableEntryCommand(
     Guid TeacherId,
     Guid CourseId,
     int DayOfWeek,
     int SessionNumber,
-    TimetablePeriod Period) : ICommand<FixedTimetableEntryDto>;
+    TimetablePeriod Period,
+    IReadOnlyList<int>? CombinedGrades = null) : ICommand<FixedTimetableEntryDto>;

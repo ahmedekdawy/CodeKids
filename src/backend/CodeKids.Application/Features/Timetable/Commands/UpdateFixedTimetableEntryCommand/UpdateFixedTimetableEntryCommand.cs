@@ -11,7 +11,8 @@ public sealed record UpdateFixedTimetableEntryRequest(
     Guid CourseId,
     int DayOfWeek,
     int SessionNumber,
-    string Period);
+    string Period,
+    IReadOnlyList<int>? CombinedGrades = null);
 
 public sealed record UpdateFixedTimetableEntryCommand(
     Guid EntryId,
@@ -19,4 +20,5 @@ public sealed record UpdateFixedTimetableEntryCommand(
     Guid CourseId,
     int DayOfWeek,
     int SessionNumber,
-    TimetablePeriod Period) : ICommand<FixedTimetableEntryDto>;
+    TimetablePeriod Period,
+    IReadOnlyList<int>? CombinedGrades = null) : ICommand<FixedTimetableEntryDto>;

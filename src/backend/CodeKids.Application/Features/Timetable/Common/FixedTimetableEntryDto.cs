@@ -14,6 +14,7 @@ public sealed record FixedTimetableEntryDto(
     string CourseName,
     int? CourseGrade,
     int? CourseStageId,
+    IReadOnlyList<int> CombinedGrades,
     int DayOfWeek,
     int SessionNumber,
     string Period,
