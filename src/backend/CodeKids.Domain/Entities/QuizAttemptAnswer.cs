@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class QuizAttemptAnswer
+public class QuizAttemptAnswer : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid AttemptId { get; set; }

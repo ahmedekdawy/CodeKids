@@ -1,7 +1,7 @@
 namespace CodeKids.Domain.Entities;
 
 /// <summary>One school week inside a course study plan.</summary>
-public class WeeklyStudyPlanItem
+public class WeeklyStudyPlanItem : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid WeeklyStudyPlanId { get; set; }

@@ -1,7 +1,7 @@
 namespace CodeKids.Domain.Entities;
 
 /// <summary>Manual payroll addition or deduction for a teacher.</summary>
-public class TeacherPayrollAdjustment
+public class TeacherPayrollAdjustment : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid TeacherId { get; set; }

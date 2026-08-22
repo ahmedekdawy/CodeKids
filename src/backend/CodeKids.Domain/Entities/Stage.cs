@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class Stage
+public class Stage : TenantEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
