@@ -4,9 +4,9 @@ export const environment = {
   appBaseUrl: 'http://schoolacadmy.runasp.net',
   zoomCallbackUrl: 'http://abakera.runasp.net/api/zoom/callback',
   zoomFrontendRedirectUrl: 'http://schoolacadmy.runasp.net/teacher/zoom',
-  defaultTenant: 'esraa',
+  defaultTenant: 'abakera',
   tenantHosts: {
-    localhost: 'esraa',
+    localhost: 'abakera',
     'schoolacadmy.runasp.net': 'esraa',
     'www.schoolacadmy.runasp.net': 'esraa'
   } as Record<string, string>

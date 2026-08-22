@@ -22,9 +22,12 @@ foreach (var tenant in catalog.All)
     var options = new DbContextOptionsBuilder<AppDbContext>()
         .UseNpgsql(tenant.ConnectionString)
         .Options;
-    await using var db = new AppDbContext(options);
+    await using var db = new AppDbContext(options, new FixedTenantContext(tenant.Id));
     await TenantSchema.EnsureAsync(db);
+    await TenantSchema.StampTenantIdAsync(db, tenant.Id);
     await DataSeeder.SeedAsync(db, hasher);
+    await TenantSchema.StampTenantIdAsync(db, tenant.Id);
+    Console.WriteLine($"Stamped TenantId='{tenant.Id}' on all tenant tables.");
 
     var classroomCount = await db.Classrooms.CountAsync();
     var userCount = await db.Users.CountAsync();

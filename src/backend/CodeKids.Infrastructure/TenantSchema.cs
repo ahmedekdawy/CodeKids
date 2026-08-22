@@ -28,6 +28,55 @@ public static class TenantSchema
         await db.Database.MigrateAsync(cancellationToken);
     }
 
+    public static async Task StampTenantIdAsync(
+        AppDbContext db,
+        string tenantId,
+        CancellationToken cancellationToken = default)
+    {
+        var slug = (tenantId ?? string.Empty).Trim().ToLowerInvariant();
+        if (slug.Length == 0)
+        {
+            return;
+        }
+
+        if (slug.Length > 64)
+        {
+            slug = slug[..64];
+        }
+
+        if (slug.Any(ch => !char.IsAsciiLetterOrDigit(ch) && ch is not '-' and not '_'))
+        {
+            throw new InvalidOperationException($"Invalid tenant id '{tenantId}'.");
+        }
+
+#pragma warning disable EF1002
+        await db.Database.ExecuteSqlRawAsync(
+            $"""
+            DO $stamp$
+            DECLARE r record;
+            BEGIN
+              FOR r IN
+                SELECT c.table_name
+                FROM information_schema.columns c
+                JOIN information_schema.tables t
+                  ON t.table_schema = c.table_schema
+                 AND t.table_name = c.table_name
+                WHERE c.table_schema = 'public'
+                  AND c.column_name = 'TenantId'
+                  AND t.table_type = 'BASE TABLE'
+                  AND c.table_name <> 'TenantSignups'
+              LOOP
+                EXECUTE format(
+                  'UPDATE %I SET "TenantId" = %L WHERE "TenantId" IS DISTINCT FROM %L',
+                  r.table_name, '{slug}', '{slug}');
+              END LOOP;
+            END
+            $stamp$;
+            """,
+            cancellationToken);
+#pragma warning restore EF1002
+    }
+
     private static async Task<bool> UsersTableExistsAsync(AppDbContext db, CancellationToken cancellationToken)
     {
         var connection = db.Database.GetDbConnection();

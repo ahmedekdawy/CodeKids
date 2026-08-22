@@ -26,10 +26,14 @@ export function currentTenantId(): string {
     return fromQuery;
   }
 
-  const stored = (localStorage.getItem(TENANT_KEY) ?? '').trim();
-  if (stored) return stored;
   const host = (globalThis.location?.hostname ?? '').toLowerCase();
   const mapped = environment.tenantHosts?.[host];
-  if (mapped) return mapped;
-  return environment.defaultTenant;
+  if (mapped) {
+    setCurrentTenantId(mapped);
+    return mapped;
+  }
+
+  const fallback = environment.defaultTenant || 'abakera';
+  setCurrentTenantId(fallback);
+  return fallback;
 }
