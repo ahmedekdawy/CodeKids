@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './auth.guard';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { RegisterTenantComponent } from './pages/register-tenant/register-tenant.component';
+import { VerifyTenantComponent } from './pages/verify-tenant/verify-tenant.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { StudentHomeComponent } from './pages/student-home/student-home.component';
@@ -49,6 +51,8 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'register-tenant', component: RegisterTenantComponent },
+  { path: 'verify-tenant', component: VerifyTenantComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   {

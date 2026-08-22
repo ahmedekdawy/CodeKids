@@ -2,7 +2,7 @@ using CodeKids.Domain.Enums;
 
 namespace CodeKids.Domain.Entities;
 
-public class BankQuestion
+public class BankQuestion : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid CourseId { get; set; }
@@ -30,7 +30,7 @@ public class BankQuestion
     public List<BankQuestion> Children { get; set; } = [];
 }
 
-public class Exam
+public class Exam : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid ClassroomId { get; set; }
@@ -49,7 +49,7 @@ public class Exam
     public List<ExamAttempt> Attempts { get; set; } = [];
 }
 
-public class ExamQuestion
+public class ExamQuestion : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid ExamId { get; set; }
@@ -76,7 +76,7 @@ public class ExamQuestion
     public List<ExamQuestion> Children { get; set; } = [];
 }
 
-public class ExamAttempt
+public class ExamAttempt : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid ExamId { get; set; }
@@ -99,7 +99,7 @@ public class ExamAttempt
             : null;
 }
 
-public class ExamAnswer
+public class ExamAnswer : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid AttemptId { get; set; }

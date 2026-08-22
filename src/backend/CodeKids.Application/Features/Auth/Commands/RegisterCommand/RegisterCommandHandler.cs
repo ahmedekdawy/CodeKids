@@ -69,7 +69,8 @@ public sealed class RegisterCommandHandler(
             user.AvatarId,
             user.TotalXp,
             user.MobilePhone,
-            user.WorkShift?.ToString());
+            user.WorkShift?.ToString(),
+            user.TenantId);
 
     /// <summary>Keeps digits and an optional leading +.</summary>
     internal static string NormalizePhone(string? phone)

@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class UserBadge
+public class UserBadge : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

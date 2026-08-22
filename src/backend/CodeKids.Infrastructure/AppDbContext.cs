@@ -1,12 +1,28 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
+using CodeKids.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Linq.Expressions;
 
 namespace CodeKids.Infrastructure;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options), IAppDbContext
+public class AppDbContext : DbContext, IAppDbContext
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options, ITenantContext? tenantContext = null)
+        : base(options)
+    {
+        CurrentTenantId = tenantContext?.TenantId;
+    }
+
+    /// <summary>Current request tenant. Null means only shared rows (TenantId IS NULL) are visible.</summary>
+    public string? CurrentTenantId { get; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+    }
     public DbSet<User> Users => Set<User>();
     public DbSet<Avatar> Avatars => Set<Avatar>();
     public DbSet<Course> Courses => Set<Course>();
@@ -53,16 +69,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
     public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
+    public DbSet<TenantSignup> TenantSignups => Set<TenantSignup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.HasIndex(x => x.Email)
+            entity.HasIndex(x => new { x.TenantId, x.Email })
                 .IsUnique()
                 .HasFilter("\"Email\" <> ''");
-            entity.HasIndex(x => x.MobilePhone)
+            entity.HasIndex(x => new { x.TenantId, x.MobilePhone })
                 .IsUnique()
                 .HasFilter("\"MobilePhone\" <> ''");
             entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
@@ -774,5 +791,77 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(x => x.AmSessionCount).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultSessionCount);
             entity.Property(x => x.PmSessionCount).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultSessionCount);
         });
+
+        modelBuilder.Entity<TenantSignup>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.TenantName).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.TenantSlug).HasMaxLength(64).IsRequired();
+            entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.DisplayName).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.PasswordHash).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.TokenHash).HasMaxLength(128).IsRequired();
+            entity.HasIndex(x => x.Email).IsUnique();
+            entity.HasIndex(x => x.TenantSlug).IsUnique();
+            entity.HasIndex(x => x.TokenHash).IsUnique();
+        });
+
+        ApplyTenantFilters(modelBuilder);
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        StampTenantOnInsert();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        StampTenantOnInsert();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void StampTenantOnInsert()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentTenantId))
+        {
+            return;
+        }
+
+        foreach (var entry in ChangeTracker.Entries<TenantEntity>())
+        {
+            if (entry.State == EntityState.Added
+                && entry.Entity.TenantId is null
+                && entry.Entity is not TenantSignup)
+            {
+                entry.Entity.TenantId = CurrentTenantId;
+            }
+        }
+    }
+
+    private void ApplyTenantFilters(ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (!typeof(TenantEntity).IsAssignableFrom(entityType.ClrType)
+                || entityType.ClrType.IsAbstract
+                || entityType.ClrType == typeof(TenantSignup))
+            {
+                continue;
+            }
+
+            var builder = modelBuilder.Entity(entityType.ClrType);
+            builder.Property(nameof(TenantEntity.TenantId)).HasMaxLength(64);
+            builder.HasIndex(nameof(TenantEntity.TenantId));
+
+            var parameter = Expression.Parameter(entityType.ClrType, "e");
+            var property = Expression.Property(parameter, nameof(TenantEntity.TenantId));
+            var current = Expression.Property(Expression.Constant(this), nameof(CurrentTenantId));
+            var isShared = Expression.Equal(property, Expression.Constant(null, typeof(string)));
+            var isCurrent = Expression.Equal(property, current);
+            var body = Expression.OrElse(isShared, isCurrent);
+            builder.HasQueryFilter(Expression.Lambda(body, parameter));
+        }
     }
 }

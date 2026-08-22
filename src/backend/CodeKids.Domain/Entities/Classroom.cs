@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class Classroom
+public class Classroom : TenantEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

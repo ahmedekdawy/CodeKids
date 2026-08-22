@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthResponse, AuthUser, UserRole } from './models';
+import { setCurrentTenantId } from './tenant';
 
 const TOKEN_KEY = 'codekids_token';
 const USER_KEY = 'codekids_user';
@@ -33,6 +34,28 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.baseUrl}/register`, payload).pipe(
       tap((response) => this.persist(response))
     );
+  }
+
+  registerTenant(payload: {
+    tenantName: string;
+    email: string;
+    displayName: string;
+    password: string;
+    mobilePhone?: string;
+  }): Observable<{ accepted: boolean; message: string }> {
+    return this.http.post<{ accepted: boolean; message: string }>(
+      `${environment.apiBaseUrl}/tenants/register`,
+      payload
+    );
+  }
+
+  verifyTenant(token: string): Observable<{ tenantId: string; email: string; message: string }> {
+    return this.http
+      .post<{ tenantId: string; email: string; message: string }>(
+        `${environment.apiBaseUrl}/tenants/verify`,
+        { token }
+      )
+      .pipe(tap((result) => setCurrentTenantId(result.tenantId)));
   }
 
   forgotPassword(email: string): Observable<{ accepted: boolean; message: string }> {
@@ -84,12 +107,13 @@ export class AuthService {
   private persist(response: AuthResponse): void {
     localStorage.setItem(TOKEN_KEY, response.token);
     localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    setCurrentTenantId(response.user.tenantId);
     this.token.set(response.token);
     this.user.set(response.user);
   }
 
   private readUser(): AuthUser | null {
     const raw = localStorage.getItem(USER_KEY);
-    return raw ? JSON.parse(raw) as AuthUser : null;
+    return raw ? (JSON.parse(raw) as AuthUser) : null;
   }
 }

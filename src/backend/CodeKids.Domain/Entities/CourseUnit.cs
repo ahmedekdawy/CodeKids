@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class CourseUnit
+public class CourseUnit : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid CourseId { get; set; }

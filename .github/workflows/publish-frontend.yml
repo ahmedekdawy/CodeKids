@@ -2,7 +2,7 @@ name: Publish Frontend
 
 on:
   push:
-    branches: [master, main]
+    branches: [master, main, multitenant]
     paths:
       - "src/frontend/**"
       - "!src/frontend/dist/**"
@@ -11,12 +11,18 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: publish-frontend
+  group: publish-frontend-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'multitenant' && 'multitenant' || 'production' }}
+    env:
+      FTP_SERVER: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_FRONTEND_FTP_SERVER || secrets.FRONTEND_FTP_SERVER }}
+      FTP_USERNAME: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_FRONTEND_FTP_USERNAME || secrets.FRONTEND_FTP_USERNAME }}
+      FTP_PASSWORD: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_FRONTEND_FTP_PASSWORD || secrets.FRONTEND_FTP_PASSWORD }}
+      FTP_SERVER_DIR: ${{ github.ref_name == 'multitenant' && secrets.MULTITENANT_FRONTEND_FTP_SERVER_DIR || secrets.FRONTEND_FTP_SERVER_DIR }}
     defaults:
       run:
         working-directory: src/frontend
@@ -36,16 +42,16 @@ jobs:
         run: npm ci
 
       - name: Build production
-        run: npm run build -- --configuration=production
+        run: npm run build -- --configuration=${{ github.ref_name == 'multitenant' && 'multitenant' || 'production' }}
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FRONTEND_FTP_SERVER }}
-          username: ${{ secrets.FRONTEND_FTP_USERNAME }}
-          password: ${{ secrets.FRONTEND_FTP_PASSWORD }}
+          server: ${{ env.FTP_SERVER }}
+          username: ${{ env.FTP_USERNAME }}
+          password: ${{ env.FTP_PASSWORD }}
           local-dir: ./src/frontend/dist/codekids-frontend/browser/
-          server-dir: ${{ secrets.FRONTEND_FTP_SERVER_DIR }}
+          server-dir: ${{ env.FTP_SERVER_DIR }}
           dangerous-clean-slate: false
           exclude: |
             **/.git*

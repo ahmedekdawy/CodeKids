@@ -2,7 +2,7 @@ using CodeKids.Domain.Enums;
 
 namespace CodeKids.Domain.Entities;
 
-public class Course
+public class Course : TenantEntity
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;

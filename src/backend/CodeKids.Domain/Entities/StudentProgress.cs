@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class StudentProgress
+public class StudentProgress : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

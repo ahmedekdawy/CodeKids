@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class Badge
+public class Badge : TenantEntity
 {
     public Guid Id { get; set; }
     public string Code { get; set; } = string.Empty;

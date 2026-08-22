@@ -1,7 +1,7 @@
 namespace CodeKids.Domain.Entities;
 
 /// <summary>Per-subject pay override for a teacher (session amount and/or monthly salary).</summary>
-public class TeacherCourseRate
+public class TeacherCourseRate : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid TeacherId { get; set; }

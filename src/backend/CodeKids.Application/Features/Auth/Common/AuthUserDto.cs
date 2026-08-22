@@ -16,4 +16,5 @@ public sealed record AuthUserDto(
     Guid? AvatarId,
     int TotalXp,
     string MobilePhone,
-    string? WorkShift);
+    string? WorkShift,
+    string? TenantId);

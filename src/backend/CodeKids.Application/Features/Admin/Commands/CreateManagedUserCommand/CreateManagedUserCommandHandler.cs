@@ -14,9 +14,12 @@ public sealed class CreateManagedUserCommandHandler(
 {
     public async Task<ManagedUserDto> Handle(CreateManagedUserCommand command, CancellationToken cancellationToken)
     {
-        var admin = await dbContext.Users.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && x.Role == UserRole.SuperAdmin, cancellationToken)
-            ?? throw new InvalidOperationException("Super Admin account not found.");
+        if (command.Role != "SuperAdmin")
+        {
+            var admin = await dbContext.Users.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && x.Role == UserRole.SuperAdmin, cancellationToken)
+                ?? throw new InvalidOperationException("Super Admin account not found.");
+        }
 
         if (!Enum.TryParse<UserRole>(command.Role, true, out var role) ||
             role is not (UserRole.Teacher or UserRole.Student or UserRole.Parent or UserRole.SuperAdmin))
@@ -90,7 +93,7 @@ public sealed class CreateManagedUserCommandHandler(
         await ReplaceCourseRatesAsync(dbContext, user.Id, role, command.CourseRates, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        _ = admin;
+        //_ = admin;
         return await LoadDtoAsync(dbContext, user.Id, cancellationToken);
     }
 

@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class SiteSettings
+public class SiteSettings : TenantEntity
 {
     public static readonly Guid DefaultId = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
     public const int DefaultSessionCount = 6;

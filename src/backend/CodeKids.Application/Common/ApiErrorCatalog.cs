@@ -7,6 +7,10 @@ public static class ApiErrorCatalog
     private static readonly Dictionary<string, string> Exact = new(StringComparer.Ordinal)
     {
         ["An account with that email already exists."] = "api.errors.auth.emailExists",
+        ["Tenant name is required."] = "api.errors.tenant.nameRequired",
+        ["A valid tenant email is required."] = "api.errors.tenant.emailRequired",
+        ["Display name is required."] = "api.errors.tenant.displayNameRequired",
+        ["Verification token is invalid or has expired."] = "api.errors.tenant.verifyTokenInvalid",
         ["Public registration is limited to Student or Parent. Teachers are created by Super Admin."] = "api.errors.auth.registrationRoleLimited",
         ["Parent account was not found."] = "api.errors.auth.parentNotFound",
         ["Invalid email or password."] = "api.errors.auth.invalidCredentials",

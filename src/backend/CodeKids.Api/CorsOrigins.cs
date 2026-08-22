@@ -1,3 +1,5 @@
+using CodeKids.Infrastructure.Tenancy;
+
 namespace CodeKids.Api;
 
 internal static class CorsOrigins
@@ -13,14 +15,19 @@ internal static class CorsOrigins
         "http://abakeraadmin.runasp.net",
         "https://abakeraadmin.runasp.net",
         "http://www.abakeraadmin.runasp.net",
-        "https://www.abakeraadmin.runasp.net"
+        "https://www.abakeraadmin.runasp.net",
+        "http://schoolacadmy.runasp.net",
+        "https://schoolacadmy.runasp.net",
+        "http://www.schoolacadmy.runasp.net",
+        "https://www.schoolacadmy.runasp.net"
     ];
 
-    public static HashSet<string> Resolve(IConfiguration configuration)
+    public static HashSet<string> Resolve(IConfiguration configuration, TenantCatalog? catalog = null)
     {
         var fromConfig = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+        var fromTenants = catalog?.FrontendOrigins() ?? [];
         var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var origin in BuiltIn.Concat(fromConfig))
+        foreach (var origin in BuiltIn.Concat(fromConfig).Concat(fromTenants))
         {
             var normalized = Normalize(origin);
             if (normalized is not null)

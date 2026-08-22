@@ -1,6 +1,6 @@
 namespace CodeKids.Domain.Entities;
 
-public class PasswordResetToken
+public class PasswordResetToken : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }

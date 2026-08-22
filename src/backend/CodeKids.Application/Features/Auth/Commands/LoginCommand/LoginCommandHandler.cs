@@ -24,7 +24,8 @@ public sealed class LoginCommandHandler(
         if (login.Contains('@', StringComparison.Ordinal))
         {
             var email = login.ToLowerInvariant();
-            user = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+            user = await dbContext.Users.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
         }
         else
         {
@@ -34,7 +35,8 @@ public sealed class LoginCommandHandler(
                 throw new InvalidOperationException("Invalid email, mobile, or password.");
             }
 
-            user = await dbContext.Users.FirstOrDefaultAsync(x => x.MobilePhone == phone, cancellationToken);
+            user = await dbContext.Users.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.MobilePhone == phone, cancellationToken);
         }
 
         if (user is null || !passwordHasher.Verify(command.Password, user.PasswordHash))
