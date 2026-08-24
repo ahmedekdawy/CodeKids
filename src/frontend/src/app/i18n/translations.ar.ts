@@ -59,6 +59,7 @@ export const AR: Record<string, string> = {
   'common.pageOf': 'صفحة {page} من {pages}',
   'common.expandMenu': 'توسيع القائمة',
   'common.collapseMenu': 'طي القائمة',
+  'common.menu': 'القائمة',
   'common.back': 'رجوع',
   'common.backMissions': '← العودة للمهام',
   'common.select': 'اختر',

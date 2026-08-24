@@ -59,6 +59,7 @@ export const EN: Record<string, string> = {
   'common.pageOf': 'Page {page} of {pages}',
   'common.expandMenu': 'Expand menu',
   'common.collapseMenu': 'Collapse menu',
+  'common.menu': 'Menu',
   'common.back': 'Back',
   'common.backMissions': '← Back to missions',
   'common.select': 'Select',
