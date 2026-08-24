@@ -6,4 +6,6 @@ public sealed record CourseUnitDto(
     string Title,
     string Description,
     int SortOrder,
-    IReadOnlyList<CourseLessonDto> Lessons);
+    IReadOnlyList<CourseLessonDto> Lessons,
+    int? Term = null,
+    string VerificationStatus = "");

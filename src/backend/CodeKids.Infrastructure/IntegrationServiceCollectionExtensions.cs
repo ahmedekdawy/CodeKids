@@ -63,7 +63,7 @@ public static class IntegrationServiceCollectionExtensions
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
         services.AddHttpClient(nameof(StudyPlanAiClient), client =>
         {
-            client.Timeout = TimeSpan.FromSeconds(90);
+            client.Timeout = TimeSpan.FromSeconds(120);
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             client.DefaultRequestHeaders.UserAgent.ParseAdd("CodeKids/1.0");
         });

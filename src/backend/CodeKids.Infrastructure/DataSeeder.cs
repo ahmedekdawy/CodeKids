@@ -40,6 +40,12 @@ public static class DataSeeder
                 new Grade { Id = 12, Name = "الصف 12", NameEn = "Grade 12", StageId = 3 });
         }
 
+        if (!await dbContext.Subjects.AnyAsync(cancellationToken))
+        {
+            dbContext.Subjects.AddRange(SubjectSeedData.All);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
         if (!await dbContext.Avatars.AnyAsync(cancellationToken))
         {
             dbContext.Avatars.AddRange(
@@ -85,7 +91,7 @@ public static class DataSeeder
                         {
                             Id = starterUnitId,
                             CourseId = starterCourseId,
-                            Title = "Unit 1",
+                            Title = "Loops and variables",
                             Description = "Loops and variables",
                             SortOrder = 1,
                             Lessons =
@@ -214,7 +220,7 @@ public static class DataSeeder
                         {
                             Id = logicUnitId,
                             CourseId = logicCourseId,
-                            Title = "Unit 1",
+                            Title = "Conditions",
                             Description = "Conditions",
                             SortOrder = 1,
                             Lessons =
@@ -282,6 +288,8 @@ public static class DataSeeder
                     ]
                 });
         }
+
+        await EgyptianCurriculumSeedData.SeedAsync(dbContext, cancellationToken);
 
         if (!await dbContext.Users.AnyAsync(cancellationToken))
         {

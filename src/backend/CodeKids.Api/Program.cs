@@ -32,6 +32,8 @@ using CodeKids.Application.Features.Expenses;
 
 using CodeKids.Application.Features.Grades;
 
+using CodeKids.Application.Features.Subjects;
+
 using CodeKids.Application.Features.Lessons;
 
 using CodeKids.Application.Features.Media;
@@ -196,10 +198,13 @@ builder.Services.AddScoped<ICommandHandler<RegisterTenantCommand, RegisterTenant
 builder.Services.AddScoped<ICommandHandler<VerifyTenantCommand, VerifyTenantResult>, VerifyTenantCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetCourseByIdQuery, CourseDto?>, GetCourseByIdQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListStagesQuery, IReadOnlyList<StageDto>>, ListStagesQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListGradesQuery, IReadOnlyList<GradeDto>>, ListGradesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListSubjectsQuery, IReadOnlyList<SubjectDto>>, ListSubjectsQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetSiteSettingsQuery, SiteSettingsDto>, GetSiteSettingsQueryHandler>();
 
@@ -502,11 +507,12 @@ app.UseAuthorization();
 
 //        await TenantSchema.EnsureAsync(dbContext);
 
-//        await DataSeeder.SeedAsync(dbContext, passwordHasher);
+//       await DataSeeder.SeedAsync(dbContext, passwordHasher);
 
 //    }
 
 //}
+
 
 app.MapAccountReportEndpoints();
 
@@ -531,6 +537,7 @@ app.MapClassroomsEndpoints();
 app.MapCoursesEndpoints();
 app.MapCourseTreeEndpoints();
 app.MapGradesEndpoints();
+app.MapSubjectsEndpoints();
 
 app.MapDashboardEndpoints();
 

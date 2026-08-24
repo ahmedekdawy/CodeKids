@@ -18,6 +18,20 @@ public class Course : TenantEntity
     /// <summary>Arabic, Language, or All; null treated as All.</summary>
     public SchoolType? SchoolType { get; set; }
     public int SortOrder { get; set; }
+    /// <summary>External catalog subject id. Null if this course is not in the external subject list.</summary>
+    public int? ExternalSubjectId { get; set; }
+    /// <summary>Curriculum subject code from the MoE catalog (e.g. arabic, math).</summary>
+    public string SubjectCode { get; set; } = string.Empty;
+    /// <summary>core, pass_fail_non_total, activity, etc.</summary>
+    public string Category { get; set; } = string.Empty;
+    /// <summary>Secondary track code (science, literature, math). Empty when the grade has no tracks.</summary>
+    public string TrackCode { get; set; } = string.Empty;
+    public string TrackName { get; set; } = string.Empty;
+    public string VerificationStatus { get; set; } = string.Empty;
+    public string SourceTocUrl { get; set; } = string.Empty;
+    public string Notes { get; set; } = string.Empty;
+    public string Variants { get; set; } = string.Empty;
+    public Subject? ExternalSubject { get; set; }
     public Stage? Stage { get; set; }
     public List<CourseUnit> Units { get; set; } = [];
     public List<Lesson> Lessons { get; set; } = [];

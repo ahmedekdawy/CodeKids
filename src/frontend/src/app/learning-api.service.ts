@@ -55,7 +55,8 @@ import {
   ZoomConnectionStatus,
   ZoomOAuthSettings,
   SiteSettings,
-  Stage
+  Stage,
+  Subject
 } from './models';
 import { environment } from '../environments/environment';
 
@@ -64,8 +65,13 @@ export class LearningApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiBaseUrl;
 
-  getCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.baseUrl}/courses`);
+  getCourses(includeContent = true): Observable<Course[]> {
+    const query = includeContent ? '' : '?includeContent=false';
+    return this.http.get<Course[]>(`${this.baseUrl}/courses${query}`);
+  }
+
+  getCourse(courseId: string): Observable<Course> {
+    return this.http.get<Course>(`${this.baseUrl}/courses/${courseId}`);
   }
 
   getStages(): Observable<Stage[]> {
@@ -75,6 +81,11 @@ export class LearningApiService {
   getGrades(stageId?: number | null): Observable<Grade[]> {
     const query = stageId == null ? '' : `?stageId=${stageId}`;
     return this.http.get<Grade[]>(`${this.baseUrl}/grades${query}`);
+  }
+
+  getSubjects(stageId?: number | null): Observable<Subject[]> {
+    const query = stageId == null ? '' : `?stageId=${stageId}`;
+    return this.http.get<Subject[]>(`${this.baseUrl}/subjects${query}`);
   }
 
   getLessons(courseId?: string): Observable<Lesson[]> {

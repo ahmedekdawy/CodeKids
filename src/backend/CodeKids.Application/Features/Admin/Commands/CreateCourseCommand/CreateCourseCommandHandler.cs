@@ -167,5 +167,11 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             course.Grade,
             course.StageId,
             course.SortOrder,
-            course.SchoolType?.ToString() ?? nameof(SchoolType.All));
+            course.SchoolType?.ToString() ?? nameof(SchoolType.All),
+            course.ExternalSubjectId,
+            course.SubjectCode,
+            course.Category,
+            course.TrackCode,
+            course.TrackName,
+            course.VerificationStatus);
 }

@@ -22,7 +22,7 @@ public sealed class StudyPlanAiClient(
         CancellationToken cancellationToken)
     {
         var settings = options.Value;
-        var provider = (settings.Provider ?? "groq").Trim().ToLowerInvariant();
+        var provider = (settings.Provider ?? "gemini").Trim().ToLowerInvariant();
         var apiKey = (settings.ApiKey ?? string.Empty).Trim();
 
         if (provider is "gemini" && apiKey.Length > 0)
@@ -120,43 +120,184 @@ public sealed class StudyPlanAiClient(
         string userPrompt,
         CancellationToken cancellationToken)
     {
-        var model = string.IsNullOrWhiteSpace(settings.Model) ? "gemini-2.0-flash" : settings.Model.Trim();
-        var url =
-            $"https://generativelanguage.googleapis.com/v1beta/models/{Uri.EscapeDataString(model)}:generateContent?key={Uri.EscapeDataString(settings.ApiKey.Trim())}";
+        var model = string.IsNullOrWhiteSpace(settings.Model) ? "gemini-2.5-flash" : settings.Model.Trim();
+        var url = string.IsNullOrWhiteSpace(settings.BaseUrl)
+            ? "https://generativelanguage.googleapis.com/v1beta/interactions"
+            : settings.BaseUrl.Trim().TrimEnd('/');
+        if (!url.EndsWith("/interactions", StringComparison.OrdinalIgnoreCase))
+        {
+            url = "https://generativelanguage.googleapis.com/v1beta/interactions";
+        }
+
         var client = httpClientFactory.CreateClient(nameof(StudyPlanAiClient));
+        using var request = new HttpRequestMessage(HttpMethod.Post, url);
+        request.Headers.TryAddWithoutValidation("x-goog-api-key", settings.ApiKey.Trim());
+        request.Headers.TryAddWithoutValidation("Api-Revision", "2026-05-20");
         var body = new
         {
-            system_instruction = new { parts = new[] { new { text = systemPrompt } } },
-            contents = new[]
+            model,
+            input = userPrompt,
+            system_instruction = systemPrompt,
+            store = false,
+            response_format = new
             {
-                new { role = "user", parts = new[] { new { text = userPrompt } } }
-            },
-            generationConfig = new
-            {
-                temperature = 0.4,
-                responseMimeType = "application/json"
+                type = "text",
+                mime_type = "application/json",
+                schema = StudyPlanResponseSchema
             }
         };
-        using var content = new StringContent(JsonSerializer.Serialize(body, JsonOptions), Encoding.UTF8, "application/json");
-        using var response = await client.PostAsync(url, content, cancellationToken);
+        request.Content = new StringContent(JsonSerializer.Serialize(body, JsonOptions), Encoding.UTF8, "application/json");
+
+        using var response = await client.SendAsync(request, cancellationToken);
         var raw = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException($"AI provider returned {(int)response.StatusCode}.");
         }
 
+        return ExtractGeminiText(raw);
+    }
+
+    private static readonly object StudyPlanResponseSchema = new
+    {
+        type = "object",
+        properties = new
+        {
+            notes = new { type = "string" },
+            weeks = new
+            {
+                type = "array",
+                items = new
+                {
+                    type = "object",
+                    properties = new
+                    {
+                        weekNumber = new { type = "integer" },
+                        topics = new
+                        {
+                            type = "array",
+                            items = new
+                            {
+                                type = "object",
+                                properties = new
+                                {
+                                    title = new { type = "string" },
+                                    highlight = new { type = "boolean" }
+                                },
+                                required = new[] { "title", "highlight" }
+                            }
+                        }
+                    },
+                    required = new[] { "weekNumber", "topics" }
+                }
+            }
+        },
+        required = new[] { "notes", "weeks" }
+    };
+
+    private static string ExtractGeminiText(string raw)
+    {
         using var doc = JsonDocument.Parse(raw);
-        var text = doc.RootElement
-            .GetProperty("candidates")[0]
-            .GetProperty("content")
-            .GetProperty("parts")[0]
-            .GetProperty("text")
-            .GetString();
-        return text ?? string.Empty;
+        var root = doc.RootElement;
+        if (root.TryGetProperty("status", out var statusEl))
+        {
+            var status = statusEl.GetString();
+            if (status is "failed" or "cancelled")
+            {
+                throw new HttpRequestException($"AI provider returned status {status}.");
+            }
+        }
+
+        if (TryReadString(root, "output_text", out var outputText))
+        {
+            return outputText;
+        }
+
+        if (TryCollectText(root, "steps", out var fromSteps))
+        {
+            return fromSteps;
+        }
+
+        if (TryCollectText(root, "outputs", out var fromOutputs))
+        {
+            return fromOutputs;
+        }
+
+        throw new HttpRequestException("AI provider returned an empty response.");
+    }
+
+    private static bool TryReadString(JsonElement root, string name, out string value)
+    {
+        value = string.Empty;
+        if (!root.TryGetProperty(name, out var el) || el.ValueKind != JsonValueKind.String)
+        {
+            return false;
+        }
+
+        value = el.GetString()?.Trim() ?? string.Empty;
+        return value.Length > 0;
+    }
+
+    private static bool TryCollectText(JsonElement root, string arrayName, out string value)
+    {
+        value = string.Empty;
+        if (!root.TryGetProperty(arrayName, out var array) || array.ValueKind != JsonValueKind.Array)
+        {
+            return false;
+        }
+
+        var parts = new StringBuilder();
+        foreach (var item in array.EnumerateArray())
+        {
+            if (item.ValueKind != JsonValueKind.Object)
+            {
+                continue;
+            }
+
+            var type = item.TryGetProperty("type", out var typeEl) ? typeEl.GetString() : null;
+            if (type is "thought")
+            {
+                continue;
+            }
+
+            if (item.TryGetProperty("content", out var content) && content.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var part in content.EnumerateArray())
+                {
+                    AppendTextPart(parts, part);
+                }
+
+                continue;
+            }
+
+            AppendTextPart(parts, item);
+        }
+
+        value = parts.ToString().Trim();
+        return value.Length > 0;
+    }
+
+    private static void AppendTextPart(StringBuilder parts, JsonElement part)
+    {
+        if (part.ValueKind != JsonValueKind.Object)
+        {
+            return;
+        }
+
+        var type = part.TryGetProperty("type", out var typeEl) ? typeEl.GetString() : null;
+        if (type is not null and not "text")
+        {
+            return;
+        }
+
+        if (part.TryGetProperty("text", out var textEl) && textEl.ValueKind == JsonValueKind.String)
+        {
+            parts.Append(textEl.GetString());
+        }
     }
 
     private static string DefaultModel(string provider) =>
-        provider == "gemini" ? "gemini-2.0-flash" : "llama-3.1-8b-instant";
+        provider == "gemini" ? "gemini-2.5-flash" : "llama-3.1-8b-instant";
 
     private static string NormalizeBaseUrl(string? baseUrl, string provider)
     {

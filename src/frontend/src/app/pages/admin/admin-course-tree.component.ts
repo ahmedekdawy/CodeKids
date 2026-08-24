@@ -1,11 +1,18 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Course, CourseLesson, CourseUnit } from '../../models';
+import { Course, CourseLesson, CourseUnit, Grade, Stage } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
-import { formatGradeLabel } from '../../grade.util';
+import {
+  GRADE_CODES,
+  formatCourseAudienceLabel,
+  formatCourseLabel,
+  formatGradeLabel,
+  gradeToStage
+} from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
@@ -18,8 +25,10 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
 export class AdminCourseTreeComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly auth = inject(AuthService);
 
   readonly courses = signal<Course[]>([]);
+  readonly selectedCourse = signal<Course | null>(null);
   readonly selectedCourseId = signal<string>('');
   readonly expandedUnits = signal<Record<string, boolean>>({});
   readonly message = signal('');
@@ -27,6 +36,14 @@ export class AdminCourseTreeComponent {
   readonly editingUnitId = signal<string | null>(null);
   readonly editingLessonId = signal<string | null>(null);
   readonly addingLessonForUnitId = signal<string | null>(null);
+  readonly filterStage = signal<number | ''>('');
+  readonly filterGrade = signal<number | ''>('');
+  readonly stages = signal<Stage[]>([]);
+  readonly catalogGrades = signal<Grade[]>([]);
+  readonly isSuperAdmin = computed(() => this.auth.user()?.role === 'SuperAdmin');
+  readonly emptyCoursesKey = computed(() =>
+    this.isSuperAdmin() ? 'admin.courseTree.noCourses' : 'admin.courseTree.noAssignedCourses'
+  );
 
   unitTitle = '';
   unitDescription = '';
@@ -51,9 +68,40 @@ export class AdminCourseTreeComponent {
   editLessonSort: number | null = 1;
   editLessonUnitId = '';
 
-  readonly selectedCourse = computed(() =>
-    this.courses().find((c) => c.id === this.selectedCourseId()) ?? null
-  );
+  readonly filteredCourses = computed(() => {
+    const stage = this.filterStage();
+    const grade = this.filterGrade();
+    return this.courses().filter((course) => {
+      if (stage !== '' && !this.courseMatchesStage(course, stage)) return false;
+      if (grade !== '' && !this.courseMatchesGrade(course, grade)) return false;
+      return true;
+    });
+  });
+
+  readonly courseOptions = computed(() => {
+    this.locale.lang();
+    return this.filteredCourses().map((course) => ({
+      value: course.id,
+      label: this.courseLabel(course)
+    }));
+  });
+
+  readonly filterGradeOptions = computed(() => {
+    this.locale.lang();
+    const stageId = this.filterStage();
+    const catalog = this.catalogGrades().filter((g) => stageId === '' || g.stageId === stageId);
+    if (!catalog.length) {
+      const grades = stageId === '' ? [...GRADE_CODES] : GRADE_CODES.filter((g) => gradeToStage(g) === stageId);
+      return grades.map((g) => ({
+        value: g,
+        label: formatGradeLabel((k, p) => this.locale.t(k, p), g)
+      }));
+    }
+    return catalog.map((g) => ({
+      value: g.id,
+      label: this.locale.lang() === 'ar' ? g.name : g.nameEn
+    }));
+  });
 
   readonly units = computed(() => {
     const course = this.selectedCourse();
@@ -77,14 +125,38 @@ export class AdminCourseTreeComponent {
 
   constructor() {
     this.reload();
+    this.api.getStages().subscribe({ next: (stages) => this.stages.set(stages) });
+    this.api.getGrades().subscribe({ next: (grades) => this.catalogGrades.set(grades) });
   }
 
   reload(): void {
-    this.api.getCourses().subscribe({
+    this.api.getCourses(false).subscribe({
       next: (courses) => {
         this.courses.set(courses);
-        if (!this.selectedCourseId() && courses.length) {
-          this.selectedCourseId.set(courses[0].id);
+        const selectedId = this.selectedCourseId();
+        const visible = this.filteredCourses();
+        if (selectedId && visible.some((c) => c.id === selectedId)) {
+          this.reloadTree();
+          return;
+        }
+        const nextId = visible[0]?.id ?? courses[0]?.id ?? '';
+        this.selectedCourseId.set(nextId);
+        this.reloadTree();
+      },
+      error: () => this.error.set(this.locale.t('admin.courseTree.loadFailed'))
+    });
+  }
+
+  reloadTree(): void {
+    const courseId = this.selectedCourseId();
+    if (!courseId) {
+      this.selectedCourse.set(null);
+      return;
+    }
+    this.api.getCourse(courseId).subscribe({
+      next: (course) => {
+        if (this.selectedCourseId() === course.id) {
+          this.selectedCourse.set(course);
         }
       },
       error: () => this.error.set(this.locale.t('admin.courseTree.loadFailed'))
@@ -93,19 +165,85 @@ export class AdminCourseTreeComponent {
 
   onCourseChange(courseId: string): void {
     this.selectedCourseId.set(courseId);
+    this.selectedCourse.set(null);
     this.cancelUnitEdit();
     this.cancelLessonEdit();
     this.addingLessonForUnitId.set(null);
     this.message.set('');
     this.error.set('');
+    this.reloadTree();
   }
 
-  gradeLabel(grade: number | null | undefined): string {
-    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  stageOptions(): { value: number; label: string }[] {
+    this.locale.lang();
+    const stages = this.stages();
+    if (stages.length) {
+      return stages.map((s) => ({
+        value: s.id,
+        label: this.locale.lang() === 'ar' ? s.name : s.nameEn
+      }));
+    }
+    return [0, 1, 2, 3].map((id) => ({
+      value: id,
+      label: formatCourseAudienceLabel((k, p) => this.locale.t(k, p), null, id)
+    }));
+  }
+
+  onFilterStageChange(value: string): void {
+    const stage = value === '' ? '' : Number(value);
+    this.filterStage.set(stage);
+    const grade = this.filterGrade();
+    if (grade !== '' && stage !== '' && gradeToStage(grade) !== stage) {
+      this.filterGrade.set('');
+    }
+    this.ensureSelectedVisible();
+  }
+
+  onFilterGradeChange(value: string): void {
+    this.filterGrade.set(value === '' ? '' : Number(value));
+    this.ensureSelectedVisible();
+  }
+
+  hasActiveFilters(): boolean {
+    return this.filterStage() !== '' || this.filterGrade() !== '';
+  }
+
+  clearFilters(): void {
+    this.filterStage.set('');
+    this.filterGrade.set('');
+    this.ensureSelectedVisible();
   }
 
   courseLabel(course: Course): string {
-    return `${course.title} (${this.gradeLabel(course.grade)})`;
+    const base = formatCourseLabel(
+      (k, p) => this.locale.t(k, p),
+      course.title,
+      course.grade,
+      'common.allGrades',
+      course.stageId
+    );
+    const track = (course.trackName || '').trim();
+    return track ? `${base} — ${track}` : base;
+  }
+
+  private ensureSelectedVisible(): void {
+    const id = this.selectedCourseId();
+    const visible = this.filteredCourses();
+    if (id && visible.some((c) => c.id === id)) return;
+    const nextId = visible[0]?.id ?? '';
+    this.selectedCourseId.set(nextId);
+    this.reloadTree();
+  }
+
+  private courseMatchesStage(course: Course, stage: number): boolean {
+    if (course.stageId === stage) return true;
+    return course.grade != null && gradeToStage(course.grade) === stage;
+  }
+
+  private courseMatchesGrade(course: Course, grade: number): boolean {
+    if (course.grade === grade) return true;
+    if (course.grade != null) return false;
+    return course.stageId == null || course.stageId === gradeToStage(grade);
   }
 
   isExpanded(unitId: string): boolean {
@@ -137,7 +275,7 @@ export class AdminCourseTreeComponent {
           this.unitSort = 1;
           this.message.set(this.locale.t('admin.courseTree.unitCreated'));
           this.error.set('');
-          this.reload();
+          this.reloadTree();
         },
         error: (err) =>
           this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.unitCreateFailed'))
@@ -170,7 +308,7 @@ export class AdminCourseTreeComponent {
           this.cancelUnitEdit();
           this.message.set(this.locale.t('admin.courseTree.unitUpdated'));
           this.error.set('');
-          this.reload();
+          this.reloadTree();
         },
         error: (err) =>
           this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.unitUpdateFailed'))
@@ -229,7 +367,7 @@ export class AdminCourseTreeComponent {
           this.cancelAddLesson();
           this.message.set(this.locale.t('admin.courseTree.lessonCreated'));
           this.error.set('');
-          this.reload();
+          this.reloadTree();
         },
         error: (err) =>
           this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.lessonCreateFailed'))
@@ -269,7 +407,7 @@ export class AdminCourseTreeComponent {
           this.cancelLessonEdit();
           this.message.set(this.locale.t('admin.courseTree.lessonUpdated'));
           this.error.set('');
-          this.reload();
+          this.reloadTree();
         },
         error: (err) =>
           this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.lessonUpdateFailed'))

@@ -49,6 +49,8 @@ export interface CourseUnit {
   description: string;
   sortOrder: number;
   lessons: CourseLesson[];
+  term?: number | null;
+  verificationStatus?: string;
 }
 
 export interface CourseQuiz {
@@ -73,6 +75,15 @@ export interface Course {
   stageId?: number | null;
   schoolType?: CourseSchoolType | string | null;
   sortOrder: number;
+  externalSubjectId?: number | null;
+  subjectCode?: string;
+  category?: string;
+  trackCode?: string;
+  trackName?: string;
+  verificationStatus?: string;
+  sourceTocUrl?: string;
+  notes?: string;
+  variants?: string;
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
@@ -89,6 +100,15 @@ export interface Grade {
   name: string;
   nameEn: string;
   stageId: number;
+}
+
+export interface Subject {
+  id: number;
+  title: string;
+  stageId: number;
+  code?: string;
+  category?: string;
+  nameEn?: string;
 }
 
 export interface SiteSettings {

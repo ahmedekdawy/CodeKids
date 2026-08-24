@@ -6,4 +6,5 @@ public class Stage : TenantEntity
     public string Name { get; set; } = string.Empty;
     public string NameEn { get; set; } = string.Empty;
     public List<Grade> Grades { get; set; } = [];
+    public List<Subject> Subjects { get; set; } = [];
 }
