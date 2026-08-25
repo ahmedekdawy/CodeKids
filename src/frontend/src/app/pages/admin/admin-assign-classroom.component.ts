@@ -6,7 +6,7 @@ import { Classroom, ClassroomCourseAssignment, Course, ManagedUser } from '../..
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
-import { formatCourseLabel } from '../../grade.util';
+import { courseMatchesClassroomGrade, formatCourseLabel } from '../../grade.util';
 
 type CourseTeacherRow = { courseId: string; teacherId: string };
 
@@ -40,7 +40,11 @@ export class AdminAssignClassroomComponent {
 
   readonly courseOptions = computed(() => {
     this.locale.lang();
+    const classroomGrade = this.selectedClassroom()?.grade ?? null;
     return this.allCourses()
+      .filter((course) =>
+        courseMatchesClassroomGrade(course.grade, classroomGrade, course.stageId)
+      )
       .slice()
       .sort((a, b) => {
         const ga = a.grade ?? 999;
