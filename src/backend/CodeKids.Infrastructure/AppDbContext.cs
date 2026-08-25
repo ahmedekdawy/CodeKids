@@ -28,6 +28,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Stage> Stages => Set<Stage>();
     public DbSet<Grade> Grades => Set<Grade>();
+    public DbSet<Subject> Subjects => Set<Subject>();
     public DbSet<CourseUnit> CourseUnits => Set<CourseUnit>();
     public DbSet<Lesson> Lessons => Set<Lesson>();
     public DbSet<LessonStep> LessonSteps => Set<LessonStep>();
@@ -131,6 +132,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithOne(x => x.Stage)
                 .HasForeignKey(x => x.StageId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasMany(x => x.Subjects)
+                .WithOne(x => x.Stage)
+                .HasForeignKey(x => x.StageId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Grade>(entity =>
@@ -142,19 +147,45 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasIndex(x => x.StageId);
         });
 
+        modelBuilder.Entity<Subject>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Code).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.Category).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.NameEn).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Notes).HasMaxLength(1000).IsRequired();
+            entity.HasIndex(x => x.StageId);
+            entity.HasIndex(x => new { x.Code, x.StageId });
+        });
+
         modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
-            entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
-            entity.Property(x => x.Term).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
             entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.SubjectCode).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.Category).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.TrackCode).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.TrackName).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.VerificationStatus).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.SourceTocUrl).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.Notes).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.Variants).HasMaxLength(400).IsRequired();
+            entity.HasIndex(x => new { x.Grade, x.SubjectCode, x.TrackCode });
             entity.HasOne(x => x.Stage)
                 .WithMany()
                 .HasForeignKey(x => x.StageId)
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasIndex(x => x.StageId);
+            entity.HasOne(x => x.ExternalSubject)
+                .WithMany()
+                .HasForeignKey(x => x.ExternalSubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(x => x.ExternalSubjectId);
             entity.HasMany(x => x.Units)
                 .WithOne(x => x.Course)
                 .HasForeignKey(x => x.CourseId)
@@ -172,8 +203,9 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<CourseUnit>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.VerificationStatus).HasMaxLength(80).IsRequired();
             entity.HasIndex(x => new { x.CourseId, x.SortOrder });
             entity.HasMany(x => x.Lessons)
                 .WithOne(x => x.Unit)
@@ -184,7 +216,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<Lesson>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.HasIndex(x => x.UnitId);
@@ -420,7 +452,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<WeeklyStudyPlanTopic>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Title).HasMaxLength(1000).IsRequired();
             entity.HasIndex(x => new { x.WeeklyStudyPlanItemId, x.SortOrder });
         });
 

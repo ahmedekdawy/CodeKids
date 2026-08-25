@@ -500,11 +500,24 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int?>("ExternalSubjectId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("SchoolType")
                         .HasMaxLength(20)
@@ -513,12 +526,21 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SourceTocUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<int?>("StageId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Term")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<string>("SubjectCode")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int?>("TermId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Theme")
                         .IsRequired()
@@ -527,12 +549,36 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("TrackCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("TrackName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("Variants")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExternalSubjectId");
+
                     b.HasIndex("StageId");
+
+                    b.HasIndex("Grade", "SubjectCode", "TrackCode");
 
                     b.ToTable("Courses");
                 });
@@ -554,10 +600,18 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("TermId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
                     b.HasKey("Id");
 
@@ -861,8 +915,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<Guid?>("UnitId")
                         .HasColumnType("uuid");
@@ -1383,6 +1437,48 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("Stages");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("StageId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StageId");
+
+                    b.HasIndex("Code", "StageId");
+
+                    b.ToTable("Subjects");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1644,8 +1740,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<Guid>("WeeklyStudyPlanItemId")
                         .HasColumnType("uuid");
@@ -2115,6 +2211,13 @@ namespace CodeKids.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("StageId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CodeKids.Domain.Entities.Subject", "ExternalSubject")
+                        .WithMany()
+                        .HasForeignKey("ExternalSubjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ExternalSubject");
 
                     b.Navigation("Stage");
                 });
@@ -2668,6 +2771,8 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Course", b =>
                 {
+                    b.Navigation("ExternalSubject");
+
                     b.Navigation("Lessons");
 
                     b.Navigation("Quizzes");
@@ -2681,6 +2786,17 @@ namespace CodeKids.Infrastructure.Migrations
                 {
                     b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
                         .WithMany("Grades")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Stage");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
+                        .WithMany("Subjects")
                         .HasForeignKey("StageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -2725,6 +2841,8 @@ namespace CodeKids.Infrastructure.Migrations
             modelBuilder.Entity("CodeKids.Domain.Entities.Stage", b =>
                 {
                     b.Navigation("Grades");
+
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttempt", b =>

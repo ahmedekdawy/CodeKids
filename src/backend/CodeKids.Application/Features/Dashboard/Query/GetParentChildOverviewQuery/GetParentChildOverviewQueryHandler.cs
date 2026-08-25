@@ -65,7 +65,7 @@ public sealed class GetParentChildOverviewQueryHandler(IAppDbContext dbContext)
                 c.Theme,
                 c.Description,
                 c.Grade,
-                c.Term
+                c.TermId
             })
             .ToListAsync(cancellationToken);
 
@@ -268,7 +268,7 @@ public sealed class GetParentChildOverviewQueryHandler(IAppDbContext dbContext)
                 course.Theme,
                 course.Description,
                 course.Grade,
-                course.Term?.ToString(),
+                course.TermId?.ToString(),
                 courseAssignments,
                 courseExams,
                 courseQuizzes);

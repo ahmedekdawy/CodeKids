@@ -22,21 +22,9 @@ public static class TenantRequest
 
         var header = http.Request.Headers[TenantCatalog.HeaderName].ToString().Trim();
         var connection = catalog.Resolve(header, http.Request.Headers.Origin.ToString(), http.Request.Host.Host);
-        var tenantId = SanitizeTenantId(header) ?? connection.Id;
-        var resolved = new TenantResolution(tenantId, connection.ConnectionString);
+        var resolved = new TenantResolution(connection.Id, connection.ConnectionString);
         http.Items[HttpItemKey] = resolved;
         return resolved;
-    }
-
-    private static string? SanitizeTenantId(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return null;
-        }
-
-        var slug = value.Trim().ToLowerInvariant();
-        return slug.Length > 64 ? slug[..64] : slug;
     }
 }
 

@@ -24,6 +24,17 @@ type EditableWeek = {
   topics: EditableTopic[];
 };
 
+type GeneratedWeekDraft = {
+  weekNumber?: number;
+  WeekNumber?: number;
+  fromDate?: string;
+  FromDate?: string;
+  toDate?: string;
+  ToDate?: string;
+  topics?: unknown;
+  Topics?: unknown;
+};
+
 const MAX_WEEKS = 20;
 const DEFAULT_WEEKS = 18;
 
@@ -53,6 +64,7 @@ export class TeacherStudyPlansComponent {
   readonly message = signal('');
   readonly error = signal('');
   readonly saving = signal(false);
+  readonly generating = signal(false);
   readonly exporting = signal(false);
 
   readonly filterCourseId = signal('');
@@ -66,6 +78,7 @@ export class TeacherStudyPlansComponent {
   toDate = defaultToDate();
   notes = '';
   private editorLoadSeq = 0;
+  private suppressEditorLoad = false;
 
   readonly courseOptions = computed(() =>
     this.courses()
@@ -158,11 +171,13 @@ export class TeacherStudyPlansComponent {
 
   onEditorCourseChange(courseId: string): void {
     this.courseId = courseId;
+    this.suppressEditorLoad = false;
     this.tryLoadMatchingPlan();
   }
 
   onFromDateChange(value: string): void {
     this.fromDate = value;
+    this.suppressEditorLoad = false;
     this.rebuildWeeks();
     this.tryLoadMatchingPlan();
   }
@@ -175,6 +190,7 @@ export class TeacherStudyPlansComponent {
   thisTerm(): void {
     this.fromDate = defaultFromDate();
     this.toDate = defaultToDate();
+    this.suppressEditorLoad = false;
     this.rebuildWeeks();
     this.tryLoadMatchingPlan();
   }
@@ -182,20 +198,50 @@ export class TeacherStudyPlansComponent {
   newPlan(): void {
     this.editingId = null;
     this.notes = '';
+    this.suppressEditorLoad = false;
     this.rebuildWeeks([]);
     this.editorTick.update((n) => n + 1);
     this.clearStatus();
   }
 
-  addTopic(week: EditableWeek): void {
-    week.topics.push({ title: '', highlight: false });
-    this.queueEqualize();
-  }
+  generate(): void {
+    this.clearStatus();
+    if (!this.courseId || !this.fromDate || !this.toDate) {
+      this.error.set(this.locale.t('teacher.studyPlans.required'));
+      return;
+    }
+    if (buildSchoolWeeks(this.fromDate, this.toDate).length > MAX_WEEKS) {
+      this.error.set(this.locale.t('teacher.studyPlans.rangeTooLong'));
+      return;
+    }
+    if (this.hasFilledTopics() && !confirm(this.locale.t('teacher.studyPlans.confirmGenerate'))) {
+      return;
+    }
 
-  removeTopic(week: EditableWeek, index: number): void {
-    week.topics.splice(index, 1);
-    if (week.topics.length === 0) this.addTopic(week);
-    this.queueEqualize();
+    this.suppressEditorLoad = true;
+    const seq = ++this.editorLoadSeq;
+    this.generating.set(true);
+    this.api
+      .generateStudyPlan({
+        courseId: this.courseId,
+        fromDate: this.fromDate,
+        toDate: this.toDate,
+        language: this.locale.lang()
+      })
+      .subscribe({
+        next: (draft) => {
+          this.generating.set(false);
+          if (seq !== this.editorLoadSeq) return;
+          this.applyGenerated(draft);
+          this.message.set(this.locale.t('teacher.studyPlans.generated'));
+        },
+        error: (err) => {
+          this.generating.set(false);
+          if (seq !== this.editorLoadSeq) return;
+          this.suppressEditorLoad = false;
+          this.error.set(this.locale.fromApiError(err, 'teacher.studyPlans.generateFailed'));
+        }
+      });
   }
 
   onTopicInput(event: Event): void {
@@ -241,14 +287,15 @@ export class TeacherStudyPlansComponent {
       return;
     }
 
-    const weeks: SaveWeeklyStudyPlanWeek[] = this.weeks().map((week) => ({
-      weekNumber: week.weekNumber,
-      fromDate: week.fromDate,
-      toDate: week.toDate,
-      topics: week.topics
-        .map((topic) => ({ title: topic.title.trim(), highlight: topic.highlight }))
-        .filter((topic) => topic.title)
-    }));
+    const weeks: SaveWeeklyStudyPlanWeek[] = this.weeks().map((week) => {
+      const topic = combineTopics(week.topics);
+      return {
+        weekNumber: week.weekNumber,
+        fromDate: week.fromDate,
+        toDate: week.toDate,
+        topics: topic.title ? [topic] : []
+      };
+    });
 
     this.saving.set(true);
     this.api
@@ -262,6 +309,7 @@ export class TeacherStudyPlansComponent {
       })
       .subscribe({
         next: (plan) => {
+          this.suppressEditorLoad = false;
           this.applyPlan(normalizeStudyPlan(plan));
           this.saving.set(false);
           this.loadPlans();
@@ -307,6 +355,7 @@ export class TeacherStudyPlansComponent {
 
   private tryLoadMatchingPlan(): void {
     this.editorTick.update((n) => n + 1);
+    if (this.suppressEditorLoad || this.generating()) return;
     if (!this.courseId || !this.fromDate) {
       this.editingId = null;
       return;
@@ -321,7 +370,7 @@ export class TeacherStudyPlansComponent {
       })
       .subscribe({
         next: (rows) => {
-          if (seq !== this.editorLoadSeq) return;
+          if (seq !== this.editorLoadSeq || this.suppressEditorLoad || this.generating()) return;
           const match = normalizeStudyPlans(rows).find(
             (plan) => plan.courseId === this.courseId && plan.fromDate === this.fromDate
           );
@@ -342,17 +391,44 @@ export class TeacherStudyPlansComponent {
     this.editorTick.update((n) => n + 1);
   }
 
+  private applyGenerated(draft: {
+    notes?: string;
+    Notes?: string;
+    weeks?: GeneratedWeekDraft[];
+    Weeks?: GeneratedWeekDraft[];
+  }): void {
+    this.notes = String(draft.notes ?? draft.Notes ?? '');
+    const weeks = Array.isArray(draft.weeks)
+      ? draft.weeks
+      : Array.isArray(draft.Weeks)
+        ? draft.Weeks
+        : [];
+    this.rebuildWeeks(
+      weeks.map((week, index) => ({
+        weekNumber: Number(week.weekNumber ?? week.WeekNumber ?? index + 1),
+        fromDate: String(week.fromDate ?? week.FromDate ?? ''),
+        toDate: String(week.toDate ?? week.ToDate ?? ''),
+        topics: [combineTopics(week.topics ?? week.Topics)]
+      }))
+    );
+    this.editorTick.update((n) => n + 1);
+  }
+
+  private hasFilledTopics(): boolean {
+    return this.weeks().some((week) => week.topics.some((topic) => topic.title.trim()));
+  }
+
   private rebuildWeeks(existing?: { weekNumber: number; fromDate: string; toDate: string; topics: EditableTopic[] }[]): void {
     const previous = new Map((existing ?? this.weeks()).map((week) => [week.weekNumber, week]));
     this.weeks.set(
       buildSchoolWeeks(this.fromDate, this.toDate).map((slot) => {
         const found = previous.get(slot.weekNumber);
-        const topics = (found?.topics ?? []).map((topic) => ({ ...topic }));
+        const combined = combineTopics(found?.topics);
         return {
           weekNumber: slot.weekNumber,
-          fromDate: found?.fromDate || slot.fromDate,
-          toDate: found?.toDate || slot.toDate,
-          topics: topics.length ? topics : [{ title: '', highlight: false }]
+          fromDate: toDateString(found?.fromDate) || slot.fromDate,
+          toDate: toDateString(found?.toDate) || slot.toDate,
+          topics: [{ title: combined.title, highlight: combined.highlight }]
         };
       })
     );
@@ -395,6 +471,38 @@ export class TeacherStudyPlansComponent {
     this.message.set('');
     this.error.set('');
   }
+}
+
+function combineTopics(topics: unknown): EditableTopic {
+  const list = Array.isArray(topics) ? topics : topics == null ? [] : [topics];
+  const titles: string[] = [];
+  let highlight = false;
+  for (const item of list) {
+    if (typeof item === 'string') {
+      const title = item.trim();
+      if (title) titles.push(title);
+      continue;
+    }
+    if (!item || typeof item !== 'object') continue;
+    const topic = item as {
+      title?: string;
+      Title?: string;
+      highlight?: boolean;
+      Highlight?: boolean;
+    };
+    const title = String(topic.title ?? topic.Title ?? '').trim();
+    if (title) titles.push(title);
+    highlight = highlight || !!(topic.highlight ?? topic.Highlight);
+  }
+  return {
+    title: titles.join('\n'),
+    highlight
+  };
+}
+
+function toDateString(value: unknown): string {
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) return value.slice(0, 10);
+  return '';
 }
 
 function autosizeTextarea(area: HTMLTextAreaElement): void {

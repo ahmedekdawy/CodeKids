@@ -1,4 +1,4 @@
-<div class="shell" [class.collapsed]="collapsed()">
+<div class="shell" [class.collapsed]="collapsed()" [class.menu-open]="menuOpen()">
   <aside class="sidebar">
     <div class="sidebar-top">
       <div class="sidebar-brand">
@@ -21,26 +21,32 @@
       </div>
     </div>
 
-    <nav class="side-nav">
-      @for (item of navItems; track item.path) {
-        <a
-          [routerLink]="item.path"
-          routerLinkActive="active"
-          [title]="item.labelKey | t">
-          <span class="nav-icon">{{ iconFor(item) }}</span>
-          @if (!collapsed()) {
+    <div class="nav-wrap" [class.open]="menuOpen()">
+      <button
+        type="button"
+        class="menu-toggle"
+        (click)="toggleMenu($event)"
+        [attr.aria-expanded]="menuOpen()"
+        [attr.aria-label]="'common.menu' | t">
+        <span class="menu-toggle-icon" aria-hidden="true">☰</span>
+        <span>{{ 'common.menu' | t }}</span>
+      </button>
+      <nav class="side-nav" (click)="onNavClick($event)">
+        @for (item of navItems; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [title]="item.labelKey | t">
+            <span class="nav-icon">{{ iconFor(item) }}</span>
             <span class="nav-label">{{ item.labelKey | t }}</span>
-          }
-        </a>
-      }
-    </nav>
+          </a>
+        }
+      </nav>
+    </div>
 
     <button type="button" class="logout" (click)="auth.logout()" [title]="'common.signOut' | t">
-      @if (collapsed()) {
-        ⎋
-      } @else {
-        {{ 'common.signOut' | t }}
-      }
+      <span class="logout-icon" aria-hidden="true">⎋</span>
+      <span class="logout-label">{{ 'common.signOut' | t }}</span>
     </button>
   </aside>
 

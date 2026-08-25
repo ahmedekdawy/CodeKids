@@ -26,6 +26,8 @@ public static class CoursesEndpoints
 
             IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>> handler,
 
+            bool? includeContent,
+
             CancellationToken cancellationToken) =>
 
         {
@@ -54,8 +56,31 @@ public static class CoursesEndpoints
 
             }
 
-            return Results.Ok(await handler.Handle(new GetCoursesQuery(userId, role), cancellationToken));
+            return Results.Ok(await handler.Handle(new GetCoursesQuery(userId, role, includeContent ?? true), cancellationToken));
 
+        }).RequireAuthorization();
+
+        app.MapGet("/api/courses/{courseId:guid}", async (
+            Guid courseId,
+            HttpContext httpContext,
+            IQueryHandler<GetCourseByIdQuery, CourseDto?> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Guid? userId = null;
+            string? role = null;
+            try
+            {
+                userId = CurrentUser.GetUserId(httpContext.User);
+                role = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                    ?? httpContext.User.FindFirst("role")?.Value;
+            }
+            catch
+            {
+                // Authorized endpoint; ignore if claim missing.
+            }
+
+            var course = await handler.Handle(new GetCourseByIdQuery(courseId, userId, role), cancellationToken);
+            return course is null ? Results.NotFound() : Results.Ok(course);
         }).RequireAuthorization();
 
         app.MapPost("/api/admin/courses", async (

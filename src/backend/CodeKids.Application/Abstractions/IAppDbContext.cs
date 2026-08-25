@@ -10,6 +10,7 @@ public interface IAppDbContext
     DbSet<Course> Courses { get; }
     DbSet<Stage> Stages { get; }
     DbSet<Grade> Grades { get; }
+    DbSet<Subject> Subjects { get; }
     DbSet<CourseUnit> CourseUnits { get; }
     DbSet<Lesson> Lessons { get; }
     DbSet<LessonStep> LessonSteps { get; }

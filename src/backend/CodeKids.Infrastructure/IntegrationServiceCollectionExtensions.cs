@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Options;
+using CodeKids.Infrastructure.Ai;
 using CodeKids.Infrastructure.Email;
 using CodeKids.Infrastructure.Jobs;
 using CodeKids.Infrastructure.Media;
@@ -54,6 +55,19 @@ public static class IntegrationServiceCollectionExtensions
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         });
         services.AddSingleton<IWhatsAppClient, WhatsAppClient>();
+        return services;
+    }
+
+    public static IServiceCollection AddStudyPlanAi(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
+        services.AddHttpClient(nameof(StudyPlanAiClient), client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(120);
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("CodeKids/1.0");
+        });
+        services.AddSingleton<IStudyPlanAiClient, StudyPlanAiClient>();
         return services;
     }
 }

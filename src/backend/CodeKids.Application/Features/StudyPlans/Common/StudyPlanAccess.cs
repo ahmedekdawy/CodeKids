@@ -7,6 +7,7 @@ namespace CodeKids.Application.Features.StudyPlans;
 internal static class StudyPlanAccess
 {
     internal const int MaxWeeks = 20;
+    internal const int TopicTitleMax = 1000;
 
     internal static async Task EnsureTeacherOwnsCourseAsync(
         IAppDbContext dbContext,
@@ -91,7 +92,7 @@ internal static class StudyPlanAccess
             plan.Course?.Title ?? string.Empty,
             plan.Course?.Grade,
             plan.Course?.StageId,
-            plan.Course?.Term?.ToString(),
+            plan.Course?.TermId?.ToString(),
             plan.FromDate,
             plan.ToDate,
             plan.Notes,

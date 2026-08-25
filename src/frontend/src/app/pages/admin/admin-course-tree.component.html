@@ -5,6 +5,32 @@
   <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
+    <div class="list-filters">
+      <label>
+        {{ 'common.stage' | t }}
+        <app-searchable-select
+          [ngModel]="filterStage()"
+          name="courseTreeFilterStage"
+          (ngModelChange)="onFilterStageChange($event)"
+          [emptyLabel]="'common.allStages' | t"
+          [options]="stageOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <app-searchable-select
+          [ngModel]="filterGrade()"
+          name="courseTreeFilterGrade"
+          (ngModelChange)="onFilterGradeChange($event)"
+          [emptyLabel]="'common.allGrades' | t"
+          [options]="filterGradeOptions()"
+        />
+      </label>
+      @if (hasActiveFilters()) {
+        <button type="button" class="ghost-btn" (click)="clearFilters()">{{ 'common.clearFilters' | t }}</button>
+      }
+      <span class="meta">{{ 'common.ofShown' | t: { shown: filteredCourses().length, total: courses().length } }}</span>
+    </div>
     <label>
       {{ 'admin.courseTree.selectCourse' | t }}
       <app-searchable-select
@@ -12,11 +38,13 @@
         (ngModelChange)="onCourseChange($event)"
         name="courseId"
         [emptyLabel]="'common.selectCourse' | t"
-        [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        [options]="courseOptions()"
       />
     </label>
     @if (!courses().length) {
-      <p class="meta">{{ 'admin.courseTree.noAssignedCourses' | t }}</p>
+      <p class="meta">{{ emptyCoursesKey() | t }}</p>
+    } @else if (!filteredCourses().length) {
+      <p class="meta">{{ 'admin.courseTree.noMatchingCourses' | t }}</p>
     }
   </section>
 

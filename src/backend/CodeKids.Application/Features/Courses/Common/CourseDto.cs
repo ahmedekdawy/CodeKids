@@ -12,6 +12,15 @@ public sealed record CourseDto(
     int? StageId,
     string? SchoolType,
     int SortOrder,
+    int? ExternalSubjectId,
     IReadOnlyList<CourseUnitDto> Units,
     IReadOnlyList<CourseLessonDto> Lessons,
-    IReadOnlyList<CourseQuizDto> Quizzes);
+    IReadOnlyList<CourseQuizDto> Quizzes,
+    string SubjectCode = "",
+    string Category = "",
+    string TrackCode = "",
+    string TrackName = "",
+    string VerificationStatus = "",
+    string SourceTocUrl = "",
+    string Notes = "",
+    string Variants = "");

@@ -19,4 +19,10 @@ public sealed record CourseSummaryDto(
     int? Grade,
     int? StageId,
     int SortOrder,
-    string? SchoolType = null);
+    string? SchoolType = null,
+    int? ExternalSubjectId = null,
+    string SubjectCode = "",
+    string Category = "",
+    string TrackCode = "",
+    string TrackName = "",
+    string VerificationStatus = "");

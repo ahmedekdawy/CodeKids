@@ -41,6 +41,14 @@
       <button type="button" class="ghost-btn" (click)="newPlan()">
         {{ 'teacher.studyPlans.newPlan' | t }}
       </button>
+      <button
+        type="button"
+        class="ghost-btn"
+        [disabled]="generating() || saving() || !courseId"
+        (click)="generate()"
+      >
+        {{ generating() ? ('teacher.studyPlans.generating' | t) : ('teacher.studyPlans.generate' | t) }}
+      </button>
     </div>
 
     @if (courses().length === 0) {
@@ -48,7 +56,7 @@
     }
 
     <div class="timetable-export-bar">
-      <button type="button" [disabled]="saving() || !courseId" (click)="save()">
+      <button type="button" [disabled]="saving() || generating() || !courseId" (click)="save()">
         {{ saving() ? ('common.saving' | t) : ('teacher.studyPlans.save' | t) }}
       </button>
       <button
@@ -86,12 +94,12 @@
               <header class="study-week-name">{{ weekLabel(week.weekNumber) }}</header>
               <div class="study-week-dates">{{ formatRange(week.fromDate, week.toDate) }}</div>
               <div class="study-week-topics">
-                @for (topic of week.topics; track $index) {
+                @if (week.topics[0]; as topic) {
                   <div class="study-topic" [class.highlight]="topic.highlight">
                     <textarea
-                      rows="3"
+                      rows="4"
                       [(ngModel)]="topic.title"
-                      [name]="'topic-' + week.weekNumber + '-' + $index"
+                      [name]="'topic-' + week.weekNumber"
                       [placeholder]="'teacher.studyPlans.topicPlaceholder' | t"
                       (input)="onTopicInput($event)"
                     ></textarea>
@@ -104,19 +112,8 @@
                     >
                       !
                     </button>
-                    <button
-                      type="button"
-                      class="ghost-btn tiny-btn no-export"
-                      (click)="removeTopic(week, $index)"
-                      [attr.title]="'common.delete' | t"
-                    >
-                      ×
-                    </button>
                   </div>
                 }
-                <button type="button" class="ghost-btn add-topic no-export" (click)="addTopic(week)">
-                  {{ 'teacher.studyPlans.addTopic' | t }}
-                </button>
               </div>
             </article>
           }

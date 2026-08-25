@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
@@ -21,10 +21,12 @@ const COLLAPSED_KEY = 'codekids_sidebar_collapsed';
   styleUrl: './panel-shell.component.css'
 })
 export class PanelShellComponent implements OnInit {
+  private readonly host = inject(ElementRef<HTMLElement>);
   readonly auth = inject(AuthService);
   readonly locale = inject(LocaleService);
   readonly brand = inject(SiteBrandService);
   readonly collapsed = signal(false);
+  readonly menuOpen = signal(false);
 
   @Input({ required: true }) titleKey = '';
   @Input({ required: true }) subtitleKey = '';
@@ -38,6 +40,36 @@ export class PanelShellComponent implements OnInit {
     const next = !this.collapsed();
     this.collapsed.set(next);
     localStorage.setItem(COLLAPSED_KEY, next ? '1' : '0');
+  }
+
+  toggleMenu(event: Event): void {
+    event.stopPropagation();
+    this.menuOpen.update((open) => !open);
+  }
+
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  onNavClick(event: Event): void {
+    if ((event.target as HTMLElement | null)?.closest('a')) {
+      this.closeMenu();
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.menuOpen()) return;
+    if (!this.host.nativeElement.contains(event.target as Node)) {
+      this.closeMenu();
+    }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (window.innerWidth > 900) {
+      this.closeMenu();
+    }
   }
 
   iconFor(item: PanelNavItem): string {

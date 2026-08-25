@@ -6,7 +6,7 @@ export const environment = {
   zoomFrontendRedirectUrl: 'https://schoolacadmy.runasp.net/teacher/zoom',
   defaultTenant: 'esraa',
   tenantHosts: {
-    localhost: 'esraa',
+    localhost: 'abakera',
     'schoolacadmy.runasp.net': 'esraa',
     'www.schoolacadmy.runasp.net': 'esraa'
   } as Record<string, string>

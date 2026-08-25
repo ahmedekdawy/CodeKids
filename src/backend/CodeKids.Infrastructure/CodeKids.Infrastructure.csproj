@@ -28,4 +28,10 @@
     <ProjectReference Include="..\CodeKids.Application\CodeKids.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Data\egypt_curriculum_grades_1_to_12.json">
+      <LogicalName>CodeKids.Infrastructure.egypt_curriculum_grades_1_to_12.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

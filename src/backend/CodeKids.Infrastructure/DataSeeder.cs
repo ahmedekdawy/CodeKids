@@ -40,6 +40,12 @@ public static class DataSeeder
                 new Grade { Id = 12, Name = "الصف 12", NameEn = "Grade 12", StageId = 3 });
         }
 
+        if (!await dbContext.Subjects.AnyAsync(cancellationToken))
+        {
+            dbContext.Subjects.AddRange(SubjectSeedData.All);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
         if (!await dbContext.Avatars.AnyAsync(cancellationToken))
         {
             dbContext.Avatars.AddRange(
@@ -75,7 +81,7 @@ public static class DataSeeder
                     Description = "First coding missions for ages 8–10: loops and variables.",
                     AgeMin = 8,
                     AgeMax = 10,
-                    Term = CourseTerm.FirstTerm,
+                    TermId = CourseTerm.FirstTerm,
                     Grade = 3,
                     StageId = 1,
                     SortOrder = 1,
@@ -85,7 +91,7 @@ public static class DataSeeder
                         {
                             Id = starterUnitId,
                             CourseId = starterCourseId,
-                            Title = "Unit 1",
+                            Title = "Loops and variables",
                             Description = "Loops and variables",
                             SortOrder = 1,
                             Lessons =
@@ -204,7 +210,7 @@ public static class DataSeeder
                     Description = "Next-level thinking for ages 10–12 with conditions.",
                     AgeMin = 10,
                     AgeMax = 12,
-                    Term = CourseTerm.FullYear,
+                    TermId = CourseTerm.FullYear,
                     Grade = 5,
                     StageId = 1,
                     SortOrder = 2,
@@ -214,7 +220,7 @@ public static class DataSeeder
                         {
                             Id = logicUnitId,
                             CourseId = logicCourseId,
-                            Title = "Unit 1",
+                            Title = "Conditions",
                             Description = "Conditions",
                             SortOrder = 1,
                             Lessons =
@@ -282,6 +288,8 @@ public static class DataSeeder
                     ]
                 });
         }
+
+        await EgyptianCurriculumSeedData.SeedAsync(dbContext, cancellationToken);
 
         if (!await dbContext.Users.AnyAsync(cancellationToken))
         {

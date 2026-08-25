@@ -27,7 +27,7 @@ public sealed class UpdateCourseCommandHandler(IAppDbContext dbContext)
         course.Description = (command.Description ?? string.Empty).Trim();
         course.AgeMin = command.AgeMin is null or <= 0 ? 8 : command.AgeMin.Value;
         course.AgeMax = command.AgeMax is null or <= 0 ? 12 : command.AgeMax.Value;
-        course.Term = CreateCourseCommandHandler.ParseTerm(command.Term);
+        course.TermId = CreateCourseCommandHandler.ParseTerm(command.Term);
         var audience = await CreateCourseCommandHandler.ResolveAudienceAsync(
             dbContext, command.Grade, command.StageId, cancellationToken);
         course.Grade = audience.Grade;
