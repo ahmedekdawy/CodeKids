@@ -76,6 +76,7 @@ export const EN: Record<string, string> = {
   'common.teacher': 'Teacher',
   'common.date': 'Date',
   'common.teachers': 'Teachers',
+  'common.parents': 'Parents',
   'common.students': 'Students',
   'common.student': 'Student',
   'common.parent': 'Parent',
@@ -174,6 +175,7 @@ export const EN: Record<string, string> = {
   'nav.teacher.review': 'Review',
   'nav.teacher.students': 'Students',
 
+  'nav.admin.dashboard': 'Dashboard',
   'nav.admin.admins': 'Admins',
   'nav.admin.teachers': 'Teachers',
   'nav.admin.parents': 'Parents',
@@ -721,6 +723,17 @@ export const EN: Record<string, string> = {
   'admin.payroll.exporting': 'Exporting…',
   'admin.payroll.exported': 'Payroll image downloaded.',
   'admin.payroll.exportFailed': 'Could not export payroll image.',
+
+  'admin.dashboard.title': 'Login dashboard',
+  'admin.dashboard.subtitle':
+    'Count of teachers, parents, and students whose last login falls in the selected dates. Defaults to the current month.',
+  'admin.dashboard.dateFrom': 'From',
+  'admin.dashboard.dateTo': 'To',
+  'admin.dashboard.graphTitle': 'Logins by day',
+  'admin.dashboard.graphHint': 'Each bar group is a day: teachers, parents, and students who last signed in on that day.',
+  'admin.dashboard.noLogins': 'No logins in this date range yet.',
+  'admin.dashboard.dateRequired': 'Select from and to dates.',
+  'admin.dashboard.loadFailed': 'Could not load login dashboard.',
 
   'admin.accountReport.title': 'Account report',
   'admin.accountReport.subtitle':

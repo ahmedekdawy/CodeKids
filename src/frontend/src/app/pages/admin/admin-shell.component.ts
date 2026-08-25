@@ -16,6 +16,7 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
 })
 export class AdminShellComponent {
   readonly navItems: PanelNavItem[] = [
+    { labelKey: 'nav.admin.dashboard', path: '/admin/dashboard', icon: 'D' },
     { labelKey: 'nav.admin.admins', path: '/admin/admins', icon: 'A' },
     { labelKey: 'nav.admin.teachers', path: '/admin/teachers', icon: 'T' },
     { labelKey: 'nav.admin.parents', path: '/admin/parents', icon: 'P' },

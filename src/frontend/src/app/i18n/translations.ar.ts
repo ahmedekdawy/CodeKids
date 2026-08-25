@@ -76,6 +76,7 @@ export const AR: Record<string, string> = {
   'common.teacher': 'المعلم',
   'common.date': 'التاريخ',
   'common.teachers': 'المعلمون',
+  'common.parents': 'أولياء الأمور',
   'common.students': 'الطلاب',
   'common.student': 'الطالب',
   'common.parent': 'ولي الأمر',
@@ -174,6 +175,7 @@ export const AR: Record<string, string> = {
   'nav.teacher.review': 'المراجعة',
   'nav.teacher.students': 'الطلاب',
 
+  'nav.admin.dashboard': 'لوحة التحكم',
   'nav.admin.admins': 'المديرون',
   'nav.admin.teachers': 'المعلمون',
   'nav.admin.parents': 'أولياء الأمور',
@@ -721,6 +723,17 @@ export const AR: Record<string, string> = {
   'admin.payroll.exporting': 'جاري التصدير…',
   'admin.payroll.exported': 'تم تنزيل صورة التقرير.',
   'admin.payroll.exportFailed': 'تعذّر تصدير صورة التقرير.',
+
+  'admin.dashboard.title': 'لوحة الدخول',
+  'admin.dashboard.subtitle':
+    'عدد المعلمين وأولياء الأمور والطلاب الذين كان آخر دخول لهم ضمن الفترة المحددة. الافتراضي هو الشهر الحالي.',
+  'admin.dashboard.dateFrom': 'من',
+  'admin.dashboard.dateTo': 'إلى',
+  'admin.dashboard.graphTitle': 'عمليات الدخول حسب اليوم',
+  'admin.dashboard.graphHint': 'كل مجموعة أعمدة تمثل يوماً: المعلمون وأولياء الأمور والطلاب الذين كان آخر دخول لهم في ذلك اليوم.',
+  'admin.dashboard.noLogins': 'لا توجد عمليات دخول في هذه الفترة بعد.',
+  'admin.dashboard.dateRequired': 'اختر تاريخ البداية والنهاية.',
+  'admin.dashboard.loadFailed': 'تعذّر تحميل لوحة الدخول.',
 
   'admin.accountReport.title': 'تقرير الحساب',
   'admin.accountReport.subtitle':

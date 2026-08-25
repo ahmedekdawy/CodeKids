@@ -111,6 +111,7 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.AvatarId)
                 .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(x => x.LastLoginDateUtc);
         });
 
         modelBuilder.Entity<Avatar>(entity =>

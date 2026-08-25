@@ -301,6 +301,8 @@ builder.Services.AddScoped<ICommandHandler<DeleteTeacherPayrollAdjustmentCommand
 
 builder.Services.AddScoped<IQueryHandler<GetAccountReportQuery, AccountReportDto>, GetAccountReportQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<GetAdminLoginDashboardQuery, AdminLoginDashboardDto>, GetAdminLoginDashboardQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<ListTuitionPaymentsQuery, IReadOnlyList<TuitionPaymentDto>>, ListTuitionPaymentsQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateTuitionPaymentCommand, TuitionPaymentDto>, CreateTuitionPaymentCommandHandler>();

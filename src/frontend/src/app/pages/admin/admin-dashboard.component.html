@@ -1,0 +1,98 @@
+<div class="panel-page">
+  <h2>{{ 'admin.dashboard.title' | t }}</h2>
+  <p class="meta">{{ 'admin.dashboard.subtitle' | t }}</p>
+
+  <app-page-feedback [error]="error()" />
+
+  <section class="block">
+    <div class="list-filters">
+      <label>
+        {{ 'admin.dashboard.dateFrom' | t }}
+        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reload()" />
+      </label>
+      <label>
+        {{ 'admin.dashboard.dateTo' | t }}
+        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reload()" />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+  </section>
+
+  <section class="stat-row">
+    <div class="stat-card login-stat login-stat-teachers">
+      <strong>{{ report()?.teacherCount || 0 }}</strong>
+      <span>{{ 'common.teachers' | t }}</span>
+    </div>
+    <div class="stat-card login-stat login-stat-parents">
+      <strong>{{ report()?.parentCount || 0 }}</strong>
+      <span>{{ 'common.parents' | t }}</span>
+    </div>
+    <div class="stat-card login-stat login-stat-students">
+      <strong>{{ report()?.studentCount || 0 }}</strong>
+      <span>{{ 'common.students' | t }}</span>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>
+      {{ 'admin.dashboard.graphTitle' | t }}
+      @if (report(); as r) {
+        <span class="meta">({{ r.fromDate }} – {{ r.toDate }})</span>
+      }
+    </h3>
+    <p class="meta">{{ 'admin.dashboard.graphHint' | t }}</p>
+
+    <div class="login-chart-legend">
+      <span class="login-legend-item">
+        <i class="login-swatch login-swatch-teachers"></i>
+        {{ 'common.teachers' | t }}
+      </span>
+      <span class="login-legend-item">
+        <i class="login-swatch login-swatch-parents"></i>
+        {{ 'common.parents' | t }}
+      </span>
+      <span class="login-legend-item">
+        <i class="login-swatch login-swatch-students"></i>
+        {{ 'common.students' | t }}
+      </span>
+    </div>
+
+    @if (report(); as r) {
+      @if (hasLogins()) {
+        <div class="login-chart" role="img" [attr.aria-label]="'admin.dashboard.graphTitle' | t">
+          <div class="login-chart-bars">
+            @for (day of r.days; track day.date; let i = $index) {
+              <div class="login-chart-day" [title]="day.date">
+                <div class="login-chart-group">
+                  <div
+                    class="login-chart-bar login-bar-teachers"
+                    [style.height]="barHeight(day.teachers)"
+                    [attr.title]="day.teachers"></div>
+                  <div
+                    class="login-chart-bar login-bar-parents"
+                    [style.height]="barHeight(day.parents)"
+                    [attr.title]="day.parents"></div>
+                  <div
+                    class="login-chart-bar login-bar-students"
+                    [style.height]="barHeight(day.students)"
+                    [attr.title]="day.students"></div>
+                </div>
+                @if (showDayLabel(i, r.days)) {
+                  <span class="login-chart-label">{{ dayLabel(day.date) }}</span>
+                } @else {
+                  <span class="login-chart-label login-chart-label-spacer">&nbsp;</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <p class="meta">{{ 'admin.dashboard.noLogins' | t }}</p>
+      }
+    } @else {
+      <p class="meta">{{ 'common.noData' | t }}</p>
+    }
+  </section>
+</div>

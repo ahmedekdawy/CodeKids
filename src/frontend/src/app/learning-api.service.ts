@@ -32,6 +32,7 @@ import {
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
+  AdminLoginDashboard,
   TuitionPayment,
   OtherExpense,
   Lesson,
@@ -502,6 +503,18 @@ export class LearningApiService {
     params.set('toDate', filters.toDate);
     return this.http.get<AccountReport>(
       `${this.baseUrl}/admin/account-report?${params.toString()}`
+    );
+  }
+
+  getAdminLoginDashboard(filters: {
+    fromDate: string;
+    toDate: string;
+  }): Observable<AdminLoginDashboard> {
+    const params = new URLSearchParams();
+    params.set('fromDate', filters.fromDate);
+    params.set('toDate', filters.toDate);
+    return this.http.get<AdminLoginDashboard>(
+      `${this.baseUrl}/admin/dashboard/logins?${params.toString()}`
     );
   }
 

@@ -13,6 +13,7 @@ import { AssignmentPlayComponent } from './pages/assignment-play/assignment-play
 import { ParentDashboardComponent } from './pages/parent-dashboard/parent-dashboard.component';
 import { StudyPlanViewComponent } from './pages/study-plan-view/study-plan-view.component';
 import { AdminShellComponent } from './pages/admin/admin-shell.component';
+import { AdminDashboardComponent } from './pages/admin/admin-dashboard.component';
 import { AdminUsersComponent } from './pages/admin/admin-users.component';
 import { AdminStudentsComponent } from './pages/admin/admin-students.component';
 import { AdminCoursesComponent } from './pages/admin/admin-courses.component';
@@ -129,7 +130,8 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['SuperAdmin'])],
     component: AdminShellComponent,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'admins' },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'admins', component: AdminUsersComponent, data: { role: 'SuperAdmin' } },
       { path: 'teachers', component: AdminUsersComponent, data: { role: 'Teacher' } },
       { path: 'parents', component: AdminUsersComponent, data: { role: 'Parent' } },

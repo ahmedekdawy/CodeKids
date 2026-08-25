@@ -1828,6 +1828,9 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset?>("LastLoginDateUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("MobilePhone")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -1903,6 +1906,8 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique()
                         .HasFilter("\"Email\" <> ''");
+
+                    b.HasIndex("LastLoginDateUtc");
 
                     b.HasIndex("MobilePhone")
                         .IsUnique()

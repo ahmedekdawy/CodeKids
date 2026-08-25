@@ -150,6 +150,46 @@ public static class DashboardEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapGet("/api/admin/dashboard/logins", async (
+
+            DateOnly? fromDate,
+
+            DateOnly? toDate,
+
+            IQueryHandler<GetAdminLoginDashboardQuery, AdminLoginDashboardDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+                var from = fromDate ?? new DateOnly(today.Year, today.Month, 1);
+
+                var to = toDate ?? from.AddMonths(1).AddDays(-1);
+
+                return Results.Ok(await handler.Handle(
+
+                    new GetAdminLoginDashboardQuery(from, to),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         return app;
 
     }

@@ -690,6 +690,22 @@ export interface AccountReport {
   netAmount: number;
 }
 
+export interface AdminLoginDashboardDay {
+  date: string;
+  teachers: number;
+  parents: number;
+  students: number;
+}
+
+export interface AdminLoginDashboard {
+  fromDate: string;
+  toDate: string;
+  teacherCount: number;
+  parentCount: number;
+  studentCount: number;
+  days: AdminLoginDashboardDay[];
+}
+
 export interface TuitionPayment {
   id: string;
   parentId?: string | null;
