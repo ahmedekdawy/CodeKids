@@ -101,7 +101,7 @@ public static class EgyptianCurriculumSeedData
                     Grade = spec.Grade,
                     StageId = spec.StageId,
                     SchoolType = SchoolType.Arabic,
-                    Term = CourseTerm.FullYear,
+                    TermId = CourseTerm.FullYear,
                     AgeMin = ageMin,
                     AgeMax = ageMax,
                     SortOrder = sortOrder++,
@@ -134,7 +134,7 @@ public static class EgyptianCurriculumSeedData
         course.Description = Clip(description, 1000);
         course.AgeMin = ageMin;
         course.AgeMax = ageMax;
-        course.Term = CourseTerm.FullYear;
+        course.TermId = CourseTerm.FullYear;
         course.Grade = spec.Grade;
         course.StageId = spec.StageId;
         course.SchoolType = SchoolType.Arabic;
@@ -177,7 +177,7 @@ public static class EgyptianCurriculumSeedData
                 Title = Clip(unitSpec.Title, 300),
                 Description = Clip($"{unitSpec.Title} — {GradeLabel(spec.Grade)} — الترم {unitSpec.Term}", 500),
                 SortOrder = unitOrder,
-                Term = unitSpec.Term,
+                TermId = (CourseTerm)unitSpec.Term,
                 VerificationStatus = Clip(unitSpec.VerificationStatus, 80),
                 Lessons = []
             };

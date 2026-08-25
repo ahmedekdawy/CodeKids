@@ -92,7 +92,7 @@ internal static class StudyPlanAccess
             plan.Course?.Title ?? string.Empty,
             plan.Course?.Grade,
             plan.Course?.StageId,
-            plan.Course?.Term?.ToString(),
+            plan.Course?.TermId?.ToString(),
             plan.FromDate,
             plan.ToDate,
             plan.Notes,

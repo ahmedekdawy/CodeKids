@@ -10,7 +10,7 @@ public class Course : TenantEntity
     public string Description { get; set; } = string.Empty;
     public int AgeMin { get; set; } = 8;
     public int AgeMax { get; set; } = 12;
-    public CourseTerm? Term { get; set; }
+    public CourseTerm? TermId { get; set; }
     /// <summary>Specific grade id (KG1=-1, KG2=0, grades 1–12). Null with StageId = all grades in that stage; both null = all grades.</summary>
     public int? Grade { get; set; }
     /// <summary>Optional stage. When set and Grade is null, the course covers every grade in the stage.</summary>

@@ -31,7 +31,7 @@ internal static class CourseDtoMapper
                 unit.Description,
                 unit.SortOrder,
                 lessons.Where(l => l.UnitId == unit.Id).ToList(),
-                unit.Term,
+                (int?)unit.TermId,
                 unit.VerificationStatus))
             .ToList();
 
@@ -59,7 +59,7 @@ internal static class CourseDtoMapper
             course.Description,
             course.AgeMin,
             course.AgeMax,
-            course.Term?.ToString(),
+            course.TermId?.ToString(),
             course.Grade,
             course.StageId,
             course.SchoolType?.ToString() ?? nameof(SchoolType.All),

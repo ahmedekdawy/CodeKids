@@ -122,7 +122,7 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         var academicYear = AcademicYearLabel(weeks[0].FromDate, weeks[^1].ToDate);
         var gradeName = GradeLabel(grade, course.Grade, arabic);
         var stageName = StageLabel(stage, course.StageId, arabic);
-        var termName = TermLabel(course.Term, arabic);
+        var termName = TermLabel(course.TermId, arabic);
         var schoolType = SchoolTypeLabel(course.SchoolType, arabic);
         var outline = CollectCurriculum(course);
         var sb = new StringBuilder();

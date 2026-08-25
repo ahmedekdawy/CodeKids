@@ -539,9 +539,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
-                    b.Property<string>("Term")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<int?>("TermId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Theme")
                         .IsRequired()
@@ -601,7 +600,7 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Term")
+                    b.Property<int?>("TermId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")

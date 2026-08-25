@@ -36,7 +36,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             Description = description,
             AgeMin = ageMin,
             AgeMax = ageMax,
-            Term = term,
+            TermId = term,
             Grade = audience.Grade,
             StageId = audience.StageId,
             SchoolType = schoolType,
@@ -56,7 +56,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             return null;
         }
 
-        if (!Enum.TryParse<CourseTerm>(value.Trim(), true, out var term))
+        if (!Enum.TryParse<CourseTerm>(value.Trim(), true, out var term) || !Enum.IsDefined(term))
         {
             throw new InvalidOperationException("Term must be FirstTerm, SecondTerm, or FullYear.");
         }
@@ -163,7 +163,7 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             course.Description,
             course.AgeMin,
             course.AgeMax,
-            course.Term?.ToString(),
+            course.TermId?.ToString(),
             course.Grade,
             course.StageId,
             course.SortOrder,

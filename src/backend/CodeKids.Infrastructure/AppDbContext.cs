@@ -166,7 +166,6 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(1000).IsRequired();
-            entity.Property(x => x.Term).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.SubjectCode).HasMaxLength(80).IsRequired();
             entity.Property(x => x.Category).HasMaxLength(40).IsRequired();
