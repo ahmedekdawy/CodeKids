@@ -1,5 +1,43 @@
 @import '../../styles/dashboard-shared.css';
 
+.question-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem;
+  margin: 0.85rem 0;
+  border-radius: var(--radius-md, 12px);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+}
+
+.question-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.question-prompt {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.question-prompt textarea {
+  min-height: 4.2em;
+  resize: vertical;
+  width: 100%;
+}
+
+.options-editor {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.9rem;
+  margin-top: 0.25rem;
+  border-radius: var(--radius-md, 12px);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+}
+
 .link-row {
   width: 100%;
   text-align: left;
@@ -21,9 +59,14 @@
   gap: 1rem;
 }
 
-.panel-page .block form,
-.panel-page .meeting-form {
-  padding: 0.15rem 0;
+.panel-page .meeting-form .questions-group,
+.panel-page .meeting-form .form-actions {
+  grid-column: 1 / -1;
+}
+
+.questions-group {
+  display: grid;
+  gap: 0.85rem;
 }
 
 .grade-roster {
