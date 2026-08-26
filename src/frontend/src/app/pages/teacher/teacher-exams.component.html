@@ -20,11 +20,55 @@
           [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
         />
       </label>
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [(ngModel)]="courseId"
+          name="courseId"
+          (ngModelChange)="onCourseChange()"
+          required
+          [emptyLabel]="'common.selectCourse' | t"
+          [options]="coursesForClassroom().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <label>
+        {{ 'common.units' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="unitIds"
+          name="unitIds"
+          (ngModelChange)="onUnitsChange()"
+          [placeholder]="'common.selectUnits' | t"
+          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+        />
+      </label>
+      <label>
+        {{ 'common.lessons' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="lessonIds"
+          name="lessonIds"
+          [placeholder]="'common.selectLessons' | t"
+          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
+        />
+      </label>
       <label>{{ 'common.xpReward' | t }} <input type="number" [(ngModel)]="xpReward" name="xpReward" min="0" /></label>
+      <label>
+        {{ 'teacher.ai.questionCount' | t }}
+        <input type="number" [(ngModel)]="questionCount" name="questionCount" min="1" max="12" />
+      </label>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="generating() || !classroomId || !courseId"
+          (click)="generate()">
+          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+        </button>
+      </div>
 
       <div class="block">
         <h4>{{ 'teacher.exams.selectQuestions' | t }}</h4>
-        @for (question of bank(); track question.id) {
+        @for (question of visibleBank(); track question.id) {
           <label class="checkbox">
             <input type="checkbox" [checked]="isSelected(question.id)" (change)="toggleQuestion(question.id)" />
             {{ question.prompt }}

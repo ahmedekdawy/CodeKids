@@ -29,6 +29,7 @@ import {
   WeeklyStudyPlan,
   SaveWeeklyStudyPlanWeek,
   GeneratedStudyPlan,
+  GeneratedAssessmentDraft,
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
@@ -442,6 +443,19 @@ export class LearningApiService {
     language?: string;
   }): Observable<GeneratedStudyPlan> {
     return this.http.post<GeneratedStudyPlan>(`${this.baseUrl}/study-plans/generate`, payload);
+  }
+
+  generateAssessment(payload: {
+    kind: 'Quiz' | 'Exam' | 'Assignment';
+    courseId?: string | null;
+    classroomId?: string | null;
+    unitIds?: string[] | null;
+    lessonIds?: string[] | null;
+    questionCount?: number;
+    questionType?: string;
+    language?: string;
+  }): Observable<GeneratedAssessmentDraft> {
+    return this.http.post<GeneratedAssessmentDraft>(`${this.baseUrl}/assessments/generate`, payload);
   }
 
   deleteStudyPlan(planId: string): Observable<void> {

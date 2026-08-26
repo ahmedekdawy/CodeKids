@@ -650,6 +650,24 @@ export interface GeneratedStudyPlan {
   weeks: SaveWeeklyStudyPlanWeek[];
 }
 
+export interface GeneratedAssessmentQuestion {
+  prompt: string;
+  questionType: string;
+  options: string[];
+  correctOption: string;
+  correctAnswer: string;
+  points: number;
+  sortOrder: number;
+}
+
+export interface GeneratedAssessmentDraft {
+  kind: string;
+  title: string;
+  description: string;
+  questions: GeneratedAssessmentQuestion[];
+  questionIds: string[];
+}
+
 export interface TeacherPayrollRow {
   teacherId: string;
   teacherName: string;

@@ -24,9 +24,9 @@ public sealed class AiOptions
 {
     public const string SectionName = "Ai";
 
-    /// <summary>gemini, groq, openai, or pollinations. Gemini uses the Interactions API.</summary>
+    /// <summary>gemini, groq, openai, or pollinations. Gemini uses generateContent.</summary>
     public string Provider { get; set; } = "gemini";
     public string ApiKey { get; set; } = string.Empty;
-    public string Model { get; set; } = "gemini-2.5-flash";
-    public string BaseUrl { get; set; } = "https://generativelanguage.googleapis.com/v1beta/interactions";
+    public string Model { get; set; } = "gemini-flash-latest";
+    public string BaseUrl { get; set; } = "https://generativelanguage.googleapis.com/v1beta";
 }

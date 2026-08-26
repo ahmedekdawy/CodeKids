@@ -16,7 +16,8 @@ const LEGACY_MESSAGE_CODES: Record<string, string> = {
   'Reset token is invalid or has expired.': 'api.errors.auth.resetTokenInvalid',
   'Password must be at least 6 characters.': 'api.errors.auth.passwordTooShort',
   'Exam already submitted.': 'api.errors.exam.alreadySubmitted',
-  'Assignment already submitted.': 'api.errors.assignment.alreadySubmitted'
+  'Assignment already submitted.': 'api.errors.assignment.alreadySubmitted',
+  'Could not generate assessment questions.': 'api.errors.assessment.generateFailed'
 };
 
 function readApiBody(err: unknown): ApiMessageBody | null {

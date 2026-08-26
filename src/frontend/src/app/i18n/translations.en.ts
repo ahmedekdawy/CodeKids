@@ -66,6 +66,10 @@ export const EN: Record<string, string> = {
   'common.selectClassroom': 'Select classroom',
   'common.selectCourse': 'Select course',
   'common.selectUnit': 'Select unit',
+  'common.selectUnits': 'Select units',
+  'common.selectLessons': 'Select lessons',
+  'common.units': 'Units',
+  'common.lessons': 'Lessons',
   'common.none': 'None',
   'common.unassigned': 'Unassigned',
   'common.name': 'Name',
@@ -966,7 +970,7 @@ export const EN: Record<string, string> = {
   'admin.assign.coursesForStage': 'Course list is limited to this stage.',
   'admin.assign.coursesForAll': 'Showing courses for all grades and stages.',
   'admin.assign.noCoursesForGrade': 'No courses found for this classroom grade.',
-  'admin.assign.noCoursesForFilter': 'No courses found.',
+  'admin.assign.noCoursesForFilter': 'No courses found for this classroom grade.',
   'admin.assign.setGradeFirst': 'Set a grade on the classroom first to load matching courses.',
   'admin.assign.gradeRequired': 'Classroom must have a grade before assigning courses.',
   'admin.assign.courseGradeMismatch': 'One or more selected courses do not match the selected stage.',
@@ -1023,6 +1027,15 @@ export const EN: Record<string, string> = {
   'teacher.assignments.created': 'Assignment created.',
   'teacher.assignments.createFailed': 'Could not create assignment.',
 
+  'teacher.ai.generate': 'Generate with AI',
+  'teacher.ai.generating': 'Generating…',
+  'teacher.ai.generated': 'Draft generated. Review it, then save.',
+  'teacher.ai.generateFailed': 'Could not generate with AI.',
+  'teacher.ai.needCourse': 'Select a course first.',
+  'teacher.ai.needClassroom': 'Select a classroom first.',
+  'teacher.ai.needScope': 'Select a course, or units of that course, or lessons of a selected unit.',
+  'teacher.ai.questionCount': 'Number of questions',
+
   'teacher.review.title': 'Review answers',
   'teacher.review.subtitle': 'Load assignment submissions and mark student answers.',
   'teacher.review.load': 'Load submissions',
@@ -1045,6 +1058,8 @@ export const EN: Record<string, string> = {
   'teacher.exams.required': 'Title, classroom, and at least one question are required.',
   'teacher.exams.created': 'Exam created. Students can take it from their home page.',
   'teacher.exams.createFailed': 'Could not create exam.',
+  'teacher.exams.aiGenerated':
+    'Questions were added to the bank and selected. Review them, then create the exam.',
   'teacher.exams.loadAttemptsFailed': 'Could not load attempts.',
 
   'teacher.quizzes.title': 'Quizzes',
@@ -1356,6 +1371,7 @@ export const EN: Record<string, string> = {
   'api.errors.studyPlan.duplicate': 'A study plan already exists for this course and start date.',
   'api.errors.studyPlan.courseNotAssigned': 'Course is not assigned to this teacher.',
   'api.errors.studyPlan.generateFailed': 'Could not generate a study plan.',
+  'api.errors.assessment.generateFailed': 'Could not generate assessment questions.',
 
   'api.feedback.stepNotFound': "We couldn't find that challenge step.",
   'api.feedback.stepIncorrect': 'Not quite yet. Try matching the example carefully.',

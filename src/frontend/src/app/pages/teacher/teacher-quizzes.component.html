@@ -112,7 +112,29 @@
         <app-searchable-select
           [(ngModel)]="quizCourseId"
           name="quizCourseId"
+          (ngModelChange)="onCourseChange()"
+          required
+          [emptyLabel]="'common.selectCourse' | t"
           [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <label>
+        {{ 'common.units' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="quizUnitIds"
+          name="quizUnitIds"
+          (ngModelChange)="onUnitsChange()"
+          [placeholder]="'common.selectUnits' | t"
+          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+        />
+      </label>
+      <label>
+        {{ 'common.lessons' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="quizLessonIds"
+          name="quizLessonIds"
+          [placeholder]="'common.selectLessons' | t"
+          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
         />
       </label>
       <label>
@@ -124,6 +146,27 @@
         />
       </label>
       <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
+      <label>
+        {{ 'teacher.ai.questionCount' | t }}
+        <input
+          type="number"
+          [(ngModel)]="quizQuestionCount"
+          name="quizQuestionCount"
+          min="1"
+          max="12"
+          (ngModelChange)="onQuestionCountChange()"
+        />
+      </label>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="generating() || !quizCourseId"
+          (click)="generate()">
+          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+        </button>
+      </div>
 
       <div class="questions-head">
         <h4>{{ 'teacher.quizzes.questions' | t }}</h4>
@@ -145,7 +188,7 @@
 
           <label>
             {{ 'teacher.quizzes.question' | t }}
-            <input [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" required />
+            <textarea [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" rows="3" required></textarea>
           </label>
 
           <div class="options-editor">
