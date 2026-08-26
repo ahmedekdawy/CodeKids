@@ -60,6 +60,7 @@ import {
   Stage,
   Subject
 } from './models';
+import { normalizePmStartMinutes } from './fixed-timetable.util';
 import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -803,6 +804,7 @@ export class LearningApiService {
     clearTimetableWeek?: boolean;
     amSessionCount?: number;
     pmSessionCount?: number;
+    pmStartMinutes?: number;
   }): Observable<SiteSettings> {
     return this.http
       .put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload)
@@ -1109,6 +1111,7 @@ function normalizeSiteSettings(raw: SiteSettings | Record<string, unknown>): Sit
     timetableWeekStartUtc: timetableWeek == null ? null : String(timetableWeek),
     amSessionCount: Number(item.amSessionCount ?? item['AmSessionCount'] ?? 6) || 6,
     pmSessionCount: Number(item.pmSessionCount ?? item['PmSessionCount'] ?? 6) || 6,
+    pmStartMinutes: normalizePmStartMinutes(item.pmStartMinutes ?? item['PmStartMinutes']),
     updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? '')
   };
 }

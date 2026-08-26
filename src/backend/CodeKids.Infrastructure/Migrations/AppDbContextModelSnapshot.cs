@@ -1410,6 +1410,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(6);
 
+                    b.Property<int>("PmStartMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(900);
+
                     b.Property<string>("SiteName")
                         .IsRequired()
                         .HasMaxLength(120)

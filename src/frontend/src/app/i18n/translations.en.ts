@@ -555,6 +555,9 @@ export const EN: Record<string, string> = {
   'admin.site.pmSessionCount': 'PM sessions',
   'admin.site.sessionCountHint': 'Number of timetable sessions in each shift ({min}–{max}). Default is 6.',
   'admin.site.sessionCountInvalid': 'Session count must be between {min} and {max}.',
+  'admin.site.pmStart': 'PM start time',
+  'admin.site.pmStartHint': 'First afternoon session starts at this time ({min}–{max}). Default is 15:00.',
+  'admin.site.pmStartInvalid': 'PM start time must be between {min} and {max}.',
 
   'admin.users.title': 'Users',
   'admin.users.subtitle': 'Create, edit, and delete platform users. Add mobile for login. Teachers choose AM/PM and one or more stages. Click headers to sort.',
@@ -1281,6 +1284,7 @@ export const EN: Record<string, string> = {
     'Teacher already has a session in this slot. To teach more than one grade together, edit that session and select combined grades.',
   'api.errors.timetable.schoolTypeOverlap': 'A course with the same school type (or All) is already in this slot.',
   'api.errors.site.sessionCountInvalid': 'Session count must be between {min} and {max}.',
+  'api.errors.site.pmStartInvalid': 'PM start time must be between {min} and {max}.',
   'api.errors.site.amSessionCountInUse': 'Cannot reduce AM sessions while timetable entries exist beyond session {max}.',
   'api.errors.site.pmSessionCountInUse': 'Cannot reduce PM sessions while timetable entries exist beyond session {max}.',
   'api.errors.attendance.notFound': 'Session attendance not found.',

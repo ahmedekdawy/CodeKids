@@ -173,6 +173,7 @@ public static class ApiErrorCatalog
         (new Regex("^File size must be between 1 byte and (\\d+) bytes\\.$", RegexOptions.Compiled), "api.errors.media.fileSizeInvalid"),
         (new Regex("^Session number must be between 1 and (\\d+)\\.$", RegexOptions.Compiled), "api.errors.timetable.sessionInvalid"),
         (new Regex("^Timetable session count must be between (\\d+) and (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.sessionCountInvalid"),
+        (new Regex("^PM start time must be between (.+) and (.+)\\.$", RegexOptions.Compiled), "api.errors.site.pmStartInvalid"),
         (new Regex("^Cannot reduce AM sessions while timetable entries exist beyond session (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.amSessionCountInUse"),
         (new Regex("^Cannot reduce PM sessions while timetable entries exist beyond session (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.pmSessionCountInUse")
     ];
@@ -197,6 +198,11 @@ public static class ApiErrorCatalog
             if (patternCode == "api.errors.timetable.sessionInvalid" && match.Groups.Count > 1)
                 args["max"] = match.Groups[1].Value;
             if (patternCode == "api.errors.site.sessionCountInvalid" && match.Groups.Count > 2)
+            {
+                args["min"] = match.Groups[1].Value;
+                args["max"] = match.Groups[2].Value;
+            }
+            if (patternCode == "api.errors.site.pmStartInvalid" && match.Groups.Count > 2)
             {
                 args["min"] = match.Groups[1].Value;
                 args["max"] = match.Groups[2].Value;

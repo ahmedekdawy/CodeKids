@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using System.Text;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Lessons;
+using CodeKids.Application.Features.StudentAsk;
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -154,9 +156,9 @@ internal static class CourseOutlineResolver
                     var mapped = new CourseLessonDto(
                         StableId("lesson", course.Id, subject.TermId, unit.SortOrder, lesson.SortOrder, lesson.Title),
                         unitId,
-                        lesson.Title,
-                        course.Theme,
-                        $"{lesson.Title} — {subject.Title}",
+                        Clamp(lesson.Title, 300),
+                        Clamp(course.Theme, 60),
+                        Clamp($"{lesson.Title} — {subject.Title}", 500),
                         Math.Clamp(1 + (course.Grade ?? 1) / 3, 1, 5),
                         20 + (course.Grade ?? 1) * 2,
                         lesson.SortOrder,
@@ -169,16 +171,147 @@ internal static class CourseOutlineResolver
                 units.Add(new CourseUnitDto(
                     unitId,
                     course.Id,
-                    unit.Title,
-                    subject.TermId is int term ? $"{unit.Title} — الترم {term}" : unit.Title,
+                    Clamp(unit.Title, 300),
+                    Clamp(
+                        subject.TermId is int term ? $"{unit.Title} — الترم {term}" : unit.Title,
+                        500),
                     unit.SortOrder,
                     unitLessons,
                     subject.TermId,
-                    unit.VerificationStatus));
+                    Clamp(unit.VerificationStatus, 80)));
             }
         }
 
         return new CourseContentOutline(units, lessons);
+    }
+
+    public static async Task<Lesson?> LoadStoredLessonAsync(
+        IAppDbContext dbContext,
+        Guid lessonId,
+        CancellationToken cancellationToken) =>
+        await dbContext.Lessons
+            .Include(x => x.Steps)
+            .Include(x => x.Videos)
+            .Include(x => x.Unit)
+            .Include(x => x.Course)
+            .FirstOrDefaultAsync(x => x.Id == lessonId, cancellationToken);
+
+    public static async Task<LessonDto?> ResolvePlayableLessonAsync(
+        IAppDbContext dbContext,
+        Guid lessonId,
+        CancellationToken cancellationToken)
+    {
+        var stored = await LoadStoredLessonAsync(dbContext, lessonId, cancellationToken);
+        if (stored is not null)
+        {
+            return MapPlayable(stored);
+        }
+
+        var fallback = await FindFallbackLessonAsync(dbContext, lessonId, cancellationToken);
+        if (fallback is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            await AttachFallbackUnitsAsync(dbContext, fallback.Value.Course, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            stored = await LoadStoredLessonAsync(dbContext, lessonId, cancellationToken);
+            if (stored is not null)
+            {
+                return MapPlayable(stored);
+            }
+        }
+        catch
+        {
+            // Catalog rows can fail validation; still return a playable DTO.
+        }
+
+        var course = fallback.Value.Course;
+        var lesson = fallback.Value.Lesson;
+        return new LessonDto(
+            lesson.Id,
+            course.Id,
+            lesson.Title,
+            lesson.Theme,
+            lesson.Description,
+            lesson.Difficulty,
+            lesson.XpReward,
+            [],
+            [],
+            lesson.UnitId,
+            StudentAskAccess.IsEnabled(course, null, null));
+    }
+
+    private static async Task<(Course Course, CourseUnitDto Unit, CourseLessonDto Lesson)?> FindFallbackLessonAsync(
+        IAppDbContext dbContext,
+        Guid lessonId,
+        CancellationToken cancellationToken)
+    {
+        var candidates = await dbContext.Courses
+            .Include(x => x.Units)
+            .Include(x => x.Lessons)
+            .Where(x => !x.Units.Any() && !x.Lessons.Any())
+            .ToListAsync(cancellationToken);
+
+        if (candidates.Count == 0)
+        {
+            return null;
+        }
+
+        var outlines = await ResolveManyAsync(dbContext, candidates, cancellationToken);
+        foreach (var course in candidates)
+        {
+            var outline = outlines[course.Id];
+            var lesson = outline.Lessons.FirstOrDefault(l => l.Id == lessonId);
+            if (lesson is null)
+            {
+                continue;
+            }
+
+            var unit = outline.Units.FirstOrDefault(u => u.Id == lesson.UnitId || u.Lessons.Any(l => l.Id == lessonId));
+            if (unit is null)
+            {
+                continue;
+            }
+
+            return (course, unit, lesson);
+        }
+
+        return null;
+    }
+
+    internal static LessonDto MapPlayable(Lesson lesson) =>
+        new(
+            lesson.Id,
+            lesson.CourseId,
+            lesson.Title,
+            lesson.Theme,
+            lesson.Description,
+            lesson.Difficulty,
+            lesson.XpReward,
+            lesson.Steps
+                .OrderBy(step => step.StepNumber)
+                .Select(step => new LessonStepDto(step.Id, step.StepNumber, step.Title, step.Prompt))
+                .ToList(),
+            (lesson.Videos ?? [])
+                .OrderBy(v => v.SortOrder)
+                .ThenBy(v => v.CreatedAtUtc)
+                .Select(v => new LessonVideoSummaryDto(
+                    v.Id,
+                    v.MediaAssetId,
+                    v.Title,
+                    v.SortOrder,
+                    null))
+                .ToList(),
+            lesson.UnitId,
+            StudentAskAccess.IsEnabled(lesson.Course, lesson.Unit, lesson));
+
+    private static string Clamp(string? value, int max)
+    {
+        var text = (value ?? string.Empty).Trim();
+        return text.Length <= max ? text : text[..max];
     }
 
     public static async Task AttachFallbackUnitsAsync(
@@ -198,11 +331,13 @@ internal static class CourseOutlineResolver
             {
                 Id = unit.Id,
                 CourseId = course.Id,
-                Title = unit.Title,
-                Description = unit.Description,
+                Title = Clamp(unit.Title, 300),
+                Description = Clamp(unit.Description, 500),
                 SortOrder = unit.SortOrder,
-                TermId = unit.Term is int term ? (Domain.Enums.CourseTerm)term : null,
-                VerificationStatus = unit.VerificationStatus,
+                TermId = unit.Term is int term && Enum.IsDefined(typeof(Domain.Enums.CourseTerm), term)
+                    ? (Domain.Enums.CourseTerm)term
+                    : null,
+                VerificationStatus = Clamp(unit.VerificationStatus, 80),
                 Lessons = []
             };
             foreach (var lesson in unit.Lessons)
@@ -212,11 +347,11 @@ internal static class CourseOutlineResolver
                     Id = lesson.Id,
                     CourseId = course.Id,
                     UnitId = unit.Id,
-                    Title = lesson.Title,
-                    Theme = lesson.Theme,
-                    Description = lesson.Description,
-                    Difficulty = lesson.Difficulty,
-                    XpReward = lesson.XpReward,
+                    Title = Clamp(lesson.Title, 300),
+                    Theme = Clamp(string.IsNullOrWhiteSpace(lesson.Theme) ? "General" : lesson.Theme, 60),
+                    Description = Clamp(lesson.Description, 500),
+                    Difficulty = Math.Clamp(lesson.Difficulty, 1, 5),
+                    XpReward = Math.Max(0, lesson.XpReward),
                     SortOrder = lesson.SortOrder
                 };
                 entity.Lessons.Add(lessonEntity);

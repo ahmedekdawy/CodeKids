@@ -121,6 +121,7 @@ export interface SiteSettings {
   timetableWeekStartUtc?: string | null;
   amSessionCount: number;
   pmSessionCount: number;
+  pmStartMinutes: number;
   updatedAtUtc: string;
 }
 

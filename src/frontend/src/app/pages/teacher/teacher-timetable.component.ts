@@ -52,7 +52,7 @@ export class TeacherTimetableComponent {
   readonly weekDays = WEEKDAY_INDEXES;
 
   readonly sessionSlots = computed(() =>
-    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount())
+    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount(), this.brand.pmStartMinutes())
   );
   readonly amSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'am'));
   readonly pmSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'pm'));

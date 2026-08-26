@@ -555,6 +555,9 @@ export const AR: Record<string, string> = {
   'admin.site.pmSessionCount': 'حصص الفترة المسائية',
   'admin.site.sessionCountHint': 'عدد الحصص في كل فترة ({min}–{max}). الافتراضي 6.',
   'admin.site.sessionCountInvalid': 'عدد الحصص يجب أن يكون بين {min} و {max}.',
+  'admin.site.pmStart': 'بداية الفترة المسائية',
+  'admin.site.pmStartHint': 'تبدأ أول حصة مسائية في هذا الوقت ({min}–{max}). الافتراضي 15:00.',
+  'admin.site.pmStartInvalid': 'وقت بداية الفترة المسائية يجب أن يكون بين {min} و {max}.',
 
   'admin.users.title': 'المستخدمون',
   'admin.users.subtitle': 'إنشاء وتعديل وحذف مستخدمي المنصة. أضف الجوال لتسجيل الدخول. للمعلمين اختر الوردية ومرحلة أو أكثر. انقر على العناوين للترتيب.',
@@ -1280,6 +1283,7 @@ export const AR: Record<string, string> = {
     'المعلم لديه حصة بالفعل في هذا الوقت. لتدريس أكثر من صف معًا، عدّل الحصة الحالية واختر الصفوف المجمّعة.',
   'api.errors.timetable.schoolTypeOverlap': 'توجد مادة بنفس نوع المدرسة (أو الكل) في هذا الوقت.',
   'api.errors.site.sessionCountInvalid': 'عدد الحصص يجب أن يكون بين {min} و {max}.',
+  'api.errors.site.pmStartInvalid': 'وقت بداية الفترة المسائية يجب أن يكون بين {min} و {max}.',
   'api.errors.site.amSessionCountInUse': 'لا يمكن تقليل الحصص الصباحية بينما توجد حصص في الجدول بعد الحصة {max}.',
   'api.errors.site.pmSessionCountInUse': 'لا يمكن تقليل الحصص المسائية بينما توجد حصص في الجدول بعد الحصة {max}.',
   'api.errors.attendance.notFound': 'لم يُعثر على سجل الحضور.',

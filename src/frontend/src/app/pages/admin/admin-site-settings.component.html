@@ -55,6 +55,19 @@
         />
         <span class="meta">{{ 'admin.site.sessionCountHint' | t: { min: minSessionCount, max: maxSessionCount } }}</span>
       </label>
+      <label>
+        {{ 'admin.site.pmStart' | t }}
+        <input
+          type="time"
+          [(ngModel)]="pmStartTime"
+          name="pmStartTime"
+          required
+          [min]="minPmStartTime"
+          [max]="maxPmStartTime"
+          step="300"
+        />
+        <span class="meta">{{ 'admin.site.pmStartHint' | t: { min: minPmStartTime, max: maxPmStartTime } }}</span>
+      </label>
 
       <button type="submit" [disabled]="saving()">
         {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}

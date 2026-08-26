@@ -8,9 +8,15 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import {
   DEFAULT_SESSION_COUNT,
+  DEFAULT_PM_START_MINUTES,
   MAX_SESSION_COUNT,
   MIN_SESSION_COUNT,
-  normalizeSessionCount
+  MAX_PM_START_MINUTES,
+  MIN_PM_START_MINUTES,
+  minutesToTimeInput,
+  normalizePmStartMinutes,
+  normalizeSessionCount,
+  timeInputToMinutes
 } from '../../fixed-timetable.util';
 
 @Component({
@@ -35,8 +41,11 @@ export class AdminSiteSettingsComponent {
   useCurrentTimetableWeek = true;
   amSessionCount = DEFAULT_SESSION_COUNT;
   pmSessionCount = DEFAULT_SESSION_COUNT;
+  pmStartTime = minutesToTimeInput(DEFAULT_PM_START_MINUTES);
   readonly minSessionCount = MIN_SESSION_COUNT;
   readonly maxSessionCount = MAX_SESSION_COUNT;
+  readonly minPmStartTime = minutesToTimeInput(MIN_PM_START_MINUTES);
+  readonly maxPmStartTime = minutesToTimeInput(MAX_PM_START_MINUTES);
 
   constructor() {
     this.reload();
@@ -88,6 +97,16 @@ export class AdminSiteSettingsComponent {
         this.locale.t('admin.site.sessionCountInvalid', {
           min: MIN_SESSION_COUNT,
           max: MAX_SESSION_COUNT
+        })
+      );
+      return;
+    }
+
+    if (!this.pmStartValid()) {
+      this.error.set(
+        this.locale.t('admin.site.pmStartInvalid', {
+          min: this.minPmStartTime,
+          max: this.maxPmStartTime
         })
       );
       return;
@@ -160,10 +179,12 @@ export class AdminSiteSettingsComponent {
     clearTimetableWeek?: boolean;
     amSessionCount: number;
     pmSessionCount: number;
+    pmStartMinutes: number;
   } {
     const counts = {
       amSessionCount: normalizeSessionCount(this.amSessionCount),
-      pmSessionCount: normalizeSessionCount(this.pmSessionCount)
+      pmSessionCount: normalizeSessionCount(this.pmSessionCount),
+      pmStartMinutes: timeInputToMinutes(this.pmStartTime)
     };
     if (this.useCurrentTimetableWeek) {
       return {
@@ -197,6 +218,7 @@ export class AdminSiteSettingsComponent {
   private applySessionCounts(settings: SiteSettings): void {
     this.amSessionCount = normalizeSessionCount(settings.amSessionCount);
     this.pmSessionCount = normalizeSessionCount(settings.pmSessionCount);
+    this.pmStartTime = minutesToTimeInput(normalizePmStartMinutes(settings.pmStartMinutes));
   }
 
   private sessionCountsValid(): boolean {
@@ -210,6 +232,13 @@ export class AdminSiteSettingsComponent {
       pm >= MIN_SESSION_COUNT &&
       pm <= MAX_SESSION_COUNT
     );
+  }
+
+  private pmStartValid(): boolean {
+    const match = /^(\d{1,2}):(\d{2})$/.exec((this.pmStartTime ?? '').trim());
+    if (!match) return false;
+    const minutes = Number(match[1]) * 60 + Number(match[2]);
+    return minutes >= MIN_PM_START_MINUTES && minutes <= MAX_PM_START_MINUTES;
   }
 }
 

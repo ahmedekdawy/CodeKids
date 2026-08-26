@@ -144,7 +144,7 @@ export class AdminTimetableComponent {
   });
 
   readonly sessionSlots = computed(() =>
-    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount())
+    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount(), this.brand.pmStartMinutes())
   );
 
   readonly sessionNumberOptions = computed(() => {

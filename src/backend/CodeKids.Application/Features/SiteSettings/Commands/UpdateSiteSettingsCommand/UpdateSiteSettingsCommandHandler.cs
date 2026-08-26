@@ -62,6 +62,11 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
                 cancellationToken);
         }
 
+        if (command.PmStartMinutes.HasValue)
+        {
+            settings.PmStartMinutes = ValidatePmStartMinutes(command.PmStartMinutes.Value);
+        }
+
         settings.UpdatedAtUtc = DateTimeOffset.UtcNow;
         await dbContext.SaveChangesAsync(cancellationToken);
         return SiteSettingsMapper.ToDto(settings);
@@ -97,5 +102,24 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
         }
 
         return count;
+    }
+
+    private static int ValidatePmStartMinutes(int minutes)
+    {
+        if (minutes is < Domain.Entities.SiteSettings.MinPmStartMinutes
+            or > Domain.Entities.SiteSettings.MaxPmStartMinutes)
+        {
+            throw new InvalidOperationException(
+                $"PM start time must be between {FormatClock(Domain.Entities.SiteSettings.MinPmStartMinutes)} and {FormatClock(Domain.Entities.SiteSettings.MaxPmStartMinutes)}.");
+        }
+
+        return minutes;
+    }
+
+    private static string FormatClock(int totalMinutes)
+    {
+        var hour = totalMinutes / 60;
+        var minute = totalMinutes % 60;
+        return $"{hour:00}:{minute:00}";
     }
 }
