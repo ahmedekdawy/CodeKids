@@ -32,6 +32,13 @@ public sealed class CreateCourseUnitCommandHandler(IAppDbContext dbContext)
         dbContext.CourseUnits.Add(unit);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return new CourseUnitDto(unit.Id, unit.CourseId, unit.Title, unit.Description, unit.SortOrder, []);
+        return new CourseUnitDto(
+            unit.Id,
+            unit.CourseId,
+            unit.Title,
+            unit.Description,
+            unit.SortOrder,
+            [],
+            StudentAskEnabled: unit.StudentAskEnabled);
     }
 }

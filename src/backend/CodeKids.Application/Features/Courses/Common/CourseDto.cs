@@ -23,4 +23,5 @@ public sealed record CourseDto(
     string VerificationStatus = "",
     string SourceTocUrl = "",
     string Notes = "",
-    string Variants = "");
+    string Variants = "",
+    bool StudentAskEnabled = false);

@@ -56,6 +56,8 @@ using CodeKids.Application.Features.SiteSettings;
 
 using CodeKids.Application.Features.StudyPlans;
 
+using CodeKids.Application.Features.StudentAsk;
+
 using CodeKids.Application.Features.Timetable;
 
 using CodeKids.Application.Features.WeeklyReports;
@@ -226,6 +228,8 @@ builder.Services.AddScoped<ICommandHandler<DeleteCourseUnitCommand, bool>, Delet
 builder.Services.AddScoped<ICommandHandler<CreateCourseLessonCommand, CourseLessonDto>, CreateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateCourseLessonCommand, CourseLessonDto>, UpdateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteCourseLessonCommand, bool>, DeleteCourseLessonCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetStudentAskEnabledCommand, StudentAskSettingsDto>, SetStudentAskEnabledCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<AskStudentQuestionCommand, StudentAskAnswerDto>, AskStudentQuestionCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>>, GetLessonsQueryHandler>();
 
@@ -556,6 +560,7 @@ app.MapExamsEndpoints();
 app.MapExpensesEndpoints();
 
 app.MapLessonsEndpoints();
+app.MapStudentAskEndpoints();
 
 app.MapMediaEndpoints();
 

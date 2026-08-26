@@ -426,4 +426,15 @@ export class AdminCourseTreeComponent {
         this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.lessonDeleteFailed'))
     });
   }
+
+  toggleAsk(scope: 'course' | 'unit' | 'lesson', id: string, enabled: boolean): void {
+    this.api.setStudentAskEnabled(scope, id, enabled).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('admin.courseTree.studentAskUpdated'));
+        this.error.set('');
+        this.reloadTree();
+      },
+      error: (err) => this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.studentAskFailed'))
+    });
+  }
 }

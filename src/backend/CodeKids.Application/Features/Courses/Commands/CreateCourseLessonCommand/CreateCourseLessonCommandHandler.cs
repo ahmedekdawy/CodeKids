@@ -57,6 +57,7 @@ public sealed class CreateCourseLessonCommandHandler(IAppDbContext dbContext)
             lesson.Difficulty,
             lesson.XpReward,
             lesson.SortOrder,
-            0);
+            0,
+            lesson.StudentAskEnabled);
     }
 }

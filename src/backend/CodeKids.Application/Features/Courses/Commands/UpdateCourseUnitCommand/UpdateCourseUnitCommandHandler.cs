@@ -37,9 +37,17 @@ public sealed class UpdateCourseUnitCommandHandler(IAppDbContext dbContext)
                 l.Difficulty,
                 l.XpReward,
                 l.SortOrder,
-                l.Steps.Count))
+                l.Steps.Count,
+                l.StudentAskEnabled))
             .ToList();
 
-        return new CourseUnitDto(unit.Id, unit.CourseId, unit.Title, unit.Description, unit.SortOrder, lessons);
+        return new CourseUnitDto(
+            unit.Id,
+            unit.CourseId,
+            unit.Title,
+            unit.Description,
+            unit.SortOrder,
+            lessons,
+            StudentAskEnabled: unit.StudentAskEnabled);
     }
 }

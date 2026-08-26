@@ -9,4 +9,5 @@ public sealed record CourseLessonDto(
     int Difficulty,
     int XpReward,
     int SortOrder,
-    int StepCount);
+    int StepCount,
+    bool StudentAskEnabled = false);

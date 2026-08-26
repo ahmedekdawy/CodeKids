@@ -12,6 +12,8 @@ public class CourseUnit : TenantEntity
     /// <summary>FirstTerm = 1, SecondTerm = 2, FullYear = 3. Null when the unit is not term-specific.</summary>
     public CourseTerm? TermId { get; set; }
     public string VerificationStatus { get; set; } = string.Empty;
+    /// <summary>When true, students may use Ask on this unit and its lessons (or if the course enables Ask).</summary>
+    public bool StudentAskEnabled { get; set; }
     public Course? Course { get; set; }
     public List<Lesson> Lessons { get; set; } = [];
 }

@@ -63,6 +63,7 @@ public sealed class UpdateCourseLessonCommandHandler(IAppDbContext dbContext)
             lesson.Difficulty,
             lesson.XpReward,
             lesson.SortOrder,
-            lesson.Steps.Count);
+            lesson.Steps.Count,
+            lesson.StudentAskEnabled);
     }
 }

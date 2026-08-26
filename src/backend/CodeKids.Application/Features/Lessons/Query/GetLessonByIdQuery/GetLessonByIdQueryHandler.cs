@@ -1,5 +1,6 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.StudentAsk;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Lessons;
@@ -14,6 +15,8 @@ public sealed class GetLessonByIdQueryHandler(IAppDbContext dbContext)
             .Include(x => x.Steps)
             .Include(x => x.Videos)
                 .ThenInclude(v => v.MediaAsset)
+            .Include(x => x.Unit)
+            .Include(x => x.Course)
             .FirstOrDefaultAsync(x => x.Id == query.LessonId, cancellationToken);
 
         if (lesson is null)
@@ -42,6 +45,8 @@ public sealed class GetLessonByIdQueryHandler(IAppDbContext dbContext)
                     v.Title,
                     v.SortOrder,
                     v.MediaAsset?.DurationSeconds))
-                .ToList());
+                .ToList(),
+            lesson.UnitId,
+            StudentAskAccess.IsEnabled(lesson.Course, lesson.Unit, lesson));
     }
 }

@@ -32,7 +32,8 @@ internal static class CourseDtoMapper
                         .Select(MapLesson)
                         .ToList(),
                     (int?)unit.TermId,
-                    unit.VerificationStatus))
+                    unit.VerificationStatus,
+                    unit.StudentAskEnabled))
                 .ToList(),
             course.Lessons.OrderBy(x => x.SortOrder).Select(MapLesson).ToList());
 
@@ -76,7 +77,8 @@ internal static class CourseDtoMapper
             course.VerificationStatus,
             course.SourceTocUrl,
             course.Notes,
-            course.Variants);
+            course.Variants,
+            course.StudentAskEnabled);
 
     private static CourseLessonDto MapLesson(Lesson lesson) =>
         new(
@@ -88,5 +90,6 @@ internal static class CourseDtoMapper
             lesson.Difficulty,
             lesson.XpReward,
             lesson.SortOrder,
-            lesson.Steps.Count);
+            lesson.Steps.Count,
+            lesson.StudentAskEnabled);
 }

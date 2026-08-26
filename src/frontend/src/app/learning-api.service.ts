@@ -99,6 +99,27 @@ export class LearningApiService {
     return this.http.get<Lesson>(`${this.baseUrl}/lessons/${lessonId}`);
   }
 
+  setStudentAskEnabled(
+    scope: 'course' | 'unit' | 'lesson',
+    id: string,
+    enabled: boolean
+  ): Observable<{ scope: string; id: string; enabled: boolean }> {
+    return this.http.put<{ scope: string; id: string; enabled: boolean }>(`${this.baseUrl}/admin/student-ask`, {
+      scope,
+      id,
+      enabled
+    });
+  }
+
+  askStudentQuestion(payload: {
+    question: string;
+    courseId?: string | null;
+    unitId?: string | null;
+    lessonId?: string | null;
+  }): Observable<{ inScope: boolean; answer: string }> {
+    return this.http.post<{ inScope: boolean; answer: string }>(`${this.baseUrl}/student-ask`, payload);
+  }
+
   getStudentSummary(): Observable<StudentSummary> {
     return this.http.get<StudentSummary>(`${this.baseUrl}/progress/me`);
   }

@@ -131,7 +131,8 @@ internal static class CourseOutlineResolver
                 unit.SortOrder,
                 allLessons.Where(l => l.UnitId == unit.Id).ToList(),
                 (int?)unit.TermId,
-                unit.VerificationStatus))
+                unit.VerificationStatus,
+                unit.StudentAskEnabled))
             .ToList();
 
         return new CourseContentOutline(units, allLessons);
@@ -159,7 +160,8 @@ internal static class CourseOutlineResolver
                         Math.Clamp(1 + (course.Grade ?? 1) / 3, 1, 5),
                         20 + (course.Grade ?? 1) * 2,
                         lesson.SortOrder,
-                        0);
+                        0,
+                        false);
                     unitLessons.Add(mapped);
                     lessons.Add(mapped);
                 }
@@ -235,7 +237,8 @@ internal static class CourseOutlineResolver
             lesson.Difficulty,
             lesson.XpReward,
             lesson.SortOrder,
-            lesson.Steps.Count);
+            lesson.Steps.Count,
+            lesson.StudentAskEnabled);
 
     private static Guid StableId(params object?[] parts)
     {

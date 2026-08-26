@@ -10,10 +10,19 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
 
 @Component({
   selector: 'app-student-home',
-  imports: [SearchableSelectComponent, FormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent],
+  imports: [
+    SearchableSelectComponent,
+    FormsModule,
+    RouterLink,
+    TranslatePipe,
+    LanguageSwitcherComponent,
+    SiteBrandComponent,
+    StudentAskPanelComponent
+  ],
   templateUrl: './student-home.component.html',
   styleUrl: './student-home.component.css'
 })

@@ -70,6 +70,15 @@
 
     <section class="block">
       <h3>{{ 'admin.courseTree.tree' | t }} — {{ course.title }}</h3>
+      <p class="meta">{{ 'admin.courseTree.studentAskHint' | t }}</p>
+      <label class="ask-toggle">
+        <input
+          type="checkbox"
+          [ngModel]="course.studentAskEnabled"
+          (ngModelChange)="toggleAsk('course', course.id, $event)"
+        />
+        {{ 'admin.courseTree.studentAsk' | t }}
+      </label>
       @if (!units().length) {
         <p class="meta">{{ 'admin.courseTree.empty' | t }}</p>
       }
@@ -100,6 +109,14 @@
                 </div>
                 @if (unit.id) {
                   <div class="row-actions">
+                    <label class="ask-toggle">
+                      <input
+                        type="checkbox"
+                        [ngModel]="unit.studentAskEnabled"
+                        (ngModelChange)="toggleAsk('unit', unit.id, $event)"
+                      />
+                      {{ 'admin.courseTree.studentAsk' | t }}
+                    </label>
                     <app-icon-action-button kind="edit" (clicked)="startUnitEdit(unit)" />
                     <app-icon-action-button kind="delete" (clicked)="deleteUnit(unit)" />
                   </div>
@@ -137,6 +154,14 @@
                         </span>
                       </div>
                       <div class="row-actions">
+                        <label class="ask-toggle">
+                          <input
+                            type="checkbox"
+                            [ngModel]="lesson.studentAskEnabled"
+                            (ngModelChange)="toggleAsk('lesson', lesson.id, $event)"
+                          />
+                          {{ 'admin.courseTree.studentAsk' | t }}
+                        </label>
                         <app-icon-action-button kind="edit" (clicked)="startLessonEdit(lesson, unit.id)" />
                         <app-icon-action-button kind="delete" (clicked)="deleteLesson(lesson)" />
                       </div>

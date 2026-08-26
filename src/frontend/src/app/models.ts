@@ -40,6 +40,7 @@ export interface CourseLesson {
   xpReward: number;
   sortOrder: number;
   stepCount: number;
+  studentAskEnabled?: boolean;
 }
 
 export interface CourseUnit {
@@ -51,6 +52,7 @@ export interface CourseUnit {
   lessons: CourseLesson[];
   term?: number | null;
   verificationStatus?: string;
+  studentAskEnabled?: boolean;
 }
 
 export interface CourseQuiz {
@@ -84,6 +86,7 @@ export interface Course {
   sourceTocUrl?: string;
   notes?: string;
   variants?: string;
+  studentAskEnabled?: boolean;
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
@@ -146,6 +149,8 @@ export interface Lesson {
   xpReward: number;
   steps: LessonStep[];
   videos?: LessonVideoSummary[];
+  unitId?: string | null;
+  studentAskEnabled?: boolean;
 }
 
 export interface MediaAsset {
