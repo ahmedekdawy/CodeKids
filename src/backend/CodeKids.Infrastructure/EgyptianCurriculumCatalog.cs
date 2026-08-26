@@ -2,11 +2,14 @@ using System.Text.Json;
 
 namespace CodeKids.Infrastructure;
 
+internal sealed record CurriculumLessonSpec(int Index, string Title);
+
 internal sealed record CurriculumUnitSpec(
+    int Index,
     int Term,
     string Title,
     string VerificationStatus,
-    IReadOnlyList<string> Lessons);
+    IReadOnlyList<CurriculumLessonSpec> Lessons);
 
 internal sealed record CurriculumCourseSpec(
     int Grade,
@@ -27,23 +30,26 @@ internal static class EgyptianCurriculumCatalog
 {
     public const string ResourceName = "CodeKids.Infrastructure.egypt_curriculum_grades_1_to_12.json";
 
-    public static IReadOnlyList<CurriculumCourseSpec> Load() => LoadCatalog();
+    public static IReadOnlyList<CurriculumCourseSpec> Load() => Merge(LoadOfferings());
 
-    private static IReadOnlyList<CurriculumCourseSpec> LoadCatalog()
+    public static IReadOnlyList<CurriculumSubjectSpec> LoadOfferings()
     {
         using var stream = typeof(EgyptianCurriculumCatalog).Assembly.GetManifestResourceStream(ResourceName)
             ?? throw new InvalidOperationException($"Embedded curriculum file '{ResourceName}' was not found.");
         using var document = JsonDocument.Parse(stream);
 
-        var offerings = new List<RawOffering>();
+        var offerings = new List<CurriculumSubjectSpec>();
         if (!document.RootElement.TryGetProperty("stages", out var stages) || stages.ValueKind != JsonValueKind.Array)
         {
             return [];
         }
 
+        var jsonStageIndex = 0;
         foreach (var stage in stages.EnumerateArray())
         {
-            var stageId = StageIdFor(Str(stage, "stage_code"));
+            // JSON stages[] is 0-based; Stages.Id in the database starts at 1 (KG is 0 and is not in this file).
+            var stageId = jsonStageIndex + 1;
+            jsonStageIndex++;
             if (!stage.TryGetProperty("grades", out var grades) || grades.ValueKind != JsonValueKind.Array)
             {
                 continue;
@@ -52,6 +58,12 @@ internal static class EgyptianCurriculumCatalog
             foreach (var grade in grades.EnumerateArray())
             {
                 var gradeNumber = Int(grade, "grade_number");
+                if (gradeNumber == 0)
+                {
+                    // File arrays are 0-based; database grade ids start at 1.
+                    gradeNumber = IndexOr(grade, 1);
+                }
+
                 if (gradeNumber is < 1 or > 12)
                 {
                     continue;
@@ -83,7 +95,7 @@ internal static class EgyptianCurriculumCatalog
             }
         }
 
-        return Merge(offerings);
+        return offerings;
     }
 
     private static void ReadTerms(
@@ -92,7 +104,7 @@ internal static class EgyptianCurriculumCatalog
         int stageId,
         string trackCode,
         string trackName,
-        List<RawOffering> offerings)
+        List<CurriculumSubjectSpec> offerings)
     {
         foreach (var term in terms.EnumerateArray())
         {
@@ -116,7 +128,7 @@ internal static class EgyptianCurriculumCatalog
                     continue;
                 }
 
-                offerings.Add(new RawOffering(
+                offerings.Add(new CurriculumSubjectSpec(
                     grade,
                     stageId,
                     termNumber,
@@ -143,6 +155,7 @@ internal static class EgyptianCurriculumCatalog
         }
 
         var list = new List<CurriculumUnitSpec>();
+        var unitFallback = 1;
         foreach (var unit in units.EnumerateArray())
         {
             var title = Str(unit, "title").Trim();
@@ -151,7 +164,11 @@ internal static class EgyptianCurriculumCatalog
                 continue;
             }
 
-            var lessons = new List<string>();
+            var unitIndex = IndexOr(unit, unitFallback);
+            unitFallback++;
+
+            var lessons = new List<CurriculumLessonSpec>();
+            var lessonFallback = 1;
             if (unit.TryGetProperty("lessons", out var lessonEl) && lessonEl.ValueKind == JsonValueKind.Array)
             {
                 foreach (var lesson in lessonEl.EnumerateArray())
@@ -159,14 +176,21 @@ internal static class EgyptianCurriculumCatalog
                     var lessonTitle = lesson.ValueKind == JsonValueKind.String
                         ? lesson.GetString()
                         : Str(lesson, "title");
-                    if (!string.IsNullOrWhiteSpace(lessonTitle))
+                    if (string.IsNullOrWhiteSpace(lessonTitle))
                     {
-                        lessons.Add(lessonTitle.Trim());
+                        continue;
                     }
+
+                    var lessonIndex = lesson.ValueKind == JsonValueKind.Object
+                        ? IndexOr(lesson, lessonFallback)
+                        : lessonFallback;
+                    lessons.Add(new CurriculumLessonSpec(lessonIndex, lessonTitle.Trim()));
+                    lessonFallback++;
                 }
             }
 
             list.Add(new CurriculumUnitSpec(
+                unitIndex,
                 term,
                 title,
                 Str(unit, "verification_status").Trim(),
@@ -176,7 +200,7 @@ internal static class EgyptianCurriculumCatalog
         return list;
     }
 
-    private static IReadOnlyList<CurriculumCourseSpec> Merge(IReadOnlyList<RawOffering> offerings)
+    private static IReadOnlyList<CurriculumCourseSpec> Merge(IReadOnlyList<CurriculumSubjectSpec> offerings)
     {
         return offerings
             .GroupBy(x => (x.Grade, x.SubjectCode, x.TrackCode), x => x)
@@ -257,14 +281,6 @@ internal static class EgyptianCurriculumCatalog
             .Select(v => v!));
     }
 
-    private static int StageIdFor(string stageCode) => stageCode switch
-    {
-        "primary" => 1,
-        "preparatory" => 2,
-        "secondary" => 3,
-        _ => 1
-    };
-
     private static string Str(JsonElement element, string name) =>
         element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String
             ? value.GetString() ?? ""
@@ -275,19 +291,27 @@ internal static class EgyptianCurriculumCatalog
             ? number
             : 0;
 
-    private sealed record RawOffering(
-        int Grade,
-        int StageId,
-        int Term,
-        string SubjectCode,
-        string Title,
-        string NameEn,
-        string Category,
-        string TrackCode,
-        string TrackName,
-        string VerificationStatus,
-        string Notes,
-        string SourceTocUrl,
-        string Variants,
-        IReadOnlyList<CurriculumUnitSpec> Units);
+    /// <summary>JSON arrays are 0-based; stored index/SortOrder values are 1-based.</summary>
+    private static int IndexOr(JsonElement element, int fallback)
+    {
+        var index = Int(element, "index");
+        return index > 0 ? index : Math.Max(1, fallback);
+    }
+
 }
+
+internal sealed record CurriculumSubjectSpec(
+    int Grade,
+    int StageId,
+    int Term,
+    string SubjectCode,
+    string Title,
+    string NameEn,
+    string Category,
+    string TrackCode,
+    string TrackName,
+    string VerificationStatus,
+    string Notes,
+    string SourceTocUrl,
+    string Variants,
+    IReadOnlyList<CurriculumUnitSpec> Units);

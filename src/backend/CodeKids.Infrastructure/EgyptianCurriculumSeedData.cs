@@ -14,32 +14,60 @@ public static class EgyptianCurriculumSeedData
 {
     public static async Task SeedAsync(AppDbContext dbContext, CancellationToken cancellationToken = default)
     {
+        var offerings = EgyptianCurriculumCatalog.LoadOfferings();
         var catalog = EgyptianCurriculumCatalog.Load();
-        await EnsureSubjectsAsync(dbContext, catalog, cancellationToken);
+        await EnsureSubjectsAsync(dbContext, offerings, cancellationToken);
         await SyncCoursesAsync(dbContext, catalog, cancellationToken);
         await ApplyExternalSubjectIdsAsync(dbContext, cancellationToken);
     }
 
     private static async Task EnsureSubjectsAsync(
         AppDbContext dbContext,
-        IReadOnlyList<CurriculumCourseSpec> catalog,
+        IReadOnlyList<CurriculumSubjectSpec> offerings,
         CancellationToken cancellationToken)
     {
         var subjects = await dbContext.Subjects.ToListAsync(cancellationToken);
+        var usedIds = new HashSet<int>();
         var nextId = subjects.Count == 0 ? 1000 : Math.Max(1000, subjects.Max(s => s.Id) + 1);
 
-        foreach (var spec in catalog
-            .GroupBy(x => (x.SubjectCode, x.StageId))
-            .Select(g => g.First())
+        ApplyKnownGradeIds(subjects);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        await dbContext.SubjectUnitLessons.ExecuteDeleteAsync(cancellationToken);
+        await dbContext.SubjectUnits.ExecuteDeleteAsync(cancellationToken);
+
+        foreach (var spec in offerings
             .OrderBy(x => x.StageId)
+            .ThenBy(x => x.Grade)
+            .ThenBy(x => x.Term)
+            .ThenBy(x => x.TrackCode)
             .ThenBy(x => x.Title))
         {
             var match = subjects.FirstOrDefault(s =>
-                    s.StageId == spec.StageId
-                    && s.Code.Equals(spec.SubjectCode, StringComparison.OrdinalIgnoreCase))
-                ?? subjects.FirstOrDefault(s =>
-                    s.StageId == spec.StageId
-                    && TitleAliasesFor(spec.SubjectCode, spec.Grade).Contains(s.Title));
+                    !usedIds.Contains(s.Id)
+                    && s.GradeId == spec.Grade
+                    && s.TermId == spec.Term
+                    && s.Code.Equals(spec.SubjectCode, StringComparison.OrdinalIgnoreCase)
+                    && (s.TrackCode ?? "") == spec.TrackCode);
+
+            if (match is null && spec.Term == 1 && spec.TrackCode.Length == 0)
+            {
+                var aliases = TitleAliasesFor(spec.SubjectCode, spec.Grade);
+                foreach (var title in aliases)
+                {
+                    if (ExternalSubjectIds.TryGetValue((title, spec.Grade), out var preferred)
+                        && subjects.FirstOrDefault(s => s.Id == preferred && !usedIds.Contains(s.Id)) is { } preferredRow)
+                    {
+                        match = preferredRow;
+                        break;
+                    }
+                }
+
+                match ??= subjects.FirstOrDefault(s =>
+                    !usedIds.Contains(s.Id)
+                    && s.GradeId == spec.Grade
+                    && aliases.Contains(s.Title));
+            }
 
             if (match is null)
             {
@@ -47,18 +75,57 @@ public static class EgyptianCurriculumSeedData
                 {
                     Id = nextId++,
                     Title = Clip(spec.Title, 200),
-                    StageId = spec.StageId
+                    StageId = spec.StageId,
+                    Units = []
                 };
                 dbContext.Subjects.Add(match);
                 subjects.Add(match);
             }
 
+            usedIds.Add(match.Id);
+            match.Title = Clip(spec.Title, 200);
             match.Code = spec.SubjectCode;
             match.Category = Clip(spec.Category, 40);
             match.NameEn = Clip(spec.NameEn, 200);
+            match.Notes = Clip(spec.Notes, 1000);
+            match.StageId = spec.StageId;
+            match.GradeId = spec.Grade;
+            match.TermId = spec.Term;
+            match.TrackCode = spec.TrackCode;
+            match.TrackName = Clip(spec.TrackName, 80);
+            match.VerificationStatus = Clip(spec.VerificationStatus, 80);
+            match.SourceTocUrl = Clip(spec.SourceTocUrl, 500);
+            match.Variants = Clip(spec.Variants, 400);
+            SyncSubjectUnits(match, spec);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private static void SyncSubjectUnits(Subject subject, CurriculumSubjectSpec spec)
+    {
+        foreach (var unitSpec in spec.Units)
+        {
+            var unit = new SubjectUnit
+            {
+                SubjectId = subject.Id,
+                Title = Clip(unitSpec.Title, 300),
+                SortOrder = Math.Max(1, unitSpec.Index),
+                VerificationStatus = Clip(unitSpec.VerificationStatus, 80),
+                Lessons = []
+            };
+
+            foreach (var lessonSpec in unitSpec.Lessons)
+            {
+                unit.Lessons.Add(new SubjectUnitLesson
+                {
+                    Title = Clip(lessonSpec.Title, 300),
+                    SortOrder = Math.Max(1, lessonSpec.Index)
+                });
+            }
+
+            subject.Units.Add(unit);
+        }
     }
 
     private static async Task SyncCoursesAsync(
@@ -166,9 +233,16 @@ public static class EgyptianCurriculumSeedData
         await dbContext.Lessons.Where(l => l.CourseId == course.Id).ExecuteDeleteAsync(cancellationToken);
         await dbContext.CourseUnits.Where(u => u.CourseId == course.Id).ExecuteDeleteAsync(cancellationToken);
 
-        var unitOrder = 1;
-        foreach (var unitSpec in spec.Units)
+        var units = spec.Units;
+        if (units.Count == 0)
         {
+            await CopyUnitsFromRelatedSubjectsAsync(dbContext, course, cancellationToken);
+            return;
+        }
+
+        foreach (var unitSpec in units)
+        {
+            var unitOrder = Math.Max(1, unitSpec.Index);
             var unitId = CurriculumGuid("unit", spec.Grade, spec.SubjectCode, spec.TrackCode, unitSpec.Term, unitOrder);
             var unit = new CourseUnit
             {
@@ -182,26 +256,88 @@ public static class EgyptianCurriculumSeedData
                 Lessons = []
             };
 
-            var lessonOrder = 1;
-            foreach (var lessonTitle in unitSpec.Lessons)
+            foreach (var lessonSpec in unitSpec.Lessons)
             {
+                var lessonOrder = Math.Max(1, lessonSpec.Index);
                 unit.Lessons.Add(new Lesson
                 {
                     Id = CurriculumGuid("lesson", spec.Grade, spec.SubjectCode, spec.TrackCode, unitSpec.Term, unitOrder, lessonOrder),
                     CourseId = course.Id,
                     UnitId = unitId,
-                    Title = Clip(lessonTitle, 300),
+                    Title = Clip(lessonSpec.Title, 300),
                     Theme = course.Theme,
-                    Description = Clip($"{lessonTitle} — {spec.Title} — {GradeLabel(spec.Grade)}", 500),
+                    Description = Clip($"{lessonSpec.Title} — {spec.Title} — {GradeLabel(spec.Grade)}", 500),
                     Difficulty = Math.Clamp(1 + spec.Grade / 3, 1, 5),
                     XpReward = 20 + spec.Grade * 2,
                     SortOrder = lessonOrder
                 });
-                lessonOrder++;
             }
 
             dbContext.CourseUnits.Add(unit);
-            unitOrder++;
+        }
+    }
+
+    private static async Task CopyUnitsFromRelatedSubjectsAsync(
+        AppDbContext dbContext,
+        Course course,
+        CancellationToken cancellationToken)
+    {
+        var subjects = await dbContext.Subjects
+            .AsNoTracking()
+            .Include(s => s.Units)
+                .ThenInclude(u => u.Lessons)
+            .Where(s =>
+                (course.ExternalSubjectId != null && s.Id == course.ExternalSubjectId)
+                || (course.Grade != null
+                    && s.GradeId == course.Grade
+                    && s.Code == course.SubjectCode
+                    && (s.TrackCode ?? "") == (course.TrackCode ?? "")))
+            .OrderBy(s => s.TermId ?? 99)
+            .ThenBy(s => s.Id)
+            .ToListAsync(cancellationToken);
+
+        foreach (var subject in subjects)
+        {
+            foreach (var unitSpec in subject.Units.OrderBy(u => u.SortOrder).ThenBy(u => u.Title))
+            {
+                var unitOrder = Math.Max(1, unitSpec.SortOrder);
+                var term = subject.TermId ?? 1;
+                var unitId = CurriculumGuid("sunit", course.Grade ?? 0, course.SubjectCode, course.TrackCode, term, unitOrder, unitSpec.Title);
+                var unit = new CourseUnit
+                {
+                    Id = unitId,
+                    CourseId = course.Id,
+                    Title = Clip(unitSpec.Title, 300),
+                    Description = Clip(
+                        subject.TermId is int termId
+                            ? $"{unitSpec.Title} — {GradeLabel(course.Grade ?? 0)} — الترم {termId}"
+                            : $"{unitSpec.Title} — {GradeLabel(course.Grade ?? 0)}",
+                        500),
+                    SortOrder = unitOrder,
+                    TermId = subject.TermId is int t ? (CourseTerm)t : null,
+                    VerificationStatus = Clip(unitSpec.VerificationStatus, 80),
+                    Lessons = []
+                };
+
+                foreach (var lessonSpec in unitSpec.Lessons.OrderBy(l => l.SortOrder).ThenBy(l => l.Title))
+                {
+                    var lessonOrder = Math.Max(1, lessonSpec.SortOrder);
+                    unit.Lessons.Add(new Lesson
+                    {
+                        Id = CurriculumGuid("slesson", course.Grade ?? 0, course.SubjectCode, course.TrackCode, term, unitOrder, lessonOrder, lessonSpec.Title),
+                        CourseId = course.Id,
+                        UnitId = unitId,
+                        Title = Clip(lessonSpec.Title, 300),
+                        Theme = course.Theme,
+                        Description = Clip($"{lessonSpec.Title} — {course.Title} — {GradeLabel(course.Grade ?? 0)}", 500),
+                        Difficulty = Math.Clamp(1 + (course.Grade ?? 1) / 3, 1, 5),
+                        XpReward = 20 + (course.Grade ?? 1) * 2,
+                        SortOrder = lessonOrder
+                    });
+                }
+
+                dbContext.CourseUnits.Add(unit);
+            }
         }
     }
 
@@ -376,54 +512,163 @@ public static class EgyptianCurriculumSeedData
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await FillMissingGradeIdsFromCoursesAsync(dbContext, cancellationToken);
+    }
+
+    private static void ApplyKnownGradeIds(IEnumerable<Subject> subjects)
+    {
+        var byId = subjects.ToDictionary(s => s.Id);
+        foreach (var ((_, grade), id) in ExternalSubjectIds)
+        {
+            if (byId.TryGetValue(id, out var subject))
+            {
+                subject.GradeId = grade;
+            }
+        }
+    }
+
+    private static async Task FillMissingGradeIdsFromCoursesAsync(
+        AppDbContext dbContext,
+        CancellationToken cancellationToken)
+    {
+        var subjects = await dbContext.Subjects.ToListAsync(cancellationToken);
+        ApplyKnownGradeIds(subjects);
+
+        var courseGrades = await dbContext.Courses
+            .Where(c => c.ExternalSubjectId != null && c.Grade != null)
+            .Select(c => new { c.ExternalSubjectId, c.Grade })
+            .ToListAsync(cancellationToken);
+
+        var gradeBySubject = courseGrades
+            .GroupBy(c => c.ExternalSubjectId!.Value)
+            .ToDictionary(g => g.Key, g => g.Select(x => x.Grade!.Value).Min());
+
+        foreach (var subject in subjects)
+        {
+            if (subject.GradeId is not null)
+            {
+                continue;
+            }
+
+            if (gradeBySubject.TryGetValue(subject.Id, out var grade))
+            {
+                subject.GradeId = grade;
+            }
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private static int? ResolveSubjectId(Course course, IReadOnlyList<Subject> subjects)
     {
-        var titles = TitleCandidates(course.Title);
-        var stageId = course.StageId ?? (course.Grade is int grade ? StageFor(grade) : null);
-
-        if (course.Grade is int mappedGrade)
+        IEnumerable<Subject> pool = subjects;
+        if (course.Grade is int grade)
         {
-            foreach (var title in titles)
+            pool = subjects.Where(s => s.GradeId == grade);
+        }
+        else if (course.StageId is int stage)
+        {
+            pool = subjects.Where(s => s.StageId == stage);
+        }
+
+        var courseTrack = course.TrackCode ?? "";
+        var ranked = pool
+            .Select(subject =>
             {
-                if (ExternalSubjectIds.TryGetValue((title, mappedGrade), out var preferred)
-                    && subjects.Any(s => s.Id == preferred))
+                var titleMatch = TitlesLike(course.Title, subject.Title);
+                var codeMatch = !string.IsNullOrWhiteSpace(course.SubjectCode)
+                    && subject.Code.Equals(course.SubjectCode, StringComparison.OrdinalIgnoreCase);
+                var trackMatch = (subject.TrackCode ?? "") == courseTrack;
+                return (subject, titleMatch, codeMatch, trackMatch);
+            })
+            .Where(x => x.titleMatch || x.codeMatch)
+            .OrderBy(x => x.titleMatch ? 0 : 1)
+            .ThenBy(x => x.trackMatch ? 0 : 1)
+            .ThenBy(x => x.subject.TermId ?? 99)
+            .ThenBy(x => x.subject.Id)
+            .Select(x => (int?)x.subject.Id)
+            .FirstOrDefault();
+
+        return ranked;
+    }
+
+    private static bool TitlesLike(string courseTitle, string subjectTitle)
+    {
+        var courseNames = ExpandTitles(courseTitle);
+        var subjectNames = ExpandTitles(subjectTitle);
+        if (courseNames.Overlaps(subjectNames))
+        {
+            return true;
+        }
+
+        foreach (var courseName in courseNames)
+        {
+            foreach (var subjectName in subjectNames)
+            {
+                if (courseName.Length < 3 || subjectName.Length < 3)
                 {
-                    return preferred;
+                    continue;
+                }
+
+                if (courseName.Contains(subjectName, StringComparison.OrdinalIgnoreCase)
+                    || subjectName.Contains(courseName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
                 }
             }
         }
 
-        if (!string.IsNullOrWhiteSpace(course.SubjectCode) && stageId is int codeStage)
+        return false;
+    }
+
+    private static HashSet<string> ExpandTitles(string title)
+    {
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        AddTitle(names, title);
+        foreach (var name in names.ToList())
         {
-            var byCode = subjects
-                .Where(s => s.Code == course.SubjectCode && s.StageId == codeStage)
-                .OrderBy(s => s.Id)
-                .Select(s => (int?)s.Id)
-                .FirstOrDefault();
-            if (byCode is not null)
+            if (TitleAliases.TryGetValue(name, out var mapped))
             {
-                return byCode;
+                AddTitle(names, mapped);
+            }
+
+            foreach (var pair in TitleAliases)
+            {
+                if (pair.Value.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    AddTitle(names, pair.Key);
+                }
             }
         }
 
-        return subjects
-            .Where(s => titles.Contains(s.Title) && (stageId is null || s.StageId == stageId))
-            .OrderBy(s => s.Id)
-            .Select(s => (int?)s.Id)
-            .FirstOrDefault();
-    }
-
-    private static IReadOnlyList<string> TitleCandidates(string title)
-    {
-        if (TitleAliases.TryGetValue(title, out var canonical) && canonical != title)
+        foreach (var code in TitleAliasCodes)
         {
-            return [title, canonical];
+            var aliases = TitleAliasesFor(code, 5);
+            aliases.UnionWith(TitleAliasesFor(code, 10));
+            if (names.Overlaps(aliases))
+            {
+                names.UnionWith(aliases);
+            }
         }
 
-        return [title];
+        return names;
     }
+
+    private static void AddTitle(HashSet<string> names, string? title)
+    {
+        var value = title?.Trim();
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            names.Add(value);
+        }
+    }
+
+    private static readonly string[] TitleAliasCodes =
+    [
+        "arabic", "english", "first_foreign_language", "math", "discover", "science",
+        "social_studies", "islamic_religion", "religion", "history", "geography",
+        "physics", "chemistry", "biology"
+    ];
 
     private static readonly Dictionary<string, string> TitleAliases = new(StringComparer.Ordinal)
     {

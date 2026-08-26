@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.StudyPlans;
 using CodeKids.Domain.Abstractions;
@@ -154,8 +155,9 @@ public sealed class GenerateAssessmentDraftCommandHandler(
         return (await LoadCourseAsync(selectedCourseId, cancellationToken), null);
     }
 
-    private async Task<Course> LoadCourseAsync(Guid courseId, CancellationToken cancellationToken) =>
-        await dbContext.Courses
+    private async Task<Course> LoadCourseAsync(Guid courseId, CancellationToken cancellationToken)
+    {
+        var course = await dbContext.Courses
             .AsNoTracking()
             .Include(x => x.Stage)
             .Include(x => x.Units)
@@ -163,6 +165,9 @@ public sealed class GenerateAssessmentDraftCommandHandler(
             .Include(x => x.Lessons)
             .FirstOrDefaultAsync(x => x.Id == courseId, cancellationToken)
             ?? throw new InvalidOperationException("Course not found.");
+        await CourseOutlineResolver.AttachFallbackUnitsAsync(dbContext, course, cancellationToken);
+        return course;
+    }
 
     private static AssessmentKind ParseKind(string? kind)
     {
