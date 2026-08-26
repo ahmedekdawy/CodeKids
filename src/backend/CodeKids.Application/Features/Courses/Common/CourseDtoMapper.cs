@@ -5,7 +5,7 @@ namespace CodeKids.Application.Features.Courses;
 
 internal static class CourseDtoMapper
 {
-    public static CourseDto Map(Course course, bool includeContent = true)
+    public static CourseDto Map(Course course, bool includeContent = true, CourseContentOutline? outline = null)
     {
         if (!includeContent)
         {
@@ -16,24 +16,25 @@ internal static class CourseDtoMapper
                 Array.Empty<CourseQuizDto>());
         }
 
-        var lessons = course.Lessons
-            .OrderBy(x => x.SortOrder)
-            .Select(MapLesson)
-            .ToList();
-
-        var units = course.Units
-            .OrderBy(x => x.SortOrder)
-            .ThenBy(x => x.Title)
-            .Select(unit => new CourseUnitDto(
-                unit.Id,
-                unit.CourseId,
-                unit.Title,
-                unit.Description,
-                unit.SortOrder,
-                lessons.Where(l => l.UnitId == unit.Id).ToList(),
-                (int?)unit.TermId,
-                unit.VerificationStatus))
-            .ToList();
+        var content = outline ?? new CourseContentOutline(
+            course.Units
+                .OrderBy(x => x.SortOrder)
+                .ThenBy(x => x.Title)
+                .Select(unit => new CourseUnitDto(
+                    unit.Id,
+                    unit.CourseId,
+                    unit.Title,
+                    unit.Description,
+                    unit.SortOrder,
+                    course.Lessons
+                        .Where(l => l.UnitId == unit.Id)
+                        .OrderBy(l => l.SortOrder)
+                        .Select(MapLesson)
+                        .ToList(),
+                    (int?)unit.TermId,
+                    unit.VerificationStatus))
+                .ToList(),
+            course.Lessons.OrderBy(x => x.SortOrder).Select(MapLesson).ToList());
 
         var quizzes = course.Quizzes
             .Select(quiz => new CourseQuizDto(
@@ -44,7 +45,7 @@ internal static class CourseDtoMapper
                 quiz.Questions.Count))
             .ToList();
 
-        return Create(course, units, lessons, quizzes);
+        return Create(course, content.Units, content.Lessons, quizzes);
     }
 
     private static CourseDto Create(

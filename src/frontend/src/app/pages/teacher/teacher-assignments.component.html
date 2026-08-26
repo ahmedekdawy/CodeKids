@@ -14,26 +14,94 @@
         <app-searchable-select
           [(ngModel)]="assignmentClassroomId"
           name="assignmentClassroomId"
+          (ngModelChange)="onClassroomChange()"
           [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
         />
       </label>
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [(ngModel)]="assignmentCourseId"
+          name="assignmentCourseId"
+          (ngModelChange)="onCourseChange()"
+          required
+          [emptyLabel]="'common.selectCourse' | t"
+          [options]="coursesForClassroom().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <label>
+        {{ 'common.units' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="assignmentUnitIds"
+          name="assignmentUnitIds"
+          (ngModelChange)="onUnitsChange()"
+          [placeholder]="'common.selectUnits' | t"
+          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+        />
+      </label>
+      <label>
+        {{ 'common.lessons' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="assignmentLessonIds"
+          name="assignmentLessonIds"
+          [placeholder]="'common.selectLessons' | t"
+          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
+        />
+      </label>
       <label>XP <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" /></label>
+      <label>
+        {{ 'teacher.ai.questionCount' | t }}
+        <input
+          type="number"
+          [(ngModel)]="assignmentQuestionCount"
+          name="assignmentQuestionCount"
+          min="1"
+          max="12"
+          (ngModelChange)="onQuestionCountChange()"
+        />
+      </label>
       <label>
         {{ 'common.type' | t }}
         <app-searchable-select
           [(ngModel)]="assignmentType"
           name="assignmentType"
+          (ngModelChange)="onTypeChange()"
           [options]="[{ value: 'ShortAnswer', label: ('assignType.shortAnswer' | t) }, { value: 'MultipleChoice', label: ('assignType.multipleChoice' | t) }]"
         />
       </label>
-      <label>{{ 'teacher.assignments.question' | t }} <input [(ngModel)]="assignmentPrompt" name="assignmentPrompt" required /></label>
-      @if (assignmentType === 'MultipleChoice') {
-        <label>A <input [(ngModel)]="assignmentOptionA" name="assignmentOptionA" /></label>
-        <label>B <input [(ngModel)]="assignmentOptionB" name="assignmentOptionB" /></label>
-        <label>C <input [(ngModel)]="assignmentOptionC" name="assignmentOptionC" /></label>
+      <div class="questions-group">
+      @for (question of questions; track $index; let qi = $index) {
+        <div class="question-card">
+          <div class="question-card-head">
+            <strong>{{ 'teacher.assignments.question' | t }} {{ qi + 1 }}</strong>
+          </div>
+          <label class="question-prompt">
+            {{ 'teacher.assignments.question' | t }}
+            <textarea [(ngModel)]="question.prompt" [name]="'assignmentPrompt-' + qi" rows="2" required></textarea>
+          </label>
+          <div class="options-editor">
+            @if (question.questionType === 'MultipleChoice') {
+              <label>A <input [(ngModel)]="question.optionA" [name]="'assignmentOptionA-' + qi" /></label>
+              <label>B <input [(ngModel)]="question.optionB" [name]="'assignmentOptionB-' + qi" /></label>
+              <label>C <input [(ngModel)]="question.optionC" [name]="'assignmentOptionC-' + qi" /></label>
+            }
+            <label>{{ 'common.correctAnswer' | t }}
+              <input [(ngModel)]="question.correct" [name]="'assignmentCorrect-' + qi" required />
+            </label>
+          </div>
+        </div>
       }
-      <label>{{ 'common.correctAnswer' | t }} <input [(ngModel)]="assignmentCorrect" name="assignmentCorrect" required /></label>
-      <button type="submit">{{ 'teacher.assignments.create' | t }}</button>
+      </div>
+      <div class="form-actions">
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="generating() || !assignmentClassroomId || !assignmentCourseId"
+          (click)="generate()">
+          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+        </button>
+        <button type="submit">{{ 'teacher.assignments.create' | t }}</button>
+      </div>
     </form>
   </section>
 

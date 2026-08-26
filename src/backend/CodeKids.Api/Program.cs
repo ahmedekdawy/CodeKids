@@ -8,6 +8,8 @@ using CodeKids.Application.Features.Analytics;
 
 using CodeKids.Application.Features.Appointments;
 
+using CodeKids.Application.Features.Assessments;
+
 using CodeKids.Application.Features.Assignments;
 
 using CodeKids.Application.Features.Attendance;
@@ -301,6 +303,8 @@ builder.Services.AddScoped<ICommandHandler<DeleteTeacherPayrollAdjustmentCommand
 
 builder.Services.AddScoped<IQueryHandler<GetAccountReportQuery, AccountReportDto>, GetAccountReportQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<GetAdminLoginDashboardQuery, AdminLoginDashboardDto>, GetAdminLoginDashboardQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<ListTuitionPaymentsQuery, IReadOnlyList<TuitionPaymentDto>>, ListTuitionPaymentsQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateTuitionPaymentCommand, TuitionPaymentDto>, CreateTuitionPaymentCommandHandler>();
@@ -417,6 +421,8 @@ builder.Services.AddScoped<ICommandHandler<SaveWeeklyStudyPlanCommand, WeeklyStu
 
 builder.Services.AddScoped<ICommandHandler<GenerateWeeklyStudyPlanCommand, GenerateWeeklyStudyPlanResult>, GenerateWeeklyStudyPlanCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<GenerateAssessmentDraftCommand, GeneratedAssessmentDraftDto>, GenerateAssessmentDraftCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<DeleteWeeklyStudyPlanCommand, bool>, DeleteWeeklyStudyPlanCommandHandler>();
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
@@ -519,6 +525,8 @@ app.MapAccountReportEndpoints();
 app.MapAdminUsersEndpoints();
 
 app.MapAppointmentsEndpoints();
+
+app.MapAssessmentsEndpoints();
 
 app.MapAssignmentsEndpoints();
 

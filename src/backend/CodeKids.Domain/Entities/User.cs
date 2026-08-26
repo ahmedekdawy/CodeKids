@@ -36,6 +36,8 @@ public class User : TenantEntity
     public string ZoomConnectedEmail { get; set; } = string.Empty;
     public int TotalXp { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
+    /// <summary>Set on each successful login; null until the user has signed in at least once.</summary>
+    public DateTimeOffset? LastLoginDateUtc { get; set; }
 
     public User? Parent { get; set; }
     public Avatar? Avatar { get; set; }

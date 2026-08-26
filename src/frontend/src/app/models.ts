@@ -650,6 +650,24 @@ export interface GeneratedStudyPlan {
   weeks: SaveWeeklyStudyPlanWeek[];
 }
 
+export interface GeneratedAssessmentQuestion {
+  prompt: string;
+  questionType: string;
+  options: string[];
+  correctOption: string;
+  correctAnswer: string;
+  points: number;
+  sortOrder: number;
+}
+
+export interface GeneratedAssessmentDraft {
+  kind: string;
+  title: string;
+  description: string;
+  questions: GeneratedAssessmentQuestion[];
+  questionIds: string[];
+}
+
 export interface TeacherPayrollRow {
   teacherId: string;
   teacherName: string;
@@ -688,6 +706,22 @@ export interface AccountReport {
   totalSubscriptions: number;
   totalOtherExpenses: number;
   netAmount: number;
+}
+
+export interface AdminLoginDashboardDay {
+  date: string;
+  teachers: number;
+  parents: number;
+  students: number;
+}
+
+export interface AdminLoginDashboard {
+  fromDate: string;
+  toDate: string;
+  teacherCount: number;
+  parentCount: number;
+  studentCount: number;
+  days: AdminLoginDashboardDay[];
 }
 
 export interface TuitionPayment {

@@ -44,6 +44,9 @@ public sealed class LoginCommandHandler(
             throw new InvalidOperationException("Invalid email, mobile, or password.");
         }
 
+        user.LastLoginDateUtc = DateTimeOffset.UtcNow;
+        await dbContext.SaveChangesAsync(cancellationToken);
+
         return new AuthResponse(
             jwtTokenService.CreateToken(user),
             RegisterCommandHandler.ToDto(user));

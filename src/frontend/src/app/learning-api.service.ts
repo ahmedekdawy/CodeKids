@@ -29,9 +29,11 @@ import {
   WeeklyStudyPlan,
   SaveWeeklyStudyPlanWeek,
   GeneratedStudyPlan,
+  GeneratedAssessmentDraft,
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
+  AdminLoginDashboard,
   TuitionPayment,
   OtherExpense,
   Lesson,
@@ -443,6 +445,19 @@ export class LearningApiService {
     return this.http.post<GeneratedStudyPlan>(`${this.baseUrl}/study-plans/generate`, payload);
   }
 
+  generateAssessment(payload: {
+    kind: 'Quiz' | 'Exam' | 'Assignment';
+    courseId?: string | null;
+    classroomId?: string | null;
+    unitIds?: string[] | null;
+    lessonIds?: string[] | null;
+    questionCount?: number;
+    questionType?: string;
+    language?: string;
+  }): Observable<GeneratedAssessmentDraft> {
+    return this.http.post<GeneratedAssessmentDraft>(`${this.baseUrl}/assessments/generate`, payload);
+  }
+
   deleteStudyPlan(planId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/study-plans/${planId}`);
   }
@@ -502,6 +517,18 @@ export class LearningApiService {
     params.set('toDate', filters.toDate);
     return this.http.get<AccountReport>(
       `${this.baseUrl}/admin/account-report?${params.toString()}`
+    );
+  }
+
+  getAdminLoginDashboard(filters: {
+    fromDate: string;
+    toDate: string;
+  }): Observable<AdminLoginDashboard> {
+    const params = new URLSearchParams();
+    params.set('fromDate', filters.fromDate);
+    params.set('toDate', filters.toDate);
+    return this.http.get<AdminLoginDashboard>(
+      `${this.baseUrl}/admin/dashboard/logins?${params.toString()}`
     );
   }
 

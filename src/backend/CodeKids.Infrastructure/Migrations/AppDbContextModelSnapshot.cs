@@ -1452,6 +1452,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
+                    b.Property<int?>("GradeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("NameEn")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -1462,7 +1465,15 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<string>("SourceTocUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<int>("StageId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TermId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
@@ -1470,13 +1481,94 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<string>("TrackCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("TrackName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("Variants")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GradeId");
 
                     b.HasIndex("StageId");
 
                     b.HasIndex("Code", "StageId");
 
+                    b.HasIndex("GradeId", "TermId", "Code", "TrackCode");
+
                     b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectId", "SortOrder");
+
+                    b.ToTable("SubjectUnits");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnitLesson", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubjectUnitId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubjectUnitId", "SortOrder");
+
+                    b.ToTable("SubjectUnitLessons");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
@@ -1828,6 +1920,9 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
 
+                    b.Property<DateTimeOffset?>("LastLoginDateUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("MobilePhone")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -1903,6 +1998,8 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique()
                         .HasFilter("\"Email\" <> ''");
+
+                    b.HasIndex("LastLoginDateUtc");
 
                     b.HasIndex("MobilePhone")
                         .IsUnique()
@@ -2795,13 +2892,42 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.Grade", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
                         .WithMany("Subjects")
                         .HasForeignKey("StageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Grade");
+
                     b.Navigation("Stage");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnit", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Subject", "Subject")
+                        .WithMany("Units")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnitLesson", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.SubjectUnit", "Unit")
+                        .WithMany("Lessons")
+                        .HasForeignKey("SubjectUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
@@ -2858,6 +2984,16 @@ namespace CodeKids.Infrastructure.Migrations
             modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
                 {
                     b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
+                {
+                    b.Navigation("Units");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnit", b =>
+                {
+                    b.Navigation("Lessons");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.User", b =>

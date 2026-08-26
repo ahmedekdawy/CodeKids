@@ -112,7 +112,29 @@
         <app-searchable-select
           [(ngModel)]="quizCourseId"
           name="quizCourseId"
+          (ngModelChange)="onCourseChange()"
+          required
+          [emptyLabel]="'common.selectCourse' | t"
           [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <label>
+        {{ 'common.units' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="quizUnitIds"
+          name="quizUnitIds"
+          (ngModelChange)="onUnitsChange()"
+          [placeholder]="'common.selectUnits' | t"
+          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+        />
+      </label>
+      <label>
+        {{ 'common.lessons' | t }}
+        <app-searchable-multi-select
+          [(ngModel)]="quizLessonIds"
+          name="quizLessonIds"
+          [placeholder]="'common.selectLessons' | t"
+          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
         />
       </label>
       <label>
@@ -124,69 +146,71 @@
         />
       </label>
       <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
+      <label>
+        {{ 'teacher.ai.questionCount' | t }}
+        <input
+          type="number"
+          [(ngModel)]="quizQuestionCount"
+          name="quizQuestionCount"
+          min="1"
+          max="12"
+          (ngModelChange)="onQuestionCountChange()"
+        />
+      </label>
 
-      <div class="questions-head">
-        <h4>{{ 'teacher.quizzes.questions' | t }}</h4>
-        <button type="button" class="ghost-btn" (click)="addQuestion()">{{ 'teacher.quizzes.addQuestion' | t }}</button>
-      </div>
-
-      @for (question of questions; track $index; let qi = $index) {
-        <div class="question-card">
-          <div class="question-card-head">
-            <strong>{{ 'teacher.quizzes.questionNumber' | t:{ n: qi + 1 } }}</strong>
-            <app-icon-action-button
-              kind="delete"
-              variant="ghost"
-              [label]="'teacher.quizzes.removeQuestion' | t"
-              [disabled]="questions.length <= 1"
-              (action)="removeQuestion(qi)"
-            />
-          </div>
-
-          <label>
-            {{ 'teacher.quizzes.question' | t }}
-            <input [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" required />
-          </label>
-
-          <div class="options-editor">
-            <div class="options-head">
-              <h4>{{ 'teacher.quizzes.options' | t }}</h4>
-              <button type="button" class="ghost-btn" (click)="addOption(qi)">{{ 'common.addOption' | t }}</button>
-            </div>
-            @for (opt of question.options; track $index; let oi = $index) {
-              <div class="option-row">
-                <span class="option-key">{{ optionLabel(oi) }}</span>
-                <input
-                  [(ngModel)]="opt.text"
-                  [name]="'quizOpt-' + qi + '-' + oi"
-                  [placeholder]="'common.optionText' | t"
-                  (ngModelChange)="onOptionTextChange(question)"
-                />
-                <app-icon-action-button
-                  kind="delete"
-                  variant="ghost"
-                  [label]="'common.removeOption' | t"
-                  [disabled]="question.options.length <= 2"
-                  (action)="removeOption(qi, oi)"
-                />
-              </div>
-            }
-
-            <label>
-              {{ 'common.correctAnswer' | t }}
-              <app-searchable-select
-                [(ngModel)]="question.correct"
-                [name]="'quizCorrect-' + qi"
-                required
-                [emptyLabel]="'common.selectCorrect' | t"
-                [options]="filledOptions(question).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+      <div class="questions-group">
+        @for (question of questions; track $index; let qi = $index) {
+          <div class="question-card">
+            <div class="question-card-head">
+              <strong>{{ 'teacher.quizzes.questionNumber' | t:{ n: qi + 1 } }}</strong>
+              <app-icon-action-button
+                kind="delete"
+                variant="ghost"
+                [label]="'teacher.quizzes.removeQuestion' | t"
+                [disabled]="questions.length <= 1"
+                (action)="removeQuestion(qi)"
               />
+            </div>
+            <label class="question-prompt">
+              {{ 'teacher.quizzes.question' | t }}
+              <textarea [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" rows="2" required></textarea>
             </label>
+            <div class="options-editor">
+              @for (opt of question.options; track $index; let oi = $index) {
+                <label>
+                  {{ optionLabel(oi) }}
+                  <input
+                    [(ngModel)]="opt.text"
+                    [name]="'quizOpt-' + qi + '-' + oi"
+                    [placeholder]="'common.optionText' | t"
+                    (ngModelChange)="onOptionTextChange(question)"
+                  />
+                </label>
+              }
+              <label>
+                {{ 'common.correctAnswer' | t }}
+                <app-searchable-select
+                  [(ngModel)]="question.correct"
+                  [name]="'quizCorrect-' + qi"
+                  required
+                  [emptyLabel]="'common.selectCorrect' | t"
+                  [options]="filledOptions(question).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+                />
+              </label>
+            </div>
           </div>
-        </div>
-      }
-
-      <button type="submit">{{ 'teacher.quizzes.create' | t }}</button>
+        }
+      </div>
+      <div class="form-actions">
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="generating() || !quizCourseId"
+          (click)="generate()">
+          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+        </button>
+        <button type="submit">{{ 'teacher.quizzes.create' | t }}</button>
+      </div>
     </form>
   </section>
 </div>

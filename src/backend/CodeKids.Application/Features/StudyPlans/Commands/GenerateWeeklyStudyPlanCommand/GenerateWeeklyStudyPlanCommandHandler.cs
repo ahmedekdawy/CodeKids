@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -30,6 +31,7 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
             .Include(x => x.Lessons)
             .FirstOrDefaultAsync(x => x.Id == command.CourseId, cancellationToken)
             ?? throw new InvalidOperationException("Course not found.");
+        await CourseOutlineResolver.AttachFallbackUnitsAsync(dbContext, course, cancellationToken);
 
         var grade = course.Grade is int gradeId
             ? await dbContext.Grades.AsNoTracking().FirstOrDefaultAsync(x => x.Id == gradeId, cancellationToken)

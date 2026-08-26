@@ -66,6 +66,10 @@ export const AR: Record<string, string> = {
   'common.selectClassroom': 'اختر الفصل',
   'common.selectCourse': 'اختر المادة',
   'common.selectUnit': 'اختر الوحدة',
+  'common.selectUnits': 'اختر الوحدات',
+  'common.selectLessons': 'اختر الدروس',
+  'common.units': 'الوحدات',
+  'common.lessons': 'الدروس',
   'common.none': 'لا يوجد',
   'common.unassigned': 'غير معيّن',
   'common.name': 'الاسم',
@@ -76,6 +80,7 @@ export const AR: Record<string, string> = {
   'common.teacher': 'المعلم',
   'common.date': 'التاريخ',
   'common.teachers': 'المعلمون',
+  'common.parents': 'أولياء الأمور',
   'common.students': 'الطلاب',
   'common.student': 'الطالب',
   'common.parent': 'ولي الأمر',
@@ -174,6 +179,7 @@ export const AR: Record<string, string> = {
   'nav.teacher.review': 'المراجعة',
   'nav.teacher.students': 'الطلاب',
 
+  'nav.admin.dashboard': 'لوحة التحكم',
   'nav.admin.admins': 'المديرون',
   'nav.admin.teachers': 'المعلمون',
   'nav.admin.parents': 'أولياء الأمور',
@@ -722,6 +728,17 @@ export const AR: Record<string, string> = {
   'admin.payroll.exported': 'تم تنزيل صورة التقرير.',
   'admin.payroll.exportFailed': 'تعذّر تصدير صورة التقرير.',
 
+  'admin.dashboard.title': 'لوحة الدخول',
+  'admin.dashboard.subtitle':
+    'عدد المعلمين وأولياء الأمور والطلاب الذين كان آخر دخول لهم ضمن الفترة المحددة. الافتراضي هو الشهر الحالي.',
+  'admin.dashboard.dateFrom': 'من',
+  'admin.dashboard.dateTo': 'إلى',
+  'admin.dashboard.graphTitle': 'عمليات الدخول حسب اليوم',
+  'admin.dashboard.graphHint': 'كل مجموعة أعمدة تمثل يوماً: المعلمون وأولياء الأمور والطلاب الذين كان آخر دخول لهم في ذلك اليوم.',
+  'admin.dashboard.noLogins': 'لا توجد عمليات دخول في هذه الفترة بعد.',
+  'admin.dashboard.dateRequired': 'اختر تاريخ البداية والنهاية.',
+  'admin.dashboard.loadFailed': 'تعذّر تحميل لوحة الدخول.',
+
   'admin.accountReport.title': 'تقرير الحساب',
   'admin.accountReport.subtitle':
     'إجمالي الاشتراكات ومرتبات المعلمين والمصروفات الأخرى في الفترة المحددة. الصافي = الاشتراكات − المرتبات − المصروفات الأخرى.',
@@ -953,7 +970,7 @@ export const AR: Record<string, string> = {
   'admin.assign.coursesForStage': 'قائمة المواد مقتصرة على هذه المرحلة.',
   'admin.assign.coursesForAll': 'عرض المواد لجميع الصفوف والمراحل.',
   'admin.assign.noCoursesForGrade': 'لا توجد مواد لهذا صف الفصل.',
-  'admin.assign.noCoursesForFilter': 'لا توجد مواد.',
+  'admin.assign.noCoursesForFilter': 'لا توجد مواد لهذا الصف.',
   'admin.assign.setGradeFirst': 'عيّن صفًا للفصل أولًا لتحميل المواد المطابقة.',
   'admin.assign.gradeRequired': 'يجب أن يكون للفصل صف دراسي قبل تعيين المواد.',
   'admin.assign.courseGradeMismatch': 'مادة أو أكثر لا تطابق المرحلة المحددة.',
@@ -1010,6 +1027,15 @@ export const AR: Record<string, string> = {
   'teacher.assignments.created': 'تم إنشاء الواجب.',
   'teacher.assignments.createFailed': 'تعذّر إنشاء الواجب.',
 
+  'teacher.ai.generate': 'توليد بالذكاء الاصطناعي',
+  'teacher.ai.generating': 'جاري التوليد…',
+  'teacher.ai.generated': 'تم توليد المسودة. راجعها ثم احفظ.',
+  'teacher.ai.generateFailed': 'تعذّر التوليد بالذكاء الاصطناعي.',
+  'teacher.ai.needCourse': 'اختر المادة أولاً.',
+  'teacher.ai.needClassroom': 'اختر الفصل أولاً.',
+  'teacher.ai.needScope': 'اختر المادة، أو وحدات من المادة المختارة، أو دروس من وحدة مختارة.',
+  'teacher.ai.questionCount': 'عدد الأسئلة',
+
   'teacher.review.title': 'مراجعة الإجابات',
   'teacher.review.subtitle': 'تحميل تسليمات الواجبات وتقييم إجابات الطلاب.',
   'teacher.review.load': 'تحميل التسليمات',
@@ -1032,6 +1058,7 @@ export const AR: Record<string, string> = {
   'teacher.exams.required': 'العنوان والفصل وسؤال واحد على الأقل مطلوبة.',
   'teacher.exams.created': 'تم إنشاء الامتحان. يمكن للطلاب أخذه من الصفحة الرئيسية.',
   'teacher.exams.createFailed': 'تعذّر إنشاء الامتحان.',
+  'teacher.exams.aiGenerated': 'أُضيفت الأسئلة إلى البنك وتم تحديدها. راجعها ثم أنشئ الامتحان.',
   'teacher.exams.loadAttemptsFailed': 'تعذّر تحميل المحاولات.',
 
   'teacher.quizzes.title': 'الاختبارات',
@@ -1343,6 +1370,7 @@ export const AR: Record<string, string> = {
   'api.errors.studyPlan.duplicate': 'توجد خطة دراسية مسبقاً لهذه المادة وتاريخ البداية.',
   'api.errors.studyPlan.courseNotAssigned': 'هذه المادة غير معيّنة لهذا المعلم.',
   'api.errors.studyPlan.generateFailed': 'تعذّر توليد الخطة الدراسية.',
+  'api.errors.assessment.generateFailed': 'تعذّر توليد أسئلة التقييم.',
 
   'api.feedback.stepNotFound': 'لم نجد خطوة التحدي هذه.',
   'api.feedback.stepIncorrect': 'ليس بعد. حاول مطابقة المثال بعناية.',

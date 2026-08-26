@@ -11,6 +11,8 @@ public interface IAppDbContext
     DbSet<Stage> Stages { get; }
     DbSet<Grade> Grades { get; }
     DbSet<Subject> Subjects { get; }
+    DbSet<SubjectUnit> SubjectUnits { get; }
+    DbSet<SubjectUnitLesson> SubjectUnitLessons { get; }
     DbSet<CourseUnit> CourseUnits { get; }
     DbSet<Lesson> Lessons { get; }
     DbSet<LessonStep> LessonSteps { get; }

@@ -31,6 +31,12 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
             .ThenBy(x => x.TrackName)
             .ToListAsync(cancellationToken);
 
-        return courses.Select(course => CourseDtoMapper.Map(course, query.IncludeContent)).ToList();
+        if (!query.IncludeContent)
+        {
+            return courses.Select(course => CourseDtoMapper.Map(course, includeContent: false)).ToList();
+        }
+
+        var outlines = await CourseOutlineResolver.ResolveManyAsync(dbContext, courses, cancellationToken);
+        return courses.Select(course => CourseDtoMapper.Map(course, query.IncludeContent, outlines[course.Id])).ToList();
     }
 }

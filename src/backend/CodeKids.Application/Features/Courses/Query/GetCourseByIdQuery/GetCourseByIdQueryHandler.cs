@@ -22,6 +22,12 @@ public sealed class GetCourseByIdQueryHandler(IAppDbContext dbContext)
             dbContext, coursesQuery, query.UserId, query.Role, cancellationToken);
 
         var course = await coursesQuery.FirstOrDefaultAsync(cancellationToken);
-        return course is null ? null : CourseDtoMapper.Map(course);
+        if (course is null)
+        {
+            return null;
+        }
+
+        var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
+        return CourseDtoMapper.Map(course, includeContent: true, outline);
     }
 }
