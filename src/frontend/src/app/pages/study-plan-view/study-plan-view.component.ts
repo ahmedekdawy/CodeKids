@@ -9,6 +9,7 @@ import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component
 import { StudyPlanViewerComponent } from '../../shared/study-plan-sheet/study-plan-viewer.component';
 import { normalizeStudyPlans } from '../../shared/study-plan-sheet/study-plan.util';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 
 @Component({
   selector: 'app-study-plan-view',
@@ -17,7 +18,8 @@ import { TranslatePipe } from '../../shared/translate.pipe';
     TranslatePipe,
     SiteBrandComponent,
     LanguageSwitcherComponent,
-    StudyPlanViewerComponent
+    StudyPlanViewerComponent,
+    ApiBusyIndicatorComponent
   ],
   templateUrl: './study-plan-view.component.html',
   styleUrl: './study-plan-view.component.css'

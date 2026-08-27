@@ -7,10 +7,11 @@ import { CompleteStepResponse, Lesson, LessonStep, LessonVideoSummary } from '..
 import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 
 @Component({
   selector: 'app-lesson-play',
-  imports: [ReactiveFormsModule, RouterLink, ProtectedVideoPlayerComponent, StudentAskPanelComponent, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, ProtectedVideoPlayerComponent, StudentAskPanelComponent, TranslatePipe, ApiBusyIndicatorComponent],
   templateUrl: './lesson-play.component.html',
   styleUrl: './lesson-play.component.css'
 })

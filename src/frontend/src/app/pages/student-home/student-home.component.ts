@@ -11,6 +11,7 @@ import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
+import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 
 @Component({
   selector: 'app-student-home',
@@ -21,7 +22,8 @@ import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student
     TranslatePipe,
     LanguageSwitcherComponent,
     SiteBrandComponent,
-    StudentAskPanelComponent
+    StudentAskPanelComponent,
+    ApiBusyIndicatorComponent
   ],
   templateUrl: './student-home.component.html',
   styleUrl: './student-home.component.css'
