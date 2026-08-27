@@ -14,9 +14,6 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
         if (query.IncludeContent)
         {
             coursesQuery = coursesQuery
-                .Include(x => x.Units)
-                .Include(x => x.Lessons)
-                    .ThenInclude(x => x.Steps)
                 .Include(x => x.Quizzes)
                     .ThenInclude(x => x.Questions);
         }

@@ -31,8 +31,6 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Subject> Subjects => Set<Subject>();
     public DbSet<SubjectUnit> SubjectUnits => Set<SubjectUnit>();
     public DbSet<SubjectUnitLesson> SubjectUnitLessons => Set<SubjectUnitLesson>();
-    public DbSet<CourseUnit> CourseUnits => Set<CourseUnit>();
-    public DbSet<Lesson> Lessons => Set<Lesson>();
     public DbSet<LessonStep> LessonSteps => Set<LessonStep>();
     public DbSet<StudentProgress> StudentProgress => Set<StudentProgress>();
     public DbSet<Quiz> Quizzes => Set<Quiz>();
@@ -184,6 +182,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
             entity.Property(x => x.VerificationStatus).HasMaxLength(80).IsRequired();
             entity.HasIndex(x => new { x.SubjectId, x.SortOrder });
+            entity.Property(x => x.StudentAskEnabled);
             entity.HasMany(x => x.Lessons)
                 .WithOne(x => x.Unit)
                 .HasForeignKey(x => x.SubjectUnitId)
@@ -195,6 +194,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
             entity.HasIndex(x => new { x.SubjectUnitId, x.SortOrder });
+            entity.Property(x => x.StudentAskEnabled);
         });
 
         modelBuilder.Entity<Course>(entity =>
@@ -223,53 +223,16 @@ public class AppDbContext : DbContext, IAppDbContext
                 .HasForeignKey(x => x.ExternalSubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasIndex(x => x.ExternalSubjectId);
-            entity.HasMany(x => x.Units)
-                .WithOne(x => x.Course)
-                .HasForeignKey(x => x.CourseId)
-                .OnDelete(DeleteBehavior.Cascade);
-            entity.HasMany(x => x.Lessons)
-                .WithOne(x => x.Course)
-                .HasForeignKey(x => x.CourseId)
-                .OnDelete(DeleteBehavior.Cascade);
             entity.HasMany(x => x.Quizzes)
                 .WithOne(x => x.Course)
                 .HasForeignKey(x => x.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<CourseUnit>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
-            entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
-            entity.Property(x => x.VerificationStatus).HasMaxLength(80).IsRequired();
-            entity.HasIndex(x => new { x.CourseId, x.SortOrder });
-            entity.HasMany(x => x.Lessons)
-                .WithOne(x => x.Unit)
-                .HasForeignKey(x => x.UnitId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<Lesson>(entity =>
-        {
-            entity.HasKey(x => x.Id);
-            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
-            entity.Property(x => x.Theme).HasMaxLength(60).IsRequired();
-            entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
-            entity.HasIndex(x => x.UnitId);
-            entity.HasMany(x => x.Steps)
-                .WithOne(x => x.Lesson)
-                .HasForeignKey(x => x.LessonId)
-                .OnDelete(DeleteBehavior.Cascade);
-            entity.HasMany(x => x.Videos)
-                .WithOne(x => x.Lesson)
-                .HasForeignKey(x => x.LessonId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<LessonStep>(entity =>
         {
             entity.HasKey(x => x.Id);
+            entity.HasIndex(x => x.LessonId);
             entity.Property(x => x.Title).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Prompt).HasMaxLength(500).IsRequired();
             entity.Property(x => x.ExpectedAnswer).HasMaxLength(120).IsRequired();
@@ -702,10 +665,7 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(x => x.Lesson)
-                .WithMany()
-                .HasForeignKey(x => x.LessonId)
-                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(x => x.LessonId);
             entity.HasOne(x => x.CreatedBy)
                 .WithMany()
                 .HasForeignKey(x => x.CreatedByUserId)
@@ -759,10 +719,7 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.BankQuestionId)
                 .OnDelete(DeleteBehavior.SetNull);
-            entity.HasOne(x => x.Lesson)
-                .WithMany()
-                .HasForeignKey(x => x.LessonId)
-                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(x => x.LessonId);
             entity.HasOne(x => x.Parent)
                 .WithMany(x => x.Children)
                 .HasForeignKey(x => x.ParentExamQuestionId)
@@ -812,10 +769,7 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).HasMaxLength(160).IsRequired();
-            entity.HasOne(x => x.Lesson)
-                .WithMany(x => x.Videos)
-                .HasForeignKey(x => x.LessonId)
-                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(x => x.LessonId);
             entity.HasOne(x => x.MediaAsset)
                 .WithMany()
                 .HasForeignKey(x => x.MediaAssetId)
@@ -834,10 +788,7 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne(x => x.Lesson)
-                .WithMany()
-                .HasForeignKey(x => x.LessonId)
-                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(x => x.LessonId);
         });
 
         modelBuilder.Entity<WhatsAppReportLog>(entity =>

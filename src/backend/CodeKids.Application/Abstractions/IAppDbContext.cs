@@ -13,8 +13,6 @@ public interface IAppDbContext
     DbSet<Subject> Subjects { get; }
     DbSet<SubjectUnit> SubjectUnits { get; }
     DbSet<SubjectUnitLesson> SubjectUnitLessons { get; }
-    DbSet<CourseUnit> CourseUnits { get; }
-    DbSet<Lesson> Lessons { get; }
     DbSet<LessonStep> LessonSteps { get; }
     DbSet<StudentProgress> StudentProgress { get; }
     DbSet<Quiz> Quizzes { get; }

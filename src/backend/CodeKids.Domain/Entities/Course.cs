@@ -35,7 +35,5 @@ public class Course : TenantEntity
     public bool StudentAskEnabled { get; set; }
     public Subject? ExternalSubject { get; set; }
     public Stage? Stage { get; set; }
-    public List<CourseUnit> Units { get; set; } = [];
-    public List<Lesson> Lessons { get; set; } = [];
     public List<Quiz> Quizzes { get; set; } = [];
 }

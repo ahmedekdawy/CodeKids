@@ -82,17 +82,15 @@ public static class StudentAskEndpoints
         }
         else if (normalized == "unit")
         {
-            var unit = await dbContext.CourseUnits.AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+            var unit = await CourseOutlineResolver.FindUnitAsync(dbContext, id, cancellationToken)
                 ?? throw new InvalidOperationException("Unit not found.");
-            courseId = unit.CourseId;
+            courseId = unit.Course.Id;
         }
         else if (normalized == "lesson")
         {
-            var lesson = await dbContext.Lessons.AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+            var lesson = await CourseOutlineResolver.FindLessonAsync(dbContext, id, cancellationToken)
                 ?? throw new InvalidOperationException("Lesson not found.");
-            courseId = lesson.CourseId;
+            courseId = lesson.Course.Id;
         }
         else
         {

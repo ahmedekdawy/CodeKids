@@ -25,7 +25,6 @@ public class LessonVideo : TenantEntity
     public int SortOrder { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
-    public Lesson? Lesson { get; set; }
     public MediaAsset? MediaAsset { get; set; }
 }
 
@@ -44,7 +43,6 @@ public class VideoWatchSession : TenantEntity
 
     public MediaAsset? MediaAsset { get; set; }
     public User? Student { get; set; }
-    public Lesson? Lesson { get; set; }
 }
 
 public class WhatsAppReportLog : TenantEntity

@@ -16,29 +16,21 @@ public sealed class CreateCourseUnitCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Unit title is required.");
         }
 
-        _ = await dbContext.Courses.AsNoTracking()
+        var course = await dbContext.Courses
                 .FirstOrDefaultAsync(x => x.Id == command.CourseId, cancellationToken)
             ?? throw new InvalidOperationException("Course not found.");
+        var subjects = await CourseOutlineResolver.LoadRelatedSubjectsAsync(dbContext, course, cancellationToken);
+        var subject = subjects.FirstOrDefault()
+            ?? throw new InvalidOperationException("Course has no linked subject catalog.");
 
-        var unit = new CourseUnit
+        var unit = new SubjectUnit
         {
-            Id = Guid.NewGuid(),
-            CourseId = command.CourseId,
-            Title = title,
-            Description = (command.Description ?? string.Empty).Trim(),
-            SortOrder = command.SortOrder
+            SubjectId = subject.Id,
+            Title = CourseOutlineResolver.Clamp(title, 300),
+            SortOrder = Math.Max(1, command.SortOrder)
         };
-
-        dbContext.CourseUnits.Add(unit);
+        dbContext.SubjectUnits.Add(unit);
         await dbContext.SaveChangesAsync(cancellationToken);
-
-        return new CourseUnitDto(
-            unit.Id,
-            unit.CourseId,
-            unit.Title,
-            unit.Description,
-            unit.SortOrder,
-            [],
-            StudentAskEnabled: unit.StudentAskEnabled);
+        return CourseOutlineResolver.MapUnit(course, subject, unit);
     }
 }

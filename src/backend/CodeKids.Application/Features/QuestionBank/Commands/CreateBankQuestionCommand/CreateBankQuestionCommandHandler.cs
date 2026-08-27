@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -15,9 +16,9 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
 
         if (command.LessonId is Guid lessonId)
         {
-            var lessonOk = await dbContext.Lessons.AnyAsync(
-                x => x.Id == lessonId && x.CourseId == command.CourseId, cancellationToken);
-            if (!lessonOk)
+            var lesson = await CourseOutlineResolver.FindLessonAsync(dbContext, lessonId, cancellationToken)
+                ?? throw new InvalidOperationException("Lesson not found for this course.");
+            if (lesson.Course.Id != command.CourseId)
             {
                 throw new InvalidOperationException("Lesson not found for this course.");
             }
@@ -190,7 +191,6 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
         var question = await dbContext.BankQuestions
             .AsNoTracking()
             .Include(x => x.Course)
-            .Include(x => x.Lesson)
             .Include(x => x.Children)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         return question is null ? null : Map(question);
@@ -204,7 +204,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             q.CourseId,
             q.Course?.Title ?? "Course",
             q.LessonId,
-            q.Lesson?.Title,
+            null,
             q.CreatedByUserId,
             q.ParentQuestionId,
             q.QuestionType.ToString(),

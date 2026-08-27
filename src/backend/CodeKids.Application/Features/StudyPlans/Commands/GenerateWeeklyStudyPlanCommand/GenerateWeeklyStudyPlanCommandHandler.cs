@@ -26,12 +26,9 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         var course = await dbContext.Courses
             .AsNoTracking()
             .Include(x => x.Stage)
-            .Include(x => x.Units)
-                .ThenInclude(x => x.Lessons)
-            .Include(x => x.Lessons)
             .FirstOrDefaultAsync(x => x.Id == command.CourseId, cancellationToken)
             ?? throw new InvalidOperationException("Course not found.");
-        await CourseOutlineResolver.AttachFallbackUnitsAsync(dbContext, course, cancellationToken);
+        var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
 
         var grade = course.Grade is int gradeId
             ? await dbContext.Grades.AsNoTracking().FirstOrDefaultAsync(x => x.Id == gradeId, cancellationToken)
@@ -48,7 +45,7 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         {
             var json = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(arabic),
-                BuildUserPrompt(course, grade, stage, weeks, arabic),
+                BuildUserPrompt(course, grade, stage, weeks, arabic, outline),
                 cancellationToken);
             draft = ParseDraft(json);
         }
@@ -63,11 +60,11 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
 
         if (draft?.Weeks is null || draft.Weeks.Count == 0)
         {
-            draft = BuildFallbackDraft(course, grade, weeks.Count, arabic);
+            draft = BuildFallbackDraft(course, grade, weeks.Count, arabic, outline);
         }
         else
         {
-            draft = ReplaceGenericTopics(draft, course, grade, weeks.Count, arabic);
+            draft = ReplaceGenericTopics(draft, course, grade, weeks.Count, arabic, outline);
         }
 
         return MapToResult(weeks, draft, arabic);
@@ -119,14 +116,15 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         Grade? grade,
         Stage? stage,
         IReadOnlyList<(int WeekNumber, DateOnly FromDate, DateOnly ToDate)> weeks,
-        bool arabic)
+        bool arabic,
+        CourseContentOutline content)
     {
         var academicYear = AcademicYearLabel(weeks[0].FromDate, weeks[^1].ToDate);
         var gradeName = GradeLabel(grade, course.Grade, arabic);
         var stageName = StageLabel(stage, course.StageId, arabic);
         var termName = TermLabel(course.TermId, arabic);
         var schoolType = SchoolTypeLabel(course.SchoolType, arabic);
-        var outline = CollectCurriculum(course);
+        var outline = CollectCurriculum(content);
         var sb = new StringBuilder();
         if (arabic)
         {
@@ -225,51 +223,22 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         }
     }
 
-    private static IReadOnlyList<CurriculumUnit> CollectCurriculum(Course course)
+    private static IReadOnlyList<CurriculumUnit> CollectCurriculum(CourseContentOutline content)
     {
-        var units = new List<CurriculumUnit>();
-        var assignedLessonIds = new HashSet<Guid>();
-        foreach (var unit in course.Units.OrderBy(x => x.SortOrder).ThenBy(x => x.Title))
-        {
-            var lessons = unit.Lessons
-                .OrderBy(x => x.SortOrder)
-                .ThenBy(x => x.Title)
-                .Select(lesson => new CurriculumLesson(
-                    ResolveName(lesson.Title, lesson.Description),
-                    lesson.Description))
-                .Where(lesson => !string.IsNullOrWhiteSpace(lesson.Title))
-                .ToList();
-            foreach (var lesson in unit.Lessons)
-            {
-                assignedLessonIds.Add(lesson.Id);
-            }
-
-            if (string.IsNullOrWhiteSpace(unit.Title) && lessons.Count == 0)
-            {
-                continue;
-            }
-
-            units.Add(new CurriculumUnit(
-                ResolveName(unit.Title, unit.Description),
-                unit.Description,
-                lessons));
-        }
-
-        var looseLessons = course.Lessons
-            .Where(lesson => lesson.UnitId is null || !assignedLessonIds.Contains(lesson.Id))
+        return content.Units
             .OrderBy(x => x.SortOrder)
             .ThenBy(x => x.Title)
-            .Select(lesson => new CurriculumLesson(
-                ResolveName(lesson.Title, lesson.Description),
-                lesson.Description))
-            .Where(lesson => !string.IsNullOrWhiteSpace(lesson.Title))
+            .Select(unit => new CurriculumUnit(
+                unit.Title,
+                unit.Description,
+                unit.Lessons
+                    .OrderBy(x => x.SortOrder)
+                    .ThenBy(x => x.Title)
+                    .Select(lesson => new CurriculumLesson(lesson.Title, lesson.Description))
+                    .Where(lesson => !string.IsNullOrWhiteSpace(lesson.Title))
+                    .ToList()))
+            .Where(unit => !string.IsNullOrWhiteSpace(unit.Title) || unit.Lessons.Count > 0)
             .ToList();
-        if (looseLessons.Count > 0)
-        {
-            units.Add(new CurriculumUnit(string.Empty, null, looseLessons));
-        }
-
-        return units;
     }
 
     private static string AcademicYearLabel(DateOnly from, DateOnly to) =>
@@ -411,10 +380,15 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         return from >= 0 && to > from ? text[from..(to + 1)] : text;
     }
 
-    private static DraftPlan BuildFallbackDraft(Course course, Grade? grade, int weekCount, bool arabic)
+    private static DraftPlan BuildFallbackDraft(
+        Course course,
+        Grade? grade,
+        int weekCount,
+        bool arabic,
+        CourseContentOutline content)
     {
         var topics = new List<(string Title, bool Highlight)>();
-        foreach (var unit in CollectCurriculum(course))
+        foreach (var unit in CollectCurriculum(content))
         {
             if (unit.Lessons.Count == 0 && !string.IsNullOrWhiteSpace(unit.Title) && !IsNumberedPlaceholder(unit.Title))
             {
@@ -472,9 +446,10 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         Course course,
         Grade? grade,
         int weekCount,
-        bool arabic)
+        bool arabic,
+        CourseContentOutline content)
     {
-        var fallback = BuildFallbackDraft(course, grade, weekCount, arabic);
+        var fallback = BuildFallbackDraft(course, grade, weekCount, arabic, content);
         var fallbackByWeek = (fallback.Weeks ?? [])
             .Where(week => week.WeekNumber > 0)
             .GroupBy(week => week.WeekNumber)

@@ -16,27 +16,7 @@ internal static class CourseDtoMapper
                 Array.Empty<CourseQuizDto>());
         }
 
-        var content = outline ?? new CourseContentOutline(
-            course.Units
-                .OrderBy(x => x.SortOrder)
-                .ThenBy(x => x.Title)
-                .Select(unit => new CourseUnitDto(
-                    unit.Id,
-                    unit.CourseId,
-                    unit.Title,
-                    unit.Description,
-                    unit.SortOrder,
-                    course.Lessons
-                        .Where(l => l.UnitId == unit.Id)
-                        .OrderBy(l => l.SortOrder)
-                        .Select(MapLesson)
-                        .ToList(),
-                    (int?)unit.TermId,
-                    unit.VerificationStatus,
-                    unit.StudentAskEnabled))
-                .ToList(),
-            course.Lessons.OrderBy(x => x.SortOrder).Select(MapLesson).ToList());
-
+        var content = outline ?? new CourseContentOutline([], []);
         var quizzes = course.Quizzes
             .Select(quiz => new CourseQuizDto(
                 quiz.Id,
@@ -79,17 +59,4 @@ internal static class CourseDtoMapper
             course.Notes,
             course.Variants,
             course.StudentAskEnabled);
-
-    private static CourseLessonDto MapLesson(Lesson lesson) =>
-        new(
-            lesson.Id,
-            lesson.UnitId,
-            lesson.Title,
-            lesson.Theme,
-            lesson.Description,
-            lesson.Difficulty,
-            lesson.XpReward,
-            lesson.SortOrder,
-            lesson.Steps.Count,
-            lesson.StudentAskEnabled);
 }

@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -20,23 +21,27 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
         var lessonVideos = await dbContext.LessonVideos
             .AsNoTracking()
             .Include(x => x.MediaAsset)
-            .Include(x => x.Lesson)!.ThenInclude(l => l!.Course)
             .Where(x => isAdmin || x.MediaAsset!.UploadedByUserId == query.TeacherUserId)
             .OrderByDescending(x => x.CreatedAtUtc)
-            .Select(x => new TeacherLessonVideoDto(
+            .ToListAsync(cancellationToken);
+        var lessonIndex = await CourseOutlineResolver.IndexLessonsAsync(dbContext, cancellationToken);
+        var lessonVideoDtos = lessonVideos.Select(x =>
+        {
+            lessonIndex.TryGetValue(x.LessonId, out var found);
+            return new TeacherLessonVideoDto(
                 x.Id,
                 x.LessonId,
-                x.Lesson!.Title,
-                x.Lesson.CourseId,
-                x.Lesson.Course!.Title,
+                found.Lesson?.Title ?? "Lesson",
+                found.Course?.Id ?? Guid.Empty,
+                found.Course?.Title ?? "",
                 x.MediaAssetId,
                 x.Title,
                 x.MediaAsset!.FileName,
                 x.MediaAsset.SizeBytes,
                 x.MediaAsset.DurationSeconds,
                 x.SortOrder,
-                x.CreatedAtUtc))
-            .ToListAsync(cancellationToken);
+                x.CreatedAtUtc);
+        }).ToList();
 
         var solutionVideos = await dbContext.Assignments
             .AsNoTracking()
@@ -60,6 +65,6 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
                 x.SolutionVideo.CreatedAtUtc))
             .ToListAsync(cancellationToken);
 
-        return new TeacherVideoLibraryDto(lessonVideos, solutionVideos);
+        return new TeacherVideoLibraryDto(lessonVideoDtos, solutionVideos);
     }
 }

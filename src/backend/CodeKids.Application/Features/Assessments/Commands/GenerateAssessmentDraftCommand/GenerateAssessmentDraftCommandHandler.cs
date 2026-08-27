@@ -52,7 +52,8 @@ public sealed class GenerateAssessmentDraftCommandHandler(
     {
         var kind = ParseKind(command.Kind);
         var (course, _) = await ResolveCourseAsync(command, cancellationToken);
-        var scope = ResolveCurriculumScope(course, command.UnitIds, command.LessonIds);
+        var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
+        var scope = ResolveCurriculumScope(outline, command.UnitIds, command.LessonIds);
         var count = ClampCount(kind, command.QuestionCount);
         var arabic = IsArabic(command.Language);
 
@@ -61,7 +62,7 @@ public sealed class GenerateAssessmentDraftCommandHandler(
         {
             var json = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(kind, count, command.QuestionType, arabic),
-                BuildUserPrompt(kind, course, scope, count, command.QuestionType, arabic),
+                BuildUserPrompt(kind, course, outline, scope, count, command.QuestionType, arabic),
                 cancellationToken,
                 AssessmentSchema);
             draft = ParseDraft(json);
@@ -160,12 +161,8 @@ public sealed class GenerateAssessmentDraftCommandHandler(
         var course = await dbContext.Courses
             .AsNoTracking()
             .Include(x => x.Stage)
-            .Include(x => x.Units)
-                .ThenInclude(x => x.Lessons)
-            .Include(x => x.Lessons)
             .FirstOrDefaultAsync(x => x.Id == courseId, cancellationToken)
             ?? throw new InvalidOperationException("Course not found.");
-        await CourseOutlineResolver.AttachFallbackUnitsAsync(dbContext, course, cancellationToken);
         return course;
     }
 
@@ -244,15 +241,14 @@ public sealed class GenerateAssessmentDraftCommandHandler(
     }
 
     private static CurriculumScope ResolveCurriculumScope(
-        Course course,
+        CourseContentOutline outline,
         IReadOnlyList<Guid>? unitIds,
         IReadOnlyList<Guid>? lessonIds)
     {
         var requestedUnits = (unitIds ?? []).Where(id => id != Guid.Empty).Distinct().ToList();
         var requestedLessons = (lessonIds ?? []).Where(id => id != Guid.Empty).Distinct().ToList();
-        var courseUnits = course.Units.ToDictionary(x => x.Id);
-        var courseLessons = course.Lessons
-            .Concat(course.Units.SelectMany(unit => unit.Lessons))
+        var courseUnits = outline.Units.ToDictionary(x => x.Id);
+        var courseLessons = outline.Lessons
             .GroupBy(lesson => lesson.Id)
             .Select(group => group.First())
             .ToDictionary(x => x.Id);
@@ -286,6 +282,7 @@ public sealed class GenerateAssessmentDraftCommandHandler(
     private static string BuildUserPrompt(
         AssessmentKind kind,
         Course course,
+        CourseContentOutline outline,
         CurriculumScope scope,
         int count,
         string? preferredType,
@@ -327,20 +324,19 @@ public sealed class GenerateAssessmentDraftCommandHandler(
             }
         }
 
-        AppendCurriculum(sb, course, scope, arabic);
+        AppendCurriculum(sb, outline, scope, arabic);
         return sb.ToString();
     }
 
-    private static void AppendCurriculum(StringBuilder sb, Course course, CurriculumScope scope, bool arabic)
+    private static void AppendCurriculum(StringBuilder sb, CourseContentOutline outline, CurriculumScope scope, bool arabic)
     {
         var unitFilter = scope.UnitIds.Count > 0 ? scope.UnitIds.ToHashSet() : null;
         var lessonFilter = scope.LessonIds.Count > 0 ? scope.LessonIds.ToHashSet() : null;
-        var units = course.Units
+        var units = outline.Units
             .Where(unit => unitFilter is null || unitFilter.Contains(unit.Id))
             .OrderBy(x => x.SortOrder)
             .ThenBy(x => x.Title)
             .ToList();
-        var assigned = units.SelectMany(unit => unit.Lessons.Select(lesson => lesson.Id)).ToHashSet();
         if (arabic)
         {
             sb.AppendLine("الوحدات والدروس المطلوبة فقط:");
@@ -369,17 +365,6 @@ public sealed class GenerateAssessmentDraftCommandHandler(
             {
                 sb.AppendLine($"  - {lesson.Title}");
             }
-        }
-
-        foreach (var lesson in course.Lessons
-            .Where(lesson => lesson.UnitId is null || !assigned.Contains(lesson.Id))
-            .Where(lesson => lessonFilter is null || lessonFilter.Contains(lesson.Id))
-            .Where(lesson => unitFilter is null || lesson.UnitId is null || unitFilter.Contains(lesson.UnitId.Value))
-            .OrderBy(x => x.SortOrder)
-            .ThenBy(x => x.Title))
-        {
-            any = true;
-            sb.AppendLine($"- {lesson.Title}");
         }
 
         if (!any)

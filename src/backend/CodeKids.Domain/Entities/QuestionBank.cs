@@ -24,7 +24,6 @@ public class BankQuestion : TenantEntity
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public Course? Course { get; set; }
-    public Lesson? Lesson { get; set; }
     public User? CreatedBy { get; set; }
     public BankQuestion? Parent { get; set; }
     public List<BankQuestion> Children { get; set; } = [];
@@ -71,7 +70,6 @@ public class ExamQuestion : TenantEntity
 
     public Exam? Exam { get; set; }
     public BankQuestion? BankQuestion { get; set; }
-    public Lesson? Lesson { get; set; }
     public ExamQuestion? Parent { get; set; }
     public List<ExamQuestion> Children { get; set; } = [];
 }

@@ -1,6 +1,6 @@
-using CodeKids.Domain.Abstractions;
 using CodeKids.Application.Abstractions;
-using CodeKids.Application.Features.StudentAsk;
+using CodeKids.Domain.Abstractions;
+using CodeKids.Application.Features.Courses;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Lessons;
@@ -10,50 +10,31 @@ public sealed class GetLessonsQueryHandler(IAppDbContext dbContext)
 {
     public async Task<IReadOnlyList<LessonDto>> Handle(GetLessonsQuery query, CancellationToken cancellationToken)
     {
-        var lessonsQuery = dbContext.Lessons
-            .AsNoTracking()
-            .Include(x => x.Steps)
-            .Include(x => x.Videos)
-            .Include(x => x.Unit)
-            .Include(x => x.Course)
-            .AsQueryable();
-
+        var coursesQuery = dbContext.Courses.AsNoTracking().AsQueryable();
         if (query.CourseId is Guid courseId)
         {
-            lessonsQuery = lessonsQuery.Where(x => x.CourseId == courseId);
+            coursesQuery = coursesQuery.Where(x => x.Id == courseId);
         }
 
-        var lessons = await lessonsQuery
-            .OrderBy(x => x.SortOrder)
-            .ThenBy(x => x.Difficulty)
-            .ToListAsync(cancellationToken);
+        var courses = await coursesQuery.ToListAsync(cancellationToken);
+        var outlines = await CourseOutlineResolver.ResolveManyAsync(dbContext, courses, cancellationToken);
+        var result = new List<LessonDto>();
+        foreach (var course in courses)
+        {
+            var outline = outlines[course.Id];
+            foreach (var unit in outline.Units)
+            {
+                foreach (var lesson in unit.Lessons)
+                {
+                    result.Add(await CourseOutlineResolver.ToPlayableAsync(
+                        dbContext, course, lesson, unit.StudentAskEnabled, cancellationToken));
+                }
+            }
+        }
 
-        return lessons.Select(Map).ToList();
+        return result
+            .OrderBy(x => x.Difficulty)
+            .ThenBy(x => x.Title)
+            .ToList();
     }
-
-    internal static LessonDto Map(Domain.Entities.Lesson lesson) =>
-        new(
-            lesson.Id,
-            lesson.CourseId,
-            lesson.Title,
-            lesson.Theme,
-            lesson.Description,
-            lesson.Difficulty,
-            lesson.XpReward,
-            lesson.Steps
-                .OrderBy(step => step.StepNumber)
-                .Select(step => new LessonStepDto(step.Id, step.StepNumber, step.Title, step.Prompt))
-                .ToList(),
-            lesson.Videos
-                .OrderBy(v => v.SortOrder)
-                .ThenBy(v => v.CreatedAtUtc)
-                .Select(v => new LessonVideoSummaryDto(
-                    v.Id,
-                    v.MediaAssetId,
-                    v.Title,
-                    v.SortOrder,
-                    null))
-                .ToList(),
-            lesson.UnitId,
-            StudentAskAccess.IsEnabled(lesson.Course, lesson.Unit, lesson));
 }

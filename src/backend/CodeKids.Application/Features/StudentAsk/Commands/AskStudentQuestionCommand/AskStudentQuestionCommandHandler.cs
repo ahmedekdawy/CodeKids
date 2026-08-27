@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Classrooms;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -51,11 +52,10 @@ public sealed class AskStudentQuestionCommandHandler(
             throw new InvalidOperationException("You do not have access to this course.");
         }
 
-        var enabled = lesson is not null
-            ? StudentAskAccess.IsEnabled(course, unit, lesson)
-            : unit is not null
-                ? StudentAskAccess.IsEnabled(course, unit)
-                : StudentAskAccess.IsEnabled(course);
+        var enabled = StudentAskAccess.IsEnabled(
+            course,
+            unit?.StudentAskEnabled ?? false,
+            lesson?.StudentAskEnabled ?? false);
 
         if (!enabled)
         {
@@ -75,7 +75,7 @@ public sealed class AskStudentQuestionCommandHandler(
         {
             throw;
         }
-        catch
+        catch(Exception ex)
         {
             return OutOfScope();
         }
@@ -83,66 +83,50 @@ public sealed class AskStudentQuestionCommandHandler(
         return ParseAnswer(raw) ?? OutOfScope();
     }
 
-    private async Task<(Course Course, CourseUnit? Unit, Lesson? Lesson, string Context)> ResolveScopeAsync(
+    private async Task<(Course Course, CourseUnitDto? Unit, CourseLessonDto? Lesson, string Context)> ResolveScopeAsync(
         AskStudentQuestionCommand command,
         CancellationToken cancellationToken)
     {
         if (command.LessonId is Guid lessonId)
         {
-            var lesson = await dbContext.Lessons
-                    .AsNoTracking()
-                    .Include(x => x.Course)
-                    .Include(x => x.Unit)
-                    .Include(x => x.Steps)
-                    .FirstOrDefaultAsync(x => x.Id == lessonId, cancellationToken)
+            var found = await CourseOutlineResolver.FindLessonAsync(dbContext, lessonId, cancellationToken)
                 ?? throw new InvalidOperationException("Lesson not found.");
-
-            if (command.CourseId is Guid courseId && courseId != lesson.CourseId)
+            var unitDto = CourseOutlineResolver.MapUnit(found.Course, found.Subject, found.Unit);
+            var lessonDto = CourseOutlineResolver.MapLesson(found.Course, found.Subject, found.Unit, found.Lesson);
+            if (command.CourseId is Guid courseId && courseId != found.Course.Id)
             {
                 throw new InvalidOperationException("Lesson does not belong to the selected course.");
             }
 
-            if (command.UnitId is Guid unitId && lesson.UnitId != unitId)
+            if (command.UnitId is Guid unitId && lessonDto.UnitId != unitId)
             {
                 throw new InvalidOperationException("Lesson does not belong to the selected unit.");
             }
 
-            var course = lesson.Course ?? throw new InvalidOperationException("Course not found.");
-            return (course, lesson.Unit, lesson, BuildLessonContext(course, lesson.Unit, lesson));
+            return (found.Course, unitDto, lessonDto, await BuildLessonContextAsync(found.Course, unitDto, lessonDto, cancellationToken));
         }
 
         if (command.UnitId is Guid onlyUnitId)
         {
-            var unit = await dbContext.CourseUnits
-                    .AsNoTracking()
-                    .Include(x => x.Course)
-                    .Include(x => x.Lessons)
-                        .ThenInclude(x => x.Steps)
-                    .FirstOrDefaultAsync(x => x.Id == onlyUnitId, cancellationToken)
+            var found = await CourseOutlineResolver.FindUnitAsync(dbContext, onlyUnitId, cancellationToken)
                 ?? throw new InvalidOperationException("Unit not found.");
-
-            if (command.CourseId is Guid courseId && courseId != unit.CourseId)
+            var unitDto = CourseOutlineResolver.MapUnit(found.Course, found.Subject, found.Unit);
+            if (command.CourseId is Guid courseId && courseId != found.Course.Id)
             {
                 throw new InvalidOperationException("Unit does not belong to the selected course.");
             }
 
-            var course = unit.Course ?? throw new InvalidOperationException("Course not found.");
-            return (course, unit, null, BuildUnitContext(course, unit));
+            return (found.Course, unitDto, null, BuildUnitContext(found.Course, unitDto));
         }
 
         if (command.CourseId is Guid onlyCourseId)
         {
             var course = await dbContext.Courses
                     .AsNoTracking()
-                    .Include(x => x.Units)
-                        .ThenInclude(x => x.Lessons)
-                            .ThenInclude(x => x.Steps)
-                    .Include(x => x.Lessons)
-                        .ThenInclude(x => x.Steps)
                     .FirstOrDefaultAsync(x => x.Id == onlyCourseId, cancellationToken)
                 ?? throw new InvalidOperationException("Course not found.");
-
-            return (course, null, null, BuildCourseContext(course));
+            var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
+            return (course, null, null, BuildCourseContext(course, outline));
         }
 
         throw new InvalidOperationException("Select a course, unit, or lesson to ask about.");
@@ -160,8 +144,8 @@ public sealed class AskStudentQuestionCommandHandler(
 
     private static string BuildUserPrompt(
         Course course,
-        CourseUnit? unit,
-        Lesson? lesson,
+        CourseUnitDto? unit,
+        CourseLessonDto? lesson,
         string context,
         string question)
     {
@@ -183,7 +167,11 @@ public sealed class AskStudentQuestionCommandHandler(
             """;
     }
 
-    private static string BuildLessonContext(Course course, CourseUnit? unit, Lesson lesson)
+    private async Task<string> BuildLessonContextAsync(
+        Course course,
+        CourseUnitDto? unit,
+        CourseLessonDto lesson,
+        CancellationToken cancellationToken)
     {
         var sb = new StringBuilder();
         AppendCourseHeader(sb, course);
@@ -196,11 +184,11 @@ public sealed class AskStudentQuestionCommandHandler(
             }
         }
 
-        AppendLesson(sb, lesson);
+        await AppendLessonAsync(sb, lesson, cancellationToken);
         return Truncate(sb.ToString());
     }
 
-    private static string BuildUnitContext(Course course, CourseUnit unit)
+    private static string BuildUnitContext(Course course, CourseUnitDto unit)
     {
         var sb = new StringBuilder();
         AppendCourseHeader(sb, course);
@@ -210,19 +198,23 @@ public sealed class AskStudentQuestionCommandHandler(
             sb.AppendLine(unit.Description);
         }
 
-        foreach (var lesson in unit.Lessons.OrderBy(x => x.SortOrder).ThenBy(x => x.Title))
+        foreach (var item in unit.Lessons.OrderBy(x => x.SortOrder).ThenBy(x => x.Title))
         {
-            AppendLesson(sb, lesson);
+            sb.AppendLine($"Lesson: {item.Title}");
+            if (!string.IsNullOrWhiteSpace(item.Description))
+            {
+                sb.AppendLine(item.Description);
+            }
         }
 
         return Truncate(sb.ToString());
     }
 
-    private static string BuildCourseContext(Course course)
+    private static string BuildCourseContext(Course course, CourseContentOutline outline)
     {
         var sb = new StringBuilder();
         AppendCourseHeader(sb, course);
-        foreach (var unit in course.Units.OrderBy(x => x.SortOrder).ThenBy(x => x.Title))
+        foreach (var unit in outline.Units.OrderBy(x => x.SortOrder).ThenBy(x => x.Title))
         {
             sb.AppendLine($"Unit: {unit.Title}");
             if (!string.IsNullOrWhiteSpace(unit.Description))
@@ -232,13 +224,8 @@ public sealed class AskStudentQuestionCommandHandler(
 
             foreach (var lesson in unit.Lessons.OrderBy(x => x.SortOrder).ThenBy(x => x.Title))
             {
-                AppendLesson(sb, lesson);
+                sb.AppendLine($"Lesson: {lesson.Title}");
             }
-        }
-
-        foreach (var lesson in course.Lessons.Where(x => x.UnitId is null).OrderBy(x => x.SortOrder))
-        {
-            AppendLesson(sb, lesson);
         }
 
         return Truncate(sb.ToString());
@@ -253,7 +240,7 @@ public sealed class AskStudentQuestionCommandHandler(
         }
     }
 
-    private static void AppendLesson(StringBuilder sb, Lesson lesson)
+    private async Task AppendLessonAsync(StringBuilder sb, CourseLessonDto lesson, CancellationToken cancellationToken)
     {
         sb.AppendLine($"Lesson: {lesson.Title}");
         if (!string.IsNullOrWhiteSpace(lesson.Description))
@@ -261,7 +248,12 @@ public sealed class AskStudentQuestionCommandHandler(
             sb.AppendLine(lesson.Description);
         }
 
-        foreach (var step in lesson.Steps.OrderBy(x => x.StepNumber))
+        var steps = await dbContext.LessonSteps
+            .AsNoTracking()
+            .Where(x => x.LessonId == lesson.Id)
+            .OrderBy(x => x.StepNumber)
+            .ToListAsync(cancellationToken);
+        foreach (var step in steps)
         {
             sb.AppendLine($"Step {step.StepNumber}: {step.Title}. {step.Prompt}");
         }

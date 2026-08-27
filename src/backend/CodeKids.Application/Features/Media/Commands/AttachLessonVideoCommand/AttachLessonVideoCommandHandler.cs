@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -11,7 +12,7 @@ public sealed class AttachLessonVideoCommandHandler(IAppDbContext dbContext)
 {
     public async Task<LessonVideoDto> Handle(AttachLessonVideoCommand command, CancellationToken cancellationToken)
     {
-        var lesson = await dbContext.Lessons.FirstOrDefaultAsync(x => x.Id == command.LessonId, cancellationToken)
+        var found = await CourseOutlineResolver.FindLessonAsync(dbContext, command.LessonId, cancellationToken)
             ?? throw new InvalidOperationException("Lesson not found.");
 
         var media = await dbContext.MediaAssets.FirstOrDefaultAsync(x => x.Id == command.MediaAssetId, cancellationToken)
@@ -31,7 +32,7 @@ public sealed class AttachLessonVideoCommandHandler(IAppDbContext dbContext)
         var video = new LessonVideo
         {
             Id = Guid.NewGuid(),
-            LessonId = lesson.Id,
+            LessonId = command.LessonId,
             MediaAssetId = media.Id,
             Title = string.IsNullOrWhiteSpace(command.Title) ? media.FileName : command.Title.Trim(),
             SortOrder = command.SortOrder,

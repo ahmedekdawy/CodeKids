@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -48,14 +49,29 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
                 .ToListAsync(cancellationToken);
         }
 
-        var lessons = await dbContext.Lessons
+        var courses = await dbContext.Courses
             .AsNoTracking()
-            .Include(x => x.Steps)
-            .Include(x => x.Videos)
-                .ThenInclude(v => v.MediaAsset)
-            .Where(x => classroomCourseIds.Contains(x.CourseId))
-            .OrderBy(x => x.SortOrder)
+            .Where(x => classroomCourseIds.Contains(x.Id))
             .ToListAsync(cancellationToken);
+        var outlines = await CourseOutlineResolver.ResolveManyAsync(dbContext, courses, cancellationToken);
+        var catalogLessons = outlines.Values.SelectMany(o => o.Lessons).ToList();
+        var lessonIds = catalogLessons.Select(l => l.Id).ToList();
+        var stepCounts = await dbContext.LessonSteps
+            .AsNoTracking()
+            .Where(x => lessonIds.Contains(x.LessonId))
+            .GroupBy(x => x.LessonId)
+            .Select(g => new { LessonId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.LessonId, x => x.Count, cancellationToken);
+        var videoDurations = await dbContext.LessonVideos
+            .AsNoTracking()
+            .Where(x => lessonIds.Contains(x.LessonId))
+            .Select(x => new { x.LessonId, x.MediaAsset!.DurationSeconds })
+            .ToListAsync(cancellationToken);
+        var durationByLesson = videoDurations
+            .GroupBy(x => x.LessonId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(x => x.DurationSeconds).Where(d => d is > 0).Cast<int>().DefaultIfEmpty(0).Max());
 
         var completedByLesson = await dbContext.StudentProgress
             .AsNoTracking()
@@ -75,16 +91,11 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             })
             .ToDictionaryAsync(x => x.LessonId, x => x.Seconds, cancellationToken);
 
-        var mastery = lessons.Select(lesson =>
+        var mastery = catalogLessons.Select(lesson =>
         {
-            var totalSteps = Math.Max(1, lesson.Steps.Count);
+            var totalSteps = Math.Max(1, stepCounts.GetValueOrDefault(lesson.Id));
             var completed = completedByLesson.GetValueOrDefault(lesson.Id);
-            var duration = lesson.Videos
-                .Select(v => v.MediaAsset?.DurationSeconds)
-                .Where(d => d is > 0)
-                .Cast<int>()
-                .DefaultIfEmpty(0)
-                .Max();
+            var duration = durationByLesson.GetValueOrDefault(lesson.Id);
             var watched = watchByLesson.GetValueOrDefault(lesson.Id);
             var stepPct = (int)Math.Round(completed * 100.0 / totalSteps);
             var watchPct = duration > 0
@@ -95,7 +106,7 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
                 lesson.Id,
                 lesson.Title,
                 completed,
-                lesson.Steps.Count,
+                stepCounts.GetValueOrDefault(lesson.Id),
                 watched,
                 duration > 0 ? duration : null,
                 masteryPct);
@@ -111,21 +122,30 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             x => x.StudentId == student.Id, cancellationToken);
         var completedSteps = completedByLesson.Values.Sum();
 
+        var titleByLesson = catalogLessons.ToDictionary(x => x.Id, x => x.Title);
         var recentWatch = await dbContext.VideoWatchSessions
             .AsNoTracking()
-            .Include(x => x.Lesson)
             .Where(x => x.StudentId == student.Id)
             .OrderByDescending(x => x.LastEventAtUtc)
             .Take(8)
-            .Select(x => new WatchSummaryDto(
+            .Select(x => new
+            {
                 x.MediaAssetId,
                 x.LessonId,
-                x.Lesson != null ? x.Lesson.Title : null,
                 x.ActualWatchSeconds,
                 x.UsedSpeedUp,
                 x.SkippedAhead,
-                x.LastEventAtUtc))
+                x.LastEventAtUtc
+            })
             .ToListAsync(cancellationToken);
+        var recentWatchDtos = recentWatch.Select(x => new WatchSummaryDto(
+            x.MediaAssetId,
+            x.LessonId,
+            x.LessonId is Guid lid && titleByLesson.TryGetValue(lid, out var title) ? title : null,
+            x.ActualWatchSeconds,
+            x.UsedSpeedUp,
+            x.SkippedAhead,
+            x.LastEventAtUtc)).ToList();
 
         var level = StudentLevelCalculator.FromXp(student.TotalXp);
 
@@ -144,6 +164,6 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             assignmentSubs,
             mastery,
             weaknesses,
-            recentWatch);
+            recentWatchDtos);
     }
 }

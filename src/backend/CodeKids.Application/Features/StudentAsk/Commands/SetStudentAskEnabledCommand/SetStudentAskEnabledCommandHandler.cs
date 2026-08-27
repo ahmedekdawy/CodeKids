@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,17 +29,17 @@ public sealed class SetStudentAskEnabledCommandHandler(IAppDbContext dbContext)
 
         if (scope == "unit")
         {
-            var unit = await dbContext.CourseUnits.FirstOrDefaultAsync(x => x.Id == command.Id, cancellationToken)
+            var found = await CourseOutlineResolver.FindUnitAsync(dbContext, command.Id, cancellationToken)
                 ?? throw new InvalidOperationException("Unit not found.");
-            unit.StudentAskEnabled = command.Enabled;
+            found.Unit.StudentAskEnabled = command.Enabled;
             await dbContext.SaveChangesAsync(cancellationToken);
-            return new StudentAskSettingsDto("unit", unit.Id, unit.StudentAskEnabled);
+            return new StudentAskSettingsDto("unit", command.Id, found.Unit.StudentAskEnabled);
         }
 
-        var lesson = await dbContext.Lessons.FirstOrDefaultAsync(x => x.Id == command.Id, cancellationToken)
+        var lesson = await CourseOutlineResolver.FindLessonAsync(dbContext, command.Id, cancellationToken)
             ?? throw new InvalidOperationException("Lesson not found.");
-        lesson.StudentAskEnabled = command.Enabled;
+        lesson.Lesson.StudentAskEnabled = command.Enabled;
         await dbContext.SaveChangesAsync(cancellationToken);
-        return new StudentAskSettingsDto("lesson", lesson.Id, lesson.StudentAskEnabled);
+        return new StudentAskSettingsDto("lesson", command.Id, lesson.Lesson.StudentAskEnabled);
     }
 }

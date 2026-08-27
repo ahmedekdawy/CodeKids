@@ -187,11 +187,9 @@ public static class CourseTreeEndpoints
         Guid unitId,
         CancellationToken cancellationToken)
     {
-        var unit = await dbContext.CourseUnits
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == unitId, cancellationToken)
+        var unit = await CourseOutlineResolver.FindUnitAsync(dbContext, unitId, cancellationToken)
             ?? throw new InvalidOperationException("Unit not found.");
-        await EnsureCanManageCourseAsync(httpContext, dbContext, unit.CourseId, cancellationToken);
+        await EnsureCanManageCourseAsync(httpContext, dbContext, unit.Course.Id, cancellationToken);
     }
 
     private static async Task EnsureCanManageLessonAsync(
@@ -200,10 +198,8 @@ public static class CourseTreeEndpoints
         Guid lessonId,
         CancellationToken cancellationToken)
     {
-        var lesson = await dbContext.Lessons
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == lessonId, cancellationToken)
+        var lesson = await CourseOutlineResolver.FindLessonAsync(dbContext, lessonId, cancellationToken)
             ?? throw new InvalidOperationException("Lesson not found.");
-        await EnsureCanManageCourseAsync(httpContext, dbContext, lesson.CourseId, cancellationToken);
+        await EnsureCanManageCourseAsync(httpContext, dbContext, lesson.Course.Id, cancellationToken);
     }
 }

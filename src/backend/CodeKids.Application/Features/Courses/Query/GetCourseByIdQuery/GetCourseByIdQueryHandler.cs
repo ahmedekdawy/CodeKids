@@ -11,9 +11,6 @@ public sealed class GetCourseByIdQueryHandler(IAppDbContext dbContext)
     {
         var coursesQuery = dbContext.Courses
             .AsNoTracking()
-            .Include(x => x.Units)
-            .Include(x => x.Lessons)
-                .ThenInclude(x => x.Steps)
             .Include(x => x.Quizzes)
                 .ThenInclude(x => x.Questions)
             .Where(x => x.Id == query.CourseId);
