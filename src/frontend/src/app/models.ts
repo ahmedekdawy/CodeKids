@@ -721,6 +721,14 @@ export interface AdminLoginDashboardDay {
   students: number;
 }
 
+export interface AdminLoginUser {
+  id: string;
+  displayName: string;
+  email: string;
+  mobilePhone: string;
+  lastLoginDateUtc: string;
+}
+
 export interface AdminLoginDashboard {
   fromDate: string;
   toDate: string;
@@ -728,6 +736,9 @@ export interface AdminLoginDashboard {
   parentCount: number;
   studentCount: number;
   days: AdminLoginDashboardDay[];
+  teachers: AdminLoginUser[];
+  parents: AdminLoginUser[];
+  students: AdminLoginUser[];
 }
 
 export interface TuitionPayment {

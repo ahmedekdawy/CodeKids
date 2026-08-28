@@ -30,10 +30,22 @@ public sealed class GetAdminLoginDashboardQueryHandler(IAppDbContext dbContext)
                 && x.LastLoginDateUtc >= fromUtc
                 && x.LastLoginDateUtc < toExclusive
                 && TrackedRoles.Contains(x.Role))
-            .Select(x => new { x.Role, LoginAt = x.LastLoginDateUtc!.Value })
+            .Select(x => new
+            {
+                x.Id,
+                x.Role,
+                x.DisplayName,
+                x.Email,
+                x.MobilePhone,
+                LoginAt = x.LastLoginDateUtc!.Value
+            })
             .ToListAsync(cancellationToken);
 
-        var byDayRole = logins
+        var rows = logins
+            .Select(x => new LoginRow(x.Id, x.Role, x.DisplayName, x.Email, x.MobilePhone, x.LoginAt))
+            .ToList();
+
+        var byDayRole = rows
             .GroupBy(x => (Date: DateOnly.FromDateTime(x.LoginAt.UtcDateTime), x.Role))
             .ToDictionary(g => g.Key, g => g.Count());
 
@@ -53,6 +65,25 @@ public sealed class GetAdminLoginDashboardQueryHandler(IAppDbContext dbContext)
             days.Sum(d => d.Teachers),
             days.Sum(d => d.Parents),
             days.Sum(d => d.Students),
-            days);
+            days,
+            ToUsers(rows, UserRole.Teacher),
+            ToUsers(rows, UserRole.Parent),
+            ToUsers(rows, UserRole.Student));
     }
+
+    private static IReadOnlyList<AdminLoginUserDto> ToUsers(List<LoginRow> logins, UserRole role) =>
+        logins
+            .Where(x => x.Role == role)
+            .OrderByDescending(x => x.LoginAt)
+            .ThenBy(x => x.DisplayName)
+            .Select(x => new AdminLoginUserDto(x.Id, x.DisplayName, x.Email, x.MobilePhone, x.LoginAt))
+            .ToList();
+
+    private sealed record LoginRow(
+        Guid Id,
+        UserRole Role,
+        string DisplayName,
+        string Email,
+        string MobilePhone,
+        DateTimeOffset LoginAt);
 }

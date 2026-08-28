@@ -21,18 +21,61 @@
   </section>
 
   <section class="stat-row">
-    <div class="stat-card login-stat login-stat-teachers">
+    <button
+      type="button"
+      class="stat-card stat-card-link login-stat login-stat-teachers"
+      [class.active]="selectedRole() === 'teachers'"
+      (click)="selectRole('teachers')">
       <strong>{{ report()?.teacherCount || 0 }}</strong>
       <span>{{ 'common.teachers' | t }}</span>
-    </div>
-    <div class="stat-card login-stat login-stat-parents">
+    </button>
+    <button
+      type="button"
+      class="stat-card stat-card-link login-stat login-stat-parents"
+      [class.active]="selectedRole() === 'parents'"
+      (click)="selectRole('parents')">
       <strong>{{ report()?.parentCount || 0 }}</strong>
       <span>{{ 'common.parents' | t }}</span>
-    </div>
-    <div class="stat-card login-stat login-stat-students">
+    </button>
+    <button
+      type="button"
+      class="stat-card stat-card-link login-stat login-stat-students"
+      [class.active]="selectedRole() === 'students'"
+      (click)="selectRole('students')">
       <strong>{{ report()?.studentCount || 0 }}</strong>
       <span>{{ 'common.students' | t }}</span>
-    </div>
+    </button>
+  </section>
+
+  <section class="block">
+    <h3>{{ loggedInTitleKey() | t }}</h3>
+    <p class="meta">{{ 'admin.dashboard.loggedInHint' | t }}</p>
+    @if (loggedInUsers().length) {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.name' | t }}</th>
+              <th>{{ 'common.email' | t }}</th>
+              <th>{{ 'common.mobile' | t }}</th>
+              <th>{{ 'admin.dashboard.lastLogin' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of loggedInUsers(); track user.id) {
+              <tr>
+                <td>{{ user.displayName }}</td>
+                <td>{{ user.email || ('common.emDash' | t) }}</td>
+                <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
+                <td>{{ formatLogin(user.lastLoginDateUtc) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="meta">{{ 'admin.dashboard.noLoggedInUsers' | t }}</p>
+    }
   </section>
 
   <section class="block">

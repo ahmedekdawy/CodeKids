@@ -117,8 +117,8 @@
                       />
                       {{ 'admin.courseTree.studentAsk' | t }}
                     </label>
-                    <app-icon-action-button kind="edit" (clicked)="startUnitEdit(unit)" />
-                    <app-icon-action-button kind="delete" (clicked)="deleteUnit(unit)" />
+                    <app-icon-action-button kind="edit" (action)="startUnitEdit(unit)" />
+                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteUnit(unit)" />
                   </div>
                 }
               }
@@ -162,8 +162,8 @@
                           />
                           {{ 'admin.courseTree.studentAsk' | t }}
                         </label>
-                        <app-icon-action-button kind="edit" (clicked)="startLessonEdit(lesson, unit.id)" />
-                        <app-icon-action-button kind="delete" (clicked)="deleteLesson(lesson)" />
+                        <app-icon-action-button kind="edit" (action)="startLessonEdit(lesson, unit.id)" />
+                        <app-icon-action-button kind="delete" variant="danger" (action)="deleteLesson(lesson)" />
                       </div>
                     }
                   </div>

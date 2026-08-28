@@ -541,6 +541,32 @@ label.checkbox {
   font-size: 0.85rem;
 }
 
+button.stat-card-link {
+  display: block;
+  width: 100%;
+  text-align: start;
+  font: inherit;
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: var(--surface-strong);
+  box-shadow: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+button.stat-card-link:hover,
+button.stat-card-link:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: none;
+  outline: none;
+}
+
+button.stat-card-link.active {
+  border-color: var(--border-strong);
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+
 @keyframes pageIn {
   from {
     opacity: 0;
