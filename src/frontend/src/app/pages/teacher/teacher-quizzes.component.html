@@ -40,7 +40,7 @@
       </button>
     </div>
 
-    @for (quiz of quizzes(); track quiz.id) {
+    @for (quiz of pagedQuizzes(); track quiz.id) {
       <div class="meeting-row">
         <div>
           <strong>{{ quiz.title }}</strong>
@@ -58,12 +58,24 @@
     } @empty {
       <p class="meta">{{ 'teacher.quizzes.empty' | t }}</p>
     }
+
+    @if (quizzes().length) {
+      <div class="list-pager">
+        <button type="button" class="ghost-btn" [disabled]="quizListPage() <= 1" (click)="goToQuizListPage(quizListPage() - 1)">
+          {{ 'common.previous' | t }}
+        </button>
+        <span class="meta">{{ 'common.pageOf' | t: { page: quizListPage(), pages: quizTotalPages() } }}</span>
+        <button type="button" class="ghost-btn" [disabled]="quizListPage() >= quizTotalPages()" (click)="goToQuizListPage(quizListPage() + 1)">
+          {{ 'common.next' | t }}
+        </button>
+      </div>
+    }
   </section>
 
   @if (reviewQuizId) {
     <section class="block">
       <h3>{{ 'teacher.quizzes.attempts' | t }} — {{ reviewQuizTitle() }}</h3>
-      @for (attempt of attempts(); track attempt.id) {
+      @for (attempt of pagedAttempts(); track attempt.id) {
         <div class="meeting-row">
           <div>
             <strong>{{ attempt.studentName }}</strong>
@@ -99,6 +111,18 @@
         }
       } @empty {
         <p class="meta">{{ 'teacher.quizzes.noAttempts' | t }}</p>
+      }
+
+      @if (attempts().length) {
+        <div class="list-pager">
+          <button type="button" class="ghost-btn" [disabled]="attemptsPage() <= 1" (click)="goToAttemptsPage(attemptsPage() - 1)">
+            {{ 'common.previous' | t }}
+          </button>
+          <span class="meta">{{ 'common.pageOf' | t: { page: attemptsPage(), pages: attemptsTotalPages() } }}</span>
+          <button type="button" class="ghost-btn" [disabled]="attemptsPage() >= attemptsTotalPages()" (click)="goToAttemptsPage(attemptsPage() + 1)">
+            {{ 'common.next' | t }}
+          </button>
+        </div>
       }
     </section>
   }

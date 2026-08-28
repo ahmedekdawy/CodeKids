@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -11,6 +11,7 @@ import { SearchableSelectComponent } from '../../shared/searchable-select/search
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { paginate, totalPages } from '../../list-query.util';
 
 interface OptionDraft {
   text: string;
@@ -71,6 +72,19 @@ export class TeacherQuizzesComponent {
   filterCourseId = '';
   reviewQuizId = '';
   expandedAttemptId = '';
+
+  readonly reviewPageSize = 2;
+  readonly quizListPage = signal(1);
+  readonly attemptsPage = signal(1);
+
+  readonly quizTotalPages = computed(() => totalPages(this.quizzes().length, this.reviewPageSize));
+  readonly pagedQuizzes = computed(() =>
+    paginate(this.quizzes(), this.quizListPage(), this.reviewPageSize)
+  );
+  readonly attemptsTotalPages = computed(() => totalPages(this.attempts().length, this.reviewPageSize));
+  readonly pagedAttempts = computed(() =>
+    paginate(this.attempts(), this.attemptsPage(), this.reviewPageSize)
+  );
 
   constructor() {
     this.api.getCourses().subscribe((courses) => {
@@ -150,6 +164,7 @@ export class TeacherQuizzesComponent {
     this.filterToDate = endOfMonthLocal();
     this.filterGrade = '';
     this.filterCourseId = '';
+    this.quizListPage.set(1);
     this.reloadQuizzes();
   }
 
@@ -163,14 +178,27 @@ export class TeacherQuizzesComponent {
         courseId: this.filterCourseId || undefined
       })
       .subscribe({
-        next: (quizzes) => this.quizzes.set(quizzes),
+        next: (quizzes) => {
+          this.quizzes.set(quizzes);
+          this.quizListPage.set(1);
+        },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.quizzes.loadFailed'))
       });
+  }
+
+  goToQuizListPage(page: number): void {
+    this.quizListPage.set(Math.min(Math.max(1, page), this.quizTotalPages()));
+  }
+
+  goToAttemptsPage(page: number): void {
+    this.attemptsPage.set(Math.min(Math.max(1, page), this.attemptsTotalPages()));
+    this.expandedAttemptId = '';
   }
 
   reviewQuiz(quiz: TeacherQuizListItem): void {
     this.reviewQuizId = quiz.id;
     this.expandedAttemptId = '';
+    this.attemptsPage.set(1);
     this.error.set('');
     this.api.getQuizAttempts(quiz.id).subscribe({
       next: (attempts) => this.attempts.set(attempts),
