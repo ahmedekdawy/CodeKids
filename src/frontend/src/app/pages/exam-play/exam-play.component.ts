@@ -8,10 +8,12 @@ import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 
 @Component({
   selector: 'app-exam-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
   templateUrl: './exam-play.component.html',
   styleUrl: './exam-play.component.css'
 })

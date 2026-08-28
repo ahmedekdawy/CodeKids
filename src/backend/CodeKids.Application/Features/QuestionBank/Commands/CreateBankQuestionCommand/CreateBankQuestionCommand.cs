@@ -20,6 +20,7 @@ public sealed record CreateBankQuestionRequest(
     string? CorrectAnswer,
     int Points,
     int SortOrder,
+    Guid? PromptImageMediaAssetId,
     IReadOnlyList<BankChildQuestionInput>? Children);
 
 public sealed record CreateBankQuestionCommand(
@@ -37,4 +38,5 @@ public sealed record CreateBankQuestionCommand(
     string? CorrectAnswer,
     int Points,
     int SortOrder,
+    Guid? PromptImageMediaAssetId,
     IReadOnlyList<BankChildQuestionInput>? Children) : ICommand<BankQuestionDto>;

@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,7 +60,8 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                     OptionText(options, selected),
                     correct,
                     OptionText(options, correct),
-                    a.IsCorrect);
+                    a.IsCorrect,
+                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId));
             })
             .ToList();
 

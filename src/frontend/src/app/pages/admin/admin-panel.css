@@ -768,6 +768,15 @@
   min-width: 12rem;
 }
 
+.ask-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  color: var(--text-soft);
+}
+
 .tree-unit-body {
   margin-top: 0.75rem;
   margin-inline-start: 1.6rem;

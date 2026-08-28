@@ -299,6 +299,7 @@
 }
 
 .shell-main {
+  position: relative;
   padding: 1.6rem 2rem 3rem;
   min-width: 0;
 }

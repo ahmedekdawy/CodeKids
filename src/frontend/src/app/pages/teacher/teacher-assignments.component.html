@@ -79,6 +79,12 @@
             {{ 'teacher.assignments.question' | t }}
             <textarea [(ngModel)]="question.prompt" [name]="'assignmentPrompt-' + qi" rows="2" required></textarea>
           </label>
+          <app-question-image-upload
+            [mediaAssetId]="question.promptImageMediaAssetId ?? null"
+            [imageUrl]="question.promptImageUrl ?? null"
+            (mediaAssetIdChange)="question.promptImageMediaAssetId = $event"
+            (imageUrlChange)="question.promptImageUrl = $event"
+          />
           <div class="options-editor">
             @if (question.questionType === 'MultipleChoice') {
               <label>A <input [(ngModel)]="question.optionA" [name]="'assignmentOptionA-' + qi" /></label>

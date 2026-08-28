@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-export type IconActionKind = 'edit' | 'delete' | 'play';
+export type IconActionKind = 'edit' | 'delete' | 'play' | 'apply' | 'clear';
 
 @Component({
   selector: 'app-icon-action-button',
@@ -19,6 +19,8 @@ export class IconActionButtonComponent {
     if (this.label) return this.label;
     if (this.kind === 'edit') return 'Edit';
     if (this.kind === 'play') return 'Play';
+    if (this.kind === 'apply') return 'Apply filters';
+    if (this.kind === 'clear') return 'Clear filters';
     return 'Delete';
   }
 }

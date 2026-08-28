@@ -6,12 +6,13 @@ import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component
 import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { setCurrentTenantId } from '../../tenant';
 
 @Component({
   selector: 'app-verify-tenant',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent],
+  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
   templateUrl: './verify-tenant.component.html',
   styleUrl: '../forgot-password/forgot-password.component.css'
 })

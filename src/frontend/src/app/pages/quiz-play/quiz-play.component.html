@@ -1,4 +1,5 @@
 <div class="page">
+  <app-api-busy-indicator />
   <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
   @if (quiz(); as current) {
     <section class="hero-strip">
@@ -16,6 +17,7 @@
           @for (question of current.questions; track question.id) {
             <div class="question">
               <strong>{{ question.sortOrder }}. {{ question.prompt }}</strong>
+              <app-question-image-display [url]="question.promptImageUrl" />
               @for (opt of choiceOptions(question); track opt.key) {
                 <label>
                   <input type="radio" [formControlName]="question.id" [value]="opt.key" />

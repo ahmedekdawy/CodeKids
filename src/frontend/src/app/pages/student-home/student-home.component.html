@@ -1,4 +1,5 @@
 <div class="page student-home">
+  <app-api-busy-indicator />
   <header class="topbar student-topbar">
     <div class="brand-block">
       <app-site-brand />
@@ -6,6 +7,8 @@
     </div>
     <div class="topbar-actions">
       <a routerLink="/student/study-plans" class="chip">{{ 'student.studyPlans' | t }}</a>
+      <a routerLink="/student/asked-questions" class="chip">{{ 'askedQuestions.nav' | t }}</a>
+      <a routerLink="/student/chat" class="chip">{{ 'chat.nav' | t }}</a>
       <app-language-switcher />
       <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
     </div>
@@ -141,6 +144,10 @@
                     }
                   </div>
                 </div>
+              }
+
+              @if (course.studentAskEnabled) {
+                <app-student-ask-panel [courseId]="course.id" titleKey="studentAsk.courseTitle" />
               }
             </article>
           } @empty {

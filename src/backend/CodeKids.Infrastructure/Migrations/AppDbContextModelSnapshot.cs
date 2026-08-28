@@ -572,6 +572,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
+                    b.Property<bool>("StudentAskEnabled")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ExternalSubjectId");
@@ -599,6 +602,9 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("StudentAskEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("TermId")
                         .HasColumnType("integer");
@@ -907,6 +913,9 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("StudentAskEnabled")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Theme")
                         .IsRequired()
@@ -1400,6 +1409,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(6);
+
+                    b.Property<int>("PmStartMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(900);
 
                     b.Property<string>("SiteName")
                         .IsRequired()

@@ -8,6 +8,5 @@ public class LessonStep : TenantEntity
     public string Prompt { get; set; } = string.Empty;
     public string ExpectedAnswer { get; set; } = string.Empty;
     public int StepNumber { get; set; }
-    public Lesson? Lesson { get; set; }
 }
 

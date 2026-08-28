@@ -40,7 +40,7 @@
       </button>
     </div>
 
-    @for (quiz of quizzes(); track quiz.id) {
+    @for (quiz of pagedQuizzes(); track quiz.id) {
       <div class="meeting-row">
         <div>
           <strong>{{ quiz.title }}</strong>
@@ -58,12 +58,24 @@
     } @empty {
       <p class="meta">{{ 'teacher.quizzes.empty' | t }}</p>
     }
+
+    @if (quizzes().length) {
+      <div class="list-pager">
+        <button type="button" class="ghost-btn" [disabled]="quizListPage() <= 1" (click)="goToQuizListPage(quizListPage() - 1)">
+          {{ 'common.previous' | t }}
+        </button>
+        <span class="meta">{{ 'common.pageOf' | t: { page: quizListPage(), pages: quizTotalPages() } }}</span>
+        <button type="button" class="ghost-btn" [disabled]="quizListPage() >= quizTotalPages()" (click)="goToQuizListPage(quizListPage() + 1)">
+          {{ 'common.next' | t }}
+        </button>
+      </div>
+    }
   </section>
 
   @if (reviewQuizId) {
     <section class="block">
       <h3>{{ 'teacher.quizzes.attempts' | t }} — {{ reviewQuizTitle() }}</h3>
-      @for (attempt of attempts(); track attempt.id) {
+      @for (attempt of pagedAttempts(); track attempt.id) {
         <div class="meeting-row">
           <div>
             <strong>{{ attempt.studentName }}</strong>
@@ -82,6 +94,7 @@
             @for (answer of attempt.answers; track answer.questionId) {
               <div class="answer-row" [class.correct]="answer.isCorrect" [class.wrong]="!answer.isCorrect">
                 <strong>{{ answer.sortOrder }}. {{ answer.prompt }}</strong>
+                <app-question-image-display [url]="answer.promptImageUrl" />
                 <p class="meta">
                   {{ 'teacher.quizzes.studentAnswer' | t }}:
                   {{ answer.selectedText || ('common.emDash' | t) }}
@@ -98,6 +111,18 @@
         }
       } @empty {
         <p class="meta">{{ 'teacher.quizzes.noAttempts' | t }}</p>
+      }
+
+      @if (attempts().length) {
+        <div class="list-pager">
+          <button type="button" class="ghost-btn" [disabled]="attemptsPage() <= 1" (click)="goToAttemptsPage(attemptsPage() - 1)">
+            {{ 'common.previous' | t }}
+          </button>
+          <span class="meta">{{ 'common.pageOf' | t: { page: attemptsPage(), pages: attemptsTotalPages() } }}</span>
+          <button type="button" class="ghost-btn" [disabled]="attemptsPage() >= attemptsTotalPages()" (click)="goToAttemptsPage(attemptsPage() + 1)">
+            {{ 'common.next' | t }}
+          </button>
+        </div>
       }
     </section>
   }
@@ -175,6 +200,12 @@
               {{ 'teacher.quizzes.question' | t }}
               <textarea [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" rows="2" required></textarea>
             </label>
+            <app-question-image-upload
+              [mediaAssetId]="question.promptImageMediaAssetId ?? null"
+              [imageUrl]="question.promptImageUrl ?? null"
+              (mediaAssetIdChange)="question.promptImageMediaAssetId = $event"
+              (imageUrlChange)="question.promptImageUrl = $event"
+            />
             <div class="options-editor">
               @for (opt of question.options; track $index; let oi = $index) {
                 <label>

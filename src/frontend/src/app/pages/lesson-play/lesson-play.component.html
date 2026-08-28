@@ -1,4 +1,5 @@
 <div class="page">
+  <app-api-busy-indicator />
   <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
   @if (lesson(); as current) {
     <section class="hero-strip">
@@ -65,5 +66,12 @@
         </article>
       }
     </section>
+    @if (current.studentAskEnabled) {
+      <app-student-ask-panel
+        [courseId]="current.courseId"
+        [unitId]="current.unitId ?? null"
+        [lessonId]="current.id"
+      />
+    }
   }
 </div>

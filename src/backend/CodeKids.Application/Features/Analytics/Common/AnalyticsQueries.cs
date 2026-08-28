@@ -17,20 +17,19 @@ public static class AnalyticsQueries
             .AsNoTracking()
             .Include(x => x.Attempt)
             .Include(x => x.Question)
-                .ThenInclude(q => q!.Lesson)
             .Where(x => x.Attempt!.StudentId == studentId
                         && x.Question!.LessonId != null
                         && x.IsCorrect != null)
             .ToListAsync(cancellationToken);
 
         return rows
-            .GroupBy(x => new { LessonId = x.Question!.LessonId!.Value, Title = x.Question.Lesson?.Title ?? "Lesson" })
+            .GroupBy(x => x.Question!.LessonId!.Value)
             .Select(g =>
             {
                 var total = g.Count();
                 var wrong = g.Count(x => x.IsCorrect == false);
                 var accuracy = total == 0 ? 100 : (int)Math.Round((total - wrong) * 100.0 / total);
-                return new LessonWeaknessDto(g.Key.LessonId, g.Key.Title, wrong, total, accuracy);
+                return new LessonWeaknessDto(g.Key, "Lesson", wrong, total, accuracy);
             })
             .Where(x => x.WrongAnswers > 0)
             .OrderBy(x => x.AccuracyPercent)
@@ -53,20 +52,19 @@ public static class AnalyticsQueries
             .AsNoTracking()
             .Include(x => x.Attempt)
             .Include(x => x.Question)
-                .ThenInclude(q => q!.Lesson)
             .Where(x => studentIds.Contains(x.Attempt!.StudentId)
                         && x.Question!.LessonId != null
                         && x.IsCorrect != null)
             .ToListAsync(cancellationToken);
 
         return rows
-            .GroupBy(x => new { LessonId = x.Question!.LessonId!.Value, Title = x.Question.Lesson?.Title ?? "Lesson" })
+            .GroupBy(x => x.Question!.LessonId!.Value)
             .Select(g =>
             {
                 var total = g.Count();
                 var wrong = g.Count(x => x.IsCorrect == false);
                 var accuracy = total == 0 ? 100 : (int)Math.Round((total - wrong) * 100.0 / total);
-                return new LessonWeaknessDto(g.Key.LessonId, g.Key.Title, wrong, total, accuracy);
+                return new LessonWeaknessDto(g.Key, "Lesson", wrong, total, accuracy);
             })
             .Where(x => x.WrongAnswers > 0 && x.AccuracyPercent < 70)
             .OrderBy(x => x.AccuracyPercent)

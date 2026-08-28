@@ -10,6 +10,7 @@
 }
 
 .auth-panel {
+  position: relative;
   padding: clamp(2rem, 5vw, 4.5rem);
   display: grid;
   align-content: center;

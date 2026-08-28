@@ -1,11 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 
-export type ToastKind = 'success' | 'error';
+export type ToastKind = 'success' | 'error' | 'chat';
 
 export interface ToastItem {
   id: number;
   kind: ToastKind;
   text: string;
+  title?: string;
+  href?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -14,22 +16,26 @@ export class ToastService {
   readonly items = signal<ToastItem[]>([]);
 
   success(text: string): void {
-    this.push('success', text);
+    this.push({ kind: 'success', text });
   }
 
   error(text: string): void {
-    this.push('error', text);
+    this.push({ kind: 'error', text });
+  }
+
+  chat(title: string, text: string, href: string): void {
+    this.push({ kind: 'chat', title, text, href });
   }
 
   dismiss(id: number): void {
     this.items.update((list) => list.filter((item) => item.id !== id));
   }
 
-  private push(kind: ToastKind, text: string): void {
-    const trimmed = text.trim();
-    if (!trimmed) return;
+  private push(item: Omit<ToastItem, 'id'>): void {
+    const trimmed = (item.text ?? '').trim();
+    if (!trimmed && !item.title) return;
     const id = this.nextId++;
-    this.items.update((list) => [...list, { id, kind, text: trimmed }]);
-    window.setTimeout(() => this.dismiss(id), 5200);
+    this.items.update((list) => [...list, { ...item, id, text: trimmed }]);
+    window.setTimeout(() => this.dismiss(id), item.kind === 'chat' ? 12000 : 5200);
   }
 }

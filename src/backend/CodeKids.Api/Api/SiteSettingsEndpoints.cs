@@ -118,7 +118,9 @@ public static class SiteSettingsEndpoints
 
                         request.AmSessionCount,
 
-                        request.PmSessionCount),
+                        request.PmSessionCount,
+
+                        request.PmStartMinutes),
 
                     cancellationToken));
 

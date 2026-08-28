@@ -1,4 +1,5 @@
 <div class="page">
+  <app-api-busy-indicator />
   <header class="topbar">
     <div>
       <app-site-brand />
@@ -21,6 +22,7 @@
       @for (answer of attempt.answers; track answer.questionId) {
         <div class="question">
           <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
+          <app-question-image-display [url]="answer.promptImageUrl" />
           <p class="meta">
             {{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}
             @if (answer.isCorrect === true) { · {{ 'common.correct' | t }} }
@@ -37,6 +39,7 @@
       @for (question of current.questions; track question.id) {
         <div class="question">
           <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
+          <app-question-image-display [url]="question.promptImageUrl" />
           @if (question.passageText) {
             <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
           }
@@ -45,6 +48,7 @@
             @for (child of question.children; track child.id) {
               <div class="child-question">
                 <strong>{{ child.prompt }}</strong>
+                <app-question-image-display [url]="child.promptImageUrl" />
                 @if (child.questionType === 'TrueFalse') {
                   <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'True')" /> {{ 'common.true' | t }}</label>
                   <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'False')" /> {{ 'common.false' | t }}</label>

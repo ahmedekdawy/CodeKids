@@ -1,6 +1,5 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Courses;
 
@@ -9,11 +8,9 @@ public sealed class DeleteCourseUnitCommandHandler(IAppDbContext dbContext)
 {
     public async Task<bool> Handle(DeleteCourseUnitCommand command, CancellationToken cancellationToken)
     {
-        var unit = await dbContext.CourseUnits
-                .FirstOrDefaultAsync(x => x.Id == command.UnitId, cancellationToken)
+        var found = await CourseOutlineResolver.FindUnitAsync(dbContext, command.UnitId, cancellationToken)
             ?? throw new InvalidOperationException("Unit not found.");
-
-        dbContext.CourseUnits.Remove(unit);
+        dbContext.SubjectUnits.Remove(found.Unit);
         await dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }

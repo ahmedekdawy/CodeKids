@@ -3,6 +3,7 @@
   class="icon-action-btn"
   [class.danger]="variant === 'danger' || kind === 'delete'"
   [class.play]="kind === 'play'"
+  [class.apply]="kind === 'apply'"
   [class.ghost]="variant === 'ghost'"
   [attr.aria-label]="ariaLabel()"
   [title]="ariaLabel()"
@@ -31,6 +32,13 @@
         stroke-linejoin="round"
       />
     </svg>
+  } @else if (kind === 'apply') {
+    <i class="fa-solid fa-filter" aria-hidden="true"></i>
+  } @else if (kind === 'clear') {
+    <span class="fa-filter-clear" aria-hidden="true">
+      <i class="fa-solid fa-filter"></i>
+      <i class="fa-solid fa-xmark"></i>
+    </span>
   } @else {
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path

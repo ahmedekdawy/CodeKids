@@ -14,7 +14,6 @@ public sealed class ListBankQuestionsQueryHandler(IAppDbContext dbContext)
         var items = await dbContext.BankQuestions
             .AsNoTracking()
             .Include(x => x.Course)
-            .Include(x => x.Lesson)
             .Include(x => x.Children)
             .Where(x => x.ParentQuestionId == null && x.CreatedByUserId == query.TeacherUserId)
             .OrderByDescending(x => x.CreatedAtUtc)

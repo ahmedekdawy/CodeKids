@@ -46,7 +46,11 @@ import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.com
 import { TeacherAttendanceComponent } from './pages/teacher/teacher-attendance.component';
 import { TeacherWeeklyReportsComponent } from './pages/teacher/teacher-weekly-reports.component';
 import { TeacherStudyPlansComponent } from './pages/teacher/teacher-study-plans.component';
+import { TeacherAskedQuestionsComponent } from './pages/teacher/teacher-asked-questions.component';
+import { TeacherChatComponent } from './pages/teacher/teacher-chat.component';
 import { ExamPlayComponent } from './pages/exam-play/exam-play.component';
+import { StudentAskedQuestionsComponent } from './pages/student-asked-questions/student-asked-questions.component';
+import { StudentChatComponent } from './pages/student-chat/student-chat.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -65,6 +69,16 @@ export const routes: Routes = [
     path: 'student/study-plans',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: StudyPlanViewComponent
+  },
+  {
+    path: 'student/asked-questions',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudentAskedQuestionsComponent
+  },
+  {
+    path: 'student/chat',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudentChatComponent
   },
   {
     path: 'lessons/:lessonId',
@@ -110,6 +124,8 @@ export const routes: Routes = [
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
+      { path: 'asked-questions', component: TeacherAskedQuestionsComponent },
+      { path: 'chat', component: TeacherChatComponent },
       { path: 'zoom', component: TeacherZoomComponent },
       { path: 'appointments', component: TeacherAppointmentsComponent },
       { path: 'timetable', component: TeacherTimetableComponent },

@@ -2,6 +2,7 @@ using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,6 +77,7 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
             }
 
             var (a, b, c, _) = ChoiceOptions.ToLegacy(options);
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, q.PromptImageMediaAssetId, cancellationToken);
             quiz.Questions.Add(new QuizQuestion
             {
                 Id = Guid.NewGuid(),
@@ -86,7 +88,8 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
                 OptionC = c ?? string.Empty,
                 OptionsJson = ChoiceOptions.ToJson(options),
                 CorrectOption = correct,
-                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder
+                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder,
+                PromptImageMediaAssetId = q.PromptImageMediaAssetId
             });
             order++;
         }

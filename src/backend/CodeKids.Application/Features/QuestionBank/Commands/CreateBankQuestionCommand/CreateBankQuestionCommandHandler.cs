@@ -1,4 +1,6 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Courses;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -15,9 +17,9 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
 
         if (command.LessonId is Guid lessonId)
         {
-            var lessonOk = await dbContext.Lessons.AnyAsync(
-                x => x.Id == lessonId && x.CourseId == command.CourseId, cancellationToken);
-            if (!lessonOk)
+            var lesson = await CourseOutlineResolver.FindLessonAsync(dbContext, lessonId, cancellationToken)
+                ?? throw new InvalidOperationException("Lesson not found for this course.");
+            if (lesson.Course.Id != command.CourseId)
             {
                 throw new InvalidOperationException("Lesson not found for this course.");
             }
@@ -54,6 +56,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
 
         var rootOptions = ResolveOptions(type, command.Options, command.OptionA, command.OptionB, command.OptionC, command.OptionD);
         var (legacyA, legacyB, legacyC, legacyD) = ChoiceOptions.ToLegacy(rootOptions);
+        await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, command.PromptImageMediaAssetId, cancellationToken);
 
         var question = new BankQuestion
         {
@@ -74,6 +77,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
                 : (command.CorrectAnswer ?? string.Empty).Trim(),
             Points = command.Points <= 0 ? 1 : command.Points,
             SortOrder = command.SortOrder <= 0 ? 1 : command.SortOrder,
+            PromptImageMediaAssetId = command.PromptImageMediaAssetId,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -103,6 +107,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
                 var (cA, cB, cC, cD) = ChoiceOptions.ToLegacy(childOptions);
                 var points = child.Points <= 0 ? 1 : child.Points;
                 childPoints += points;
+                await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, child.PromptImageMediaAssetId, cancellationToken);
                 question.Children.Add(new BankQuestion
                 {
                     Id = Guid.NewGuid(),
@@ -123,6 +128,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
                         : child.CorrectAnswer.Trim(),
                     Points = points,
                     SortOrder = child.SortOrder <= 0 ? childOrder : child.SortOrder,
+                    PromptImageMediaAssetId = child.PromptImageMediaAssetId,
                     CreatedAtUtc = DateTimeOffset.UtcNow
                 });
                 childOrder++;
@@ -190,7 +196,6 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
         var question = await dbContext.BankQuestions
             .AsNoTracking()
             .Include(x => x.Course)
-            .Include(x => x.Lesson)
             .Include(x => x.Children)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         return question is null ? null : Map(question);
@@ -204,7 +209,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             q.CourseId,
             q.Course?.Title ?? "Course",
             q.LessonId,
-            q.Lesson?.Title,
+            null,
             q.CreatedByUserId,
             q.ParentQuestionId,
             q.QuestionType.ToString(),
@@ -218,6 +223,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             q.CorrectAnswer,
             q.Points,
             q.SortOrder,
+            QuestionImageUrls.Build(q.PromptImageMediaAssetId),
             q.Children
                 .OrderBy(c => c.SortOrder)
                 .Select(Map)

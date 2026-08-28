@@ -1,4 +1,5 @@
 <div class="page">
+  <app-api-busy-indicator />
   <header class="topbar">
     <div>
       <app-site-brand />
@@ -25,6 +26,14 @@
           [title]="'play.solutionVideo' | t" />
       </section>
     }
+
+    @for (answer of submission.answers; track answer.questionId) {
+      <section class="block question">
+        <strong>{{ answer.prompt }}</strong>
+        <app-question-image-display [url]="answer.promptImageUrl" />
+        <p class="meta">{{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
+      </section>
+    }
   } @else if (assignment(); as current) {
     <section class="block">
       <p>{{ current.description }}</p>
@@ -32,6 +41,7 @@
       @for (question of current.questions; track question.id) {
         <div class="question">
           <strong>{{ question.prompt }}</strong>
+          <app-question-image-display [url]="question.promptImageUrl" />
           @if (question.questionType === 'MultipleChoice') {
             <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'A')" /> A. {{ question.optionA }}</label>
             <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'B')" /> B. {{ question.optionB }}</label>

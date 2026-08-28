@@ -14,4 +14,5 @@ public sealed record QuizQuestionDto(
     string OptionB,
     string OptionC,
     IReadOnlyList<ChoiceOptionDto> Options,
-    int SortOrder);
+    int SortOrder,
+    string? PromptImageUrl);

@@ -4,9 +4,16 @@
       type="button"
       class="toast"
       [class.ok]="item.kind === 'success'"
-      (click)="toasts.dismiss(item.id)"
+      [class.chat]="item.kind === 'chat'"
+      (click)="activate(item)"
     >
-      {{ item.text }}
+      @if (item.kind === 'chat') {
+        <strong class="toast-title">{{ item.title || ('chat.newMessage' | t) }}</strong>
+        <span class="toast-body">{{ item.text }}</span>
+        <span class="toast-hint">{{ 'chat.openConversation' | t }}</span>
+      } @else {
+        {{ item.text }}
+      }
     </button>
   }
 </div>

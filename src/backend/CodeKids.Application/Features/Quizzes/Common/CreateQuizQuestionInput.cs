@@ -14,4 +14,5 @@ public sealed record CreateQuizQuestionInput(
     string? OptionC,
     IReadOnlyList<string>? Options,
     string CorrectOption,
-    int SortOrder);
+    int SortOrder,
+    Guid? PromptImageMediaAssetId);

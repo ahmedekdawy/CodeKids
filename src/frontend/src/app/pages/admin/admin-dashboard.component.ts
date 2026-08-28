@@ -2,9 +2,11 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { AdminLoginDashboard, AdminLoginDashboardDay } from '../../models';
+import { AdminLoginDashboard, AdminLoginDashboardDay, AdminLoginUser } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+
+type LoginRole = 'teachers' | 'parents' | 'students';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -18,6 +20,7 @@ export class AdminDashboardComponent {
 
   readonly report = signal<AdminLoginDashboard | null>(null);
   readonly error = signal('');
+  readonly selectedRole = signal<LoginRole>('students');
 
   filterFromDate = startOfMonthLocal();
   filterToDate = endOfMonthLocal();
@@ -37,8 +40,33 @@ export class AdminDashboardComponent {
     return r.teacherCount + r.parentCount + r.studentCount > 0;
   });
 
+  readonly loggedInUsers = computed<AdminLoginUser[]>(() => {
+    const r = this.report();
+    if (!r) return [];
+    const role = this.selectedRole();
+    if (role === 'teachers') return r.teachers ?? [];
+    if (role === 'parents') return r.parents ?? [];
+    return r.students ?? [];
+  });
+
+  readonly loggedInTitleKey = computed(() => {
+    const role = this.selectedRole();
+    if (role === 'teachers') return 'admin.dashboard.loggedInTeachers';
+    if (role === 'parents') return 'admin.dashboard.loggedInParents';
+    return 'admin.dashboard.loggedInStudents';
+  });
+
   constructor() {
     this.reload();
+  }
+
+  selectRole(role: LoginRole): void {
+    this.selectedRole.set(role);
+  }
+
+  formatLogin(iso: string): string {
+    this.locale.lang();
+    return new Date(iso).toLocaleString(this.locale.lang());
   }
 
   barHeight(count: number): string {

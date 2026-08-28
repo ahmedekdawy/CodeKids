@@ -66,12 +66,6 @@ public static class DataSeeder
         {
             var starterCourseId = Guid.Parse("22222222-2222-2222-2222-222222222201");
             var logicCourseId = Guid.Parse("22222222-2222-2222-2222-222222222202");
-            var starterUnitId = Guid.Parse("26262626-2626-2626-2626-262626262601");
-            var logicUnitId = Guid.Parse("26262626-2626-2626-2626-262626262602");
-            var loopsLessonId = Guid.Parse("33333333-3333-3333-3333-333333333301");
-            var variablesLessonId = Guid.Parse("33333333-3333-3333-3333-333333333302");
-            var conditionsLessonId = Guid.Parse("33333333-3333-3333-3333-333333333303");
-
             dbContext.Courses.AddRange(
                 new Course
                 {
@@ -85,86 +79,6 @@ public static class DataSeeder
                     Grade = 3,
                     StageId = 1,
                     SortOrder = 1,
-                    Units =
-                    [
-                        new CourseUnit
-                        {
-                            Id = starterUnitId,
-                            CourseId = starterCourseId,
-                            Title = "Loops and variables",
-                            Description = "Loops and variables",
-                            SortOrder = 1,
-                            Lessons =
-                            [
-                                new Lesson
-                                {
-                                    Id = loopsLessonId,
-                                    CourseId = starterCourseId,
-                                    UnitId = starterUnitId,
-                                    Title = "Robot Loops Adventure",
-                                    Theme = "Robots",
-                                    Description = "Teach a tiny robot to repeat moves using simple loops.",
-                                    Difficulty = 1,
-                                    XpReward = 40,
-                                    SortOrder = 1,
-                                    Steps =
-                                    [
-                                        new LessonStep
-                                        {
-                                            Id = Guid.Parse("44444444-4444-4444-4444-444444444401"),
-                                            LessonId = loopsLessonId,
-                                            StepNumber = 1,
-                                            Title = "Repeat Forward",
-                                            Prompt = "Type LOOP 3 FORWARD to move the robot three times.",
-                                            ExpectedAnswer = "LOOP 3 FORWARD"
-                                        },
-                                        new LessonStep
-                                        {
-                                            Id = Guid.Parse("44444444-4444-4444-4444-444444444402"),
-                                            LessonId = loopsLessonId,
-                                            StepNumber = 2,
-                                            Title = "Repeat Jump",
-                                            Prompt = "Type LOOP 2 JUMP to help the robot hop twice.",
-                                            ExpectedAnswer = "LOOP 2 JUMP"
-                                        }
-                                    ]
-                                },
-                                new Lesson
-                                {
-                                    Id = variablesLessonId,
-                                    CourseId = starterCourseId,
-                                    UnitId = starterUnitId,
-                                    Title = "Treasure Variables",
-                                    Theme = "Pirates",
-                                    Description = "Learn how names can store values like treasure counts.",
-                                    Difficulty = 2,
-                                    XpReward = 60,
-                                    SortOrder = 2,
-                                    Steps =
-                                    [
-                                        new LessonStep
-                                        {
-                                            Id = Guid.Parse("44444444-4444-4444-4444-444444444403"),
-                                            LessonId = variablesLessonId,
-                                            StepNumber = 1,
-                                            Title = "Create a Variable",
-                                            Prompt = "Type coins = 5 to store five gold coins.",
-                                            ExpectedAnswer = "coins = 5"
-                                        },
-                                        new LessonStep
-                                        {
-                                            Id = Guid.Parse("44444444-4444-4444-4444-444444444404"),
-                                            LessonId = variablesLessonId,
-                                            StepNumber = 2,
-                                            Title = "Use a Variable",
-                                            Prompt = "Type print(coins) to show the treasure amount.",
-                                            ExpectedAnswer = "print(coins)"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
                     Quizzes =
                     [
                         new Quiz
@@ -214,53 +128,6 @@ public static class DataSeeder
                     Grade = 5,
                     StageId = 1,
                     SortOrder = 2,
-                    Units =
-                    [
-                        new CourseUnit
-                        {
-                            Id = logicUnitId,
-                            CourseId = logicCourseId,
-                            Title = "Conditions",
-                            Description = "Conditions",
-                            SortOrder = 1,
-                            Lessons =
-                            [
-                                new Lesson
-                                {
-                                    Id = conditionsLessonId,
-                                    CourseId = logicCourseId,
-                                    UnitId = logicUnitId,
-                                    Title = "Starship Conditions",
-                                    Theme = "Space",
-                                    Description = "Use IF statements to help a starship make choices.",
-                                    Difficulty = 3,
-                                    XpReward = 80,
-                                    SortOrder = 1,
-                                    Steps =
-                                    [
-                                        new LessonStep
-                                        {
-                                            Id = Guid.Parse("44444444-4444-4444-4444-444444444405"),
-                                            LessonId = conditionsLessonId,
-                                            StepNumber = 1,
-                                            Title = "If Fuel Low",
-                                            Prompt = "Type IF fuel < 10 THEN refuel to keep flying safely.",
-                                            ExpectedAnswer = "IF fuel < 10 THEN refuel"
-                                        },
-                                        new LessonStep
-                                        {
-                                            Id = Guid.Parse("44444444-4444-4444-4444-444444444406"),
-                                            LessonId = conditionsLessonId,
-                                            StepNumber = 2,
-                                            Title = "If Asteroid Ahead",
-                                            Prompt = "Type IF asteroid THEN dodge to avoid a crash.",
-                                            ExpectedAnswer = "IF asteroid THEN dodge"
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
                     Quizzes =
                     [
                         new Quiz

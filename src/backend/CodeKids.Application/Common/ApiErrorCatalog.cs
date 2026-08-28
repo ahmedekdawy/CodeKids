@@ -127,6 +127,33 @@ public static class ApiErrorCatalog
         ["Video URL is too long."] = "api.errors.media.urlTooLong",
         ["Video URL must be an absolute http or https link."] = "api.errors.media.urlInvalid",
         ["Lesson not found."] = "api.errors.lesson.notFound",
+        ["Unit not found."] = "api.errors.unit.notFound",
+        ["Ask scope must be course, unit, or lesson."] = "api.errors.studentAsk.scopeInvalid",
+        ["Question is required."] = "api.errors.studentAsk.questionRequired",
+        ["Question is too long."] = "api.errors.studentAsk.questionTooLong",
+        ["Student Ask is not enabled for this course, unit, or lesson."] = "api.errors.studentAsk.notEnabled",
+        ["You do not have access to this course."] = "api.errors.studentAsk.noAccess",
+        ["Select a course, unit, or lesson to ask about."] = "api.errors.studentAsk.scopeRequired",
+        ["Lesson does not belong to the selected course."] = "api.errors.studentAsk.lessonCourseMismatch",
+        ["Lesson does not belong to the selected unit."] = "api.errors.studentAsk.lessonUnitMismatch",
+        ["Unit does not belong to the selected course."] = "api.errors.studentAsk.unitCourseMismatch",
+        ["Asked question not found."] = "api.errors.studentAsk.questionNotFound",
+        ["You can only delete your own questions."] = "api.errors.studentAsk.deleteOwnOnly",
+        ["Answer is required."] = "api.errors.studentAsk.answerRequired",
+        ["Answer is too long."] = "api.errors.studentAsk.answerTooLong",
+        ["You can only chat in classrooms and courses assigned to you."] = "api.errors.chat.teacherOnly",
+        ["You are not in this chat."] = "api.errors.chat.notMember",
+        ["You are blocked from this chat."] = "api.errors.chat.blocked",
+        ["Only teachers can delete chat messages."] = "api.errors.chat.teacherOnlyDelete",
+        ["Only teachers can block students from chat."] = "api.errors.chat.teacherOnlyBlock",
+        ["Chat message not found."] = "api.errors.chat.messageNotFound",
+        ["Student is not in this chat."] = "api.errors.chat.studentNotInChat",
+        ["You can only block students."] = "api.errors.chat.blockStudentsOnly",
+        ["Select at least one student."] = "api.errors.chat.studentsRequired",
+        ["Select one student for a direct chat."] = "api.errors.chat.directOneStudent",
+        ["Select at least two students for a group chat."] = "api.errors.chat.groupMinStudents",
+        ["Chat kind must be Direct, Group, or Class."] = "api.errors.chat.kindInvalid",
+        ["Message is too long."] = "api.errors.chat.messageTooLong",
         ["Media asset not found."] = "api.errors.media.notFound",
         ["You can only attach media you uploaded."] = "api.errors.media.ownUploadOnly",
         ["Only the classroom teacher can attach a solution video."] = "api.errors.media.teacherOnlySolution",
@@ -163,6 +190,7 @@ public static class ApiErrorCatalog
         (new Regex("^File size must be between 1 byte and (\\d+) bytes\\.$", RegexOptions.Compiled), "api.errors.media.fileSizeInvalid"),
         (new Regex("^Session number must be between 1 and (\\d+)\\.$", RegexOptions.Compiled), "api.errors.timetable.sessionInvalid"),
         (new Regex("^Timetable session count must be between (\\d+) and (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.sessionCountInvalid"),
+        (new Regex("^PM start time must be between (.+) and (.+)\\.$", RegexOptions.Compiled), "api.errors.site.pmStartInvalid"),
         (new Regex("^Cannot reduce AM sessions while timetable entries exist beyond session (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.amSessionCountInUse"),
         (new Regex("^Cannot reduce PM sessions while timetable entries exist beyond session (\\d+)\\.$", RegexOptions.Compiled), "api.errors.site.pmSessionCountInUse")
     ];
@@ -187,6 +215,11 @@ public static class ApiErrorCatalog
             if (patternCode == "api.errors.timetable.sessionInvalid" && match.Groups.Count > 1)
                 args["max"] = match.Groups[1].Value;
             if (patternCode == "api.errors.site.sessionCountInvalid" && match.Groups.Count > 2)
+            {
+                args["min"] = match.Groups[1].Value;
+                args["max"] = match.Groups[2].Value;
+            }
+            if (patternCode == "api.errors.site.pmStartInvalid" && match.Groups.Count > 2)
             {
                 args["min"] = match.Groups[1].Value;
                 args["max"] = match.Groups[2].Value;

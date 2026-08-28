@@ -40,6 +40,7 @@ export interface CourseLesson {
   xpReward: number;
   sortOrder: number;
   stepCount: number;
+  studentAskEnabled?: boolean;
 }
 
 export interface CourseUnit {
@@ -51,6 +52,7 @@ export interface CourseUnit {
   lessons: CourseLesson[];
   term?: number | null;
   verificationStatus?: string;
+  studentAskEnabled?: boolean;
 }
 
 export interface CourseQuiz {
@@ -84,6 +86,7 @@ export interface Course {
   sourceTocUrl?: string;
   notes?: string;
   variants?: string;
+  studentAskEnabled?: boolean;
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
@@ -118,6 +121,7 @@ export interface SiteSettings {
   timetableWeekStartUtc?: string | null;
   amSessionCount: number;
   pmSessionCount: number;
+  pmStartMinutes: number;
   updatedAtUtc: string;
 }
 
@@ -146,6 +150,8 @@ export interface Lesson {
   xpReward: number;
   steps: LessonStep[];
   videos?: LessonVideoSummary[];
+  unitId?: string | null;
+  studentAskEnabled?: boolean;
 }
 
 export interface MediaAsset {
@@ -246,6 +252,7 @@ export interface QuizQuestion {
   optionC: string;
   options?: ChoiceOption[];
   sortOrder: number;
+  promptImageUrl?: string | null;
 }
 
 export interface Quiz {
@@ -282,6 +289,7 @@ export interface QuizAnswerReview {
   correctOption: string;
   correctText: string;
   isCorrect: boolean;
+  promptImageUrl?: string | null;
 }
 
 export interface QuizAttemptReview {
@@ -708,11 +716,39 @@ export interface AccountReport {
   netAmount: number;
 }
 
+export interface StudentAskedQuestion {
+  id: string;
+  studentId: string;
+  studentName: string;
+  courseId: string;
+  courseTitle: string;
+  unitId?: string | null;
+  unitTitle: string;
+  lessonId?: string | null;
+  lessonTitle: string;
+  question: string;
+  aiAnswer: string;
+  aiInScope: boolean;
+  teacherAnswer: string;
+  teacherName: string;
+  createdAtUtc: string;
+  teacherAnsweredAtUtc?: string | null;
+  isMine: boolean;
+}
+
 export interface AdminLoginDashboardDay {
   date: string;
   teachers: number;
   parents: number;
   students: number;
+}
+
+export interface AdminLoginUser {
+  id: string;
+  displayName: string;
+  email: string;
+  mobilePhone: string;
+  lastLoginDateUtc: string;
 }
 
 export interface AdminLoginDashboard {
@@ -722,6 +758,9 @@ export interface AdminLoginDashboard {
   parentCount: number;
   studentCount: number;
   days: AdminLoginDashboardDay[];
+  teachers: AdminLoginUser[];
+  parents: AdminLoginUser[];
+  students: AdminLoginUser[];
 }
 
 export interface TuitionPayment {
@@ -866,6 +905,7 @@ export interface AssignmentQuestion {
   points: number;
   sortOrder: number;
   correctAnswer?: string | null;
+  promptImageUrl?: string | null;
 }
 
 export interface Assignment {
@@ -890,6 +930,7 @@ export interface AssignmentAnswerReview {
   isCorrect?: boolean | null;
   pointsAwarded?: number | null;
   points: number;
+  promptImageUrl?: string | null;
 }
 
 export interface AssignmentSubmission {
@@ -936,6 +977,7 @@ export interface BankQuestion {
   correctAnswer: string;
   points: number;
   sortOrder: number;
+  promptImageUrl?: string | null;
   children: BankQuestion[];
 }
 
@@ -954,6 +996,7 @@ export interface ExamQuestion {
   points: number;
   sortOrder: number;
   correctAnswer?: string | null;
+  promptImageUrl?: string | null;
   children: ExamQuestion[];
 }
 
@@ -981,6 +1024,49 @@ export interface ExamAnswerReview {
   isCorrect?: boolean | null;
   pointsAwarded?: number | null;
   points: number;
+  promptImageUrl?: string | null;
+}
+
+export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;
+
+export interface ChatMember {
+  userId: string;
+  displayName: string;
+  role: string;
+  isBlocked: boolean;
+}
+
+export interface ChatMessage {
+  id: string;
+  roomId: string;
+  senderId: string;
+  senderName: string;
+  body: string;
+  createdAtUtc: string;
+  isDeleted: boolean;
+}
+
+export interface ChatRoom {
+  id: string;
+  classroomId: string;
+  classroomName: string;
+  courseId: string;
+  courseTitle: string;
+  unitId?: string | null;
+  unitTitle: string;
+  lessonId?: string | null;
+  lessonTitle: string;
+  kind: ChatKind;
+  title: string;
+  isBlocked: boolean;
+  unreadCount: number;
+  members: ChatMember[];
+}
+
+export interface ChatUnreadSummary {
+  totalUnread: number;
+  roomId?: string | null;
+  roomTitle: string;
 }
 
 export interface ExamAttempt {

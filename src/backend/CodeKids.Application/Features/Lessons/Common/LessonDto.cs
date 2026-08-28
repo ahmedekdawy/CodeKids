@@ -13,4 +13,6 @@ public sealed record LessonDto(
     int Difficulty,
     int XpReward,
     IReadOnlyList<LessonStepDto> Steps,
-    IReadOnlyList<LessonVideoSummaryDto> Videos);
+    IReadOnlyList<LessonVideoSummaryDto> Videos,
+    Guid? UnitId = null,
+    bool StudentAskEnabled = false);

@@ -56,6 +56,12 @@ using CodeKids.Application.Features.SiteSettings;
 
 using CodeKids.Application.Features.StudyPlans;
 
+using CodeKids.Application.Features.StudentAsk;
+
+using CodeKids.Application.Features.Chat;
+
+using CodeKids.Api.Hubs;
+
 using CodeKids.Application.Features.Timetable;
 
 using CodeKids.Application.Features.WeeklyReports;
@@ -151,6 +157,8 @@ builder.Services.AddCors(options =>
 
             .AllowAnyMethod()
 
+            .AllowCredentials()
+
             .SetPreflightMaxAge(TimeSpan.FromHours(1)));
 
 });
@@ -226,6 +234,21 @@ builder.Services.AddScoped<ICommandHandler<DeleteCourseUnitCommand, bool>, Delet
 builder.Services.AddScoped<ICommandHandler<CreateCourseLessonCommand, CourseLessonDto>, CreateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateCourseLessonCommand, CourseLessonDto>, UpdateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteCourseLessonCommand, bool>, DeleteCourseLessonCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetStudentAskEnabledCommand, StudentAskSettingsDto>, SetStudentAskEnabledCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<AskStudentQuestionCommand, StudentAskAnswerDto>, AskStudentQuestionCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<ListStudentAskedQuestionsQuery, IReadOnlyList<StudentAskedQuestionDto>>, ListStudentAskedQuestionsQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<AnswerStudentAskedQuestionCommand, StudentAskedQuestionDto>, AnswerStudentAskedQuestionCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateStudentAskedQuestionCommand, StudentAskedQuestionDto>, UpdateStudentAskedQuestionCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteStudentAskedQuestionCommand, bool>, DeleteStudentAskedQuestionCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateChatRoomCommand, ChatRoomDto>, CreateChatRoomCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<ListChatRoomsQuery, IReadOnlyList<ChatRoomDto>>, ListChatRoomsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListChatMessagesQuery, IReadOnlyList<ChatMessageDto>>, ListChatMessagesQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<SendChatMessageCommand, ChatMessageDto>, SendChatMessageCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteChatMessageCommand, ChatMessageDto>, DeleteChatMessageCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetChatMemberBlockedCommand, ChatMemberDto>, SetChatMemberBlockedCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<MarkChatRoomReadCommand, int>, MarkChatRoomReadCommandHandler>();
+builder.Services.AddScoped<IQueryHandler<GetChatUnreadSummaryQuery, ChatUnreadSummaryDto>, GetChatUnreadSummaryQueryHandler>();
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>>, GetLessonsQueryHandler>();
 
@@ -459,6 +482,32 @@ builder.Services
 
         };
 
+        options.Events = new JwtBearerEvents
+
+        {
+
+            OnMessageReceived = context =>
+
+            {
+
+                var accessToken = context.Request.Query["access_token"].ToString();
+
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+
+                {
+
+                    context.Token = accessToken;
+
+                }
+
+                return Task.CompletedTask;
+
+            }
+
+        };
+
     });
 
 builder.Services.AddAuthorization();
@@ -556,8 +605,15 @@ app.MapExamsEndpoints();
 app.MapExpensesEndpoints();
 
 app.MapLessonsEndpoints();
+app.MapStudentAskEndpoints();
+
+app.MapChatEndpoints();
+
+app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
 
 app.MapMediaEndpoints();
+
+app.MapQuestionImageEndpoints();
 
 app.MapMeetingsEndpoints();
 

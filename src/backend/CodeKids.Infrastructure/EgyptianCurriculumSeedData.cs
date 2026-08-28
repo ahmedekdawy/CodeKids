@@ -8,7 +8,7 @@ namespace CodeKids.Infrastructure;
 
 /// <summary>
 /// Seeds Egyptian MoE subjects, units, and lessons from the official grades 1–12 catalog.
-/// Course = subject for one grade (and track when applicable); CourseUnit = وحدة; Lesson = درس.
+/// Course = subject for one grade (and track when applicable); SubjectUnit = وحدة; SubjectUnitLesson = درس.
 /// </summary>
 public static class EgyptianCurriculumSeedData
 {
@@ -172,8 +172,6 @@ public static class EgyptianCurriculumSeedData
                     AgeMin = ageMin,
                     AgeMax = ageMax,
                     SortOrder = sortOrder++,
-                    Units = [],
-                    Lessons = []
                 };
                 dbContext.Courses.Add(course);
                 courses.Add(course);
@@ -181,7 +179,6 @@ public static class EgyptianCurriculumSeedData
 
             used.Add(course.Id);
             ApplyCourseMetadata(course, spec);
-            await SyncUnitsAndLessonsAsync(dbContext, course, spec, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
@@ -213,167 +210,6 @@ public static class EgyptianCurriculumSeedData
         course.SourceTocUrl = Clip(spec.SourceTocUrl, 500);
         course.Notes = Clip(spec.Notes, 1000);
         course.Variants = Clip(spec.Variants, 400);
-    }
-
-    private static async Task SyncUnitsAndLessonsAsync(
-        AppDbContext dbContext,
-        Course course,
-        CurriculumCourseSpec spec,
-        CancellationToken cancellationToken)
-    {
-        var lessonIds = await dbContext.Lessons
-            .Where(l => l.CourseId == course.Id)
-            .Select(l => l.Id)
-            .ToListAsync(cancellationToken);
-        if (await LessonsAreInUseAsync(dbContext, lessonIds, cancellationToken))
-        {
-            return;
-        }
-
-        await dbContext.Lessons.Where(l => l.CourseId == course.Id).ExecuteDeleteAsync(cancellationToken);
-        await dbContext.CourseUnits.Where(u => u.CourseId == course.Id).ExecuteDeleteAsync(cancellationToken);
-
-        var units = spec.Units;
-        if (units.Count == 0)
-        {
-            await CopyUnitsFromRelatedSubjectsAsync(dbContext, course, cancellationToken);
-            return;
-        }
-
-        foreach (var unitSpec in units)
-        {
-            var unitOrder = Math.Max(1, unitSpec.Index);
-            var unitId = CurriculumGuid("unit", spec.Grade, spec.SubjectCode, spec.TrackCode, unitSpec.Term, unitOrder);
-            var unit = new CourseUnit
-            {
-                Id = unitId,
-                CourseId = course.Id,
-                Title = Clip(unitSpec.Title, 300),
-                Description = Clip($"{unitSpec.Title} — {GradeLabel(spec.Grade)} — الترم {unitSpec.Term}", 500),
-                SortOrder = unitOrder,
-                TermId = (CourseTerm)unitSpec.Term,
-                VerificationStatus = Clip(unitSpec.VerificationStatus, 80),
-                Lessons = []
-            };
-
-            foreach (var lessonSpec in unitSpec.Lessons)
-            {
-                var lessonOrder = Math.Max(1, lessonSpec.Index);
-                unit.Lessons.Add(new Lesson
-                {
-                    Id = CurriculumGuid("lesson", spec.Grade, spec.SubjectCode, spec.TrackCode, unitSpec.Term, unitOrder, lessonOrder),
-                    CourseId = course.Id,
-                    UnitId = unitId,
-                    Title = Clip(lessonSpec.Title, 300),
-                    Theme = course.Theme,
-                    Description = Clip($"{lessonSpec.Title} — {spec.Title} — {GradeLabel(spec.Grade)}", 500),
-                    Difficulty = Math.Clamp(1 + spec.Grade / 3, 1, 5),
-                    XpReward = 20 + spec.Grade * 2,
-                    SortOrder = lessonOrder
-                });
-            }
-
-            dbContext.CourseUnits.Add(unit);
-        }
-    }
-
-    private static async Task CopyUnitsFromRelatedSubjectsAsync(
-        AppDbContext dbContext,
-        Course course,
-        CancellationToken cancellationToken)
-    {
-        var subjects = await dbContext.Subjects
-            .AsNoTracking()
-            .Include(s => s.Units)
-                .ThenInclude(u => u.Lessons)
-            .Where(s =>
-                (course.ExternalSubjectId != null && s.Id == course.ExternalSubjectId)
-                || (course.Grade != null
-                    && s.GradeId == course.Grade
-                    && s.Code == course.SubjectCode
-                    && (s.TrackCode ?? "") == (course.TrackCode ?? "")))
-            .OrderBy(s => s.TermId ?? 99)
-            .ThenBy(s => s.Id)
-            .ToListAsync(cancellationToken);
-
-        foreach (var subject in subjects)
-        {
-            foreach (var unitSpec in subject.Units.OrderBy(u => u.SortOrder).ThenBy(u => u.Title))
-            {
-                var unitOrder = Math.Max(1, unitSpec.SortOrder);
-                var term = subject.TermId ?? 1;
-                var unitId = CurriculumGuid("sunit", course.Grade ?? 0, course.SubjectCode, course.TrackCode, term, unitOrder, unitSpec.Title);
-                var unit = new CourseUnit
-                {
-                    Id = unitId,
-                    CourseId = course.Id,
-                    Title = Clip(unitSpec.Title, 300),
-                    Description = Clip(
-                        subject.TermId is int termId
-                            ? $"{unitSpec.Title} — {GradeLabel(course.Grade ?? 0)} — الترم {termId}"
-                            : $"{unitSpec.Title} — {GradeLabel(course.Grade ?? 0)}",
-                        500),
-                    SortOrder = unitOrder,
-                    TermId = subject.TermId is int t ? (CourseTerm)t : null,
-                    VerificationStatus = Clip(unitSpec.VerificationStatus, 80),
-                    Lessons = []
-                };
-
-                foreach (var lessonSpec in unitSpec.Lessons.OrderBy(l => l.SortOrder).ThenBy(l => l.Title))
-                {
-                    var lessonOrder = Math.Max(1, lessonSpec.SortOrder);
-                    unit.Lessons.Add(new Lesson
-                    {
-                        Id = CurriculumGuid("slesson", course.Grade ?? 0, course.SubjectCode, course.TrackCode, term, unitOrder, lessonOrder, lessonSpec.Title),
-                        CourseId = course.Id,
-                        UnitId = unitId,
-                        Title = Clip(lessonSpec.Title, 300),
-                        Theme = course.Theme,
-                        Description = Clip($"{lessonSpec.Title} — {course.Title} — {GradeLabel(course.Grade ?? 0)}", 500),
-                        Difficulty = Math.Clamp(1 + (course.Grade ?? 1) / 3, 1, 5),
-                        XpReward = 20 + (course.Grade ?? 1) * 2,
-                        SortOrder = lessonOrder
-                    });
-                }
-
-                dbContext.CourseUnits.Add(unit);
-            }
-        }
-    }
-
-    private static async Task<bool> LessonsAreInUseAsync(
-        AppDbContext dbContext,
-        IReadOnlyList<Guid> lessonIds,
-        CancellationToken cancellationToken)
-    {
-        if (lessonIds.Count == 0)
-        {
-            return false;
-        }
-
-        if (await dbContext.LessonVideos.AnyAsync(v => lessonIds.Contains(v.LessonId), cancellationToken))
-        {
-            return true;
-        }
-
-        if (await dbContext.BankQuestions.AnyAsync(
-                q => q.LessonId != null && lessonIds.Contains(q.LessonId.Value), cancellationToken))
-        {
-            return true;
-        }
-
-        if (await dbContext.VideoWatchSessions.AnyAsync(
-                s => s.LessonId != null && lessonIds.Contains(s.LessonId.Value), cancellationToken))
-        {
-            return true;
-        }
-
-        var stepIds = await dbContext.LessonSteps
-            .Where(s => lessonIds.Contains(s.LessonId))
-            .Select(s => s.Id)
-            .ToListAsync(cancellationToken);
-        return stepIds.Count > 0
-            && await dbContext.StudentProgress.AnyAsync(p => stepIds.Contains(p.StepId), cancellationToken);
     }
 
     private static Guid CurriculumGuid(params object[] parts)

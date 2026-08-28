@@ -12,4 +12,5 @@ public sealed record SiteSettingsDto(
     DateTimeOffset? TimetableWeekStartUtc,
     int AmSessionCount,
     int PmSessionCount,
+    int PmStartMinutes,
     DateTimeOffset UpdatedAtUtc);

@@ -12,7 +12,8 @@ public sealed record UpdateSiteSettingsRequest(
     DateTimeOffset? TimetableWeekStartUtc = null,
     bool? ClearTimetableWeek = null,
     int? AmSessionCount = null,
-    int? PmSessionCount = null);
+    int? PmSessionCount = null,
+    int? PmStartMinutes = null);
 
 public sealed record UpdateSiteSettingsCommand(
     Guid AdminUserId,
@@ -22,4 +23,5 @@ public sealed record UpdateSiteSettingsCommand(
     DateTimeOffset? TimetableWeekStartUtc,
     bool ClearTimetableWeek,
     int? AmSessionCount,
-    int? PmSessionCount) : ICommand<SiteSettingsDto>;
+    int? PmSessionCount,
+    int? PmStartMinutes) : ICommand<SiteSettingsDto>;

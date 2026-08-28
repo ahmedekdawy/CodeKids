@@ -8,10 +8,12 @@ import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-play
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })

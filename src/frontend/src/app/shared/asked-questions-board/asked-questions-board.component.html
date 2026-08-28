@@ -1,0 +1,134 @@
+<app-page-feedback [ok]="message()" [error]="error()" />
+
+<div class="list-filters">
+  <label>
+    {{ 'common.course' | t }}
+    <app-searchable-select
+      [ngModel]="filterCourseId"
+      name="askedFilterCourse"
+      (ngModelChange)="onCourseChange($event)"
+      [emptyLabel]="'common.all' | t"
+      [options]="courseOptions()"
+    />
+  </label>
+  <label>
+    {{ 'common.unit' | t }}
+    <app-searchable-select
+      [ngModel]="filterUnitId"
+      name="askedFilterUnit"
+      (ngModelChange)="onUnitChange($event)"
+      [emptyLabel]="'common.all' | t"
+      [options]="unitOptions()"
+    />
+  </label>
+  <label>
+    {{ 'common.lesson' | t }}
+    <app-searchable-select
+      [ngModel]="filterLessonId"
+      name="askedFilterLesson"
+      (ngModelChange)="filterLessonId = $event"
+      [emptyLabel]="'common.all' | t"
+      [options]="lessonOptions()"
+    />
+  </label>
+  <label>
+    {{ 'askedQuestions.dateFrom' | t }}
+    <input type="date" [(ngModel)]="filterFromDate" name="askedFrom" />
+  </label>
+  <label>
+    {{ 'askedQuestions.dateTo' | t }}
+    <input type="date" [(ngModel)]="filterToDate" name="askedTo" />
+  </label>
+  <label>
+    {{ 'askedQuestions.questionText' | t }}
+    <input
+      [(ngModel)]="filterQuestion"
+      name="askedQuestionText"
+      [placeholder]="'askedQuestions.questionPlaceholder' | t"
+    />
+  </label>
+  <div class="filter-actions">
+    <app-icon-action-button kind="apply" [label]="'common.applyFilters' | t" (action)="applyFilters()" />
+    <app-icon-action-button kind="clear" variant="ghost" [label]="'common.clearFilters' | t" (action)="clearFilters()" />
+  </div>
+</div>
+
+@if (!items().length) {
+  <p class="meta">{{ 'askedQuestions.empty' | t }}</p>
+} @else {
+  <p class="meta">{{ 'common.ofShown' | t: { shown: pagedItems().length, total: items().length } }}</p>
+}
+
+@for (item of pagedItems(); track item.id) {
+  <article class="asked-card" [class.mine]="item.isMine">
+    <header class="asked-card-head">
+      <div>
+        <strong>{{ item.studentName }}</strong>
+        @if (item.isMine) {
+          <span class="meta"> · {{ 'askedQuestions.yours' | t }}</span>
+        }
+        <p class="meta">{{ scopeLabel(item) }} · {{ formatWhen(item.createdAtUtc) }}</p>
+      </div>
+      @if (canAnswer() || item.isMine) {
+        <div class="row-actions">
+          @if (canAnswer()) {
+            <app-icon-action-button kind="edit" [label]="'askedQuestions.editQuestion' | t" (action)="startEditQuestion(item)" />
+            <button type="button" class="ghost-btn" (click)="startEditAnswer(item)">
+              {{ item.teacherAnswer ? ('askedQuestions.editAnswer' | t) : ('askedQuestions.answerBtn' | t) }}
+            </button>
+          }
+          <app-icon-action-button kind="delete" variant="danger" (action)="deleteQuestion(item)" />
+        </div>
+      }
+    </header>
+    @if (canAnswer() && editingQuestionId() === item.id) {
+      <form class="asked-edit" (ngSubmit)="saveQuestion(item)">
+        <div class="asked-answer">
+          <strong>{{ 'askedQuestions.questionText' | t }}</strong>
+          <textarea [(ngModel)]="draftQuestion" name="questionDraft" rows="6" required></textarea>
+        </div>
+        <div class="asked-edit-actions">
+          <button type="submit">{{ 'common.save' | t }}</button>
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        </div>
+      </form>
+    } @else {
+      <p class="asked-question">{{ item.question }}</p>
+    }
+    @if (item.aiAnswer) {
+      <div class="asked-answer" [class.out]="!item.aiInScope">
+        <strong>{{ item.aiInScope ? ('askedQuestions.aiAnswer' | t) : ('studentAsk.outOfScope' | t) }}</strong>
+        <p>{{ item.aiAnswer }}</p>
+      </div>
+    }
+    @if (canAnswer() && editingAnswerId() === item.id) {
+      <form class="asked-edit" (ngSubmit)="saveAnswer(item)">
+        <div class="asked-answer teacher">
+          <strong>{{ 'askedQuestions.teacherAnswer' | t }}</strong>
+          <textarea [(ngModel)]="draftAnswer" name="teacherAnswerDraft" rows="6" required></textarea>
+        </div>
+        <div class="asked-edit-actions">
+          <button type="submit">{{ 'common.save' | t }}</button>
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        </div>
+      </form>
+    } @else if (item.teacherAnswer) {
+      <div class="asked-answer teacher">
+        <strong>{{ 'askedQuestions.teacherAnswer' | t }}{{ item.teacherName ? ' — ' + item.teacherName : '' }}</strong>
+        <p>{{ item.teacherAnswer }}</p>
+      </div>
+    }
+  </article>
+}
+
+@if (items().length) {
+  <div class="list-pager">
+    <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+      {{ 'common.previous' | t }}
+    </button>
+    <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+    <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+      {{ 'common.next' | t }}
+    </button>
+  </div>
+}

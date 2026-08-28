@@ -69,10 +69,13 @@
       <div class="block">
         <h4>{{ 'teacher.exams.selectQuestions' | t }}</h4>
         @for (question of visibleBank(); track question.id) {
-          <label class="checkbox">
+          <label class="checkbox bank-question-row">
             <input type="checkbox" [checked]="isSelected(question.id)" (change)="toggleQuestion(question.id)" />
-            {{ question.prompt }}
-            <span class="meta">({{ questionTypeLabel(question.questionType) }} · {{ question.points }} {{ 'common.pts' | t }})</span>
+            <span class="bank-question-label">
+              <span class="prompt-html" [innerHTML]="question.prompt | safeHtml"></span>
+              <app-question-image-display [url]="question.promptImageUrl" [compact]="true" />
+              <span class="meta">({{ questionTypeLabel(question.questionType) }} · {{ question.points }} {{ 'common.pts' | t }})</span>
+            </span>
           </label>
         } @empty {
           <p class="meta">{{ 'teacher.exams.noBank' | t }}</p>

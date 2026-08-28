@@ -71,6 +71,15 @@ public sealed class GetSiteSettingsQueryHandler(IAppDbContext dbContext)
             BannerStorageKey = template?.BannerStorageKey ?? string.Empty,
             BannerContentType = template?.BannerContentType ?? string.Empty,
             TimetableWeekStartUtc = template?.TimetableWeekStartUtc,
+            AmSessionCount = template is null
+                ? Domain.Entities.SiteSettings.DefaultSessionCount
+                : Domain.Entities.SiteSettings.NormalizeSessionCount(template.AmSessionCount),
+            PmSessionCount = template is null
+                ? Domain.Entities.SiteSettings.DefaultSessionCount
+                : Domain.Entities.SiteSettings.NormalizeSessionCount(template.PmSessionCount),
+            PmStartMinutes = template is null
+                ? Domain.Entities.SiteSettings.DefaultPmStartMinutes
+                : Domain.Entities.SiteSettings.NormalizePmStartMinutes(template.PmStartMinutes),
             UpdatedAtUtc = DateTimeOffset.UtcNow
         };
 }

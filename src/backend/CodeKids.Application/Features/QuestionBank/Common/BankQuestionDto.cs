@@ -25,4 +25,5 @@ public sealed record BankQuestionDto(
     string CorrectAnswer,
     int Points,
     int SortOrder,
+    string? PromptImageUrl,
     IReadOnlyList<BankQuestionDto> Children);

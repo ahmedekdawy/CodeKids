@@ -8,4 +8,5 @@ public sealed record CourseUnitDto(
     int SortOrder,
     IReadOnlyList<CourseLessonDto> Lessons,
     int? Term = null,
-    string VerificationStatus = "");
+    string VerificationStatus = "",
+    bool StudentAskEnabled = false);

@@ -31,9 +31,9 @@ public class Course : TenantEntity
     public string SourceTocUrl { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
     public string Variants { get; set; } = string.Empty;
+    /// <summary>When true, students may use Ask on this course and all of its units/lessons.</summary>
+    public bool StudentAskEnabled { get; set; }
     public Subject? ExternalSubject { get; set; }
     public Stage? Stage { get; set; }
-    public List<CourseUnit> Units { get; set; } = [];
-    public List<Lesson> Lessons { get; set; } = [];
     public List<Quiz> Quizzes { get; set; } = [];
 }

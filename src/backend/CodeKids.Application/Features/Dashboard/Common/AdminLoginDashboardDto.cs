@@ -6,10 +6,20 @@ public sealed record AdminLoginDashboardDto(
     int TeacherCount,
     int ParentCount,
     int StudentCount,
-    IReadOnlyList<AdminLoginDashboardDayDto> Days);
+    IReadOnlyList<AdminLoginDashboardDayDto> Days,
+    IReadOnlyList<AdminLoginUserDto> Teachers,
+    IReadOnlyList<AdminLoginUserDto> Parents,
+    IReadOnlyList<AdminLoginUserDto> Students);
 
 public sealed record AdminLoginDashboardDayDto(
     DateOnly Date,
     int Teachers,
     int Parents,
     int Students);
+
+public sealed record AdminLoginUserDto(
+    Guid Id,
+    string DisplayName,
+    string Email,
+    string MobilePhone,
+    DateTimeOffset LastLoginDateUtc);

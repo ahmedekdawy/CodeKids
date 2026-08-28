@@ -8,6 +8,10 @@ import {
   Avatar,
   Badge,
   BankQuestion,
+  ChatMember,
+  ChatMessage,
+  ChatRoom,
+  ChatUnreadSummary,
   Classroom,
   ClassroomCourseAssignment,
   CompleteStepResponse,
@@ -58,8 +62,10 @@ import {
   ZoomOAuthSettings,
   SiteSettings,
   Stage,
+  StudentAskedQuestion,
   Subject
 } from './models';
+import { normalizePmStartMinutes } from './fixed-timetable.util';
 import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -99,6 +105,103 @@ export class LearningApiService {
     return this.http.get<Lesson>(`${this.baseUrl}/lessons/${lessonId}`);
   }
 
+  setStudentAskEnabled(
+    scope: 'course' | 'unit' | 'lesson',
+    id: string,
+    enabled: boolean
+  ): Observable<{ scope: string; id: string; enabled: boolean }> {
+    return this.http.put<{ scope: string; id: string; enabled: boolean }>(`${this.baseUrl}/admin/student-ask`, {
+      scope,
+      id,
+      enabled
+    });
+  }
+
+  askStudentQuestion(payload: {
+    question: string;
+    courseId?: string | null;
+    unitId?: string | null;
+    lessonId?: string | null;
+  }): Observable<{ inScope: boolean; answer: string }> {
+    return this.http.post<{ inScope: boolean; answer: string }>(`${this.baseUrl}/student-ask`, payload);
+  }
+
+  listStudentAskedQuestions(filters: {
+    courseId?: string;
+    unitId?: string;
+    lessonId?: string;
+    fromDate?: string;
+    toDate?: string;
+    q?: string;
+  }): Observable<StudentAskedQuestion[]> {
+    const params = new URLSearchParams();
+    if (filters.courseId) params.set('courseId', filters.courseId);
+    if (filters.unitId) params.set('unitId', filters.unitId);
+    if (filters.lessonId) params.set('lessonId', filters.lessonId);
+    if (filters.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters.toDate) params.set('toDate', filters.toDate);
+    if (filters.q) params.set('q', filters.q);
+    const query = params.toString();
+    return this.http.get<StudentAskedQuestion[]>(
+      `${this.baseUrl}/student-ask/questions${query ? `?${query}` : ''}`
+    );
+  }
+
+  answerStudentAskedQuestion(id: string, answer: string): Observable<StudentAskedQuestion> {
+    return this.http.put<StudentAskedQuestion>(`${this.baseUrl}/student-ask/questions/${id}/answer`, {
+      answer
+    });
+  }
+
+  updateStudentAskedQuestion(id: string, question: string): Observable<StudentAskedQuestion> {
+    return this.http.put<StudentAskedQuestion>(`${this.baseUrl}/student-ask/questions/${id}`, { question });
+  }
+
+  deleteStudentAskedQuestion(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/student-ask/questions/${id}`);
+  }
+
+  listChatRooms(): Observable<ChatRoom[]> {
+    return this.http.get<ChatRoom[]>(`${this.baseUrl}/chat/rooms`);
+  }
+
+  getChatUnreadSummary(): Observable<ChatUnreadSummary> {
+    return this.http.get<ChatUnreadSummary>(`${this.baseUrl}/chat/unread`);
+  }
+
+  markChatRoomRead(roomId: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/chat/rooms/${roomId}/read`, {});
+  }
+
+  createChatRoom(payload: {
+    classroomId: string;
+    courseId: string;
+    unitId?: string | null;
+    lessonId?: string | null;
+    kind: 'Direct' | 'Group' | 'Class';
+    studentIds?: string[];
+  }): Observable<ChatRoom> {
+    return this.http.post<ChatRoom>(`${this.baseUrl}/chat/rooms`, payload);
+  }
+
+  listChatMessages(roomId: string): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`${this.baseUrl}/chat/rooms/${roomId}/messages`);
+  }
+
+  sendChatMessage(roomId: string, body: string): Observable<ChatMessage> {
+    return this.http.post<ChatMessage>(`${this.baseUrl}/chat/rooms/${roomId}/messages`, { body });
+  }
+
+  deleteChatMessage(id: string): Observable<ChatMessage> {
+    return this.http.delete<ChatMessage>(`${this.baseUrl}/chat/messages/${id}`);
+  }
+
+  setChatMemberBlocked(roomId: string, studentId: string, blocked: boolean): Observable<ChatMember> {
+    return this.http.put<ChatMember>(`${this.baseUrl}/chat/rooms/${roomId}/members/${studentId}/block`, {
+      blocked
+    });
+  }
+
   getStudentSummary(): Observable<StudentSummary> {
     return this.http.get<StudentSummary>(`${this.baseUrl}/progress/me`);
   }
@@ -134,6 +237,7 @@ export class LearningApiService {
       options?: string[];
       correctOption: string;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[];
   }): Observable<Quiz> {
     return this.http.post<Quiz>(`${this.baseUrl}/quizzes`, payload);
@@ -782,6 +886,7 @@ export class LearningApiService {
     clearTimetableWeek?: boolean;
     amSessionCount?: number;
     pmSessionCount?: number;
+    pmStartMinutes?: number;
   }): Observable<SiteSettings> {
     return this.http
       .put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload)
@@ -912,6 +1017,7 @@ export class LearningApiService {
       correctAnswer: string;
       points: number;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[];
   }): Observable<Assignment> {
     return this.http.post<Assignment>(`${this.baseUrl}/assignments`, payload);
@@ -955,6 +1061,7 @@ export class LearningApiService {
     correctAnswer?: string;
     points: number;
     sortOrder: number;
+    promptImageMediaAssetId?: string | null;
     children?: {
       prompt: string;
       questionType: string;
@@ -966,6 +1073,7 @@ export class LearningApiService {
       correctAnswer: string;
       points: number;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[];
   }): Observable<BankQuestion> {
     return this.http.post<BankQuestion>(`${this.baseUrl}/question-bank`, payload);
@@ -1018,6 +1126,15 @@ export class LearningApiService {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/upload`, form);
+  }
+
+  uploadQuestionImage(file: File): Observable<{ id: string; url: string; contentType: string }> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<{ id: string; url: string; contentType: string }>(
+      `${this.baseUrl}/question-images/upload`,
+      form
+    );
   }
 
   registerMediaFromUrl(payload: { url: string; title?: string | null }): Observable<MediaAsset> {
@@ -1088,6 +1205,7 @@ function normalizeSiteSettings(raw: SiteSettings | Record<string, unknown>): Sit
     timetableWeekStartUtc: timetableWeek == null ? null : String(timetableWeek),
     amSessionCount: Number(item.amSessionCount ?? item['AmSessionCount'] ?? 6) || 6,
     pmSessionCount: Number(item.pmSessionCount ?? item['PmSessionCount'] ?? 6) || 6,
+    pmStartMinutes: normalizePmStartMinutes(item.pmStartMinutes ?? item['PmStartMinutes']),
     updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? '')
   };
 }
