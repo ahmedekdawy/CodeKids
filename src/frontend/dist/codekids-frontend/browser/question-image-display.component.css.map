@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/question-image-display/question-image-display.component.css"],
+  "sourcesContent": [".question-image {\r\n  display: block;\r\n  max-width: 100%;\r\n  max-height: 280px;\r\n  margin: 0.5rem 0 0.75rem;\r\n  object-fit: contain;\r\n  border-radius: 8px;\r\n}\r\n\r\n.question-image.compact {\r\n  max-height: 120px;\r\n  margin: 0.35rem 0;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,aAAW;AACX,cAAY;AACZ,UAAQ,OAAO,EAAE;AACjB,cAAY;AACZ,iBAAe;AACjB;AAEA,CATC,cASc,CAAC;AACd,cAAY;AACZ,UAAQ,QAAQ;AAClB;",
+  "names": []
+}

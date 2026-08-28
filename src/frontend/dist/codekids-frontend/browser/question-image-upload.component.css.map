@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/question-image-upload/question-image-upload.component.css"],
+  "sourcesContent": [".question-image-upload {\r\n  display: grid;\r\n  gap: 0.5rem;\r\n}\r\n\r\n.preview-wrap {\r\n  display: grid;\r\n  gap: 0.5rem;\r\n}\r\n\r\n.preview {\r\n  max-width: 100%;\r\n  max-height: 220px;\r\n  object-fit: contain;\r\n  border-radius: 8px;\r\n  border: 1px solid rgba(0, 0, 0, 0.08);\r\n}\r\n\r\n.upload-label {\r\n  display: grid;\r\n  gap: 0.35rem;\r\n  font-size: 0.92rem;\r\n}\r\n\r\n.upload-label input[type='file'] {\r\n  font-size: 0.85rem;\r\n}\r\n\r\n.error {\r\n  color: #b42318;\r\n  font-size: 0.85rem;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,OAAK;AACP;AAEA,CAAC;AACC,WAAS;AACT,OAAK;AACP;AAEA,CAAC;AACC,aAAW;AACX,cAAY;AACZ,cAAY;AACZ,iBAAe;AACf,UAAQ,IAAI,MAAM,KAAK,CAAC,EAAE,CAAC,EAAE,CAAC,EAAE;AAClC;AAEA,CAAC;AACC,WAAS;AACT,OAAK;AACL,aAAW;AACb;AAEA,CANC,aAMa,KAAK,CAAC;AAClB,aAAW;AACb;AAEA,CAAC;AACC,SAAO;AACP,aAAW;AACb;",
+  "names": []
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;608dc797a8f2101b6cc36d26283f0ef331ff39019705fb8cd8b687af240f9802;D:/Projects/CodeKids/src/frontend/src/app/shared/student-ask-panel/student-ask-panel.component.ts"],
+  "sourcesContent": ["\n    .student-ask {\n      display: grid;\n      gap: 0.65rem;\n    }\n    .student-ask textarea {\n      width: 100%;\n      margin-bottom: 0.55rem;\n    }\n    .student-ask-answer {\n      border: 1px solid var(--border);\n      border-radius: 10px;\n      padding: 0.7rem 0.8rem;\n    }\n    .student-ask-answer.out {\n      opacity: 0.9;\n    }\n    .student-ask-error {\n      color: var(--danger, #b42318);\n    }\n  "],
+  "mappings": ";AACI,CAAC;AACC,WAAS;AACT,OAAK;AACP;AACA,CAJC,YAIY;AACX,SAAO;AACP,iBAAe;AACjB;AACA,CAAC;AACC,UAAQ,IAAI,MAAM,IAAI;AACtB,iBAAe;AACf,WAAS,OAAO;AAClB;AACA,CALC,kBAKkB,CAAC;AAClB,WAAS;AACX;AACA,CAAC;AACC,SAAO,IAAI,QAAQ,EAAE;AACvB;",
+  "names": []
+}
