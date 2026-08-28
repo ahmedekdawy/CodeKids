@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Media;
 using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -33,17 +34,19 @@ public static class QuestionImageEndpoints
                     return Results.BadRequest(new { code = "api.errors.media.noFile", message = "No file uploaded." });
                 }
 
-                var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
+                var contentType = MediaFileTypes.NormalizeContentType(
+                    string.IsNullOrWhiteSpace(file.ContentType) ? null : file.ContentType);
                 QuestionImageUploadRules.EnsureAllowed(contentType, file.Length);
+                var uploadFileName = MediaFileTypes.EnsureFileName(file.FileName, contentType);
 
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken);
                 var asset = new MediaAsset
                 {
                     Id = Guid.NewGuid(),
                     StorageKey = storageKey,
-                    FileName = Path.GetFileName(file.FileName),
+                    FileName = uploadFileName,
                     ContentType = contentType,
                     SizeBytes = file.Length,
                     UploadedByUserId = userId,
@@ -78,7 +81,8 @@ public static class QuestionImageEndpoints
             }
 
             var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
-            return Results.File(stream, media.ContentType);
+            var contentType = MediaFileTypes.ResolveContentType(media.ContentType, media.StorageKey);
+            return Results.File(stream, contentType, enableRangeProcessing: true);
         }).RequireAuthorization();
 
         return app;

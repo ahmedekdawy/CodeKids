@@ -2,10 +2,11 @@ import { Component, inject, input, output, signal } from '@angular/core';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { TranslatePipe } from '../translate.pipe';
+import { QuestionImageDisplayComponent } from '../question-image-display/question-image-display.component';
 
 @Component({
   selector: 'app-question-image-upload',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, QuestionImageDisplayComponent],
   templateUrl: './question-image-upload.component.html',
   styleUrl: './question-image-upload.component.css'
 })
@@ -20,11 +21,6 @@ export class QuestionImageUploadComponent {
 
   readonly uploading = signal(false);
   readonly error = signal('');
-
-  previewUrl(): string | null {
-    const url = this.imageUrl();
-    return url ? this.api.siteAssetUrl(url) : null;
-  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

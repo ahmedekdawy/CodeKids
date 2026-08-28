@@ -1,7 +1,7 @@
 <div class="question-image-upload">
-  @if (previewUrl(); as src) {
+  @if (imageUrl()) {
     <div class="preview-wrap">
-      <img [src]="src" alt="" class="preview" />
+      <app-question-image-display [url]="imageUrl()" />
       <button type="button" class="ghost-btn" (click)="clear()">{{ 'common.remove' | t }}</button>
     </div>
   }

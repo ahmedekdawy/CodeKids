@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Media;
 using Microsoft.Extensions.Options;
 
 namespace CodeKids.Infrastructure.Media;
@@ -68,13 +69,7 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
     }
 
     private static string GuessExtension(string contentType) =>
-        contentType.ToLowerInvariant() switch
-        {
-            "video/mp4" => ".mp4",
-            "video/webm" => ".webm",
-            "video/quicktime" => ".mov",
-            _ => ".bin"
-        };
+        MediaFileTypes.ExtensionForContentType(contentType);
 }
 
 public sealed class MediaAccessTokenService(IOptions<MediaOptions> options) : IMediaAccessTokenService
