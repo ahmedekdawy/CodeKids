@@ -1,0 +1,146 @@
+.chat-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  min-height: 28rem;
+}
+
+.chat-rooms,
+.chat-thread {
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  border-radius: var(--radius-md, 12px);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.9rem;
+}
+
+.chat-rooms {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: auto;
+}
+
+.chat-room-btn {
+  display: grid;
+  gap: 0.2rem;
+  text-align: start;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.chat-room-btn.active,
+.chat-room-btn:hover {
+  background: rgba(95, 211, 188, 0.1);
+  border-color: rgba(95, 211, 188, 0.25);
+}
+
+.chat-room-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.chat-unread-badge {
+  min-width: 1.25rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(95, 211, 188, 0.85);
+  color: #0b1a24;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  min-height: 28rem;
+}
+
+.chat-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.6rem 0;
+}
+
+.member-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  font-size: 0.85rem;
+}
+
+.member-chip.blocked {
+  opacity: 0.7;
+}
+
+.banner {
+  margin: 0.4rem 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(220, 80, 80, 0.15);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.4rem 0 0.8rem;
+}
+
+.bubble {
+  max-width: 80%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.bubble.mine {
+  margin-inline-start: auto;
+  background: rgba(95, 211, 188, 0.16);
+}
+
+.bubble.deleted p {
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.bubble header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+}
+
+.composer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.composer input {
+  flex: 1;
+}
+
+.ghost.compact {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 800px) {
+  .chat-layout {
+    grid-template-columns: 1fr;
+  }
+}

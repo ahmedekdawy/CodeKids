@@ -70,6 +70,9 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
     public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
     public DbSet<StudentAskedQuestion> StudentAskedQuestions => Set<StudentAskedQuestion>();
+    public DbSet<ChatRoom> ChatRooms => Set<ChatRoom>();
+    public DbSet<ChatRoomMember> ChatRoomMembers => Set<ChatRoomMember>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<TenantSignup> TenantSignups => Set<TenantSignup>();
 
@@ -825,6 +828,58 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.TeacherId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<ChatRoom>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Kind).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Title).HasMaxLength(400).IsRequired();
+            entity.Property(x => x.CourseTitle).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.UnitTitle).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.LessonTitle).HasMaxLength(300).IsRequired();
+            entity.HasIndex(x => new { x.ClassroomId, x.CourseId, x.Kind });
+            entity.HasOne(x => x.Classroom)
+                .WithMany()
+                .HasForeignKey(x => x.ClassroomId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.CreatedBy)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ChatRoomMember>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.RoomId, x.UserId }).IsUnique();
+            entity.HasOne(x => x.Room)
+                .WithMany(x => x.Members)
+                .HasForeignKey(x => x.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Body).HasMaxLength(2000).IsRequired();
+            entity.HasIndex(x => new { x.RoomId, x.CreatedAtUtc });
+            entity.HasOne(x => x.Room)
+                .WithMany(x => x.Messages)
+                .HasForeignKey(x => x.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Sender)
+                .WithMany()
+                .HasForeignKey(x => x.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<SiteSettings>(entity =>

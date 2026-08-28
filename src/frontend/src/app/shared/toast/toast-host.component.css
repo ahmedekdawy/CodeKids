@@ -31,3 +31,25 @@
   border-color: rgba(125, 222, 160, 0.35);
   color: #d8f8de;
 }
+
+.toast.chat {
+  display: grid;
+  gap: 0.25rem;
+  border-color: rgba(95, 211, 188, 0.4);
+  color: #e8fbff;
+}
+
+.toast-title {
+  font-size: 0.95rem;
+}
+
+.toast-body {
+  opacity: 0.92;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.toast-hint {
+  font-size: 0.78rem;
+  opacity: 0.72;
+}

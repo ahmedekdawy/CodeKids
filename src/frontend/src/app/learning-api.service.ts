@@ -8,6 +8,10 @@ import {
   Avatar,
   Badge,
   BankQuestion,
+  ChatMember,
+  ChatMessage,
+  ChatRoom,
+  ChatUnreadSummary,
   Classroom,
   ClassroomCourseAssignment,
   CompleteStepResponse,
@@ -155,6 +159,47 @@ export class LearningApiService {
 
   deleteStudentAskedQuestion(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/student-ask/questions/${id}`);
+  }
+
+  listChatRooms(): Observable<ChatRoom[]> {
+    return this.http.get<ChatRoom[]>(`${this.baseUrl}/chat/rooms`);
+  }
+
+  getChatUnreadSummary(): Observable<ChatUnreadSummary> {
+    return this.http.get<ChatUnreadSummary>(`${this.baseUrl}/chat/unread`);
+  }
+
+  markChatRoomRead(roomId: string): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/chat/rooms/${roomId}/read`, {});
+  }
+
+  createChatRoom(payload: {
+    classroomId: string;
+    courseId: string;
+    unitId?: string | null;
+    lessonId?: string | null;
+    kind: 'Direct' | 'Group' | 'Class';
+    studentIds?: string[];
+  }): Observable<ChatRoom> {
+    return this.http.post<ChatRoom>(`${this.baseUrl}/chat/rooms`, payload);
+  }
+
+  listChatMessages(roomId: string): Observable<ChatMessage[]> {
+    return this.http.get<ChatMessage[]>(`${this.baseUrl}/chat/rooms/${roomId}/messages`);
+  }
+
+  sendChatMessage(roomId: string, body: string): Observable<ChatMessage> {
+    return this.http.post<ChatMessage>(`${this.baseUrl}/chat/rooms/${roomId}/messages`, { body });
+  }
+
+  deleteChatMessage(id: string): Observable<ChatMessage> {
+    return this.http.delete<ChatMessage>(`${this.baseUrl}/chat/messages/${id}`);
+  }
+
+  setChatMemberBlocked(roomId: string, studentId: string, blocked: boolean): Observable<ChatMember> {
+    return this.http.put<ChatMember>(`${this.baseUrl}/chat/rooms/${roomId}/members/${studentId}/block`, {
+      blocked
+    });
   }
 
   getStudentSummary(): Observable<StudentSummary> {

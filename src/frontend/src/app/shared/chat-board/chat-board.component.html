@@ -1,0 +1,143 @@
+<app-page-feedback [ok]="info()" [error]="error()" />
+
+@if (canCreate()) {
+  <form class="form-card meeting-form" (ngSubmit)="createRoom()">
+    <label>
+      {{ 'common.classroom' | t }}
+      <app-searchable-select
+        [ngModel]="classroomId"
+        name="chatClassroom"
+        (ngModelChange)="onClassroomChange($event)"
+        [options]="classroomOptions()"
+      />
+    </label>
+    <label>
+      {{ 'common.course' | t }}
+      <app-searchable-select
+        [ngModel]="courseId"
+        name="chatCourse"
+        (ngModelChange)="onCourseChange($event)"
+        [options]="courseOptions()"
+      />
+    </label>
+    <label>
+      {{ 'common.unit' | t }}
+      <app-searchable-select
+        [ngModel]="unitId"
+        name="chatUnit"
+        (ngModelChange)="onUnitChange($event)"
+        [emptyLabel]="'common.all' | t"
+        [options]="unitOptions()"
+      />
+    </label>
+    <label>
+      {{ 'common.lesson' | t }}
+      <app-searchable-select
+        [(ngModel)]="lessonId"
+        name="chatLesson"
+        [emptyLabel]="'common.all' | t"
+        [options]="lessonOptions()"
+      />
+    </label>
+    <label>
+      {{ 'chat.kind' | t }}
+      <app-searchable-select
+        [(ngModel)]="kind"
+        name="chatKind"
+        [options]="[
+          { value: 'Direct', label: ('chat.kindDirect' | t) },
+          { value: 'Group', label: ('chat.kindGroup' | t) },
+          { value: 'Class', label: ('chat.kindClass' | t) }
+        ]"
+      />
+    </label>
+    @if (kind !== 'Class') {
+      <label class="questions-group">
+        {{ 'chat.students' | t }}
+        <app-searchable-multi-select [(ngModel)]="studentIds" name="chatStudents" [options]="studentOptions()" />
+      </label>
+    }
+    <div class="form-actions">
+      <button type="submit" class="primary">{{ 'chat.start' | t }}</button>
+    </div>
+  </form>
+}
+
+<div class="chat-layout">
+  <aside class="chat-rooms">
+    <h3>{{ 'chat.rooms' | t }}</h3>
+    @if (!rooms().length) {
+      <p class="meta">{{ 'chat.emptyRooms' | t }}</p>
+    }
+    @for (room of rooms(); track room.id) {
+      <button
+        type="button"
+        class="chat-room-btn"
+        [class.active]="room.id === selectedRoomId()"
+        (click)="selectRoom(room.id)">
+        <strong>{{ room.title }}</strong>
+        <span class="chat-room-meta">
+          <span>{{ kindLabel(room.kind) }}</span>
+          @if (room.unreadCount > 0) {
+            <span class="chat-unread-badge">{{ room.unreadCount }}</span>
+          }
+        </span>
+      </button>
+    }
+  </aside>
+
+  <section class="chat-thread">
+    @if (selectedRoom(); as room) {
+      <header class="chat-head">
+        <div>
+          <h3>{{ room.title }}</h3>
+          <p class="meta">{{ room.classroomName }} · {{ room.courseTitle }}</p>
+        </div>
+      </header>
+      @if (canModerate()) {
+        <div class="chat-members">
+          @for (member of room.members; track member.userId) {
+            @if (isStudentMember(member)) {
+              <span class="member-chip" [class.blocked]="member.isBlocked">
+                {{ member.displayName }}
+                <button type="button" class="ghost compact" (click)="toggleBlock(member)">
+                  {{ (member.isBlocked ? 'chat.unblock' : 'chat.block') | t }}
+                </button>
+              </span>
+            }
+          }
+        </div>
+      }
+      @if (meBlocked()) {
+        <p class="banner">{{ 'chat.youAreBlocked' | t }}</p>
+      }
+      <div class="chat-messages">
+        @for (message of messages(); track message.id) {
+          <article class="bubble" [class.mine]="isMine(message)" [class.deleted]="message.isDeleted">
+            <header>
+              <strong>{{ message.senderName }}</strong>
+              <span>{{ message.createdAtUtc | date: 'short' }}</span>
+              @if (canModerate() && !message.isDeleted) {
+                <app-icon-action-button kind="delete" variant="danger" (action)="deleteMessage(message.id)" />
+              }
+            </header>
+            <p>{{ message.isDeleted ? ('chat.deleted' | t) : message.body }}</p>
+          </article>
+        }
+      </div>
+      <form class="composer" (ngSubmit)="send()">
+        <input
+          [(ngModel)]="draft"
+          name="chatDraft"
+          [disabled]="meBlocked()"
+          [placeholder]="'chat.placeholder' | t"
+        />
+        <button type="submit" class="primary" [disabled]="sending() || meBlocked() || !draft.trim()">
+          {{ 'chat.send' | t }}
+        </button>
+      </form>
+    } @else {
+      <p class="meta">{{ 'chat.pickRoom' | t }}</p>
+    }
+  </section>
+</div>

@@ -1020,6 +1020,48 @@ export interface ExamAnswerReview {
   points: number;
 }
 
+export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;
+
+export interface ChatMember {
+  userId: string;
+  displayName: string;
+  role: string;
+  isBlocked: boolean;
+}
+
+export interface ChatMessage {
+  id: string;
+  roomId: string;
+  senderId: string;
+  senderName: string;
+  body: string;
+  createdAtUtc: string;
+  isDeleted: boolean;
+}
+
+export interface ChatRoom {
+  id: string;
+  classroomId: string;
+  classroomName: string;
+  courseId: string;
+  courseTitle: string;
+  unitId?: string | null;
+  unitTitle: string;
+  lessonId?: string | null;
+  lessonTitle: string;
+  kind: ChatKind;
+  title: string;
+  isBlocked: boolean;
+  unreadCount: number;
+  members: ChatMember[];
+}
+
+export interface ChatUnreadSummary {
+  totalUnread: number;
+  roomId?: string | null;
+  roomTitle: string;
+}
+
 export interface ExamAttempt {
   id: string;
   examId: string;
