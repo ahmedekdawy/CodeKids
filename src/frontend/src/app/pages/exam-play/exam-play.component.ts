@@ -106,4 +106,8 @@ export class ExamPlayComponent {
         error: (err) => this.error.set(this.locale.fromApiError(err, 'play.submitExamFailed'))
       });
   }
+
+  questionImageUrl(url: string | null | undefined): string | null {
+    return this.api.siteAssetUrl(url);
+  }
 }

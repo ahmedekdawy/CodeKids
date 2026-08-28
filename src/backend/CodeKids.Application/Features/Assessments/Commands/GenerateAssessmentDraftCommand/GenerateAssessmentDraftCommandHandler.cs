@@ -106,6 +106,7 @@ public sealed class GenerateAssessmentDraftCommandHandler(
                         BankCorrectAnswer(question),
                         question.Points,
                         order++,
+                        PromptImageMediaAssetId: null,
                         Children: null),
                     cancellationToken);
                 questionIds.Add(saved.Id);

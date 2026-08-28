@@ -75,4 +75,8 @@ export class QuizPlayComponent {
   feedbackText(response: SubmitQuizResponse): string {
     return this.locale.fromApiFeedback(response);
   }
+
+  questionImageUrl(url: string | null | undefined): string | null {
+    return this.api.siteAssetUrl(url);
+  }
 }

@@ -16,4 +16,5 @@ public sealed record BankChildQuestionInput(
     IReadOnlyList<string>? Options,
     string CorrectAnswer,
     int Points,
-    int SortOrder);
+    int SortOrder,
+    Guid? PromptImageMediaAssetId);

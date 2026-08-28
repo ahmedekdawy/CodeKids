@@ -23,4 +23,5 @@ public sealed record ExamQuestionDto(
     int Points,
     int SortOrder,
     string? CorrectAnswer,
+    string? PromptImageUrl,
     IReadOnlyList<ExamQuestionDto> Children);

@@ -56,6 +56,13 @@
         <app-math-prompt-editor [(ngModel)]="prompt" name="prompt"></app-math-prompt-editor>
       </div>
 
+      <app-question-image-upload
+        [mediaAssetId]="promptImageMediaAssetId"
+        [imageUrl]="promptImageUrl"
+        (mediaAssetIdChange)="promptImageMediaAssetId = $event"
+        (imageUrlChange)="promptImageUrl = $event"
+      />
+
       @if (isParagraph()) {
         <label class="qb-field">
           <span>{{ 'teacher.qbank.paragraphText' | t }}</span>
@@ -74,6 +81,12 @@
                   <span>{{ 'teacher.qbank.childPrompt' | t }}</span>
                   <input [(ngModel)]="child.prompt" [name]="'cPrompt-' + i" />
                 </label>
+                <app-question-image-upload
+                  [mediaAssetId]="child.promptImageMediaAssetId ?? null"
+                  [imageUrl]="child.promptImageUrl ?? null"
+                  (mediaAssetIdChange)="child.promptImageMediaAssetId = $event"
+                  (imageUrlChange)="child.promptImageUrl = $event"
+                />
                 <label class="qb-field">
                   <span>{{ 'common.type' | t }}</span>
                   <app-searchable-select
@@ -247,6 +260,9 @@
       <div class="meeting-row">
         <div>
           <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
+          @if (questionImageUrl(question.promptImageUrl); as imageSrc) {
+            <img [src]="imageSrc" alt="" class="question-image" />
+          }
           <p class="meta">
             {{ typeLabel(question.questionType) }} · {{ courseLabelById(question.courseId, question.courseTitle) }} · {{ question.points }} {{ 'common.pts' | t }}
             @if (question.options?.length) {

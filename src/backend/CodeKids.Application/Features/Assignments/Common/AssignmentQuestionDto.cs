@@ -16,4 +16,5 @@ public sealed record AssignmentQuestionDto(
     string? OptionC,
     int Points,
     int SortOrder,
-    string? CorrectAnswer);
+    string? CorrectAnswer,
+    string? PromptImageUrl);

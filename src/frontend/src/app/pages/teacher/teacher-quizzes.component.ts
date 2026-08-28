@@ -9,6 +9,7 @@ import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, Teacher
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 
 interface OptionDraft {
   text: string;
@@ -18,6 +19,8 @@ interface QuestionDraft {
   prompt: string;
   options: OptionDraft[];
   correct: string;
+  promptImageMediaAssetId?: string | null;
+  promptImageUrl?: string | null;
 }
 
 function emptyQuestion(): QuestionDraft {
@@ -32,7 +35,8 @@ function emptyQuestion(): QuestionDraft {
     SearchableMultiSelectComponent,
     FormsModule,
     IconActionButtonComponent,
-    TranslatePipe
+    TranslatePipe,
+    QuestionImageUploadComponent
   ],
   templateUrl: './teacher-quizzes.component.html',
   styleUrls: ['./teacher-panel.css', '../admin/admin-panel.css', './teacher-quizzes.component.css']
@@ -263,6 +267,7 @@ export class TeacherQuizzesComponent {
       options: string[];
       correctOption: string;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[] = [];
 
     for (let i = 0; i < this.questions.length; i++) {
@@ -287,7 +292,8 @@ export class TeacherQuizzesComponent {
         prompt,
         options: filled.map((o) => o.text),
         correctOption: question.correct,
-        sortOrder: i + 1
+        sortOrder: i + 1,
+        promptImageMediaAssetId: question.promptImageMediaAssetId || null
       });
     }
 

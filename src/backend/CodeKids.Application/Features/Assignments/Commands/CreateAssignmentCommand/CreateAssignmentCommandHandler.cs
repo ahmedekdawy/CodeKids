@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -53,6 +54,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
                 throw new InvalidOperationException("Question type must be ShortAnswer or MultipleChoice.");
             }
 
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, q.PromptImageMediaAssetId, cancellationToken);
             assignment.Questions.Add(new AssignmentQuestion
             {
                 Id = Guid.NewGuid(),
@@ -64,7 +66,8 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
                 OptionC = q.OptionC,
                 CorrectAnswer = q.CorrectAnswer.Trim(),
                 Points = q.Points <= 0 ? 1 : q.Points,
-                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder
+                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder,
+                PromptImageMediaAssetId = q.PromptImageMediaAssetId
             });
             order++;
         }
@@ -114,6 +117,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
                     q.OptionC,
                     q.Points,
                     q.SortOrder,
-                    includeAnswerKey ? q.CorrectAnswer : null))
+                    includeAnswerKey ? q.CorrectAnswer : null,
+                    QuestionImageUrls.Build(q.PromptImageMediaAssetId)))
                 .ToList());
 }

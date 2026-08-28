@@ -281,6 +281,10 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.OptionC).HasMaxLength(200).IsRequired();
             entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
             entity.Property(x => x.CorrectOption).HasMaxLength(40).IsRequired();
+            entity.HasOne(x => x.PromptImage)
+                .WithMany()
+                .HasForeignKey(x => x.PromptImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<QuizAttempt>(entity =>
@@ -625,6 +629,10 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.OptionB).HasMaxLength(120);
             entity.Property(x => x.OptionC).HasMaxLength(120);
             entity.Property(x => x.CorrectAnswer).HasMaxLength(200).IsRequired();
+            entity.HasOne(x => x.PromptImage)
+                .WithMany()
+                .HasForeignKey(x => x.PromptImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<AssignmentSubmission>(entity =>
@@ -678,6 +686,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany(x => x.Children)
                 .HasForeignKey(x => x.ParentQuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.PromptImage)
+                .WithMany()
+                .HasForeignKey(x => x.PromptImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Exam>(entity =>
@@ -728,6 +740,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany(x => x.Children)
                 .HasForeignKey(x => x.ParentExamQuestionId)
                 .OnDelete(DeleteBehavior.NoAction);
+            entity.HasOne(x => x.PromptImage)
+                .WithMany()
+                .HasForeignKey(x => x.PromptImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<ExamAttempt>(entity =>

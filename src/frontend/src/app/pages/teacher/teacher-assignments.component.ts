@@ -8,6 +8,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 
 interface AssignmentQuestionDraft {
   prompt: string;
@@ -16,6 +17,8 @@ interface AssignmentQuestionDraft {
   optionB: string;
   optionC: string;
   correct: string;
+  promptImageMediaAssetId?: string | null;
+  promptImageUrl?: string | null;
 }
 
 function emptyAssignmentQuestion(
@@ -31,7 +34,8 @@ function emptyAssignmentQuestion(
     SearchableSelectComponent,
     SearchableMultiSelectComponent,
     FormsModule,
-    TranslatePipe
+    TranslatePipe,
+    QuestionImageUploadComponent
   ],
   templateUrl: './teacher-assignments.component.html',
   styleUrl: './teacher-panel.css'
@@ -225,7 +229,8 @@ export class TeacherAssignmentsComponent {
         optionC: question.questionType === 'MultipleChoice' ? question.optionC : null,
         correctAnswer: question.correct,
         points: 1,
-        sortOrder: index + 1
+        sortOrder: index + 1,
+        promptImageMediaAssetId: question.promptImageMediaAssetId || null
       }))
       .filter((question) => question.prompt.length > 0);
     if (!questions.length) {

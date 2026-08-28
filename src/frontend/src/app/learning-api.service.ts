@@ -237,6 +237,7 @@ export class LearningApiService {
       options?: string[];
       correctOption: string;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[];
   }): Observable<Quiz> {
     return this.http.post<Quiz>(`${this.baseUrl}/quizzes`, payload);
@@ -1016,6 +1017,7 @@ export class LearningApiService {
       correctAnswer: string;
       points: number;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[];
   }): Observable<Assignment> {
     return this.http.post<Assignment>(`${this.baseUrl}/assignments`, payload);
@@ -1059,6 +1061,7 @@ export class LearningApiService {
     correctAnswer?: string;
     points: number;
     sortOrder: number;
+    promptImageMediaAssetId?: string | null;
     children?: {
       prompt: string;
       questionType: string;
@@ -1070,6 +1073,7 @@ export class LearningApiService {
       correctAnswer: string;
       points: number;
       sortOrder: number;
+      promptImageMediaAssetId?: string | null;
     }[];
   }): Observable<BankQuestion> {
     return this.http.post<BankQuestion>(`${this.baseUrl}/question-bank`, payload);
@@ -1122,6 +1126,15 @@ export class LearningApiService {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/upload`, form);
+  }
+
+  uploadQuestionImage(file: File): Observable<{ id: string; url: string; contentType: string }> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<{ id: string; url: string; contentType: string }>(
+      `${this.baseUrl}/question-images/upload`,
+      form
+    );
   }
 
   registerMediaFromUrl(payload: { url: string; title?: string | null }): Observable<MediaAsset> {

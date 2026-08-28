@@ -613,6 +613,8 @@ app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
 
 app.MapMediaEndpoints();
 
+app.MapQuestionImageEndpoints();
+
 app.MapMeetingsEndpoints();
 
 app.MapPaymentsEndpoints();

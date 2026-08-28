@@ -10,6 +10,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatCourseLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 
 interface OptionDraft {
   text: string;
@@ -22,11 +23,13 @@ interface ChildDraft {
   correctAnswer: string;
   correctKeys: string[];
   points: number;
+  promptImageMediaAssetId?: string | null;
+  promptImageUrl?: string | null;
 }
 
 @Component({
   selector: 'app-teacher-question-bank',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, MathPromptEditorComponent, SafeHtmlPipe, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, MathPromptEditorComponent, SafeHtmlPipe, IconActionButtonComponent, TranslatePipe, QuestionImageUploadComponent],
   templateUrl: './teacher-question-bank.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-question-bank.component.css']
 })
@@ -49,6 +52,8 @@ export class TeacherQuestionBankComponent {
   correctKeys: string[] = [];
   points = 1;
   children: ChildDraft[] = [];
+  promptImageMediaAssetId: string | null = null;
+  promptImageUrl: string | null = null;
 
   readonly types: BankQuestionType[] = [
     'Choose',
@@ -240,6 +245,10 @@ export class TeacherQuestionBankComponent {
     return (el.textContent || '').trim();
   }
 
+  questionImageUrl(url: string | null | undefined): string | null {
+    return this.api.siteAssetUrl(url);
+  }
+
   createQuestion(): void {
     this.error.set('');
     this.info.set('');
@@ -279,6 +288,7 @@ export class TeacherQuestionBankComponent {
         correctAnswer: this.isParagraph() ? '' : this.correctAnswer,
         points: this.points,
         sortOrder: 1,
+        promptImageMediaAssetId: this.promptImageMediaAssetId,
         children: this.isParagraph()
           ? this.children.map((c, i) => {
               const childOptions =
@@ -293,7 +303,8 @@ export class TeacherQuestionBankComponent {
                 options: childOptions,
                 correctAnswer: correct,
                 points: c.points,
-                sortOrder: i + 1
+                sortOrder: i + 1,
+                promptImageMediaAssetId: c.promptImageMediaAssetId || null
               };
             })
           : undefined
@@ -307,6 +318,8 @@ export class TeacherQuestionBankComponent {
           this.correctAnswer = this.questionType === 'TrueFalse' ? 'True' : '';
           this.correctKeys = [];
           this.children = [];
+          this.promptImageMediaAssetId = null;
+          this.promptImageUrl = null;
           if (this.isParagraph()) this.addChild();
           this.reload();
         },

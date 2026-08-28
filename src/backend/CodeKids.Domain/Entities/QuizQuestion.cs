@@ -12,6 +12,8 @@ public class QuizQuestion : TenantEntity
     public string OptionsJson { get; set; } = "[]";
     public string CorrectOption { get; set; } = "A";
     public int SortOrder { get; set; }
+    public Guid? PromptImageMediaAssetId { get; set; }
     public Quiz? Quiz { get; set; }
+    public MediaAsset? PromptImage { get; set; }
 }
 

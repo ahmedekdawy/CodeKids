@@ -21,9 +21,11 @@ public class BankQuestion : TenantEntity
     public string CorrectAnswer { get; set; } = string.Empty;
     public int Points { get; set; } = 1;
     public int SortOrder { get; set; }
+    public Guid? PromptImageMediaAssetId { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public Course? Course { get; set; }
+    public MediaAsset? PromptImage { get; set; }
     public User? CreatedBy { get; set; }
     public BankQuestion? Parent { get; set; }
     public List<BankQuestion> Children { get; set; } = [];
@@ -67,8 +69,10 @@ public class ExamQuestion : TenantEntity
     public string CorrectAnswer { get; set; } = string.Empty;
     public int Points { get; set; } = 1;
     public int SortOrder { get; set; }
+    public Guid? PromptImageMediaAssetId { get; set; }
 
     public Exam? Exam { get; set; }
+    public MediaAsset? PromptImage { get; set; }
     public BankQuestion? BankQuestion { get; set; }
     public ExamQuestion? Parent { get; set; }
     public List<ExamQuestion> Children { get; set; } = [];

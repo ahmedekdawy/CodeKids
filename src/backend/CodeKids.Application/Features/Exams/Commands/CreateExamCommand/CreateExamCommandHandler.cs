@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -114,7 +115,8 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
             OptionsJson = string.IsNullOrWhiteSpace(bank.OptionsJson) ? "[]" : bank.OptionsJson,
             CorrectAnswer = bank.CorrectAnswer,
             Points = bank.Points,
-            SortOrder = sortOrder
+            SortOrder = sortOrder,
+            PromptImageMediaAssetId = bank.PromptImageMediaAssetId
         };
 
     internal static async Task<ExamDto?> LoadExam(
@@ -176,6 +178,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
             q.Points,
             q.SortOrder,
             includeAnswerKey ? q.CorrectAnswer : null,
+            QuestionImageUrls.Build(q.PromptImageMediaAssetId),
             all.Where(c => c.ParentExamQuestionId == q.Id)
                 .OrderBy(c => c.SortOrder)
                 .Select(c => MapQuestion(c, all, includeAnswerKey))

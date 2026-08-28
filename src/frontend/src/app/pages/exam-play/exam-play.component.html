@@ -38,6 +38,9 @@
       @for (question of current.questions; track question.id) {
         <div class="question">
           <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
+          @if (questionImageUrl(question.promptImageUrl); as imageSrc) {
+            <img [src]="imageSrc" alt="" class="question-image" />
+          }
           @if (question.passageText) {
             <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
           }
@@ -46,6 +49,9 @@
             @for (child of question.children; track child.id) {
               <div class="child-question">
                 <strong>{{ child.prompt }}</strong>
+                @if (questionImageUrl(child.promptImageUrl); as imageSrc) {
+                  <img [src]="imageSrc" alt="" class="question-image" />
+                }
                 @if (child.questionType === 'TrueFalse') {
                   <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'True')" /> {{ 'common.true' | t }}</label>
                   <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'False')" /> {{ 'common.false' | t }}</label>

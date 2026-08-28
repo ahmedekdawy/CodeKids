@@ -33,8 +33,10 @@ public class AssignmentQuestion : TenantEntity
     public string CorrectAnswer { get; set; } = string.Empty;
     public int Points { get; set; } = 1;
     public int SortOrder { get; set; }
+    public Guid? PromptImageMediaAssetId { get; set; }
 
     public Assignment? Assignment { get; set; }
+    public MediaAsset? PromptImage { get; set; }
 }
 
 public class AssignmentSubmission : TenantEntity

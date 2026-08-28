@@ -252,6 +252,7 @@ export interface QuizQuestion {
   optionC: string;
   options?: ChoiceOption[];
   sortOrder: number;
+  promptImageUrl?: string | null;
 }
 
 export interface Quiz {
@@ -903,6 +904,7 @@ export interface AssignmentQuestion {
   points: number;
   sortOrder: number;
   correctAnswer?: string | null;
+  promptImageUrl?: string | null;
 }
 
 export interface Assignment {
@@ -973,6 +975,7 @@ export interface BankQuestion {
   correctAnswer: string;
   points: number;
   sortOrder: number;
+  promptImageUrl?: string | null;
   children: BankQuestion[];
 }
 
@@ -991,6 +994,7 @@ export interface ExamQuestion {
   points: number;
   sortOrder: number;
   correctAnswer?: string | null;
+  promptImageUrl?: string | null;
   children: ExamQuestion[];
 }
 

@@ -175,6 +175,12 @@
               {{ 'teacher.quizzes.question' | t }}
               <textarea [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" rows="2" required></textarea>
             </label>
+            <app-question-image-upload
+              [mediaAssetId]="question.promptImageMediaAssetId ?? null"
+              [imageUrl]="question.promptImageUrl ?? null"
+              (mediaAssetIdChange)="question.promptImageMediaAssetId = $event"
+              (imageUrlChange)="question.promptImageUrl = $event"
+            />
             <div class="options-editor">
               @for (opt of question.options; track $index; let oi = $index) {
                 <label>

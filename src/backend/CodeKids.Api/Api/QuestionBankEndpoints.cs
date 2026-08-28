@@ -86,6 +86,8 @@ public static class QuestionBankEndpoints
 
                         request.SortOrder,
 
+                        request.PromptImageMediaAssetId,
+
                         request.Children),
 
                     cancellationToken));

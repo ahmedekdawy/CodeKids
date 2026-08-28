@@ -2,6 +2,7 @@ using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +49,7 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
                     x.OptionB,
                     x.OptionC,
                     ChoiceOptions.Parse(x.OptionsJson, x.OptionA, x.OptionB, x.OptionC),
-                    x.SortOrder))
+                    x.SortOrder,
+                    QuestionImageUrls.Build(x.PromptImageMediaAssetId)))
                 .ToList());
 }

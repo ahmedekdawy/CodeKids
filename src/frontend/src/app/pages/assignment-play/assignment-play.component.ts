@@ -68,4 +68,8 @@ export class AssignmentPlayComponent {
         error: (err) => this.error.set(this.locale.fromApiError(err, 'play.submitAssignmentFailed'))
       });
   }
+
+  questionImageUrl(url: string | null | undefined): string | null {
+    return this.api.siteAssetUrl(url);
+  }
 }
