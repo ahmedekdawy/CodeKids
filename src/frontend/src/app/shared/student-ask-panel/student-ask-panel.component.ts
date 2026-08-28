@@ -1,12 +1,13 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { TranslatePipe } from '../translate.pipe';
 
 @Component({
   selector: 'app-student-ask-panel',
-  imports: [FormsModule, TranslatePipe],
+  imports: [FormsModule, RouterLink, TranslatePipe],
   template: `
     <section class="block student-ask">
       <h3>{{ titleKey() | t }}</h3>
@@ -20,6 +21,7 @@ import { TranslatePipe } from '../translate.pipe';
         ></textarea>
         <button type="submit" [disabled]="loading()">{{ 'studentAsk.submit' | t }}</button>
       </form>
+      <p class="meta"><a routerLink="/student/asked-questions">{{ 'askedQuestions.seeAll' | t }}</a></p>
       @if (error()) {
         <p class="meta student-ask-error">{{ error() }}</p>
       }

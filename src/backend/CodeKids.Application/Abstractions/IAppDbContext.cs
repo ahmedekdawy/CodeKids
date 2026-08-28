@@ -51,6 +51,7 @@ public interface IAppDbContext
     DbSet<LessonVideo> LessonVideos { get; }
     DbSet<VideoWatchSession> VideoWatchSessions { get; }
     DbSet<WhatsAppReportLog> WhatsAppReportLogs { get; }
+    DbSet<StudentAskedQuestion> StudentAskedQuestions { get; }
     DbSet<SiteSettings> SiteSettings { get; }
     DbSet<TenantSignup> TenantSignups { get; }
 

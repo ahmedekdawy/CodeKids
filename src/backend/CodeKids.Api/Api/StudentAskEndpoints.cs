@@ -60,6 +60,104 @@ public static class StudentAskEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Student" });
 
+        app.MapGet("/api/student-ask/questions", async (
+            Guid? courseId,
+            Guid? unitId,
+            Guid? lessonId,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            string? q,
+            HttpContext httpContext,
+            IQueryHandler<ListStudentAskedQuestionsQuery, IReadOnlyList<StudentAskedQuestionDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirst(ClaimTypes.Role)?.Value
+                    ?? httpContext.User.FindFirst("role")?.Value;
+                return Results.Ok(await handler.Handle(
+                    new ListStudentAskedQuestionsQuery(
+                        userId,
+                        role,
+                        courseId,
+                        unitId,
+                        lessonId,
+                        fromDate,
+                        toDate,
+                        q),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Student,Teacher,SuperAdmin" });
+
+        app.MapPut("/api/student-ask/questions/{id:guid}/answer", async (
+            Guid id,
+            AnswerStudentAskedQuestionRequest request,
+            HttpContext httpContext,
+            ICommandHandler<AnswerStudentAskedQuestionCommand, StudentAskedQuestionDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirst(ClaimTypes.Role)?.Value
+                    ?? httpContext.User.FindFirst("role")?.Value;
+                return Results.Ok(await handler.Handle(
+                    new AnswerStudentAskedQuestionCommand(userId, role, id, request.Answer),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(TeacherOrAdmin);
+
+        app.MapPut("/api/student-ask/questions/{id:guid}", async (
+            Guid id,
+            UpdateStudentAskedQuestionRequest request,
+            HttpContext httpContext,
+            ICommandHandler<UpdateStudentAskedQuestionCommand, StudentAskedQuestionDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirst(ClaimTypes.Role)?.Value
+                    ?? httpContext.User.FindFirst("role")?.Value;
+                return Results.Ok(await handler.Handle(
+                    new UpdateStudentAskedQuestionCommand(userId, role, id, request.Question),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(TeacherOrAdmin);
+
+        app.MapDelete("/api/student-ask/questions/{id:guid}", async (
+            Guid id,
+            HttpContext httpContext,
+            ICommandHandler<DeleteStudentAskedQuestionCommand, bool> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirst(ClaimTypes.Role)?.Value
+                    ?? httpContext.User.FindFirst("role")?.Value;
+                await handler.Handle(new DeleteStudentAskedQuestionCommand(userId, role, id), cancellationToken);
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Student,Teacher,SuperAdmin" });
+
         return app;
     }
 

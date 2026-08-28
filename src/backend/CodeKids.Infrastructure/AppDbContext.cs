@@ -69,6 +69,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<LessonVideo> LessonVideos => Set<LessonVideo>();
     public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
     public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
+    public DbSet<StudentAskedQuestion> StudentAskedQuestions => Set<StudentAskedQuestion>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<TenantSignup> TenantSignups => Set<TenantSignup>();
 
@@ -798,6 +799,32 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.RecipientPhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.Status).HasMaxLength(40).IsRequired();
             entity.Property(x => x.MessagePreview).HasMaxLength(1000).IsRequired();
+        });
+
+        modelBuilder.Entity<StudentAskedQuestion>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.CourseTitle).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.UnitTitle).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.LessonTitle).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.StudentName).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.Question).HasMaxLength(800).IsRequired();
+            entity.Property(x => x.AiAnswer).IsRequired();
+            entity.Property(x => x.TeacherAnswer).IsRequired();
+            entity.HasIndex(x => new { x.CourseId, x.CreatedAtUtc });
+            entity.HasIndex(x => x.StudentId);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<SiteSettings>(entity =>

@@ -714,6 +714,26 @@ export interface AccountReport {
   netAmount: number;
 }
 
+export interface StudentAskedQuestion {
+  id: string;
+  studentId: string;
+  studentName: string;
+  courseId: string;
+  courseTitle: string;
+  unitId?: string | null;
+  unitTitle: string;
+  lessonId?: string | null;
+  lessonTitle: string;
+  question: string;
+  aiAnswer: string;
+  aiInScope: boolean;
+  teacherAnswer: string;
+  teacherName: string;
+  createdAtUtc: string;
+  teacherAnsweredAtUtc?: string | null;
+  isMine: boolean;
+}
+
 export interface AdminLoginDashboardDay {
   date: string;
   teachers: number;

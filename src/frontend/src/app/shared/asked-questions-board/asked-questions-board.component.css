@@ -1,0 +1,102 @@
+.asked-card {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.9rem 1rem;
+  margin: 0.75rem 0;
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.asked-card.mine {
+  border-color: var(--border-strong, var(--border));
+}
+
+.asked-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.asked-card-head .row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.asked-question {
+  margin: 0;
+  font-weight: 700;
+  white-space: pre-wrap;
+}
+
+.asked-answer {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+
+.asked-answer.out {
+  opacity: 0.9;
+}
+
+.asked-answer.teacher {
+  background: rgba(95, 211, 188, 0.08);
+}
+
+.asked-answer p,
+.asked-card-head p {
+  margin: 0.25rem 0 0;
+  white-space: pre-wrap;
+}
+
+.asked-edit {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.asked-edit textarea {
+  display: block;
+  width: 100%;
+  min-height: 9rem;
+  margin-top: 0.35rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.asked-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.list-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.list-pager .meta {
+  margin: 0;
+}
+
+.list-pager button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: end;
+  padding-bottom: 0.15rem;
+}

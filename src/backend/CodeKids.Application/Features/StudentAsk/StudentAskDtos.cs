@@ -11,3 +11,26 @@ public sealed record AskStudentQuestionRequest(
     Guid? LessonId = null);
 
 public sealed record StudentAskAnswerDto(bool InScope, string Answer);
+
+public sealed record AnswerStudentAskedQuestionRequest(string Answer);
+
+public sealed record UpdateStudentAskedQuestionRequest(string Question);
+
+public sealed record StudentAskedQuestionDto(
+    Guid Id,
+    Guid StudentId,
+    string StudentName,
+    Guid CourseId,
+    string CourseTitle,
+    Guid? UnitId,
+    string UnitTitle,
+    Guid? LessonId,
+    string LessonTitle,
+    string Question,
+    string AiAnswer,
+    bool AiInScope,
+    string TeacherAnswer,
+    string TeacherName,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset? TeacherAnsweredAtUtc,
+    bool IsMine);

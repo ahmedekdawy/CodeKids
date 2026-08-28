@@ -63,6 +63,7 @@ public sealed class AskStudentQuestionCommandHandler(
         }
 
         string raw;
+        StudentAskAnswerDto dto;
         try
         {
             raw = await aiClient.CompleteJsonAsync(
@@ -70,17 +71,63 @@ public sealed class AskStudentQuestionCommandHandler(
                 BuildUserPrompt(course, unit, lesson, context, question),
                 cancellationToken,
                 AnswerSchema);
+            dto = ParseAnswer(raw) ?? OutOfScope();
         }
         catch (InvalidOperationException)
         {
             throw;
         }
-        catch(Exception ex)
+        catch
         {
-            return OutOfScope();
+            dto = OutOfScope();
         }
 
-        return ParseAnswer(raw) ?? OutOfScope();
+        await LogAskedQuestionAsync(command.StudentId, course, unit, lesson, question, dto, cancellationToken);
+        return dto;
+    }
+
+    private async Task LogAskedQuestionAsync(
+        Guid studentId,
+        Course course,
+        CourseUnitDto? unit,
+        CourseLessonDto? lesson,
+        string question,
+        StudentAskAnswerDto dto,
+        CancellationToken cancellationToken)
+    {
+        var studentName = await dbContext.Users
+            .AsNoTracking()
+            .Where(x => x.Id == studentId)
+            .Select(x => x.DisplayName)
+            .FirstOrDefaultAsync(cancellationToken) ?? string.Empty;
+
+        dbContext.StudentAskedQuestions.Add(new StudentAskedQuestion
+        {
+            Id = Guid.NewGuid(),
+            StudentId = studentId,
+            CourseId = course.Id,
+            UnitId = unit?.Id,
+            LessonId = lesson?.Id,
+            CourseTitle = course.Title,
+            UnitTitle = unit?.Title ?? string.Empty,
+            LessonTitle = lesson?.Title ?? string.Empty,
+            StudentName = studentName,
+            Question = question,
+            AiAnswer = dto.Answer,
+            AiInScope = dto.InScope,
+            CreatedAtUtc = DateTimeOffset.UtcNow
+        });
+        try
+        {
+
+        
+        await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
     }
 
     private async Task<(Course Course, CourseUnitDto? Unit, CourseLessonDto? Lesson, string Context)> ResolveScopeAsync(

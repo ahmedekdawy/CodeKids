@@ -13,9 +13,40 @@
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.icon-action-btn svg {
+.icon-action-btn svg,
+.icon-action-btn i {
   width: 1.05rem;
   height: 1.05rem;
+  font-size: 0.95rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fa-filter-clear {
+  position: relative;
+  display: inline-flex;
+  width: 1.1rem;
+  height: 1.1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.fa-filter-clear .fa-filter {
+  font-size: 0.95rem;
+}
+
+.fa-filter-clear .fa-xmark {
+  position: absolute;
+  right: -0.15rem;
+  bottom: -0.2rem;
+  width: auto;
+  height: auto;
+  font-size: 0.55rem;
+  background: var(--surface-strong, #142036);
+  border-radius: 50%;
+  padding: 0.05rem;
 }
 
 .icon-action-btn:hover:not(:disabled) {
@@ -23,10 +54,9 @@
   border-color: rgba(95, 211, 188, 0.45);
 }
 
-.icon-action-btn.play:hover:not(:disabled) {
-  background: rgba(255, 214, 10, 0.16);
-  border-color: rgba(255, 214, 10, 0.55);
-  color: #ffd60a;
+.icon-action-btn.apply:hover:not(:disabled) {
+  background: rgba(95, 211, 188, 0.18);
+  border-color: rgba(95, 211, 188, 0.55);
 }
 
 .icon-action-btn.danger:hover:not(:disabled) {

@@ -58,6 +58,7 @@ import {
   ZoomOAuthSettings,
   SiteSettings,
   Stage,
+  StudentAskedQuestion,
   Subject
 } from './models';
 import { normalizePmStartMinutes } from './fixed-timetable.util';
@@ -119,6 +120,41 @@ export class LearningApiService {
     lessonId?: string | null;
   }): Observable<{ inScope: boolean; answer: string }> {
     return this.http.post<{ inScope: boolean; answer: string }>(`${this.baseUrl}/student-ask`, payload);
+  }
+
+  listStudentAskedQuestions(filters: {
+    courseId?: string;
+    unitId?: string;
+    lessonId?: string;
+    fromDate?: string;
+    toDate?: string;
+    q?: string;
+  }): Observable<StudentAskedQuestion[]> {
+    const params = new URLSearchParams();
+    if (filters.courseId) params.set('courseId', filters.courseId);
+    if (filters.unitId) params.set('unitId', filters.unitId);
+    if (filters.lessonId) params.set('lessonId', filters.lessonId);
+    if (filters.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters.toDate) params.set('toDate', filters.toDate);
+    if (filters.q) params.set('q', filters.q);
+    const query = params.toString();
+    return this.http.get<StudentAskedQuestion[]>(
+      `${this.baseUrl}/student-ask/questions${query ? `?${query}` : ''}`
+    );
+  }
+
+  answerStudentAskedQuestion(id: string, answer: string): Observable<StudentAskedQuestion> {
+    return this.http.put<StudentAskedQuestion>(`${this.baseUrl}/student-ask/questions/${id}/answer`, {
+      answer
+    });
+  }
+
+  updateStudentAskedQuestion(id: string, question: string): Observable<StudentAskedQuestion> {
+    return this.http.put<StudentAskedQuestion>(`${this.baseUrl}/student-ask/questions/${id}`, { question });
+  }
+
+  deleteStudentAskedQuestion(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/student-ask/questions/${id}`);
   }
 
   getStudentSummary(): Observable<StudentSummary> {
