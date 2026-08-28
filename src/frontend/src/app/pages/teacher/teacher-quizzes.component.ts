@@ -58,7 +58,7 @@ export class TeacherQuizzesComponent {
   quizTitle = '';
   quizDescription = '';
   quizXp = 30;
-  quizQuestionCount = 5;
+  quizQuestionCount = 1;
   quizCourseId = '';
   quizUnitIds: string[] = [];
   quizLessonIds: string[] = [];
@@ -135,7 +135,7 @@ export class TeacherQuizzesComponent {
   }
 
   onQuestionCountChange(): void {
-    const count = this.clampQuestionCount(this.quizQuestionCount, 5);
+    const count = this.clampQuestionCount(this.quizQuestionCount, 1);
     this.quizQuestionCount = count;
     while (this.questions.length < count) this.questions.push(emptyQuestion());
     if (this.questions.length > count) this.questions = this.questions.slice(0, count);
@@ -258,7 +258,7 @@ export class TeacherQuizzesComponent {
         classroomId: this.quizClassroomId || null,
         unitIds: this.quizUnitIds,
         lessonIds: this.quizLessonIds,
-        questionCount: this.clampQuestionCount(this.quizQuestionCount, 5),
+        questionCount: this.clampQuestionCount(this.quizQuestionCount, 1),
         language: this.locale.lang()
       })
       .subscribe({
