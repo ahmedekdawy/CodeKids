@@ -260,9 +260,7 @@
       <div class="meeting-row">
         <div>
           <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
-          @if (questionImageUrl(question.promptImageUrl); as imageSrc) {
-            <img [src]="imageSrc" alt="" class="question-image" />
-          }
+          <app-question-image-display [url]="question.promptImageUrl" />
           <p class="meta">
             {{ typeLabel(question.questionType) }} · {{ courseLabelById(question.courseId, question.courseTitle) }} · {{ question.points }} {{ 'common.pts' | t }}
             @if (question.options?.length) {
@@ -275,7 +273,10 @@
           @if (question.children.length) {
             <ul>
               @for (child of question.children; track child.id) {
-                <li>{{ child.prompt }} ({{ typeLabel(child.questionType) }})</li>
+                <li>
+                  {{ child.prompt }} ({{ typeLabel(child.questionType) }})
+                  <app-question-image-display [url]="child.promptImageUrl" [compact]="true" />
+                </li>
               }
             </ul>
           }

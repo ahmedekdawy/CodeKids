@@ -289,6 +289,7 @@ export interface QuizAnswerReview {
   correctOption: string;
   correctText: string;
   isCorrect: boolean;
+  promptImageUrl?: string | null;
 }
 
 export interface QuizAttemptReview {
@@ -929,6 +930,7 @@ export interface AssignmentAnswerReview {
   isCorrect?: boolean | null;
   pointsAwarded?: number | null;
   points: number;
+  promptImageUrl?: string | null;
 }
 
 export interface AssignmentSubmission {
@@ -1022,6 +1024,7 @@ export interface ExamAnswerReview {
   isCorrect?: boolean | null;
   pointsAwarded?: number | null;
   points: number;
+  promptImageUrl?: string | null;
 }
 
 export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;

@@ -6,10 +6,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { ChoiceOption, Quiz, QuizQuestion, SubmitQuizResponse } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 
 @Component({
   selector: 'app-quiz-play',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, ApiBusyIndicatorComponent],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
   templateUrl: './quiz-play.component.html',
   styleUrl: './quiz-play.component.css'
 })
@@ -74,9 +75,5 @@ export class QuizPlayComponent {
 
   feedbackText(response: SubmitQuizResponse): string {
     return this.locale.fromApiFeedback(response);
-  }
-
-  questionImageUrl(url: string | null | undefined): string | null {
-    return this.api.siteAssetUrl(url);
   }
 }

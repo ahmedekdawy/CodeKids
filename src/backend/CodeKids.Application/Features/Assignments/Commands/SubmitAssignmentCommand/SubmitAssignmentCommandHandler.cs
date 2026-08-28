@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -146,5 +147,6 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
                 a.Question?.CorrectAnswer,
                 a.IsCorrect,
                 a.PointsAwarded,
-                a.Question?.Points ?? 0)).ToList());
+                a.Question?.Points ?? 0,
+                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId))).ToList());
 }

@@ -10,6 +10,7 @@ import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.ut
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
+import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 
 interface OptionDraft {
   text: string;
@@ -36,7 +37,8 @@ function emptyQuestion(): QuestionDraft {
     FormsModule,
     IconActionButtonComponent,
     TranslatePipe,
-    QuestionImageUploadComponent
+    QuestionImageUploadComponent,
+    QuestionImageDisplayComponent
   ],
   templateUrl: './teacher-quizzes.component.html',
   styleUrls: ['./teacher-panel.css', '../admin/admin-panel.css', './teacher-quizzes.component.css']

@@ -8,6 +8,8 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 
 @Component({
   selector: 'app-teacher-exams',
@@ -16,7 +18,9 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
     SearchableSelectComponent,
     SearchableMultiSelectComponent,
     FormsModule,
-    TranslatePipe
+    TranslatePipe,
+    QuestionImageDisplayComponent,
+    SafeHtmlPipe
   ],
   templateUrl: './teacher-exams.component.html',
   styleUrl: './teacher-panel.css'

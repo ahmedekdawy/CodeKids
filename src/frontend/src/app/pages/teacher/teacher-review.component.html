@@ -27,6 +27,7 @@
       @for (answer of submission.answers; track answer.questionId) {
         <div class="question">
           <p>{{ answer.prompt }}</p>
+          <app-question-image-display [url]="answer.promptImageUrl" />
           <p>{{ 'common.answer' | t }}: {{ answer.answerText }}</p>
           <p class="meta">{{ 'common.key' | t }}: {{ answer.correctAnswer }}</p>
           <div class="chip-row">

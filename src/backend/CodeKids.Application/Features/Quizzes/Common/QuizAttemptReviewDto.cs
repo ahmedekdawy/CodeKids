@@ -8,7 +8,8 @@ public sealed record QuizAnswerReviewDto(
     string SelectedText,
     string CorrectOption,
     string CorrectText,
-    bool IsCorrect);
+    bool IsCorrect,
+    string? PromptImageUrl);
 
 public sealed record QuizAttemptReviewDto(
     Guid Id,

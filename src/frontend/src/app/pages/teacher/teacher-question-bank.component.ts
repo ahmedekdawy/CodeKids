@@ -11,6 +11,7 @@ import { formatCourseLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
+import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 
 interface OptionDraft {
   text: string;
@@ -29,7 +30,7 @@ interface ChildDraft {
 
 @Component({
   selector: 'app-teacher-question-bank',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, MathPromptEditorComponent, SafeHtmlPipe, IconActionButtonComponent, TranslatePipe, QuestionImageUploadComponent],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, MathPromptEditorComponent, SafeHtmlPipe, IconActionButtonComponent, TranslatePipe, QuestionImageUploadComponent, QuestionImageDisplayComponent],
   templateUrl: './teacher-question-bank.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-question-bank.component.css']
 })
@@ -243,10 +244,6 @@ export class TeacherQuestionBankComponent {
     const el = document.createElement('div');
     el.innerHTML = html || '';
     return (el.textContent || '').trim();
-  }
-
-  questionImageUrl(url: string | null | undefined): string | null {
-    return this.api.siteAssetUrl(url);
   }
 
   createQuestion(): void {

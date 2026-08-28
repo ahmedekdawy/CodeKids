@@ -82,6 +82,7 @@
             @for (answer of attempt.answers; track answer.questionId) {
               <div class="answer-row" [class.correct]="answer.isCorrect" [class.wrong]="!answer.isCorrect">
                 <strong>{{ answer.sortOrder }}. {{ answer.prompt }}</strong>
+                <app-question-image-display [url]="answer.promptImageUrl" />
                 <p class="meta">
                   {{ 'teacher.quizzes.studentAnswer' | t }}:
                   {{ answer.selectedText || ('common.emDash' | t) }}

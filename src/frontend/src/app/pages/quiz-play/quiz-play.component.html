@@ -17,9 +17,7 @@
           @for (question of current.questions; track question.id) {
             <div class="question">
               <strong>{{ question.sortOrder }}. {{ question.prompt }}</strong>
-              @if (questionImageUrl(question.promptImageUrl); as imageSrc) {
-                <img [src]="imageSrc" alt="" class="question-image" />
-              }
+              <app-question-image-display [url]="question.promptImageUrl" />
               @for (opt of choiceOptions(question); track opt.key) {
                 <label>
                   <input type="radio" [formControlName]="question.id" [value]="opt.key" />
