@@ -33,6 +33,7 @@ import {
   WeeklyStudyPlan,
   SaveWeeklyStudyPlanWeek,
   GeneratedStudyPlan,
+  GeneratedCourseTree,
   GeneratedAssessmentDraft,
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
@@ -545,6 +546,7 @@ export class LearningApiService {
     fromDate: string;
     toDate: string;
     language?: string;
+    prompt?: string;
   }): Observable<GeneratedStudyPlan> {
     return this.http.post<GeneratedStudyPlan>(`${this.baseUrl}/study-plans/generate`, payload);
   }
@@ -870,6 +872,21 @@ export class LearningApiService {
 
   deleteCourseLesson(lessonId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/admin/lessons/${lessonId}`);
+  }
+
+  generateCourseTree(
+    courseId: string,
+    payload: {
+      mode: 'rebuild' | 'update';
+      prompt?: string;
+      language?: string;
+      apply?: boolean;
+    }
+  ): Observable<GeneratedCourseTree> {
+    return this.http.post<GeneratedCourseTree>(
+      `${this.baseUrl}/admin/courses/${courseId}/tree/generate`,
+      payload
+    );
   }
 
   getSiteSettings(): Observable<SiteSettings> {

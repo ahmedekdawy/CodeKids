@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Course, CourseLesson, CourseUnit, Grade, Stage } from '../../models';
+import { Course, CourseLesson, CourseUnit, GeneratedCourseTree, Grade, Stage } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import {
@@ -40,6 +40,9 @@ export class AdminCourseTreeComponent {
   readonly filterGrade = signal<number | ''>('');
   readonly stages = signal<Stage[]>([]);
   readonly catalogGrades = signal<Grade[]>([]);
+  readonly generating = signal(false);
+  readonly applying = signal(false);
+  readonly aiDraft = signal<GeneratedCourseTree | null>(null);
   readonly isSuperAdmin = computed(() => this.auth.user()?.role === 'SuperAdmin');
   readonly emptyCoursesKey = computed(() =>
     this.isSuperAdmin() ? 'admin.courseTree.noCourses' : 'admin.courseTree.noAssignedCourses'
@@ -67,6 +70,14 @@ export class AdminCourseTreeComponent {
   editLessonXp: number | null = 10;
   editLessonSort: number | null = 1;
   editLessonUnitId = '';
+
+  aiMode: 'rebuild' | 'update' = 'update';
+  aiPrompt = '';
+
+  readonly aiDraftUnitCount = computed(() => this.aiDraft()?.units.length ?? 0);
+  readonly aiDraftLessonCount = computed(() =>
+    (this.aiDraft()?.units ?? []).reduce((sum, unit) => sum + unit.lessons.length, 0)
+  );
 
   readonly filteredCourses = computed(() => {
     const stage = this.filterStage();
@@ -169,6 +180,7 @@ export class AdminCourseTreeComponent {
     this.cancelUnitEdit();
     this.cancelLessonEdit();
     this.addingLessonForUnitId.set(null);
+    this.aiDraft.set(null);
     this.message.set('');
     this.error.set('');
     this.reloadTree();
@@ -436,5 +448,60 @@ export class AdminCourseTreeComponent {
       },
       error: (err) => this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.studentAskFailed'))
     });
+  }
+
+  generateAiPreview(): void {
+    const courseId = this.selectedCourseId();
+    if (!courseId || this.generating()) return;
+    this.generating.set(true);
+    this.error.set('');
+    this.api
+      .generateCourseTree(courseId, {
+        mode: this.aiMode,
+        prompt: this.aiPrompt.trim() || undefined,
+        language: this.locale.lang(),
+        apply: false
+      })
+      .subscribe({
+        next: (draft) => {
+          this.aiDraft.set(draft);
+          this.message.set(this.locale.t('admin.courseTree.aiGenerated'));
+          this.generating.set(false);
+        },
+        error: (err) => {
+          this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.aiGenerateFailed'));
+          this.generating.set(false);
+        }
+      });
+  }
+
+  applyAiDraft(): void {
+    const courseId = this.selectedCourseId();
+    const draft = this.aiDraft();
+    if (!courseId || !draft || this.applying()) return;
+    if (this.aiMode === 'rebuild' && !confirm(this.locale.t('admin.courseTree.confirmRebuild'))) {
+      return;
+    }
+    this.applying.set(true);
+    this.error.set('');
+    this.api
+      .generateCourseTree(courseId, {
+        mode: this.aiMode,
+        prompt: this.aiPrompt.trim() || undefined,
+        language: this.locale.lang(),
+        apply: true
+      })
+      .subscribe({
+        next: (result) => {
+          this.aiDraft.set(result);
+          this.message.set(this.locale.t('admin.courseTree.aiApplied'));
+          this.applying.set(false);
+          this.reload();
+        },
+        error: (err) => {
+          this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.aiApplyFailed'));
+          this.applying.set(false);
+        }
+      });
   }
 }

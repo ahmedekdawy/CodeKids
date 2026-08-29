@@ -8,6 +8,7 @@ internal static class StudyPlanAccess
 {
     internal const int MaxWeeks = 20;
     internal const int TopicTitleMax = 1000;
+    internal const int PromptMax = 2000;
 
     internal static async Task EnsureTeacherOwnsCourseAsync(
         IAppDbContext dbContext,

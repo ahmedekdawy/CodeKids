@@ -234,6 +234,7 @@ builder.Services.AddScoped<ICommandHandler<DeleteCourseUnitCommand, bool>, Delet
 builder.Services.AddScoped<ICommandHandler<CreateCourseLessonCommand, CourseLessonDto>, CreateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateCourseLessonCommand, CourseLessonDto>, UpdateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteCourseLessonCommand, bool>, DeleteCourseLessonCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<GenerateCourseTreeCommand, GenerateCourseTreeResult>, GenerateCourseTreeCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<SetStudentAskEnabledCommand, StudentAskSettingsDto>, SetStudentAskEnabledCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<AskStudentQuestionCommand, StudentAskAnswerDto>, AskStudentQuestionCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<ListStudentAskedQuestionsQuery, IReadOnlyList<StudentAskedQuestionDto>>, ListStudentAskedQuestionsQueryHandler>();

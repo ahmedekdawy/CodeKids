@@ -814,6 +814,50 @@
   width: 100%;
 }
 
+.course-tree-ai {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  background: var(--surface-elevated, rgba(255, 255, 255, 0.35));
+}
+
+.course-tree-prompt-field {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.75rem 0 0.35rem;
+  width: 100%;
+  max-width: 42rem;
+}
+
+.course-tree-prompt-field > span:first-child {
+  font-weight: 650;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.course-tree-prompt-field textarea {
+  width: 100%;
+  min-height: 5.5rem;
+  resize: vertical;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.course-tree-ai-actions {
+  margin-top: 0.35rem;
+}
+
+.course-tree-ai-preview {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--border);
+}
+
 .login-stat {
   border-top: 3px solid transparent;
 }

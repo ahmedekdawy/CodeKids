@@ -49,6 +49,78 @@
   </section>
 
   @if (selectedCourse(); as course) {
+    <section class="block course-tree-ai">
+      <h3>{{ 'admin.courseTree.aiTitle' | t }}</h3>
+      <p class="meta">{{ 'admin.courseTree.aiHint' | t }}</p>
+      <div class="list-filters">
+        <label>
+          {{ 'admin.courseTree.aiMode' | t }}
+          <select [(ngModel)]="aiMode" name="aiMode">
+            <option value="update">{{ 'admin.courseTree.aiModeUpdate' | t }}</option>
+            <option value="rebuild">{{ 'admin.courseTree.aiModeRebuild' | t }}</option>
+          </select>
+        </label>
+      </div>
+      <label class="course-tree-prompt-field">
+        <span>{{ 'admin.courseTree.aiPrompt' | t }}</span>
+        <textarea
+          rows="3"
+          [(ngModel)]="aiPrompt"
+          name="aiPrompt"
+          [placeholder]="'admin.courseTree.aiPromptPlaceholder' | t"
+        ></textarea>
+        <span class="meta">{{ 'admin.courseTree.aiPromptHint' | t }}</span>
+      </label>
+      <div class="list-filters course-tree-ai-actions">
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="generating() || applying()"
+          (click)="generateAiPreview()"
+        >
+          {{ generating() ? ('admin.courseTree.aiGenerating' | t) : ('admin.courseTree.aiGenerate' | t) }}
+        </button>
+        @if (aiDraft()) {
+          <button type="button" [disabled]="applying() || generating()" (click)="applyAiDraft()">
+            {{ applying() ? ('admin.courseTree.aiApplying' | t) : ('admin.courseTree.aiApply' | t) }}
+          </button>
+        }
+      </div>
+      @if (aiDraft(); as draft) {
+        <div class="course-tree-ai-preview">
+          <p class="meta">
+            <strong>{{ 'admin.courseTree.aiPreview' | t }}</strong>
+            · {{ 'admin.courseTree.aiUnits' | t: { count: aiDraftUnitCount() } }}
+            · {{ 'admin.courseTree.aiLessons' | t: { count: aiDraftLessonCount() } }}
+          </p>
+          @if (draft.notes) {
+            <p class="meta">{{ draft.notes }}</p>
+          }
+          <div class="course-tree">
+            @for (unit of draft.units; track unit.sortOrder + unit.title) {
+              <div class="tree-unit">
+                <div class="tree-unit-head">
+                  <div class="tree-unit-title">
+                    <strong>{{ unit.sortOrder }}. {{ unit.title }}</strong>
+                    <span class="meta">· {{ unit.lessons.length }} {{ 'admin.courseTree.lessons' | t }}</span>
+                  </div>
+                </div>
+                <div class="tree-unit-body">
+                  @for (lesson of unit.lessons; track lesson.sortOrder + lesson.title) {
+                    <div class="tree-lesson">
+                      <div class="tree-lesson-title">
+                        <span>{{ lesson.sortOrder }}. {{ lesson.title }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </section>
+
     <section class="block">
       <h3>{{ 'admin.courseTree.addUnit' | t }}</h3>
       <form class="meeting-form" (ngSubmit)="createUnit()">

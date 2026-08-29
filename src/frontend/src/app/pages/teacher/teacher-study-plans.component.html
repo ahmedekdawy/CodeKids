@@ -41,6 +41,20 @@
       <button type="button" class="ghost-btn" (click)="newPlan()">
         {{ 'teacher.studyPlans.newPlan' | t }}
       </button>
+    </div>
+
+    <label class="study-plan-prompt-field">
+      <span>{{ 'teacher.studyPlans.aiPrompt' | t }}</span>
+      <textarea
+        rows="3"
+        [(ngModel)]="aiPrompt"
+        name="aiPrompt"
+        [placeholder]="'teacher.studyPlans.aiPromptPlaceholder' | t"
+      ></textarea>
+      <span class="meta">{{ 'teacher.studyPlans.aiPromptHint' | t }}</span>
+    </label>
+
+    <div class="list-filters study-plan-generate-row">
       <button
         type="button"
         class="ghost-btn"

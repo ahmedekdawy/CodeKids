@@ -133,7 +133,7 @@
   --tt-shift-pm-bg: rgba(95, 211, 188, 0.14);
   --tt-shift-pm-fg: #f4f7fb;
   --tt-session-id-fg: #f4f7fb;
-  --tt-session-time-fg: rgba(244, 247, 251, 0.8);
+  --tt-session-time-fg: #e2e8f0;
   --tt-entry-bg:
     linear-gradient(
       145deg,
@@ -241,7 +241,7 @@
   --tt-shift-pm-bg: #d1fae5;
   --tt-shift-pm-fg: #065f46;
   --tt-session-id-fg: #0f172a;
-  --tt-session-time-fg: #64748b;
+  --tt-session-time-fg: #1e293b;
   --tt-entry-bg: #ffffff;
   --tt-entry-fg: #0f172a;
   --tt-entry-border: #cbd5e1;
@@ -370,7 +370,7 @@ html[dir=rtl] .auth-panel-top {
   --tt-shift-pm-bg: #ecfdf5;
   --tt-shift-pm-fg: #0f172a;
   --tt-session-id-fg: #0f172a;
-  --tt-session-time-fg: #475569;
+  --tt-session-time-fg: #1e293b;
   --tt-entry-bg: #ffffff;
   --tt-entry-fg: #0f172a;
   --tt-entry-border: #64748b;
@@ -412,7 +412,7 @@ html[dir=rtl] .auth-panel-top {
   color: #0f172a !important;
 }
 .timetable-wrap.exporting .timetable-session-time {
-  color: #475569 !important;
+  color: #1e293b !important;
 }
 .timetable-wrap.exporting .timetable-cell:not(.pm) {
   background: #ffffff !important;
@@ -448,7 +448,7 @@ html[dir=rtl] .auth-panel-top {
     --tt-shift-pm-bg: #ecfdf5;
     --tt-shift-pm-fg: #0f172a;
     --tt-session-id-fg: #0f172a;
-    --tt-session-time-fg: #475569;
+    --tt-session-time-fg: #1e293b;
     --tt-entry-bg: #ffffff;
     --tt-entry-fg: #0f172a;
     --tt-entry-border: #64748b;

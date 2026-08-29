@@ -77,6 +77,7 @@ export class TeacherStudyPlansComponent {
   fromDate = defaultFromDate();
   toDate = defaultToDate();
   notes = '';
+  aiPrompt = '';
   private editorLoadSeq = 0;
   private suppressEditorLoad = false;
 
@@ -226,7 +227,8 @@ export class TeacherStudyPlansComponent {
         courseId: this.courseId,
         fromDate: this.fromDate,
         toDate: this.toDate,
-        language: this.locale.lang()
+        language: this.locale.lang(),
+        prompt: this.aiPrompt.trim() || undefined
       })
       .subscribe({
         next: (draft) => {

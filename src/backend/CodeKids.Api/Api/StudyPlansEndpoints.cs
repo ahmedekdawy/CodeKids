@@ -75,7 +75,8 @@ public static class StudyPlansEndpoints
                         request.CourseId,
                         request.FromDate,
                         request.ToDate,
-                        request.Language),
+                        request.Language,
+                        request.Prompt),
                     cancellationToken));
             }
             catch (Exception ex)

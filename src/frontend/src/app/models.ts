@@ -658,6 +658,24 @@ export interface GeneratedStudyPlan {
   weeks: SaveWeeklyStudyPlanWeek[];
 }
 
+export interface GeneratedCourseTreeLesson {
+  title: string;
+  sortOrder: number;
+}
+
+export interface GeneratedCourseTreeUnit {
+  title: string;
+  sortOrder: number;
+  lessons: GeneratedCourseTreeLesson[];
+}
+
+export interface GeneratedCourseTree {
+  notes: string;
+  mode: string;
+  applied: boolean;
+  units: GeneratedCourseTreeUnit[];
+}
+
 export interface GeneratedAssessmentQuestion {
   prompt: string;
   questionType: string;
