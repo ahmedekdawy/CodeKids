@@ -4,8 +4,8 @@
   padding: var(--space-5) 6vw 4rem;
   color: var(--text);
   background:
-    radial-gradient(circle at 88% 0%, rgba(95, 211, 188, 0.16), transparent 28%),
-    radial-gradient(circle at 8% 12%, rgba(255, 214, 10, 0.08), transparent 22%),
+    radial-gradient(circle at 88% 0%, var(--page-glow-1), transparent 28%),
+    radial-gradient(circle at 8% 12%, var(--page-glow-2), transparent 22%),
     var(--bg);
 }
 
@@ -42,14 +42,14 @@
   font-size: clamp(1.75rem, 3vw, 2.15rem);
   font-weight: 800;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--heading);
   letter-spacing: 0.04em;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
   margin: 0.15rem 0;
-  color: #fff;
+  color: var(--heading);
   letter-spacing: 0.01em;
   line-height: 1.15;
 }
@@ -65,16 +65,15 @@ h3 { font-size: 1.2rem; }
   padding: 1.5rem 1.6rem;
   border-radius: var(--radius-xl);
   margin-bottom: var(--space-5);
-  background:
-    linear-gradient(135deg, rgba(9, 32, 63, 0.95), rgba(23, 104, 172, 0.92));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--hero-bg);
+  border: 1px solid var(--hero-border);
   box-shadow: var(--shadow-sm);
-  color: #fff;
+  color: var(--hero-fg);
 }
 
 .hero-strip p,
 .hero-strip h2 {
-  color: #fff;
+  color: var(--hero-fg);
 }
 
 .eyebrow,
@@ -103,7 +102,7 @@ h3 { font-size: 1.2rem; }
 }
 
 .back:hover {
-  color: #fff;
+  color: var(--heading);
 }
 
 .xp-pill,
@@ -125,12 +124,12 @@ button {
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-  box-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);
+  box-shadow: var(--btn-shadow);
 }
 
 button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(255, 159, 28, 0.28);
+  box-shadow: var(--btn-shadow-hover);
 }
 
 button:active:not(:disabled) {
@@ -157,7 +156,7 @@ textarea:focus-visible {
 button.ghost,
 .ghost-btn {
   background: transparent;
-  color: #fff;
+  color: var(--ghost-fg);
   border: 1px solid var(--border-strong);
   box-shadow: none;
 }
@@ -192,7 +191,6 @@ button.ghost:hover:not(:disabled),
   border-radius: var(--radius-lg);
   padding: 1.25rem;
   color: var(--text);
-  backdrop-filter: blur(8px);
 }
 
 .block {
@@ -231,9 +229,9 @@ button.ghost:hover:not(:disabled),
   align-items: center;
   gap: 0.4rem;
   padding: 0.65rem 0.95rem;
-  background: rgba(255, 214, 10, 0.14);
-  border: 1px solid rgba(255, 214, 10, 0.18);
-  color: #fff;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  color: var(--chip-fg);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
@@ -241,7 +239,9 @@ button.ghost:hover:not(:disabled),
 
 .chip:hover,
 .list-btn:hover {
-  background: rgba(255, 214, 10, 0.22);
+  background: var(--chip-bg);
+  border-color: var(--chip-border);
+  filter: brightness(0.97);
   transform: translateY(-1px);
 }
 
@@ -270,7 +270,7 @@ button.ghost:hover:not(:disabled),
   display: grid;
   gap: 0.3rem;
   text-align: left;
-  color: #fff;
+  color: var(--text);
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.15s ease;
 }
@@ -313,8 +313,8 @@ select {
   width: 100%;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-strong);
-  background: rgba(6, 14, 28, 0.72);
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--text);
   padding: 0.8rem 0.95rem;
   font: inherit;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
@@ -334,7 +334,7 @@ input::placeholder {
 textarea:hover,
 input:hover,
 select:hover {
-  border-color: rgba(255, 255, 255, 0.34);
+  border-color: var(--input-border-hover);
 }
 
 textarea:focus,
@@ -342,13 +342,13 @@ input:focus,
 select:focus {
   outline: none;
   border-color: rgba(255, 214, 10, 0.65);
-  background: rgba(8, 18, 34, 0.92);
+  background: var(--input-bg-focus);
   box-shadow: var(--focus-ring);
 }
 
 select option {
-  background: #0c1a2e;
-  color: #fff;
+  background: var(--bg-elevated);
+  color: var(--text);
 }
 
 label {
@@ -366,15 +366,20 @@ label > span {
 .feedback {
   padding: 0.9rem 1rem;
   border-radius: var(--radius-md);
-  background: rgba(255, 107, 107, 0.14);
-  border: 1px solid rgba(255, 143, 143, 0.25);
-  color: #ffe3e3;
+  background: var(--auth-error-bg);
+  border: 1px solid var(--auth-error-border);
+  color: var(--feedback-error-fg);
 }
 
 .feedback.ok {
   background: rgba(81, 207, 102, 0.14);
   border-color: rgba(125, 222, 160, 0.28);
-  color: #d8f8de;
+  color: var(--feedback-ok-fg);
+}
+
+[data-theme='light'] .feedback.ok {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
 }
 
 .question {
@@ -383,14 +388,14 @@ label > span {
   margin-bottom: var(--space-3);
   padding: 1rem;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--elevated-bg);
   border: 1px solid var(--border);
   color: var(--text);
 }
 
 .prompt-html,
 .prompt-html * {
-  color: #f4f7fb !important;
+  color: var(--prompt-fg) !important;
 }
 
 .table {
@@ -433,7 +438,7 @@ label > span {
 
 .panel-page > h2 {
   margin: 0;
-  color: #fff;
+  color: var(--heading);
 }
 
 .panel-page > .meta {
@@ -477,8 +482,8 @@ label.checkbox {
   width: 100%;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-strong);
-  background: rgba(6, 14, 28, 0.72);
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--text);
   padding: 0.75rem 0.9rem;
   font: inherit;
 }
@@ -533,7 +538,7 @@ label.checkbox {
   display: block;
   font-family: var(--font-display);
   font-size: 1.55rem;
-  color: #fff;
+  color: var(--stat-strong);
 }
 
 .stat-card span {

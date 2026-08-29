@@ -6,6 +6,7 @@
       <h1>{{ 'parent.title' | t }}</h1>
     </div>
     <div class="topbar-actions">
+      <app-theme-switcher />
       <app-language-switcher />
       <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
     </div>

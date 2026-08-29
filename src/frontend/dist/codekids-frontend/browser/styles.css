@@ -40,6 +40,213 @@
   --space-4: 1.35rem;
   --space-5: 1.75rem;
   --space-6: 2.5rem;
+  --sidebar-bg:
+    linear-gradient(
+      180deg,
+      rgba(8, 18, 34, 0.98),
+      rgba(5, 13, 26, 0.94));
+  --sidebar-inset: inset -1px 0 0 rgba(255, 255, 255, 0.02);
+  --shell-glow:
+    radial-gradient(
+      circle at top right,
+      rgba(95, 211, 188, 0.14),
+      transparent 26%);
+  --auth-shell-bg:
+    radial-gradient(
+      circle at 12% 18%,
+      rgba(255, 214, 10, 0.22),
+      transparent 26%),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(95, 211, 188, 0.16),
+      transparent 28%),
+    linear-gradient(
+      145deg,
+      #07111f 0%,
+      #0a2744 48%,
+      #145a8f 100%);
+  --auth-form-bg: rgba(7, 17, 31, 0.42);
+  --auth-form-border: rgba(255, 255, 255, 0.12);
+  --auth-input-bg: rgba(5, 12, 26, 0.72);
+  --auth-input-border: rgba(255, 255, 255, 0.18);
+  --auth-input-focus-bg: rgba(8, 18, 34, 0.92);
+  --auth-link: rgba(255, 255, 255, 0.78);
+  --auth-label: rgba(255, 255, 255, 0.8);
+  --auth-code-card-bg: rgba(5, 12, 28, 0.78);
+  --auth-error-bg: rgba(255, 107, 107, 0.14);
+  --auth-error-border: rgba(255, 143, 143, 0.28);
+  --auth-error-text: #ffd0d0;
+  --heading: #f4f7fb;
+  --on-hero: #ffffff;
+  --input-bg: rgba(6, 14, 28, 0.72);
+  --input-bg-focus: rgba(8, 18, 34, 0.92);
+  --input-border-hover: rgba(255, 255, 255, 0.34);
+  --elevated-bg: rgba(255, 255, 255, 0.03);
+  --elevated-bg-hover: rgba(255, 255, 255, 0.06);
+  --hero-bg:
+    linear-gradient(
+      135deg,
+      rgba(9, 32, 63, 0.95),
+      rgba(23, 104, 172, 0.92));
+  --hero-border: rgba(255, 255, 255, 0.1);
+  --hero-fg: #ffffff;
+  --chip-bg: rgba(255, 214, 10, 0.14);
+  --chip-border: rgba(255, 214, 10, 0.18);
+  --chip-fg: #ffffff;
+  --ghost-fg: #ffffff;
+  --stat-strong: #ffffff;
+  --page-glow-1: rgba(95, 211, 188, 0.16);
+  --page-glow-2: rgba(255, 214, 10, 0.08);
+  --welcome-bg:
+    linear-gradient(
+      125deg,
+      rgba(9, 32, 63, 0.96),
+      rgba(18, 72, 128, 0.88) 55%,
+      rgba(12, 40, 72, 0.92)),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 214, 10, 0.12),
+      transparent 40%);
+  --welcome-border: rgba(255, 255, 255, 0.1);
+  --welcome-sub: rgba(244, 247, 251, 0.78);
+  --table-row-hover: rgba(255, 255, 255, 0.035);
+  --table-row-total: rgba(255, 255, 255, 0.06);
+  --feedback-error-fg: #ffe3e3;
+  --feedback-ok-fg: #d8f8de;
+  --prompt-fg: #f4f7fb;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.22);
+  --nav-tooltip-bg: #0b1728;
+  --nav-hover-fg: #ffffff;
+  --nav-icon-fg: #ffe27a;
+  --logout-fg: #ffffff;
+  --btn-shadow: 0 8px 20px rgba(255, 159, 28, 0.18);
+  --btn-shadow-hover: 0 12px 24px rgba(255, 159, 28, 0.28);
+  --switcher-active-bg: rgba(255, 214, 10, 0.18);
+  --tt-header-bg: #0a182a;
+  --tt-header-fg: #cbd5e1;
+  --tt-day-bg: #07111f;
+  --tt-day-fg: #f4f7fb;
+  --tt-cell-bg: rgba(255, 255, 255, 0.02);
+  --tt-cell-pm-bg: rgba(95, 211, 188, 0.04);
+  --tt-shift-am-bg: rgba(255, 214, 10, 0.12);
+  --tt-shift-am-fg: #f4f7fb;
+  --tt-shift-pm-bg: rgba(95, 211, 188, 0.14);
+  --tt-shift-pm-fg: #f4f7fb;
+  --tt-session-id-fg: #f4f7fb;
+  --tt-session-time-fg: rgba(244, 247, 251, 0.8);
+  --tt-entry-bg:
+    linear-gradient(
+      145deg,
+      rgba(255, 214, 10, 0.16),
+      rgba(20, 90, 143, 0.35));
+  --tt-entry-fg: #f4f7fb;
+  --tt-entry-border: rgba(255, 214, 10, 0.28);
+  --tt-teacher-fg: rgba(244, 247, 251, 0.85);
+  --tt-border: var(--border);
+}
+[data-theme=light] {
+  color-scheme: light;
+  --bg: #f6f8fb;
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-strong: #f1f5f9;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-soft: #64748b;
+  --accent: #c99700;
+  --accent-hot: #e6ad00;
+  --accent-ink: #1a1200;
+  --teal: #0d7a68;
+  --danger: #c53030;
+  --success: #1f7a4a;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --focus-ring: 0 0 0 3px rgba(201, 151, 0, 0.22);
+  --sidebar-bg: #ffffff;
+  --sidebar-inset: 0 1px 0 rgba(15, 23, 42, 0.04);
+  --shell-glow:
+    radial-gradient(
+      circle at top right,
+      rgba(13, 122, 104, 0.05),
+      transparent 32%);
+  --auth-shell-bg:
+    linear-gradient(
+      160deg,
+      #f8fafc 0%,
+      #f1f5f9 48%,
+      #e8eef5 100%);
+  --auth-form-bg: #ffffff;
+  --auth-form-border: #e2e8f0;
+  --auth-input-bg: #ffffff;
+  --auth-input-border: #cbd5e1;
+  --auth-input-focus-bg: #ffffff;
+  --auth-link: #475569;
+  --auth-label: #334155;
+  --auth-code-card-bg: #ffffff;
+  --auth-error-bg: #fef2f2;
+  --auth-error-border: #fecaca;
+  --auth-error-text: #b91c1c;
+  --heading: #0f172a;
+  --on-hero: #0f172a;
+  --input-bg: #ffffff;
+  --input-bg-focus: #ffffff;
+  --input-border-hover: #94a3b8;
+  --elevated-bg: #f8fafc;
+  --elevated-bg-hover: #f1f5f9;
+  --hero-bg:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fafc 100%);
+  --hero-border: #e2e8f0;
+  --hero-fg: #0f172a;
+  --chip-bg: #fffbeb;
+  --chip-border: #fde68a;
+  --chip-fg: #854d0e;
+  --ghost-fg: #334155;
+  --stat-strong: #0f172a;
+  --page-glow-1: rgba(13, 122, 104, 0.06);
+  --page-glow-2: rgba(201, 151, 0, 0.04);
+  --welcome-bg:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fafc 52%,
+      #f1f5f9 100%);
+  --welcome-border: #e2e8f0;
+  --welcome-sub: #64748b;
+  --table-row-hover: rgba(15, 23, 42, 0.03);
+  --table-row-total: #f8fafc;
+  --feedback-error-fg: #b91c1c;
+  --feedback-ok-fg: #166534;
+  --prompt-fg: #0f172a;
+  --scrollbar-thumb: #cbd5e1;
+  --nav-tooltip-bg: #ffffff;
+  --nav-hover-fg: #0f172a;
+  --nav-icon-fg: #a16207;
+  --logout-fg: #991b1b;
+  --btn-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(201, 151, 0, 0.12);
+  --btn-shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(201, 151, 0, 0.16);
+  --switcher-active-bg: #fffbeb;
+  --tt-header-bg: #f1f5f9;
+  --tt-header-fg: #334155;
+  --tt-day-bg: #e2e8f0;
+  --tt-day-fg: #0f172a;
+  --tt-cell-bg: #ffffff;
+  --tt-cell-pm-bg: #f0fdfa;
+  --tt-shift-am-bg: #fef3c7;
+  --tt-shift-am-fg: #78350f;
+  --tt-shift-pm-bg: #d1fae5;
+  --tt-shift-pm-fg: #065f46;
+  --tt-session-id-fg: #0f172a;
+  --tt-session-time-fg: #64748b;
+  --tt-entry-bg: #ffffff;
+  --tt-entry-fg: #0f172a;
+  --tt-entry-border: #cbd5e1;
+  --tt-teacher-fg: #475569;
+  --tt-border: #cbd5e1;
 }
 * {
   box-sizing: border-box;
@@ -73,7 +280,28 @@ textarea {
 }
 ::selection {
   background: rgba(255, 214, 10, 0.35);
-  color: #08203c;
+  color: var(--accent-ink);
+}
+[data-theme=light] ::selection {
+  background: rgba(201, 151, 0, 0.22);
+  color: #0f172a;
+}
+[data-theme=light] .block,
+[data-theme=light] .form-card,
+[data-theme=light] .section-card {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+[data-theme=light] .sidebar {
+  box-shadow: none;
+}
+[data-theme=light] .side-nav a.active {
+  box-shadow: var(--btn-shadow);
+}
+[data-theme=light] .chip.quiz {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
 }
 html[dir=rtl] {
   --font-body:
@@ -118,7 +346,8 @@ html[dir=rtl] .auth-panel-top {
   flex-direction: row-reverse;
 }
 .topbar-actions,
-.auth-panel-top {
+.auth-panel-top,
+.toolbar-prefs {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -126,6 +355,121 @@ html[dir=rtl] .auth-panel-top {
 .auth-panel-top {
   justify-content: space-between;
   width: 100%;
+}
+.timetable-wrap.exporting {
+  background: #ffffff !important;
+  border-color: #334155 !important;
+  --tt-header-bg: #f1f5f9;
+  --tt-header-fg: #0f172a;
+  --tt-day-bg: #e2e8f0;
+  --tt-day-fg: #0f172a;
+  --tt-cell-bg: #ffffff;
+  --tt-cell-pm-bg: #f8fafc;
+  --tt-shift-am-bg: #fef9c3;
+  --tt-shift-am-fg: #0f172a;
+  --tt-shift-pm-bg: #ecfdf5;
+  --tt-shift-pm-fg: #0f172a;
+  --tt-session-id-fg: #0f172a;
+  --tt-session-time-fg: #475569;
+  --tt-entry-bg: #ffffff;
+  --tt-entry-fg: #0f172a;
+  --tt-entry-border: #64748b;
+  --tt-teacher-fg: #475569;
+  --tt-border: #334155;
+  color: #0f172a;
+}
+.timetable-wrap.exporting .timetable th,
+.timetable-wrap.exporting .timetable td {
+  border-color: #334155 !important;
+}
+.timetable-wrap.exporting .timetable {
+  font-family:
+    "Cairo",
+    "Space Grotesk",
+    "Segoe UI",
+    Tahoma,
+    sans-serif !important;
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable thead th {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable-day-col,
+.timetable-wrap.exporting .timetable-day {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable-shift:not(.pm) {
+  background: #fef9c3 !important;
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable-shift.pm {
+  background: #ecfdf5 !important;
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable-session-id {
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable-session-time {
+  color: #475569 !important;
+}
+.timetable-wrap.exporting .timetable-cell:not(.pm) {
+  background: #ffffff !important;
+}
+.timetable-wrap.exporting .timetable-cell.pm {
+  background: #f8fafc !important;
+}
+.timetable-wrap.exporting .timetable-entry {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #64748b !important;
+}
+.timetable-wrap.exporting .timetable-course {
+  color: #0f172a !important;
+}
+.timetable-wrap.exporting .timetable-teacher {
+  color: #475569 !important;
+}
+@media print {
+  .timetable-wrap {
+    background: #ffffff !important;
+    border-color: #334155 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    --tt-header-bg: #f1f5f9;
+    --tt-header-fg: #0f172a;
+    --tt-day-bg: #e2e8f0;
+    --tt-day-fg: #0f172a;
+    --tt-cell-bg: #ffffff;
+    --tt-cell-pm-bg: #f8fafc;
+    --tt-shift-am-bg: #fef9c3;
+    --tt-shift-am-fg: #0f172a;
+    --tt-shift-pm-bg: #ecfdf5;
+    --tt-shift-pm-fg: #0f172a;
+    --tt-session-id-fg: #0f172a;
+    --tt-session-time-fg: #475569;
+    --tt-entry-bg: #ffffff;
+    --tt-entry-fg: #0f172a;
+    --tt-entry-border: #64748b;
+    --tt-teacher-fg: #475569;
+    --tt-border: #334155;
+    color: #0f172a;
+  }
+  .timetable-wrap .timetable th,
+  .timetable-wrap .timetable td {
+    border-color: #334155 !important;
+  }
+  .timetable-wrap .row-actions,
+  .timetable-export-bar,
+  .list-filters {
+    display: none !important;
+  }
+  .timetable-wrap .timetable thead th,
+  .timetable-wrap .timetable-day-col,
+  .timetable-wrap .timetable-day {
+    position: static !important;
+  }
 }
 
 /* angular:styles/global:styles */

@@ -1,0 +1,22 @@
+<div class="theme-switch" role="group" [attr.aria-label]="'theme.switch' | t">
+  <button
+    type="button"
+    class="theme-btn"
+    [class.active]="theme.theme() === 'light'"
+    (click)="setTheme('light')"
+    [attr.aria-label]="'theme.light' | t"
+    [title]="'theme.light' | t"
+  >
+    {{ 'theme.light' | t }}
+  </button>
+  <button
+    type="button"
+    class="theme-btn"
+    [class.active]="theme.theme() === 'dark'"
+    (click)="setTheme('dark')"
+    [attr.aria-label]="'theme.dark' | t"
+    [title]="'theme.dark' | t"
+  >
+    {{ 'theme.dark' | t }}
+  </button>
+</div>

@@ -5,6 +5,7 @@ import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, Avatar, Badge, Course, CourseTerm, Exam, LiveSession, StudentSummary } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
@@ -21,6 +22,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
     RouterLink,
     TranslatePipe,
     LanguageSwitcherComponent,
+    ThemeSwitcherComponent,
     SiteBrandComponent,
     StudentAskPanelComponent,
     ApiBusyIndicatorComponent

@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
@@ -12,7 +13,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'
 })

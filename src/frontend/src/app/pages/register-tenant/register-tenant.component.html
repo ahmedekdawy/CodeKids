@@ -3,7 +3,10 @@
     <app-api-busy-indicator />
     <div class="auth-panel-top">
       <app-site-brand />
-      <app-language-switcher />
+      <div class="toolbar-prefs">
+        <app-theme-switcher />
+        <app-language-switcher />
+      </div>
     </div>
     <h1>{{ 'auth.tenant.title' | t }}</h1>
     <p class="supporting">{{ 'auth.tenant.subtitle' | t }}</p>

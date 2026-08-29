@@ -4,6 +4,7 @@ import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 
@@ -17,7 +18,7 @@ const COLLAPSED_KEY = 'codekids_sidebar_collapsed';
 
 @Component({
   selector: 'app-panel-shell',
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, LanguageSwitcherComponent, ApiBusyIndicatorComponent],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, ApiBusyIndicatorComponent],
   templateUrl: './panel-shell.component.html',
   styleUrl: './panel-shell.component.css'
 })

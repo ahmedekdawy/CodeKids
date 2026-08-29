@@ -3,6 +3,10 @@ export const AR: Record<string, string> = {
   'lang.ar': 'العربية',
   'lang.switch': 'اللغة',
 
+  'theme.switch': 'المظهر',
+  'theme.light': 'فاتح',
+  'theme.dark': 'داكن',
+
   'common.save': 'حفظ',
   'common.cancel': 'إلغاء',
   'common.delete': 'حذف',
