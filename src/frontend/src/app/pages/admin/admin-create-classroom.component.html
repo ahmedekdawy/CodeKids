@@ -21,7 +21,15 @@
       </label>
       <p class="meta">{{ 'admin.classrooms.gradeHint' | t }}</p>
       <label>{{ 'admin.classrooms.whatsAppInvite' | t }} <input [(ngModel)]="classroomWhatsAppInvite" name="classroomWhatsAppInvite" /></label>
-      <label>{{ 'classroom.zoomLink' | t }} <input [(ngModel)]="classroomZoomLink" name="classroomZoomLink" [placeholder]="'classroom.zoomLinkPlaceholder' | t" /></label>
+      <label>
+        {{ 'classroom.zoomLink' | t }}
+        <div class="chip-row">
+          <input type="url" [(ngModel)]="classroomZoomLink" name="classroomZoomLink" [placeholder]="'classroom.zoomLinkPlaceholder' | t" />
+          @if ((classroomZoomLink || '').trim()) {
+            <a class="chip quiz" [href]="classroomZoomLink" target="_blank" rel="noopener">{{ 'common.open' | t }}</a>
+          }
+        </div>
+      </label>
       <label>{{ 'admin.classrooms.whatsAppPhones' | t }} <input [(ngModel)]="classroomWhatsAppPhones" name="classroomWhatsAppPhones" /></label>
       <button type="submit">{{ 'admin.classrooms.create' | t }}</button>
     </form>
@@ -35,6 +43,7 @@
           <tr>
             <th class="sortable" (click)="setSort('name')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('name') }}</span></th>
             <th class="sortable" (click)="setSort('gradeLabel')">{{ 'common.grade' | t }} <span class="sort-mark">{{ sortMark('gradeLabel') }}</span></th>
+            <th>{{ 'classroom.zoomLink' | t }}</th>
             <th>{{ 'common.students' | t }}</th>
             <th>{{ 'common.actions' | t }}</th>
           </tr>
@@ -55,10 +64,22 @@
                     [compact]="true"
                   />
                   <input [(ngModel)]="editWhatsAppInvite" [name]="'rInvite-' + room.id" [placeholder]="'admin.classrooms.whatsAppInvite' | t" />
-                  <input [(ngModel)]="editZoomLink" [name]="'rZoom-' + room.id" [placeholder]="'classroom.zoomLink' | t" />
+                  <div class="chip-row">
+                    <input type="url" [(ngModel)]="editZoomLink" [name]="'rZoom-' + room.id" [placeholder]="'classroom.zoomLink' | t" />
+                    @if ((editZoomLink || '').trim()) {
+                      <a class="chip quiz" [href]="editZoomLink" target="_blank" rel="noopener">{{ 'common.open' | t }}</a>
+                    }
+                  </div>
                   <input [(ngModel)]="editWhatsAppPhones" [name]="'rPhones-' + room.id" [placeholder]="'admin.classrooms.whatsAppPhones' | t" />
                 </td>
                 <td>{{ room.gradeLabel }}</td>
+                <td>
+                  @if ((editZoomLink || '').trim()) {
+                    <a class="chip quiz" [href]="editZoomLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
+                  } @else {
+                    <span class="meta">{{ 'common.emDash' | t }}</span>
+                  }
+                </td>
                 <td>{{ room.students.length }}</td>
                 <td>
                   <div class="row-actions">
@@ -72,6 +93,13 @@
                   <div class="meta">{{ room.description }}</div>
                 </td>
                 <td>{{ room.gradeLabel }}</td>
+                <td>
+                  @if ((room.zoomMeetingLink || '').trim()) {
+                    <a class="chip quiz" [href]="room.zoomMeetingLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
+                  } @else {
+                    <span class="meta">{{ 'common.emDash' | t }}</span>
+                  }
+                </td>
                 <td>{{ room.students.length }}</td>
                 <td>
                   <div class="row-actions">

@@ -18,6 +18,15 @@
   vertical-align: middle;
 }
 
+.data-table td .chip-row {
+  margin-top: 0.45rem;
+}
+
+.meeting-form label .chip-row input {
+  flex: 1;
+  min-width: 0;
+}
+
 .data-table th {
   color: var(--text-soft);
   font-weight: 700;
