@@ -13,7 +13,7 @@ type GradeStudentGroup = {
   gradeLabel: string;
   courseTitles: string[];
   students: { studentId: string; displayName: string }[];
-  zoomClassrooms: { id: string; name: string; zoomMeetingLink: string }[];
+  zoomLinks: { classroomName: string; name: string; url: string }[];
 };
 
 @Component({
@@ -49,7 +49,7 @@ export class TeacherOverviewComponent {
         grade: number | null;
         courses: Set<string>;
         students: Map<string, string>;
-        zoomRooms: Map<string, { name: string; zoomMeetingLink: string }>;
+        zoomLinks: { classroomName: string; name: string; url: string }[];
       }
     >();
 
@@ -74,13 +74,17 @@ export class TeacherOverviewComponent {
         const key = grade == null ? 'all' : String(grade);
         let group = byGrade.get(key);
         if (!group) {
-          group = { grade, courses: new Set(), students: new Map(), zoomRooms: new Map() };
+          group = { grade, courses: new Set(), students: new Map(), zoomLinks: [] };
           byGrade.set(key, group);
         }
         if (course.courseTitle) group.courses.add(course.courseTitle);
-        const zoomLink = (room.zoomMeetingLink || '').trim();
-        if (zoomLink) {
-          group.zoomRooms.set(room.id, { name: room.name, zoomMeetingLink: zoomLink });
+        for (const link of room.zoomLinks ?? []) {
+          const name = (link.name || '').trim();
+          const url = (link.url || '').trim();
+          if (!name || !url) continue;
+          if (!group.zoomLinks.some((existing) => existing.classroomName === room.name && existing.url === url)) {
+            group.zoomLinks.push({ classroomName: room.name, name, url });
+          }
         }
         for (const student of room.students ?? []) {
           group.students.set(student.studentId, student.displayName);
@@ -96,9 +100,7 @@ export class TeacherOverviewComponent {
         students: [...group.students.entries()]
           .map(([studentId, displayName]) => ({ studentId, displayName }))
           .sort((a, b) => a.displayName.localeCompare(b.displayName)),
-        zoomClassrooms: [...group.zoomRooms.entries()]
-          .map(([id, room]) => ({ id, ...room }))
-          .sort((a, b) => a.name.localeCompare(b.name))
+        zoomLinks: [...group.zoomLinks].sort((a, b) => a.name.localeCompare(b.name))
       }))
       .sort((a, b) => {
         if (a.grade == null && b.grade == null) return 0;

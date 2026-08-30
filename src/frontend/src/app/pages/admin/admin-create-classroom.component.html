@@ -4,34 +4,33 @@
 
   <app-page-feedback [ok]="message()" [error]="error()" />
 
-  <section class="block">
-    <h3>{{ 'admin.classrooms.create' | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createClassroom()">
-      <label>{{ 'common.name' | t }} <input [(ngModel)]="classroomName" name="classroomName" required /></label>
-      <label>{{ 'common.description' | t }} <input [(ngModel)]="classroomDescription" name="classroomDescription" /></label>
+  <section class="block edit-panel">
+    <h3>{{ (editingId() ? ('admin.classrooms.editTitle' | t:{ name: formName }) : ('admin.classrooms.create' | t)) }}</h3>
+    <form class="meeting-form classroom-edit-form" (ngSubmit)="saveForm()">
+      <label>{{ 'common.name' | t }} <input [(ngModel)]="formName" name="formName" required /></label>
+      <label>{{ 'common.description' | t }} <input [(ngModel)]="formDescription" name="formDescription" /></label>
       <label>
         {{ 'admin.classrooms.gradeOptional' | t }}
         <app-searchable-select
-          [ngModel]="classroomGrade()"
-          name="classroomGrade"
-          (ngModelChange)="classroomGrade.set($event)"
+          [ngModel]="formGrade()"
+          name="formGrade"
+          (ngModelChange)="formGrade.set($event)"
           [emptyLabel]="'common.none' | t"
           [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
         />
       </label>
-      <p class="meta">{{ 'admin.classrooms.gradeHint' | t }}</p>
-      <label>{{ 'admin.classrooms.whatsAppInvite' | t }} <input [(ngModel)]="classroomWhatsAppInvite" name="classroomWhatsAppInvite" /></label>
-      <label>
-        {{ 'classroom.zoomLink' | t }}
-        <div class="chip-row">
-          <input type="url" [(ngModel)]="classroomZoomLink" name="classroomZoomLink" [placeholder]="'classroom.zoomLinkPlaceholder' | t" />
-          @if ((classroomZoomLink || '').trim()) {
-            <a class="chip quiz" [href]="classroomZoomLink" target="_blank" rel="noopener">{{ 'common.open' | t }}</a>
-          }
-        </div>
-      </label>
-      <label>{{ 'admin.classrooms.whatsAppPhones' | t }} <input [(ngModel)]="classroomWhatsAppPhones" name="classroomWhatsAppPhones" /></label>
-      <button type="submit">{{ 'admin.classrooms.create' | t }}</button>
+      <label>{{ 'admin.classrooms.whatsAppInvite' | t }} <input [(ngModel)]="formWhatsAppInvite" name="formWhatsAppInvite" /></label>
+      <label>{{ 'admin.classrooms.whatsAppPhones' | t }} <input [(ngModel)]="formWhatsAppPhones" name="formWhatsAppPhones" /></label>
+      <p class="meta edit-form-hint">{{ 'admin.classrooms.gradeHint' | t }}</p>
+      <div class="span-3">
+        <app-classroom-zoom-links-editor [links]="formZoomLinks" />
+      </div>
+      <div class="span-3 form-actions chip-row">
+        <button type="submit">{{ (editingId() ? ('common.save' | t) : ('admin.classrooms.create' | t)) }}</button>
+        @if (editingId()) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
+      </div>
     </form>
   </section>
 
@@ -43,7 +42,7 @@
           <tr>
             <th class="sortable" (click)="setSort('name')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('name') }}</span></th>
             <th class="sortable" (click)="setSort('gradeLabel')">{{ 'common.grade' | t }} <span class="sort-mark">{{ sortMark('gradeLabel') }}</span></th>
-            <th>{{ 'classroom.zoomLink' | t }}</th>
+            <th>{{ 'classroom.zoomLinks' | t }}</th>
             <th>{{ 'common.students' | t }}</th>
             <th>{{ 'common.actions' | t }}</th>
           </tr>
@@ -51,63 +50,27 @@
         <tbody>
           @for (room of sortedClassrooms(); track room.id) {
             <tr>
-              @if (editingId() === room.id) {
-                <td>
-                  <input [(ngModel)]="editName" [name]="'rName-' + room.id" />
-                  <input [(ngModel)]="editDescription" [name]="'rDesc-' + room.id" [placeholder]="'common.descriptionPlaceholder' | t" />
-                  <app-searchable-select
-                    [ngModel]="editGrade()"
-                    [name]="'rGrade-' + room.id"
-                    (ngModelChange)="editGrade.set($event)"
-                    [emptyLabel]="'admin.classrooms.gradeOptional' | t"
-                    [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
-                    [compact]="true"
-                  />
-                  <input [(ngModel)]="editWhatsAppInvite" [name]="'rInvite-' + room.id" [placeholder]="'admin.classrooms.whatsAppInvite' | t" />
-                  <div class="chip-row">
-                    <input type="url" [(ngModel)]="editZoomLink" [name]="'rZoom-' + room.id" [placeholder]="'classroom.zoomLink' | t" />
-                    @if ((editZoomLink || '').trim()) {
-                      <a class="chip quiz" [href]="editZoomLink" target="_blank" rel="noopener">{{ 'common.open' | t }}</a>
-                    }
-                  </div>
-                  <input [(ngModel)]="editWhatsAppPhones" [name]="'rPhones-' + room.id" [placeholder]="'admin.classrooms.whatsAppPhones' | t" />
-                </td>
-                <td>{{ room.gradeLabel }}</td>
-                <td>
-                  @if ((editZoomLink || '').trim()) {
-                    <a class="chip quiz" [href]="editZoomLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
-                  } @else {
+              <td>
+                <strong>{{ room.name }}</strong>
+                <div class="meta">{{ room.description }}</div>
+              </td>
+              <td>{{ room.gradeLabel }}</td>
+              <td>
+                <div class="chip-row">
+                  @for (link of room.zoomLinks; track link.url + link.name) {
+                    <a class="chip quiz" [href]="link.url" target="_blank" rel="noopener">{{ link.name }}</a>
+                  } @empty {
                     <span class="meta">{{ 'common.emDash' | t }}</span>
                   }
-                </td>
-                <td>{{ room.students.length }}</td>
-                <td>
-                  <div class="row-actions">
-                    <button type="button" (click)="saveEdit(room.id)">{{ 'common.save' | t }}</button>
-                    <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
-                  </div>
-                </td>
-              } @else {
-                <td>
-                  <strong>{{ room.name }}</strong>
-                  <div class="meta">{{ room.description }}</div>
-                </td>
-                <td>{{ room.gradeLabel }}</td>
-                <td>
-                  @if ((room.zoomMeetingLink || '').trim()) {
-                    <a class="chip quiz" [href]="room.zoomMeetingLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
-                  } @else {
-                    <span class="meta">{{ 'common.emDash' | t }}</span>
-                  }
-                </td>
-                <td>{{ room.students.length }}</td>
-                <td>
-                  <div class="row-actions">
-                    <app-icon-action-button kind="edit" (action)="startEdit(room)" />
-                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteClassroom(room)" />
-                  </div>
-                </td>
-              }
+                </div>
+              </td>
+              <td>{{ room.students.length }}</td>
+              <td>
+                <div class="row-actions">
+                  <app-icon-action-button kind="edit" (action)="startEdit(room)" />
+                  <app-icon-action-button kind="delete" variant="danger" (action)="deleteClassroom(room)" />
+                </div>
+              </td>
             </tr>
           }
         </tbody>

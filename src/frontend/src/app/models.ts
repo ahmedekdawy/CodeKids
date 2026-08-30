@@ -885,6 +885,11 @@ export interface ClassroomCourseAssignment {
   teacherId: string;
 }
 
+export interface ClassroomZoomLink {
+  name: string;
+  url: string;
+}
+
 export interface Classroom {
   id: string;
   name: string;
@@ -898,7 +903,7 @@ export interface Classroom {
   courseStageId?: number | null;
   courseSchoolType?: CourseSchoolType | string | null;
   whatsAppGroupInviteUrl: string;
-  zoomMeetingLink: string;
+  zoomLinks: ClassroomZoomLink[];
   whatsAppNotifyPhones: string;
   dailyWhatsAppReportsEnabled?: boolean;
   students: ClassroomStudent[];

@@ -17,20 +17,19 @@
             <div class="meeting-row">
               <div>
                 <strong>{{ room.name }}</strong>
-                @if ((room.zoomMeetingLink || '').trim()) {
-                  <p class="meta">{{ 'classroom.zoomLinkHintShort' | t }}</p>
+                @if (room.zoomLinks.length) {
+                  <div class="chip-row">
+                    @for (link of room.zoomLinks; track link.url + link.name) {
+                      <a class="chip quiz" [href]="link.url" target="_blank" rel="noopener">{{ link.name }}</a>
+                    }
+                  </div>
                 } @else {
                   <p class="meta">{{ 'teacher.zoom.noLinkSet' | t }}</p>
                 }
               </div>
-              <div class="chip-row">
-                @if ((room.zoomMeetingLink || '').trim()) {
-                  <a class="chip quiz" [href]="room.zoomMeetingLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
-                }
-                <button type="button" class="ghost-btn" (click)="editZoomLink(room.id)">
-                  {{ (room.zoomMeetingLink || '').trim() ? ('common.edit' | t) : ('teacher.zoom.setLink' | t) }}
-                </button>
-              </div>
+              <button type="button" class="ghost-btn" (click)="editZoomLink(room.id)">
+                {{ room.zoomLinks.length ? ('common.edit' | t) : ('teacher.zoom.setLink' | t) }}
+              </button>
             </div>
           }
         </div>
@@ -160,7 +159,7 @@
   </section>
 
   <section class="block" id="zoom-link-form">
-    <h3>{{ 'classroom.zoomLinkTitle' | t }}</h3>
+    <h3>{{ 'classroom.zoomLinks' | t }}</h3>
     <p class="meta">{{ 'classroom.zoomLinkHint' | t }}</p>
     <form class="meeting-form" (ngSubmit)="saveZoomLink()">
       <label>
@@ -174,15 +173,7 @@
           [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
         />
       </label>
-      <label>
-        {{ 'classroom.zoomLink' | t }}
-        <input
-          type="url"
-          [(ngModel)]="zoomMeetingLink"
-          name="zoomMeetingLink"
-          [placeholder]="'classroom.zoomLinkPlaceholder' | t"
-        />
-      </label>
+      <app-classroom-zoom-links-editor [links]="zoomLinks" />
       <button type="submit" [disabled]="savingZoomLink()">
         {{ savingZoomLink() ? ('common.saving' | t) : ('common.save' | t) }}
       </button>

@@ -537,7 +537,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.Name).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.Property(x => x.WhatsAppGroupInviteUrl).HasMaxLength(500).IsRequired();
-            entity.Property(x => x.ZoomMeetingLink).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.ZoomLinksJson).IsRequired();
             entity.Property(x => x.WhatsAppNotifyPhones).HasMaxLength(1000).IsRequired();
             entity.HasOne(x => x.Course)
                 .WithMany()

@@ -18,18 +18,10 @@ public sealed class UpdateClassroomZoomCommandHandler(IAppDbContext dbContext)
         var isSuperAdmin = string.Equals(command.ActorRole, nameof(UserRole.SuperAdmin), StringComparison.OrdinalIgnoreCase);
         if (!isSuperAdmin && !CreateClassroomCommandHandler.HasTeacher(classroom, command.ActorUserId))
         {
-            throw new InvalidOperationException("Only an assigned classroom teacher can update the Zoom link.");
+            throw new InvalidOperationException("Only an assigned classroom teacher can update Zoom links.");
         }
 
-        var link = (command.ZoomMeetingLink ?? string.Empty).Trim();
-        if (!string.IsNullOrWhiteSpace(link)
-            && (!Uri.TryCreate(link, UriKind.Absolute, out var uri)
-                || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)))
-        {
-            throw new InvalidOperationException("Zoom meeting link must be a valid http or https URL.");
-        }
-
-        classroom.ZoomMeetingLink = link;
+        classroom.ZoomLinksJson = ClassroomZoomLinks.Serialize(ClassroomZoomLinks.Normalize(command.ZoomLinks));
         await dbContext.SaveChangesAsync(cancellationToken);
         return (await CreateClassroomCommandHandler.LoadDto(dbContext, classroom.Id, cancellationToken))!;
     }

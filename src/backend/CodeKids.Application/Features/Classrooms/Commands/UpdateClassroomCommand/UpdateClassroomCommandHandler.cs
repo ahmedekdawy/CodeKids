@@ -31,7 +31,7 @@ public sealed class UpdateClassroomCommandHandler(IAppDbContext dbContext)
         classroom.Grade = grade;
         classroom.CourseId = assignments.Count > 0 ? assignments[0].CourseId : null;
         classroom.WhatsAppGroupInviteUrl = (command.WhatsAppGroupInviteUrl ?? string.Empty).Trim();
-        classroom.ZoomMeetingLink = (command.ZoomMeetingLink ?? string.Empty).Trim();
+        classroom.ZoomLinksJson = ClassroomZoomLinks.Serialize(ClassroomZoomLinks.Normalize(command.ZoomLinks));
         classroom.WhatsAppNotifyPhones = (command.WhatsAppNotifyPhones ?? string.Empty).Trim();
 
         await CreateClassroomCommandHandler.ReplaceCourseAssignmentsAsync(

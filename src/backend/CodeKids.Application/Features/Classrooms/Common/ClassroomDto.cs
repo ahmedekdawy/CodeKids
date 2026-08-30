@@ -21,7 +21,7 @@ public sealed record ClassroomDto(
     int? CourseStageId,
     string? CourseSchoolType,
     string WhatsAppGroupInviteUrl,
-    string ZoomMeetingLink,
+    IReadOnlyList<ClassroomZoomLinkDto> ZoomLinks,
     string WhatsAppNotifyPhones,
     bool DailyWhatsAppReportsEnabled,
     IReadOnlyList<ClassroomStudentDto> Students);

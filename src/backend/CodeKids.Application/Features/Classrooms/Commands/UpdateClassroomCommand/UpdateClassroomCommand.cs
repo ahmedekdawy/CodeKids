@@ -14,7 +14,7 @@ public sealed record UpdateClassroomRequest(
     int? Grade,
     IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
-    string? ZoomMeetingLink,
+    IReadOnlyList<ClassroomZoomLinkDto>? ZoomLinks,
     string? WhatsAppNotifyPhones);
 
 public sealed record UpdateClassroomCommand(
@@ -24,5 +24,5 @@ public sealed record UpdateClassroomCommand(
     int? Grade,
     IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
-    string? ZoomMeetingLink,
+    IReadOnlyList<ClassroomZoomLinkDto>? ZoomLinks,
     string? WhatsAppNotifyPhones) : ICommand<ClassroomDto>;

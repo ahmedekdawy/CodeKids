@@ -7,14 +7,21 @@ import { Classroom, LiveSession, ZoomConnectionStatus, ZoomOAuthSettings } from 
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { environment } from '../../../environments/environment';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
-import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { groupClassroomsByGrade } from '../../grade.util';
+import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { ClassroomZoomLinksEditorComponent } from '../../shared/classroom-zoom-links/classroom-zoom-links-editor.component';
+import {
+  ClassroomZoomLinkDraft,
+  classroomHasZoomLinks,
+  cloneZoomLinks,
+  normalizeZoomLinks
+} from '../../shared/classroom-zoom-links/classroom-zoom-links.util';
 
 type GradeZoomGroup = ReturnType<typeof groupClassroomsByGrade<Classroom>>[number];
 
 @Component({
   selector: 'app-teacher-zoom',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, ClassroomZoomLinksEditorComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-zoom.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-zoom.component.css']
 })
@@ -40,7 +47,7 @@ export class TeacherZoomComponent {
   durationMinutes = 45;
   classroomId = '';
   zoomLinkClassroomId = '';
-  zoomMeetingLink = '';
+  zoomLinks: ClassroomZoomLinkDraft[] = [];
   savingZoomLink = signal(false);
   notifyWhatsApp = true;
 
@@ -49,9 +56,7 @@ export class TeacherZoomComponent {
     return groupClassroomsByGrade(this.classrooms(), (k, p) => this.locale.t(k, p));
   });
 
-  readonly classroomsWithZoom = computed(() =>
-    this.classrooms().filter((room) => (room.zoomMeetingLink || '').trim().length > 0)
-  );
+  readonly classroomsWithZoom = computed(() => this.classrooms().filter((room) => classroomHasZoomLinks(room)));
 
   clientId = '';
   clientSecret = '';
@@ -82,7 +87,7 @@ export class TeacherZoomComponent {
       if (!this.classroomId && classrooms[0]) this.classroomId = classrooms[0].id;
       if (!this.zoomLinkClassroomId && classrooms[0]) {
         this.zoomLinkClassroomId = classrooms[0].id;
-        this.zoomMeetingLink = classrooms[0].zoomMeetingLink || '';
+        this.zoomLinks = cloneZoomLinks(classrooms[0].zoomLinks);
       }
     });
     this.reloadMeetings();
@@ -260,7 +265,7 @@ export class TeacherZoomComponent {
 
   onZoomLinkClassroomChange(): void {
     const room = this.classrooms().find((c) => c.id === this.zoomLinkClassroomId);
-    this.zoomMeetingLink = room?.zoomMeetingLink || '';
+    this.zoomLinks = cloneZoomLinks(room?.zoomLinks);
   }
 
   editZoomLink(classroomId: string): void {
@@ -274,10 +279,11 @@ export class TeacherZoomComponent {
     this.error.set('');
     this.info.set('');
     this.savingZoomLink.set(true);
-    this.api.updateClassroomZoom(this.zoomLinkClassroomId, { zoomMeetingLink: this.zoomMeetingLink.trim() }).subscribe({
+    this.api.updateClassroomZoom(this.zoomLinkClassroomId, { zoomLinks: normalizeZoomLinks(this.zoomLinks) }).subscribe({
       next: (room) => {
         this.savingZoomLink.set(false);
         this.classrooms.update((list) => list.map((c) => (c.id === room.id ? room : c)));
+        this.zoomLinks = cloneZoomLinks(room.zoomLinks);
         this.info.set(this.locale.t('classroom.zoomLinkSaved'));
       },
       error: (err) => {

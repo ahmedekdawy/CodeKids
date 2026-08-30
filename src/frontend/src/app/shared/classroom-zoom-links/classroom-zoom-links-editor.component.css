@@ -1,0 +1,48 @@
+.course-teacher-block {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.85rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.course-teacher-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.course-teacher-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr auto;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.course-teacher-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.zoom-link-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.15rem;
+}
+
+@media (max-width: 700px) {
+  .course-teacher-row {
+    grid-template-columns: 1fr;
+  }
+}

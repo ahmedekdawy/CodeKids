@@ -1,0 +1,35 @@
+<div class="course-teacher-block">
+  <div class="course-teacher-head">
+    <strong>{{ 'classroom.zoomLinks' | t }}</strong>
+    <button type="button" class="ghost-btn" (click)="addLink()">{{ 'classroom.addZoomLink' | t }}</button>
+  </div>
+  @for (link of links; track $index) {
+    <div class="course-teacher-row zoom-link-row">
+      <label>
+        {{ 'common.name' | t }}
+        <input
+          [(ngModel)]="link.name"
+          [name]="'zoomLinkName-' + $index"
+          [placeholder]="'classroom.zoomLinkNamePlaceholder' | t"
+          required
+        />
+      </label>
+      <label>
+        {{ 'classroom.zoomLink' | t }}
+        <input
+          type="url"
+          [(ngModel)]="link.url"
+          [name]="'zoomLinkUrl-' + $index"
+          [placeholder]="'classroom.zoomLinkPlaceholder' | t"
+          required
+        />
+      </label>
+      <div class="zoom-link-actions">
+        @if ((link.url || '').trim()) {
+          <a class="chip quiz" [href]="link.url" target="_blank" rel="noopener">{{ link.name || ('common.open' | t) }}</a>
+        }
+        <app-icon-action-button kind="delete" variant="danger" (action)="removeLink($index)" />
+      </div>
+    </div>
+  }
+</div>

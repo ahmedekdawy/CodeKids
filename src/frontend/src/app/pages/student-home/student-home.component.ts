@@ -10,6 +10,7 @@ import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
+import { classroomHasZoomLinks } from '../../shared/classroom-zoom-links/classroom-zoom-links.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
 import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
@@ -49,9 +50,7 @@ export class StudentHomeComponent {
   readonly selectedAvatar = computed(() => this.avatars().find((a) => a.isSelected) ?? null);
   readonly earnedBadges = computed(() => this.badges().filter((b) => b.isEarned));
   readonly openTasks = computed(() => this.assignments().length + this.exams().length);
-  readonly classroomsWithZoom = computed(() =>
-    this.classrooms().filter((room) => (room.zoomMeetingLink || '').trim().length > 0)
-  );
+  readonly classroomsWithZoom = computed(() => this.classrooms().filter((room) => classroomHasZoomLinks(room)));
 
   constructor() {
     this.api.getCourses().subscribe((courses) => this.courses.set(courses));

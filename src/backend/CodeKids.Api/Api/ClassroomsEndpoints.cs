@@ -66,7 +66,7 @@ public static class ClassroomsEndpoints
 
                         request.WhatsAppGroupInviteUrl,
 
-                        request.ZoomMeetingLink,
+                        request.ZoomLinks,
 
                         request.WhatsAppNotifyPhones),
 
@@ -116,7 +116,7 @@ public static class ClassroomsEndpoints
 
                         request.WhatsAppGroupInviteUrl,
 
-                        request.ZoomMeetingLink,
+                        request.ZoomLinks,
 
                         request.WhatsAppNotifyPhones),
 
@@ -388,7 +388,7 @@ public static class ClassroomsEndpoints
 
                         role,
 
-                        request.ZoomMeetingLink),
+                        request.ZoomLinks),
 
                     cancellationToken));
 

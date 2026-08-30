@@ -16,6 +16,7 @@ import {
   NotificationUnreadSummary,
   Classroom,
   ClassroomCourseAssignment,
+  ClassroomZoomLink,
   CompleteStepResponse,
   Course,
   CourseLesson,
@@ -958,7 +959,7 @@ export class LearningApiService {
     grade?: number | null;
     courses?: ClassroomCourseAssignment[] | null;
     whatsAppGroupInviteUrl?: string;
-    zoomMeetingLink?: string;
+    zoomLinks?: ClassroomZoomLink[];
     whatsAppNotifyPhones?: string;
   }): Observable<Classroom> {
     return this.http.post<Classroom>(`${this.baseUrl}/classrooms`, payload);
@@ -972,7 +973,7 @@ export class LearningApiService {
       grade?: number | null;
       courses?: ClassroomCourseAssignment[] | null;
       whatsAppGroupInviteUrl?: string;
-      zoomMeetingLink?: string;
+      zoomLinks?: ClassroomZoomLink[];
       whatsAppNotifyPhones?: string;
     }
   ): Observable<Classroom> {
@@ -1016,7 +1017,7 @@ export class LearningApiService {
     return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/whatsapp`, payload);
   }
 
-  updateClassroomZoom(classroomId: string, payload: { zoomMeetingLink?: string }): Observable<Classroom> {
+  updateClassroomZoom(classroomId: string, payload: { zoomLinks?: ClassroomZoomLink[] }): Observable<Classroom> {
     return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/zoom`, payload);
   }
 
