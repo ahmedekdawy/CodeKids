@@ -55,6 +55,7 @@ public interface IAppDbContext
     DbSet<ChatRoom> ChatRooms { get; }
     DbSet<ChatRoomMember> ChatRoomMembers { get; }
     DbSet<ChatMessage> ChatMessages { get; }
+    DbSet<UserNotification> UserNotifications { get; }
     DbSet<SiteSettings> SiteSettings { get; }
     DbSet<TenantSignup> TenantSignups { get; }
 

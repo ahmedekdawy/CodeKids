@@ -60,6 +60,8 @@ using CodeKids.Application.Features.StudentAsk;
 
 using CodeKids.Application.Features.Chat;
 
+using CodeKids.Application.Features.Notifications;
+
 using CodeKids.Api.Hubs;
 
 using CodeKids.Application.Features.Timetable;
@@ -249,6 +251,13 @@ builder.Services.AddScoped<ICommandHandler<DeleteChatMessageCommand, ChatMessage
 builder.Services.AddScoped<ICommandHandler<SetChatMemberBlockedCommand, ChatMemberDto>, SetChatMemberBlockedCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<MarkChatRoomReadCommand, int>, MarkChatRoomReadCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetChatUnreadSummaryQuery, ChatUnreadSummaryDto>, GetChatUnreadSummaryQueryHandler>();
+
+builder.Services.AddScoped<INotificationRealtime, NotificationRealtime>();
+builder.Services.AddScoped<NotificationPublisher>();
+builder.Services.AddScoped<IQueryHandler<ListNotificationsQuery, IReadOnlyList<NotificationDto>>, ListNotificationsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetNotificationUnreadSummaryQuery, NotificationUnreadSummaryDto>, GetNotificationUnreadSummaryQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<MarkNotificationReadCommand, NotificationDto>, MarkNotificationReadCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<MarkAllNotificationsReadCommand, int>, MarkAllNotificationsReadCommandHandler>();
 builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>>, GetLessonsQueryHandler>();
@@ -374,6 +383,7 @@ builder.Services.AddScoped<ICommandHandler<AddStudentToClassroomCommand, EnrollS
 builder.Services.AddScoped<ICommandHandler<RemoveStudentFromClassroomCommand, ClassroomDto>, RemoveStudentFromClassroomCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomWhatsAppCommand, ClassroomDto>, UpdateClassroomWhatsAppCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateClassroomZoomCommand, ClassroomDto>, UpdateClassroomZoomCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto>, SendClassroomWhatsAppCommandHandler>();
 
@@ -412,6 +422,8 @@ builder.Services.AddScoped<ICommandHandler<SubmitExamCommand, ExamAttemptDto>, S
 builder.Services.AddScoped<ICommandHandler<StartExamCommand, ExamAttemptDto>, StartExamCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetExamAttemptsQuery, IReadOnlyList<ExamAttemptDto>>, GetExamAttemptsQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<GradeExamAttemptCommand, ExamAttemptDto>, GradeExamAttemptCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<AttachLessonVideoCommand, LessonVideoDto>, AttachLessonVideoCommandHandler>();
 
@@ -610,7 +622,10 @@ app.MapStudentAskEndpoints();
 
 app.MapChatEndpoints();
 
+app.MapNotificationEndpoints();
+
 app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
+app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
 
 app.MapMediaEndpoints();
 

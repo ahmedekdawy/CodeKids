@@ -14,6 +14,7 @@ public sealed record CreateClassroomRequest(
     int? Grade,
     IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
+    string? ZoomMeetingLink,
     string? WhatsAppNotifyPhones);
 
 public sealed record CreateClassroomCommand(
@@ -22,4 +23,5 @@ public sealed record CreateClassroomCommand(
     int? Grade,
     IReadOnlyList<ClassroomCourseAssignmentRequest>? Courses,
     string? WhatsAppGroupInviteUrl,
+    string? ZoomMeetingLink,
     string? WhatsAppNotifyPhones) : ICommand<ClassroomDto>;

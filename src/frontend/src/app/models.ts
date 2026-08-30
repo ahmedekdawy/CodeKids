@@ -205,6 +205,8 @@ export interface PlaybackInfo {
   contentType: string;
   fileName: string;
   isExternalLink?: boolean;
+  isTeraboxHosted?: boolean;
+  teraboxBaseUrl?: string | null;
 }
 
 export interface WatchSession {
@@ -896,6 +898,7 @@ export interface Classroom {
   courseStageId?: number | null;
   courseSchoolType?: CourseSchoolType | string | null;
   whatsAppGroupInviteUrl: string;
+  zoomMeetingLink: string;
   whatsAppNotifyPhones: string;
   dailyWhatsAppReportsEnabled?: boolean;
   students: ClassroomStudent[];
@@ -949,6 +952,7 @@ export interface AssignmentAnswerReview {
   pointsAwarded?: number | null;
   points: number;
   promptImageUrl?: string | null;
+  answerImageUrl?: string | null;
 }
 
 export interface AssignmentSubmission {
@@ -961,6 +965,7 @@ export interface AssignmentSubmission {
   score?: number | null;
   maxScore?: number | null;
   teacherFeedback?: string | null;
+  feedbackImageUrl?: string | null;
   startedAtUtc?: string | null;
   submittedAtUtc: string;
   gradedAtUtc?: string | null;
@@ -1043,6 +1048,7 @@ export interface ExamAnswerReview {
   pointsAwarded?: number | null;
   points: number;
   promptImageUrl?: string | null;
+  answerImageUrl?: string | null;
 }
 
 export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;
@@ -1087,6 +1093,22 @@ export interface ChatUnreadSummary {
   roomTitle: string;
 }
 
+export interface AppNotification {
+  id: string;
+  kind: string;
+  title: string;
+  body: string;
+  targetUrl: string;
+  entityId?: string | null;
+  relatedStudentId?: string | null;
+  isRead: boolean;
+  createdAtUtc: string;
+}
+
+export interface NotificationUnreadSummary {
+  unreadCount: number;
+}
+
 export interface ExamAttempt {
   id: string;
   examId: string;
@@ -1097,6 +1119,7 @@ export interface ExamAttempt {
   score?: number | null;
   maxScore?: number | null;
   teacherFeedback?: string | null;
+  feedbackImageUrl?: string | null;
   startedAtUtc: string;
   submittedAtUtc?: string | null;
   gradedAtUtc?: string | null;

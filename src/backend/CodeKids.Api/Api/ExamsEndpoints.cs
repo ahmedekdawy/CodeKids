@@ -212,6 +212,25 @@ public static class ExamsEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapPost("/api/exams/attempts/grade", async (
+            GradeExamAttemptRequest request,
+            HttpContext httpContext,
+            ICommandHandler<GradeExamAttemptCommand, ExamAttemptDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new GradeExamAttemptCommand(userId, request.AttemptId, request.TeacherFeedback, request.FeedbackImageMediaAssetId, request.Answers),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
         return app;
 
     }

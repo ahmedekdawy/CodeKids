@@ -3,12 +3,13 @@ using CodeKids.Domain.Entities;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
 
-public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
+public sealed class CreateQuizCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<CreateQuizCommand, QuizDto>
 {
     public async Task<QuizDto> Handle(CreateQuizCommand command, CancellationToken cancellationToken)
@@ -96,6 +97,7 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext)
 
         dbContext.Quizzes.Add(quiz);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await notifications.NotifyQuizCreatedAsync(quiz, cancellationToken);
         return GetQuizzesQueryHandler.Map(quiz);
     }
 }

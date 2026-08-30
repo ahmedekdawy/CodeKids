@@ -2,6 +2,7 @@ using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Media;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Infrastructure;
+using CodeKids.Infrastructure.Tenancy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -147,14 +148,25 @@ public static class MediaEndpoints
 
         app.MapGet("/api/media/{mediaAssetId:guid}/playback", async (
             Guid mediaAssetId,
+            string? apiBase,
             HttpContext httpContext,
+            TenantCatalog tenantCatalog,
+            Microsoft.Extensions.Options.IOptions<MediaOptions> mediaOptions,
             IQueryHandler<GetPlaybackQuery, PlaybackDto> handler,
             CancellationToken cancellationToken) =>
         {
             try
             {
                 var userId = CurrentUser.GetUserId(httpContext.User);
-                var baseApiUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api";
+                var tenant = tenantCatalog.Resolve(
+                    httpContext.Request.Headers[TenantCatalog.HeaderName].ToString(),
+                    httpContext.Request.Headers.Origin.ToString(),
+                    httpContext.Request.Host.Host);
+                var baseApiUrl = MediaApiBaseUrl.Resolve(
+                    apiBase,
+                    tenant,
+                    mediaOptions.Value.PublicBaseUrl,
+                    httpContext);
                 return Results.Ok(await handler.Handle(
                     new GetPlaybackQuery(mediaAssetId, userId, baseApiUrl),
                     cancellationToken));
@@ -183,9 +195,10 @@ public static class MediaEndpoints
                 return Results.NotFound();
             }
             var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
+            var contentType = MediaFileTypes.ResolveContentType(media.ContentType, media.FileName);
             return Results.File(
                 stream,
-                contentType: media.ContentType,
+                contentType: contentType,
                 fileDownloadName: null,
                 enableRangeProcessing: true);
         }).AllowAnonymous();

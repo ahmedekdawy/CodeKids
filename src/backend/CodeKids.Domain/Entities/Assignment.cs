@@ -48,12 +48,14 @@ public class AssignmentSubmission : TenantEntity
     public int? Score { get; set; }
     public int? MaxScore { get; set; }
     public string? TeacherFeedback { get; set; }
+    public Guid? FeedbackImageMediaAssetId { get; set; }
     public DateTimeOffset? StartedAtUtc { get; set; }
     public DateTimeOffset SubmittedAtUtc { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? GradedAtUtc { get; set; }
 
     public Assignment? Assignment { get; set; }
     public User? Student { get; set; }
+    public MediaAsset? FeedbackImage { get; set; }
     public List<AssignmentAnswer> Answers { get; set; } = [];
 }
 
@@ -63,9 +65,11 @@ public class AssignmentAnswer : TenantEntity
     public Guid SubmissionId { get; set; }
     public Guid QuestionId { get; set; }
     public string AnswerText { get; set; } = string.Empty;
+    public Guid? AnswerImageMediaAssetId { get; set; }
     public bool? IsCorrect { get; set; }
     public int? PointsAwarded { get; set; }
 
     public AssignmentSubmission? Submission { get; set; }
     public AssignmentQuestion? Question { get; set; }
+    public MediaAsset? AnswerImage { get; set; }
 }

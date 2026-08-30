@@ -10,10 +10,17 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { StudentAnswerUploadComponent } from '../../shared/student-answer-upload/student-answer-upload.component';
+
+interface AnswerDraft {
+  text: string;
+  imageMediaAssetId: string | null;
+  imageUrl: string | null;
+}
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, StudentAnswerUploadComponent],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })
@@ -25,7 +32,7 @@ export class AssignmentPlayComponent {
   readonly assignment = signal<Assignment | null>(null);
   readonly result = signal<AssignmentSubmission | null>(null);
   readonly error = signal('');
-  readonly answers = signal<Record<string, string>>({});
+  readonly answers = signal<Record<string, AnswerDraft>>({});
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('assignmentId');
@@ -33,8 +40,10 @@ export class AssignmentPlayComponent {
     this.api.getAssignment(id).subscribe({
       next: (assignment) => {
         this.assignment.set(assignment);
-        const seed: Record<string, string> = {};
-        for (const q of assignment.questions) seed[q.id] = '';
+        const seed: Record<string, AnswerDraft> = {};
+        for (const q of assignment.questions) {
+          seed[q.id] = { text: '', imageMediaAssetId: null, imageUrl: null };
+        }
         this.answers.set(seed);
       },
       error: () => this.error.set(this.locale.t('play.assignmentNotFound'))
@@ -49,8 +58,18 @@ export class AssignmentPlayComponent {
     });
   }
 
-  setAnswer(questionId: string, value: string): void {
-    this.answers.update((current) => ({ ...current, [questionId]: value }));
+  setAnswerText(questionId: string, value: string): void {
+    this.answers.update((current) => ({
+      ...current,
+      [questionId]: { ...current[questionId], text: value }
+    }));
+  }
+
+  setAnswerImage(questionId: string, mediaAssetId: string | null, imageUrl: string | null): void {
+    this.answers.update((current) => ({
+      ...current,
+      [questionId]: { ...current[questionId], imageMediaAssetId: mediaAssetId, imageUrl }
+    }));
   }
 
   submit(): void {
@@ -61,7 +80,8 @@ export class AssignmentPlayComponent {
         assignmentId: assignment.id,
         answers: assignment.questions.map((q) => ({
           questionId: q.id,
-          answerText: this.answers()[q.id] || ''
+          answerText: this.answers()[q.id]?.text || '',
+          answerImageMediaAssetId: this.answers()[q.id]?.imageMediaAssetId || null
         }))
       })
       .subscribe({

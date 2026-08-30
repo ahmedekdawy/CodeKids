@@ -7,7 +7,7 @@
   }
   <label class="upload-label">
     {{ 'teacher.questionImage.upload' | t }}
-    <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="onFileSelected($event)" [disabled]="uploading()" />
+    <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" (change)="onFileSelected($event)" [disabled]="uploading()" />
   </label>
   @if (uploading()) {
     <span class="meta">{{ 'teacher.questionImage.uploading' | t }}</span>

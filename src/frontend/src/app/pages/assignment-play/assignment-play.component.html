@@ -17,13 +17,15 @@
       @if (submission.teacherFeedback) {
         <p>{{ submission.teacherFeedback }}</p>
       }
+      <app-question-image-display [url]="submission.feedbackImageUrl" />
     </section>
 
     @if (submission.solutionVideoMediaAssetId) {
       <section class="block">
         <app-protected-video-player
           [mediaAssetId]="submission.solutionVideoMediaAssetId"
-          [title]="'play.solutionVideo' | t" />
+          [title]="'play.solutionVideo' | t"
+          [autoLoad]="true" />
       </section>
     }
 
@@ -32,6 +34,7 @@
         <strong>{{ answer.prompt }}</strong>
         <app-question-image-display [url]="answer.promptImageUrl" />
         <p class="meta">{{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
+        <app-question-image-display [url]="answer.answerImageUrl" />
       </section>
     }
   } @else if (assignment(); as current) {
@@ -43,11 +46,17 @@
           <strong>{{ question.prompt }}</strong>
           <app-question-image-display [url]="question.promptImageUrl" />
           @if (question.questionType === 'MultipleChoice') {
-            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'A')" /> A. {{ question.optionA }}</label>
-            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'B')" /> B. {{ question.optionB }}</label>
-            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'C')" /> C. {{ question.optionC }}</label>
+            <label><input type="radio" [name]="question.id" (change)="setAnswerText(question.id, 'A')" /> A. {{ question.optionA }}</label>
+            <label><input type="radio" [name]="question.id" (change)="setAnswerText(question.id, 'B')" /> B. {{ question.optionB }}</label>
+            <label><input type="radio" [name]="question.id" (change)="setAnswerText(question.id, 'C')" /> C. {{ question.optionC }}</label>
           } @else {
-            <textarea [value]="answers()[question.id] || ''" (input)="setAnswer(question.id, $any($event.target).value)"></textarea>
+            <textarea [value]="answers()[question.id]?.text || ''" (input)="setAnswerText(question.id, $any($event.target).value)"></textarea>
+            <app-student-answer-upload
+              [mediaAssetId]="answers()[question.id]?.imageMediaAssetId ?? null"
+              [imageUrl]="answers()[question.id]?.imageUrl ?? null"
+              (mediaAssetIdChange)="setAnswerImage(question.id, $event, answers()[question.id]?.imageUrl ?? null)"
+              (imageUrlChange)="setAnswerImage(question.id, answers()[question.id]?.imageMediaAssetId ?? null, $event)"
+            />
           }
         </div>
       }

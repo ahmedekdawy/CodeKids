@@ -100,12 +100,25 @@
             [(ngModel)]="lessonVideoUrl"
             name="lessonVideoUrl"
             [placeholder]="'videos.videoLinkPlaceholder' | t"
-            required
           />
         </label>
-        <button type="submit" [disabled]="uploading()">
-          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
-        </button>
+        <label>
+          {{ 'videos.videoFile' | t }}
+          <input
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime"
+            (change)="onLessonFileSelected($event)"
+            [disabled]="uploading()"
+          />
+        </label>
+        <div class="video-upload-actions">
+          <button type="submit" [disabled]="uploading() || !lessonVideoUrl.trim()">
+            {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+          </button>
+          <button type="button" [disabled]="uploading() || !lessonVideoFile()" (click)="attachLessonVideoFile()">
+            {{ (uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t }}
+          </button>
+        </div>
       </form>
     </section>
 
@@ -217,12 +230,25 @@
             [(ngModel)]="solutionVideoUrl"
             name="solutionVideoUrl"
             [placeholder]="'videos.videoLinkPlaceholder' | t"
-            required
           />
         </label>
-        <button type="submit" [disabled]="uploading()">
-          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
-        </button>
+        <label>
+          {{ 'videos.videoFile' | t }}
+          <input
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime"
+            (change)="onSolutionFileSelected($event)"
+            [disabled]="uploading()"
+          />
+        </label>
+        <div class="video-upload-actions">
+          <button type="submit" [disabled]="uploading() || !solutionVideoUrl.trim()">
+            {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+          </button>
+          <button type="button" [disabled]="uploading() || !solutionVideoFile()" (click)="attachSolutionVideoFile()">
+            {{ (uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t }}
+          </button>
+        </div>
       </form>
     </section>
 

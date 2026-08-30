@@ -8,4 +8,4 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Exams;
 
-public sealed record ExamAnswerInput(Guid QuestionId, string AnswerText);
+public sealed record ExamAnswerInput(Guid QuestionId, string AnswerText, Guid? AnswerImageMediaAssetId = null);

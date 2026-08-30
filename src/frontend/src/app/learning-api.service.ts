@@ -12,6 +12,8 @@ import {
   ChatMessage,
   ChatRoom,
   ChatUnreadSummary,
+  AppNotification,
+  NotificationUnreadSummary,
   Classroom,
   ClassroomCourseAssignment,
   CompleteStepResponse,
@@ -67,12 +69,12 @@ import {
   Subject
 } from './models';
 import { normalizePmStartMinutes } from './fixed-timetable.util';
-import { environment } from '../environments/environment';
+import { resolveApiBaseUrl } from './api-base-url';
 
 @Injectable({ providedIn: 'root' })
 export class LearningApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl = resolveApiBaseUrl();
 
   getCourses(includeContent = true): Observable<Course[]> {
     const query = includeContent ? '' : '?includeContent=false';
@@ -168,6 +170,22 @@ export class LearningApiService {
 
   getChatUnreadSummary(): Observable<ChatUnreadSummary> {
     return this.http.get<ChatUnreadSummary>(`${this.baseUrl}/chat/unread`);
+  }
+
+  listNotifications(limit = 30): Observable<AppNotification[]> {
+    return this.http.get<AppNotification[]>(`${this.baseUrl}/notifications`, { params: { limit } });
+  }
+
+  getNotificationUnreadSummary(): Observable<NotificationUnreadSummary> {
+    return this.http.get<NotificationUnreadSummary>(`${this.baseUrl}/notifications/unread`);
+  }
+
+  markNotificationRead(id: string): Observable<AppNotification> {
+    return this.http.post<AppNotification>(`${this.baseUrl}/notifications/${id}/read`, {});
+  }
+
+  markAllNotificationsRead(): Observable<number> {
+    return this.http.post<number>(`${this.baseUrl}/notifications/read-all`, {});
   }
 
   markChatRoomRead(roomId: string): Observable<void> {
@@ -940,6 +958,7 @@ export class LearningApiService {
     grade?: number | null;
     courses?: ClassroomCourseAssignment[] | null;
     whatsAppGroupInviteUrl?: string;
+    zoomMeetingLink?: string;
     whatsAppNotifyPhones?: string;
   }): Observable<Classroom> {
     return this.http.post<Classroom>(`${this.baseUrl}/classrooms`, payload);
@@ -953,6 +972,7 @@ export class LearningApiService {
       grade?: number | null;
       courses?: ClassroomCourseAssignment[] | null;
       whatsAppGroupInviteUrl?: string;
+      zoomMeetingLink?: string;
       whatsAppNotifyPhones?: string;
     }
   ): Observable<Classroom> {
@@ -994,6 +1014,10 @@ export class LearningApiService {
     }
   ): Observable<Classroom> {
     return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/whatsapp`, payload);
+  }
+
+  updateClassroomZoom(classroomId: string, payload: { zoomMeetingLink?: string }): Observable<Classroom> {
+    return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/zoom`, payload);
   }
 
   sendClassroomWhatsApp(
@@ -1042,7 +1066,7 @@ export class LearningApiService {
 
   submitAssignment(payload: {
     assignmentId: string;
-    answers: { questionId: string; answerText: string }[];
+    answers: { questionId: string; answerText: string; answerImageMediaAssetId?: string | null }[];
   }): Observable<AssignmentSubmission> {
     return this.http.post<AssignmentSubmission>(`${this.baseUrl}/assignments/submit`, payload);
   }
@@ -1054,6 +1078,7 @@ export class LearningApiService {
   gradeSubmission(payload: {
     submissionId: string;
     teacherFeedback?: string;
+    feedbackImageMediaAssetId?: string | null;
     answers?: { questionId: string; isCorrect: boolean; pointsAwarded: number }[];
   }): Observable<AssignmentSubmission> {
     return this.http.post<AssignmentSubmission>(`${this.baseUrl}/assignments/submissions/grade`, payload);
@@ -1123,7 +1148,7 @@ export class LearningApiService {
 
   submitExam(payload: {
     examId: string;
-    answers: { questionId: string; answerText: string }[];
+    answers: { questionId: string; answerText: string; answerImageMediaAssetId?: string | null }[];
   }): Observable<ExamAttempt> {
     return this.http.post<ExamAttempt>(`${this.baseUrl}/exams/submit`, payload);
   }
@@ -1134,6 +1159,15 @@ export class LearningApiService {
 
   getExamAttempts(examId: string): Observable<ExamAttempt[]> {
     return this.http.get<ExamAttempt[]>(`${this.baseUrl}/exams/${examId}/attempts`);
+  }
+
+  gradeExamAttempt(payload: {
+    attemptId: string;
+    teacherFeedback?: string;
+    feedbackImageMediaAssetId?: string | null;
+    answers?: { questionId: string; isCorrect: boolean; pointsAwarded: number }[];
+  }): Observable<ExamAttempt> {
+    return this.http.post<ExamAttempt>(`${this.baseUrl}/exams/attempts/grade`, payload);
   }
 
   uploadMedia(file: File, durationSeconds?: number): Observable<MediaAsset> {
@@ -1187,7 +1221,29 @@ export class LearningApiService {
   }
 
   getPlayback(mediaAssetId: string): Observable<PlaybackInfo> {
-    return this.http.get<PlaybackInfo>(`${this.baseUrl}/media/${mediaAssetId}/playback`);
+    const params = { apiBase: this.baseUrl };
+    return this.http.get<PlaybackInfo>(`${this.baseUrl}/media/${mediaAssetId}/playback`, { params }).pipe(
+      map((info) => ({
+        ...info,
+        playbackUrl: this.normalizeMediaPlaybackUrl(info)
+      }))
+    );
+  }
+
+  private normalizeMediaPlaybackUrl(info: PlaybackInfo): string {
+    const url = info.playbackUrl;
+    if (!url) return url;
+
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname.endsWith('/media/stream')) {
+        return `${this.baseUrl}/media/stream${parsed.search}`;
+      }
+    } catch {
+      // Relative URLs are returned as-is.
+    }
+
+    return url;
   }
 
   recordWatchEvents(payload: {

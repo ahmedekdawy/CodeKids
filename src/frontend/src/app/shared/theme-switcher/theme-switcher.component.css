@@ -11,14 +11,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.2rem;
+  width: 2rem;
+  height: 2rem;
   border: 0;
   border-radius: var(--radius-pill, 999px);
-  padding: 0.35rem 0.65rem;
+  padding: 0;
   background: transparent;
   color: var(--text-muted, rgba(244, 247, 251, 0.72));
-  font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -39,7 +39,7 @@
 }
 
 :host-context(.shell.collapsed) .theme-btn {
-  min-width: 0;
+  width: auto;
   flex: 1;
-  padding: 0.3rem 0.35rem;
+  height: 1.85rem;
 }

@@ -1,4 +1,13 @@
-.video-tabs-shell {
+.video-upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.video-upload-actions button {
+  flex: 1 1 auto;
+}
+
   margin: 1rem 0 1.35rem;
   padding: 0.35rem 0.35rem 0;
   border-radius: var(--radius-lg, 20px);

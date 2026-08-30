@@ -13,6 +13,7 @@ type GradeStudentGroup = {
   gradeLabel: string;
   courseTitles: string[];
   students: { studentId: string; displayName: string }[];
+  zoomClassrooms: { id: string; name: string; zoomMeetingLink: string }[];
 };
 
 @Component({
@@ -44,7 +45,12 @@ export class TeacherOverviewComponent {
 
     const byGrade = new Map<
       string,
-      { grade: number | null; courses: Set<string>; students: Map<string, string> }
+      {
+        grade: number | null;
+        courses: Set<string>;
+        students: Map<string, string>;
+        zoomRooms: Map<string, { name: string; zoomMeetingLink: string }>;
+      }
     >();
 
     for (const room of this.classrooms()) {
@@ -68,10 +74,14 @@ export class TeacherOverviewComponent {
         const key = grade == null ? 'all' : String(grade);
         let group = byGrade.get(key);
         if (!group) {
-          group = { grade, courses: new Set(), students: new Map() };
+          group = { grade, courses: new Set(), students: new Map(), zoomRooms: new Map() };
           byGrade.set(key, group);
         }
         if (course.courseTitle) group.courses.add(course.courseTitle);
+        const zoomLink = (room.zoomMeetingLink || '').trim();
+        if (zoomLink) {
+          group.zoomRooms.set(room.id, { name: room.name, zoomMeetingLink: zoomLink });
+        }
         for (const student of room.students ?? []) {
           group.students.set(student.studentId, student.displayName);
         }
@@ -85,7 +95,10 @@ export class TeacherOverviewComponent {
         courseTitles: [...group.courses].sort((a, b) => a.localeCompare(b)),
         students: [...group.students.entries()]
           .map(([studentId, displayName]) => ({ studentId, displayName }))
-          .sort((a, b) => a.displayName.localeCompare(b.displayName))
+          .sort((a, b) => a.displayName.localeCompare(b.displayName)),
+        zoomClassrooms: [...group.zoomRooms.entries()]
+          .map(([id, room]) => ({ id, ...room }))
+          .sort((a, b) => a.name.localeCompare(b.name))
       }))
       .sort((a, b) => {
         if (a.grade == null && b.grade == null) return 0;

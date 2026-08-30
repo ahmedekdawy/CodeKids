@@ -2,6 +2,7 @@ using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Exams;
 
-public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
+public sealed class CreateExamCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<CreateExamCommand, ExamDto>
 {
     public async Task<ExamDto> Handle(CreateExamCommand command, CancellationToken cancellationToken)
@@ -94,6 +95,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
 
         dbContext.Exams.Add(exam);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await notifications.NotifyExamCreatedAsync(exam, cancellationToken);
         return (await LoadExam(dbContext, exam.Id, includeAnswerKey: true, cancellationToken))!;
     }
 

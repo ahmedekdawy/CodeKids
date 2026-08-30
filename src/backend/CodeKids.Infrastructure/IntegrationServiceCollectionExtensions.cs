@@ -16,7 +16,25 @@ public static class IntegrationServiceCollectionExtensions
     public static IServiceCollection AddMediaStorage(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<MediaOptions>(configuration.GetSection(MediaOptions.SectionName));
-        services.AddSingleton<IFileStorage, LocalFileStorage>();
+        services.Configure<TeraboxOptions>(configuration.GetSection(TeraboxOptions.SectionName));
+
+        var provider = configuration.GetSection(MediaOptions.SectionName).GetValue<string>("Provider") ?? "Local";
+        if (string.Equals(provider, "Terabox", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddHttpClient(nameof(TeraboxClient), client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(30);
+            });
+            services.AddSingleton<TeraboxClient>();
+            services.AddSingleton<IFileStorage, TeraboxFileStorage>();
+            services.AddSingleton<ITeraboxDirectLinkResolver, TeraboxDirectLinkResolver>();
+        }
+        else
+        {
+            services.AddSingleton<IFileStorage, LocalFileStorage>();
+            services.AddSingleton<ITeraboxDirectLinkResolver, NullTeraboxDirectLinkResolver>();
+        }
+
         services.AddSingleton<IMediaAccessTokenService, MediaAccessTokenService>();
         services.AddHostedService<DailyReportHostedService>();
         return services;

@@ -4,6 +4,45 @@
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
+  @if (classrooms().length) {
+    <section class="block">
+      <h3>{{ 'teacher.zoom.gradeLinksTitle' | t }}</h3>
+      <p class="meta">{{ 'teacher.zoom.gradeLinksHint' | t }}</p>
+      @for (group of zoomLinksByGrade(); track group.gradeLabel) {
+        <div class="grade-roster">
+          <div class="grade-roster-head">
+            <strong>{{ group.gradeLabel }}</strong>
+          </div>
+          @for (room of group.classrooms; track room.id) {
+            <div class="meeting-row">
+              <div>
+                <strong>{{ room.name }}</strong>
+                @if ((room.zoomMeetingLink || '').trim()) {
+                  <p class="meta">{{ 'classroom.zoomLinkHintShort' | t }}</p>
+                } @else {
+                  <p class="meta">{{ 'teacher.zoom.noLinkSet' | t }}</p>
+                }
+              </div>
+              <div class="chip-row">
+                @if ((room.zoomMeetingLink || '').trim()) {
+                  <a class="chip quiz" [href]="room.zoomMeetingLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
+                }
+                <button type="button" class="ghost-btn" (click)="editZoomLink(room.id)">
+                  {{ (room.zoomMeetingLink || '').trim() ? ('common.edit' | t) : ('teacher.zoom.setLink' | t) }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  } @else {
+    <section class="block">
+      <h3>{{ 'teacher.zoom.gradeLinksTitle' | t }}</h3>
+      <p class="meta">{{ 'teacher.zoom.noClassrooms' | t }}</p>
+    </section>
+  }
+
   @if (showWizard()) {
     <section class="block zoom-wizard">
       <div class="wizard-head">
@@ -118,6 +157,36 @@
         <button type="button" class="ghost-btn" (click)="openWizard()">{{ 'teacher.zoom.oauthSettings' | t }}</button>
       </div>
     }
+  </section>
+
+  <section class="block" id="zoom-link-form">
+    <h3>{{ 'classroom.zoomLinkTitle' | t }}</h3>
+    <p class="meta">{{ 'classroom.zoomLinkHint' | t }}</p>
+    <form class="meeting-form" (ngSubmit)="saveZoomLink()">
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          [(ngModel)]="zoomLinkClassroomId"
+          name="zoomLinkClassroomId"
+          (ngModelChange)="onZoomLinkClassroomChange()"
+          required
+          [emptyLabel]="'common.selectClassroom' | t"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
+      </label>
+      <label>
+        {{ 'classroom.zoomLink' | t }}
+        <input
+          type="url"
+          [(ngModel)]="zoomMeetingLink"
+          name="zoomMeetingLink"
+          [placeholder]="'classroom.zoomLinkPlaceholder' | t"
+        />
+      </label>
+      <button type="submit" [disabled]="savingZoomLink()">
+        {{ savingZoomLink() ? ('common.saving' | t) : ('common.save' | t) }}
+      </button>
+    </form>
   </section>
 
   <section class="block">

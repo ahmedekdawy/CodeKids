@@ -1,0 +1,116 @@
+.notify-wrap {
+  position: relative;
+}
+
+.notify-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border, #d8dee9);
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  cursor: pointer;
+}
+
+.notify-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.notify-badge {
+  position: absolute;
+  top: -0.25rem;
+  inset-inline-end: -0.25rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: #e4572e;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.1rem;
+  text-align: center;
+}
+
+.notify-panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  width: min(22rem, 92vw);
+  max-height: 24rem;
+  overflow: auto;
+  border: 1px solid var(--border, #d8dee9);
+  border-radius: 0.75rem;
+  background: var(--surface, #fff);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  z-index: 40;
+}
+
+.notify-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border, #d8dee9);
+}
+
+.notify-head .ghost {
+  border: 0;
+  background: transparent;
+  color: var(--accent, #2563eb);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.notify-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notify-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-bottom: 1px solid var(--border, #d8dee9);
+  background: transparent;
+  text-align: start;
+  cursor: pointer;
+}
+
+.notify-item:last-child {
+  border-bottom: 0;
+}
+
+.notify-item.unread {
+  background: color-mix(in srgb, var(--accent, #2563eb) 8%, transparent);
+}
+
+.notify-item strong {
+  font-size: 0.92rem;
+}
+
+.notify-item span {
+  color: var(--muted, #64748b);
+  font-size: 0.85rem;
+}
+
+.notify-item small {
+  color: var(--muted, #94a3b8);
+  font-size: 0.75rem;
+}
+
+.notify-empty {
+  margin: 0;
+  padding: 1rem;
+  color: var(--muted, #64748b);
+}

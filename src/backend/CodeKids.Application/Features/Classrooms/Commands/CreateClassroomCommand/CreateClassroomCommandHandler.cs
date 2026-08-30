@@ -24,6 +24,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             Grade = grade,
             CourseId = assignments.Count > 0 ? assignments[0].CourseId : null,
             WhatsAppGroupInviteUrl = (command.WhatsAppGroupInviteUrl ?? string.Empty).Trim(),
+            ZoomMeetingLink = (command.ZoomMeetingLink ?? string.Empty).Trim(),
             WhatsAppNotifyPhones = (command.WhatsAppNotifyPhones ?? string.Empty).Trim(),
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
@@ -179,6 +180,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
             primary?.CourseStageId ?? classroom.Course?.StageId,
             primary?.CourseSchoolType ?? classroom.Course?.SchoolType?.ToString() ?? nameof(SchoolType.All),
             classroom.WhatsAppGroupInviteUrl,
+            classroom.ZoomMeetingLink,
             classroom.WhatsAppNotifyPhones,
             classroom.DailyWhatsAppReportsEnabled,
             classroom.Students

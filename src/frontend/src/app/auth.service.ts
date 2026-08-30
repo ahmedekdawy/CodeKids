@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../environments/environment';
+import { resolveApiBaseUrl } from './api-base-url';
 import { AuthResponse, AuthUser, UserRole } from './models';
 import { setCurrentTenantId } from './tenant';
 
@@ -13,7 +13,7 @@ const USER_KEY = 'codekids_user';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly baseUrl = `${environment.apiBaseUrl}/auth`;
+  private readonly baseUrl = `${resolveApiBaseUrl()}/auth`;
 
   readonly user = signal<AuthUser | null>(this.readUser());
   readonly token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
@@ -44,7 +44,7 @@ export class AuthService {
     mobilePhone?: string;
   }): Observable<{ accepted: boolean; message: string }> {
     return this.http.post<{ accepted: boolean; message: string }>(
-      `${environment.apiBaseUrl}/tenants/register`,
+      `${resolveApiBaseUrl()}/tenants/register`,
       payload
     );
   }
@@ -52,7 +52,7 @@ export class AuthService {
   verifyTenant(token: string): Observable<{ tenantId: string; email: string; message: string }> {
     return this.http
       .post<{ tenantId: string; email: string; message: string }>(
-        `${environment.apiBaseUrl}/tenants/verify`,
+        `${resolveApiBaseUrl()}/tenants/verify`,
         { token }
       )
       .pipe(tap((result) => setCurrentTenantId(result.tenantId)));

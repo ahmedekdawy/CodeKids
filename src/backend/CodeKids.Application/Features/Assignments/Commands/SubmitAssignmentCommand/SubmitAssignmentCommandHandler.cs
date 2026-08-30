@@ -54,8 +54,15 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
         {
             var input = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
             var answerText = (input?.AnswerText ?? string.Empty).Trim();
+            var answerImageId = input?.AnswerImageMediaAssetId;
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, answerImageId, cancellationToken);
             bool? isCorrect = null;
             int? points = null;
+
+            if (answerImageId is not null)
+            {
+                allAutoGradable = false;
+            }
 
             if (question.QuestionType == AssignmentQuestionType.MultipleChoice)
             {
@@ -67,15 +74,12 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             {
                 allAutoGradable = false;
                 if (!string.IsNullOrWhiteSpace(question.CorrectAnswer) &&
-                    string.Equals(answerText, question.CorrectAnswer, StringComparison.OrdinalIgnoreCase))
+                    string.Equals(answerText, question.CorrectAnswer, StringComparison.OrdinalIgnoreCase) &&
+                    answerImageId is null)
                 {
                     isCorrect = true;
                     points = question.Points;
                     autoScore += question.Points;
-                }
-                else
-                {
-                    allAutoGradable = false;
                 }
             }
 
@@ -85,6 +89,7 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
                 SubmissionId = submission.Id,
                 QuestionId = question.Id,
                 AnswerText = answerText,
+                AnswerImageMediaAssetId = answerImageId,
                 IsCorrect = isCorrect,
                 PointsAwarded = points
             });
@@ -136,6 +141,7 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             submission.Score,
             submission.MaxScore,
             submission.TeacherFeedback,
+            QuestionImageUrls.Build(submission.FeedbackImageMediaAssetId),
             submission.StartedAtUtc,
             submission.SubmittedAtUtc,
             submission.GradedAtUtc,
@@ -148,5 +154,6 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
                 a.IsCorrect,
                 a.PointsAwarded,
                 a.Question?.Points ?? 0,
-                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId))).ToList());
+                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                QuestionImageUrls.Build(a.AnswerImageMediaAssetId))).ToList());
 }

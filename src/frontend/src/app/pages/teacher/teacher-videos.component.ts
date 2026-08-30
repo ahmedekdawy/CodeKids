@@ -44,6 +44,8 @@ export class TeacherVideosComponent {
   readonly info = signal('');
   readonly error = signal('');
   readonly uploading = signal(false);
+  readonly lessonVideoFile = signal<File | null>(null);
+  readonly solutionVideoFile = signal<File | null>(null);
   readonly tab = signal<VideoTab>('lesson');
   readonly preview = signal<VideoPreview | null>(null);
   readonly previewKey = signal(0);
@@ -301,6 +303,61 @@ export class TeacherVideosComponent {
       return;
     }
 
+    this.uploadLessonAssetFromUrl(url);
+  }
+
+  onLessonFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.lessonVideoFile.set(input.files?.[0] ?? null);
+  }
+
+  onSolutionFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.solutionVideoFile.set(input.files?.[0] ?? null);
+  }
+
+  attachLessonVideoFile(): void {
+    const file = this.lessonVideoFile();
+    if (!file || !this.selectedLessonId) {
+      this.error.set(this.locale.t('videos.fileRequired'));
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.uploading.set(true);
+
+    this.api.uploadMedia(file).subscribe({
+      next: (asset) => {
+        this.selectedMediaAssetId = asset.id;
+        this.api
+          .attachLessonVideo(this.selectedLessonId, {
+            mediaAssetId: asset.id,
+            title: this.videoTitle.trim() || asset.fileName,
+            sortOrder: 1
+          })
+          .subscribe({
+            next: () => {
+              this.uploading.set(false);
+              this.info.set(this.locale.t('videos.uploadedLessonFile'));
+              this.videoTitle = '';
+              this.lessonVideoFile.set(null);
+              this.reloadLibrary();
+            },
+            error: (err) => {
+              this.uploading.set(false);
+              this.error.set(this.locale.fromApiError(err, 'videos.attachLessonFailed'));
+            }
+          });
+      },
+      error: (err) => {
+        this.uploading.set(false);
+        this.error.set(this.locale.fromApiError(err, 'videos.uploadFailed'));
+      }
+    });
+  }
+
+  private uploadLessonAssetFromUrl(url: string): void {
     this.error.set('');
     this.info.set('');
     this.uploading.set(true);
@@ -342,6 +399,44 @@ export class TeacherVideosComponent {
       return;
     }
 
+    this.uploadSolutionAssetFromUrl(url);
+  }
+
+  attachSolutionVideoFile(): void {
+    const file = this.solutionVideoFile();
+    if (!file || !this.selectedAssignmentId) {
+      this.error.set(this.locale.t('videos.fileRequired'));
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.uploading.set(true);
+
+    this.api.uploadMedia(file).subscribe({
+      next: (asset) => {
+        this.api.attachAssignmentSolutionVideo(this.selectedAssignmentId, asset.id).subscribe({
+          next: () => {
+            this.uploading.set(false);
+            this.info.set(this.locale.t('videos.uploadedSolutionFile'));
+            this.solutionVideoFile.set(null);
+            this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
+            this.reloadLibrary();
+          },
+          error: (err) => {
+            this.uploading.set(false);
+            this.error.set(this.locale.fromApiError(err, 'videos.attachSolutionFailed'));
+          }
+        });
+      },
+      error: (err) => {
+        this.uploading.set(false);
+        this.error.set(this.locale.fromApiError(err, 'videos.uploadFailed'));
+      }
+    });
+  }
+
+  private uploadSolutionAssetFromUrl(url: string): void {
     this.error.set('');
     this.info.set('');
     this.uploading.set(true);

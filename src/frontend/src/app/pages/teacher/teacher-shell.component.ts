@@ -21,6 +21,7 @@ export class TeacherShellComponent {
     { labelKey: 'nav.teacher.courseTree', path: '/teacher/course-tree', icon: 'U' },
     { labelKey: 'nav.teacher.askedQuestions', path: '/teacher/asked-questions', icon: '?' },
     { labelKey: 'nav.teacher.chat', path: '/teacher/chat', icon: 'C' },
+    { labelKey: 'nav.teacher.zoom', path: '/teacher/zoom', icon: 'Z' },
     { labelKey: 'nav.teacher.appointments', path: '/teacher/appointments', icon: 'K' },
     { labelKey: 'nav.teacher.timetable', path: '/teacher/timetable', icon: 'H' },
     { labelKey: 'nav.teacher.attendance', path: '/teacher/attendance', icon: 'N' },

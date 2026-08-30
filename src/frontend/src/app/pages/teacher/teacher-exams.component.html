@@ -107,14 +107,49 @@
     <section class="block">
       <h3>{{ 'teacher.exams.attempts' | t }}</h3>
       @for (attempt of attempts(); track attempt.id) {
-        <div class="meeting-row">
-          <div>
-            <strong>{{ attempt.studentName }}</strong>
-            <p class="meta">
-              {{ attempt.status }} · {{ attempt.score ?? ('common.emDash' | t) }}/{{ attempt.maxScore ?? ('common.emDash' | t) }}
-              @if (attempt.durationSeconds != null) { · {{ attempt.durationSeconds }}s }
-            </p>
-          </div>
+        <div class="block">
+          <strong>{{ attempt.studentName }}</strong>
+          <p class="meta">
+            {{ attempt.status }} · {{ attempt.score ?? ('common.emDash' | t) }}/{{ attempt.maxScore ?? ('common.emDash' | t) }}
+            @if (attempt.durationSeconds != null) { · {{ attempt.durationSeconds }}s }
+          </p>
+          @for (answer of attempt.answers; track answer.questionId) {
+            <div class="question">
+              <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
+              <app-question-image-display [url]="answer.promptImageUrl" />
+              <p>{{ 'common.answer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
+              <app-question-image-display [url]="answer.answerImageUrl" />
+              <label class="points-field">
+                {{ 'teacher.review.points' | t }}
+                <input
+                  type="number"
+                  min="0"
+                  [max]="answer.points"
+                  [value]="answer.pointsAwarded ?? 0"
+                  (input)="setExamPoints(attempt.id, answer.questionId, +$any($event.target).value)"
+                />
+                / {{ answer.points }}
+              </label>
+              <div class="chip-row">
+                <button type="button" class="chip" (click)="markExamAnswer(attempt.id, answer.questionId, true)">{{ 'common.correct' | t }}</button>
+                <button type="button" class="chip" (click)="markExamAnswer(attempt.id, answer.questionId, false)">{{ 'common.wrong' | t }}</button>
+              </div>
+            </div>
+          }
+          <label>{{ 'common.feedback' | t }}
+            <textarea
+              rows="3"
+              [value]="attemptDraftFor(attempt.id).feedback"
+              (input)="setAttemptFeedback(attempt.id, $any($event.target).value)"
+            ></textarea>
+          </label>
+          <app-question-image-upload
+            [mediaAssetId]="attemptDraftFor(attempt.id).feedbackImageMediaAssetId"
+            [imageUrl]="attemptDraftFor(attempt.id).feedbackImageUrl"
+            (mediaAssetIdChange)="setAttemptFeedbackImage(attempt.id, $event, attemptDraftFor(attempt.id).feedbackImageUrl)"
+            (imageUrlChange)="setAttemptFeedbackImage(attempt.id, attemptDraftFor(attempt.id).feedbackImageMediaAssetId, $event)"
+          />
+          <button type="button" (click)="gradeAttempt(attempt)">{{ 'teacher.review.saveGrade' | t }}</button>
         </div>
       } @empty {
         <p class="meta">{{ 'teacher.exams.noAttempts' | t }}</p>

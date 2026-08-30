@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Assignments;
 
-public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
+public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<CreateAssignmentCommand, AssignmentDto>
 {
     public async Task<AssignmentDto> Handle(CreateAssignmentCommand command, CancellationToken cancellationToken)
@@ -74,6 +75,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
 
         dbContext.Assignments.Add(assignment);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await notifications.NotifyAssignmentCreatedAsync(assignment, cancellationToken);
         return (await LoadAssignment(dbContext, assignment.Id, includeAnswerKey: true, cancellationToken))!;
     }
 

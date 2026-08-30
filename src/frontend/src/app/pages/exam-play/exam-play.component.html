@@ -19,6 +19,10 @@
           {{ 'play.timeSeconds' | t:{ seconds: attempt.durationSeconds } }}
         }
       </p>
+      @if (attempt.teacherFeedback) {
+        <p>{{ attempt.teacherFeedback }}</p>
+      }
+      <app-question-image-display [url]="attempt.feedbackImageUrl" />
       @for (answer of attempt.answers; track answer.questionId) {
         <div class="question">
           <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
@@ -28,6 +32,7 @@
             @if (answer.isCorrect === true) { · {{ 'common.correct' | t }} }
             @else if (answer.isCorrect === false) { · {{ 'common.incorrect' | t }} }
           </p>
+          <app-question-image-display [url]="answer.answerImageUrl" />
         </div>
       }
     </section>
@@ -67,6 +72,12 @@
                     </label>
                   }
                 }
+                <app-student-answer-upload
+                  [mediaAssetId]="answerImages()[child.id]?.mediaAssetId ?? null"
+                  [imageUrl]="answerImages()[child.id]?.imageUrl ?? null"
+                  (mediaAssetIdChange)="setAnswerImage(child.id, $event, answerImages()[child.id]?.imageUrl ?? null)"
+                  (imageUrlChange)="setAnswerImage(child.id, answerImages()[child.id]?.mediaAssetId ?? null, $event)"
+                />
               </div>
             }
           } @else if (question.questionType === 'Underline') {
@@ -96,6 +107,14 @@
                 {{ opt.key }}. {{ opt.text }}
               </label>
             }
+          }
+          @if (question.questionType !== 'Paragraph') {
+            <app-student-answer-upload
+              [mediaAssetId]="answerImages()[question.id]?.mediaAssetId ?? null"
+              [imageUrl]="answerImages()[question.id]?.imageUrl ?? null"
+              (mediaAssetIdChange)="setAnswerImage(question.id, $event, answerImages()[question.id]?.imageUrl ?? null)"
+              (imageUrlChange)="setAnswerImage(question.id, answerImages()[question.id]?.mediaAssetId ?? null, $event)"
+            />
           }
         </div>
       }

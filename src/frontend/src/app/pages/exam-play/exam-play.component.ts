@@ -10,10 +10,16 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { StudentAnswerUploadComponent } from '../../shared/student-answer-upload/student-answer-upload.component';
+
+interface AnswerImageDraft {
+  mediaAssetId: string | null;
+  imageUrl: string | null;
+}
 
 @Component({
   selector: 'app-exam-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, StudentAnswerUploadComponent],
   templateUrl: './exam-play.component.html',
   styleUrl: './exam-play.component.css'
 })
@@ -27,6 +33,7 @@ export class ExamPlayComponent {
   readonly error = signal('');
   readonly answers = signal<Record<string, string>>({});
   readonly multiAnswers = signal<Record<string, Set<string>>>({});
+  readonly answerImages = signal<Record<string, AnswerImageDraft>>({});
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('examId');
@@ -36,12 +43,15 @@ export class ExamPlayComponent {
         this.exam.set(exam);
         const seed: Record<string, string> = {};
         const multi: Record<string, Set<string>> = {};
+        const images: Record<string, AnswerImageDraft> = {};
         for (const q of this.flatten(exam.questions)) {
           seed[q.id] = '';
           if (q.questionType === 'MultiChoice') multi[q.id] = new Set();
+          images[q.id] = { mediaAssetId: null, imageUrl: null };
         }
         this.answers.set(seed);
         this.multiAnswers.set(multi);
+        this.answerImages.set(images);
         this.api.startExam(exam.id).subscribe({
           error: (err) => {
             if (!this.locale.hasApiErrorCode(err, 'api.errors.exam.alreadySubmitted')) {
@@ -90,6 +100,13 @@ export class ExamPlayComponent {
     return this.multiAnswers()[questionId]?.has(key) === true;
   }
 
+  setAnswerImage(questionId: string, mediaAssetId: string | null, imageUrl: string | null): void {
+    this.answerImages.update((current) => ({
+      ...current,
+      [questionId]: { mediaAssetId, imageUrl }
+    }));
+  }
+
   submit(): void {
     const exam = this.exam();
     if (!exam) return;
@@ -99,7 +116,8 @@ export class ExamPlayComponent {
         examId: exam.id,
         answers: answerable.map((q) => ({
           questionId: q.id,
-          answerText: this.answers()[q.id] || ''
+          answerText: this.answers()[q.id] || '',
+          answerImageMediaAssetId: this.answerImages()[q.id]?.mediaAssetId || null
         }))
       })
       .subscribe({

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
@@ -8,6 +8,9 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { environment } from '../../../environments/environment';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { groupClassroomsByGrade } from '../../grade.util';
+
+type GradeZoomGroup = ReturnType<typeof groupClassroomsByGrade<Classroom>>[number];
 
 @Component({
   selector: 'app-teacher-zoom',
@@ -36,7 +39,19 @@ export class TeacherZoomComponent {
   startsAtLocal = '';
   durationMinutes = 45;
   classroomId = '';
+  zoomLinkClassroomId = '';
+  zoomMeetingLink = '';
+  savingZoomLink = signal(false);
   notifyWhatsApp = true;
+
+  readonly zoomLinksByGrade = computed<GradeZoomGroup[]>(() => {
+    this.locale.lang();
+    return groupClassroomsByGrade(this.classrooms(), (k, p) => this.locale.t(k, p));
+  });
+
+  readonly classroomsWithZoom = computed(() =>
+    this.classrooms().filter((room) => (room.zoomMeetingLink || '').trim().length > 0)
+  );
 
   clientId = '';
   clientSecret = '';
@@ -65,6 +80,10 @@ export class TeacherZoomComponent {
     this.api.getClassrooms().subscribe((classrooms) => {
       this.classrooms.set(classrooms);
       if (!this.classroomId && classrooms[0]) this.classroomId = classrooms[0].id;
+      if (!this.zoomLinkClassroomId && classrooms[0]) {
+        this.zoomLinkClassroomId = classrooms[0].id;
+        this.zoomMeetingLink = classrooms[0].zoomMeetingLink || '';
+      }
     });
     this.reloadMeetings();
     this.reloadZoomStatus();
@@ -236,6 +255,35 @@ export class TeacherZoomComponent {
         }
       },
       error: () => this.oauthSettings.set(null)
+    });
+  }
+
+  onZoomLinkClassroomChange(): void {
+    const room = this.classrooms().find((c) => c.id === this.zoomLinkClassroomId);
+    this.zoomMeetingLink = room?.zoomMeetingLink || '';
+  }
+
+  editZoomLink(classroomId: string): void {
+    this.zoomLinkClassroomId = classroomId;
+    this.onZoomLinkClassroomChange();
+    document.getElementById('zoom-link-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  saveZoomLink(): void {
+    if (!this.zoomLinkClassroomId) return;
+    this.error.set('');
+    this.info.set('');
+    this.savingZoomLink.set(true);
+    this.api.updateClassroomZoom(this.zoomLinkClassroomId, { zoomMeetingLink: this.zoomMeetingLink.trim() }).subscribe({
+      next: (room) => {
+        this.savingZoomLink.set(false);
+        this.classrooms.update((list) => list.map((c) => (c.id === room.id ? room : c)));
+        this.info.set(this.locale.t('classroom.zoomLinkSaved'));
+      },
+      error: (err) => {
+        this.savingZoomLink.set(false);
+        this.error.set(this.locale.fromApiError(err, 'classroom.zoomLinkSaveFailed'));
+      }
     });
   }
 

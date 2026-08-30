@@ -1,0 +1,48 @@
+<div class="notify-wrap">
+  <button
+    type="button"
+    class="notify-btn"
+    (click)="toggle($event)"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="'notifications.bell' | t">
+    <span class="notify-icon" aria-hidden="true">🔔</span>
+    @if (unreadCount() > 0) {
+      <span class="notify-badge">{{ unreadCount() > 99 ? '99+' : unreadCount() }}</span>
+    }
+  </button>
+
+  @if (open()) {
+    <div class="notify-panel" role="dialog" [attr.aria-label]="'notifications.panel' | t">
+      <div class="notify-head">
+        <strong>{{ 'notifications.panel' | t }}</strong>
+        @if (unreadCount() > 0) {
+          <button type="button" class="ghost" (click)="markAllRead($event)">
+            {{ 'notifications.markAllRead' | t }}
+          </button>
+        }
+      </div>
+
+      @if (loading()) {
+        <p class="notify-empty">{{ 'common.loading' | t }}</p>
+      } @else if (!items().length) {
+        <p class="notify-empty">{{ 'notifications.empty' | t }}</p>
+      } @else {
+        <ul class="notify-list">
+          @for (item of items(); track item.id) {
+            <li>
+              <button
+                type="button"
+                class="notify-item"
+                [class.unread]="!item.isRead"
+                (click)="openItem(item, $event)">
+                <strong>{{ item.title }}</strong>
+                <span>{{ label(item) }}</span>
+                <small>{{ formatWhen(item.createdAtUtc) }}</small>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

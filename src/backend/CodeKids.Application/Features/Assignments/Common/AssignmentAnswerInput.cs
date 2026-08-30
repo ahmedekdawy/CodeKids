@@ -7,4 +7,4 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Assignments;
 
-public sealed record AssignmentAnswerInput(Guid QuestionId, string AnswerText);
+public sealed record AssignmentAnswerInput(Guid QuestionId, string AnswerText, Guid? AnswerImageMediaAssetId = null);

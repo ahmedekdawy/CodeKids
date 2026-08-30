@@ -15,4 +15,5 @@ public sealed record AssignmentAnswerReviewDto(
     bool? IsCorrect,
     int? PointsAwarded,
     int Points,
-    string? PromptImageUrl);
+    string? PromptImageUrl,
+    string? AnswerImageUrl);

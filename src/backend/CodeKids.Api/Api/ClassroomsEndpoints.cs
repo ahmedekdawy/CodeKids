@@ -66,6 +66,8 @@ public static class ClassroomsEndpoints
 
                         request.WhatsAppGroupInviteUrl,
 
+                        request.ZoomMeetingLink,
+
                         request.WhatsAppNotifyPhones),
 
                     cancellationToken));
@@ -113,6 +115,8 @@ public static class ClassroomsEndpoints
                         request.Courses,
 
                         request.WhatsAppGroupInviteUrl,
+
+                        request.ZoomMeetingLink,
 
                         request.WhatsAppNotifyPhones),
 
@@ -337,6 +341,54 @@ public static class ClassroomsEndpoints
                         request.WhatsAppNotifyPhones,
 
                         request.DailyWhatsAppReportsEnabled),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin,Teacher" });
+
+        app.MapPut("/api/classrooms/{classroomId:guid}/zoom", async (
+
+            Guid classroomId,
+
+            UpdateClassroomZoomRequest request,
+
+            HttpContext httpContext,
+
+            ICommandHandler<UpdateClassroomZoomCommand, ClassroomDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var userId = CurrentUser.GetUserId(httpContext.User);
+
+                var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+
+                return Results.Ok(await handler.Handle(
+
+                    new UpdateClassroomZoomCommand(
+
+                        classroomId,
+
+                        userId,
+
+                        role,
+
+                        request.ZoomMeetingLink),
 
                     cancellationToken));
 

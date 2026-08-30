@@ -34,12 +34,14 @@ export class AdminCreateClassroomComponent {
   classroomDescription = '';
   readonly classroomGrade = signal<number | ''>('');
   classroomWhatsAppInvite = '';
+  classroomZoomLink = '';
   classroomWhatsAppPhones = '';
 
   editName = '';
   editDescription = '';
   readonly editGrade = signal<number | ''>('');
   editWhatsAppInvite = '';
+  editZoomLink = '';
   editWhatsAppPhones = '';
   private editCourses: ClassroomCourseAssignment[] = [];
 
@@ -84,6 +86,7 @@ export class AdminCreateClassroomComponent {
         grade: this.classroomGrade() === '' ? null : Number(this.classroomGrade()),
         courses: [],
         whatsAppGroupInviteUrl: this.classroomWhatsAppInvite,
+        zoomMeetingLink: this.classroomZoomLink,
         whatsAppNotifyPhones: this.classroomWhatsAppPhones
       })
       .subscribe({
@@ -93,6 +96,7 @@ export class AdminCreateClassroomComponent {
           this.classroomDescription = '';
           this.classroomGrade.set('');
           this.classroomWhatsAppInvite = '';
+          this.classroomZoomLink = '';
           this.classroomWhatsAppPhones = '';
           this.reload();
         },
@@ -106,6 +110,7 @@ export class AdminCreateClassroomComponent {
     this.editDescription = room.description;
     this.editGrade.set(room.grade ?? '');
     this.editWhatsAppInvite = room.whatsAppGroupInviteUrl || '';
+    this.editZoomLink = room.zoomMeetingLink || '';
     this.editWhatsAppPhones = room.whatsAppNotifyPhones || '';
     const courses = room.courses ?? [];
     this.editCourses = courses.length
@@ -128,6 +133,7 @@ export class AdminCreateClassroomComponent {
         grade: this.editGrade() === '' ? null : Number(this.editGrade()),
         courses: this.editCourses,
         whatsAppGroupInviteUrl: this.editWhatsAppInvite,
+        zoomMeetingLink: this.editZoomLink,
         whatsAppNotifyPhones: this.editWhatsAppPhones
       })
       .subscribe({

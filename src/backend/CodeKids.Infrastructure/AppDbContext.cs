@@ -73,6 +73,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<ChatRoom> ChatRooms => Set<ChatRoom>();
     public DbSet<ChatRoomMember> ChatRoomMembers => Set<ChatRoomMember>();
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<TenantSignup> TenantSignups => Set<TenantSignup>();
 
@@ -536,6 +537,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.Name).HasMaxLength(120).IsRequired();
             entity.Property(x => x.Description).HasMaxLength(500).IsRequired();
             entity.Property(x => x.WhatsAppGroupInviteUrl).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.ZoomMeetingLink).HasMaxLength(500).IsRequired();
             entity.Property(x => x.WhatsAppNotifyPhones).HasMaxLength(1000).IsRequired();
             entity.HasOne(x => x.Course)
                 .WithMany()
@@ -645,6 +647,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.FeedbackImage)
+                .WithMany()
+                .HasForeignKey(x => x.FeedbackImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
             entity.HasMany(x => x.Answers)
                 .WithOne(x => x.Submission)
                 .HasForeignKey(x => x.SubmissionId)
@@ -659,6 +665,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.QuestionId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.AnswerImage)
+                .WithMany()
+                .HasForeignKey(x => x.AnswerImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<BankQuestion>(entity =>
@@ -756,6 +766,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.FeedbackImage)
+                .WithMany()
+                .HasForeignKey(x => x.FeedbackImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
             entity.HasMany(x => x.Answers)
                 .WithOne(x => x.Attempt)
                 .HasForeignKey(x => x.AttemptId)
@@ -770,6 +784,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.ExamQuestionId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.AnswerImage)
+                .WithMany()
+                .HasForeignKey(x => x.AnswerImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<MediaAsset>(entity =>
@@ -896,6 +914,20 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<UserNotification>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Kind).HasConversion<string>().HasMaxLength(40);
+            entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Body).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.TargetUrl).HasMaxLength(500).IsRequired();
+            entity.HasIndex(x => new { x.UserId, x.IsRead, x.CreatedAtUtc });
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<SiteSettings>(entity =>

@@ -9,6 +9,7 @@
       <a routerLink="/student/study-plans" class="chip">{{ 'student.studyPlans' | t }}</a>
       <a routerLink="/student/asked-questions" class="chip">{{ 'askedQuestions.nav' | t }}</a>
       <a routerLink="/student/chat" class="chip">{{ 'chat.nav' | t }}</a>
+      <app-notification-bell />
       <app-theme-switcher />
       <app-language-switcher />
       <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
@@ -166,6 +167,25 @@
             <p class="section-hint">{{ 'student.upcoming' | t }}</p>
           </div>
         </header>
+
+        @if (classroomsWithZoom().length) {
+          <div class="task-group">
+            <p class="group-label">{{ 'classroom.zoomLinkTitle' | t }}</p>
+            <div class="item-list">
+              @for (room of classroomsWithZoom(); track room.id) {
+                <div class="item-row">
+                  <div class="item-body">
+                    <strong>{{ room.name }}</strong>
+                    <p class="meta">{{ 'classroom.zoomLinkHintShort' | t }}</p>
+                  </div>
+                  <a class="action-btn" [href]="room.zoomMeetingLink" target="_blank" rel="noopener">
+                    {{ 'student.joinZoom' | t }}
+                  </a>
+                </div>
+              }
+            </div>
+          </div>
+        }
 
         <div class="item-list">
           @for (meeting of meetings(); track meeting.id) {

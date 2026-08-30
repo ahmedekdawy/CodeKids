@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Avatar, Badge, Course, CourseTerm, Exam, LiveSession, StudentSummary } from '../../models';
+import { Assignment, Avatar, Badge, Classroom, Course, CourseTerm, Exam, LiveSession, StudentSummary } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
@@ -12,6 +12,7 @@ import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
+import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 
 @Component({
@@ -25,6 +26,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
     ThemeSwitcherComponent,
     SiteBrandComponent,
     StudentAskPanelComponent,
+    NotificationBellComponent,
     ApiBusyIndicatorComponent
   ],
   templateUrl: './student-home.component.html',
@@ -40,12 +42,16 @@ export class StudentHomeComponent {
   readonly badges = signal<Badge[]>([]);
   readonly avatars = signal<Avatar[]>([]);
   readonly meetings = signal<LiveSession[]>([]);
+  readonly classrooms = signal<Classroom[]>([]);
   readonly assignments = signal<Assignment[]>([]);
   readonly exams = signal<Exam[]>([]);
 
   readonly selectedAvatar = computed(() => this.avatars().find((a) => a.isSelected) ?? null);
   readonly earnedBadges = computed(() => this.badges().filter((b) => b.isEarned));
   readonly openTasks = computed(() => this.assignments().length + this.exams().length);
+  readonly classroomsWithZoom = computed(() =>
+    this.classrooms().filter((room) => (room.zoomMeetingLink || '').trim().length > 0)
+  );
 
   constructor() {
     this.api.getCourses().subscribe((courses) => this.courses.set(courses));
@@ -53,6 +59,7 @@ export class StudentHomeComponent {
     this.api.getBadges().subscribe((badges) => this.badges.set(badges));
     this.api.getAvatars().subscribe((avatars) => this.avatars.set(avatars));
     this.api.getMeetings().subscribe((meetings) => this.meetings.set(meetings));
+    this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
     this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
     this.api.getExams().subscribe((exams) => this.exams.set(exams));
   }

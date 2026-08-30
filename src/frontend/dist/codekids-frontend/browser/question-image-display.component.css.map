@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["src/app/shared/question-image-display/question-image-display.component.css"],
-  "sourcesContent": [".question-image {\r\n  display: block;\r\n  max-width: 100%;\r\n  max-height: 280px;\r\n  margin: 0.5rem 0 0.75rem;\r\n  object-fit: contain;\r\n  border-radius: 8px;\r\n}\r\n\r\n.question-image.compact {\r\n  max-height: 120px;\r\n  margin: 0.35rem 0;\r\n}\r\n"],
-  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,aAAW;AACX,cAAY;AACZ,UAAQ,OAAO,EAAE;AACjB,cAAY;AACZ,iBAAe;AACjB;AAEA,CATC,cASc,CAAC;AACd,cAAY;AACZ,UAAQ,QAAQ;AAClB;",
+  "sourcesContent": [".question-image {\r\n  display: block;\r\n  max-width: 100%;\r\n  max-height: 280px;\r\n  margin: 0.5rem 0 0.75rem;\r\n  object-fit: contain;\r\n  border-radius: 8px;\r\n}\r\n\r\n.question-image.compact {\r\n  max-height: 120px;\r\n  margin: 0.35rem 0;\r\n}\r\n\r\n.question-pdf {\r\n  display: block;\r\n  width: 100%;\r\n  min-height: 420px;\r\n  max-height: 640px;\r\n  margin: 0.5rem 0 0.75rem;\r\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\r\n  border-radius: 8px;\r\n  background: var(--surface, rgba(255, 255, 255, 0.04));\r\n}\r\n\r\n.question-pdf.compact {\r\n  min-height: 240px;\r\n  max-height: 320px;\r\n  margin: 0.35rem 0;\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,aAAW;AACX,cAAY;AACZ,UAAQ,OAAO,EAAE;AACjB,cAAY;AACZ,iBAAe;AACjB;AAEA,CATC,cASc,CAAC;AACd,cAAY;AACZ,UAAQ,QAAQ;AAClB;AAEA,CAAC;AACC,WAAS;AACT,SAAO;AACP,cAAY;AACZ,cAAY;AACZ,UAAQ,OAAO,EAAE;AACjB,UAAQ,IAAI,MAAM,IAAI,QAAQ,EAAE,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AACpD,iBAAe;AACf,cAAY,IAAI,SAAS,EAAE,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AACjD;AAEA,CAXC,YAWY,CAhBG;AAiBd,cAAY;AACZ,cAAY;AACZ,UAAQ,QAAQ;AAClB;",
   "names": []
 }

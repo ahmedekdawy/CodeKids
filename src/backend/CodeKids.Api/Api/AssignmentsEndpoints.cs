@@ -200,7 +200,7 @@ public static class AssignmentsEndpoints
 
                 return Results.Ok(await handler.Handle(
 
-                    new GradeSubmissionCommand(userId, request.SubmissionId, request.TeacherFeedback, request.Answers),
+                    new GradeSubmissionCommand(userId, request.SubmissionId, request.TeacherFeedback, request.FeedbackImageMediaAssetId, request.Answers),
 
                     cancellationToken));
 

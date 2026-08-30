@@ -70,9 +70,27 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
         {
             var input = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
             var answerText = (input?.AnswerText ?? string.Empty).Trim();
+            var answerImageId = input?.AnswerImageMediaAssetId;
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, answerImageId, cancellationToken);
             if (question.QuestionType == BankQuestionType.MultiChoice)
             {
                 answerText = string.Join(',', ExamGrading.NormalizeMultiAnswer(answerText));
+            }
+
+            if (answerImageId is not null)
+            {
+                allAutoGradable = false;
+                attempt.Answers.Add(new ExamAnswer
+                {
+                    Id = Guid.NewGuid(),
+                    AttemptId = attempt.Id,
+                    ExamQuestionId = question.Id,
+                    AnswerText = answerText,
+                    AnswerImageMediaAssetId = answerImageId,
+                    IsCorrect = null,
+                    PointsAwarded = null
+                });
+                continue;
             }
 
             var isCorrect = ExamGrading.AnswersMatch(question.QuestionType, answerText, question.CorrectAnswer);
@@ -85,6 +103,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
                 AttemptId = attempt.Id,
                 ExamQuestionId = question.Id,
                 AnswerText = answerText,
+                AnswerImageMediaAssetId = answerImageId,
                 IsCorrect = isCorrect,
                 PointsAwarded = points
             });
@@ -133,6 +152,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             attempt.Score,
             attempt.MaxScore,
             attempt.TeacherFeedback,
+            QuestionImageUrls.Build(attempt.FeedbackImageMediaAssetId),
             attempt.StartedAtUtc,
             attempt.SubmittedAtUtc,
             attempt.GradedAtUtc,
@@ -146,5 +166,6 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
                 a.IsCorrect,
                 a.PointsAwarded,
                 a.Question?.Points ?? 0,
-                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId))).ToList());
+                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                QuestionImageUrls.Build(a.AnswerImageMediaAssetId))).ToList());
 }

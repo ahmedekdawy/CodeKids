@@ -73,6 +73,15 @@
         @if (group.courseTitles.length) {
           <p class="meta">{{ 'teacher.overview.coursesForGrade' | t:{ list: group.courseTitles.join(', ') } }}</p>
         }
+        @for (room of group.zoomClassrooms; track room.id) {
+          <div class="meeting-row">
+            <div>
+              <strong>{{ room.name }}</strong>
+              <p class="meta">{{ 'classroom.zoomLinkHintShort' | t }}</p>
+            </div>
+            <a class="chip quiz" [href]="room.zoomMeetingLink" target="_blank" rel="noopener">{{ 'common.join' | t }}</a>
+          </div>
+        }
         <ul class="student-name-list">
           @for (student of group.students; track student.studentId) {
             <li>{{ student.displayName }}</li>
