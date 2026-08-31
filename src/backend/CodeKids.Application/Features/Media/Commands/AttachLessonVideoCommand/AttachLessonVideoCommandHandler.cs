@@ -12,8 +12,29 @@ public sealed class AttachLessonVideoCommandHandler(IAppDbContext dbContext)
 {
     public async Task<LessonVideoDto> Handle(AttachLessonVideoCommand command, CancellationToken cancellationToken)
     {
-        var found = await CourseOutlineResolver.FindLessonAsync(dbContext, command.LessonId, cancellationToken)
-            ?? throw new InvalidOperationException("Lesson not found.");
+        Guid courseId;
+        Guid? lessonId = command.LessonId;
+
+        if (lessonId is Guid resolvedLessonId)
+        {
+            var found = await CourseOutlineResolver.FindLessonAsync(dbContext, resolvedLessonId, cancellationToken)
+                ?? throw new InvalidOperationException("Lesson not found.");
+            courseId = found.Course.Id;
+        }
+        else if (command.CourseId is Guid resolvedCourseId)
+        {
+            var courseExists = await dbContext.Courses.AnyAsync(x => x.Id == resolvedCourseId, cancellationToken);
+            if (!courseExists)
+            {
+                throw new InvalidOperationException("Course not found.");
+            }
+
+            courseId = resolvedCourseId;
+        }
+        else
+        {
+            throw new InvalidOperationException("Course or lesson is required.");
+        }
 
         var media = await dbContext.MediaAssets.FirstOrDefaultAsync(x => x.Id == command.MediaAssetId, cancellationToken)
             ?? throw new InvalidOperationException("Media asset not found.");
@@ -32,7 +53,8 @@ public sealed class AttachLessonVideoCommandHandler(IAppDbContext dbContext)
         var video = new LessonVideo
         {
             Id = Guid.NewGuid(),
-            LessonId = command.LessonId,
+            LessonId = lessonId,
+            CourseId = courseId,
             MediaAssetId = media.Id,
             Title = string.IsNullOrWhiteSpace(command.Title) ? media.FileName : command.Title.Trim(),
             SortOrder = command.SortOrder,

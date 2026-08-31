@@ -78,6 +78,8 @@ public static class ApiErrorCatalog
         ["Only the classroom teacher can review exam attempts."] = "api.errors.exam.teacherOnlyReview",
         ["Assignment not found."] = "api.errors.assignment.notFound",
         ["Only the assigned classroom teacher can create assignments."] = "api.errors.assignment.teacherOnlyCreate",
+        ["Only an assigned classroom teacher can edit assignments."] = "api.errors.assignment.teacherOnlyEdit",
+        ["Only an assigned classroom teacher can delete assignments."] = "api.errors.assignment.teacherOnlyDelete",
         ["Assignment title is required."] = "api.errors.assignment.titleRequired",
         ["Add at least one question."] = "api.errors.assignment.questionsRequired",
         ["Question type must be ShortAnswer or MultipleChoice."] = "api.errors.assignment.questionTypeInvalid",

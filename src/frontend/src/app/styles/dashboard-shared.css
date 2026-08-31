@@ -250,6 +250,11 @@ button.ghost:hover:not(:disabled),
   border-color: rgba(95, 211, 188, 0.22);
 }
 
+.chip.video {
+  background: rgba(255, 214, 10, 0.16);
+  border-color: rgba(255, 214, 10, 0.28);
+}
+
 .list-btn {
   width: 100%;
   text-align: left;

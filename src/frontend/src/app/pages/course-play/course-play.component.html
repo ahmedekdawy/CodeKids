@@ -1,0 +1,40 @@
+<div class="page">
+  <app-api-busy-indicator />
+  <a [routerLink]="backLink()" class="back">{{ backLabelKey() | t }}</a>
+  @if (error()) {
+    <p class="meta">{{ error() }}</p>
+  }
+  @if (course(); as current) {
+    <section class="hero-strip">
+      <div>
+        <p class="eyebrow">{{ 'play.courseVideos' | t }}</p>
+        <h1>{{ current.title }}</h1>
+        <p>{{ current.description }}</p>
+      </div>
+    </section>
+
+    @if (current.videos?.length) {
+      <section class="block video-block">
+        <nav class="video-nav">
+          @for (video of current.videos; track video.id) {
+            <button
+              type="button"
+              class="list-btn"
+              [class.active]="selectedVideo()?.id === video.id"
+              (click)="chooseVideo(video)">
+              {{ video.title }}
+            </button>
+          }
+        </nav>
+        @if (selectedVideo(); as video) {
+          <app-protected-video-player
+            [mediaAssetId]="video.mediaAssetId"
+            [title]="video.title"
+            [autoLoad]="true" />
+        }
+      </section>
+    } @else {
+      <p class="meta">{{ 'play.noCourseVideos' | t }}</p>
+    }
+  }
+</div>

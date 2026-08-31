@@ -392,6 +392,8 @@ builder.Services.AddScoped<IQueryHandler<GetClassroomsQuery, IReadOnlyList<Class
 builder.Services.AddScoped<IQueryHandler<GetClassroomByIdQuery, ClassroomDto?>, GetClassroomByIdQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateAssignmentCommand, AssignmentDto>, CreateAssignmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateAssignmentCommand, AssignmentDto>, UpdateAssignmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteAssignmentCommand, bool>, DeleteAssignmentCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetAssignmentsQuery, IReadOnlyList<AssignmentDto>>, GetAssignmentsQueryHandler>();
 
@@ -436,6 +438,8 @@ builder.Services.AddScoped<IQueryHandler<GetLessonVideosQuery, IReadOnlyList<Les
 builder.Services.AddScoped<IQueryHandler<GetTeacherVideoLibraryQuery, TeacherVideoLibraryDto>, GetTeacherVideoLibraryQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteLessonVideoCommand, bool>, DeleteLessonVideoCommandHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetCourseVideoLibraryQuery, IReadOnlyList<CourseVideoLibraryItemDto>>, GetCourseVideoLibraryQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteAssignmentSolutionVideoCommand, bool>, DeleteAssignmentSolutionVideoCommandHandler>();
 

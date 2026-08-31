@@ -30,6 +30,8 @@ import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
 import { AdminAccountReportComponent } from './pages/admin/admin-account-report.component';
 import { AdminPaymentsComponent } from './pages/admin/admin-payments.component';
 import { AdminOtherExpensesComponent } from './pages/admin/admin-other-expenses.component';
+import { CoursePlayComponent } from './pages/course-play/course-play.component';
+import { AdminVideosComponent } from './pages/admin/admin-videos.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
 import { TeacherOverviewComponent } from './pages/teacher/teacher-overview.component';
 import { TeacherZoomComponent } from './pages/teacher/teacher-zoom.component';
@@ -84,6 +86,11 @@ export const routes: Routes = [
     path: 'lessons/:lessonId',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: LessonPlayComponent
+  },
+  {
+    path: 'courses/:courseId',
+    canActivate: [authGuard, roleGuard(['Student', 'Teacher', 'SuperAdmin'])],
+    component: CoursePlayComponent
   },
   {
     path: 'quizzes/:quizId',
@@ -155,6 +162,7 @@ export const routes: Routes = [
       { path: 'students', component: AdminStudentsComponent },
       { path: 'courses', component: AdminCoursesComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
+      { path: 'videos', component: AdminVideosComponent },
       { path: 'create-classroom', component: AdminCreateClassroomComponent },
       { path: 'assign-classroom', component: AdminAssignClassroomComponent },
       { path: 'enroll-student', component: AdminEnrollStudentComponent },

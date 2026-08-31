@@ -151,6 +151,14 @@
         />
         {{ 'admin.courseTree.studentAsk' | t }}
       </label>
+      @if (courseVideos(course).length) {
+        <p class="meta">{{ 'videos.courseList' | t }}</p>
+        <div class="chip-row">
+          @for (video of courseVideos(course); track video.id) {
+            <a class="chip video" [routerLink]="['/courses', course.id]" [queryParams]="{ video: video.id }">{{ video.title }}</a>
+          }
+        </div>
+      }
       @if (!units().length) {
         <p class="meta">{{ 'admin.courseTree.empty' | t }}</p>
       }

@@ -16,4 +16,5 @@ public sealed record AssignmentQuestionInput(
     string CorrectAnswer,
     int Points,
     int SortOrder,
-    Guid? PromptImageMediaAssetId);
+    Guid? PromptImageMediaAssetId,
+    Guid? Id = null);

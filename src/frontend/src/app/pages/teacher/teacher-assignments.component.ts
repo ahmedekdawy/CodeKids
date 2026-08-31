@@ -9,8 +9,10 @@ import { SearchableSelectComponent } from '../../shared/searchable-select/search
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 
 interface AssignmentQuestionDraft {
+  id?: string;
   prompt: string;
   questionType: 'ShortAnswer' | 'MultipleChoice';
   optionA: string;
@@ -35,7 +37,8 @@ function emptyAssignmentQuestion(
     SearchableMultiSelectComponent,
     FormsModule,
     TranslatePipe,
-    QuestionImageUploadComponent
+    QuestionImageUploadComponent,
+    IconActionButtonComponent
   ],
   templateUrl: './teacher-assignments.component.html',
   styleUrl: './teacher-panel.css'
@@ -60,6 +63,8 @@ export class TeacherAssignmentsComponent {
   assignmentQuestionCount = 1;
   assignmentType: 'ShortAnswer' | 'MultipleChoice' = 'ShortAnswer';
   questions: AssignmentQuestionDraft[] = [emptyAssignmentQuestion()];
+  editingAssignmentId: string | null = null;
+  editingDueAtUtc: string | null = null;
 
   constructor() {
     this.api.getCourses().subscribe((courses) => {
@@ -217,11 +222,116 @@ export class TeacherAssignmentsComponent {
   }
 
   createAssignment(): void {
+    this.saveAssignment();
+  }
+
+  startEdit(assignment: Assignment): void {
+    this.error.set('');
+    this.info.set('');
+    this.editingAssignmentId = assignment.id;
+    this.editingDueAtUtc = assignment.dueAtUtc ?? null;
+    this.assignmentTitle = assignment.title;
+    this.assignmentDescription = assignment.description;
+    this.assignmentClassroomId = assignment.classroomId;
+    this.assignmentXp = assignment.xpReward;
+    this.questions = assignment.questions.length
+      ? assignment.questions.map((question) => {
+          const type =
+            question.questionType === 'MultipleChoice' ? 'MultipleChoice' : 'ShortAnswer';
+          return {
+            id: question.id,
+            prompt: question.prompt,
+            questionType: type,
+            optionA: question.optionA || '',
+            optionB: question.optionB || '',
+            optionC: question.optionC || '',
+            correct: question.correctAnswer || '',
+            promptImageMediaAssetId: question.promptImageMediaAssetId || null,
+            promptImageUrl: question.promptImageUrl || null
+          };
+        })
+      : [emptyAssignmentQuestion(this.assignmentType)];
+    this.assignmentQuestionCount = this.questions.length;
+    this.assignmentType = this.questions[0]?.questionType || this.assignmentType;
+    this.onClassroomChange();
+  }
+
+  cancelEdit(): void {
+    this.editingAssignmentId = null;
+    this.editingDueAtUtc = null;
+    this.assignmentTitle = '';
+    this.assignmentDescription = '';
+    this.questions = [emptyAssignmentQuestion(this.assignmentType)];
+    this.assignmentQuestionCount = 1;
+    this.error.set('');
+    this.info.set('');
+  }
+
+  deleteAssignment(assignment: Assignment): void {
+    if (!confirm(this.locale.t('teacher.assignments.confirmDelete', { title: assignment.title }))) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.api.deleteAssignment(assignment.id).subscribe({
+      next: () => {
+        if (this.editingAssignmentId === assignment.id) {
+          this.cancelEdit();
+        }
+        this.info.set(this.locale.t('teacher.assignments.deleted'));
+        this.reloadAssignments();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.assignments.deleteFailed'))
+    });
+  }
+
+  private saveAssignment(): void {
     this.error.set('');
     this.info.set('');
     if (!this.requireScope()) return;
-    const questions = this.questions
+    const questions = this.buildQuestionPayload();
+    if (!questions.length) {
+      this.error.set(this.locale.t('teacher.assignments.question'));
+      return;
+    }
+
+    const payload = {
+      classroomId: this.assignmentClassroomId,
+      title: this.assignmentTitle,
+      description: this.assignmentDescription,
+      dueAtUtc: this.editingDueAtUtc,
+      xpReward: this.assignmentXp,
+      questions
+    };
+
+    const editingId = this.editingAssignmentId;
+    const request = editingId
+      ? this.api.updateAssignment(editingId, payload)
+      : this.api.createAssignment(payload);
+
+    request.subscribe({
+      next: () => {
+        this.cancelEdit();
+        this.info.set(
+          this.locale.t(editingId ? 'teacher.assignments.updated' : 'teacher.assignments.created')
+        );
+        this.reloadAssignments();
+      },
+      error: (err) =>
+        this.error.set(
+          this.locale.fromApiError(
+            err,
+            editingId ? 'teacher.assignments.updateFailed' : 'teacher.assignments.createFailed'
+          )
+        )
+    });
+  }
+
+  private buildQuestionPayload() {
+    return this.questions
       .map((question, index) => ({
+        id: question.id || undefined,
         prompt: (question.prompt || '').trim(),
         questionType: question.questionType,
         optionA: question.questionType === 'MultipleChoice' ? question.optionA : null,
@@ -233,29 +343,6 @@ export class TeacherAssignmentsComponent {
         promptImageMediaAssetId: question.promptImageMediaAssetId || null
       }))
       .filter((question) => question.prompt.length > 0);
-    if (!questions.length) {
-      this.error.set(this.locale.t('teacher.assignments.question'));
-      return;
-    }
-
-    this.api
-      .createAssignment({
-        classroomId: this.assignmentClassroomId,
-        title: this.assignmentTitle,
-        description: this.assignmentDescription,
-        xpReward: this.assignmentXp,
-        questions
-      })
-      .subscribe({
-        next: () => {
-          this.info.set(this.locale.t('teacher.assignments.created'));
-          this.assignmentTitle = '';
-          this.questions = [emptyAssignmentQuestion(this.assignmentType)];
-          this.assignmentQuestionCount = 1;
-          this.reloadAssignments();
-        },
-        error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.assignments.createFailed'))
-      });
   }
 
   private reloadAssignments(): void {

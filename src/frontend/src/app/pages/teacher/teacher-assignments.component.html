@@ -5,7 +5,7 @@
   <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block">
-    <h3>{{ 'teacher.assignments.create' | t }}</h3>
+    <h3>{{ (editingAssignmentId ? 'teacher.assignments.edit' : 'teacher.assignments.create') | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createAssignment()">
       <label>{{ 'common.title' | t }} <input [(ngModel)]="assignmentTitle" name="assignmentTitle" required /></label>
       <label>{{ 'common.description' | t }} <input [(ngModel)]="assignmentDescription" name="assignmentDescription" /></label>
@@ -106,7 +106,10 @@
           (click)="generate()">
           {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
         </button>
-        <button type="submit">{{ 'teacher.assignments.create' | t }}</button>
+        <button type="submit">{{ (editingAssignmentId ? 'teacher.assignments.save' : 'teacher.assignments.create') | t }}</button>
+        @if (editingAssignmentId) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
       </div>
     </form>
   </section>
@@ -118,6 +121,10 @@
         <div>
           <strong>{{ assignment.title }}</strong>
           <p class="meta">{{ assignment.classroomName }} · {{ assignment.xpReward }} XP · {{ assignment.questions.length }} {{ 'common.questions' | t }}</p>
+        </div>
+        <div class="row-actions">
+          <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
+          <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteAssignment(assignment)" />
         </div>
       </div>
     } @empty {

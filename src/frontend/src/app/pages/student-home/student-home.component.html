@@ -124,7 +124,22 @@
               <div class="course-counts">
                 <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
                 <span>{{ 'student.quizCount' | t: { count: course.quizzes.length } }}</span>
+                @if (courseVideos(course).length) {
+                  <span>{{ 'student.videoCount' | t: { count: courseVideos(course).length } }}</span>
+                }
               </div>
+
+              @if (courseVideos(course).length) {
+                <div class="link-group">
+                  <p class="group-label">{{ 'student.videos' | t }}</p>
+                  <div class="chip-row">
+                    <a class="chip video" [routerLink]="['/courses', course.id]">{{ 'student.watchVideos' | t }}</a>
+                    @for (video of courseVideos(course); track video.id) {
+                      <a class="chip video" [routerLink]="['/courses', course.id]" [queryParams]="{ video: video.id }">{{ video.title }}</a>
+                    }
+                  </div>
+                </div>
+              }
 
               @if (course.lessons.length) {
                 <div class="link-group">

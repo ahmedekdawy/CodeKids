@@ -273,6 +273,12 @@ textarea {
   color: #065f46;
 }
 
+[data-theme='light'] .chip.video {
+  background: #fff7d6;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
 html[dir='rtl'] {
   --font-body: 'Cairo', 'Space Grotesk', 'Segoe UI', Tahoma, sans-serif;
   --font-display: 'Cairo', 'Baloo 2', 'Trebuchet MS', 'Segoe UI', sans-serif;

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Avatar, Badge, Classroom, Course, CourseTerm, Exam, LiveSession, StudentSummary } from '../../models';
+import { Assignment, Avatar, Badge, Classroom, Course, CourseTerm, CourseVideoSummary, Exam, LiveSession, StudentSummary } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
@@ -95,5 +95,9 @@ export class StudentHomeComponent {
 
   gradeLabel(grade: number | null | undefined): string {
     return formatGradeLabel((k, p) => this.locale.t(k, p), grade, 'student.allGrades');
+  }
+
+  courseVideos(course: Course): CourseVideoSummary[] {
+    return course.videos ?? [];
   }
 }

@@ -807,7 +807,15 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Title).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.LessonId).IsRequired(false);
+            entity.Property(x => x.CourseId).IsRequired(false);
             entity.HasIndex(x => x.LessonId);
+            entity.HasIndex(x => x.CourseId);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(x => x.MediaAsset)
                 .WithMany()
                 .HasForeignKey(x => x.MediaAssetId)

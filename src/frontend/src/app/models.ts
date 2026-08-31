@@ -90,6 +90,7 @@ export interface Course {
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
+  videos?: CourseVideoSummary[];
 }
 
 export interface Stage {
@@ -138,6 +139,27 @@ export interface LessonVideoSummary {
   title: string;
   sortOrder: number;
   durationSeconds?: number | null;
+}
+
+export interface CourseVideoSummary {
+  id: string;
+  mediaAssetId: string;
+  title: string;
+  sortOrder: number;
+  durationSeconds?: number | null;
+}
+
+export interface CourseVideoLibraryItem {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  mediaAssetId: string;
+  title: string;
+  fileName: string;
+  sizeBytes: number;
+  durationSeconds?: number | null;
+  sortOrder: number;
+  createdAtUtc: string;
 }
 
 export interface Lesson {
@@ -194,6 +216,7 @@ export interface TeacherSolutionVideo {
 export interface TeacherVideoLibrary {
   lessonVideos: TeacherLessonVideo[];
   solutionVideos: TeacherSolutionVideo[];
+  courseVideos?: CourseVideoLibraryItem[];
 }
 
 export interface PlaybackInfo {
@@ -932,6 +955,7 @@ export interface AssignmentQuestion {
   sortOrder: number;
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
+  promptImageMediaAssetId?: string | null;
 }
 
 export interface Assignment {

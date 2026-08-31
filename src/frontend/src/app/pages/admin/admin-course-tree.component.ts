@@ -1,9 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Course, CourseLesson, CourseUnit, GeneratedCourseTree, Grade, Stage } from '../../models';
+import { Course, CourseLesson, CourseUnit, CourseVideoSummary, GeneratedCourseTree, Grade, Stage } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import {
@@ -18,7 +19,7 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
 
 @Component({
   selector: 'app-admin-course-tree',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe, RouterLink],
   templateUrl: './admin-course-tree.component.html',
   styleUrl: './admin-panel.css'
 })
@@ -448,6 +449,10 @@ export class AdminCourseTreeComponent {
       },
       error: (err) => this.error.set(err?.error?.detail || this.locale.t('admin.courseTree.studentAskFailed'))
     });
+  }
+
+  courseVideos(course: Course): CourseVideoSummary[] {
+    return course.videos ?? [];
   }
 
   generateAiPreview(): void {

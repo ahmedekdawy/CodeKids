@@ -8,6 +8,7 @@
   flex: 1 1 auto;
 }
 
+.video-tabs-shell {
   margin: 1rem 0 1.35rem;
   padding: 0.35rem 0.35rem 0;
   border-radius: var(--radius-lg, 20px);
@@ -19,7 +20,7 @@
 
 .video-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.35rem;
   padding: 0.35rem;
 }

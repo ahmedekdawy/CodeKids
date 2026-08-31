@@ -64,8 +64,8 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             .ToDictionaryAsync(x => x.LessonId, x => x.Count, cancellationToken);
         var videoDurations = await dbContext.LessonVideos
             .AsNoTracking()
-            .Where(x => lessonIds.Contains(x.LessonId))
-            .Select(x => new { x.LessonId, x.MediaAsset!.DurationSeconds })
+            .Where(x => x.LessonId != null && lessonIds.Contains(x.LessonId.Value))
+            .Select(x => new { LessonId = x.LessonId!.Value, x.MediaAsset!.DurationSeconds })
             .ToListAsync(cancellationToken);
         var durationByLesson = videoDurations
             .GroupBy(x => x.LessonId)

@@ -120,6 +120,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
                     q.Points,
                     q.SortOrder,
                     includeAnswerKey ? q.CorrectAnswer : null,
-                    QuestionImageUrls.Build(q.PromptImageMediaAssetId)))
+                    QuestionImageUrls.Build(q.PromptImageMediaAssetId),
+                    q.PromptImageMediaAssetId))
                 .ToList());
 }

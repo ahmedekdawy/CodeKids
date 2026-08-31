@@ -5,7 +5,11 @@ namespace CodeKids.Application.Features.Courses;
 
 internal static class CourseDtoMapper
 {
-    public static CourseDto Map(Course course, bool includeContent = true, CourseContentOutline? outline = null)
+    public static CourseDto Map(
+        Course course,
+        bool includeContent = true,
+        CourseContentOutline? outline = null,
+        IReadOnlyList<CourseVideoSummaryDto>? videos = null)
     {
         if (!includeContent)
         {
@@ -13,7 +17,8 @@ internal static class CourseDtoMapper
                 course,
                 Array.Empty<CourseUnitDto>(),
                 Array.Empty<CourseLessonDto>(),
-                Array.Empty<CourseQuizDto>());
+                Array.Empty<CourseQuizDto>(),
+                Array.Empty<CourseVideoSummaryDto>());
         }
 
         var content = outline ?? new CourseContentOutline([], []);
@@ -26,14 +31,15 @@ internal static class CourseDtoMapper
                 quiz.Questions.Count))
             .ToList();
 
-        return Create(course, content.Units, content.Lessons, quizzes);
+        return Create(course, content.Units, content.Lessons, quizzes, videos ?? []);
     }
 
     private static CourseDto Create(
         Course course,
         IReadOnlyList<CourseUnitDto> units,
         IReadOnlyList<CourseLessonDto> lessons,
-        IReadOnlyList<CourseQuizDto> quizzes) =>
+        IReadOnlyList<CourseQuizDto> quizzes,
+        IReadOnlyList<CourseVideoSummaryDto> videos) =>
         new(
             course.Id,
             course.Title,
@@ -50,6 +56,7 @@ internal static class CourseDtoMapper
             units,
             lessons,
             quizzes,
+            videos,
             course.SubjectCode,
             course.Category,
             course.TrackCode,

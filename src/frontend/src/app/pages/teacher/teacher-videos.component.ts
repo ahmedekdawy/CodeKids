@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { LearningApiService } from '../../learning-api.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
@@ -10,6 +11,7 @@ import {
   Course,
   CourseLesson,
   CourseUnit,
+  CourseVideoLibraryItem,
   TeacherLessonVideo,
   TeacherSolutionVideo,
   WatchSession
@@ -18,7 +20,7 @@ import { formatCourseLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
-type VideoTab = 'lesson' | 'solution' | 'analytics';
+type VideoTab = 'lesson' | 'course' | 'solution' | 'analytics';
 
 interface VideoPreview {
   mediaAssetId: string;
@@ -28,7 +30,7 @@ interface VideoPreview {
 
 @Component({
   selector: 'app-teacher-videos',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, ProtectedVideoPlayerComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, ProtectedVideoPlayerComponent, TranslatePipe, RouterLink],
   templateUrl: './teacher-videos.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-videos.component.css']
 })
@@ -39,6 +41,7 @@ export class TeacherVideosComponent {
   readonly courses = signal<Course[]>([]);
   readonly assignments = signal<Assignment[]>([]);
   readonly lessonVideos = signal<TeacherLessonVideo[]>([]);
+  readonly courseVideos = signal<CourseVideoLibraryItem[]>([]);
   readonly solutionVideos = signal<TeacherSolutionVideo[]>([]);
   readonly watchSessions = signal<WatchSession[]>([]);
   readonly info = signal('');
@@ -63,6 +66,9 @@ export class TeacherVideosComponent {
   lessonFilterUnitId = '';
   lessonFilterLessonId = '';
   lessonSearch = '';
+
+  readonly courseFilterCourseId = signal('');
+  readonly courseSearch = signal('');
 
   solutionFilterClassroomId = '';
   solutionSearch = '';
@@ -89,6 +95,24 @@ export class TeacherVideosComponent {
           v.fileName.toLowerCase().includes(q) ||
           v.courseTitle.toLowerCase().includes(q) ||
           v.lessonTitle.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  });
+
+  readonly filteredCourseVideos = computed(() => {
+    let list = this.courseVideos();
+    const courseId = this.courseFilterCourseId();
+    if (courseId) {
+      list = list.filter((v) => v.courseId === courseId);
+    }
+    const q = this.courseSearch().trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (v) =>
+          v.title.toLowerCase().includes(q) ||
+          v.fileName.toLowerCase().includes(q) ||
+          v.courseTitle.toLowerCase().includes(q)
       );
     }
     return list;
@@ -234,6 +258,11 @@ export class TeacherVideosComponent {
     this.lessonSearch = '';
   }
 
+  clearCourseFilters(): void {
+    this.courseFilterCourseId.set('');
+    this.courseSearch.set('');
+  }
+
   clearSolutionFilters(): void {
     this.solutionFilterClassroomId = '';
     this.solutionSearch = '';
@@ -266,6 +295,7 @@ export class TeacherVideosComponent {
     this.api.getVideoLibrary().subscribe({
       next: (lib) => {
         this.lessonVideos.set(lib.lessonVideos || []);
+        this.courseVideos.set(lib.courseVideos || []);
         this.solutionVideos.set(lib.solutionVideos || []);
       },
       error: (err) => this.error.set(this.locale.fromApiError(err,'videos.loadLibraryFailed'))
@@ -286,6 +316,13 @@ export class TeacherVideosComponent {
       mediaAssetId: video.mediaAssetId,
       title: video.title,
       lessonId: video.lessonId
+    });
+  }
+
+  playCourseVideo(video: CourseVideoLibraryItem): void {
+    this.openPreview({
+      mediaAssetId: video.mediaAssetId,
+      title: video.title
     });
   }
 

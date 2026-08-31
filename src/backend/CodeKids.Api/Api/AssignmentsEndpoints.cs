@@ -112,6 +112,52 @@ public static class AssignmentsEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapPut("/api/assignments/{assignmentId:guid}", async (
+            Guid assignmentId,
+            UpdateAssignmentRequest request,
+            HttpContext httpContext,
+            ICommandHandler<UpdateAssignmentCommand, AssignmentDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new UpdateAssignmentCommand(
+                        userId,
+                        assignmentId,
+                        request.ClassroomId,
+                        request.Title,
+                        request.Description,
+                        request.DueAtUtc,
+                        request.XpReward,
+                        request.Questions),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+        app.MapDelete("/api/assignments/{assignmentId:guid}", async (
+            Guid assignmentId,
+            HttpContext httpContext,
+            ICommandHandler<DeleteAssignmentCommand, bool> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                await handler.Handle(new DeleteAssignmentCommand(userId, assignmentId), cancellationToken);
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
         app.MapPost("/api/assignments/submit", async (
 
             SubmitAssignmentRequest request,

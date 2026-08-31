@@ -17,4 +17,5 @@ public sealed record AssignmentQuestionDto(
     int Points,
     int SortOrder,
     string? CorrectAnswer,
-    string? PromptImageUrl);
+    string? PromptImageUrl,
+    Guid? PromptImageMediaAssetId);

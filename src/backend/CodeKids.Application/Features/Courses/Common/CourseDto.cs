@@ -16,6 +16,7 @@ public sealed record CourseDto(
     IReadOnlyList<CourseUnitDto> Units,
     IReadOnlyList<CourseLessonDto> Lessons,
     IReadOnlyList<CourseQuizDto> Quizzes,
+    IReadOnlyList<CourseVideoSummaryDto> Videos,
     string SubjectCode = "",
     string Category = "",
     string TrackCode = "",

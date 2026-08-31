@@ -8,7 +8,7 @@ namespace CodeKids.Application.Features.Media;
 
 public sealed record LessonVideoDto(
     Guid Id,
-    Guid LessonId,
+    Guid? LessonId,
     Guid MediaAssetId,
     string Title,
     int SortOrder,

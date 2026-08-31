@@ -25,6 +25,11 @@ public sealed class GetCourseByIdQueryHandler(IAppDbContext dbContext)
         }
 
         var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
-        return CourseDtoMapper.Map(course, includeContent: true, outline);
+        var videosByCourse = await CourseVideoLoader.LoadByCourseIdsAsync(dbContext, [course.Id], cancellationToken);
+        return CourseDtoMapper.Map(
+            course,
+            includeContent: true,
+            outline,
+            videosByCourse.GetValueOrDefault(course.Id, []));
     }
 }

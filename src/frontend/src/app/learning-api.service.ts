@@ -21,6 +21,7 @@ import {
   Course,
   CourseLesson,
   CourseUnit,
+  CourseVideoLibraryItem,
   CreateMeetingPayload,
   ClassroomDiagnosis,
   DailyWhatsAppReportsResult,
@@ -1060,9 +1061,39 @@ export class LearningApiService {
       points: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
+      id?: string | null;
     }[];
   }): Observable<Assignment> {
     return this.http.post<Assignment>(`${this.baseUrl}/assignments`, payload);
+  }
+
+  updateAssignment(
+    assignmentId: string,
+    payload: {
+      classroomId: string;
+      title: string;
+      description?: string;
+      dueAtUtc?: string | null;
+      xpReward: number;
+      questions: {
+        prompt: string;
+        questionType: string;
+        optionA?: string | null;
+        optionB?: string | null;
+        optionC?: string | null;
+        correctAnswer: string;
+        points: number;
+        sortOrder: number;
+        promptImageMediaAssetId?: string | null;
+        id?: string | null;
+      }[];
+    }
+  ): Observable<Assignment> {
+    return this.http.put<Assignment>(`${this.baseUrl}/assignments/${assignmentId}`, payload);
+  }
+
+  deleteAssignment(assignmentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}`);
   }
 
   submitAssignment(payload: {
@@ -1209,6 +1240,24 @@ export class LearningApiService {
 
   deleteLessonVideo(lessonVideoId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/lessons/videos/${lessonVideoId}`);
+  }
+
+  getCourseVideoLibrary(): Observable<CourseVideoLibraryItem[]> {
+    return this.http.get<CourseVideoLibraryItem[]>(`${this.baseUrl}/media/course-videos`);
+  }
+
+  attachCourseVideo(
+    courseId: string,
+    payload: { mediaAssetId: string; title?: string; sortOrder?: number }
+  ): Observable<{ id: string; courseId: string; mediaAssetId: string; title: string }> {
+    return this.http.post<{ id: string; courseId: string; mediaAssetId: string; title: string }>(
+      `${this.baseUrl}/courses/${courseId}/videos`,
+      payload
+    );
+  }
+
+  deleteCourseVideo(courseVideoId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/courses/videos/${courseVideoId}`);
   }
 
   attachAssignmentSolutionVideo(assignmentId: string, mediaAssetId: string): Observable<MediaAsset> {

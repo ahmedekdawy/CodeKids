@@ -27,6 +27,23 @@
         type="button"
         role="tab"
         class="video-tab"
+        [class.active]="tab() === 'course'"
+        [attr.aria-selected]="tab() === 'course'"
+        (click)="setTab('course')"
+      >
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16v11H4z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7V5h8v2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10 12 5 3-5 3v-6Z" fill="currentColor"/></svg>
+        </span>
+        <span class="tab-copy">
+          <span class="tab-label">{{ 'videos.tab.course' | t }}</span>
+          <span class="tab-hint">{{ 'videos.tab.courseHint' | t }}</span>
+        </span>
+        <span class="tab-count">{{ courseVideos().length }}</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="video-tab"
         [class.active]="tab() === 'solution'"
         [attr.aria-selected]="tab() === 'solution'"
         (click)="setTab('solution')"
@@ -203,6 +220,84 @@
             } @empty {
               <tr>
                 <td colspan="6" class="meta">{{ 'videos.noLessonMatch' | t }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab() === 'course') {
+    <section class="block">
+      <div class="video-table-head">
+        <h3>{{ 'videos.courseList' | t }}</h3>
+        <p class="meta">{{ shownLabel(filteredCourseVideos().length, courseVideos().length) }}</p>
+      </div>
+      <p class="meta">{{ 'videos.teacherCourseHint' | t }}</p>
+      <div class="video-filters">
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            [ngModel]="courseFilterCourseId()"
+            (ngModelChange)="courseFilterCourseId.set($event)"
+            name="courseFilterCourse"
+            [emptyLabel]="'videos.allCourses' | t"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.search' | t }}
+          <input
+            [ngModel]="courseSearch()"
+            (ngModelChange)="courseSearch.set($event)"
+            name="courseSearch"
+            [placeholder]="'videos.searchCourse' | t"
+          />
+        </label>
+        @if (courseFilterCourseId() || courseSearch().trim()) {
+          <button type="button" class="ghost-btn" (click)="clearCourseFilters()">{{ 'common.clearFilters' | t }}</button>
+        }
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table video-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.title' | t }}</th>
+              <th>{{ 'common.course' | t }}</th>
+              <th>{{ 'videos.link' | t }}</th>
+              <th>{{ 'common.uploaded' | t }}</th>
+              <th>{{ 'common.actions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (video of filteredCourseVideos(); track video.id) {
+              <tr
+                class="video-row-clickable"
+                tabindex="0"
+                [attr.aria-label]="'Play ' + video.title"
+                (click)="playCourseVideo(video)"
+                (keydown.enter)="playCourseVideo(video)"
+                (keydown.space)="$event.preventDefault(); playCourseVideo(video)"
+              >
+                <td><strong>{{ video.title }}</strong></td>
+                <td>{{ courseLabelById(video.courseId, video.courseTitle) }}</td>
+                <td class="mono">{{ video.fileName }}</td>
+                <td>{{ formatDate(video.createdAtUtc) }}</td>
+                <td class="row-actions-cell" (click)="$event.stopPropagation()">
+                  <div class="row-actions">
+                    <app-icon-action-button kind="play" [label]="'videos.playVideo' | t" (action)="playCourseVideo(video)" />
+                    <a class="ghost-btn small-btn" [routerLink]="['/courses', video.courseId]" [queryParams]="{ video: video.id }">
+                      {{ 'videos.openStudentView' | t }}
+                    </a>
+                    <button type="button" class="ghost-btn small-btn" (click)="inspectWatch(video.mediaAssetId)">{{ 'videos.analytics' | t }}</button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="meta">{{ courseVideos().length ? ('videos.noCourseMatch' | t) : ('videos.noCourseYet' | t) }}</td>
               </tr>
             }
           </tbody>
