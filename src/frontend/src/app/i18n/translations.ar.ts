@@ -1513,6 +1513,7 @@ export const AR: Record<string, string> = {
   'api.errors.media.invalidStorageKey': 'مفتاح التخزين غير صالح.',
   'api.errors.media.multipartRequired': 'مطلوب رفع نموذج multipart.',
   'api.errors.media.noFile': 'لم يُرفع أي ملف.',
+  'api.errors.media.teraboxSessionExpired': 'انتهت صلاحية جلسة التخزين. اطلب من المسؤول تحديث بيانات Terabox.',
   'api.errors.lesson.notFound': 'لم يُعثر على الدرس.',
   'api.errors.unit.notFound': 'لم يُعثر على الوحدة.',
   'api.errors.studentAsk.scopeInvalid': 'نطاق السؤال يجب أن يكون مادة أو وحدة أو درساً.',

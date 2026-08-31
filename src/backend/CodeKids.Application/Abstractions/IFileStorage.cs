@@ -23,6 +23,17 @@ public sealed class TeraboxOptions
     public string BrowserId { get; set; } = string.Empty;
     public string RemoteDirectory { get; set; } = "/CodeKids";
     public string BaseUrl { get; set; } = "https://www.1024terabox.com";
+
+    /// <summary>Terabox Open Platform app key (apply at terabox.com/integrations).</summary>
+    public string ClientId { get; set; } = string.Empty;
+    /// <summary>Terabox Open Platform app secret.</summary>
+    public string ClientSecret { get; set; } = string.Empty;
+    /// <summary>Private secret used to sign OAuth token requests.</summary>
+    public string PrivateSecret { get; set; } = string.Empty;
+    /// <summary>Initial OAuth access token (optional; refreshed automatically).</summary>
+    public string AccessToken { get; set; } = string.Empty;
+    /// <summary>OAuth refresh token from the initial authorization.</summary>
+    public string RefreshToken { get; set; } = string.Empty;
 }
 
 public interface IFileStorage

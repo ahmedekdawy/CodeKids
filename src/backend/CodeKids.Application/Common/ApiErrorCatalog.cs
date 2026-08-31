@@ -181,7 +181,8 @@ public static class ApiErrorCatalog
         ["Study plan cannot exceed 20 weeks."] = "api.errors.studyPlan.rangeTooLong",
         ["A study plan already exists for this course and start date."] = "api.errors.studyPlan.duplicate",
         ["Course is not assigned to this teacher."] = "api.errors.studyPlan.courseNotAssigned",
-        ["Could not generate a study plan."] = "api.errors.studyPlan.generateFailed"
+        ["Could not generate a study plan."] = "api.errors.studyPlan.generateFailed",
+        ["Terabox session expired and could not be refreshed automatically. Log in at terabox.com, complete verification, and update Ndus/JsToken in server config."] = "api.errors.media.teraboxSessionExpired"
     };
 
     private static readonly (Regex Pattern, string Code)[] Patterns =

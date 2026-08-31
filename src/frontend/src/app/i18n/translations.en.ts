@@ -1514,6 +1514,7 @@ export const EN: Record<string, string> = {
   'api.errors.media.invalidStorageKey': 'Invalid storage key.',
   'api.errors.media.multipartRequired': 'Expected multipart form upload.',
   'api.errors.media.noFile': 'No file uploaded.',
+  'api.errors.media.teraboxSessionExpired': 'File storage session expired. Ask your administrator to refresh Terabox credentials.',
   'api.errors.lesson.notFound': 'Lesson not found.',
   'api.errors.unit.notFound': 'Unit not found.',
   'api.errors.studentAsk.scopeInvalid': 'Ask scope must be course, unit, or lesson.',

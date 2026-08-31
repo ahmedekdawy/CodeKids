@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Media;
 using Microsoft.Extensions.Logging;
@@ -12,26 +13,38 @@ namespace CodeKids.Infrastructure.Media;
 
 public sealed class TeraboxClient
 {
+    private static readonly TimeSpan TokenRefreshInterval = TimeSpan.FromHours(6);
+
     private readonly TeraboxOptions _options;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<TeraboxClient> _logger;
+    private readonly TeraboxOAuthTokenManager _oauthTokenManager;
     private readonly string _cookieHeader;
     private readonly string _dpLogId;
+    private readonly SemaphoreSlim _refreshLock = new(1, 1);
+    private string _jsToken;
+    private string _bdsToken;
+    private DateTimeOffset _tokensRefreshedAt;
 
     public TeraboxClient(
         IOptions<TeraboxOptions> options,
         IHttpClientFactory httpClientFactory,
-        ILogger<TeraboxClient> logger)
+        ILogger<TeraboxClient> logger,
+        TeraboxOAuthTokenManager oauthTokenManager)
     {
         _options = options.Value;
         _httpClientFactory = httpClientFactory;
         _logger = logger;
+        _oauthTokenManager = oauthTokenManager;
         _dpLogId = Random.Shared.NextInt64(100000000000L, 999999999999L).ToString();
         _cookieHeader = BuildCookieHeader(_options);
+        _jsToken = _options.JsToken;
+        _bdsToken = _options.BdsToken;
     }
 
     public bool IsConfigured =>
-        !string.IsNullOrWhiteSpace(_options.Ndus) && !string.IsNullOrWhiteSpace(_options.JsToken);
+        _oauthTokenManager.IsEnabled
+        || (!string.IsNullOrWhiteSpace(_options.Ndus) && !string.IsNullOrWhiteSpace(_options.JsToken));
 
     public async Task<TeraboxUploadResult> UploadAsync(
         string localFilePath,
@@ -40,6 +53,119 @@ public sealed class TeraboxClient
         CancellationToken cancellationToken = default)
     {
         EnsureConfigured();
+        if (_oauthTokenManager.IsEnabled)
+        {
+            try
+            {
+                return await UploadCoreAsync(localFilePath, remoteDirectory, fileName, cancellationToken);
+            }
+            catch (TeraboxApiException ex) when (IsAccessTokenExpired(ex.Errno))
+            {
+                _logger.LogWarning("Terabox OAuth access token expired (errno {Errno}); refreshing and retrying upload.", ex.Errno);
+                await _oauthTokenManager.RefreshAsync(cancellationToken);
+                return await UploadCoreAsync(localFilePath, remoteDirectory, fileName, cancellationToken);
+            }
+        }
+
+        await EnsureFreshSessionAsync(cancellationToken);
+
+        try
+        {
+            return await UploadCoreAsync(localFilePath, remoteDirectory, fileName, cancellationToken);
+        }
+        catch (TeraboxApiException ex) when (IsVerificationRequired(ex.Errno, ex.Errmsg))
+        {
+            _logger.LogWarning(
+                "Terabox {Operation} requires verification (errno {Errno}); refreshing session tokens and retrying upload.",
+                ex.Operation,
+                ex.Errno);
+            await RefreshSessionTokensAsync(force: true, cancellationToken);
+            return await UploadCoreAsync(localFilePath, remoteDirectory, fileName, cancellationToken);
+        }
+    }
+
+    private async Task<TeraboxUploadResult> UploadCoreAsync(
+        string localFilePath,
+        string remoteDirectory,
+        string fileName,
+        CancellationToken cancellationToken)
+    {
+        if (_oauthTokenManager.IsEnabled)
+        {
+            return await UploadOAuthAsync(localFilePath, remoteDirectory, fileName, cancellationToken);
+        }
+
+        return await UploadSessionAsync(localFilePath, remoteDirectory, fileName, cancellationToken);
+    }
+
+    private async Task<TeraboxUploadResult> UploadOAuthAsync(
+        string localFilePath,
+        string remoteDirectory,
+        string fileName,
+        CancellationToken cancellationToken)
+    {
+        var session = await _oauthTokenManager.GetSessionAsync(cancellationToken);
+        var directory = NormalizeDirectory(remoteDirectory);
+        await EnsureDirectoryAsync(directory, cancellationToken);
+
+        var remotePath = $"{directory}/{fileName}";
+        var fileInfo = new FileInfo(localFilePath);
+        var fileSize = fileInfo.Length;
+        var fileMd5 = await ComputeMd5HexAsync(localFilePath, cancellationToken);
+        var modifiedUnix = new DateTimeOffset(fileInfo.LastWriteTimeUtc).ToUnixTimeSeconds();
+
+        var precreateUrl = BuildOAuthApiUrl(session, "/openapi/api/precreate");
+        var precreateBody = new Dictionary<string, string>
+        {
+            ["path"] = remotePath,
+            ["autoinit"] = "1",
+            ["target_path"] = directory,
+            ["block_list"] = JsonSerializer.Serialize(new[] { fileMd5 }),
+            ["size"] = fileSize.ToString(),
+            ["local_mtime"] = modifiedUnix.ToString()
+        };
+
+        var precreate = await PostOAuthFormAsync<TeraboxPrecreateResponse>(precreateUrl, precreateBody, cancellationToken);
+        EnsureSuccess(precreate?.Errno, precreate?.Errmsg, "precreate");
+        if (string.IsNullOrWhiteSpace(precreate!.UploadId))
+        {
+            throw new InvalidOperationException("Terabox precreate did not return an upload id.");
+        }
+
+        var uploadUrl =
+            $"{session.UploadDomain}/rest/2.0/pcs/superfile2?method=upload&app_id={Uri.EscapeDataString(_options.AppId)}&path=%2F{Uri.EscapeDataString(fileName)}&uploadid={Uri.EscapeDataString(precreate.UploadId)}&partseq=0&access_tokens={Uri.EscapeDataString(session.AccessToken)}";
+
+        await UploadFileContentOAuthAsync(uploadUrl, localFilePath, cancellationToken);
+
+        var createUrl = BuildOAuthApiUrl(session, "/openapi/api/create");
+        var createBody = new Dictionary<string, string>
+        {
+            ["path"] = remotePath,
+            ["size"] = fileSize.ToString(),
+            ["uploadid"] = precreate.UploadId,
+            ["target_path"] = directory,
+            ["block_list"] = JsonSerializer.Serialize(new[] { fileMd5 }),
+            ["local_mtime"] = modifiedUnix.ToString(),
+            ["isdir"] = "0",
+            ["rtype"] = "1"
+        };
+
+        var create = await PostOAuthFormAsync<TeraboxCreateResponse>(createUrl, createBody, cancellationToken);
+        EnsureSuccess(create?.Errno, create?.Errmsg, "create");
+        if (create!.FsId <= 0)
+        {
+            throw new InvalidOperationException("Terabox create did not return a file id.");
+        }
+
+        return new TeraboxUploadResult(create.FsId, remotePath);
+    }
+
+    private async Task<TeraboxUploadResult> UploadSessionAsync(
+        string localFilePath,
+        string remoteDirectory,
+        string fileName,
+        CancellationToken cancellationToken)
+    {
         var directory = NormalizeDirectory(remoteDirectory);
         await EnsureDirectoryAsync(directory, cancellationToken);
 
@@ -118,6 +244,11 @@ public sealed class TeraboxClient
     private async Task<string> GetDirectLinkByFsIdAsync(long fsId, CancellationToken cancellationToken)
     {
         EnsureConfigured();
+        if (_oauthTokenManager.IsEnabled)
+        {
+            return await GetDirectLinkByFsIdOAuthAsync(fsId, cancellationToken);
+        }
+
         var home = await GetHomeInfoAsync(cancellationToken);
         var sign = GenerateSign(home.Sign3, home.Sign1);
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -140,6 +271,11 @@ public sealed class TeraboxClient
     private async Task<string> GetDirectLinkByPathAsync(string remotePath, CancellationToken cancellationToken)
     {
         EnsureConfigured();
+        if (_oauthTokenManager.IsEnabled)
+        {
+            return await GetDirectLinkByPathOAuthAsync(remotePath, cancellationToken);
+        }
+
         var target = JsonSerializer.Serialize(new[] { remotePath });
         var url = BuildApiUrl("/api/filemetas") +
                   $"&target={Uri.EscapeDataString(target)}&dlink=1&origin=dlna";
@@ -226,6 +362,12 @@ public sealed class TeraboxClient
     public async Task DeleteAsync(string remotePath, CancellationToken cancellationToken = default)
     {
         EnsureConfigured();
+        if (_oauthTokenManager.IsEnabled)
+        {
+            await DeleteOAuthAsync(remotePath, cancellationToken);
+            return;
+        }
+
         var url = BuildApiUrl("/api/filemanager") + "&opera=delete&async=2&onnest=fail";
         var body = new Dictionary<string, string>
         {
@@ -262,7 +404,9 @@ public sealed class TeraboxClient
                 continue;
             }
 
-            var createUrl = BuildApiUrl("/api/create");
+            var createUrl = _oauthTokenManager.IsEnabled
+                ? BuildOAuthApiUrl(await _oauthTokenManager.GetSessionAsync(cancellationToken), "/openapi/api/create")
+                : BuildApiUrl("/api/create");
             var body = new Dictionary<string, string>
             {
                 ["path"] = current,
@@ -271,8 +415,14 @@ public sealed class TeraboxClient
                 ["block_list"] = "[]",
                 ["local_mtime"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()
             };
-            AppendBdsToken(body);
-            var result = await PostFormAsync<TeraboxSimpleResponse>(createUrl, body, cancellationToken);
+            if (!_oauthTokenManager.IsEnabled)
+            {
+                AppendBdsToken(body);
+            }
+
+            var result = _oauthTokenManager.IsEnabled
+                ? await PostOAuthFormAsync<TeraboxSimpleResponse>(createUrl, body, cancellationToken)
+                : await PostFormAsync<TeraboxSimpleResponse>(createUrl, body, cancellationToken);
             if (result?.Errno is not (0 or -8))
             {
                 EnsureSuccess(result?.Errno, result?.Errmsg, $"create directory {current}");
@@ -297,6 +447,11 @@ public sealed class TeraboxClient
 
     private async Task<TeraboxListResponse?> ListDirectoryAsync(string directoryPath, CancellationToken cancellationToken)
     {
+        if (_oauthTokenManager.IsEnabled)
+        {
+            return await ListDirectoryOAuthAsync(directoryPath, cancellationToken);
+        }
+
         var url = BuildApiUrl("/api/list") +
                   $"&order=time&desc=1&dir={Uri.EscapeDataString(NormalizeDirectory(directoryPath))}&num=100&page=1&showempty=0";
         using var client = CreateClient();
@@ -406,15 +561,133 @@ public sealed class TeraboxClient
     private string BuildApiUrl(string path)
     {
         var baseUrl = _options.BaseUrl.TrimEnd('/');
-        return $"{baseUrl}{path}?app_id={Uri.EscapeDataString(_options.AppId)}&web=1&channel=dubox&clienttype=0&jsToken={Uri.EscapeDataString(_options.JsToken)}&dp-logid={_dpLogId}";
+        return $"{baseUrl}{path}?app_id={Uri.EscapeDataString(_options.AppId)}&web=1&channel=dubox&clienttype=0&jsToken={Uri.EscapeDataString(_jsToken)}&dp-logid={_dpLogId}";
     }
 
     private void AppendBdsToken(Dictionary<string, string> body)
     {
-        if (!string.IsNullOrWhiteSpace(_options.BdsToken))
+        if (!string.IsNullOrWhiteSpace(_bdsToken))
         {
-            body["bdstoken"] = _options.BdsToken;
+            body["bdstoken"] = _bdsToken;
         }
+    }
+
+    private static string BuildOAuthApiUrl(TeraboxOAuthSession session, string path) =>
+        $"{session.ApiDomain}{path}?access_tokens={Uri.EscapeDataString(session.AccessToken)}";
+
+    private async Task<T?> PostOAuthFormAsync<T>(string url, Dictionary<string, string> body, CancellationToken cancellationToken)
+    {
+        using var client = CreateOAuthClient();
+        using var content = new FormUrlEncodedContent(body);
+        using var response = await client.PostAsync(url, content, cancellationToken);
+        var json = await ReadResponseBodyAsync(response.Content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Terabox request failed ({(int)response.StatusCode}): {json}");
+        }
+
+        return JsonSerializer.Deserialize<T>(json);
+    }
+
+    private async Task UploadFileContentOAuthAsync(string uploadUrl, string localFilePath, CancellationToken cancellationToken)
+    {
+        await using var fileStream = File.OpenRead(localFilePath);
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(fileStream);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        content.Add(fileContent, "file", Path.GetFileName(localFilePath));
+
+        using var client = CreateOAuthClient();
+        using var response = await client.PostAsync(uploadUrl, content, cancellationToken);
+        var body = await ReadResponseBodyAsync(response.Content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Terabox upload failed ({(int)response.StatusCode}): {body}");
+        }
+    }
+
+    private HttpClient CreateOAuthClient()
+    {
+        var client = _httpClientFactory.CreateClient(nameof(TeraboxClient));
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/json, text/plain, */*");
+        client.DefaultRequestHeaders.UserAgent.ParseAdd(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        return client;
+    }
+
+    private async Task<string> GetDirectLinkByFsIdOAuthAsync(long fsId, CancellationToken cancellationToken)
+    {
+        var session = await _oauthTokenManager.GetSessionAsync(cancellationToken);
+        var downloadUrl = BuildOAuthApiUrl(session, "/openapi/api/download") +
+                          $"&fidlist=[{fsId}]&type=dlink";
+
+        using var client = CreateOAuthClient();
+        using var response = await client.GetAsync(downloadUrl, cancellationToken);
+        var json = await ReadResponseBodyAsync(response.Content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Terabox download lookup failed ({(int)response.StatusCode}): {json}");
+        }
+
+        var payload = JsonSerializer.Deserialize<TeraboxDownloadResponse>(json);
+        EnsureSuccess(payload?.Errno, payload?.Errmsg, "download");
+        return ExtractDirectLink(payload, json);
+    }
+
+    private async Task<string> GetDirectLinkByPathOAuthAsync(string remotePath, CancellationToken cancellationToken)
+    {
+        var session = await _oauthTokenManager.GetSessionAsync(cancellationToken);
+        var target = JsonSerializer.Serialize(new[] { remotePath });
+        var url = BuildOAuthApiUrl(session, "/openapi/api/filemetas") +
+                  $"&target={Uri.EscapeDataString(target)}&dlink=1";
+
+        using var client = CreateOAuthClient();
+        using var response = await client.GetAsync(url, cancellationToken);
+        var json = await ReadResponseBodyAsync(response.Content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Terabox filemetas lookup failed ({(int)response.StatusCode}): {json}");
+        }
+
+        var payload = JsonSerializer.Deserialize<TeraboxFileMetasResponse>(json);
+        EnsureSuccess(payload?.Errno, payload?.Errmsg, "filemetas");
+        var link = payload?.Info?.FirstOrDefault()?.Dlink;
+        if (string.IsNullOrWhiteSpace(link))
+        {
+            throw new InvalidOperationException($"Terabox filemetas did not return a download link: {json}");
+        }
+
+        return NormalizeRawLink(link);
+    }
+
+    private async Task DeleteOAuthAsync(string remotePath, CancellationToken cancellationToken)
+    {
+        var session = await _oauthTokenManager.GetSessionAsync(cancellationToken);
+        var url = BuildOAuthApiUrl(session, "/openapi/api/filemanager") + "&opera=delete&async=2&onnest=fail";
+        var body = new Dictionary<string, string>
+        {
+            ["filelist"] = JsonSerializer.Serialize(new[] { remotePath })
+        };
+
+        var result = await PostOAuthFormAsync<TeraboxSimpleResponse>(url, body, cancellationToken);
+        EnsureSuccess(result?.Errno, result?.Errmsg, "delete");
+    }
+
+    private async Task<TeraboxListResponse?> ListDirectoryOAuthAsync(string directoryPath, CancellationToken cancellationToken)
+    {
+        var session = await _oauthTokenManager.GetSessionAsync(cancellationToken);
+        var url = BuildOAuthApiUrl(session, "/openapi/api/list") +
+                  $"&order=time&desc=1&dir={Uri.EscapeDataString(NormalizeDirectory(directoryPath))}&num=100&page=1&showempty=0";
+        using var client = CreateOAuthClient();
+        using var response = await client.GetAsync(url, cancellationToken);
+        var json = await ReadResponseBodyAsync(response.Content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogWarning("Terabox list failed for {Directory}: {Status} {Body}", directoryPath, (int)response.StatusCode, json);
+            return null;
+        }
+
+        return JsonSerializer.Deserialize<TeraboxListResponse>(json);
     }
 
     private void EnsureConfigured()
@@ -432,7 +705,115 @@ public sealed class TeraboxClient
             return;
         }
 
-        throw new InvalidOperationException($"Terabox {operation} failed ({errno}): {errmsg ?? "Unknown error"}");
+        throw new TeraboxApiException(errno ?? 0, errmsg, operation);
+    }
+
+    private async Task EnsureFreshSessionAsync(CancellationToken cancellationToken)
+    {
+        if (_tokensRefreshedAt != default &&
+            DateTimeOffset.UtcNow - _tokensRefreshedAt < TokenRefreshInterval)
+        {
+            return;
+        }
+
+        await RefreshSessionTokensAsync(force: false, cancellationToken);
+    }
+
+    private async Task RefreshSessionTokensAsync(bool force, CancellationToken cancellationToken)
+    {
+        await _refreshLock.WaitAsync(cancellationToken);
+        try
+        {
+            if (!force &&
+                _tokensRefreshedAt != default &&
+                DateTimeOffset.UtcNow - _tokensRefreshedAt < TokenRefreshInterval)
+            {
+                return;
+            }
+
+            var baseUrl = _options.BaseUrl.TrimEnd('/');
+            var mainUrl = $"{baseUrl}/main?category=all";
+            using var client = CreateClient();
+            using var response = await client.GetAsync(mainUrl, cancellationToken);
+            var html = await ReadResponseBodyAsync(response.Content, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning(
+                    "Terabox token refresh failed ({Status}): {Body}",
+                    (int)response.StatusCode,
+                    html);
+                if (force)
+                {
+                    throw new InvalidOperationException(
+                        "Terabox session expired and could not be refreshed automatically. Log in at terabox.com, complete verification, and update Ndus/JsToken in server config.");
+                }
+
+                return;
+            }
+
+            var jsToken = ExtractJsToken(html);
+            var bdsToken = ExtractBdsToken(html);
+            if (string.IsNullOrWhiteSpace(jsToken))
+            {
+                _logger.LogWarning("Terabox token refresh did not find jsToken in main page HTML.");
+                if (force)
+                {
+                    throw new InvalidOperationException(
+                        "Terabox session expired and could not be refreshed automatically. Log in at terabox.com, complete verification, and update Ndus/JsToken in server config.");
+                }
+
+                return;
+            }
+
+            _jsToken = jsToken;
+            if (!string.IsNullOrWhiteSpace(bdsToken))
+            {
+                _bdsToken = bdsToken;
+            }
+
+            _tokensRefreshedAt = DateTimeOffset.UtcNow;
+            _logger.LogInformation("Terabox session tokens refreshed successfully.");
+        }
+        finally
+        {
+            _refreshLock.Release();
+        }
+    }
+
+    private static bool IsVerificationRequired(int errno, string? errmsg) =>
+        errno == 4000023 ||
+        string.Equals(errmsg, "need verify", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsAccessTokenExpired(int errno) => errno is 200002 or 200003;
+
+    private static string? ExtractJsToken(string html)
+    {
+        const string encodedMarker = "fn%28%22";
+        var start = html.IndexOf(encodedMarker, StringComparison.Ordinal);
+        if (start >= 0)
+        {
+            start += encodedMarker.Length;
+            var end = html.IndexOf("%22%29", start, StringComparison.Ordinal);
+            if (end > start)
+            {
+                return html[start..end];
+            }
+        }
+
+        var match = Regex.Match(html, @"fn\(""([A-Fa-f0-9]+)""\)");
+        return match.Success ? match.Groups[1].Value : null;
+    }
+
+    private static string? ExtractBdsToken(string html)
+    {
+        var match = Regex.Match(html, @"bdstoken""\s*:\s*""([^""]+)""");
+        if (match.Success)
+        {
+            return match.Groups[1].Value;
+        }
+
+        match = Regex.Match(html, @"bdstoken%22%3A%22([^%""']+)%22");
+        return match.Success ? match.Groups[1].Value : null;
     }
 
     private static string BuildCookieHeader(TeraboxOptions options)
@@ -502,6 +883,21 @@ public sealed class TeraboxClient
         }
 
         return Convert.ToBase64String(output);
+    }
+
+    private sealed class TeraboxApiException : InvalidOperationException
+    {
+        public TeraboxApiException(int errno, string? errmsg, string operation)
+            : base($"Terabox {operation} failed ({errno}): {errmsg ?? "Unknown error"}")
+        {
+            Errno = errno;
+            Errmsg = errmsg;
+            Operation = operation;
+        }
+
+        public int Errno { get; }
+        public string? Errmsg { get; }
+        public string Operation { get; }
     }
 
     private class TeraboxSimpleResponse

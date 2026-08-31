@@ -25,6 +25,7 @@ public static class IntegrationServiceCollectionExtensions
             {
                 client.Timeout = TimeSpan.FromMinutes(30);
             });
+            services.AddSingleton<TeraboxOAuthTokenManager>();
             services.AddSingleton<TeraboxClient>();
             services.AddSingleton<IFileStorage, TeraboxFileStorage>();
             services.AddSingleton<ITeraboxDirectLinkResolver, TeraboxDirectLinkResolver>();
