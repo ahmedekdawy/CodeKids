@@ -26,6 +26,11 @@ public sealed class StartExamCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Student is not in this classroom.");
         }
 
+        if (!exam.IsPublished)
+        {
+            throw new InvalidOperationException("Exam is not available.");
+        }
+
         var existing = await dbContext.ExamAttempts
             .Include(x => x.Student)
             .Include(x => x.Exam)

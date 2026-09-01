@@ -97,7 +97,7 @@ public sealed class GetParentChildOverviewQueryHandler(IAppDbContext dbContext)
 
         var assignments = await dbContext.Assignments
             .AsNoTracking()
-            .Where(a => relevantClassroomIds.Contains(a.ClassroomId))
+            .Where(a => a.IsPublished && relevantClassroomIds.Contains(a.ClassroomId))
             .Select(a => new
             {
                 a.Id,
@@ -131,7 +131,8 @@ public sealed class GetParentChildOverviewQueryHandler(IAppDbContext dbContext)
 
         var exams = await dbContext.Exams
             .AsNoTracking()
-            .Where(e => relevantClassroomIds.Contains(e.ClassroomId)
+            .Where(e => e.IsPublished
+                && relevantClassroomIds.Contains(e.ClassroomId)
                 && (e.CourseId == null || visibleCourseIds.Contains(e.CourseId.Value)))
             .Select(e => new
             {
@@ -170,7 +171,8 @@ public sealed class GetParentChildOverviewQueryHandler(IAppDbContext dbContext)
 
         var quizzes = await dbContext.Quizzes
             .AsNoTracking()
-            .Where(q => visibleCourseIds.Contains(q.CourseId)
+            .Where(q => q.IsPublished
+                && visibleCourseIds.Contains(q.CourseId)
                 && (q.ClassroomId == null || classroomIds.Contains(q.ClassroomId.Value)))
             .Select(q => new
             {

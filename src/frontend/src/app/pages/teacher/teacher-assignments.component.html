@@ -49,6 +49,10 @@
         />
       </label>
       <label>XP <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" /></label>
+      <label class="checkbox">
+        <input type="checkbox" [(ngModel)]="assignmentIsPublished" name="assignmentIsPublished" />
+        {{ 'teacher.assessments.publish' | t }}
+      </label>
       <label>
         {{ 'teacher.ai.questionCount' | t }}
         <input
@@ -119,10 +123,20 @@
     @for (assignment of assignments(); track assignment.id) {
       <div class="meeting-row">
         <div>
-          <strong>{{ assignment.title }}</strong>
+          <div class="list-title-row">
+            <strong>{{ assignment.title }}</strong>
+            <span class="status-badge" [class.published]="assignment.isPublished" [class.draft]="!assignment.isPublished">
+              {{ (assignment.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
+            </span>
+          </div>
           <p class="meta">{{ assignment.classroomName }} · {{ assignment.xpReward }} XP · {{ assignment.questions.length }} {{ 'common.questions' | t }}</p>
         </div>
         <div class="row-actions">
+          @if (!assignment.isPublished) {
+            <button type="button" class="ghost-btn" [disabled]="isPublishing(assignment.id)" (click)="publishAssignment(assignment)">
+              {{ isPublishing(assignment.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
+            </button>
+          }
           <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
           <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteAssignment(assignment)" />
         </div>

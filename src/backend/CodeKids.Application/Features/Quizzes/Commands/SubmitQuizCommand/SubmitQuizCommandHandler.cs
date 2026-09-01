@@ -20,6 +20,11 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == command.QuizId, cancellationToken)
             ?? throw new InvalidOperationException("Quiz not found.");
 
+        if (!quiz.IsPublished)
+        {
+            throw new InvalidOperationException("Quiz is not available.");
+        }
+
         var score = 0;
         foreach (var question in quiz.Questions)
         {

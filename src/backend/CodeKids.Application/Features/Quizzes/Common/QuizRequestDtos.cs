@@ -6,6 +6,7 @@ public sealed record CreateQuizRequest(
     string Title,
     string? Description,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<CreateQuizQuestionInput> Questions);
 
 public sealed record UpdateQuizRequest(
@@ -14,6 +15,7 @@ public sealed record UpdateQuizRequest(
     string Title,
     string? Description,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<CreateQuizQuestionInput> Questions);
 
 public sealed record CreateQuizQuestionInput(

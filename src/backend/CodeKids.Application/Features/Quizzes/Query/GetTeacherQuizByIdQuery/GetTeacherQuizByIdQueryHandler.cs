@@ -34,6 +34,7 @@ public sealed class GetTeacherQuizByIdQueryHandler(IAppDbContext dbContext)
             quiz.Title,
             quiz.Description,
             quiz.XpReward,
+            quiz.IsPublished,
             quiz.Questions
                 .OrderBy(x => x.SortOrder)
                 .Select(x => new TeacherQuizQuestionDetailDto(

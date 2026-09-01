@@ -61,6 +61,7 @@ export interface CourseQuiz {
   description: string;
   xpReward: number;
   questionCount: number;
+  isPublished?: boolean;
 }
 
 export type CourseTerm = 'FirstTerm' | 'SecondTerm' | 'FullYear';
@@ -287,6 +288,7 @@ export interface Quiz {
   title: string;
   description: string;
   xpReward: number;
+  isPublished: boolean;
   questions: QuizQuestion[];
 }
 
@@ -300,6 +302,7 @@ export interface TeacherQuizListItem {
   title: string;
   description: string;
   xpReward: number;
+  isPublished: boolean;
   questionCount: number;
   attemptCount: number;
   createdAtUtc: string;
@@ -322,6 +325,7 @@ export interface TeacherQuizDetail {
   title: string;
   description: string;
   xpReward: number;
+  isPublished: boolean;
   questions: TeacherQuizQuestionDetail[];
 }
 
@@ -986,6 +990,7 @@ export interface Assignment {
   description: string;
   dueAtUtc?: string | null;
   xpReward: number;
+  isPublished: boolean;
   createdByUserId: string;
   createdByName: string;
   solutionVideoMediaAssetId?: string | null;
@@ -1082,6 +1087,7 @@ export interface Exam {
   description: string;
   dueAtUtc?: string | null;
   xpReward: number;
+  isPublished: boolean;
   createdByUserId: string;
   createdByName: string;
   questions: ExamQuestion[];

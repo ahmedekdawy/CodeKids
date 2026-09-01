@@ -75,6 +75,7 @@ public sealed class GetTeacherQuizzesQueryHandler(IAppDbContext dbContext)
             quiz.Title,
             quiz.Description,
             quiz.XpReward,
+            quiz.IsPublished,
             quiz.Questions.Count,
             attemptCounts.GetValueOrDefault(quiz.Id),
             quiz.CreatedAtUtc)).ToList();

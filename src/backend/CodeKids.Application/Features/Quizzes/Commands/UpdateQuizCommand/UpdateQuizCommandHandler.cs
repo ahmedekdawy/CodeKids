@@ -1,13 +1,14 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
 
-public sealed class UpdateQuizCommandHandler(IAppDbContext dbContext)
+public sealed class UpdateQuizCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<UpdateQuizCommand, QuizDto>
 {
     public async Task<QuizDto> Handle(UpdateQuizCommand command, CancellationToken cancellationToken)
@@ -55,6 +56,8 @@ public sealed class UpdateQuizCommandHandler(IAppDbContext dbContext)
         quiz.Title = title;
         quiz.Description = (command.Description ?? string.Empty).Trim();
         quiz.XpReward = Math.Max(5, command.XpReward);
+        var wasPublished = quiz.IsPublished;
+        quiz.IsPublished = command.IsPublished;
 
         var incoming = command.Questions.ToList();
         var keptIds = incoming
@@ -129,6 +132,10 @@ public sealed class UpdateQuizCommandHandler(IAppDbContext dbContext)
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        if (!wasPublished && quiz.IsPublished)
+        {
+            await notifications.NotifyQuizCreatedAsync(quiz, cancellationToken);
+        }
 
         var updated = await dbContext.Quizzes
             .AsNoTracking()

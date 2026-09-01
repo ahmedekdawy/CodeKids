@@ -10,4 +10,5 @@ public sealed record UpdateQuizCommand(
     string Title,
     string? Description,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<CreateQuizQuestionInput> Questions) : ICommand<QuizDto>;

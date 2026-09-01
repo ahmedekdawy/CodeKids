@@ -11,6 +11,7 @@ public class Assignment : TenantEntity
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset? DueAtUtc { get; set; }
     public int XpReward { get; set; }
+    public bool IsPublished { get; set; }
     public Guid? SolutionVideoMediaAssetId { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 

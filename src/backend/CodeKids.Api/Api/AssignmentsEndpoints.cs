@@ -96,6 +96,8 @@ public static class AssignmentsEndpoints
 
                         request.XpReward,
 
+                        request.IsPublished,
+
                         request.Questions),
 
                     cancellationToken));
@@ -131,8 +133,26 @@ public static class AssignmentsEndpoints
                         request.Description,
                         request.DueAtUtc,
                         request.XpReward,
+                        request.IsPublished,
                         request.Questions),
                     cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
+
+        app.MapPost("/api/assignments/{assignmentId:guid}/publish", async (
+            Guid assignmentId,
+            HttpContext httpContext,
+            ICommandHandler<PublishAssignmentCommand, AssignmentDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(new PublishAssignmentCommand(userId, assignmentId), cancellationToken));
             }
             catch (Exception ex)
             {

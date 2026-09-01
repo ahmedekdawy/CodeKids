@@ -1191,6 +1191,12 @@ export const EN: Record<string, string> = {
   'teacher.students.loadFailed': 'Could not load students.',
   'teacher.students.loadDetailFailed': 'Could not load student detail.',
 
+  'teacher.assessments.publish': 'Publish for students and parents',
+  'teacher.assessments.publishNow': 'Publish',
+  'teacher.assessments.published': 'Published',
+  'teacher.assessments.draft': 'Draft',
+  'teacher.assessments.publishedSuccess': 'Published successfully.',
+  'teacher.assessments.publishFailed': 'Could not publish.',
   'teacher.assignments.title': 'Assignments',
   'teacher.assignments.subtitle': 'Create, edit, or delete classroom assignments with short-answer or multiple-choice questions.',
   'teacher.assignments.create': 'Create assignment',
@@ -1241,7 +1247,7 @@ export const EN: Record<string, string> = {
   'teacher.exams.attempts': 'Attempts',
   'teacher.exams.noAttempts': 'No attempts yet.',
   'teacher.exams.required': 'Title, classroom, and at least one question are required.',
-  'teacher.exams.created': 'Exam created. Students can take it from their home page.',
+  'teacher.exams.created': 'Exam created.',
   'teacher.exams.createFailed': 'Could not create exam.',
   'teacher.exams.aiGenerated':
     'Questions were added to the bank and selected. Review them, then create the exam.',

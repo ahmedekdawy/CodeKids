@@ -77,6 +77,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             Description = (command.Description ?? string.Empty).Trim(),
             DueAtUtc = command.DueAtUtc?.ToUniversalTime(),
             XpReward = Math.Max(0, command.XpReward),
+            IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -95,7 +96,10 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
 
         dbContext.Exams.Add(exam);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await notifications.NotifyExamCreatedAsync(exam, cancellationToken);
+        if (exam.IsPublished)
+        {
+            await notifications.NotifyExamCreatedAsync(exam, cancellationToken);
+        }
         return (await LoadExam(dbContext, exam.Id, includeAnswerKey: true, cancellationToken))!;
     }
 
@@ -156,6 +160,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             exam.Description,
             exam.DueAtUtc,
             exam.XpReward,
+            exam.IsPublished,
             exam.CreatedByUserId,
             exam.CreatedBy?.DisplayName ?? "Teacher",
             roots);

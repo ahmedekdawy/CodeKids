@@ -111,3 +111,33 @@
   gap: 0.4rem;
   flex: 0 0 auto;
 }
+
+.list-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+
+.status-badge.published {
+  color: #8ef0d8;
+  background: rgba(95, 211, 188, 0.14);
+  border-color: rgba(95, 211, 188, 0.35);
+}
+
+.status-badge.draft {
+  color: #ffd28a;
+  background: rgba(255, 193, 94, 0.12);
+  border-color: rgba(255, 193, 94, 0.35);
+}

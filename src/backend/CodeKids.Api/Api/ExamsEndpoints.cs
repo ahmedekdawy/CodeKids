@@ -96,6 +96,8 @@ public static class ExamsEndpoints
 
                         request.XpReward,
 
+                        request.IsPublished,
+
                         request.QuestionIds),
 
                     cancellationToken));
@@ -110,6 +112,23 @@ public static class ExamsEndpoints
 
             }
 
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapPost("/api/exams/{examId:guid}/publish", async (
+            Guid examId,
+            HttpContext httpContext,
+            ICommandHandler<PublishExamCommand, ExamDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(new PublishExamCommand(userId, examId), cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
         app.MapPost("/api/exams/{examId:guid}/start", async (

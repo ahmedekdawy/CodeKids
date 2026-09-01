@@ -27,6 +27,11 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Student is not in this classroom.");
         }
 
+        if (!assignment.IsPublished)
+        {
+            throw new InvalidOperationException("Assignment is not available.");
+        }
+
         if (await dbContext.AssignmentSubmissions.AnyAsync(
                 x => x.AssignmentId == assignment.Id && x.StudentId == command.StudentId, cancellationToken))
         {

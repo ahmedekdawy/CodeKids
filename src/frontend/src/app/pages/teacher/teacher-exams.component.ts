@@ -45,6 +45,7 @@ export class TeacherExamsComponent {
   readonly error = signal('');
   readonly info = signal('');
   readonly generating = signal(false);
+  readonly publishingId = signal<string | null>(null);
 
   title = '';
   description = '';
@@ -53,6 +54,7 @@ export class TeacherExamsComponent {
   unitIds: string[] = [];
   lessonIds: string[] = [];
   xpReward = 40;
+  isPublished = false;
   questionCount = 6;
   reviewExamId = '';
   private readonly attemptDrafts = signal<Record<string, AttemptDraft>>({});
@@ -224,6 +226,7 @@ export class TeacherExamsComponent {
         title: this.title.trim(),
         description: this.description.trim() || undefined,
         xpReward: this.xpReward,
+        isPublished: this.isPublished,
         questionIds
       })
       .subscribe({
@@ -231,11 +234,37 @@ export class TeacherExamsComponent {
           this.info.set(this.locale.t('teacher.exams.created'));
           this.title = '';
           this.description = '';
+          this.isPublished = false;
           this.selectedIds.set(new Set());
           this.reloadExams();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.exams.createFailed'))
       });
+  }
+
+  publishExam(exam: Exam): void {
+    if (exam.isPublished || this.publishingId()) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.publishingId.set(exam.id);
+    this.api.publishExam(exam.id).subscribe({
+      next: () => {
+        this.publishingId.set(null);
+        this.info.set(this.locale.t('teacher.assessments.publishedSuccess'));
+        this.reloadExams();
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
+      }
+    });
+  }
+
+  isPublishing(id: string): boolean {
+    return this.publishingId() === id;
   }
 
   reviewExam(exam: Exam): void {

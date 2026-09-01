@@ -41,6 +41,10 @@
         />
       </label>
       <label>XP <input type="number" formControlName="xp" /></label>
+      <label class="checkbox">
+        <input type="checkbox" formControlName="isPublished" />
+        {{ 'teacher.assessments.publish' | t }}
+      </label>
       <label>
         {{ 'teacher.ai.questionCount' | t }}
         <input
@@ -212,7 +216,12 @@
     @for (quiz of pagedQuizzes(); track quiz.id) {
       <div class="meeting-row">
         <div>
-          <strong>{{ quiz.title }}</strong>
+          <div class="list-title-row">
+            <strong>{{ quiz.title }}</strong>
+            <span class="status-badge" [class.published]="quiz.isPublished" [class.draft]="!quiz.isPublished">
+              {{ (quiz.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
+            </span>
+          </div>
           <p class="meta">
             {{ quiz.courseTitle }}
             · {{ gradeLabel(quiz.courseGrade) }}
@@ -223,6 +232,11 @@
           </p>
         </div>
         <div class="row-actions">
+          @if (!quiz.isPublished) {
+            <button type="button" class="ghost-btn" [disabled]="isPublishing(quiz.id)" (click)="publishQuiz(quiz)">
+              {{ isPublishing(quiz.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
+            </button>
+          }
           <button type="button" class="ghost-btn" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
           <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(quiz)" />
           <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteQuiz(quiz)" />

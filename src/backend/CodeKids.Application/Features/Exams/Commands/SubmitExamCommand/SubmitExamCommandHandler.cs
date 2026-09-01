@@ -28,6 +28,11 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Student is not in this classroom.");
         }
 
+        if (!exam.IsPublished)
+        {
+            throw new InvalidOperationException("Exam is not available.");
+        }
+
         var student = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.StudentId, cancellationToken)
             ?? throw new InvalidOperationException("Student not found.");
 

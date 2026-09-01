@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Assignments;
 
-public sealed class UpdateAssignmentCommandHandler(IAppDbContext dbContext)
+public sealed class UpdateAssignmentCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<UpdateAssignmentCommand, AssignmentDto>
 {
     public async Task<AssignmentDto> Handle(UpdateAssignmentCommand command, CancellationToken cancellationToken)
@@ -50,6 +51,8 @@ public sealed class UpdateAssignmentCommandHandler(IAppDbContext dbContext)
         assignment.Description = (command.Description ?? string.Empty).Trim();
         assignment.DueAtUtc = command.DueAtUtc?.ToUniversalTime();
         assignment.XpReward = Math.Max(0, command.XpReward);
+        var wasPublished = assignment.IsPublished;
+        assignment.IsPublished = command.IsPublished;
 
         var incoming = command.Questions.ToList();
         var keptIds = incoming
@@ -116,6 +119,10 @@ public sealed class UpdateAssignmentCommandHandler(IAppDbContext dbContext)
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        if (!wasPublished && assignment.IsPublished)
+        {
+            await notifications.NotifyAssignmentCreatedAsync(assignment, cancellationToken);
+        }
         return (await CreateAssignmentCommandHandler.LoadAssignment(
             dbContext, assignment.Id, includeAnswerKey: true, cancellationToken))!;
     }

@@ -62,6 +62,7 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext, Notificati
             Title = title,
             Description = (command.Description ?? string.Empty).Trim(),
             XpReward = Math.Max(5, command.XpReward),
+            IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -103,7 +104,10 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext, Notificati
 
         dbContext.Quizzes.Add(quiz);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await notifications.NotifyQuizCreatedAsync(quiz, cancellationToken);
+        if (quiz.IsPublished)
+        {
+            await notifications.NotifyQuizCreatedAsync(quiz, cancellationToken);
+        }
         return GetQuizzesQueryHandler.Map(quiz);
     }
 }

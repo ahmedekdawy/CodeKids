@@ -15,6 +15,7 @@ public sealed record CreateExamRequest(
     string? Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<Guid> QuestionIds);
 
 public sealed record CreateExamCommand(
@@ -25,4 +26,5 @@ public sealed record CreateExamCommand(
     string? Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<Guid> QuestionIds) : ICommand<ExamDto>;

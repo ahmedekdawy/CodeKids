@@ -44,6 +44,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             Description = (command.Description ?? string.Empty).Trim(),
             DueAtUtc = command.DueAtUtc?.ToUniversalTime(),
             XpReward = Math.Max(0, command.XpReward),
+            IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -75,7 +76,10 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
 
         dbContext.Assignments.Add(assignment);
         await dbContext.SaveChangesAsync(cancellationToken);
-        await notifications.NotifyAssignmentCreatedAsync(assignment, cancellationToken);
+        if (assignment.IsPublished)
+        {
+            await notifications.NotifyAssignmentCreatedAsync(assignment, cancellationToken);
+        }
         return (await LoadAssignment(dbContext, assignment.Id, includeAnswerKey: true, cancellationToken))!;
     }
 
@@ -105,6 +109,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             assignment.Description,
             assignment.DueAtUtc,
             assignment.XpReward,
+            assignment.IsPublished,
             assignment.CreatedByUserId,
             assignment.CreatedBy?.DisplayName ?? "Teacher",
             includeSolutionVideo ? assignment.SolutionVideoMediaAssetId : null,

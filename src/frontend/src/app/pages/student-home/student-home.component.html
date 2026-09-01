@@ -123,7 +123,7 @@
 
               <div class="course-counts">
                 <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
-                <span>{{ 'student.quizCount' | t: { count: course.quizzes.length } }}</span>
+                <span>{{ 'student.quizCount' | t: { count: publishedQuizzes(course).length } }}</span>
                 @if (courseVideos(course).length) {
                   <span>{{ 'student.videoCount' | t: { count: courseVideos(course).length } }}</span>
                 }
@@ -152,11 +152,11 @@
                 </div>
               }
 
-              @if (course.quizzes.length) {
+              @if (publishedQuizzes(course).length) {
                 <div class="link-group">
                   <p class="group-label">{{ 'student.quizzes' | t }}</p>
                   <div class="chip-row">
-                    @for (quiz of course.quizzes; track quiz.id) {
+                    @for (quiz of publishedQuizzes(course); track quiz.id) {
                       <a class="chip quiz" [routerLink]="['/quizzes', quiz.id]">{{ quiz.title }}</a>
                     }
                   </div>
@@ -239,7 +239,7 @@
         <div class="task-group">
           <p class="group-label">{{ 'student.assignments' | t }}</p>
           <div class="item-list">
-            @for (assignment of assignments(); track assignment.id) {
+            @for (assignment of publishedAssignments(); track assignment.id) {
               <a class="item-row link-row" [routerLink]="['/assignments', assignment.id]">
                 <div class="item-body">
                   <strong>{{ assignment.title }}</strong>
@@ -256,7 +256,7 @@
         <div class="task-group">
           <p class="group-label">{{ 'student.exams' | t }}</p>
           <div class="item-list">
-            @for (exam of exams(); track exam.id) {
+            @for (exam of publishedExams(); track exam.id) {
               <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
                 <div class="item-body">
                   <strong>{{ exam.title }}</strong>

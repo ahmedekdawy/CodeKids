@@ -65,11 +65,13 @@ export class TeacherQuizzesComponent {
     lessonIds: [[] as string[]],
     classroomId: [''],
     xp: [30],
+    isPublished: [false],
     questionCount: [1],
     questions: this.fb.array([this.createQuestionGroup()])
   });
 
   readonly generating = signal(false);
+  readonly publishingId = signal<string | null>(null);
   readonly questionRenderKey = signal(0);
   editingQuizId: string | null = null;
 
@@ -358,7 +360,8 @@ export class TeacherQuizzesComponent {
       description: quiz.description,
       courseId: quiz.courseId,
       classroomId: quiz.classroomId || '',
-      xp: quiz.xpReward
+      xp: quiz.xpReward,
+      isPublished: quiz.isPublished
     });
     this.api.getTeacherQuiz(quiz.id).subscribe({
       next: (detail) => {
@@ -373,6 +376,7 @@ export class TeacherQuizzesComponent {
           courseId: detail.courseId,
           classroomId: detail.classroomId || '',
           xp: detail.xpReward,
+          isPublished: detail.isPublished,
           questionCount: this.questionsArray.length
         });
         document.getElementById('quiz-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -409,6 +413,31 @@ export class TeacherQuizzesComponent {
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.quizzes.deleteFailed'))
     });
+  }
+
+  publishQuiz(quiz: TeacherQuizListItem): void {
+    if (quiz.isPublished || this.publishingId()) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.publishingId.set(quiz.id);
+    this.api.publishQuiz(quiz.id).subscribe({
+      next: () => {
+        this.publishingId.set(null);
+        this.info.set(this.locale.t('teacher.assessments.publishedSuccess'));
+        this.reloadQuizzes();
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
+      }
+    });
+  }
+
+  isPublishing(id: string): boolean {
+    return this.publishingId() === id;
   }
 
   private saveQuiz(): void {
@@ -478,6 +507,7 @@ export class TeacherQuizzesComponent {
       title,
       description: formValue.description.trim() || undefined,
       xpReward: Number(formValue.xp) || 0,
+      isPublished: !!formValue.isPublished,
       questions: payloads
     };
 
@@ -587,6 +617,7 @@ export class TeacherQuizzesComponent {
       lessonIds: [],
       classroomId: classrooms[0]?.id ?? '',
       xp: 30,
+      isPublished: false,
       questionCount: 1
     });
     this.setQuestions([this.emptyQuestionDraft()]);

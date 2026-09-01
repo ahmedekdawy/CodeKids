@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Avatar, Badge, Classroom, Course, CourseTerm, CourseVideoSummary, Exam, LiveSession, StudentSummary } from '../../models';
+import { Assignment, Avatar, Badge, Classroom, Course, CourseQuiz, CourseTerm, CourseVideoSummary, Exam, LiveSession, StudentSummary } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
@@ -49,7 +49,9 @@ export class StudentHomeComponent {
 
   readonly selectedAvatar = computed(() => this.avatars().find((a) => a.isSelected) ?? null);
   readonly earnedBadges = computed(() => this.badges().filter((b) => b.isEarned));
-  readonly openTasks = computed(() => this.assignments().length + this.exams().length);
+  readonly publishedAssignments = computed(() => this.assignments().filter((a) => a.isPublished === true));
+  readonly publishedExams = computed(() => this.exams().filter((e) => e.isPublished === true));
+  readonly openTasks = computed(() => this.publishedAssignments().length + this.publishedExams().length);
   readonly classroomsWithZoom = computed(() => this.classrooms().filter((room) => classroomHasZoomLinks(room)));
 
   constructor() {
@@ -99,5 +101,9 @@ export class StudentHomeComponent {
 
   courseVideos(course: Course): CourseVideoSummary[] {
     return course.videos ?? [];
+  }
+
+  publishedQuizzes(course: Course): CourseQuiz[] {
+    return (course.quizzes ?? []).filter((quiz) => quiz.isPublished === true);
   }
 }

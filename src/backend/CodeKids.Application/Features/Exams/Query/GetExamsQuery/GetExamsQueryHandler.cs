@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.Classrooms;
 using CodeKids.Application.Features.QuestionBank;
@@ -29,6 +30,11 @@ public sealed class GetExamsQueryHandler(IAppDbContext dbContext)
         if (query.ClassroomId is Guid classroomId)
         {
             exams = exams.Where(x => x.ClassroomId == classroomId).ToList();
+        }
+
+        if (!PublishedAssessmentAccess.CanViewUnpublished(query.ViewerRole))
+        {
+            exams = exams.Where(x => x.IsPublished).ToList();
         }
 
         var isTeacher = string.Equals(query.ViewerRole, nameof(UserRole.Teacher), StringComparison.OrdinalIgnoreCase);

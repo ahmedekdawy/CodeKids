@@ -284,6 +284,8 @@ builder.Services.AddScoped<ICommandHandler<CreateQuizCommand, QuizDto>, CreateQu
 
 builder.Services.AddScoped<ICommandHandler<UpdateQuizCommand, QuizDto>, UpdateQuizCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<PublishQuizCommand, QuizDto>, PublishQuizCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<DeleteQuizCommand, bool>, DeleteQuizCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetTeacherQuizzesQuery, IReadOnlyList<TeacherQuizListDto>>, GetTeacherQuizzesQueryHandler>();
@@ -405,6 +407,7 @@ builder.Services.AddScoped<IQueryHandler<GetClassroomByIdQuery, ClassroomDto?>, 
 
 builder.Services.AddScoped<ICommandHandler<CreateAssignmentCommand, AssignmentDto>, CreateAssignmentCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateAssignmentCommand, AssignmentDto>, UpdateAssignmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<PublishAssignmentCommand, AssignmentDto>, PublishAssignmentCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteAssignmentCommand, bool>, DeleteAssignmentCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetAssignmentsQuery, IReadOnlyList<AssignmentDto>>, GetAssignmentsQueryHandler>();
@@ -426,6 +429,7 @@ builder.Services.AddScoped<ICommandHandler<UpdateBankQuestionCommand, BankQuesti
 builder.Services.AddScoped<ICommandHandler<DeleteBankQuestionCommand, bool>, DeleteBankQuestionCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateExamCommand, ExamDto>, CreateExamCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<PublishExamCommand, ExamDto>, PublishExamCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetExamsQuery, IReadOnlyList<ExamDto>>, GetExamsQueryHandler>();
 

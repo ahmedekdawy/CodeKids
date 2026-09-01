@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -12,8 +13,32 @@ public sealed class GetAssignmentByIdQueryHandler(IAppDbContext dbContext)
 {
     public async Task<AssignmentDto?> Handle(GetAssignmentByIdQuery query, CancellationToken cancellationToken)
     {
-        var includeKey = string.Equals(query.ViewerRole, nameof(UserRole.Teacher), StringComparison.OrdinalIgnoreCase)
-            || string.Equals(query.ViewerRole, nameof(UserRole.SuperAdmin), StringComparison.OrdinalIgnoreCase);
-        return await CreateAssignmentCommandHandler.LoadAssignment(dbContext, query.AssignmentId, includeKey, cancellationToken);
+        var includeKey = PublishedAssessmentAccess.CanViewUnpublished(query.ViewerRole);
+
+        var assignment = await dbContext.Assignments
+            .AsNoTracking()
+            .Include(x => x.Classroom)
+                .ThenInclude(c => c!.Courses)
+            .Include(x => x.CreatedBy)
+            .Include(x => x.Questions)
+            .FirstOrDefaultAsync(x => x.Id == query.AssignmentId, cancellationToken);
+
+        if (assignment is null)
+        {
+            return null;
+        }
+
+        var isStudent = string.Equals(query.ViewerRole, nameof(UserRole.Student), StringComparison.OrdinalIgnoreCase);
+        if (!includeKey && !assignment.IsPublished)
+        {
+            return null;
+        }
+
+        if (isStudent && assignment.Classroom?.Students.All(s => s.StudentId != query.ViewerUserId) != false)
+        {
+            return null;
+        }
+
+        return CreateAssignmentCommandHandler.Map(assignment, includeKey, includeSolutionVideo: includeKey);
     }
 }

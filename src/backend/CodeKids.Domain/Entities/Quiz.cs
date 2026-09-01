@@ -9,6 +9,7 @@ public class Quiz : TenantEntity
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int XpReward { get; set; }
+    public bool IsPublished { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
     public Course? Course { get; set; }
     public Classroom? Classroom { get; set; }

@@ -52,6 +52,7 @@ export class TeacherAssignmentsComponent {
   readonly error = signal('');
   readonly info = signal('');
   readonly generating = signal(false);
+  readonly publishingId = signal<string | null>(null);
 
   assignmentTitle = '';
   assignmentDescription = '';
@@ -60,6 +61,7 @@ export class TeacherAssignmentsComponent {
   assignmentUnitIds: string[] = [];
   assignmentLessonIds: string[] = [];
   assignmentXp = 25;
+  assignmentIsPublished = false;
   assignmentQuestionCount = 1;
   assignmentType: 'ShortAnswer' | 'MultipleChoice' = 'ShortAnswer';
   questions: AssignmentQuestionDraft[] = [emptyAssignmentQuestion()];
@@ -234,6 +236,7 @@ export class TeacherAssignmentsComponent {
     this.assignmentDescription = assignment.description;
     this.assignmentClassroomId = assignment.classroomId;
     this.assignmentXp = assignment.xpReward;
+    this.assignmentIsPublished = assignment.isPublished;
     this.questions = assignment.questions.length
       ? assignment.questions.map((question) => {
           const type =
@@ -261,6 +264,7 @@ export class TeacherAssignmentsComponent {
     this.editingDueAtUtc = null;
     this.assignmentTitle = '';
     this.assignmentDescription = '';
+    this.assignmentIsPublished = false;
     this.questions = [emptyAssignmentQuestion(this.assignmentType)];
     this.assignmentQuestionCount = 1;
     this.error.set('');
@@ -286,6 +290,31 @@ export class TeacherAssignmentsComponent {
     });
   }
 
+  publishAssignment(assignment: Assignment): void {
+    if (assignment.isPublished || this.publishingId()) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.publishingId.set(assignment.id);
+    this.api.publishAssignment(assignment.id).subscribe({
+      next: () => {
+        this.publishingId.set(null);
+        this.info.set(this.locale.t('teacher.assessments.publishedSuccess'));
+        this.reloadAssignments();
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
+      }
+    });
+  }
+
+  isPublishing(id: string): boolean {
+    return this.publishingId() === id;
+  }
+
   private saveAssignment(): void {
     this.error.set('');
     this.info.set('');
@@ -302,6 +331,7 @@ export class TeacherAssignmentsComponent {
       description: this.assignmentDescription,
       dueAtUtc: this.editingDueAtUtc,
       xpReward: this.assignmentXp,
+      isPublished: this.assignmentIsPublished,
       questions
     };
 

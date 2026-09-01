@@ -9,6 +9,7 @@ public sealed record UpdateAssignmentRequest(
     string? Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<AssignmentQuestionInput> Questions);
 
 public sealed record UpdateAssignmentCommand(
@@ -19,4 +20,5 @@ public sealed record UpdateAssignmentCommand(
     string? Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<AssignmentQuestionInput> Questions) : ICommand<AssignmentDto>;

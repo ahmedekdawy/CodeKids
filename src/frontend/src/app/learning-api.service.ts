@@ -251,6 +251,7 @@ export class LearningApiService {
     title: string;
     description?: string;
     xpReward: number;
+    isPublished: boolean;
     questions: {
       prompt: string;
       optionA?: string | null;
@@ -294,6 +295,7 @@ export class LearningApiService {
       title: string;
       description?: string;
       xpReward: number;
+      isPublished: boolean;
       questions: {
         id?: string | null;
         prompt: string;
@@ -312,6 +314,10 @@ export class LearningApiService {
 
   deleteQuiz(quizId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/teacher/quizzes/${quizId}`);
+  }
+
+  publishQuiz(quizId: string): Observable<Quiz> {
+    return this.http.post<Quiz>(`${this.baseUrl}/teacher/quizzes/${quizId}/publish`, {});
   }
 
   getQuizAttempts(quizId: string): Observable<QuizAttemptReview[]> {
@@ -1084,6 +1090,7 @@ export class LearningApiService {
     description?: string;
     dueAtUtc?: string | null;
     xpReward: number;
+    isPublished: boolean;
     questions: {
       prompt: string;
       questionType: string;
@@ -1108,6 +1115,7 @@ export class LearningApiService {
       description?: string;
       dueAtUtc?: string | null;
       xpReward: number;
+      isPublished: boolean;
       questions: {
         prompt: string;
         questionType: string;
@@ -1127,6 +1135,10 @@ export class LearningApiService {
 
   deleteAssignment(assignmentId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}`);
+  }
+
+  publishAssignment(assignmentId: string): Observable<Assignment> {
+    return this.http.post<Assignment>(`${this.baseUrl}/assignments/${assignmentId}/publish`, {});
   }
 
   submitAssignment(payload: {
@@ -1206,9 +1218,14 @@ export class LearningApiService {
     description?: string;
     dueAtUtc?: string | null;
     xpReward: number;
+    isPublished: boolean;
     questionIds: string[];
   }): Observable<Exam> {
     return this.http.post<Exam>(`${this.baseUrl}/exams`, payload);
+  }
+
+  publishExam(examId: string): Observable<Exam> {
+    return this.http.post<Exam>(`${this.baseUrl}/exams/${examId}/publish`, {});
   }
 
   submitExam(payload: {
