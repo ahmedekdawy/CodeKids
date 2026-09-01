@@ -3,6 +3,8 @@ import {
   DestroyRef,
   ElementRef,
   HostListener,
+  Injector,
+  afterNextRender,
   computed,
   forwardRef,
   inject,
@@ -45,6 +47,7 @@ export interface SelectOption {
 export class SearchableSelectComponent implements ControlValueAccessor {
   private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
   private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
 
   readonly options = input<SelectOption[]>([]);
@@ -149,10 +152,13 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     }
     this.query.set('');
     this.open.set(true);
-    requestAnimationFrame(() => {
-      this.positionPanel();
-      this.panel()?.nativeElement.querySelector<HTMLInputElement>('.ss-search')?.focus();
-    });
+    afterNextRender(
+      () => {
+        this.positionPanel();
+        this.panel()?.nativeElement.querySelector<HTMLInputElement>('.ss-search')?.focus();
+      },
+      { injector: this.injector }
+    );
   }
 
   isSelected(value: string | number | null): boolean {

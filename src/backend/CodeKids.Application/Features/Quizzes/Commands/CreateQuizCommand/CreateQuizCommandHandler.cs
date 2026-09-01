@@ -47,13 +47,19 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext, Notificati
             throw new InvalidOperationException("Add at least one question.");
         }
 
+        var title = (command.Title ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new InvalidOperationException("Quiz title is required.");
+        }
+
         var quiz = new Quiz
         {
             Id = Guid.NewGuid(),
             CourseId = command.CourseId,
             ClassroomId = command.ClassroomId,
             CreatedByUserId = command.TeacherUserId,
-            Title = command.Title.Trim(),
+            Title = title,
             Description = (command.Description ?? string.Empty).Trim(),
             XpReward = Math.Max(5, command.XpReward),
             CreatedAtUtc = DateTimeOffset.UtcNow

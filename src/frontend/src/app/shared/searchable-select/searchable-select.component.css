@@ -79,18 +79,6 @@
   transition: transform 0.15s ease;
 }
 
-.ss-panel.ss-panel--overlay {
-  position: fixed;
-  top: auto;
-  right: auto;
-  bottom: auto;
-  left: auto;
-  inset-inline-start: auto;
-  inset-inline-end: auto;
-  width: auto;
-  min-width: 0;
-}
-
 .ss-panel {
   position: absolute;
   z-index: 40;
@@ -107,6 +95,23 @@
   background: rgba(8, 18, 36, 0.98);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+}
+
+.ss-panel.ss-panel--overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  inset-inline-start: auto;
+  inset-inline-end: auto;
+  width: auto;
+  min-width: 0;
+  visibility: hidden;
+}
+
+.ss-panel.ss-panel--overlay.ss-panel--placed {
+  visibility: visible;
 }
 
 .ss-search {

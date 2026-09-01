@@ -89,6 +89,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
@@ -276,7 +282,13 @@ builder.Services.AddScoped<ICommandHandler<SubmitQuizCommand, SubmitQuizResponse
 
 builder.Services.AddScoped<ICommandHandler<CreateQuizCommand, QuizDto>, CreateQuizCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<UpdateQuizCommand, QuizDto>, UpdateQuizCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteQuizCommand, bool>, DeleteQuizCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetTeacherQuizzesQuery, IReadOnlyList<TeacherQuizListDto>>, GetTeacherQuizzesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetTeacherQuizByIdQuery, TeacherQuizDetailDto?>, GetTeacherQuizByIdQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetQuizAttemptsQuery, IReadOnlyList<QuizAttemptReviewDto>>, GetQuizAttemptsQueryHandler>();
 

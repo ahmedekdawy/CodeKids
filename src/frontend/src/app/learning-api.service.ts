@@ -56,6 +56,7 @@ import {
   Quiz,
   QuizAttemptReview,
   TeacherQuizListItem,
+  TeacherQuizDetail,
   SendClassroomWhatsAppResult,
   StudentSummary,
   SubmitQuizResponse,
@@ -279,6 +280,38 @@ export class LearningApiService {
     return this.http.get<TeacherQuizListItem[]>(
       `${this.baseUrl}/teacher/quizzes${query ? `?${query}` : ''}`
     );
+  }
+
+  getTeacherQuiz(quizId: string): Observable<TeacherQuizDetail> {
+    return this.http.get<TeacherQuizDetail>(`${this.baseUrl}/teacher/quizzes/${quizId}`);
+  }
+
+  updateQuiz(
+    quizId: string,
+    payload: {
+      courseId: string;
+      classroomId?: string | null;
+      title: string;
+      description?: string;
+      xpReward: number;
+      questions: {
+        id?: string | null;
+        prompt: string;
+        optionA?: string | null;
+        optionB?: string | null;
+        optionC?: string | null;
+        options?: string[];
+        correctOption: string;
+        sortOrder: number;
+        promptImageMediaAssetId?: string | null;
+      }[];
+    }
+  ): Observable<Quiz> {
+    return this.http.put<Quiz>(`${this.baseUrl}/teacher/quizzes/${quizId}`, payload);
+  }
+
+  deleteQuiz(quizId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/teacher/quizzes/${quizId}`);
   }
 
   getQuizAttempts(quizId: string): Observable<QuizAttemptReview[]> {

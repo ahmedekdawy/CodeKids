@@ -305,6 +305,26 @@ export interface TeacherQuizListItem {
   createdAtUtc: string;
 }
 
+export interface TeacherQuizQuestionDetail {
+  id: string;
+  prompt: string;
+  options: ChoiceOption[];
+  correctOption: string;
+  sortOrder: number;
+  promptImageMediaAssetId?: string | null;
+  promptImageUrl?: string | null;
+}
+
+export interface TeacherQuizDetail {
+  id: string;
+  courseId: string;
+  classroomId?: string | null;
+  title: string;
+  description: string;
+  xpReward: number;
+  questions: TeacherQuizQuestionDetail[];
+}
+
 export interface QuizAnswerReview {
   questionId: string;
   prompt: string;

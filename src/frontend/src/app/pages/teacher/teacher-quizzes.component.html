@@ -4,72 +4,116 @@
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
-  <section class="block">
-    <h3>{{ 'teacher.quizzes.list' | t }}</h3>
-    <div class="list-filters">
+  <section class="block" id="quiz-form-section">
+    <h3>{{ (editingQuizId ? 'teacher.quizzes.edit' : 'teacher.quizzes.create') | t }}</h3>
+    <form class="meeting-form" [formGroup]="quizForm" novalidate (ngSubmit)="createQuiz()">
+      <label>{{ 'common.title' | t }} <input formControlName="title" /></label>
+      <label>{{ 'common.description' | t }} <input formControlName="description" /></label>
       <label>
-        {{ 'teacher.quizzes.dateFrom' | t }}
-        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reloadQuizzes()" />
-      </label>
-      <label>
-        {{ 'teacher.quizzes.dateTo' | t }}
-        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reloadQuizzes()" />
-      </label>
-      <label>
-        {{ 'common.grade' | t }}
+        {{ 'common.course' | t }}
         <app-searchable-select
-          [(ngModel)]="filterGrade"
-          name="filterGrade"
-          (ngModelChange)="reloadQuizzes()"
-          [emptyLabel]="'common.allGrades' | t"
-          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
-        />
-      </label>
-      <label>
-        {{ 'teacher.quizzes.subject' | t }}
-        <app-searchable-select
-          [(ngModel)]="filterCourseId"
-          name="filterCourseId"
-          (ngModelChange)="reloadQuizzes()"
-          [emptyLabel]="'teacher.quizzes.allSubjects' | t"
+          formControlName="courseId"
+          [emptyLabel]="'common.selectCourse' | t"
           [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
         />
       </label>
-      <button type="button" class="ghost-btn" (click)="resetFilters()">
-        {{ 'common.clearFilters' | t }}
-      </button>
-    </div>
+      <label>
+        {{ 'common.units' | t }}
+        <app-searchable-multi-select
+          formControlName="unitIds"
+          [placeholder]="'common.selectUnits' | t"
+          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+        />
+      </label>
+      <label>
+        {{ 'common.lessons' | t }}
+        <app-searchable-multi-select
+          formControlName="lessonIds"
+          [placeholder]="'common.selectLessons' | t"
+          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
+        />
+      </label>
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          formControlName="classroomId"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
+      </label>
+      <label>XP <input type="number" formControlName="xp" /></label>
+      <label>
+        {{ 'teacher.ai.questionCount' | t }}
+        <input
+          type="number"
+          formControlName="questionCount"
+          min="1"
+          max="12"
+          (change)="onQuestionCountChange()"
+        />
+      </label>
 
-    @for (quiz of pagedQuizzes(); track quiz.id) {
-      <div class="meeting-row">
-        <div>
-          <strong>{{ quiz.title }}</strong>
-          <p class="meta">
-            {{ quiz.courseTitle }}
-            · {{ gradeLabel(quiz.courseGrade) }}
-            @if (quiz.classroomName) { · {{ quiz.classroomName }} }
-            · {{ quiz.questionCount }} {{ 'common.questions' | t }}
-            · {{ quiz.attemptCount }} {{ 'teacher.quizzes.attemptsCount' | t }}
-            · {{ dateLabel(quiz.createdAtUtc) }}
-          </p>
-        </div>
-        <button type="button" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
+      <div class="questions-group" formArrayName="questions">
+        @for (_ of questionsArray.controls; track questionRenderTrackId($index); let qi = $index) {
+          <div class="question-card" [formGroupName]="qi">
+            <div class="question-card-head">
+              <strong>{{ 'teacher.quizzes.questionNumber' | t:{ n: qi + 1 } }}</strong>
+              <app-icon-action-button
+                kind="delete"
+                variant="ghost"
+                [label]="'teacher.quizzes.removeQuestion' | t"
+                [disabled]="questionsArray.length <= 1"
+                (action)="removeQuestion(qi)"
+              />
+            </div>
+            <label class="question-prompt">
+              {{ 'teacher.quizzes.question' | t }}
+              <textarea formControlName="prompt" rows="2"></textarea>
+            </label>
+            <app-question-image-upload
+              [mediaAssetId]="questionGroup(qi).controls['promptImageMediaAssetId'].value"
+              [imageUrl]="questionGroup(qi).controls['promptImageUrl'].value"
+              (mediaAssetIdChange)="questionGroup(qi).patchValue({ promptImageMediaAssetId: $event })"
+              (imageUrlChange)="questionGroup(qi).patchValue({ promptImageUrl: $event })"
+            />
+            <div class="options-editor">
+              <div class="options-list" formArrayName="options">
+                @for (__ of optionsArray(qi).controls; track $index; let oi = $index) {
+                  <label [formGroupName]="oi">
+                    {{ optionLabel(oi) }}
+                    <input
+                      formControlName="text"
+                      [placeholder]="'common.optionText' | t"
+                      (input)="onOptionTextChange(qi)"
+                    />
+                  </label>
+                }
+              </div>
+              <label class="correct-answer-field">
+                {{ 'common.correctAnswer' | t }}
+                <app-searchable-select
+                  formControlName="correct"
+                  [emptyLabel]="'common.selectCorrect' | t"
+                  [options]="filledOptions(qi).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+                />
+              </label>
+            </div>
+          </div>
+        }
       </div>
-    } @empty {
-      <p class="meta">{{ 'teacher.quizzes.empty' | t }}</p>
-    }
-
-    @if (quizzes().length) {
-      <div class="list-pager">
-        <button type="button" class="ghost-btn" [disabled]="quizListPage() <= 1" (click)="goToQuizListPage(quizListPage() - 1)">
-          {{ 'common.previous' | t }}
+      <div class="form-actions">
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="generating() || !quizForm.controls.courseId.value"
+          (click)="generate()">
+          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
         </button>
-        <span class="meta">{{ 'common.pageOf' | t: { page: quizListPage(), pages: quizTotalPages() } }}</span>
-        <button type="button" class="ghost-btn" [disabled]="quizListPage() >= quizTotalPages()" (click)="goToQuizListPage(quizListPage() + 1)">
-          {{ 'common.next' | t }}
-        </button>
+        <button type="submit">{{ (editingQuizId ? 'teacher.quizzes.save' : 'teacher.quizzes.create') | t }}</button>
+        @if (editingQuizId) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
       </div>
-    }
+    </form>
   </section>
 
   @if (reviewQuizId) {
@@ -128,120 +172,76 @@
   }
 
   <section class="block">
-    <h3>{{ 'teacher.quizzes.create' | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createQuiz()">
-      <label>{{ 'common.title' | t }} <input [(ngModel)]="quizTitle" name="quizTitle" required /></label>
-      <label>{{ 'common.description' | t }} <input [(ngModel)]="quizDescription" name="quizDescription" /></label>
+    <h3>{{ 'teacher.quizzes.list' | t }}</h3>
+    <div class="list-filters">
       <label>
-        {{ 'common.course' | t }}
+        {{ 'teacher.quizzes.dateFrom' | t }}
+        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" [ngModelOptions]="{ standalone: true }" (ngModelChange)="reloadQuizzes()" />
+      </label>
+      <label>
+        {{ 'teacher.quizzes.dateTo' | t }}
+        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" [ngModelOptions]="{ standalone: true }" (ngModelChange)="reloadQuizzes()" />
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
         <app-searchable-select
-          [(ngModel)]="quizCourseId"
-          name="quizCourseId"
-          (ngModelChange)="onCourseChange()"
-          required
-          [emptyLabel]="'common.selectCourse' | t"
+          [(ngModel)]="filterGrade"
+          name="filterGrade"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="reloadQuizzes()"
+          [emptyLabel]="'common.allGrades' | t"
+          [options]="grades.map(g => ({ value: g, label: gradeLabel(g) }))"
+        />
+      </label>
+      <label>
+        {{ 'teacher.quizzes.subject' | t }}
+        <app-searchable-select
+          [(ngModel)]="filterCourseId"
+          name="filterCourseId"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="reloadQuizzes()"
+          [emptyLabel]="'teacher.quizzes.allSubjects' | t"
           [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
         />
       </label>
-      <label>
-        {{ 'common.units' | t }}
-        <app-searchable-multi-select
-          [(ngModel)]="quizUnitIds"
-          name="quizUnitIds"
-          (ngModelChange)="onUnitsChange()"
-          [placeholder]="'common.selectUnits' | t"
-          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
-        />
-      </label>
-      <label>
-        {{ 'common.lessons' | t }}
-        <app-searchable-multi-select
-          [(ngModel)]="quizLessonIds"
-          name="quizLessonIds"
-          [placeholder]="'common.selectLessons' | t"
-          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
-        />
-      </label>
-      <label>
-        {{ 'common.classroom' | t }}
-        <app-searchable-select
-          [(ngModel)]="quizClassroomId"
-          name="quizClassroomId"
-          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
-        />
-      </label>
-      <label>XP <input type="number" [(ngModel)]="quizXp" name="quizXp" /></label>
-      <label>
-        {{ 'teacher.ai.questionCount' | t }}
-        <input
-          type="number"
-          [(ngModel)]="quizQuestionCount"
-          name="quizQuestionCount"
-          min="1"
-          max="12"
-          (ngModelChange)="onQuestionCountChange()"
-        />
-      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
 
-      <div class="questions-group">
-        @for (question of questions; track $index; let qi = $index) {
-          <div class="question-card">
-            <div class="question-card-head">
-              <strong>{{ 'teacher.quizzes.questionNumber' | t:{ n: qi + 1 } }}</strong>
-              <app-icon-action-button
-                kind="delete"
-                variant="ghost"
-                [label]="'teacher.quizzes.removeQuestion' | t"
-                [disabled]="questions.length <= 1"
-                (action)="removeQuestion(qi)"
-              />
-            </div>
-            <label class="question-prompt">
-              {{ 'teacher.quizzes.question' | t }}
-              <textarea [(ngModel)]="question.prompt" [name]="'quizPrompt-' + qi" rows="2" required></textarea>
-            </label>
-            <app-question-image-upload
-              [mediaAssetId]="question.promptImageMediaAssetId ?? null"
-              [imageUrl]="question.promptImageUrl ?? null"
-              (mediaAssetIdChange)="question.promptImageMediaAssetId = $event"
-              (imageUrlChange)="question.promptImageUrl = $event"
-            />
-            <div class="options-editor">
-              @for (opt of question.options; track $index; let oi = $index) {
-                <label>
-                  {{ optionLabel(oi) }}
-                  <input
-                    [(ngModel)]="opt.text"
-                    [name]="'quizOpt-' + qi + '-' + oi"
-                    [placeholder]="'common.optionText' | t"
-                    (ngModelChange)="onOptionTextChange(question)"
-                  />
-                </label>
-              }
-              <label>
-                {{ 'common.correctAnswer' | t }}
-                <app-searchable-select
-                  [(ngModel)]="question.correct"
-                  [name]="'quizCorrect-' + qi"
-                  required
-                  [emptyLabel]="'common.selectCorrect' | t"
-                  [options]="filledOptions(question).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
-                />
-              </label>
-            </div>
-          </div>
-        }
+    @for (quiz of pagedQuizzes(); track quiz.id) {
+      <div class="meeting-row">
+        <div>
+          <strong>{{ quiz.title }}</strong>
+          <p class="meta">
+            {{ quiz.courseTitle }}
+            · {{ gradeLabel(quiz.courseGrade) }}
+            @if (quiz.classroomName) { · {{ quiz.classroomName }} }
+            · {{ quiz.questionCount }} {{ 'common.questions' | t }}
+            · {{ quiz.attemptCount }} {{ 'teacher.quizzes.attemptsCount' | t }}
+            · {{ dateLabel(quiz.createdAtUtc) }}
+          </p>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="ghost-btn" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
+          <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(quiz)" />
+          <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteQuiz(quiz)" />
+        </div>
       </div>
-      <div class="form-actions">
-        <button
-          type="button"
-          class="ghost-btn"
-          [disabled]="generating() || !quizCourseId"
-          (click)="generate()">
-          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+    } @empty {
+      <p class="meta">{{ 'teacher.quizzes.empty' | t }}</p>
+    }
+
+    @if (quizzes().length) {
+      <div class="list-pager">
+        <button type="button" class="ghost-btn" [disabled]="quizListPage() <= 1" (click)="goToQuizListPage(quizListPage() - 1)">
+          {{ 'common.previous' | t }}
         </button>
-        <button type="submit">{{ 'teacher.quizzes.create' | t }}</button>
+        <span class="meta">{{ 'common.pageOf' | t: { page: quizListPage(), pages: quizTotalPages() } }}</span>
+        <button type="button" class="ghost-btn" [disabled]="quizListPage() >= quizTotalPages()" (click)="goToQuizListPage(quizListPage() + 1)">
+          {{ 'common.next' | t }}
+        </button>
       </div>
-    </form>
+    }
   </section>
 </div>

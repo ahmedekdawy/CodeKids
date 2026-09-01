@@ -303,6 +303,11 @@ textarea {
   border-color: #a7f3d0;
   color: #065f46;
 }
+[data-theme=light] .chip.video {
+  background: #fff7d6;
+  border-color: #fde68a;
+  color: #92400e;
+}
 html[dir=rtl] {
   --font-body:
     "Cairo",

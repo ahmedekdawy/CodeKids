@@ -158,6 +158,70 @@ public static class QuizzesEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapGet("/api/teacher/quizzes/{quizId:guid}", async (
+            Guid quizId,
+            HttpContext httpContext,
+            IQueryHandler<GetTeacherQuizByIdQuery, TeacherQuizDetailDto?> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var quiz = await handler.Handle(new GetTeacherQuizByIdQuery(userId, quizId), cancellationToken);
+                return quiz is null ? Results.NotFound() : Results.Ok(quiz);
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapPut("/api/teacher/quizzes/{quizId:guid}", async (
+            Guid quizId,
+            UpdateQuizRequest request,
+            HttpContext httpContext,
+            ICommandHandler<UpdateQuizCommand, QuizDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new UpdateQuizCommand(
+                        userId,
+                        quizId,
+                        request.CourseId,
+                        request.ClassroomId,
+                        request.Title,
+                        request.Description,
+                        request.XpReward,
+                        request.Questions),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapDelete("/api/teacher/quizzes/{quizId:guid}", async (
+            Guid quizId,
+            HttpContext httpContext,
+            ICommandHandler<DeleteQuizCommand, bool> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                await handler.Handle(new DeleteQuizCommand(userId, quizId), cancellationToken);
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
         app.MapGet("/api/teacher/quizzes/{quizId:guid}/attempts", async (
             Guid quizId,
             HttpContext httpContext,

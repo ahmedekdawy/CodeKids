@@ -14,7 +14,7 @@ public static class ApiResults
 
         {
 
-            return Results.BadRequest(new { code = api.Code, message = api.Message, args = api.Args });
+            return Results.BadRequest(new { code = api.Code, message = api.Message+"-"+api.StackTrace, args = api.Args });
 
         }
 
@@ -24,7 +24,7 @@ public static class ApiResults
 
         {
 
-            return Results.BadRequest(new { code = resolved.Value.Code, message = ex.Message, args = resolved.Value.Args });
+            return Results.BadRequest(new { code = resolved.Value.Code, message = ex.Message+"-"+ex.StackTrace, args = resolved.Value.Args });
 
         }
 

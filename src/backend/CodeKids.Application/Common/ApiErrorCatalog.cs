@@ -88,6 +88,8 @@ public static class ApiErrorCatalog
         ["Submission not found."] = "api.errors.assignment.submissionNotFound",
         ["Only the classroom teacher can grade submissions."] = "api.errors.assignment.teacherOnlyGrade",
         ["Quiz not found."] = "api.errors.quiz.notFound",
+        ["Quiz title is required."] = "api.errors.quiz.titleRequired",
+        ["Only the quiz teacher can manage this quiz."] = "api.errors.quiz.teacherOnlyManage",
         ["Only the assigned classroom teacher can create quizzes for that classroom."] = "api.errors.quiz.teacherOnlyCreate",
         ["Teacher must be assigned to a classroom before creating quizzes."] = "api.errors.quiz.teacherNeedsClassroom",
         ["Each quiz question needs at least two options."] = "api.errors.quiz.minOptions",
