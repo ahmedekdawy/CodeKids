@@ -170,7 +170,7 @@ public static class MediaEndpoints
             {
                 return ApiResults.ProblemFromException(ex);
             }
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
 
         app.MapGet("/api/media/course-videos", async (
             HttpContext httpContext,

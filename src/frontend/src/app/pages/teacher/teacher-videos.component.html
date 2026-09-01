@@ -105,7 +105,7 @@
           <app-searchable-select
             [(ngModel)]="selectedLessonId"
             name="lessonId"
-            [emptyLabel]="'common.lesson' | t"
+            [emptyLabel]="'videos.optionalLesson' | t"
             [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
           />
         </label>
@@ -128,12 +128,24 @@
             [disabled]="uploading()"
           />
         </label>
+        @if (uploadProgress() != null) {
+          <div class="upload-progress" aria-live="polite">
+            <div class="upload-progress-bar">
+              <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
+            </div>
+            <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+          </div>
+        }
         <div class="video-upload-actions">
           <button type="submit" [disabled]="uploading() || !lessonVideoUrl.trim()">
             {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
           </button>
           <button type="button" [disabled]="uploading() || !lessonVideoFile()" (click)="attachLessonVideoFile()">
-            {{ (uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t }}
+            {{
+              uploadProgress() != null
+                ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
+            }}
           </button>
         </div>
       </form>
@@ -336,12 +348,24 @@
             [disabled]="uploading()"
           />
         </label>
+        @if (uploadProgress() != null) {
+          <div class="upload-progress" aria-live="polite">
+            <div class="upload-progress-bar">
+              <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
+            </div>
+            <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+          </div>
+        }
         <div class="video-upload-actions">
           <button type="submit" [disabled]="uploading() || !solutionVideoUrl.trim()">
             {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
           </button>
           <button type="button" [disabled]="uploading() || !solutionVideoFile()" (click)="attachSolutionVideoFile()">
-            {{ (uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t }}
+            {{
+              uploadProgress() != null
+                ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
+            }}
           </button>
         </div>
       </form>

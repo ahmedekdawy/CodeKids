@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import {
   Appointment,
   Assignment,
@@ -1242,6 +1242,37 @@ export class LearningApiService {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/upload`, form);
+  }
+
+  uploadMediaWithProgress(
+    file: File,
+    durationSeconds?: number
+  ): Observable<{ progress: number; asset?: MediaAsset }> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    if (durationSeconds && durationSeconds > 0) {
+      form.append('durationSeconds', String(Math.round(durationSeconds)));
+    }
+
+    return this.http
+      .post<MediaAsset>(`${this.baseUrl}/media/upload`, form, {
+        reportProgress: true,
+        observe: 'events'
+      })
+      .pipe(
+        map((event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const total = event.total ?? 0;
+            const progress = total > 0 ? Math.round((100 * event.loaded) / total) : 0;
+            return { progress };
+          }
+          if (event.type === HttpEventType.Response) {
+            return { progress: 100, asset: event.body ?? undefined };
+          }
+          return null;
+        }),
+        filter((update): update is { progress: number; asset?: MediaAsset } => update !== null)
+      );
   }
 
   uploadQuestionImage(file: File): Observable<{ id: string; url: string; contentType: string }> {
