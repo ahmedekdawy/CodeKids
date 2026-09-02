@@ -404,6 +404,50 @@ public static class ClassroomsEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin,Teacher" });
 
+        app.MapGet("/api/classrooms/enrollments", async (
+
+            Guid? classroomId,
+
+            Guid? courseId,
+
+            string? studentSearch,
+
+            string? sortKey,
+
+            string? sortDir,
+
+            int? page,
+
+            int? pageSize,
+
+            IQueryHandler<ListClassroomEnrollmentsQuery, PagedClassroomEnrollmentsResultDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            return Results.Ok(await handler.Handle(
+
+                new ListClassroomEnrollmentsQuery(
+
+                    classroomId,
+
+                    courseId,
+
+                    studentSearch,
+
+                    sortKey ?? "classroomName",
+
+                    sortDir ?? "asc",
+
+                    page ?? 1,
+
+                    pageSize ?? 10),
+
+                cancellationToken));
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         return app;
 
     }

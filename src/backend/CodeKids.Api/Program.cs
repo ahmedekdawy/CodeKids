@@ -405,6 +405,8 @@ builder.Services.AddScoped<ICommandHandler<SendClassroomWhatsAppCommand, SendCla
 
 builder.Services.AddScoped<IQueryHandler<GetClassroomsQuery, IReadOnlyList<ClassroomDto>>, GetClassroomsQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListClassroomEnrollmentsQuery, PagedClassroomEnrollmentsResultDto>, ListClassroomEnrollmentsQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetClassroomByIdQuery, ClassroomDto?>, GetClassroomByIdQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateAssignmentCommand, AssignmentDto>, CreateAssignmentCommandHandler>();

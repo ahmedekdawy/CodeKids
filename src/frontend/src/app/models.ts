@@ -961,6 +961,23 @@ export interface EnrollStudentResult {
   whatsAppStatus: string;
 }
 
+export interface ClassroomEnrollmentListItem {
+  classroomId: string;
+  classroomName: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  enrolledCourseIds: string[];
+  enrolledCourseTitles: string[];
+}
+
+export interface PagedClassroomEnrollments {
+  items: ClassroomEnrollmentListItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface SendClassroomWhatsAppResult {
   sentCount: number;
   failedCount: number;

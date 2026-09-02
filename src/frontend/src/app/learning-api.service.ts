@@ -26,6 +26,7 @@ import {
   ClassroomDiagnosis,
   DailyWhatsAppReportsResult,
   EnrollStudentResult,
+  PagedClassroomEnrollments,
   Exam,
   ExamAttempt,
   FixedTimetableEntry,
@@ -991,6 +992,29 @@ export class LearningApiService {
 
   getClassrooms(): Observable<Classroom[]> {
     return this.http.get<Classroom[]>(`${this.baseUrl}/classrooms`);
+  }
+
+  getClassroomEnrollments(params: {
+    classroomId?: string;
+    courseId?: string;
+    studentSearch?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedClassroomEnrollments> {
+    const query = new URLSearchParams();
+    if (params.classroomId) query.set('classroomId', params.classroomId);
+    if (params.courseId) query.set('courseId', params.courseId);
+    if (params.studentSearch?.trim()) query.set('studentSearch', params.studentSearch.trim());
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedClassroomEnrollments>(
+      `${this.baseUrl}/classrooms/enrollments${qs ? `?${qs}` : ''}`
+    );
   }
 
   createClassroom(payload: {
