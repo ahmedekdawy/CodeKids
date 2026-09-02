@@ -86,10 +86,19 @@
           [options]="filterGradeOptions()"
         />
       </label>
+      <label>
+        {{ 'common.rowsPerPage' | t }}
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="coursePageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
+        />
+      </label>
       @if (hasActiveFilters()) {
         <button type="button" class="ghost-btn" (click)="clearFilters()">{{ 'common.clearFilters' | t }}</button>
       }
-      <span class="meta">{{ 'common.ofShown' | t: { shown: sortedCourses().length, total: courses().length } }}</span>
+      <span class="meta">{{ 'common.ofShown' | t: { shown: courses().length, total: totalCount() } }}</span>
     </div>
     <div class="table-wrap">
       <table class="data-table">
@@ -106,7 +115,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (course of sortedCourses(); track course.id) {
+          @for (course of courses(); track course.id) {
             <tr>
               @if (editingId() === course.id) {
                 <td>
@@ -184,6 +193,15 @@
           }
         </tbody>
       </table>
+    </div>
+    <div class="pager">
+      <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ 'common.previous' | t }}
+      </button>
+      <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+      <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ 'common.next' | t }}
+      </button>
     </div>
   </section>
 </div>

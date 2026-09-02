@@ -602,6 +602,7 @@ export const EN: Record<string, string> = {
   'admin.courses.createFailed': 'Could not create course.',
   'admin.courses.updateFailed': 'Could not update course.',
   'admin.courses.deleteFailed': 'Could not delete course.',
+  'admin.courses.listFailed': 'Could not load courses.',
   'admin.courses.allHint': 'Pick a stage for all grades in that stage, and/or specific grades (one course each). Leave both empty for all students.',
   'admin.courseTree.title': 'Course index',
   'admin.courseTree.subtitle': 'Build each course as units, then add lessons under each unit.',

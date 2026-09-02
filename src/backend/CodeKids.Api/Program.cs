@@ -219,6 +219,7 @@ builder.Services.AddScoped<ICommandHandler<VerifyTenantCommand, VerifyTenantResu
 
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetCourseByIdQuery, CourseDto?>, GetCourseByIdQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListAdminCoursesQuery, PagedCoursesResultDto>, ListAdminCoursesQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListStagesQuery, IReadOnlyList<StageDto>>, ListStagesQueryHandler>();
 
@@ -476,6 +477,7 @@ builder.Services.AddScoped<IQueryHandler<ListStudentWeeklyReportsQuery, IReadOnl
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyList<StudentWeeklyReportGridRowDto>>, SaveWeeklyReportsCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListAdminWeeklyStudyPlansQuery, PagedWeeklyStudyPlansResultDto>, ListAdminWeeklyStudyPlansQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyStudyPlanCommand, WeeklyStudyPlanDto>, SaveWeeklyStudyPlanCommandHandler>();
 

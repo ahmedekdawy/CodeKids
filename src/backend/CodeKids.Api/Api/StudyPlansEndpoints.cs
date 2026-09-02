@@ -34,6 +34,31 @@ public static class StudyPlansEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,Student,Parent,SuperAdmin" });
 
+        app.MapGet("/api/admin/study-plans", async (
+            Guid? teacherId,
+            Guid? courseId,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            string? sortKey,
+            string? sortDir,
+            int? page,
+            int? pageSize,
+            IQueryHandler<ListAdminWeeklyStudyPlansQuery, PagedWeeklyStudyPlansResultDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            return Results.Ok(await handler.Handle(
+                new ListAdminWeeklyStudyPlansQuery(
+                    teacherId,
+                    courseId,
+                    fromDate,
+                    toDate,
+                    sortKey ?? "fromDate",
+                    sortDir ?? "desc",
+                    page ?? 1,
+                    pageSize ?? 10),
+                cancellationToken));
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPut("/api/study-plans", async (
             HttpContext httpContext,
             SaveWeeklyStudyPlanRequest request,

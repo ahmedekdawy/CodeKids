@@ -12,7 +12,7 @@
         <app-searchable-select
           [ngModel]="filterTeacherId()"
           name="filterTeacherId"
-          (ngModelChange)="filterTeacherId.set($event); loadPlans()"
+          (ngModelChange)="setFilterTeacher($event)"
           [emptyLabel]="'common.all' | t"
           [options]="teacherOptions()"
         />
@@ -22,7 +22,7 @@
         <app-searchable-select
           [ngModel]="filterCourseId()"
           name="filterCourseId"
-          (ngModelChange)="filterCourseId.set($event); loadPlans()"
+          (ngModelChange)="setFilterCourse($event)"
           [emptyLabel]="'common.all' | t"
           [options]="courseOptions()"
         />
@@ -33,7 +33,7 @@
           type="date"
           [ngModel]="filterFromDate()"
           name="filterFromDate"
-          (ngModelChange)="filterFromDate.set($event); loadPlans()"
+          (ngModelChange)="setFilterFromDate($event)"
         />
       </label>
       <label>
@@ -42,23 +42,43 @@
           type="date"
           [ngModel]="filterToDate()"
           name="filterToDate"
-          (ngModelChange)="filterToDate.set($event); loadPlans()"
+          (ngModelChange)="setFilterToDate($event)"
+        />
+      </label>
+      <label>
+        {{ 'common.rowsPerPage' | t }}
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="studyPlanPageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
         />
       </label>
       <button type="button" class="ghost-btn" (click)="resetFilters()">
         {{ 'common.clearFilters' | t }}
       </button>
+      <span class="meta">{{ 'common.ofShown' | t: { shown: plans().length, total: totalCount() } }}</span>
     </div>
 
     <div class="table-wrap">
       <table class="data-table">
         <thead>
           <tr>
-            <th>{{ 'common.teacher' | t }}</th>
-            <th>{{ 'common.course' | t }}</th>
-            <th>{{ 'teacher.attendance.dateFrom' | t }}</th>
-            <th>{{ 'teacher.attendance.dateTo' | t }}</th>
-            <th>{{ 'teacher.studyPlans.weeksCount' | t }}</th>
+            <th class="sortable" (click)="setSort('teacherName')">
+              {{ 'common.teacher' | t }} <span class="sort-mark">{{ sortMark('teacherName') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('courseName')">
+              {{ 'common.course' | t }} <span class="sort-mark">{{ sortMark('courseName') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('fromDate')">
+              {{ 'teacher.attendance.dateFrom' | t }} <span class="sort-mark">{{ sortMark('fromDate') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('toDate')">
+              {{ 'teacher.attendance.dateTo' | t }} <span class="sort-mark">{{ sortMark('toDate') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('weeksCount')">
+              {{ 'teacher.studyPlans.weeksCount' | t }} <span class="sort-mark">{{ sortMark('weeksCount') }}</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -81,6 +101,15 @@
           }
         </tbody>
       </table>
+    </div>
+    <div class="pager">
+      <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ 'common.previous' | t }}
+      </button>
+      <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+      <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ 'common.next' | t }}
+      </button>
     </div>
   </section>
 

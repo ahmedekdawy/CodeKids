@@ -27,6 +27,8 @@ import {
   DailyWhatsAppReportsResult,
   EnrollStudentResult,
   PagedClassroomEnrollments,
+  PagedCourses,
+  PagedWeeklyStudyPlans,
   Exam,
   ExamAttempt,
   FixedTimetableEntry,
@@ -590,6 +592,29 @@ export class LearningApiService {
     return this.http.get<WeeklyStudyPlan[]>(`${this.baseUrl}/study-plans${query ? `?${query}` : ''}`);
   }
 
+  getAdminStudyPlans(params: {
+    teacherId?: string;
+    courseId?: string;
+    fromDate?: string;
+    toDate?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedWeeklyStudyPlans> {
+    const query = new URLSearchParams();
+    if (params.teacherId) query.set('teacherId', params.teacherId);
+    if (params.courseId) query.set('courseId', params.courseId);
+    if (params.fromDate) query.set('fromDate', params.fromDate);
+    if (params.toDate) query.set('toDate', params.toDate);
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedWeeklyStudyPlans>(`${this.baseUrl}/admin/study-plans${qs ? `?${qs}` : ''}`);
+  }
+
   saveStudyPlan(payload: {
     id?: string | null;
     courseId: string;
@@ -848,6 +873,27 @@ export class LearningApiService {
     frontendRedirectUri?: string | null;
   }): Observable<ZoomOAuthSettings> {
     return this.http.put<ZoomOAuthSettings>(`${this.baseUrl}/zoom/oauth-settings`, payload);
+  }
+
+  getAdminCourses(params: {
+    titleSearch?: string;
+    stageId?: number;
+    grade?: number;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedCourses> {
+    const query = new URLSearchParams();
+    if (params.titleSearch?.trim()) query.set('titleSearch', params.titleSearch.trim());
+    if (params.stageId != null) query.set('stageId', String(params.stageId));
+    if (params.grade != null) query.set('grade', String(params.grade));
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedCourses>(`${this.baseUrl}/admin/courses${qs ? `?${qs}` : ''}`);
   }
 
   createCourse(payload: {

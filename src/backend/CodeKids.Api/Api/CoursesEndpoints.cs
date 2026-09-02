@@ -83,6 +83,50 @@ public static class CoursesEndpoints
             return course is null ? Results.NotFound() : Results.Ok(course);
         }).RequireAuthorization();
 
+        app.MapGet("/api/admin/courses", async (
+
+            string? titleSearch,
+
+            int? stageId,
+
+            int? grade,
+
+            string? sortKey,
+
+            string? sortDir,
+
+            int? page,
+
+            int? pageSize,
+
+            IQueryHandler<ListAdminCoursesQuery, PagedCoursesResultDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            return Results.Ok(await handler.Handle(
+
+                new ListAdminCoursesQuery(
+
+                    titleSearch,
+
+                    stageId,
+
+                    grade,
+
+                    sortKey ?? "title",
+
+                    sortDir ?? "asc",
+
+                    page ?? 1,
+
+                    pageSize ?? 10),
+
+                cancellationToken));
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPost("/api/admin/courses", async (
 
             CreateCourseRequest request,

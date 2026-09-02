@@ -602,6 +602,7 @@ export const AR: Record<string, string> = {
   'admin.courses.createFailed': 'تعذّر إنشاء المادة.',
   'admin.courses.updateFailed': 'تعذّر تحديث المادة.',
   'admin.courses.deleteFailed': 'تعذّر حذف المادة.',
+  'admin.courses.listFailed': 'تعذّر تحميل المواد.',
   'admin.courses.allHint': 'اختر مرحلة لكل صفوفها، و/أو صفوفًا محددة (مادة لكل صف). اترك الاثنين فارغين لجميع الطلاب.',
   'admin.courseTree.title': 'فهرس المادة',
   'admin.courseTree.subtitle': 'ابنِ كل مادة كوحدات، ثم أضف الدروس تحت كل وحدة.',

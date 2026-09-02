@@ -978,6 +978,20 @@ export interface PagedClassroomEnrollments {
   pageSize: number;
 }
 
+export interface PagedCourses {
+  items: Course[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface PagedWeeklyStudyPlans {
+  items: WeeklyStudyPlan[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface SendClassroomWhatsAppResult {
   sentCount: number;
   failedCount: number;
