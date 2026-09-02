@@ -1,7 +1,8 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../auth.service';
 import { map } from 'rxjs';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -63,8 +64,10 @@ const ROLE_META: Record<
 })
 export class AdminUsersComponent {
   private readonly api = inject(LearningApiService);
+  private readonly auth = inject(AuthService);
   private readonly locale = inject(LocaleService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly managedRole = toSignal(
@@ -80,6 +83,7 @@ export class AdminUsersComponent {
   readonly sortKey = signal<string>('displayName');
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
+  readonly impersonatingId = signal<string | null>(null);
   readonly page = signal(1);
   readonly pageSize = signal(10);
   readonly filterName = signal('');
@@ -464,6 +468,21 @@ export class AdminUsersComponent {
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.deleteFailed'))
+    });
+  }
+
+  loginAs(user: ManagedUser): void {
+    this.clearStatus();
+    this.impersonatingId.set(user.id);
+    this.auth.impersonate(user.id).subscribe({
+      next: () => {
+        this.impersonatingId.set(null);
+        void this.router.navigateByUrl(this.auth.roleHome());
+      },
+      error: (err) => {
+        this.impersonatingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'admin.users.loginAsFailed'));
+      }
     });
   }
 

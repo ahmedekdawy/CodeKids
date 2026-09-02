@@ -1,5 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { includesIgnoreCase, paginate, totalPages } from '../../list-query.util';
@@ -18,7 +20,9 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
 })
 export class AdminStudentsComponent {
   private readonly api = inject(LearningApiService);
+  private readonly auth = inject(AuthService);
   private readonly locale = inject(LocaleService);
+  private readonly router = inject(Router);
   readonly students = signal<ManagedUser[]>([]);
   readonly parents = signal<ManagedUser[]>([]);
   readonly message = signal('');
@@ -26,6 +30,7 @@ export class AdminStudentsComponent {
   readonly sortKey = signal('displayName');
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
+  readonly impersonatingId = signal<string | null>(null);
   readonly page = signal(1);
   readonly pageSize = signal(10);
   readonly filterName = signal('');
@@ -267,6 +272,21 @@ export class AdminStudentsComponent {
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.deleteFailed'))
+    });
+  }
+
+  loginAs(student: ManagedUser): void {
+    this.clearStatus();
+    this.impersonatingId.set(student.id);
+    this.auth.impersonate(student.id).subscribe({
+      next: () => {
+        this.impersonatingId.set(null);
+        void this.router.navigateByUrl(this.auth.roleHome());
+      },
+      error: (err) => {
+        this.impersonatingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'admin.users.loginAsFailed'));
+      }
     });
   }
 

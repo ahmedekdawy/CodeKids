@@ -205,6 +205,8 @@ builder.Services.AddScoped<ICommandHandler<RegisterCommand, AuthResponse>, Regis
 
 builder.Services.AddScoped<ICommandHandler<LoginCommand, AuthResponse>, LoginCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<ImpersonateUserCommand, AuthResponse>, ImpersonateUserCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<ForgotPasswordCommand, ForgotPasswordResult>, ForgotPasswordCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<ResetPasswordCommand, bool>, ResetPasswordCommandHandler>();

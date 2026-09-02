@@ -54,7 +54,8 @@
   border-color: rgba(95, 211, 188, 0.45);
 }
 
-.icon-action-btn.apply:hover:not(:disabled) {
+.icon-action-btn.apply:hover:not(:disabled),
+.icon-action-btn.login-as:hover:not(:disabled) {
   background: rgba(95, 211, 188, 0.18);
   border-color: rgba(95, 211, 188, 0.55);
 }

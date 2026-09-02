@@ -152,6 +152,12 @@
                 <td>{{ parentLabel(student.parentId) }}</td>
                 <td>
                   <div class="row-actions">
+                    <app-icon-action-button
+                      kind="loginAs"
+                      [label]="'common.loginAs' | t"
+                      [disabled]="impersonatingId() === student.id"
+                      (action)="loginAs(student)"
+                    />
                     <app-icon-action-button kind="edit" (action)="startEdit(student)" />
                     <app-icon-action-button kind="delete" variant="danger" (action)="deleteStudent(student)" />
                   </div>

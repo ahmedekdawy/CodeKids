@@ -292,6 +292,14 @@
               }
               <td>
                 <div class="row-actions">
+                  @if (managedRole() !== 'SuperAdmin') {
+                    <app-icon-action-button
+                      kind="loginAs"
+                      [label]="'common.loginAs' | t"
+                      [disabled]="impersonatingId() === user.id"
+                      (action)="loginAs(user)"
+                    />
+                  }
                   <app-icon-action-button kind="edit" (action)="startEdit(user)" />
                   <app-icon-action-button kind="delete" variant="danger" (action)="deleteUser(user)" />
                 </div>
