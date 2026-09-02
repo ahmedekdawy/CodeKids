@@ -112,6 +112,25 @@
   flex: 0 0 auto;
 }
 
+.students-table-row {
+  grid-template-columns: 1.4fr repeat(4, 1fr) 0.8fr auto;
+  cursor: pointer;
+}
+
+.students-table-row.head {
+  cursor: default;
+}
+
+.student-row:hover {
+  background: rgba(95, 211, 188, 0.08);
+}
+
+@media (max-width: 900px) {
+  .students-table-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .list-title-row {
   display: flex;
   flex-wrap: wrap;

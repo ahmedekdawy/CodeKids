@@ -182,6 +182,7 @@ public static class ApiErrorCatalog
         ["You cannot delete your own account."] = "api.errors.admin.cannotDeleteSelf",
         ["You cannot impersonate your own account."] = "api.errors.auth.impersonateSelf",
         ["Only Super Admin can impersonate users."] = "api.errors.auth.impersonateForbidden",
+        ["Teachers can only sign in as their enrolled students."] = "api.errors.auth.teacherImpersonateStudentOnly",
         ["Only teacher, parent, or student accounts can be used."] = "api.errors.auth.impersonateRole",
         ["Cannot delete the last Super Admin."] = "api.errors.admin.cannotDeleteLastSuperAdmin",
         ["Parent account not found."] = "api.errors.parent.notFound",

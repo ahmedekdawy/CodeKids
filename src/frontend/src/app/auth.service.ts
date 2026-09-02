@@ -84,6 +84,12 @@ export class AuthService {
       .pipe(tap((response) => this.persistImpersonation(response)));
   }
 
+  impersonateStudentAsTeacher(studentId: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${resolveApiBaseUrl()}/dashboard/teacher/students/${studentId}/impersonate`, {})
+      .pipe(tap((response) => this.persistImpersonation(response)));
+  }
+
   stopImpersonating(): void {
     const saved = this.readSavedImpersonator();
     localStorage.removeItem(IMPERSONATOR_KEY);

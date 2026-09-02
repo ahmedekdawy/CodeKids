@@ -5,24 +5,33 @@
   <app-page-feedback [error]="error()" />
 
   <section class="block">
-    <div class="table">
-      <div class="table-row head">
+    <div class="table students-table">
+      <div class="table-row head students-table-row">
         <span>{{ 'common.name' | t }}</span>
         <span>{{ 'teacher.students.level' | t }}</span>
         <span>XP</span>
         <span>{{ 'common.steps' | t }}</span>
         <span>{{ 'teacher.students.weak' | t }}</span>
         <span>{{ 'teacher.students.signal' | t }}</span>
+        <span>{{ 'common.actions' | t }}</span>
       </div>
       @for (student of dashboard()?.students || []; track student.studentId) {
-        <button type="button" class="table-row link-row" (click)="openStudent(student.studentId)">
+        <div class="table-row students-table-row student-row" (click)="openStudent(student.studentId)">
           <span>{{ student.displayName }}</span>
           <span>L{{ student.levelNumber }} · {{ student.levelName }}</span>
           <span>{{ student.totalXp }}</span>
           <span>{{ student.completedSteps }}</span>
           <span>{{ student.weakLessonCount }}</span>
           <span>{{ student.signal || ('common.emDash' | t) }}</span>
-        </button>
+          <div class="row-actions" (click)="$event.stopPropagation()">
+            <app-icon-action-button
+              kind="loginAs"
+              [label]="'common.loginAs' | t"
+              [disabled]="impersonatingId() === student.studentId"
+              (action)="loginAs(student.studentId)"
+            />
+          </div>
+        </div>
       } @empty {
         <p class="meta">{{ 'teacher.students.empty' | t }}</p>
       }
@@ -42,7 +51,15 @@
             @if (student.parentMobilePhone) { · {{ student.parentMobilePhone }} }
           </p>
         </div>
-        <button type="button" (click)="closeDetail()">{{ 'common.close' | t }}</button>
+        <div class="row-actions">
+          <app-icon-action-button
+            kind="loginAs"
+            [label]="'common.loginAs' | t"
+            [disabled]="impersonatingId() === student.studentId"
+            (action)="loginAs(student.studentId)"
+          />
+          <button type="button" (click)="closeDetail()">{{ 'common.close' | t }}</button>
+        </div>
       </div>
 
       <h3>{{ 'teacher.students.weakLessons' | t }}</h3>
