@@ -43,6 +43,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<FixedTimetableEntry> FixedTimetableEntries => Set<FixedTimetableEntry>();
     public DbSet<TeacherSessionAttendance> TeacherSessionAttendances => Set<TeacherSessionAttendance>();
+    public DbSet<StudentClassroomAttendance> StudentClassroomAttendances => Set<StudentClassroomAttendance>();
     public DbSet<StudentWeeklyReport> StudentWeeklyReports => Set<StudentWeeklyReport>();
     public DbSet<WeeklyStudyPlan> WeeklyStudyPlans => Set<WeeklyStudyPlan>();
     public DbSet<WeeklyStudyPlanItem> WeeklyStudyPlanItems => Set<WeeklyStudyPlanItem>();
@@ -408,6 +409,27 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasOne(x => x.Course)
                 .WithMany()
                 .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<StudentClassroomAttendance>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(20);
+            entity.HasIndex(x => new { x.StudentId, x.ClassroomId, x.AttendanceDate }).IsUnique();
+            entity.HasIndex(x => x.AttendanceDate);
+            entity.HasIndex(x => x.ClassroomId);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Classroom)
+                .WithMany()
+                .HasForeignKey(x => x.ClassroomId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.RecordedByTeacher)
+                .WithMany()
+                .HasForeignKey(x => x.RecordedByTeacherId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

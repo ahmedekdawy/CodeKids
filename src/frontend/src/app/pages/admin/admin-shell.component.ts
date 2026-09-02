@@ -31,6 +31,7 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.timetable', path: '/admin/timetable', icon: 'H' },
     { labelKey: 'nav.admin.studyPlans', path: '/admin/study-plans', icon: 'L' },
     { labelKey: 'nav.admin.attendance', path: '/admin/attendance', icon: 'N' },
+    { labelKey: 'nav.admin.studentAttendance', path: '/admin/student-attendance', icon: 'A' },
     { labelKey: 'nav.admin.payroll', path: '/admin/payroll', icon: '$' },
     { labelKey: 'nav.admin.accountReport', path: '/admin/account-report', icon: '%' },
     { labelKey: 'nav.admin.payments', path: '/admin/payments', icon: 'F' },

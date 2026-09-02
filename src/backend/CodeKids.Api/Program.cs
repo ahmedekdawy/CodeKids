@@ -13,6 +13,7 @@ using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Assignments;
 
 using CodeKids.Application.Features.Attendance;
+using CodeKids.Application.Features.StudentAttendance;
 
 using CodeKids.Application.Features.Auth;
 
@@ -342,6 +343,10 @@ builder.Services.AddScoped<IQueryHandler<ListTeacherSessionAttendanceQuery, IRea
 builder.Services.AddScoped<ICommandHandler<CreateTeacherSessionAttendanceCommand, TeacherSessionAttendanceDto>, CreateTeacherSessionAttendanceCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteTeacherSessionAttendanceCommand, bool>, DeleteTeacherSessionAttendanceCommandHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListStudentClassroomAttendanceQuery, PagedStudentClassroomAttendanceResultDto>, ListStudentClassroomAttendanceQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateStudentClassroomAttendanceCommand, StudentClassroomAttendanceDto>, CreateStudentClassroomAttendanceCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteStudentClassroomAttendanceCommand, bool>, DeleteStudentClassroomAttendanceCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetTeacherPayrollReportQuery, TeacherPayrollReportDto>, GetTeacherPayrollReportQueryHandler>();
 

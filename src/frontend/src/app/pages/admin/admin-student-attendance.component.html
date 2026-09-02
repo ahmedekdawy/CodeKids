@@ -1,0 +1,154 @@
+<div class="panel-page">
+  <h2>{{ 'studentAttendance.title' | t }}</h2>
+  <p class="meta">{{ 'studentAttendance.adminSubtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <h3>{{ 'studentAttendance.record' | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="save()">
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          [ngModel]="formClassroomId"
+          name="formClassroomId"
+          (ngModelChange)="onFormClassroomChange($event)"
+          [emptyLabel]="'common.select' | t"
+          [options]="classroomOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.student' | t }}
+        <app-searchable-select
+          [(ngModel)]="formStudentId"
+          name="formStudentId"
+          [emptyLabel]="loadingFormStudents() ? ('common.loading' | t) : ('common.select' | t)"
+          [options]="studentOptions()"
+          [disabled]="!formClassroomId || loadingFormStudents()"
+        />
+      </label>
+      <label>
+        {{ 'common.date' | t }}
+        <input type="date" [(ngModel)]="formDate" name="formDate" required />
+      </label>
+      <label>
+        {{ 'studentAttendance.status' | t }}
+        <app-searchable-select
+          [(ngModel)]="formStatus"
+          name="formStatus"
+          [options]="statusOptions()"
+        />
+      </label>
+      <button type="submit">{{ 'studentAttendance.save' | t }}</button>
+    </form>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'studentAttendance.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          [ngModel]="filterClassroomId()"
+          name="filterClassroomId"
+          (ngModelChange)="setFilterClassroom($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="classroomOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <app-searchable-select
+          [ngModel]="filterGradeId()"
+          name="filterGradeId"
+          (ngModelChange)="setFilterGrade($event)"
+          [emptyLabel]="'common.allGrades' | t"
+          [options]="gradeOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.student' | t }}
+        <input
+          [ngModel]="filterStudent()"
+          name="filterStudent"
+          (ngModelChange)="setFilterStudent($event)"
+          [placeholder]="'common.search' | t"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input type="date" [ngModel]="filterFromDate()" name="filterFromDate" (ngModelChange)="setFilterFromDate($event)" />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input type="date" [ngModel]="filterToDate()" name="filterToDate" (ngModelChange)="setFilterToDate($event)" />
+      </label>
+      <label>
+        {{ 'common.rowsPerPage' | t }}
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="pageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
+      <span class="meta">{{ 'common.ofShown' | t: { shown: rows().length, total: totalCount() } }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="sortable" (click)="setSort('studentName')">
+              {{ 'common.student' | t }} <span class="sort-mark">{{ sortMark('studentName') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('studentGradeId')">
+              {{ 'common.grade' | t }} <span class="sort-mark">{{ sortMark('studentGradeId') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('classroomName')">
+              {{ 'common.classroom' | t }} <span class="sort-mark">{{ sortMark('classroomName') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('attendanceDate')">
+              {{ 'common.date' | t }} <span class="sort-mark">{{ sortMark('attendanceDate') }}</span>
+            </th>
+            <th class="sortable" (click)="setSort('status')">
+              {{ 'studentAttendance.status' | t }} <span class="sort-mark">{{ sortMark('status') }}</span>
+            </th>
+            <th>{{ 'common.teacher' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.studentName }}</td>
+              <td>{{ gradeLabel(row.studentGradeId) }}</td>
+              <td>{{ row.classroomName }}</td>
+              <td>{{ row.attendanceDate }}</td>
+              <td>{{ statusLabel(row.status) }}</td>
+              <td>{{ row.recordedByTeacherName || ('common.emDash' | t) }}</td>
+              <td>
+                <app-icon-action-button kind="delete" variant="danger" (action)="remove(row)" />
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7">{{ 'studentAttendance.noRows' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ 'common.previous' | t }}
+      </button>
+      <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+      <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ 'common.next' | t }}
+      </button>
+    </div>
+  </section>
+</div>

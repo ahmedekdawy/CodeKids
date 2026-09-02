@@ -5,16 +5,63 @@
   <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
-    <h3>{{ 'admin.students.create' | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createStudent()">
-      <label>{{ 'common.name' | t }} <input [(ngModel)]="studentName" name="studentName" required /></label>
-      <label>{{ 'common.email' | t }} <input [(ngModel)]="studentEmail" name="studentEmail" type="email" [placeholder]="'common.optional' | t" /></label>
-      <label>{{ 'common.password' | t }} <input [(ngModel)]="studentPassword" name="studentPassword" type="password" required /></label>
-      <label>{{ 'common.mobile' | t }} <input [(ngModel)]="studentMobile" name="studentMobile" [placeholder]="'admin.students.mobilePlaceholder' | t" /></label>
+    <h3>{{ (editingId() ? 'common.edit' : 'admin.students.create') | t }}</h3>
+    <form class="meeting-form student-edit-form" (ngSubmit)="submitForm()">
+      <label>
+        {{ 'common.name' | t }}
+        <input
+          [ngModel]="editingId() ? editName : studentName"
+          (ngModelChange)="editingId() ? (editName = $event) : (studentName = $event)"
+          name="studentName"
+          required
+        />
+      </label>
+      <label>
+        {{ 'common.email' | t }}
+        <input
+          [ngModel]="editingId() ? editEmail : studentEmail"
+          (ngModelChange)="editingId() ? (editEmail = $event) : (studentEmail = $event)"
+          name="studentEmail"
+          type="email"
+          [placeholder]="'common.optional' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.password' | t }}
+        <input
+          [ngModel]="editingId() ? editPassword : studentPassword"
+          (ngModelChange)="editingId() ? (editPassword = $event) : (studentPassword = $event)"
+          name="studentPassword"
+          type="password"
+          [required]="!editingId()"
+          [placeholder]="editingId() ? ('common.newPasswordOptional' | t) : ''"
+        />
+      </label>
+      <label>
+        {{ 'common.mobile' | t }}
+        <input
+          [ngModel]="editingId() ? editMobile : studentMobile"
+          (ngModelChange)="editingId() ? (editMobile = $event) : (studentMobile = $event)"
+          name="studentMobile"
+          [placeholder]="'admin.students.mobilePlaceholder' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <app-searchable-select
+          [ngModel]="editingId() ? editGrade : studentGrade"
+          (ngModelChange)="editingId() ? (editGrade = $event) : (studentGrade = $event)"
+          name="studentGrade"
+          [emptyLabel]="'common.select' | t"
+          [emptyValue]="null"
+          [options]="gradeOptions()"
+        />
+      </label>
       <label>
         {{ 'common.schoolType' | t }}
         <app-searchable-select
-          [(ngModel)]="studentSchoolType"
+          [ngModel]="editingId() ? editSchoolType : studentSchoolType"
+          (ngModelChange)="editingId() ? (editSchoolType = $event) : (studentSchoolType = $event)"
           name="studentSchoolType"
           [emptyLabel]="'common.select' | t"
           [options]="schoolTypeOptions()"
@@ -23,13 +70,21 @@
       <label>
         {{ 'admin.users.parentOptional' | t }}
         <app-searchable-select
-          [(ngModel)]="studentParentId"
+          [ngModel]="editingId() ? editParentId : studentParentId"
+          (ngModelChange)="editingId() ? (editParentId = $event) : (studentParentId = $event)"
           name="studentParentId"
           [emptyLabel]="'common.none' | t"
           [options]="parentOptions().map(p => ({ value: p.id, label: p.displayName + ' (' + (p.email || p.mobilePhone) + ')' }))"
         />
       </label>
-      <button type="submit">{{ 'admin.students.create' | t }}</button>
+      <div class="form-actions">
+        <button type="submit">
+          {{ (editingId() ? 'common.save' : 'admin.students.create') | t }}
+        </button>
+        @if (editingId()) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
+      </div>
     </form>
   </section>
 
@@ -104,6 +159,7 @@
             <th class="sortable" (click)="setSort('displayName')">{{ 'common.name' | t }} <span class="sort-mark">{{ sortMark('displayName') }}</span></th>
             <th class="sortable" (click)="setSort('email')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('email') }}</span></th>
             <th class="sortable" (click)="setSort('mobilePhone')">{{ 'common.mobile' | t }} <span class="sort-mark">{{ sortMark('mobilePhone') }}</span></th>
+            <th class="sortable" (click)="setSort('grade')">{{ 'common.grade' | t }} <span class="sort-mark">{{ sortMark('grade') }}</span></th>
             <th class="sortable" (click)="setSort('schoolType')">{{ 'common.schoolType' | t }} <span class="sort-mark">{{ sortMark('schoolType') }}</span></th>
             <th class="sortable" (click)="setSort('totalXp')">{{ 'common.xp' | t }} <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
             <th>{{ 'common.parentId' | t }}</th>
@@ -112,61 +168,30 @@
         </thead>
         <tbody>
           @for (student of pagedStudents(); track student.id) {
-            <tr>
-              @if (editingId() === student.id) {
-                <td><input [(ngModel)]="editName" [name]="'sName-' + student.id" /></td>
-                <td><input [(ngModel)]="editEmail" [name]="'sEmail-' + student.id" /></td>
-                <td><input [(ngModel)]="editMobile" [name]="'sMobile-' + student.id" [placeholder]="'admin.students.mobilePlaceholder' | t" /></td>
-                <td>
-                  <app-searchable-select
-                    [(ngModel)]="editSchoolType"
-                    [name]="'sSchool-' + student.id"
-                    [emptyLabel]="'common.select' | t"
-                    [options]="schoolTypeOptions()"
-                    [compact]="true"
+            <tr [class.selected]="editingId() === student.id">
+              <td>{{ student.displayName }}</td>
+              <td>{{ student.email || ('common.emDash' | t) }}</td>
+              <td>{{ student.mobilePhone || ('common.emDash' | t) }}</td>
+              <td>{{ gradeLabel(student.grade) }}</td>
+              <td>{{ schoolTypeLabel(student.schoolType) }}</td>
+              <td>{{ student.totalXp }}</td>
+              <td>{{ parentLabel(student.parentId) }}</td>
+              <td>
+                <div class="row-actions">
+                  <app-icon-action-button
+                    kind="loginAs"
+                    [label]="'common.loginAs' | t"
+                    [disabled]="impersonatingId() === student.id"
+                    (action)="loginAs(student)"
                   />
-                </td>
-                <td>{{ student.totalXp }}</td>
-                <td>
-                  <app-searchable-select
-                    [(ngModel)]="editParentId"
-                    [name]="'sParent-' + student.id"
-                    [emptyLabel]="'common.none' | t"
-                    [options]="parentOptions().map(p => ({ value: p.id, label: p.displayName }))"
-                    [compact]="true"
-                  />
-                  <input [(ngModel)]="editPassword" [name]="'sPass-' + student.id" type="password" [placeholder]="'common.newPassword' | t" />
-                </td>
-                <td>
-                  <div class="row-actions">
-                    <button type="button" (click)="saveEdit(student.id)">{{ 'common.save' | t }}</button>
-                    <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
-                  </div>
-                </td>
-              } @else {
-                <td>{{ student.displayName }}</td>
-                <td>{{ student.email || ('common.emDash' | t) }}</td>
-                <td>{{ student.mobilePhone || ('common.emDash' | t) }}</td>
-                <td>{{ schoolTypeLabel(student.schoolType) }}</td>
-                <td>{{ student.totalXp }}</td>
-                <td>{{ parentLabel(student.parentId) }}</td>
-                <td>
-                  <div class="row-actions">
-                    <app-icon-action-button
-                      kind="loginAs"
-                      [label]="'common.loginAs' | t"
-                      [disabled]="impersonatingId() === student.id"
-                      (action)="loginAs(student)"
-                    />
-                    <app-icon-action-button kind="edit" (action)="startEdit(student)" />
-                    <app-icon-action-button kind="delete" variant="danger" (action)="deleteStudent(student)" />
-                  </div>
-                </td>
-              }
+                  <app-icon-action-button kind="edit" (action)="startEdit(student)" />
+                  <app-icon-action-button kind="delete" variant="danger" (action)="deleteStudent(student)" />
+                </div>
+              </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="7">{{ 'common.noData' | t }}</td>
+              <td colspan="8">{{ 'common.noData' | t }}</td>
             </tr>
           }
         </tbody>

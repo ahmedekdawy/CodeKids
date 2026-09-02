@@ -26,6 +26,7 @@ import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.com
 import { AdminTimetableComponent } from './pages/admin/admin-timetable.component';
 import { AdminStudyPlansComponent } from './pages/admin/admin-study-plans.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
+import { AdminStudentAttendanceComponent } from './pages/admin/admin-student-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
 import { AdminAccountReportComponent } from './pages/admin/admin-account-report.component';
 import { AdminPaymentsComponent } from './pages/admin/admin-payments.component';
@@ -46,6 +47,7 @@ import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.compo
 import { TeacherAppointmentsComponent } from './pages/teacher/teacher-appointments.component';
 import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.component';
 import { TeacherAttendanceComponent } from './pages/teacher/teacher-attendance.component';
+import { TeacherStudentAttendanceComponent } from './pages/teacher/teacher-student-attendance.component';
 import { TeacherWeeklyReportsComponent } from './pages/teacher/teacher-weekly-reports.component';
 import { TeacherStudyPlansComponent } from './pages/teacher/teacher-study-plans.component';
 import { TeacherAskedQuestionsComponent } from './pages/teacher/teacher-asked-questions.component';
@@ -137,6 +139,7 @@ export const routes: Routes = [
       { path: 'appointments', component: TeacherAppointmentsComponent },
       { path: 'timetable', component: TeacherTimetableComponent },
       { path: 'attendance', component: TeacherAttendanceComponent },
+      { path: 'student-attendance', component: TeacherStudentAttendanceComponent },
       { path: 'weekly-reports', component: TeacherWeeklyReportsComponent },
       { path: 'study-plans', component: TeacherStudyPlansComponent },
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
@@ -170,6 +173,7 @@ export const routes: Routes = [
       { path: 'timetable', component: AdminTimetableComponent },
       { path: 'study-plans', component: AdminStudyPlansComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
+      { path: 'student-attendance', component: AdminStudentAttendanceComponent },
       { path: 'payroll', component: AdminPayrollComponent },
       { path: 'account-report', component: AdminAccountReportComponent },
       { path: 'payments', component: AdminPaymentsComponent },

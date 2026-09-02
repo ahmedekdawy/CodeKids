@@ -3,6 +3,8 @@ using CodeKids.Domain.Abstractions;
 namespace CodeKids.Application.Features.Classrooms;
 
 public sealed record ListClassroomEnrollmentsQuery(
+    Guid? ViewerUserId,
+    string? ViewerRole,
     Guid? ClassroomId,
     Guid? CourseId,
     string? StudentSearch,

@@ -29,6 +29,8 @@ import {
   PagedClassroomEnrollments,
   PagedCourses,
   PagedWeeklyStudyPlans,
+  PagedStudentClassroomAttendance,
+  StudentClassroomAttendance,
   Exam,
   ExamAttempt,
   FixedTimetableEntry,
@@ -546,6 +548,82 @@ export class LearningApiService {
 
   deleteMySessionAttendance(attendanceId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/session-attendance/${attendanceId}`);
+  }
+
+  getStudentAttendance(params: {
+    classroomId?: string;
+    gradeId?: number;
+    fromDate?: string;
+    toDate?: string;
+    studentSearch?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedStudentClassroomAttendance> {
+    const query = new URLSearchParams();
+    if (params.classroomId) query.set('classroomId', params.classroomId);
+    if (params.gradeId != null) query.set('gradeId', String(params.gradeId));
+    if (params.fromDate) query.set('fromDate', params.fromDate);
+    if (params.toDate) query.set('toDate', params.toDate);
+    if (params.studentSearch?.trim()) query.set('studentSearch', params.studentSearch.trim());
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedStudentClassroomAttendance>(`${this.baseUrl}/student-attendance${qs ? `?${qs}` : ''}`);
+  }
+
+  createStudentAttendance(payload: {
+    studentId: string;
+    classroomId: string;
+    attendanceDate: string;
+    status?: string;
+  }): Observable<StudentClassroomAttendance> {
+    return this.http.post<StudentClassroomAttendance>(`${this.baseUrl}/student-attendance`, payload);
+  }
+
+  deleteStudentAttendance(attendanceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/student-attendance/${attendanceId}`);
+  }
+
+  getAdminStudentAttendance(params: {
+    classroomId?: string;
+    gradeId?: number;
+    fromDate?: string;
+    toDate?: string;
+    studentSearch?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedStudentClassroomAttendance> {
+    const query = new URLSearchParams();
+    if (params.classroomId) query.set('classroomId', params.classroomId);
+    if (params.gradeId != null) query.set('gradeId', String(params.gradeId));
+    if (params.fromDate) query.set('fromDate', params.fromDate);
+    if (params.toDate) query.set('toDate', params.toDate);
+    if (params.studentSearch?.trim()) query.set('studentSearch', params.studentSearch.trim());
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedStudentClassroomAttendance>(`${this.baseUrl}/admin/student-attendance${qs ? `?${qs}` : ''}`);
+  }
+
+  createAdminStudentAttendance(payload: {
+    studentId: string;
+    classroomId: string;
+    attendanceDate: string;
+    status?: string;
+  }): Observable<StudentClassroomAttendance> {
+    return this.http.post<StudentClassroomAttendance>(`${this.baseUrl}/admin/student-attendance`, payload);
+  }
+
+  deleteAdminStudentAttendance(attendanceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/student-attendance/${attendanceId}`);
   }
 
   getWeeklyReportGrid(filters: { weekStart: string; grade?: number }): Observable<StudentWeeklyReportGridRow[]> {

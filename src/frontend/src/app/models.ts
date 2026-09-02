@@ -623,6 +623,30 @@ export interface TeacherSessionAttendance {
   label: string;
 }
 
+export type StudentAttendanceStatus = 'Present' | 'Absent';
+
+export interface StudentClassroomAttendance {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  studentGradeId?: number | null;
+  classroomId: string;
+  classroomName: string;
+  attendanceDate: string;
+  status: StudentAttendanceStatus | string;
+  recordedByTeacherId: string;
+  recordedByTeacherName: string;
+  createdAtUtc: string;
+}
+
+export interface PagedStudentClassroomAttendance {
+  items: StudentClassroomAttendance[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface StudentWeeklyReportGridRow {
   reportId?: string | null;
   studentId: string;

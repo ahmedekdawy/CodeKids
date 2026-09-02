@@ -1,10 +1,12 @@
 using CodeKids.Application.Features.Attendance;
+using CodeKids.Application.Features.StudentAttendance;
 
 using CodeKids.Domain.Abstractions;
 
 using CodeKids.Infrastructure;
 
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CodeKids.Api;
 
@@ -325,6 +327,168 @@ public static class AttendanceEndpoints
                 return ApiResults.ProblemFromException(ex);
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapGet("/api/admin/student-attendance", async (
+            HttpContext httpContext,
+            Guid? classroomId,
+            int? gradeId,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            string? studentSearch,
+            string? sortKey,
+            string? sortDir,
+            int? page,
+            int? pageSize,
+            IQueryHandler<ListStudentClassroomAttendanceQuery, PagedStudentClassroomAttendanceResultDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+                return Results.Ok(await handler.Handle(
+                    new ListStudentClassroomAttendanceQuery(
+                        userId,
+                        role,
+                        classroomId,
+                        gradeId,
+                        fromDate,
+                        toDate,
+                        studentSearch,
+                        sortKey ?? "attendanceDate",
+                        sortDir ?? "desc",
+                        page ?? 1,
+                        pageSize ?? 10),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapPost("/api/admin/student-attendance", async (
+            HttpContext httpContext,
+            CreateStudentClassroomAttendanceRequest request,
+            ICommandHandler<CreateStudentClassroomAttendanceCommand, StudentClassroomAttendanceDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var adminId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new CreateStudentClassroomAttendanceCommand(
+                        adminId,
+                        request.StudentId,
+                        request.ClassroomId,
+                        request.AttendanceDate,
+                        request.Status,
+                        IsAdmin: true),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapDelete("/api/admin/student-attendance/{attendanceId:guid}", async (
+            Guid attendanceId,
+            ICommandHandler<DeleteStudentClassroomAttendanceCommand, bool> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                await handler.Handle(new DeleteStudentClassroomAttendanceCommand(attendanceId, null, true), cancellationToken);
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapGet("/api/student-attendance", async (
+            HttpContext httpContext,
+            Guid? classroomId,
+            int? gradeId,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            string? studentSearch,
+            string? sortKey,
+            string? sortDir,
+            int? page,
+            int? pageSize,
+            IQueryHandler<ListStudentClassroomAttendanceQuery, PagedStudentClassroomAttendanceResultDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+                return Results.Ok(await handler.Handle(
+                    new ListStudentClassroomAttendanceQuery(
+                        userId,
+                        role,
+                        classroomId,
+                        gradeId,
+                        fromDate,
+                        toDate,
+                        studentSearch,
+                        sortKey ?? "attendanceDate",
+                        sortDir ?? "desc",
+                        page ?? 1,
+                        pageSize ?? 10),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapPost("/api/student-attendance", async (
+            HttpContext httpContext,
+            CreateMyStudentClassroomAttendanceRequest request,
+            ICommandHandler<CreateStudentClassroomAttendanceCommand, StudentClassroomAttendanceDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var teacherId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new CreateStudentClassroomAttendanceCommand(
+                        teacherId,
+                        request.StudentId,
+                        request.ClassroomId,
+                        request.AttendanceDate,
+                        request.Status,
+                        IsAdmin: false),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapDelete("/api/student-attendance/{attendanceId:guid}", async (
+            Guid attendanceId,
+            HttpContext httpContext,
+            ICommandHandler<DeleteStudentClassroomAttendanceCommand, bool> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var teacherId = CurrentUser.GetUserId(httpContext.User);
+                await handler.Handle(new DeleteStudentClassroomAttendanceCommand(attendanceId, teacherId, false), cancellationToken);
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
         return app;
 

@@ -37,6 +37,17 @@
   align-items: start;
 }
 
+.student-edit-form {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+
+.student-edit-form .form-actions {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+  padding-top: 0.25rem;
+}
+
 .classroom-edit-form .span-3 {
   grid-column: 1 / -1;
 }
@@ -51,6 +62,12 @@
   padding-top: 0.25rem;
 }
 
+@media (max-width: 1100px) {
+  .student-edit-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 960px) {
   .classroom-edit-form {
     grid-template-columns: 1fr;
@@ -58,6 +75,10 @@
 
   .classroom-edit-form .span-3 {
     grid-column: auto;
+  }
+
+  .student-edit-form {
+    grid-template-columns: 1fr;
   }
 }
 

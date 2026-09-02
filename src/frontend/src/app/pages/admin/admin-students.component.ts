@@ -5,10 +5,11 @@ import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { includesIgnoreCase, paginate, totalPages } from '../../list-query.util';
-import { ManagedUser } from '../../models';
+import { Grade, ManagedUser } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SortDir, nextSort, sortBy } from '../../sort.util';
+import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
@@ -25,6 +26,7 @@ export class AdminStudentsComponent {
   private readonly router = inject(Router);
   readonly students = signal<ManagedUser[]>([]);
   readonly parents = signal<ManagedUser[]>([]);
+  readonly catalogGrades = signal<Grade[]>([]);
   readonly message = signal('');
   readonly error = signal('');
   readonly sortKey = signal('displayName');
@@ -46,6 +48,7 @@ export class AdminStudentsComponent {
   studentParentId = '';
   studentMobile = '';
   studentSchoolType = '';
+  studentGrade: number | null = null;
 
   editEmail = '';
   editName = '';
@@ -53,12 +56,28 @@ export class AdminStudentsComponent {
   editPassword = '';
   editMobile = '';
   editSchoolType = '';
+  editGrade: number | null = null;
 
   readonly parentOptions = computed(() =>
     this.parents()
       .slice()
       .sort((a, b) => a.displayName.localeCompare(b.displayName))
   );
+
+  readonly gradeOptions = computed(() => {
+    this.locale.lang();
+    const catalog = this.catalogGrades();
+    if (catalog.length) {
+      return catalog.map((g) => ({
+        value: g.id,
+        label: this.locale.lang() === 'ar' ? g.name : g.nameEn
+      }));
+    }
+    return GRADE_CODES.map((g) => ({
+      value: g,
+      label: formatGradeLabel((k, p) => this.locale.t(k, p), g)
+    }));
+  });
 
   readonly filteredStudents = computed(() => {
     const name = this.filterName();
@@ -93,6 +112,10 @@ export class AdminStudentsComponent {
 
   constructor() {
     this.reload();
+    this.api.getGrades().subscribe({
+      next: (grades) => this.catalogGrades.set(grades ?? []),
+      error: () => undefined
+    });
   }
 
   reload(): void {
@@ -122,6 +145,11 @@ export class AdminStudentsComponent {
     if (value === 'Arabic') return this.locale.t('common.schoolTypeArabic');
     if (value === 'Language') return this.locale.t('common.schoolTypeLanguage');
     return value;
+  }
+
+  gradeLabel(grade?: number | null): string {
+    if (grade == null) return this.locale.t('common.emDash');
+    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
   }
 
   setSort(key: string): void {
@@ -192,6 +220,14 @@ export class AdminStudentsComponent {
     );
   }
 
+  submitForm(): void {
+    if (this.editingId()) {
+      this.saveEdit(this.editingId()!);
+    } else {
+      this.createStudent();
+    }
+  }
+
   createStudent(): void {
     this.clearStatus();
     if (!this.studentEmail.trim() && !this.studentMobile.trim()) {
@@ -205,18 +241,14 @@ export class AdminStudentsComponent {
         password: this.studentPassword,
         role: 'Student',
         parentId: this.studentParentId || null,
+        grade: this.studentGrade,
         schoolType: this.studentSchoolType || null,
         mobilePhone: this.studentMobile || null
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.students.created'));
-          this.studentEmail = '';
-          this.studentName = '';
-          this.studentPassword = '';
-          this.studentMobile = '';
-          this.studentSchoolType = '';
-          this.studentParentId = '';
+          this.resetCreateForm();
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.createFailed'))
@@ -230,7 +262,9 @@ export class AdminStudentsComponent {
     this.editParentId = student.parentId || '';
     this.editMobile = student.mobilePhone || '';
     this.editSchoolType = student.schoolType || '';
+    this.editGrade = student.grade ?? null;
     this.editPassword = '';
+    this.clearStatus();
   }
 
   cancelEdit(): void {
@@ -250,13 +284,14 @@ export class AdminStudentsComponent {
         role: 'Student',
         parentId: this.editParentId || null,
         password: this.editPassword || null,
+        grade: this.editGrade,
         schoolType: this.editSchoolType || null,
         mobilePhone: this.editMobile || null
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.students.updated'));
-          this.editingId.set(null);
+          this.cancelEdit();
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.updateFailed'))
@@ -269,6 +304,9 @@ export class AdminStudentsComponent {
     this.api.deleteUser(student.id).subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.students.deleted'));
+        if (this.editingId() === student.id) {
+          this.cancelEdit();
+        }
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.deleteFailed'))
@@ -288,6 +326,16 @@ export class AdminStudentsComponent {
         this.error.set(this.locale.fromApiError(err, 'admin.users.loginAsFailed'));
       }
     });
+  }
+
+  private resetCreateForm(): void {
+    this.studentEmail = '';
+    this.studentName = '';
+    this.studentPassword = '';
+    this.studentMobile = '';
+    this.studentSchoolType = '';
+    this.studentParentId = '';
+    this.studentGrade = null;
   }
 
   private clampPage(): void {

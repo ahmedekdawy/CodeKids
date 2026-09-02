@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Abstractions;
+using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Classrooms;
@@ -20,6 +21,14 @@ public sealed class ListClassroomEnrollmentsQueryHandler(IAppDbContext dbContext
         var baseQuery = dbContext.ClassroomStudents
             .AsNoTracking()
             .Where(cs => cs.Student != null && cs.Classroom != null);
+
+        if (string.Equals(query.ViewerRole, nameof(UserRole.Teacher), StringComparison.OrdinalIgnoreCase)
+            && query.ViewerUserId is Guid teacherId)
+        {
+            baseQuery = baseQuery.Where(cs =>
+                dbContext.ClassroomCourses.Any(cc =>
+                    cc.ClassroomId == cs.ClassroomId && cc.TeacherId == teacherId));
+        }
 
         if (query.ClassroomId is Guid classroomId)
         {

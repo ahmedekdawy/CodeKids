@@ -406,6 +406,8 @@ public static class ClassroomsEndpoints
 
         app.MapGet("/api/classrooms/enrollments", async (
 
+            HttpContext httpContext,
+
             Guid? classroomId,
 
             Guid? courseId,
@@ -426,9 +428,17 @@ public static class ClassroomsEndpoints
 
         {
 
+            var userId = CurrentUser.GetUserId(httpContext.User);
+
+            var role = httpContext.User.FindFirstValue(ClaimTypes.Role) ?? string.Empty;
+
             return Results.Ok(await handler.Handle(
 
                 new ListClassroomEnrollmentsQuery(
+
+                    userId,
+
+                    role,
 
                     classroomId,
 
@@ -446,7 +456,7 @@ public static class ClassroomsEndpoints
 
                 cancellationToken));
 
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin,Teacher" });
 
         return app;
 
