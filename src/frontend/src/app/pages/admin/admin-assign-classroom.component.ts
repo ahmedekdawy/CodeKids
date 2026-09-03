@@ -40,10 +40,15 @@ export class AdminAssignClassroomComponent {
 
   readonly courseOptions = computed(() => {
     this.locale.lang();
-    const classroomGrade = this.selectedClassroom()?.grade ?? null;
+    const room = this.selectedClassroom();
+    const classroomGrade = room?.grade ?? null;
+    const assignedIds = new Set((room?.courses ?? []).map((c) => c.courseId).filter(Boolean));
+
     return this.allCourses()
-      .filter((course) =>
-        courseMatchesClassroomGrade(course.grade, classroomGrade, course.stageId)
+      .filter(
+        (course) =>
+          assignedIds.has(course.id) ||
+          courseMatchesClassroomGrade(course.grade, classroomGrade, course.stageId)
       )
       .slice()
       .sort((a, b) => {
@@ -62,8 +67,9 @@ export class AdminAssignClassroomComponent {
   }
 
   reload(): void {
-    this.api.getUsers().subscribe((users) => {
-      this.allTeachers.set(users.filter((u) => u.role === 'Teacher'));
+    this.api.getUsers().subscribe({
+      next: (users) => this.allTeachers.set(users.filter((u) => u.role === 'Teacher')),
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.assign.loadFailed'))
     });
 
     let coursesReady = false;
@@ -76,16 +82,25 @@ export class AdminAssignClassroomComponent {
       if (selectedId) this.loadRowsFromClassroom(selectedId, loadedClassrooms);
     };
 
-    this.api.getCourses().subscribe((courses) => {
-      this.allCourses.set((courses ?? []).map(normalizeCourse));
-      coursesReady = true;
-      applySelection();
+    this.api.getCourses(false).subscribe({
+      next: (courses) => {
+        this.allCourses.set((courses ?? []).map(normalizeCourse));
+        coursesReady = true;
+        applySelection();
+      },
+      error: (err) => {
+        this.allCourses.set([]);
+        this.error.set(this.locale.fromApiError(err, 'admin.assign.loadCoursesFailed'));
+      }
     });
-    this.api.getClassrooms().subscribe((classrooms) => {
-      loadedClassrooms = (classrooms ?? []).map(normalizeClassroom);
-      this.classrooms.set(loadedClassrooms);
-      classroomsReady = true;
-      applySelection();
+    this.api.getClassrooms().subscribe({
+      next: (classrooms) => {
+        loadedClassrooms = (classrooms ?? []).map(normalizeClassroom);
+        this.classrooms.set(loadedClassrooms);
+        classroomsReady = true;
+        applySelection();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.assign.loadFailed'))
     });
   }
 

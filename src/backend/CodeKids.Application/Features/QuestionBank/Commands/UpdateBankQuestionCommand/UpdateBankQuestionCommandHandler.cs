@@ -55,11 +55,12 @@ public sealed class UpdateBankQuestionCommandHandler(IAppDbContext dbContext)
         question.OptionC = legacyC;
         question.OptionD = legacyD;
         question.OptionsJson = ChoiceOptions.ToJson(resolved);
-        question.CorrectAnswer = question.QuestionType == BankQuestionType.MultiChoice
-            ? string.Join(',', ExamGrading.NormalizeMultiAnswer(command.CorrectAnswer ?? string.Empty))
-            : BankQuestionValidator.IsComposite(question.QuestionType)
+        question.CorrectAnswer = question.QuestionType == BankQuestionType.FreeText
+            || BankQuestionValidator.IsComposite(question.QuestionType)
                 ? string.Empty
-                : (command.CorrectAnswer ?? string.Empty).Trim();
+                : question.QuestionType == BankQuestionType.MultiChoice
+                    ? string.Join(',', ExamGrading.NormalizeMultiAnswer(command.CorrectAnswer ?? string.Empty))
+                    : (command.CorrectAnswer ?? string.Empty).Trim();
         if (!BankQuestionValidator.IsComposite(question.QuestionType))
         {
             question.Points = command.Points <= 0 ? 1 : command.Points;

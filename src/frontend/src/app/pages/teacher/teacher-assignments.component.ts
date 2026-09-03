@@ -1,33 +1,24 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Classroom, Course, CourseLesson, CourseUnit } from '../../models';
-import { formatCourseLabel } from '../../grade.util';
+import { Assignment, Classroom, ClassroomCourse, Course, CourseLesson, CourseUnit } from '../../models';
+import { courseMatchesClassroomGrade, formatCourseLabel } from '../../grade.util';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
-import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
-
-interface AssignmentQuestionDraft {
-  id?: string;
-  prompt: string;
-  questionType: 'ShortAnswer' | 'MultipleChoice';
-  optionA: string;
-  optionB: string;
-  optionC: string;
-  correct: string;
-  promptImageMediaAssetId?: string | null;
-  promptImageUrl?: string | null;
-}
-
-function emptyAssignmentQuestion(
-  type: 'ShortAnswer' | 'MultipleChoice' = 'ShortAnswer'
-): AssignmentQuestionDraft {
-  return { prompt: '', questionType: type, optionA: '', optionB: '', optionC: '', correct: '' };
-}
+import { QuestionDraftEditorComponent } from '../../shared/question-draft-editor/question-draft-editor.component';
+import { QuestionDraft } from '../../shared/question-draft/question-draft.model';
+import {
+  draftFromAssignmentQuestion,
+  draftFromGenerated,
+  emptyQuestionDraft,
+  toQuestionPayload,
+  validateQuestionDraft
+} from '../../shared/question-draft/question-draft.util';
 
 @Component({
   selector: 'app-teacher-assignments',
@@ -37,7 +28,7 @@ function emptyAssignmentQuestion(
     SearchableMultiSelectComponent,
     FormsModule,
     TranslatePipe,
-    QuestionImageUploadComponent,
+    QuestionDraftEditorComponent,
     IconActionButtonComponent
   ],
   templateUrl: './teacher-assignments.component.html',
@@ -46,6 +37,7 @@ function emptyAssignmentQuestion(
 export class TeacherAssignmentsComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly auth = inject(AuthService);
   readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
   readonly assignments = signal<Assignment[]>([]);
@@ -64,19 +56,25 @@ export class TeacherAssignmentsComponent {
   assignmentIsPublished = false;
   assignmentQuestionCount = 1;
   assignmentType: 'ShortAnswer' | 'MultipleChoice' = 'ShortAnswer';
-  questions: AssignmentQuestionDraft[] = [emptyAssignmentQuestion()];
+  questions: QuestionDraft[] = [emptyQuestionDraft('ShortAnswer')];
   editingAssignmentId: string | null = null;
   editingDueAtUtc: string | null = null;
 
   constructor() {
-    this.api.getCourses().subscribe((courses) => {
-      this.courses.set(courses);
-      this.ensureCourseSelection();
+    this.api.getCourses().subscribe({
+      next: (courses) => {
+        this.courses.set(courses ?? []);
+        this.ensureCourseSelection();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.ai.needScope'))
     });
-    this.api.getClassrooms().subscribe((classrooms) => {
-      this.classrooms.set(classrooms);
-      if (!this.assignmentClassroomId && classrooms[0]) this.assignmentClassroomId = classrooms[0].id;
-      this.ensureCourseSelection();
+    this.api.getClassrooms().subscribe({
+      next: (classrooms) => {
+        this.classrooms.set(classrooms ?? []);
+        if (!this.assignmentClassroomId && classrooms[0]) this.assignmentClassroomId = classrooms[0].id;
+        this.ensureCourseSelection();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.ai.needClassroom'))
     });
     this.reloadAssignments();
   }
@@ -86,17 +84,65 @@ export class TeacherAssignmentsComponent {
   }
 
   coursesForClassroom(): Course[] {
+    if (!this.assignmentClassroomId) return [];
     const room = this.classrooms().find((c) => c.id === this.assignmentClassroomId);
+    if (!room) return [];
+
+    const teacherId = this.auth.user()?.id;
+    const links = (room.courses ?? []).filter(
+      (link) =>
+        !!link.courseId &&
+        (!teacherId || !link.teacherId || link.teacherId === teacherId)
+    );
+
     const ids = new Set(
       [
-        ...(room?.courses?.map((c) => c.courseId) ?? []),
-        room?.courseId
-      ].filter((id): id is string => !!id)
+        ...links.map((link) => link.courseId),
+        ...(links.length ? [] : [room.courseId])
+      ]
+        .filter((id): id is string => !!id)
+        .map((id) => id.toLowerCase())
     );
+
     const all = this.courses();
-    if (!ids.size) return all;
-    const matched = all.filter((c) => ids.has(c.id));
-    return matched.length ? matched : all;
+    const sortCourses = (list: Course[]) =>
+      [...list].sort(
+        (a, b) => a.title.localeCompare(b.title) || (a.grade ?? 999) - (b.grade ?? 999)
+      );
+
+    if (!ids.size) {
+      return sortCourses(
+        all.filter((course) =>
+          courseMatchesClassroomGrade(course.grade, room.grade, course.stageId)
+        )
+      );
+    }
+
+    const matched = all.filter((course) => ids.has(course.id.toLowerCase()));
+    if (matched.length) return sortCourses(matched);
+
+    // Classroom has course links, but they were missing from getCourses — still show them.
+    return sortCourses(links.map((link) => this.toCourseOption(link, all)));
+  }
+
+  private toCourseOption(link: ClassroomCourse, loaded: Course[]): Course {
+    const existing = loaded.find((course) => course.id.toLowerCase() === link.courseId.toLowerCase());
+    if (existing) return existing;
+    return {
+      id: link.courseId,
+      title: link.courseTitle || link.courseId,
+      theme: '',
+      description: '',
+      ageMin: 0,
+      ageMax: 0,
+      grade: link.courseGrade ?? null,
+      stageId: link.courseStageId ?? null,
+      schoolType: link.courseSchoolType ?? 'All',
+      sortOrder: 0,
+      lessons: [],
+      quizzes: [],
+      units: []
+    };
   }
 
   unitsForCourse(): CourseUnit[] {
@@ -118,7 +164,9 @@ export class TeacherAssignmentsComponent {
   }
 
   onClassroomChange(): void {
-      this.ensureCourseSelection();
+    this.assignmentCourseId = '';
+    this.onCourseChange();
+    this.ensureCourseSelection();
   }
 
   onCourseChange(): void {
@@ -156,16 +204,10 @@ export class TeacherAssignmentsComponent {
     const count = this.clampQuestionCount(this.assignmentQuestionCount, 1);
     this.assignmentQuestionCount = count;
     while (this.questions.length < count) {
-      this.questions.push(emptyAssignmentQuestion(this.assignmentType));
+      this.questions.push(emptyQuestionDraft(this.assignmentType));
     }
     if (this.questions.length > count) {
       this.questions = this.questions.slice(0, count);
-    }
-  }
-
-  onTypeChange(): void {
-    for (const question of this.questions) {
-      question.questionType = this.assignmentType;
     }
   }
 
@@ -196,24 +238,9 @@ export class TeacherAssignmentsComponent {
           this.assignmentTitle = draft.title;
           this.assignmentDescription = draft.description;
           this.questions = draft.questions.length
-            ? draft.questions.map((question) => {
-                const type =
-                  question.questionType === 'MultipleChoice' ? 'MultipleChoice' : 'ShortAnswer';
-                return {
-                  prompt: question.prompt,
-                  questionType: type as 'ShortAnswer' | 'MultipleChoice',
-                  optionA: question.options[0] || '',
-                  optionB: question.options[1] || '',
-                  optionC: question.options[2] || '',
-                  correct:
-                    type === 'MultipleChoice'
-                      ? question.correctOption || question.correctAnswer
-                      : question.correctAnswer || question.correctOption
-                };
-              })
-            : [emptyAssignmentQuestion(this.assignmentType)];
+            ? draft.questions.map((question) => draftFromGenerated(question))
+            : [emptyQuestionDraft(this.assignmentType)];
           this.assignmentQuestionCount = this.questions.length;
-          this.assignmentType = this.questions[0]?.questionType || this.assignmentType;
           this.info.set(this.locale.t('teacher.ai.generated'));
         },
         error: (err) => {
@@ -238,24 +265,9 @@ export class TeacherAssignmentsComponent {
     this.assignmentXp = assignment.xpReward;
     this.assignmentIsPublished = assignment.isPublished;
     this.questions = assignment.questions.length
-      ? assignment.questions.map((question) => {
-          const type =
-            question.questionType === 'MultipleChoice' ? 'MultipleChoice' : 'ShortAnswer';
-          return {
-            id: question.id,
-            prompt: question.prompt,
-            questionType: type,
-            optionA: question.optionA || '',
-            optionB: question.optionB || '',
-            optionC: question.optionC || '',
-            correct: question.correctAnswer || '',
-            promptImageMediaAssetId: question.promptImageMediaAssetId || null,
-            promptImageUrl: question.promptImageUrl || null
-          };
-        })
-      : [emptyAssignmentQuestion(this.assignmentType)];
+      ? assignment.questions.map((question) => draftFromAssignmentQuestion(question))
+      : [emptyQuestionDraft(this.assignmentType)];
     this.assignmentQuestionCount = this.questions.length;
-    this.assignmentType = this.questions[0]?.questionType || this.assignmentType;
     this.onClassroomChange();
   }
 
@@ -265,7 +277,7 @@ export class TeacherAssignmentsComponent {
     this.assignmentTitle = '';
     this.assignmentDescription = '';
     this.assignmentIsPublished = false;
-    this.questions = [emptyAssignmentQuestion(this.assignmentType)];
+    this.questions = [emptyQuestionDraft(this.assignmentType)];
     this.assignmentQuestionCount = 1;
     this.error.set('');
     this.info.set('');
@@ -320,6 +332,9 @@ export class TeacherAssignmentsComponent {
     this.info.set('');
     if (!this.requireScope()) return;
     const questions = this.buildQuestionPayload();
+    if (questions === null) {
+      return;
+    }
     if (!questions.length) {
       this.error.set(this.locale.t('teacher.assignments.question'));
       return;
@@ -359,20 +374,16 @@ export class TeacherAssignmentsComponent {
   }
 
   private buildQuestionPayload() {
-    return this.questions
-      .map((question, index) => ({
-        id: question.id || undefined,
-        prompt: (question.prompt || '').trim(),
-        questionType: question.questionType,
-        optionA: question.questionType === 'MultipleChoice' ? question.optionA : null,
-        optionB: question.questionType === 'MultipleChoice' ? question.optionB : null,
-        optionC: question.questionType === 'MultipleChoice' ? question.optionC : null,
-        correctAnswer: question.correct,
-        points: 1,
-        sortOrder: index + 1,
-        promptImageMediaAssetId: question.promptImageMediaAssetId || null
-      }))
-      .filter((question) => question.prompt.length > 0);
+    const questions = [];
+    for (let index = 0; index < this.questions.length; index++) {
+      const errorKey = validateQuestionDraft(this.questions[index], index + 1);
+      if (errorKey) {
+        this.error.set(this.locale.t(errorKey));
+        return null;
+      }
+      questions.push(toQuestionPayload(this.questions[index], index + 1));
+    }
+    return questions.filter((question) => question.prompt.length > 0 || question.questionType === 'Paragraph');
   }
 
   private reloadAssignments(): void {

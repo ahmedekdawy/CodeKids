@@ -12,22 +12,24 @@
     </section>
 
     <section class="block">
-      @if (form) {
-        <form [formGroup]="form" (ngSubmit)="submit()">
-          @for (question of current.questions; track question.id) {
-            <div class="question">
-              <strong>{{ question.sortOrder }}. {{ question.prompt }}</strong>
-              <app-question-image-display [url]="question.promptImageUrl" />
-              @for (opt of choiceOptions(question); track opt.key) {
-                <label>
-                  <input type="radio" [formControlName]="question.id" [value]="opt.key" />
-                  {{ opt.key }}) {{ opt.text }}
-                </label>
-              }
-            </div>
-          }
-          <button type="submit" [disabled]="loading() || form.invalid">{{ 'play.submitQuiz' | t }}</button>
-        </form>
+      @if (!result()) {
+        @for (question of current.questions; track question.id) {
+          <div class="question">
+            <strong>{{ question.sortOrder }}.</strong>
+            <app-question-play-prompt
+              [question]="question"
+              [answers]="answers()"
+              [multiAnswers]="multiAnswers()"
+              answerUpload="none"
+              (answerChange)="setAnswer($event.questionId, $event.value)"
+              (multiToggle)="toggleMulti($event.questionId, $event.key)"
+            />
+          </div>
+        }
+        <button type="button" [disabled]="loading()" (click)="submit()">{{ 'play.submitQuiz' | t }}</button>
+      }
+      @if (error()) {
+        <p class="feedback error">{{ error() }}</p>
       }
       @if (result(); as response) {
         <div class="feedback ok">

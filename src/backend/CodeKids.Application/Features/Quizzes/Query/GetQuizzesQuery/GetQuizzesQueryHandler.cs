@@ -50,16 +50,5 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
             quiz.Description,
             quiz.XpReward,
             quiz.IsPublished,
-            quiz.Questions
-                .OrderBy(x => x.SortOrder)
-                .Select(x => new QuizQuestionDto(
-                    x.Id,
-                    x.Prompt,
-                    x.OptionA,
-                    x.OptionB,
-                    x.OptionC,
-                    ChoiceOptions.Parse(x.OptionsJson, x.OptionA, x.OptionB, x.OptionC),
-                    x.SortOrder,
-                    QuestionImageUrls.Build(x.PromptImageMediaAssetId)))
-                .ToList());
+            QuizQuestionSync.MapTree(quiz.Questions));
 }

@@ -7,7 +7,8 @@ public enum BankQuestionType
     SingleChoice = 2,
     MultiChoice = 3,
     Paragraph = 4,
-    Underline = 5
+    Underline = 5,
+    FreeText = 6
 }
 
 public enum ExamAttemptStatus

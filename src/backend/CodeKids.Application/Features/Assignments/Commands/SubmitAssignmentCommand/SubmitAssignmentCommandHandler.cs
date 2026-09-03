@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -52,10 +53,13 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
         };
 
         var autoScore = 0;
-        var maxScore = assignment.Questions.Sum(x => x.Points);
+        var answerable = assignment.Questions
+            .Where(x => x.QuestionType != AssignmentQuestionType.Paragraph)
+            .ToList();
+        var maxScore = answerable.Sum(x => x.Points);
         var allAutoGradable = true;
 
-        foreach (var question in assignment.Questions)
+        foreach (var question in answerable)
         {
             var input = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
             var answerText = (input?.AnswerText ?? string.Empty).Trim();
@@ -69,22 +73,36 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
                 allAutoGradable = false;
             }
 
-            if (question.QuestionType == AssignmentQuestionType.MultipleChoice)
-            {
-                isCorrect = string.Equals(answerText, question.CorrectAnswer, StringComparison.OrdinalIgnoreCase);
-                points = isCorrect == true ? question.Points : 0;
-                if (isCorrect == true) autoScore += question.Points;
-            }
-            else
+            if (TypedQuestionSupport.IsTeacherGradedText(question.QuestionType))
             {
                 allAutoGradable = false;
-                if (!string.IsNullOrWhiteSpace(question.CorrectAnswer) &&
-                    string.Equals(answerText, question.CorrectAnswer, StringComparison.OrdinalIgnoreCase) &&
-                    answerImageId is null)
+                if (TypedQuestionSupport.IsShortAnswer(question.QuestionType)
+                    && !string.IsNullOrWhiteSpace(question.CorrectAnswer)
+                    && string.Equals(answerText, question.CorrectAnswer, StringComparison.OrdinalIgnoreCase)
+                    && answerImageId is null)
                 {
                     isCorrect = true;
                     points = question.Points;
                     autoScore += question.Points;
+                }
+            }
+            else if (answerImageId is null)
+            {
+                var bankType = TypedQuestionSupport.ToBankType(question.QuestionType);
+                if (question.QuestionType == AssignmentQuestionType.MultiChoice)
+                {
+                    answerText = string.Join(',', ExamGrading.NormalizeMultiAnswer(answerText));
+                }
+
+                if (ExamGrading.IsAutoGradable(bankType))
+                {
+                    isCorrect = ExamGrading.AnswersMatch(bankType, answerText, question.CorrectAnswer);
+                    points = isCorrect == true ? question.Points : 0;
+                    if (isCorrect == true) autoScore += question.Points;
+                }
+                else
+                {
+                    allAutoGradable = false;
                 }
             }
 

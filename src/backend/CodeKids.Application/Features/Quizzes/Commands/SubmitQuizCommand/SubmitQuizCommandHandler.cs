@@ -1,5 +1,6 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
+using CodeKids.Domain.Enums;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Abstractions;
@@ -25,18 +26,29 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Quiz is not available.");
         }
 
+        var answerable = quiz.Questions
+            .Where(x => x.QuestionType != BankQuestionType.Paragraph)
+            .ToList();
         var score = 0;
-        foreach (var question in quiz.Questions)
+        foreach (var question in answerable)
         {
             var answer = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
-            if (answer is not null &&
-                string.Equals(answer.SelectedOption, question.CorrectOption, StringComparison.OrdinalIgnoreCase))
+            var selected = answer?.SelectedOption?.Trim() ?? string.Empty;
+            if (question.QuestionType == BankQuestionType.MultiChoice)
+            {
+                selected = string.Join(',', ExamGrading.NormalizeMultiAnswer(selected));
+            }
+
+            var correct = string.IsNullOrWhiteSpace(question.CorrectAnswer)
+                ? question.CorrectOption
+                : question.CorrectAnswer;
+            if (ExamGrading.AnswersMatch(question.QuestionType, selected, correct))
             {
                 score++;
             }
         }
 
-        var total = quiz.Questions.Count;
+        var total = answerable.Count;
         var ratio = total == 0 ? 0 : (double)score / total;
         var earnedXp = ratio >= 0.7 ? quiz.XpReward : Math.Max(5, quiz.XpReward / 3);
 
@@ -51,16 +63,24 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             CompletedAtUtc = DateTimeOffset.UtcNow
         };
 
-        foreach (var question in quiz.Questions.OrderBy(x => x.SortOrder))
+        foreach (var question in answerable.OrderBy(x => x.SortOrder))
         {
             var answer = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
             var selected = answer?.SelectedOption?.Trim() ?? string.Empty;
+            if (question.QuestionType == BankQuestionType.MultiChoice)
+            {
+                selected = string.Join(',', ExamGrading.NormalizeMultiAnswer(selected));
+            }
+
+            var correct = string.IsNullOrWhiteSpace(question.CorrectAnswer)
+                ? question.CorrectOption
+                : question.CorrectAnswer;
             attempt.Answers.Add(new QuizAttemptAnswer
             {
                 Id = Guid.NewGuid(),
                 QuestionId = question.Id,
                 SelectedOption = selected,
-                IsCorrect = string.Equals(selected, question.CorrectOption, StringComparison.OrdinalIgnoreCase)
+                IsCorrect = ExamGrading.AnswersMatch(question.QuestionType, selected, correct)
             });
         }
 

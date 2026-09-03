@@ -82,7 +82,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
                 answerText = string.Join(',', ExamGrading.NormalizeMultiAnswer(answerText));
             }
 
-            if (answerImageId is not null)
+            if (answerImageId is not null || !ExamGrading.IsAutoGradable(question.QuestionType))
             {
                 allAutoGradable = false;
                 attempt.Answers.Add(new ExamAnswer

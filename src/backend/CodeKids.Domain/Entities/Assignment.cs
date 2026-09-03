@@ -26,11 +26,14 @@ public class AssignmentQuestion : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid AssignmentId { get; set; }
+    public Guid? ParentQuestionId { get; set; }
     public string Prompt { get; set; } = string.Empty;
     public AssignmentQuestionType QuestionType { get; set; }
+    public string PassageText { get; set; } = string.Empty;
     public string? OptionA { get; set; }
     public string? OptionB { get; set; }
     public string? OptionC { get; set; }
+    public string OptionsJson { get; set; } = "[]";
     public string CorrectAnswer { get; set; } = string.Empty;
     public int Points { get; set; } = 1;
     public int SortOrder { get; set; }
@@ -38,6 +41,8 @@ public class AssignmentQuestion : TenantEntity
 
     public Assignment? Assignment { get; set; }
     public MediaAsset? PromptImage { get; set; }
+    public AssignmentQuestion? Parent { get; set; }
+    public List<AssignmentQuestion> Children { get; set; } = [];
 }
 
 public class AssignmentSubmission : TenantEntity

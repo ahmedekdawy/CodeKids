@@ -277,16 +277,23 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<QuizQuestion>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Prompt).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Prompt).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.QuestionType).HasConversion<string>().HasMaxLength(30);
+            entity.Property(x => x.PassageText).HasMaxLength(4000).IsRequired();
             entity.Property(x => x.OptionA).HasMaxLength(200).IsRequired();
             entity.Property(x => x.OptionB).HasMaxLength(200).IsRequired();
             entity.Property(x => x.OptionC).HasMaxLength(200).IsRequired();
             entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
-            entity.Property(x => x.CorrectOption).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.CorrectOption).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(500).IsRequired();
             entity.HasOne(x => x.PromptImage)
                 .WithMany()
                 .HasForeignKey(x => x.PromptImageMediaAssetId)
                 .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.Parent)
+                .WithMany(x => x.Children)
+                .HasForeignKey(x => x.ParentQuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<QuizAttempt>(entity =>
@@ -309,7 +316,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<QuizAttemptAnswer>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.SelectedOption).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.SelectedOption).HasMaxLength(1000).IsRequired();
             entity.HasIndex(x => new { x.AttemptId, x.QuestionId }).IsUnique();
             entity.HasOne(x => x.Question)
                 .WithMany()
@@ -647,16 +654,22 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<AssignmentQuestion>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.Prompt).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.Prompt).HasMaxLength(4000).IsRequired();
             entity.Property(x => x.QuestionType).HasConversion<string>().HasMaxLength(30);
-            entity.Property(x => x.OptionA).HasMaxLength(120);
-            entity.Property(x => x.OptionB).HasMaxLength(120);
-            entity.Property(x => x.OptionC).HasMaxLength(120);
-            entity.Property(x => x.CorrectAnswer).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.PassageText).HasMaxLength(4000).IsRequired();
+            entity.Property(x => x.OptionA).HasMaxLength(200);
+            entity.Property(x => x.OptionB).HasMaxLength(200);
+            entity.Property(x => x.OptionC).HasMaxLength(200);
+            entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(500).IsRequired();
             entity.HasOne(x => x.PromptImage)
                 .WithMany()
                 .HasForeignKey(x => x.PromptImageMediaAssetId)
                 .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(x => x.Parent)
+                .WithMany(x => x.Children)
+                .HasForeignKey(x => x.ParentQuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<AssignmentSubmission>(entity =>

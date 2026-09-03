@@ -54,69 +54,7 @@ public sealed class UpdateAssignmentCommandHandler(IAppDbContext dbContext, Noti
         var wasPublished = assignment.IsPublished;
         assignment.IsPublished = command.IsPublished;
 
-        var incoming = command.Questions.ToList();
-        var keptIds = incoming
-            .Where(q => q.Id is Guid id && assignment.Questions.Any(existing => existing.Id == id))
-            .Select(q => q.Id!.Value)
-            .ToHashSet();
-
-        var removed = assignment.Questions.Where(q => !keptIds.Contains(q.Id)).ToList();
-        if (removed.Count > 0)
-        {
-            var removedIds = removed.Select(q => q.Id).ToHashSet();
-            var answers = assignment.Submissions
-                .SelectMany(s => s.Answers)
-                .Where(a => removedIds.Contains(a.QuestionId))
-                .ToList();
-            dbContext.AssignmentAnswers.RemoveRange(answers);
-            dbContext.AssignmentQuestions.RemoveRange(removed);
-        }
-
-        var order = 1;
-        foreach (var q in incoming)
-        {
-            if (!Enum.TryParse<AssignmentQuestionType>(q.QuestionType, true, out var type))
-            {
-                throw new InvalidOperationException("Question type must be ShortAnswer or MultipleChoice.");
-            }
-
-            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, q.PromptImageMediaAssetId, cancellationToken);
-
-            var existing = q.Id is Guid id && keptIds.Contains(id)
-                ? assignment.Questions.FirstOrDefault(x => x.Id == id)
-                : null;
-            if (existing is null)
-            {
-                assignment.Questions.Add(new AssignmentQuestion
-                {
-                    Id = Guid.NewGuid(),
-                    AssignmentId = assignment.Id,
-                    Prompt = q.Prompt.Trim(),
-                    QuestionType = type,
-                    OptionA = q.OptionA,
-                    OptionB = q.OptionB,
-                    OptionC = q.OptionC,
-                    CorrectAnswer = q.CorrectAnswer.Trim(),
-                    Points = q.Points <= 0 ? 1 : q.Points,
-                    SortOrder = q.SortOrder <= 0 ? order : q.SortOrder,
-                    PromptImageMediaAssetId = q.PromptImageMediaAssetId
-                });
-            }
-            else
-            {
-                existing.Prompt = q.Prompt.Trim();
-                existing.QuestionType = type;
-                existing.OptionA = q.OptionA;
-                existing.OptionB = q.OptionB;
-                existing.OptionC = q.OptionC;
-                existing.CorrectAnswer = q.CorrectAnswer.Trim();
-                existing.Points = q.Points <= 0 ? 1 : q.Points;
-                existing.SortOrder = q.SortOrder <= 0 ? order : q.SortOrder;
-                existing.PromptImageMediaAssetId = q.PromptImageMediaAssetId ?? existing.PromptImageMediaAssetId;
-            }
-
-            order++;
-        }
+        await AssignmentQuestionSync.ApplyAsync(dbContext, assignment, command.Questions, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         if (!wasPublished && assignment.IsPublished)

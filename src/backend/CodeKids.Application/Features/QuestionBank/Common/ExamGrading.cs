@@ -18,7 +18,7 @@ public static class ExamGrading
 
     public static bool AnswersMatch(BankQuestionType type, string studentAnswer, string correctAnswer)
     {
-        if (BankQuestionValidator.IsComposite(type))
+        if (BankQuestionValidator.IsComposite(type) || BankQuestionValidator.IsFreeText(type))
         {
             return false;
         }

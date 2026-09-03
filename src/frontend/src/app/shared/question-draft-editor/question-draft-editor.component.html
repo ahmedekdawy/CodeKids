@@ -1,0 +1,218 @@
+<div class="qb-editor">
+  <div class="qb-row two">
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.questionType' | t }}</span>
+      <app-searchable-select
+        [(ngModel)]="draft.questionType"
+        [name]="namePrefix + '-type'"
+        (ngModelChange)="onTypeChange()"
+        [options]="types().map(t => ({ value: t, label: typeLabel(t) }))"
+      />
+    </label>
+    <label class="qb-field">
+      <span>{{ 'common.points' | t }}</span>
+      <input type="number" [(ngModel)]="draft.points" [name]="namePrefix + '-points'" min="1" />
+    </label>
+  </div>
+
+  <div class="qb-field">
+    <span>{{ 'teacher.qbank.prompt' | t }}</span>
+    <app-math-prompt-editor [(ngModel)]="draft.prompt" [name]="namePrefix + '-prompt'"></app-math-prompt-editor>
+  </div>
+
+  <app-question-image-upload
+    [mediaAssetId]="draft.promptImageMediaAssetId ?? null"
+    [imageUrl]="draft.promptImageUrl ?? null"
+    (mediaAssetIdChange)="draft.promptImageMediaAssetId = $event"
+    (imageUrlChange)="draft.promptImageUrl = $event"
+  />
+
+  @if (isParagraph()) {
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.paragraphText' | t }}</span>
+      <textarea
+        [(ngModel)]="draft.passageText"
+        [name]="namePrefix + '-passage'"
+        rows="5"
+        [placeholder]="'teacher.qbank.paragraphPlaceholder' | t"
+      ></textarea>
+    </label>
+
+    <div class="qb-children">
+      <div class="qb-children-head">
+        <h4>{{ 'teacher.qbank.childQuestions' | t }}</h4>
+        <button type="button" class="ghost-btn" (click)="addChild()">{{ 'teacher.qbank.addChild' | t }}</button>
+      </div>
+      @for (child of draft.children; track $index; let i = $index) {
+        <div class="qb-child">
+          <div class="qb-row two">
+            <label class="qb-field">
+              <span>{{ 'teacher.qbank.childPrompt' | t }}</span>
+              <input [(ngModel)]="child.prompt" [name]="namePrefix + '-cPrompt-' + i" />
+            </label>
+            <label class="qb-field">
+              <span>{{ 'common.type' | t }}</span>
+              <app-searchable-select
+                [(ngModel)]="child.questionType"
+                [name]="namePrefix + '-cType-' + i"
+                (ngModelChange)="applyTypeDefaults(child)"
+                [options]="childTypes().map(t => ({ value: t, label: typeLabel(t) }))"
+              />
+            </label>
+          </div>
+          <app-question-image-upload
+            [mediaAssetId]="child.promptImageMediaAssetId ?? null"
+            [imageUrl]="child.promptImageUrl ?? null"
+            (mediaAssetIdChange)="child.promptImageMediaAssetId = $event"
+            (imageUrlChange)="child.promptImageUrl = $event"
+          />
+
+          @if (isTeacherGradedText(child.questionType)) {
+            @if (isShortAnswer(child.questionType)) {
+              <label class="qb-field">
+                <span>{{ 'common.correctAnswer' | t }}</span>
+                <input [(ngModel)]="child.correctAnswer" [name]="namePrefix + '-cCorrect-' + i" />
+              </label>
+            } @else {
+              <p class="meta">{{ 'teacher.qbank.freeTextHint' | t }}</p>
+            }
+          } @else if (child.questionType === 'TrueFalse') {
+            <label class="qb-field">
+              <span>{{ 'common.correctAnswer' | t }}</span>
+              <app-searchable-select
+                [(ngModel)]="child.correctAnswer"
+                [name]="namePrefix + '-cCorrect-' + i"
+                [options]="[{ value: 'True', label: ('common.true' | t) }, { value: 'False', label: ('common.false' | t) }]"
+              />
+            </label>
+          } @else {
+            <div class="options-editor">
+              <div class="qb-children-head">
+                <h4>{{ 'common.options' | t }}</h4>
+                <button type="button" class="ghost-btn" (click)="addChildOption(child)">{{ 'common.addOption' | t }}</button>
+              </div>
+              @for (opt of child.options; track $index; let oi = $index) {
+                <div class="option-row">
+                  <span class="option-key">{{ optionLabel(oi) }}</span>
+                  <input [(ngModel)]="opt.text" [name]="namePrefix + '-cOpt-' + i + '-' + oi" [placeholder]="'common.optionText' | t" />
+                  <app-icon-action-button
+                    kind="delete"
+                    variant="ghost"
+                    [label]="'common.removeOption' | t"
+                    [disabled]="child.options.length <= 2"
+                    (action)="removeChildOption(child, oi)"
+                  />
+                </div>
+              }
+            </div>
+
+            @if (child.questionType === 'MultiChoice') {
+              <div class="correct-multi">
+                <span>{{ 'common.correctAnswers' | t }}</span>
+                @for (opt of filled(child.options); track opt.key) {
+                  <label class="checkbox">
+                    <input type="checkbox" [checked]="child.correctKeys.includes(opt.key)" (change)="toggleChildCorrectKey(child, opt.key)" />
+                    {{ opt.key }} — {{ opt.text }}
+                  </label>
+                }
+              </div>
+            } @else {
+              <label class="qb-field">
+                <span>{{ 'common.correctAnswer' | t }}</span>
+                <app-searchable-select
+                  [(ngModel)]="child.correctAnswer"
+                  [name]="namePrefix + '-cCorrect-' + i"
+                  [emptyLabel]="'common.selectCorrect' | t"
+                  [options]="filled(child.options).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+                />
+              </label>
+            }
+          }
+
+          <label class="qb-field">
+            <span>{{ 'common.points' | t }}</span>
+            <input type="number" [(ngModel)]="child.points" [name]="namePrefix + '-cPts-' + i" min="1" />
+          </label>
+          <app-icon-action-button kind="delete" variant="ghost" [label]="'teacher.qbank.removeChild' | t" (action)="removeChild(i)" />
+        </div>
+      }
+    </div>
+  } @else if (draft.questionType === 'Underline') {
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.sentenceText' | t }}</span>
+      <textarea
+        [(ngModel)]="draft.passageText"
+        [name]="namePrefix + '-passage'"
+        rows="4"
+        [placeholder]="'teacher.qbank.sentencePlaceholder' | t"
+      ></textarea>
+    </label>
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.underlinePhrase' | t }}</span>
+      <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" [placeholder]="'teacher.qbank.underlinePlaceholder' | t" />
+    </label>
+  } @else if (draft.questionType === 'TrueFalse') {
+    <label class="qb-field">
+      <span>{{ 'common.correctAnswer' | t }}</span>
+      <app-searchable-select
+        [(ngModel)]="draft.correctAnswer"
+        [name]="namePrefix + '-correct'"
+        [options]="[{ value: 'True', label: ('common.true' | t) }, { value: 'False', label: ('common.false' | t) }]"
+      />
+    </label>
+  } @else if (isFreeText()) {
+    <p class="meta">{{ 'teacher.qbank.freeTextHint' | t }}</p>
+  } @else if (isShortAnswer()) {
+    <label class="qb-field">
+      <span>{{ 'common.correctAnswer' | t }}</span>
+      <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" />
+    </label>
+  } @else {
+    <div class="options-editor">
+      <div class="qb-children-head">
+        <h4>{{ 'teacher.qbank.answerOptions' | t }}</h4>
+        <button type="button" class="ghost-btn" (click)="addOption()">{{ 'common.addOption' | t }}</button>
+      </div>
+      @for (opt of draft.options; track $index; let oi = $index) {
+        <div class="option-row">
+          <span class="option-key">{{ optionLabel(oi) }}</span>
+          <input
+            [(ngModel)]="opt.text"
+            [name]="namePrefix + '-opt-' + oi"
+            [placeholder]="'common.optionText' | t"
+            (ngModelChange)="syncCorrect()"
+          />
+          <app-icon-action-button
+            kind="delete"
+            variant="ghost"
+            [label]="'common.removeOption' | t"
+            [disabled]="draft.options.length <= 2"
+            (action)="removeOption(oi)"
+          />
+        </div>
+      }
+    </div>
+
+    @if (isMulti()) {
+      <div class="correct-multi">
+        <span>{{ 'common.correctAnswers' | t }}</span>
+        @for (opt of filled(); track opt.key) {
+          <label class="checkbox">
+            <input type="checkbox" [checked]="draft.correctKeys.includes(opt.key)" (change)="toggleCorrectKey(opt.key)" />
+            {{ opt.key }} — {{ opt.text }}
+          </label>
+        }
+      </div>
+    } @else {
+      <label class="qb-field">
+        <span>{{ 'common.correctAnswer' | t }}</span>
+        <app-searchable-select
+          [(ngModel)]="draft.correctAnswer"
+          [name]="namePrefix + '-correct'"
+          [emptyLabel]="'common.selectCorrect' | t"
+          [options]="filled().map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+        />
+      </label>
+    }
+  }
+</div>

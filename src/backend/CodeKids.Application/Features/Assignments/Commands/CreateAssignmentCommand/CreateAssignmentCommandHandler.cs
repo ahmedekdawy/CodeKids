@@ -48,31 +48,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
-        var order = 1;
-        foreach (var q in command.Questions)
-        {
-            if (!Enum.TryParse<AssignmentQuestionType>(q.QuestionType, true, out var type))
-            {
-                throw new InvalidOperationException("Question type must be ShortAnswer or MultipleChoice.");
-            }
-
-            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, q.PromptImageMediaAssetId, cancellationToken);
-            assignment.Questions.Add(new AssignmentQuestion
-            {
-                Id = Guid.NewGuid(),
-                AssignmentId = assignment.Id,
-                Prompt = q.Prompt.Trim(),
-                QuestionType = type,
-                OptionA = q.OptionA,
-                OptionB = q.OptionB,
-                OptionC = q.OptionC,
-                CorrectAnswer = q.CorrectAnswer.Trim(),
-                Points = q.Points <= 0 ? 1 : q.Points,
-                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder,
-                PromptImageMediaAssetId = q.PromptImageMediaAssetId
-            });
-            order++;
-        }
+        await AssignmentQuestionSync.ApplyAsync(dbContext, assignment, command.Questions, cancellationToken);
 
         dbContext.Assignments.Add(assignment);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -113,19 +89,5 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             assignment.CreatedByUserId,
             assignment.CreatedBy?.DisplayName ?? "Teacher",
             includeSolutionVideo ? assignment.SolutionVideoMediaAssetId : null,
-            assignment.Questions
-                .OrderBy(x => x.SortOrder)
-                .Select(q => new AssignmentQuestionDto(
-                    q.Id,
-                    q.Prompt,
-                    q.QuestionType.ToString(),
-                    q.OptionA,
-                    q.OptionB,
-                    q.OptionC,
-                    q.Points,
-                    q.SortOrder,
-                    includeAnswerKey ? q.CorrectAnswer : null,
-                    QuestionImageUrls.Build(q.PromptImageMediaAssetId),
-                    q.PromptImageMediaAssetId))
-                .ToList());
+            AssignmentQuestionSync.MapTree(assignment.Questions, includeAnswerKey));
 }

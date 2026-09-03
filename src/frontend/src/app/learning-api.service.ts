@@ -258,14 +258,20 @@ export class LearningApiService {
     xpReward: number;
     isPublished: boolean;
     questions: {
+      id?: string | null;
       prompt: string;
+      questionType?: string;
+      passageText?: string;
       optionA?: string | null;
       optionB?: string | null;
       optionC?: string | null;
       options?: string[];
-      correctOption: string;
+      correctOption?: string;
+      correctAnswer?: string;
+      points?: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
+      children?: unknown[];
     }[];
   }): Observable<Quiz> {
     return this.http.post<Quiz>(`${this.baseUrl}/quizzes`, payload);
@@ -304,13 +310,18 @@ export class LearningApiService {
       questions: {
         id?: string | null;
         prompt: string;
+        questionType?: string;
+        passageText?: string;
         optionA?: string | null;
         optionB?: string | null;
         optionC?: string | null;
         options?: string[];
-        correctOption: string;
+        correctOption?: string;
+        correctAnswer?: string;
+        points?: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
+        children?: unknown[];
       }[];
     }
   ): Observable<Quiz> {
@@ -1242,14 +1253,17 @@ export class LearningApiService {
     questions: {
       prompt: string;
       questionType: string;
+      passageText?: string;
       optionA?: string | null;
       optionB?: string | null;
       optionC?: string | null;
+      options?: string[];
       correctAnswer: string;
       points: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
       id?: string | null;
+      children?: unknown[];
     }[];
   }): Observable<Assignment> {
     return this.http.post<Assignment>(`${this.baseUrl}/assignments`, payload);
@@ -1267,14 +1281,17 @@ export class LearningApiService {
       questions: {
         prompt: string;
         questionType: string;
+        passageText?: string;
         optionA?: string | null;
         optionB?: string | null;
         optionC?: string | null;
+        options?: string[];
         correctAnswer: string;
         points: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
         id?: string | null;
+        children?: unknown[];
       }[];
     }
   ): Observable<Assignment> {

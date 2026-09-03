@@ -35,16 +35,6 @@ public sealed class GetTeacherQuizByIdQueryHandler(IAppDbContext dbContext)
             quiz.Description,
             quiz.XpReward,
             quiz.IsPublished,
-            quiz.Questions
-                .OrderBy(x => x.SortOrder)
-                .Select(x => new TeacherQuizQuestionDetailDto(
-                    x.Id,
-                    x.Prompt,
-                    ChoiceOptions.Parse(x.OptionsJson, x.OptionA, x.OptionB, x.OptionC),
-                    x.CorrectOption,
-                    x.SortOrder,
-                    x.PromptImageMediaAssetId,
-                    QuestionImageUrls.Build(x.PromptImageMediaAssetId)))
-                .ToList());
+            QuizQuestionSync.MapTeacherTree(quiz.Questions));
     }
 }

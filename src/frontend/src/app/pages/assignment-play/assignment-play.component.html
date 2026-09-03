@@ -43,21 +43,16 @@
       <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} {{ 'common.xp' | t }}</p>
       @for (question of current.questions; track question.id) {
         <div class="question">
-          <strong>{{ question.prompt }}</strong>
-          <app-question-image-display [url]="question.promptImageUrl" />
-          @if (question.questionType === 'MultipleChoice') {
-            <label><input type="radio" [name]="question.id" (change)="setAnswerText(question.id, 'A')" /> A. {{ question.optionA }}</label>
-            <label><input type="radio" [name]="question.id" (change)="setAnswerText(question.id, 'B')" /> B. {{ question.optionB }}</label>
-            <label><input type="radio" [name]="question.id" (change)="setAnswerText(question.id, 'C')" /> C. {{ question.optionC }}</label>
-          } @else {
-            <textarea [value]="answers()[question.id]?.text || ''" (input)="setAnswerText(question.id, $any($event.target).value)"></textarea>
-            <app-student-answer-upload
-              [mediaAssetId]="answers()[question.id]?.imageMediaAssetId ?? null"
-              [imageUrl]="answers()[question.id]?.imageUrl ?? null"
-              (mediaAssetIdChange)="setAnswerImage(question.id, $event, answers()[question.id]?.imageUrl ?? null)"
-              (imageUrlChange)="setAnswerImage(question.id, answers()[question.id]?.imageMediaAssetId ?? null, $event)"
-            />
-          }
+          <app-question-play-prompt
+            [question]="question"
+            [answers]="answers()"
+            [multiAnswers]="multiAnswers()"
+            [answerImages]="answerImages()"
+            answerUpload="text"
+            (answerChange)="setAnswer($event.questionId, $event.value)"
+            (multiToggle)="toggleMulti($event.questionId, $event.key)"
+            (answerImageChange)="setAnswerImage($event.questionId, $event.mediaAssetId, $event.imageUrl)"
+          />
         </div>
       }
       <button type="button" (click)="submit()">{{ 'play.submitAssignment' | t }}</button>

@@ -19,6 +19,8 @@ public sealed class GetAssignmentByIdQueryHandler(IAppDbContext dbContext)
             .AsNoTracking()
             .Include(x => x.Classroom)
                 .ThenInclude(c => c!.Courses)
+            .Include(x => x.Classroom)
+                .ThenInclude(c => c!.Students)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == query.AssignmentId, cancellationToken);
@@ -34,9 +36,13 @@ public sealed class GetAssignmentByIdQueryHandler(IAppDbContext dbContext)
             return null;
         }
 
-        if (isStudent && assignment.Classroom?.Students.All(s => s.StudentId != query.ViewerUserId) != false)
+        if (isStudent)
         {
-            return null;
+            var enrolled = assignment.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true;
+            if (!enrolled)
+            {
+                return null;
+            }
         }
 
         return CreateAssignmentCommandHandler.Map(assignment, includeKey, includeSolutionVideo: includeKey);

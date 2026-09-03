@@ -42,81 +42,16 @@
       <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} {{ 'common.xp' | t }}</p>
 
       @for (question of current.questions; track question.id) {
-        <div class="question">
-          <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
-          <app-question-image-display [url]="question.promptImageUrl" />
-          @if (question.passageText) {
-            <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
-          }
-
-          @if (question.questionType === 'Paragraph') {
-            @for (child of question.children; track child.id) {
-              <div class="child-question">
-                <strong>{{ child.prompt }}</strong>
-                <app-question-image-display [url]="child.promptImageUrl" />
-                @if (child.questionType === 'TrueFalse') {
-                  <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'True')" /> {{ 'common.true' | t }}</label>
-                  <label><input type="radio" [name]="child.id" (change)="setAnswer(child.id, 'False')" /> {{ 'common.false' | t }}</label>
-                } @else if (child.questionType === 'MultiChoice') {
-                  @for (opt of choiceOptions(child); track opt.key) {
-                    <label>
-                      <input type="checkbox" [checked]="isMultiChecked(child.id, opt.key)" (change)="toggleMulti(child.id, opt.key)" />
-                      {{ opt.key }}. {{ opt.text }}
-                    </label>
-                  }
-                } @else {
-                  @for (opt of choiceOptions(child); track opt.key) {
-                    <label>
-                      <input type="radio" [name]="child.id" (change)="setAnswer(child.id, opt.key)" />
-                      {{ opt.key }}. {{ opt.text }}
-                    </label>
-                  }
-                }
-                <app-student-answer-upload
-                  [mediaAssetId]="answerImages()[child.id]?.mediaAssetId ?? null"
-                  [imageUrl]="answerImages()[child.id]?.imageUrl ?? null"
-                  (mediaAssetIdChange)="setAnswerImage(child.id, $event, answerImages()[child.id]?.imageUrl ?? null)"
-                  (imageUrlChange)="setAnswerImage(child.id, answerImages()[child.id]?.mediaAssetId ?? null, $event)"
-                />
-              </div>
-            }
-          } @else if (question.questionType === 'Underline') {
-            <label>
-              {{ 'play.underlinedPhrase' | t }}
-              <input
-                type="text"
-                [value]="answers()[question.id] || ''"
-                (input)="setAnswer(question.id, $any($event.target).value)"
-                [placeholder]="'play.underlinePlaceholder' | t"
-              />
-            </label>
-          } @else if (question.questionType === 'TrueFalse') {
-            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'True')" /> {{ 'common.true' | t }}</label>
-            <label><input type="radio" [name]="question.id" (change)="setAnswer(question.id, 'False')" /> {{ 'common.false' | t }}</label>
-          } @else if (question.questionType === 'MultiChoice') {
-            @for (opt of choiceOptions(question); track opt.key) {
-              <label>
-                <input type="checkbox" [checked]="isMultiChecked(question.id, opt.key)" (change)="toggleMulti(question.id, opt.key)" />
-                {{ opt.key }}. {{ opt.text }}
-              </label>
-            }
-          } @else {
-            @for (opt of choiceOptions(question); track opt.key) {
-              <label>
-                <input type="radio" [name]="question.id" (change)="setAnswer(question.id, opt.key)" />
-                {{ opt.key }}. {{ opt.text }}
-              </label>
-            }
-          }
-          @if (question.questionType !== 'Paragraph') {
-            <app-student-answer-upload
-              [mediaAssetId]="answerImages()[question.id]?.mediaAssetId ?? null"
-              [imageUrl]="answerImages()[question.id]?.imageUrl ?? null"
-              (mediaAssetIdChange)="setAnswerImage(question.id, $event, answerImages()[question.id]?.imageUrl ?? null)"
-              (imageUrlChange)="setAnswerImage(question.id, answerImages()[question.id]?.mediaAssetId ?? null, $event)"
-            />
-          }
-        </div>
+        <app-question-play-prompt
+          [question]="question"
+          [answers]="answers()"
+          [multiAnswers]="multiAnswers()"
+          [answerImages]="answerImages()"
+          answerUpload="all"
+          (answerChange)="setAnswer($event.questionId, $event.value)"
+          (multiToggle)="toggleMulti($event.questionId, $event.key)"
+          (answerImageChange)="setAnswerImage($event.questionId, $event.mediaAssetId, $event.imageUrl)"
+        />
       }
 
       <button type="button" (click)="submit()">{{ 'play.submitExam' | t }}</button>

@@ -1,32 +1,25 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
-import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, TeacherQuizListItem, TeacherQuizQuestionDetail } from '../../models';
+import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, TeacherQuizListItem } from '../../models';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
-import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { QuestionDraftEditorComponent } from '../../shared/question-draft-editor/question-draft-editor.component';
+import { QuestionDraft } from '../../shared/question-draft/question-draft.model';
+import {
+  draftFromGenerated,
+  draftFromQuizQuestion,
+  emptyQuestionDraft,
+  toQuestionPayload,
+  validateQuestionDraft
+} from '../../shared/question-draft/question-draft.util';
 import { paginate, totalPages } from '../../list-query.util';
-
-interface OptionDraft {
-  key: string;
-  text: string;
-}
-
-interface QuestionDraft {
-  key: string;
-  id?: string;
-  prompt: string;
-  options: OptionDraft[];
-  correct: string;
-  promptImageMediaAssetId?: string | null;
-  promptImageUrl?: string | null;
-}
 
 @Component({
   selector: 'app-teacher-quizzes',
@@ -38,7 +31,7 @@ interface QuestionDraft {
     ReactiveFormsModule,
     IconActionButtonComponent,
     TranslatePipe,
-    QuestionImageUploadComponent,
+    QuestionDraftEditorComponent,
     QuestionImageDisplayComponent
   ],
   templateUrl: './teacher-quizzes.component.html',
@@ -66,13 +59,12 @@ export class TeacherQuizzesComponent {
     classroomId: [''],
     xp: [30],
     isPublished: [false],
-    questionCount: [1],
-    questions: this.fb.array([this.createQuestionGroup()])
+    questionCount: [1]
   });
+  questions: QuestionDraft[] = [emptyQuestionDraft()];
 
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
-  readonly questionRenderKey = signal(0);
   editingQuizId: string | null = null;
 
   filterFromDate = startOfMonthLocal();
@@ -115,30 +107,6 @@ export class TeacherQuizzesComponent {
     this.quizForm.controls.unitIds.valueChanges.subscribe(() => this.onUnitsChange());
   }
 
-  get questionsArray(): FormArray<FormGroup> {
-    return this.quizForm.controls.questions;
-  }
-
-  questionGroup(index: number): FormGroup {
-    return this.questionsArray.at(index);
-  }
-
-  optionsArray(questionIndex: number): FormArray<FormGroup> {
-    return this.questionGroup(questionIndex).controls['options'] as FormArray<FormGroup>;
-  }
-
-  questionTrackId(index: number): string {
-    return String(this.questionGroup(index).controls['key'].value ?? index);
-  }
-
-  questionRenderTrackId(index: number): string {
-    return `${this.questionRenderKey()}-${this.questionTrackId(index)}`;
-  }
-
-  optionTrackId(questionIndex: number, optionIndex: number): string {
-    return String(this.optionsArray(questionIndex).at(optionIndex).controls['key'].value ?? optionIndex);
-  }
-
   courseLabel(course: Course): string {
     return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade, 'common.allGrades', course.stageId);
   }
@@ -154,59 +122,25 @@ export class TeacherQuizzesComponent {
     return d.toLocaleString();
   }
 
-  optionLabel(index: number): string {
-    return String.fromCharCode(65 + index);
-  }
-
-  filledOptions(questionIndex: number): { key: string; text: string }[] {
-    return this.optionsArray(questionIndex).controls
-      .map((control, index) => ({
-        key: this.optionLabel(index),
-        text: String(control.controls['text'].value ?? '').trim()
-      }))
-      .filter((option) => option.text.length > 0);
-  }
-
   addQuestion(): void {
-    this.questionsArray.push(this.createQuestionGroup());
-    this.quizForm.patchValue({ questionCount: this.questionsArray.length });
+    this.questions.push(emptyQuestionDraft());
+    this.quizForm.patchValue({ questionCount: this.questions.length });
   }
 
   removeQuestion(index: number): void {
-    if (this.questionsArray.length <= 1) return;
-    this.questionsArray.removeAt(index);
-    this.quizForm.patchValue({ questionCount: this.questionsArray.length });
+    if (this.questions.length <= 1) return;
+    this.questions.splice(index, 1);
+    this.quizForm.patchValue({ questionCount: this.questions.length });
   }
 
   onQuestionCountChange(): void {
     const count = this.clampQuestionCount(this.quizForm.controls.questionCount.value, 1);
     this.quizForm.patchValue({ questionCount: count });
-    while (this.questionsArray.length < count) {
-      this.questionsArray.push(this.createQuestionGroup());
+    while (this.questions.length < count) {
+      this.questions.push(emptyQuestionDraft());
     }
-    while (this.questionsArray.length > count) {
-      this.questionsArray.removeAt(this.questionsArray.length - 1);
-    }
-  }
-
-  addOption(questionIndex: number): void {
-    const options = this.optionsArray(questionIndex);
-    if (options.length >= 26) return;
-    options.push(this.createOptionGroup());
-  }
-
-  removeOption(questionIndex: number, optionIndex: number): void {
-    const options = this.optionsArray(questionIndex);
-    if (options.length <= 2) return;
-    options.removeAt(optionIndex);
-    this.onOptionTextChange(questionIndex);
-  }
-
-  onOptionTextChange(questionIndex: number): void {
-    const correct = String(this.questionGroup(questionIndex).controls['correct'].value ?? '');
-    const keys = new Set(this.filledOptions(questionIndex).map((option) => option.key));
-    if (correct && !keys.has(correct)) {
-      this.questionGroup(questionIndex).patchValue({ correct: '' });
+    if (this.questions.length > count) {
+      this.questions = this.questions.slice(0, count);
     }
   }
 
@@ -319,23 +253,13 @@ export class TeacherQuizzesComponent {
       .subscribe({
         next: (draft) => {
           this.generating.set(false);
-          this.setQuestions(
-            draft.questions.length
-              ? draft.questions.map((question) => ({
-                  key: crypto.randomUUID(),
-                  prompt: question.prompt,
-                  options: (question.options?.length ? question.options : ['', '', '']).map((text) => ({
-                    key: crypto.randomUUID(),
-                    text
-                  })),
-                  correct: question.correctOption || ''
-                }))
-              : [this.emptyQuestionDraft()]
-          );
+          this.questions = draft.questions.length
+            ? draft.questions.map((question) => draftFromGenerated(question))
+            : [emptyQuestionDraft()];
           this.quizForm.patchValue({
             title: draft.title,
             description: draft.description,
-            questionCount: this.questionsArray.length
+            questionCount: this.questions.length
           });
           this.info.set(this.locale.t('teacher.ai.generated'));
         },
@@ -365,11 +289,9 @@ export class TeacherQuizzesComponent {
     });
     this.api.getTeacherQuiz(quiz.id).subscribe({
       next: (detail) => {
-        this.setQuestions(
-          detail.questions.length
-            ? detail.questions.map((question) => this.mapDetailQuestion(question))
-            : [this.emptyQuestionDraft()]
-        );
+        this.questions = detail.questions.length
+          ? detail.questions.map((question) => draftFromQuizQuestion(question))
+          : [emptyQuestionDraft()];
         this.quizForm.patchValue({
           title: detail.title,
           description: detail.description,
@@ -377,7 +299,7 @@ export class TeacherQuizzesComponent {
           classroomId: detail.classroomId || '',
           xp: detail.xpReward,
           isPublished: detail.isPublished,
-          questionCount: this.questionsArray.length
+          questionCount: this.questions.length
         });
         document.getElementById('quiz-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       },
@@ -459,46 +381,19 @@ export class TeacherQuizzesComponent {
     }
 
     const formValue = this.quizForm.getRawValue();
-    const payloads: {
-      id?: string | null;
-      prompt: string;
-      options: string[];
-      correctOption: string;
-      sortOrder: number;
-      promptImageMediaAssetId?: string | null;
-    }[] = [];
-
-    for (let index = 0; index < this.questionsArray.length; index++) {
-      const question = this.questionGroup(index).getRawValue() as {
-        id: string;
-        prompt: string;
-        correct: string;
-        promptImageMediaAssetId: string | null;
-      };
-      const prompt = (question.prompt || '').trim();
-      if (!prompt) {
-        this.error.set(this.locale.t('teacher.quizzes.promptRequired', { n: index + 1 }));
+    const payloads = [];
+    for (let index = 0; index < this.questions.length; index++) {
+      const errorKey = validateQuestionDraft(this.questions[index], index + 1);
+      if (errorKey) {
+        this.error.set(this.locale.t(errorKey));
         return;
       }
+      payloads.push(toQuestionPayload(this.questions[index], index + 1));
+    }
 
-      const filled = this.filledOptions(index);
-      if (filled.length < 2) {
-        this.error.set(this.locale.t('teacher.quizzes.minOptionsForQuestion', { n: index + 1 }));
-        return;
-      }
-      if (!question.correct) {
-        this.error.set(this.locale.t('teacher.quizzes.selectCorrectForQuestion', { n: index + 1 }));
-        return;
-      }
-
-      payloads.push({
-        ...(question.id ? { id: question.id } : {}),
-        prompt,
-        options: filled.map((option) => option.text),
-        correctOption: question.correct,
-        sortOrder: index + 1,
-        promptImageMediaAssetId: question.promptImageMediaAssetId || null
-      });
+    if (!payloads.length) {
+      this.error.set(this.locale.t('teacher.quizzes.promptRequired', { n: 1 }));
+      return;
     }
 
     const payload = {
@@ -534,78 +429,6 @@ export class TeacherQuizzesComponent {
     });
   }
 
-  private createQuestionGroup(draft?: QuestionDraft): FormGroup {
-    const options = draft?.options?.length
-      ? draft.options.map((option) => this.createOptionGroup(option.text, option.key))
-      : [this.createOptionGroup(), this.createOptionGroup(), this.createOptionGroup()];
-
-    return this.fb.group({
-      key: [draft?.key ?? crypto.randomUUID()],
-      id: [draft?.id ?? ''],
-      prompt: [draft?.prompt ?? ''],
-      options: this.fb.array(options),
-      correct: [draft?.correct ?? ''],
-      promptImageMediaAssetId: [draft?.promptImageMediaAssetId ?? null],
-      promptImageUrl: [draft?.promptImageUrl ?? null]
-    });
-  }
-
-  private createOptionGroup(text = '', key: string = crypto.randomUUID()): FormGroup {
-    return this.fb.group({
-      key: [key],
-      text: [text]
-    });
-  }
-
-  private emptyQuestionDraft(): QuestionDraft {
-    return {
-      key: crypto.randomUUID(),
-      prompt: '',
-      options: [
-        { key: crypto.randomUUID(), text: '' },
-        { key: crypto.randomUUID(), text: '' },
-        { key: crypto.randomUUID(), text: '' }
-      ],
-      correct: ''
-    };
-  }
-
-  private setQuestions(questions: QuestionDraft[]): void {
-    this.quizForm.setControl(
-      'questions',
-      this.fb.array(questions.map((question) => this.createQuestionGroup(question)))
-    );
-    this.quizForm.patchValue({ questionCount: questions.length });
-    this.questionRenderKey.update((value) => value + 1);
-  }
-
-  private mapDetailQuestion(question: TeacherQuizQuestionDetail): QuestionDraft {
-    const raw = question as TeacherQuizQuestionDetail & Record<string, unknown>;
-    const prompt = String(raw.prompt ?? raw['Prompt'] ?? '');
-    const correctOption = String(raw.correctOption ?? raw['CorrectOption'] ?? '').toUpperCase();
-    const optionsRaw = (raw.options ?? raw['Options']) as Array<{ key?: string; text?: string; Key?: string; Text?: string }> | undefined;
-    const options = optionsRaw?.length
-      ? optionsRaw.map((option) => ({
-          key: crypto.randomUUID(),
-          text: String(option.text ?? option.Text ?? '')
-        }))
-      : [
-          { key: crypto.randomUUID(), text: '' },
-          { key: crypto.randomUUID(), text: '' },
-          { key: crypto.randomUUID(), text: '' }
-        ];
-
-    return {
-      key: String(raw.id ?? raw['Id'] ?? crypto.randomUUID()),
-      id: String(raw.id ?? raw['Id'] ?? ''),
-      prompt,
-      options,
-      correct: correctOption,
-      promptImageMediaAssetId: (raw.promptImageMediaAssetId ?? raw['PromptImageMediaAssetId'] ?? null) as string | null,
-      promptImageUrl: (raw.promptImageUrl ?? raw['PromptImageUrl'] ?? null) as string | null
-    };
-  }
-
   private resetQuizForm(): void {
     const courses = this.courses();
     const classrooms = this.classrooms();
@@ -620,7 +443,7 @@ export class TeacherQuizzesComponent {
       isPublished: false,
       questionCount: 1
     });
-    this.setQuestions([this.emptyQuestionDraft()]);
+    this.questions = [emptyQuestionDraft()];
   }
 
   private clampQuestionCount(value: number, fallback: number): number {

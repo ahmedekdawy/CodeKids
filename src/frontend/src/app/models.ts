@@ -273,12 +273,15 @@ export interface ChoiceOption {
 export interface QuizQuestion {
   id: string;
   prompt: string;
+  questionType: string;
+  passageText?: string;
   optionA: string;
   optionB: string;
   optionC: string;
   options?: ChoiceOption[];
   sortOrder: number;
   promptImageUrl?: string | null;
+  children?: QuizQuestion[];
 }
 
 export interface Quiz {
@@ -311,11 +314,16 @@ export interface TeacherQuizListItem {
 export interface TeacherQuizQuestionDetail {
   id: string;
   prompt: string;
+  questionType?: string;
+  passageText?: string;
   options: ChoiceOption[];
   correctOption: string;
+  correctAnswer?: string;
+  points?: number;
   sortOrder: number;
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
+  children?: TeacherQuizQuestionDetail[];
 }
 
 export interface TeacherQuizDetail {
@@ -1027,14 +1035,17 @@ export interface AssignmentQuestion {
   id: string;
   prompt: string;
   questionType: string;
+  passageText?: string;
   optionA?: string | null;
   optionB?: string | null;
   optionC?: string | null;
+  options?: ChoiceOption[];
   points: number;
   sortOrder: number;
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
   promptImageMediaAssetId?: string | null;
+  children?: AssignmentQuestion[];
 }
 
 export interface Assignment {
@@ -1088,7 +1099,8 @@ export type BankQuestionType =
   | 'SingleChoice'
   | 'MultiChoice'
   | 'Paragraph'
-  | 'Underline';
+  | 'Underline'
+  | 'FreeText';
 
 export interface BankQuestion {
   id: string;

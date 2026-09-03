@@ -65,11 +65,10 @@
         />
       </label>
       <label>
-        {{ 'common.type' | t }}
+        {{ 'teacher.ai.preferredType' | t }}
         <app-searchable-select
           [(ngModel)]="assignmentType"
           name="assignmentType"
-          (ngModelChange)="onTypeChange()"
           [options]="[{ value: 'ShortAnswer', label: ('assignType.shortAnswer' | t) }, { value: 'MultipleChoice', label: ('assignType.multipleChoice' | t) }]"
         />
       </label>
@@ -79,26 +78,7 @@
           <div class="question-card-head">
             <strong>{{ 'teacher.assignments.question' | t }} {{ qi + 1 }}</strong>
           </div>
-          <label class="question-prompt">
-            {{ 'teacher.assignments.question' | t }}
-            <textarea [(ngModel)]="question.prompt" [name]="'assignmentPrompt-' + qi" rows="2" required></textarea>
-          </label>
-          <app-question-image-upload
-            [mediaAssetId]="question.promptImageMediaAssetId ?? null"
-            [imageUrl]="question.promptImageUrl ?? null"
-            (mediaAssetIdChange)="question.promptImageMediaAssetId = $event"
-            (imageUrlChange)="question.promptImageUrl = $event"
-          />
-          <div class="options-editor">
-            @if (question.questionType === 'MultipleChoice') {
-              <label>A <input [(ngModel)]="question.optionA" [name]="'assignmentOptionA-' + qi" /></label>
-              <label>B <input [(ngModel)]="question.optionB" [name]="'assignmentOptionB-' + qi" /></label>
-              <label>C <input [(ngModel)]="question.optionC" [name]="'assignmentOptionC-' + qi" /></label>
-            }
-            <label>{{ 'common.correctAnswer' | t }}
-              <input [(ngModel)]="question.correct" [name]="'assignmentCorrect-' + qi" required />
-            </label>
-          </div>
+          <app-question-draft-editor [draft]="question" [namePrefix]="'asg-' + qi" [allowShortAnswer]="true" />
         </div>
       }
       </div>

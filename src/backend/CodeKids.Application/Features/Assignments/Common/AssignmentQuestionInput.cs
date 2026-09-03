@@ -1,10 +1,3 @@
-using CodeKids.Application.Abstractions;
-using CodeKids.Application.Features.Badges;
-using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
-
 namespace CodeKids.Application.Features.Assignments;
 
 public sealed record AssignmentQuestionInput(
@@ -17,4 +10,7 @@ public sealed record AssignmentQuestionInput(
     int Points,
     int SortOrder,
     Guid? PromptImageMediaAssetId,
-    Guid? Id = null);
+    Guid? Id = null,
+    string? PassageText = null,
+    IReadOnlyList<string>? Options = null,
+    IReadOnlyList<AssignmentQuestionInput>? Children = null);

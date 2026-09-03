@@ -1,75 +1,80 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { ChoiceOption, Quiz, QuizQuestion, SubmitQuizResponse } from '../../models';
+import { Quiz, SubmitQuizResponse } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
-import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { QuestionPlayPromptComponent } from '../../shared/question-play-prompt/question-play-prompt.component';
+import { answerableQuestions, flattenQuestions } from '../../shared/question-draft/question-draft.util';
 
 @Component({
   selector: 'app-quiz-play',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
+  imports: [RouterLink, TranslatePipe, ApiBusyIndicatorComponent, QuestionPlayPromptComponent],
   templateUrl: './quiz-play.component.html',
   styleUrl: './quiz-play.component.css'
 })
 export class QuizPlayComponent {
   private readonly api = inject(LearningApiService);
   private readonly route = inject(ActivatedRoute);
-  private readonly fb = inject(FormBuilder);
   private readonly locale = inject(LocaleService);
 
   readonly quiz = signal<Quiz | null>(null);
   readonly result = signal<SubmitQuizResponse | null>(null);
   readonly loading = signal(false);
-  form: FormGroup | null = null;
+  readonly error = signal('');
+  readonly answers = signal<Record<string, string>>({});
+  readonly multiAnswers = signal<Record<string, Set<string>>>({});
 
   constructor() {
     const quizId = this.route.snapshot.paramMap.get('quizId')!;
     this.api.getQuiz(quizId).subscribe((quiz) => {
       this.quiz.set(quiz);
-      this.form = this.fb.group(
-        Object.fromEntries(
-          quiz.questions.map((question) => [
-            question.id,
-            this.fb.control('', Validators.required)
-          ])
-        )
-      );
+      const seed: Record<string, string> = {};
+      const multi: Record<string, Set<string>> = {};
+      for (const question of flattenQuestions(quiz.questions)) {
+        seed[question.id] = '';
+        if (question.questionType === 'MultiChoice') multi[question.id] = new Set();
+      }
+      this.answers.set(seed);
+      this.multiAnswers.set(multi);
     });
   }
 
-  choiceOptions(question: QuizQuestion): ChoiceOption[] {
-    if (question.options?.length) return question.options;
-    const legacy: ChoiceOption[] = [];
-    if (question.optionA) legacy.push({ key: 'A', text: question.optionA });
-    if (question.optionB) legacy.push({ key: 'B', text: question.optionB });
-    if (question.optionC) legacy.push({ key: 'C', text: question.optionC });
-    return legacy;
+  setAnswer(questionId: string, value: string): void {
+    this.answers.update((current) => ({ ...current, [questionId]: value }));
+  }
+
+  toggleMulti(questionId: string, key: string): void {
+    const current = this.multiAnswers();
+    const set = new Set(current[questionId] || []);
+    if (set.has(key)) set.delete(key);
+    else set.add(key);
+    this.multiAnswers.set({ ...current, [questionId]: set });
+    this.setAnswer(questionId, [...set].sort().join(','));
   }
 
   submit(): void {
     const quiz = this.quiz();
-    if (!quiz || !this.form || this.form.invalid) {
-      this.form?.markAllAsTouched();
-      return;
-    }
+    if (!quiz || this.loading()) return;
 
-    const answers = this.form.getRawValue() as Record<string, string>;
     this.loading.set(true);
+    this.error.set('');
     this.api.submitQuiz({
       quizId: quiz.id,
-      answers: quiz.questions.map((question) => ({
+      answers: answerableQuestions(quiz.questions).map((question) => ({
         questionId: question.id,
-        selectedOption: answers[question.id] || ''
+        selectedOption: this.answers()[question.id] || ''
       }))
     }).subscribe({
       next: (response) => {
         this.loading.set(false);
         this.result.set(response);
       },
-      error: () => this.loading.set(false)
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(this.locale.fromApiError(err, 'play.submitQuizFailed'));
+      }
     });
   }
 

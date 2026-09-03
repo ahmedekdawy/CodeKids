@@ -24,7 +24,12 @@ public sealed record CreateQuizQuestionInput(
     string? OptionB,
     string? OptionC,
     IReadOnlyList<string>? Options,
-    string CorrectOption,
+    string? CorrectOption,
     int SortOrder,
     Guid? PromptImageMediaAssetId,
-    Guid? Id = null);
+    Guid? Id = null,
+    string? QuestionType = null,
+    string? PassageText = null,
+    string? CorrectAnswer = null,
+    int Points = 1,
+    IReadOnlyList<CreateQuizQuestionInput>? Children = null);

@@ -3,23 +3,20 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { ChoiceOption, Exam, ExamAttempt, ExamQuestion } from '../../models';
+import { Exam, ExamAttempt } from '../../models';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
-import { StudentAnswerUploadComponent } from '../../shared/student-answer-upload/student-answer-upload.component';
-
-interface AnswerImageDraft {
-  mediaAssetId: string | null;
-  imageUrl: string | null;
-}
+import { QuestionPlayPromptComponent } from '../../shared/question-play-prompt/question-play-prompt.component';
+import { AnswerImageDraft } from '../../shared/question-play-prompt/playable-question';
+import { answerableQuestions, flattenQuestions } from '../../shared/question-draft/question-draft.util';
 
 @Component({
   selector: 'app-exam-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, StudentAnswerUploadComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent],
   templateUrl: './exam-play.component.html',
   styleUrl: './exam-play.component.css'
 })
@@ -44,7 +41,7 @@ export class ExamPlayComponent {
         const seed: Record<string, string> = {};
         const multi: Record<string, Set<string>> = {};
         const images: Record<string, AnswerImageDraft> = {};
-        for (const q of this.flatten(exam.questions)) {
+        for (const q of flattenQuestions(exam.questions)) {
           seed[q.id] = '';
           if (q.questionType === 'MultiChoice') multi[q.id] = new Set();
           images[q.id] = { mediaAssetId: null, imageUrl: null };
@@ -62,25 +59,6 @@ export class ExamPlayComponent {
       },
       error: () => this.error.set(this.locale.t('play.examNotFound'))
     });
-  }
-
-  choiceOptions(question: ExamQuestion): ChoiceOption[] {
-    if (question.options?.length) return question.options;
-    const legacy: ChoiceOption[] = [];
-    if (question.optionA) legacy.push({ key: 'A', text: question.optionA });
-    if (question.optionB) legacy.push({ key: 'B', text: question.optionB });
-    if (question.optionC) legacy.push({ key: 'C', text: question.optionC });
-    if (question.optionD) legacy.push({ key: 'D', text: question.optionD });
-    return legacy;
-  }
-
-  flatten(questions: ExamQuestion[]): ExamQuestion[] {
-    const list: ExamQuestion[] = [];
-    for (const q of questions) {
-      list.push(q);
-      list.push(...this.flatten(q.children || []));
-    }
-    return list;
   }
 
   setAnswer(questionId: string, value: string): void {
@@ -110,7 +88,7 @@ export class ExamPlayComponent {
   submit(): void {
     const exam = this.exam();
     if (!exam) return;
-    const answerable = this.flatten(exam.questions).filter((q) => q.questionType !== 'Paragraph');
+    const answerable = answerableQuestions(exam.questions);
     this.api
       .submitExam({
         examId: exam.id,

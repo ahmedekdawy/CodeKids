@@ -66,41 +66,7 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext, Notificati
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
-        var order = 1;
-        foreach (var q in command.Questions)
-        {
-            var options = q.Options is { Count: > 0 }
-                ? ChoiceOptions.FromTexts(q.Options)
-                : ChoiceOptions.Parse(null, q.OptionA, q.OptionB, q.OptionC);
-
-            if (options.Count < 2)
-            {
-                throw new InvalidOperationException("Each quiz question needs at least two options.");
-            }
-
-            var correct = q.CorrectOption.Trim().ToUpperInvariant();
-            if (!ChoiceOptions.AllowedKeys(options).Contains(correct))
-            {
-                throw new InvalidOperationException("Correct option must match one of the listed choices.");
-            }
-
-            var (a, b, c, _) = ChoiceOptions.ToLegacy(options);
-            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, q.PromptImageMediaAssetId, cancellationToken);
-            quiz.Questions.Add(new QuizQuestion
-            {
-                Id = Guid.NewGuid(),
-                QuizId = quiz.Id,
-                Prompt = q.Prompt.Trim(),
-                OptionA = a ?? string.Empty,
-                OptionB = b ?? string.Empty,
-                OptionC = c ?? string.Empty,
-                OptionsJson = ChoiceOptions.ToJson(options),
-                CorrectOption = correct,
-                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder,
-                PromptImageMediaAssetId = q.PromptImageMediaAssetId
-            });
-            order++;
-        }
+        await QuizQuestionSync.ApplyAsync(dbContext, quiz, command.Questions, cancellationToken);
 
         dbContext.Quizzes.Add(quiz);
         await dbContext.SaveChangesAsync(cancellationToken);

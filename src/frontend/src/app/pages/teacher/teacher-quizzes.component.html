@@ -56,51 +56,20 @@
         />
       </label>
 
-      <div class="questions-group" formArrayName="questions">
-        @for (_ of questionsArray.controls; track questionRenderTrackId($index); let qi = $index) {
-          <div class="question-card" [formGroupName]="qi">
+      <div class="questions-group">
+        @for (question of questions; track $index; let qi = $index) {
+          <div class="question-card">
             <div class="question-card-head">
               <strong>{{ 'teacher.quizzes.questionNumber' | t:{ n: qi + 1 } }}</strong>
               <app-icon-action-button
                 kind="delete"
                 variant="ghost"
                 [label]="'teacher.quizzes.removeQuestion' | t"
-                [disabled]="questionsArray.length <= 1"
+                [disabled]="questions.length <= 1"
                 (action)="removeQuestion(qi)"
               />
             </div>
-            <label class="question-prompt">
-              {{ 'teacher.quizzes.question' | t }}
-              <textarea formControlName="prompt" rows="2"></textarea>
-            </label>
-            <app-question-image-upload
-              [mediaAssetId]="questionGroup(qi).controls['promptImageMediaAssetId'].value"
-              [imageUrl]="questionGroup(qi).controls['promptImageUrl'].value"
-              (mediaAssetIdChange)="questionGroup(qi).patchValue({ promptImageMediaAssetId: $event })"
-              (imageUrlChange)="questionGroup(qi).patchValue({ promptImageUrl: $event })"
-            />
-            <div class="options-editor">
-              <div class="options-list" formArrayName="options">
-                @for (__ of optionsArray(qi).controls; track $index; let oi = $index) {
-                  <label [formGroupName]="oi">
-                    {{ optionLabel(oi) }}
-                    <input
-                      formControlName="text"
-                      [placeholder]="'common.optionText' | t"
-                      (input)="onOptionTextChange(qi)"
-                    />
-                  </label>
-                }
-              </div>
-              <label class="correct-answer-field">
-                {{ 'common.correctAnswer' | t }}
-                <app-searchable-select
-                  formControlName="correct"
-                  [emptyLabel]="'common.selectCorrect' | t"
-                  [options]="filledOptions(qi).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
-                />
-              </label>
-            </div>
+            <app-question-draft-editor [draft]="question" [namePrefix]="'quiz-' + qi" [allowFreeText]="false" />
           </div>
         }
       </div>
