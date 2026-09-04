@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
@@ -7,10 +7,11 @@ import { TeacherDashboard, TeacherStudentDetail } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
 
 @Component({
   selector: 'app-teacher-students',
-  imports: [PageFeedbackComponent, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, IconActionButtonComponent, TranslatePipe, UserPhotoComponent],
   templateUrl: './teacher-students.component.html',
   styleUrl: './teacher-panel.css'
 })
@@ -23,6 +24,13 @@ export class TeacherStudentsComponent {
   readonly detail = signal<TeacherStudentDetail | null>(null);
   readonly error = signal('');
   readonly impersonatingId = signal<string | null>(null);
+
+  /** The detail endpoint has no photo, so reuse the one already loaded with the roster. */
+  readonly detailPhotoUrl = computed(() => {
+    const studentId = this.detail()?.studentId;
+    if (!studentId) return null;
+    return this.dashboard()?.students.find((x) => x.studentId === studentId)?.profilePhotoUrl ?? null;
+  });
 
   constructor() {
     this.api.getTeacherDashboard().subscribe({

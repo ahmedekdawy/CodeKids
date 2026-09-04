@@ -45,6 +45,8 @@ using CodeKids.Application.Features.Meetings;
 
 using CodeKids.Application.Features.Payments;
 
+using CodeKids.Application.Features.Profile;
+
 using CodeKids.Application.Features.Progress;
 
 using CodeKids.Application.Features.QuestionBank;
@@ -233,6 +235,10 @@ builder.Services.AddScoped<IQueryHandler<GetSiteSettingsQuery, SiteSettingsDto>,
 builder.Services.AddScoped<ICommandHandler<UpdateSiteSettingsCommand, SiteSettingsDto>, UpdateSiteSettingsCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<UploadSiteImageCommand, SiteSettingsDto>, UploadSiteImageCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<SaveProfilePhotoCommand, AuthUserDto>, SaveProfilePhotoCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<RemoveProfilePhotoCommand, AuthUserDto>, RemoveProfilePhotoCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateCourseCommand, IReadOnlyList<CourseSummaryDto>>, CreateCourseCommandHandler>();
 
@@ -704,6 +710,8 @@ app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
 app.MapMediaEndpoints();
 
 app.MapQuestionImageEndpoints();
+
+app.MapProfilePhotoEndpoints();
 
 app.MapMeetingsEndpoints();
 

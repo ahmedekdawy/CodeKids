@@ -19,6 +19,36 @@
   <section class="welcome-panel">
     <div class="welcome-main">
       <div class="profile-identity">
+        <div class="profile-photo">
+          <app-user-photo
+            size="lg"
+            [photoUrl]="auth.user()?.profilePhotoUrl"
+            [name]="auth.user()?.displayName || ''"
+          />
+          <div class="photo-actions">
+            <label class="photo-btn" [class.disabled]="photoBusy()">
+              {{ (photoBusy() ? 'common.loading' : hasPhoto() ? 'student.photo.change' : 'student.photo.upload') | t }}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                hidden
+                [disabled]="photoBusy()"
+                (change)="onPhotoSelected($event)"
+              />
+            </label>
+            @if (hasPhoto()) {
+              <button type="button" class="photo-btn ghost" [disabled]="photoBusy()" (click)="removePhoto()">
+                {{ 'student.photo.remove' | t }}
+              </button>
+            }
+          </div>
+          @if (photoError(); as message) {
+            <p class="photo-error">{{ message }}</p>
+          } @else {
+            <p class="photo-hint">{{ 'student.photo.hint' | t }}</p>
+          }
+        </div>
+
         @if (selectedAvatar(); as avatar) {
           <span class="avatar-display" [attr.aria-label]="avatar.name">{{ avatar.emoji }}</span>
           <div class="avatar-picker">

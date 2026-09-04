@@ -94,6 +94,8 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.PasswordHash).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Role).HasConversion<string>().HasMaxLength(30);
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.ProfilePhotoStorageKey).HasMaxLength(400);
+            entity.Property(x => x.ProfilePhotoContentType).HasMaxLength(120);
             entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();

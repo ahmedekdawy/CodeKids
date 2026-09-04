@@ -1,0 +1,39 @@
+.user-photo {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--elevated-bg);
+  border: 2px solid var(--border-strong);
+  color: var(--heading);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.user-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.user-photo.sm {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.7rem;
+}
+
+.user-photo.md {
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 0.9rem;
+}
+
+.user-photo.lg {
+  width: 4.75rem;
+  height: 4.75rem;
+  font-size: 1.5rem;
+  box-shadow: 0 0 0 6px rgba(255, 214, 10, 0.06);
+}

@@ -17,7 +17,10 @@
       </div>
       @for (student of dashboard()?.students || []; track student.studentId) {
         <div class="table-row students-table-row student-row" (click)="openStudent(student.studentId)">
-          <span>{{ student.displayName }}</span>
+          <span class="name-cell">
+            <app-user-photo size="sm" [photoUrl]="student.profilePhotoUrl" [name]="student.displayName" />
+            {{ student.displayName }}
+          </span>
           <span>L{{ student.levelNumber }} · {{ student.levelName }}</span>
           <span>{{ student.totalXp }}</span>
           <span>{{ student.completedSteps }}</span>
@@ -41,6 +44,9 @@
   @if (detail(); as student) {
     <section class="block">
       <div class="meeting-row">
+        <div class="detail-identity">
+          <app-user-photo size="lg" [photoUrl]="detailPhotoUrl()" [name]="student.displayName" />
+        </div>
         <div>
           <strong>{{ student.displayName }}</strong>
           <p class="meta">

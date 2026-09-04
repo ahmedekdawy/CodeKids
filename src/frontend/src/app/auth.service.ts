@@ -78,6 +78,20 @@ export class AuthService {
     );
   }
 
+  uploadProfilePhoto(file: File): Observable<AuthUser> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<AuthUser>(`${resolveApiBaseUrl()}/profile/photo`, form).pipe(
+      tap((user) => this.patchUser(user))
+    );
+  }
+
+  removeProfilePhoto(): Observable<AuthUser> {
+    return this.http.delete<AuthUser>(`${resolveApiBaseUrl()}/profile/photo`).pipe(
+      tap((user) => this.patchUser(user))
+    );
+  }
+
   impersonate(userId: string): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${resolveApiBaseUrl()}/admin/users/${userId}/impersonate`, {})

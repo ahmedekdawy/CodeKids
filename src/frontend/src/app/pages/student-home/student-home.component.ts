@@ -15,6 +15,8 @@ import { SearchableSelectComponent } from '../../shared/searchable-select/search
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
 import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
+import { PROFILE_PHOTO_MAX_BYTES, PROFILE_PHOTO_TYPES } from '../../shared/user-photo/profile-photo.rules';
 
 @Component({
   selector: 'app-student-home',
@@ -28,7 +30,8 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
     SiteBrandComponent,
     StudentAskPanelComponent,
     NotificationBellComponent,
-    ApiBusyIndicatorComponent
+    ApiBusyIndicatorComponent,
+    UserPhotoComponent
   ],
   templateUrl: './student-home.component.html',
   styleUrl: './student-home.component.css'
@@ -47,6 +50,10 @@ export class StudentHomeComponent {
   readonly assignments = signal<Assignment[]>([]);
   readonly exams = signal<Exam[]>([]);
 
+  readonly photoBusy = signal(false);
+  readonly photoError = signal('');
+
+  readonly hasPhoto = computed(() => !!this.auth.user()?.profilePhotoUrl);
   readonly selectedAvatar = computed(() => this.avatars().find((a) => a.isSelected) ?? null);
   readonly earnedBadges = computed(() => this.badges().filter((b) => b.isEarned));
   readonly publishedAssignments = computed(() => this.assignments().filter((a) => a.isPublished === true));
@@ -63,6 +70,44 @@ export class StudentHomeComponent {
     this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
     this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
     this.api.getExams().subscribe((exams) => this.exams.set(exams));
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    this.photoError.set('');
+    if (!PROFILE_PHOTO_TYPES.includes(file.type)) {
+      this.photoError.set(this.locale.t('student.photo.invalidType'));
+      return;
+    }
+    if (file.size > PROFILE_PHOTO_MAX_BYTES) {
+      this.photoError.set(this.locale.t('student.photo.tooLarge'));
+      return;
+    }
+
+    this.photoBusy.set(true);
+    this.auth.uploadProfilePhoto(file).subscribe({
+      next: () => this.photoBusy.set(false),
+      error: (err) => {
+        this.photoBusy.set(false);
+        this.photoError.set(this.locale.fromApiError(err, 'student.photo.uploadFailed'));
+      }
+    });
+  }
+
+  removePhoto(): void {
+    this.photoError.set('');
+    this.photoBusy.set(true);
+    this.auth.removeProfilePhoto().subscribe({
+      next: () => this.photoBusy.set(false),
+      error: (err) => {
+        this.photoBusy.set(false);
+        this.photoError.set(this.locale.fromApiError(err, 'student.photo.removeFailed'));
+      }
+    });
   }
 
   selectAvatar(avatar: Avatar): void {

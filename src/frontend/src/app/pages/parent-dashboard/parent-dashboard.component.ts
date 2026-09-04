@@ -22,10 +22,11 @@ import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, UserPhotoComponent],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })

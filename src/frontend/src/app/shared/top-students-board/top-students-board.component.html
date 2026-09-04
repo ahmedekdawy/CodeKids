@@ -1,7 +1,7 @@
-@if (loaded() && students().length > 0) {
+@if (hasStudents()) {
   <section
     class="top-board"
-    [class.compact]="variant() === 'compact'"
+    [class.showcase]="variant() === 'showcase'"
     [class.section]="variant() === 'section'"
     [attr.id]="variant() === 'section' ? 'top-students' : null">
     <header class="top-board-head">
@@ -13,14 +13,13 @@
     </header>
 
     <ol class="top-board-list">
-      @for (student of students(); track student.studentName + student.studentGrade + $index; let i = $index) {
-        <li>
+      @for (student of students(); track student.studentId; let i = $index) {
+        <li [class.podium]="i < 3">
           <span class="rank" [attr.aria-label]="('topStudents.rank' | t) + ' ' + (i + 1)">{{ rankMedal(i) }}</span>
+          <app-user-photo [photoUrl]="student.profilePhotoUrl" [name]="student.studentName" />
           <div class="student">
             <strong>{{ student.studentName }}</strong>
-            @if (student.studentGrade != null) {
-              <span class="meta">{{ gradeLabel(student.studentGrade) }}</span>
-            }
+            <span class="meta">{{ metaLine(student) }}</span>
           </div>
           <span class="score">{{ student.performancePercent }}%</span>
         </li>

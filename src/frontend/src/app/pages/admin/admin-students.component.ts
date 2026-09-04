@@ -12,10 +12,11 @@ import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
 
 @Component({
   selector: 'app-admin-students',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe, UserPhotoComponent],
   templateUrl: './admin-students.component.html',
   styleUrl: './admin-panel.css'
 })

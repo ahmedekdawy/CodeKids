@@ -98,7 +98,10 @@
         @for (child of dashboard()?.children || []; track child.studentId) {
           <article class="block child-card">
             <button type="button" class="child-card-main" (click)="selectChild(child)">
-              <h3>{{ child.displayName }}</h3>
+              <span class="child-card-head">
+                <app-user-photo [photoUrl]="child.profilePhotoUrl" [name]="child.displayName" />
+                <h3>{{ child.displayName }}</h3>
+              </span>
               <p class="grade-line">{{ 'common.grade' | t }}: {{ gradeLabel(child.grade) }}</p>
               <p class="meta">{{ 'common.email' | t }}: {{ child.email || ('common.emDash' | t) }}</p>
               <p class="meta">{{ 'common.mobile' | t }}: {{ child.mobilePhone || ('common.emDash' | t) }}</p>

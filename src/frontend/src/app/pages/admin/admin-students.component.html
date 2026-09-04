@@ -183,7 +183,12 @@
         <tbody>
           @for (student of pagedStudents(); track student.id) {
             <tr [class.selected]="editingId() === student.id" [class.is-inactive]="!isActive(student)">
-              <td>{{ student.displayName }}</td>
+              <td>
+                <span class="name-cell">
+                  <app-user-photo size="sm" [photoUrl]="student.profilePhotoUrl" [name]="student.displayName" />
+                  {{ student.displayName }}
+                </span>
+              </td>
               <td>{{ student.email || ('common.emDash' | t) }}</td>
               <td>{{ student.mobilePhone || ('common.emDash' | t) }}</td>
               <td>{{ gradeLabel(student.grade) }}</td>

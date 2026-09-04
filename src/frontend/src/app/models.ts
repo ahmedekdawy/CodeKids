@@ -23,6 +23,7 @@ export interface AuthUser {
   mobilePhone?: string;
   workShift?: TeacherWorkShift | string | null;
   tenantId?: string | null;
+  profilePhotoUrl?: string | null;
 }
 
 export interface AuthResponse {
@@ -413,6 +414,7 @@ export interface ChildProgress {
   completedSteps: number;
   quizAttempts: number;
   avatarId?: string | null;
+  profilePhotoUrl?: string | null;
   badges: string[];
   latestEvaluation?: ChildEvaluationSummary | null;
 }
@@ -489,6 +491,7 @@ export interface TeacherStudent {
   weakLessonCount: number;
   parentName?: string | null;
   signal?: string | null;
+  profilePhotoUrl?: string | null;
 }
 
 export interface TeacherDashboard {
@@ -693,9 +696,13 @@ export interface SaveWeeklyReportEntry {
 }
 
 export interface TopWeeklyStudent {
+  studentId: string;
   studentName: string;
   studentGrade?: number | null;
+  /** Average across every subject the student was evaluated in that week. */
   performancePercent: number;
+  subjectCount: number;
+  profilePhotoUrl?: string | null;
   weekStartDate: string;
 }
 
@@ -922,6 +929,7 @@ export interface ManagedUser {
   monthlySalary?: number | null;
   isActive?: boolean;
   courseRates?: TeacherCourseRate[];
+  profilePhotoUrl?: string | null;
 }
 
 export interface ZoomConnectionStatus {

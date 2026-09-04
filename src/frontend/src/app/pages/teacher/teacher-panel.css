@@ -53,6 +53,18 @@
   background: rgba(95, 211, 188, 0.08);
 }
 
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.detail-identity {
+  display: flex;
+  align-items: center;
+}
+
 .meeting-form,
 .qb-form,
 .form-card form {

@@ -16,6 +16,9 @@ public class User : TenantEntity
     /// <summary>Student school type: Arabic or Language; null when unset or not a student.</summary>
     public SchoolType? SchoolType { get; set; }
     public string MobilePhone { get; set; } = string.Empty;
+    /// <summary>Storage key of the user-uploaded profile photo; null when no photo was uploaded.</summary>
+    public string? ProfilePhotoStorageKey { get; set; }
+    public string? ProfilePhotoContentType { get; set; }
     /// <summary>Teacher work period: Am, Pm, or Both; null for non-teachers.</summary>
     public TeacherWorkShift? WorkShift { get; set; }
     /// <summary>Comma-separated stage codes (0–3) for teachers; empty for non-teachers.</summary>

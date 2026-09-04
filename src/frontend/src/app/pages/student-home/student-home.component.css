@@ -52,7 +52,59 @@
 .profile-identity {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.profile-photo {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+
+.photo-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.photo-btn {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--elevated-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.photo-btn:hover:not(.disabled):not(:disabled) {
+  border-color: var(--accent);
+  color: var(--heading);
+}
+
+.photo-btn.disabled,
+.photo-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.photo-hint,
+.photo-error {
+  margin: 0;
+  max-width: 12rem;
+  text-align: center;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.photo-hint {
+  color: var(--text-muted);
+}
+
+.photo-error {
+  color: var(--danger, #e5484d);
 }
 
 .avatar-display {

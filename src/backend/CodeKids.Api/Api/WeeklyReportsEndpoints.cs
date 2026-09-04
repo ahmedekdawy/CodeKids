@@ -1,3 +1,7 @@
+using CodeKids.Application.Abstractions;
+
+using CodeKids.Application.Features.Media;
+
 using CodeKids.Application.Features.WeeklyReports;
 
 using CodeKids.Domain.Abstractions;
@@ -5,6 +9,8 @@ using CodeKids.Domain.Abstractions;
 using CodeKids.Infrastructure;
 
 using Microsoft.AspNetCore.Authorization;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Api;
 
@@ -40,6 +46,37 @@ public static class WeeklyReportsEndpoints
             return Results.Ok(await handler.Handle(
                 new ListTopWeeklyStudentsQuery(weekStart),
                 cancellationToken));
+        }).AllowAnonymous();
+
+        app.MapGet("/api/weekly-reports/top-students/{studentId:guid}/photo", async (
+            Guid studentId,
+            DateOnly? week,
+            IAppDbContext dbContext,
+            IFileStorage fileStorage,
+            CancellationToken cancellationToken) =>
+        {
+            var weekStart = week ?? ListTopWeeklyStudentsQueryHandler.StartOfWeek(
+                DateOnly.FromDateTime(DateTime.UtcNow));
+            if (!await ListTopWeeklyStudentsQueryHandler.QualifiesForBoardAsync(
+                    dbContext, studentId, weekStart, cancellationToken))
+            {
+                return Results.NotFound();
+            }
+
+            var photo = await dbContext.Users.AsNoTracking()
+                .Where(x => x.Id == studentId)
+                .Select(x => new { x.ProfilePhotoStorageKey, x.ProfilePhotoContentType })
+                .FirstOrDefaultAsync(cancellationToken);
+            if (photo is null || string.IsNullOrWhiteSpace(photo.ProfilePhotoStorageKey))
+            {
+                return Results.NotFound();
+            }
+
+            var stream = await fileStorage.OpenReadAsync(photo.ProfilePhotoStorageKey, cancellationToken);
+            var contentType = MediaFileTypes.ResolveContentType(
+                photo.ProfilePhotoContentType,
+                photo.ProfilePhotoStorageKey);
+            return Results.File(stream, contentType);
         }).AllowAnonymous();
 
         app.MapGet("/api/weekly-reports", async (

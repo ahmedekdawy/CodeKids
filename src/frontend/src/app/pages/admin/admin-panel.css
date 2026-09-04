@@ -22,6 +22,13 @@
   margin-top: 0.45rem;
 }
 
+.data-table td .name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
 .meeting-form label .chip-row input {
   flex: 1;
   min-width: 0;

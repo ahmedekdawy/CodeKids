@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Classrooms;
+using CodeKids.Application.Features.Profile;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +83,7 @@ public sealed class GetParentDashboardQueryHandler(IAppDbContext dbContext)
                 progressCounts.GetValueOrDefault(child.Id),
                 quizCounts.GetValueOrDefault(child.Id),
                 child.AvatarId,
+                ProfilePhotoUrls.Build(child),
                 child.Badges.Select(x => x.Badge!.Name).ToList(),
                 latestEvaluations.GetValueOrDefault(child.Id))).ToList());
     }

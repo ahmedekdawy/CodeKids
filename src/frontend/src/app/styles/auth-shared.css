@@ -175,7 +175,16 @@
   display: grid;
   place-items: center;
   min-height: 100%;
-  padding: 0;
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Keeps the honour board readable when it sits over an arbitrary banner image. */
+.auth-visual.has-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 10, 20, 0.15), rgba(4, 10, 20, 0.45));
+  pointer-events: none;
 }
 
 .auth-visual:not(.has-banner) {
@@ -257,9 +266,9 @@
     grid-template-columns: 1fr;
   }
 
+  /* Login form first on small screens; the banner and honour board follow it. */
   .auth-visual {
     min-height: 16rem;
-    order: -1;
   }
 
   .auth-visual:not(.has-banner) {
