@@ -257,6 +257,7 @@ export class LearningApiService {
     title: string;
     description?: string;
     xpReward: number;
+    durationMinutes?: number | null;
     isPublished: boolean;
     questions: {
       id?: string | null;
@@ -307,6 +308,7 @@ export class LearningApiService {
       title: string;
       description?: string;
       xpReward: number;
+      durationMinutes?: number | null;
       isPublished: boolean;
       questions: {
         id?: string | null;
@@ -1412,6 +1414,7 @@ export class LearningApiService {
     description?: string;
     dueAtUtc?: string | null;
     xpReward: number;
+    durationMinutes?: number | null;
     isPublished: boolean;
     questionIds: string[];
   }): Observable<Exam> {

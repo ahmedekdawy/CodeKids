@@ -23,5 +23,6 @@ public sealed record TeacherQuizDetailDto(
     string Title,
     string Description,
     int XpReward,
+    int? DurationMinutes,
     bool IsPublished,
     IReadOnlyList<TeacherQuizQuestionDetailDto> Questions);

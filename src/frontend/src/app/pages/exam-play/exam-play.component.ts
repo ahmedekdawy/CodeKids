@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
@@ -12,11 +12,14 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 import { QuestionPlayPromptComponent } from '../../shared/question-play-prompt/question-play-prompt.component';
 import { AnswerImageDraft } from '../../shared/question-play-prompt/playable-question';
+import { AttemptGuardComponent } from '../../shared/timed-attempt/attempt-guard.component';
+import { TimedAttemptService } from '../../shared/timed-attempt/timed-attempt.service';
 import { answerableQuestions, flattenQuestions } from '../../shared/question-draft/question-draft.util';
 
 @Component({
   selector: 'app-exam-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent, AttemptGuardComponent],
+  providers: [TimedAttemptService],
   templateUrl: './exam-play.component.html',
   styleUrl: './exam-play.component.css'
 })
@@ -25,12 +28,24 @@ export class ExamPlayComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly locale = inject(LocaleService);
 
+  readonly attempt = inject(TimedAttemptService);
+
   readonly exam = signal<Exam | null>(null);
   readonly result = signal<ExamAttempt | null>(null);
   readonly error = signal('');
   readonly answers = signal<Record<string, string>>({});
   readonly multiAnswers = signal<Record<string, Set<string>>>({});
   readonly answerImages = signal<Record<string, AnswerImageDraft>>({});
+
+  /** Questions stay hidden until the student starts, so the clock matches what they can see. */
+  readonly started = signal(false);
+  readonly starting = signal(false);
+  readonly timedOut = signal(false);
+
+  readonly questionCount = computed(() => {
+    const exam = this.exam();
+    return exam ? answerableQuestions(exam.questions).length : 0;
+  });
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('examId');
@@ -49,15 +64,37 @@ export class ExamPlayComponent {
         this.answers.set(seed);
         this.multiAnswers.set(multi);
         this.answerImages.set(images);
-        this.api.startExam(exam.id).subscribe({
-          error: (err) => {
-            if (!this.locale.hasApiErrorCode(err, 'api.errors.exam.alreadySubmitted')) {
-              this.error.set(this.locale.fromApiError(err, 'play.examStartFailed'));
-            }
+      },
+      error: () => this.error.set(this.locale.t('play.examNotFound'))
+    });
+  }
+
+  begin(): void {
+    const exam = this.exam();
+    if (!exam || this.started() || this.starting()) return;
+
+    this.starting.set(true);
+    this.error.set('');
+    this.api.startExam(exam.id).subscribe({
+      next: (attempt) => {
+        this.starting.set(false);
+        this.started.set(true);
+        this.attempt.start({
+          durationMinutes: exam.durationMinutes,
+          // Anchored on the server start time so reloading the page cannot buy extra minutes.
+          deadline: exam.durationMinutes
+            ? Date.parse(attempt.startedAtUtc) + exam.durationMinutes * 60_000
+            : null,
+          onExpire: () => {
+            this.timedOut.set(true);
+            this.submit();
           }
         });
       },
-      error: () => this.error.set(this.locale.t('play.examNotFound'))
+      error: (err) => {
+        this.starting.set(false);
+        this.error.set(this.locale.fromApiError(err, 'play.examStartFailed'));
+      }
     });
   }
 
@@ -88,6 +125,7 @@ export class ExamPlayComponent {
   submit(): void {
     const exam = this.exam();
     if (!exam) return;
+    this.attempt.stop();
     const answerable = answerableQuestions(exam.questions);
     this.api
       .submitExam({

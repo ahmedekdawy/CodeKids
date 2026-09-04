@@ -1,5 +1,6 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
@@ -62,6 +63,7 @@ public sealed class CreateQuizCommandHandler(IAppDbContext dbContext, Notificati
             Title = title,
             Description = (command.Description ?? string.Empty).Trim(),
             XpReward = Math.Max(5, command.XpReward),
+            DurationMinutes = AssessmentDuration.Normalize(command.DurationMinutes),
             IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };

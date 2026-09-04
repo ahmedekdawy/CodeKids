@@ -98,7 +98,9 @@ public static class QuizzesEndpoints
 
                         request.IsPublished,
 
-                        request.Questions),
+                        request.Questions,
+
+                        request.DurationMinutes),
 
                     cancellationToken));
 
@@ -212,7 +214,8 @@ public static class QuizzesEndpoints
                         request.Description,
                         request.XpReward,
                         request.IsPublished,
-                        request.Questions),
+                        request.Questions,
+                        request.DurationMinutes),
                     cancellationToken));
             }
             catch (Exception ex)

@@ -49,6 +49,7 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
             quiz.Title,
             quiz.Description,
             quiz.XpReward,
+            quiz.DurationMinutes,
             quiz.IsPublished,
             QuizQuestionSync.MapTree(quiz.Questions));
 }

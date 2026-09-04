@@ -98,7 +98,9 @@ public static class ExamsEndpoints
 
                         request.IsPublished,
 
-                        request.QuestionIds),
+                        request.QuestionIds,
+
+                        request.DurationMinutes),
 
                     cancellationToken));
 

@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Application.Features.Notifications;
@@ -56,6 +57,7 @@ public sealed class UpdateQuizCommandHandler(IAppDbContext dbContext, Notificati
         quiz.Title = title;
         quiz.Description = (command.Description ?? string.Empty).Trim();
         quiz.XpReward = Math.Max(5, command.XpReward);
+        quiz.DurationMinutes = AssessmentDuration.Normalize(command.DurationMinutes);
         var wasPublished = quiz.IsPublished;
         quiz.IsPublished = command.IsPublished;
 

@@ -41,6 +41,8 @@ public class Exam : TenantEntity
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset? DueAtUtc { get; set; }
     public int XpReward { get; set; }
+    /// <summary>Time allowed to solve the exam once started; null means untimed.</summary>
+    public int? DurationMinutes { get; set; }
     public bool IsPublished { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 

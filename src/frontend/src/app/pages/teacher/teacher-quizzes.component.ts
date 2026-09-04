@@ -58,6 +58,7 @@ export class TeacherQuizzesComponent {
     lessonIds: [[] as string[]],
     classroomId: [''],
     xp: [30],
+    durationMinutes: [0],
     isPublished: [false],
     questionCount: [1]
   });
@@ -298,6 +299,7 @@ export class TeacherQuizzesComponent {
           courseId: detail.courseId,
           classroomId: detail.classroomId || '',
           xp: detail.xpReward,
+          durationMinutes: detail.durationMinutes ?? 0,
           isPublished: detail.isPublished,
           questionCount: this.questions.length
         });
@@ -402,6 +404,7 @@ export class TeacherQuizzesComponent {
       title,
       description: formValue.description.trim() || undefined,
       xpReward: Number(formValue.xp) || 0,
+      durationMinutes: Number(formValue.durationMinutes) > 0 ? Number(formValue.durationMinutes) : null,
       isPublished: !!formValue.isPublished,
       questions: payloads
     };
@@ -440,6 +443,7 @@ export class TeacherQuizzesComponent {
       lessonIds: [],
       classroomId: classrooms[0]?.id ?? '',
       xp: 30,
+      durationMinutes: 0,
       isPublished: false,
       questionCount: 1
     });

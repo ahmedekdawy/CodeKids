@@ -1,0 +1,34 @@
+@if (attempt.running()) {
+  <div class="attempt-bar" [class.warn]="attempt.warning()">
+    @if (attempt.timed()) {
+      <span class="attempt-clock" role="timer" aria-live="off">
+        <span aria-hidden="true">⏱</span>
+        <strong>{{ clock() }}</strong>
+      </span>
+      <span class="attempt-label">{{ 'play.timer.remaining' | t }}</span>
+    } @else {
+      <span class="attempt-label">{{ 'play.timer.untimed' | t }}</span>
+    }
+
+    @if (attempt.tabSwitches(); as switches) {
+      <span class="attempt-flag">{{ 'play.timer.tabSwitches' | t:{ count: switches } }}</span>
+    }
+  </div>
+
+  @if (attempt.warning()) {
+    <p class="attempt-warning" role="alert">
+      {{ 'play.timer.warning' | t:{ minutes: warnMinutes() } }}
+    </p>
+  }
+
+  @if (attempt.fullscreenLost()) {
+    <div class="attempt-lock" role="alertdialog" aria-modal="true">
+      <div class="attempt-lock-card">
+        <span class="attempt-lock-icon" aria-hidden="true">🛡️</span>
+        <h2>{{ 'play.timer.fullscreenTitle' | t }}</h2>
+        <p>{{ 'play.timer.fullscreenBody' | t }}</p>
+        <button type="button" (click)="resumeFullscreen()">{{ 'play.timer.fullscreenResume' | t }}</button>
+      </div>
+    </div>
+  }
+}

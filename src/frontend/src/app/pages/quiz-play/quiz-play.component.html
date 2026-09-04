@@ -1,6 +1,8 @@
 <div class="page">
   <app-api-busy-indicator />
-  <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
+  @if (!started() || result()) {
+    <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
+  }
   @if (quiz(); as current) {
     <section class="hero-strip">
       <div>
@@ -11,8 +13,28 @@
       <div class="xp-pill">{{ current.xpReward }} {{ 'common.xp' | t }}</div>
     </section>
 
+    <app-attempt-guard />
+
     <section class="block">
-      @if (!result()) {
+      @if (!started() && !result()) {
+        <div class="attempt-intro">
+          <h2>{{ 'play.timer.readyTitle' | t }}</h2>
+          <ul class="attempt-facts">
+            <li>{{ 'play.timer.questionCount' | t:{ count: questionCount() } }}</li>
+            @if (current.durationMinutes) {
+              <li class="limit">{{ 'play.timer.limit' | t:{ minutes: current.durationMinutes } }}</li>
+            } @else {
+              <li>{{ 'play.timer.noLimit' | t }}</li>
+            }
+          </ul>
+          @if (current.durationMinutes) {
+            <p class="attempt-rules">{{ 'play.timer.rules' | t }}</p>
+          }
+          <button type="button" (click)="begin()">{{ 'play.timer.start' | t }}</button>
+        </div>
+      }
+
+      @if (started() && !result()) {
         @for (question of current.questions; track question.id) {
           <div class="question">
             <strong>{{ question.sortOrder }}.</strong>
@@ -32,6 +54,9 @@
         <p class="feedback error">{{ error() }}</p>
       }
       @if (result(); as response) {
+        @if (timedOut()) {
+          <p class="feedback error">{{ 'play.timer.autoSubmitted' | t }}</p>
+        }
         <div class="feedback ok">
           <strong>{{ response.score }}/{{ response.totalQuestions }}</strong>
           <p>{{ feedbackText(response) }}</p>

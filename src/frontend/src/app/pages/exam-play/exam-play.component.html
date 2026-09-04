@@ -5,7 +5,9 @@
       <app-site-brand />
       <h1>{{ exam()?.title || ('play.examFallback' | t) }}</h1>
     </div>
-    <a class="back" routerLink="/student">{{ 'common.backBtn' | t }}</a>
+    @if (!started() || result()) {
+      <a class="back" routerLink="/student">{{ 'common.backBtn' | t }}</a>
+    }
   </header>
 
   <app-page-feedback [error]="error()" />
@@ -13,6 +15,9 @@
   @if (result(); as attempt) {
     <section class="block">
       <h3>{{ 'play.autoGraded' | t }}</h3>
+      @if (timedOut()) {
+        <p class="feedback error">{{ 'play.timer.autoSubmitted' | t }}</p>
+      }
       <p>
         {{ 'common.status' | t }}: {{ attempt.status }} · {{ 'common.score' | t }}: {{ attempt.score ?? ('common.emDash' | t) }}/{{ attempt.maxScore ?? ('common.emDash' | t) }}
         @if (attempt.durationSeconds != null) {
@@ -37,24 +42,44 @@
       }
     </section>
   } @else if (exam(); as current) {
+    <app-attempt-guard />
+
     <section class="block">
       <p>{{ current.description }}</p>
       <p class="meta">{{ current.classroomName }} · {{ current.xpReward }} {{ 'common.xp' | t }}</p>
 
-      @for (question of current.questions; track question.id) {
-        <app-question-play-prompt
-          [question]="question"
-          [answers]="answers()"
-          [multiAnswers]="multiAnswers()"
-          [answerImages]="answerImages()"
-          answerUpload="all"
-          (answerChange)="setAnswer($event.questionId, $event.value)"
-          (multiToggle)="toggleMulti($event.questionId, $event.key)"
-          (answerImageChange)="setAnswerImage($event.questionId, $event.mediaAssetId, $event.imageUrl)"
-        />
-      }
+      @if (!started()) {
+        <div class="attempt-intro">
+          <h2>{{ 'play.timer.readyTitle' | t }}</h2>
+          <ul class="attempt-facts">
+            <li>{{ 'play.timer.questionCount' | t:{ count: questionCount() } }}</li>
+            @if (current.durationMinutes) {
+              <li class="limit">{{ 'play.timer.limit' | t:{ minutes: current.durationMinutes } }}</li>
+            } @else {
+              <li>{{ 'play.timer.noLimit' | t }}</li>
+            }
+          </ul>
+          @if (current.durationMinutes) {
+            <p class="attempt-rules">{{ 'play.timer.rules' | t }}</p>
+          }
+          <button type="button" [disabled]="starting()" (click)="begin()">{{ 'play.timer.start' | t }}</button>
+        </div>
+      } @else {
+        @for (question of current.questions; track question.id) {
+          <app-question-play-prompt
+            [question]="question"
+            [answers]="answers()"
+            [multiAnswers]="multiAnswers()"
+            [answerImages]="answerImages()"
+            answerUpload="all"
+            (answerChange)="setAnswer($event.questionId, $event.value)"
+            (multiToggle)="toggleMulti($event.questionId, $event.key)"
+            (answerImageChange)="setAnswerImage($event.questionId, $event.mediaAssetId, $event.imageUrl)"
+          />
+        }
 
-      <button type="button" (click)="submit()">{{ 'play.submitExam' | t }}</button>
+        <button type="button" (click)="submit()">{{ 'play.submitExam' | t }}</button>
+      }
     </section>
   }
 </div>

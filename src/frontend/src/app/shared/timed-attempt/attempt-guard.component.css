@@ -1,0 +1,112 @@
+:host {
+  display: block;
+}
+
+.attempt-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  backdrop-filter: blur(8px);
+}
+
+.attempt-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.attempt-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.attempt-flag {
+  margin-inline-start: auto;
+  font-size: 0.8rem;
+  color: var(--danger);
+}
+
+.attempt-bar.warn {
+  border-color: var(--danger);
+  background: rgba(255, 143, 143, 0.14);
+  animation: attempt-pulse 1.6s ease-in-out infinite;
+}
+
+.attempt-bar.warn .attempt-clock {
+  color: var(--danger);
+}
+
+@keyframes attempt-pulse {
+  50% {
+    box-shadow: 0 0 0 4px rgba(255, 143, 143, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attempt-bar.warn {
+    animation: none;
+  }
+}
+
+.attempt-warning {
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+  background: rgba(255, 143, 143, 0.12);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.attempt-lock {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(4, 10, 20, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.attempt-lock-card {
+  max-width: 26rem;
+  padding: 1.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.attempt-lock-icon {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.attempt-lock-card h2 {
+  margin: 0.75rem 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--heading);
+}
+
+.attempt-lock-card p {
+  margin: 0 0 1.25rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}

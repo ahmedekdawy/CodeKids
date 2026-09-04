@@ -41,6 +41,11 @@
         />
       </label>
       <label>XP <input type="number" formControlName="xp" /></label>
+      <label>
+        {{ 'teacher.assessments.durationMinutes' | t }}
+        <input type="number" formControlName="durationMinutes" min="0" max="600" />
+        <small>{{ 'teacher.assessments.durationHint' | t }}</small>
+      </label>
       <label class="checkbox">
         <input type="checkbox" formControlName="isPublished" />
         {{ 'teacher.assessments.publish' | t }}

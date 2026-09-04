@@ -292,6 +292,7 @@ export interface Quiz {
   title: string;
   description: string;
   xpReward: number;
+  durationMinutes?: number | null;
   isPublished: boolean;
   questions: QuizQuestion[];
 }
@@ -334,6 +335,7 @@ export interface TeacherQuizDetail {
   title: string;
   description: string;
   xpReward: number;
+  durationMinutes?: number | null;
   isPublished: boolean;
   questions: TeacherQuizQuestionDetail[];
 }
@@ -1172,6 +1174,7 @@ export interface Exam {
   description: string;
   dueAtUtc?: string | null;
   xpReward: number;
+  durationMinutes?: number | null;
   isPublished: boolean;
   createdByUserId: string;
   createdByName: string;

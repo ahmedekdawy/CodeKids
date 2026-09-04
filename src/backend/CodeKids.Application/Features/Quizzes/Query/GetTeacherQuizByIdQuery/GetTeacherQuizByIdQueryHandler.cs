@@ -34,6 +34,7 @@ public sealed class GetTeacherQuizByIdQueryHandler(IAppDbContext dbContext)
             quiz.Title,
             quiz.Description,
             quiz.XpReward,
+            quiz.DurationMinutes,
             quiz.IsPublished,
             QuizQuestionSync.MapTeacherTree(quiz.Questions));
     }

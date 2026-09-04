@@ -7,7 +7,8 @@ public sealed record CreateQuizRequest(
     string? Description,
     int XpReward,
     bool IsPublished,
-    IReadOnlyList<CreateQuizQuestionInput> Questions);
+    IReadOnlyList<CreateQuizQuestionInput> Questions,
+    int? DurationMinutes = null);
 
 public sealed record UpdateQuizRequest(
     Guid CourseId,
@@ -16,7 +17,8 @@ public sealed record UpdateQuizRequest(
     string? Description,
     int XpReward,
     bool IsPublished,
-    IReadOnlyList<CreateQuizQuestionInput> Questions);
+    IReadOnlyList<CreateQuizQuestionInput> Questions,
+    int? DurationMinutes = null);
 
 public sealed record CreateQuizQuestionInput(
     string Prompt,

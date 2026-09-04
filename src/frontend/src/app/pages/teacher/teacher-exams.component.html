@@ -51,6 +51,11 @@
         />
       </label>
       <label>{{ 'common.xpReward' | t }} <input type="number" [(ngModel)]="xpReward" name="xpReward" min="0" /></label>
+      <label>
+        {{ 'teacher.assessments.durationMinutes' | t }}
+        <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="0" max="600" />
+        <small>{{ 'teacher.assessments.durationHint' | t }}</small>
+      </label>
       <label class="checkbox">
         <input type="checkbox" [(ngModel)]="isPublished" name="isPublished" />
         {{ 'teacher.assessments.publish' | t }}

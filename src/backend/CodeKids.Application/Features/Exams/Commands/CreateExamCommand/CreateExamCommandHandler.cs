@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
@@ -77,6 +78,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             Description = (command.Description ?? string.Empty).Trim(),
             DueAtUtc = command.DueAtUtc?.ToUniversalTime(),
             XpReward = Math.Max(0, command.XpReward),
+            DurationMinutes = AssessmentDuration.Normalize(command.DurationMinutes),
             IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
@@ -160,6 +162,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             exam.Description,
             exam.DueAtUtc,
             exam.XpReward,
+            exam.DurationMinutes,
             exam.IsPublished,
             exam.CreatedByUserId,
             exam.CreatedBy?.DisplayName ?? "Teacher",

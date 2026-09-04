@@ -16,7 +16,8 @@ public sealed record CreateExamRequest(
     DateTimeOffset? DueAtUtc,
     int XpReward,
     bool IsPublished,
-    IReadOnlyList<Guid> QuestionIds);
+    IReadOnlyList<Guid> QuestionIds,
+    int? DurationMinutes = null);
 
 public sealed record CreateExamCommand(
     Guid TeacherUserId,
@@ -27,4 +28,5 @@ public sealed record CreateExamCommand(
     DateTimeOffset? DueAtUtc,
     int XpReward,
     bool IsPublished,
-    IReadOnlyList<Guid> QuestionIds) : ICommand<ExamDto>;
+    IReadOnlyList<Guid> QuestionIds,
+    int? DurationMinutes = null) : ICommand<ExamDto>;

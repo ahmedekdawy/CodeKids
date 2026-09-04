@@ -54,6 +54,8 @@ export class TeacherExamsComponent {
   unitIds: string[] = [];
   lessonIds: string[] = [];
   xpReward = 40;
+  /** 0 keeps the exam untimed. */
+  durationMinutes = 0;
   isPublished = false;
   questionCount = 6;
   reviewExamId = '';
@@ -226,6 +228,7 @@ export class TeacherExamsComponent {
         title: this.title.trim(),
         description: this.description.trim() || undefined,
         xpReward: this.xpReward,
+        durationMinutes: this.durationMinutes > 0 ? this.durationMinutes : null,
         isPublished: this.isPublished,
         questionIds
       })
