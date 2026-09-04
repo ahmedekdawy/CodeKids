@@ -49,6 +49,18 @@ public sealed class ImpersonateUserCommandHandler(
                 throw new InvalidOperationException("Student is not in your classrooms.");
             }
         }
+        else if (actor.Role == UserRole.Parent)
+        {
+            if (user.Role != UserRole.Student)
+            {
+                throw new InvalidOperationException("Parents can only sign in as their linked children.");
+            }
+
+            if (user.ParentId != command.AdminUserId)
+            {
+                throw new InvalidOperationException("This student is not linked to your account.");
+            }
+        }
         else
         {
             throw new InvalidOperationException("Only Super Admin can impersonate users.");

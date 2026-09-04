@@ -104,6 +104,12 @@ export class AuthService {
       .pipe(tap((response) => this.persistImpersonation(response)));
   }
 
+  impersonateChildAsParent(childId: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${resolveApiBaseUrl()}/parent/children/${childId}/impersonate`, {})
+      .pipe(tap((response) => this.persistImpersonation(response)));
+  }
+
   stopImpersonating(): void {
     const saved = this.readSavedImpersonator();
     localStorage.removeItem(IMPERSONATOR_KEY);

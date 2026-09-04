@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -22,11 +22,12 @@ import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, UserPhotoComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, IconActionButtonComponent, UserPhotoComponent],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })
@@ -35,6 +36,7 @@ export class ParentDashboardComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly dashboard = signal<ParentDashboard | null>(null);
   readonly meetings = signal<LiveSession[]>([]);
@@ -45,6 +47,7 @@ export class ParentDashboardComponent {
   readonly loadingChild = signal(false);
   readonly savingParent = signal(false);
   readonly savingChild = signal(false);
+  readonly impersonatingId = signal<string | null>(null);
   readonly message = signal('');
   readonly error = signal('');
 
@@ -114,6 +117,22 @@ export class ParentDashboardComponent {
 
   selectCourse(course: ParentChildCourse): void {
     this.selectedCourseId.set(course.courseId);
+  }
+
+  loginAs(childId: string): void {
+    this.error.set('');
+    this.message.set('');
+    this.impersonatingId.set(childId);
+    this.auth.impersonateChildAsParent(childId).subscribe({
+      next: () => {
+        this.impersonatingId.set(null);
+        void this.router.navigateByUrl(this.auth.roleHome());
+      },
+      error: (err) => {
+        this.impersonatingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'parent.loginAsFailed'));
+      }
+    });
   }
 
   backToChildren(): void {

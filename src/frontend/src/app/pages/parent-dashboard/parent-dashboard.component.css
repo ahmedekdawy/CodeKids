@@ -77,6 +77,13 @@
   border-color: rgba(95, 211, 188, 0.35);
 }
 
+.child-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .child-header-actions {
   display: grid;
   gap: 0.65rem;

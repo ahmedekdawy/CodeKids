@@ -47126,6 +47126,9 @@ var AuthService = class _AuthService {
   impersonateStudentAsTeacher(studentId) {
     return this.http.post(`${resolveApiBaseUrl()}/dashboard/teacher/students/${studentId}/impersonate`, {}).pipe(tap((response) => this.persistImpersonation(response)));
   }
+  impersonateChildAsParent(childId) {
+    return this.http.post(`${resolveApiBaseUrl()}/parent/children/${childId}/impersonate`, {}).pipe(tap((response) => this.persistImpersonation(response)));
+  }
   stopImpersonating() {
     const saved = this.readSavedImpersonator();
     localStorage.removeItem(IMPERSONATOR_KEY);
@@ -48728,6 +48731,7 @@ var AR = {
   "parent.studyPlansHint": "\u062A\u0648\u0632\u064A\u0639 \u0645\u0648\u0636\u0648\u0639\u0627\u062A \u0627\u0644\u0623\u0633\u0627\u0628\u064A\u0639 \u0644\u0645\u0648\u0627\u062F \u0647\u0630\u0627 \u0627\u0644\u0627\u0628\u0646.",
   "parent.noStudyPlans": "\u0644\u0627 \u062A\u0648\u062C\u062F \u062E\u0637\u0637 \u062F\u0631\u0627\u0633\u064A\u0629 \u0645\u0646\u0634\u0648\u0631\u0629 \u0644\u0645\u0648\u0627\u062F \u0647\u0630\u0627 \u0627\u0644\u0627\u0628\u0646 \u0628\u0639\u062F.",
   "parent.openStudyPlan": "\u0639\u0631\u0636 \u0627\u0644\u062E\u0637\u0629 \u0627\u0644\u062F\u0631\u0627\u0633\u064A\u0629",
+  "parent.loginAsFailed": "\u062A\u0639\u0630\u0651\u0631 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u062D\u0633\u0627\u0628 \u0647\u0630\u0627 \u0627\u0644\u0637\u0627\u0644\u0628.",
   "parent.accountTitle": "\u062D\u0633\u0627\u0628\u0643",
   "parent.accountHint": "\u062D\u062F\u0651\u062B \u0628\u0631\u064A\u062F\u0643 \u0623\u0648 \u0631\u0642\u0645 \u0627\u0644\u062C\u0648\u0627\u0644 \u0623\u0648 \u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631.",
   "parent.childAccountTitle": "\u0628\u064A\u0627\u0646\u0627\u062A \u062F\u062E\u0648\u0644 \u0627\u0644\u0637\u0627\u0644\u0628",
@@ -49863,6 +49867,7 @@ var AR = {
   "api.errors.auth.impersonateSelf": "\u0644\u0627 \u064A\u0645\u0643\u0646\u0643 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u062D\u0633\u0627\u0628\u0643.",
   "api.errors.auth.impersonateForbidden": "\u064A\u0645\u0643\u0646 \u0644\u0645\u062F\u064A\u0631 \u0627\u0644\u0646\u0638\u0627\u0645 \u0641\u0642\u0637 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u062D\u0633\u0627\u0628 \u0645\u0633\u062A\u062E\u062F\u0645 \u0622\u062E\u0631.",
   "api.errors.auth.teacherImpersonateStudentOnly": "\u064A\u0645\u0643\u0646 \u0644\u0644\u0645\u0639\u0644\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0641\u0642\u0637 \u0628\u062D\u0633\u0627\u0628 \u0637\u0644\u0627\u0628\u0647 \u0627\u0644\u0645\u0633\u062C\u0644\u064A\u0646.",
+  "api.errors.auth.parentImpersonateChildOnly": "\u064A\u0645\u0643\u0646 \u0644\u0648\u0644\u064A \u0627\u0644\u0623\u0645\u0631 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0641\u0642\u0637 \u0628\u062D\u0633\u0627\u0628 \u0623\u0628\u0646\u0627\u0626\u0647 \u0627\u0644\u0645\u0631\u062A\u0628\u0637\u064A\u0646.",
   "api.errors.auth.impersonateRole": "\u064A\u0645\u0643\u0646 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u062D\u0633\u0627\u0628 \u0645\u0639\u0644\u0645 \u0623\u0648 \u0648\u0644\u064A \u0623\u0645\u0631 \u0623\u0648 \u0637\u0627\u0644\u0628 \u0641\u0642\u0637.",
   "api.errors.user.schoolTypeInvalid": "\u0646\u0648\u0639 \u0645\u062F\u0631\u0633\u0629 \u0627\u0644\u0637\u0627\u0644\u0628 \u064A\u062C\u0628 \u0623\u0646 \u064A\u0643\u0648\u0646 \u0639\u0631\u0628\u064A \u0623\u0648 \u0644\u063A\u0627\u062A.",
   "api.errors.user.workShiftInvalid": "\u0648\u0631\u062F\u064A\u0629 \u0627\u0644\u0645\u0639\u0644\u0645 \u064A\u062C\u0628 \u0623\u0646 \u062A\u0643\u0648\u0646 \u0635\u0628\u0627\u062D\u0627\u064B \u0623\u0648 \u0645\u0633\u0627\u0621\u064B \u0623\u0648 \u0643\u0644\u064A\u0647\u0645\u0627.",
@@ -50514,6 +50519,7 @@ var EN = {
   "parent.studyPlansHint": "Weekly topic plans for this child\u2019s enrolled courses.",
   "parent.noStudyPlans": "No study plans have been published for this child\u2019s courses yet.",
   "parent.openStudyPlan": "View study plan",
+  "parent.loginAsFailed": "Could not sign in as this student.",
   "parent.accountTitle": "Your account",
   "parent.accountHint": "Update your email, mobile number, or password.",
   "parent.childAccountTitle": "Student login details",
@@ -51649,6 +51655,7 @@ var EN = {
   "api.errors.auth.impersonateSelf": "You cannot impersonate your own account.",
   "api.errors.auth.impersonateForbidden": "Only Super Admin can impersonate users.",
   "api.errors.auth.teacherImpersonateStudentOnly": "Teachers can only sign in as their enrolled students.",
+  "api.errors.auth.parentImpersonateChildOnly": "Parents can only sign in as their linked children.",
   "api.errors.auth.impersonateRole": "Only teacher, parent, or student accounts can be used.",
   "api.errors.user.schoolTypeInvalid": "Student school type must be Arabic or Language.",
   "api.errors.user.workShiftInvalid": "Teacher work shift must be Am, Pm, or Both.",
@@ -69205,6 +69212,194 @@ var AssignmentPlayComponent = class _AssignmentPlayComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AssignmentPlayComponent, { className: "AssignmentPlayComponent", filePath: "src/app/pages/assignment-play/assignment-play.component.ts", lineNumber: 23 });
 })();
 
+// src/app/shared/icon-action-button/icon-action-button.component.ts
+function IconActionButtonComponent_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275domElementStart(0, "svg", 1);
+    \u0275\u0275domElement(1, "path", 7)(2, "path", 8);
+    \u0275\u0275domElementEnd();
+  }
+}
+function IconActionButtonComponent_Conditional_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275domElementStart(0, "svg", 1);
+    \u0275\u0275domElement(1, "path", 9);
+    \u0275\u0275domElementEnd();
+  }
+}
+function IconActionButtonComponent_Conditional_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "i", 2);
+  }
+}
+function IconActionButtonComponent_Conditional_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "span", 3);
+    \u0275\u0275domElement(1, "i", 10)(2, "i", 11);
+    \u0275\u0275domElementEnd();
+  }
+}
+function IconActionButtonComponent_Conditional_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "i", 4);
+  }
+}
+function IconActionButtonComponent_Conditional_6_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "i", 5);
+  }
+}
+function IconActionButtonComponent_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "i", 6);
+  }
+}
+function IconActionButtonComponent_Conditional_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275domElementStart(0, "svg", 1);
+    \u0275\u0275domElement(1, "path", 12)(2, "path", 13);
+    \u0275\u0275domElementEnd();
+  }
+}
+var IconActionButtonComponent = class _IconActionButtonComponent {
+  constructor() {
+    this.label = "";
+    this.disabled = false;
+    this.variant = "default";
+    this.action = new EventEmitter();
+  }
+  ariaLabel() {
+    if (this.label)
+      return this.label;
+    if (this.kind === "edit")
+      return "Edit";
+    if (this.kind === "play")
+      return "Play";
+    if (this.kind === "apply")
+      return "Apply filters";
+    if (this.kind === "clear")
+      return "Clear filters";
+    if (this.kind === "loginAs")
+      return "Logged in as";
+    if (this.kind === "deactivate")
+      return "Deactivate";
+    if (this.kind === "activate")
+      return "Activate";
+    return "Delete";
+  }
+  static {
+    this.\u0275fac = function IconActionButtonComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _IconActionButtonComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IconActionButtonComponent, selectors: [["app-icon-action-button"]], inputs: { kind: "kind", label: "label", disabled: "disabled", variant: "variant" }, outputs: { action: "action" }, decls: 9, vars: 18, consts: [["type", "button", 1, "icon-action-btn", 3, "click", "title", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["aria-hidden", "true", 1, "fa-solid", "fa-filter"], ["aria-hidden", "true", 1, "fa-filter-clear"], ["aria-hidden", "true", 1, "fa-solid", "fa-right-to-bracket"], ["aria-hidden", "true", 1, "fa-solid", "fa-user-slash"], ["aria-hidden", "true", 1, "fa-solid", "fa-user-check"], ["d", "M4 20h4l10.5-10.5a1.8 1.8 0 0 0 0-2.5L16.5 4.5a1.8 1.8 0 0 0-2.5 0L4 14.5V20z", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round", "stroke-linejoin", "round"], ["d", "M13.5 6.5l4 4", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round"], ["d", "M8 5.5v13l10-6.5-10-6.5z", "fill", "currentColor", "stroke", "currentColor", "stroke-width", "0.5", "stroke-linejoin", "round"], [1, "fa-solid", "fa-filter"], [1, "fa-solid", "fa-xmark"], ["d", "M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7h12z", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round", "stroke-linejoin", "round"], ["d", "M10 11v6M14 11v6", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round"]], template: function IconActionButtonComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275domElementStart(0, "button", 0);
+        \u0275\u0275domListener("click", function IconActionButtonComponent_Template_button_click_0_listener() {
+          return ctx.action.emit();
+        });
+        \u0275\u0275conditionalCreate(1, IconActionButtonComponent_Conditional_1_Template, 3, 0, ":svg:svg", 1)(2, IconActionButtonComponent_Conditional_2_Template, 2, 0, ":svg:svg", 1)(3, IconActionButtonComponent_Conditional_3_Template, 1, 0, "i", 2)(4, IconActionButtonComponent_Conditional_4_Template, 3, 0, "span", 3)(5, IconActionButtonComponent_Conditional_5_Template, 1, 0, "i", 4)(6, IconActionButtonComponent_Conditional_6_Template, 1, 0, "i", 5)(7, IconActionButtonComponent_Conditional_7_Template, 1, 0, "i", 6)(8, IconActionButtonComponent_Conditional_8_Template, 3, 0, ":svg:svg", 1);
+        \u0275\u0275domElementEnd();
+      }
+      if (rf & 2) {
+        \u0275\u0275classProp("danger", ctx.variant === "danger" || ctx.kind === "delete")("play", ctx.kind === "play")("login-as", ctx.kind === "loginAs")("deactivate", ctx.kind === "deactivate")("activate", ctx.kind === "activate")("apply", ctx.kind === "apply")("ghost", ctx.variant === "ghost");
+        \u0275\u0275domProperty("title", ctx.ariaLabel())("disabled", ctx.disabled);
+        \u0275\u0275attribute("aria-label", ctx.ariaLabel());
+        \u0275\u0275advance();
+        \u0275\u0275conditional(ctx.kind === "edit" ? 1 : ctx.kind === "play" ? 2 : ctx.kind === "apply" ? 3 : ctx.kind === "clear" ? 4 : ctx.kind === "loginAs" ? 5 : ctx.kind === "deactivate" ? 6 : ctx.kind === "activate" ? 7 : 8);
+      }
+    }, styles: ["\n.icon-action-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.15rem;\n  height: 2.15rem;\n  padding: 0;\n  border-radius: 10px;\n  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));\n  background: rgba(255, 255, 255, 0.06);\n  color: var(--text, #fff);\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.icon-action-btn[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%], \n.icon-action-btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  width: 1.05rem;\n  height: 1.05rem;\n  font-size: 0.95rem;\n  line-height: 1;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear[_ngcontent-%COMP%] {\n  position: relative;\n  display: inline-flex;\n  width: 1.1rem;\n  height: 1.1rem;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear[_ngcontent-%COMP%]   .fa-filter[_ngcontent-%COMP%] {\n  font-size: 0.95rem;\n}\n.fa-filter-clear[_ngcontent-%COMP%]   .fa-xmark[_ngcontent-%COMP%] {\n  position: absolute;\n  right: -0.15rem;\n  bottom: -0.2rem;\n  width: auto;\n  height: auto;\n  font-size: 0.55rem;\n  background: var(--surface-strong, #142036);\n  border-radius: 50%;\n  padding: 0.05rem;\n}\n.icon-action-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.45);\n}\n.icon-action-btn.apply[_ngcontent-%COMP%]:hover:not(:disabled), \n.icon-action-btn.login-as[_ngcontent-%COMP%]:hover:not(:disabled), \n.icon-action-btn.activate[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.18);\n  border-color: rgba(95, 211, 188, 0.55);\n}\n.icon-action-btn.deactivate[_ngcontent-%COMP%]:hover:not(:disabled), \n.icon-action-btn.danger[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 107, 107, 0.18);\n  border-color: rgba(255, 107, 107, 0.55);\n  color: #fff;\n}\n.icon-action-btn.ghost[_ngcontent-%COMP%] {\n  background: transparent;\n  border-color: transparent;\n}\n.icon-action-btn.ghost[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: var(--border-strong, rgba(255, 255, 255, 0.18));\n}\n.icon-action-btn[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n/*# sourceMappingURL=icon-action-button.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IconActionButtonComponent, [{
+    type: Component,
+    args: [{ selector: "app-icon-action-button", template: `<button\r
+  type="button"\r
+  class="icon-action-btn"\r
+  [class.danger]="variant === 'danger' || kind === 'delete'"\r
+  [class.play]="kind === 'play'"\r
+  [class.login-as]="kind === 'loginAs'"\r
+  [class.deactivate]="kind === 'deactivate'"\r
+  [class.activate]="kind === 'activate'"\r
+  [class.apply]="kind === 'apply'"\r
+  [class.ghost]="variant === 'ghost'"\r
+  [attr.aria-label]="ariaLabel()"\r
+  [title]="ariaLabel()"\r
+  [disabled]="disabled"\r
+  (click)="action.emit()"\r
+>\r
+  @if (kind === 'edit') {\r
+    <svg viewBox="0 0 24 24" aria-hidden="true">\r
+      <path\r
+        d="M4 20h4l10.5-10.5a1.8 1.8 0 0 0 0-2.5L16.5 4.5a1.8 1.8 0 0 0-2.5 0L4 14.5V20z"\r
+        fill="none"\r
+        stroke="currentColor"\r
+        stroke-width="1.8"\r
+        stroke-linecap="round"\r
+        stroke-linejoin="round"\r
+      />\r
+      <path d="M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />\r
+    </svg>\r
+  } @else if (kind === 'play') {\r
+    <svg viewBox="0 0 24 24" aria-hidden="true">\r
+      <path\r
+        d="M8 5.5v13l10-6.5-10-6.5z"\r
+        fill="currentColor"\r
+        stroke="currentColor"\r
+        stroke-width="0.5"\r
+        stroke-linejoin="round"\r
+      />\r
+    </svg>\r
+  } @else if (kind === 'apply') {\r
+    <i class="fa-solid fa-filter" aria-hidden="true"></i>\r
+  } @else if (kind === 'clear') {\r
+    <span class="fa-filter-clear" aria-hidden="true">\r
+      <i class="fa-solid fa-filter"></i>\r
+      <i class="fa-solid fa-xmark"></i>\r
+    </span>\r
+  } @else if (kind === 'loginAs') {\r
+    <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>\r
+  } @else if (kind === 'deactivate') {\r
+    <i class="fa-solid fa-user-slash" aria-hidden="true"></i>\r
+  } @else if (kind === 'activate') {\r
+    <i class="fa-solid fa-user-check" aria-hidden="true"></i>\r
+  } @else {\r
+    <svg viewBox="0 0 24 24" aria-hidden="true">\r
+      <path\r
+        d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7h12z"\r
+        fill="none"\r
+        stroke="currentColor"\r
+        stroke-width="1.8"\r
+        stroke-linecap="round"\r
+        stroke-linejoin="round"\r
+      />\r
+      <path d="M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />\r
+    </svg>\r
+  }\r
+</button>\r
+`, styles: ["/* src/app/shared/icon-action-button/icon-action-button.component.css */\n.icon-action-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.15rem;\n  height: 2.15rem;\n  padding: 0;\n  border-radius: 10px;\n  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));\n  background: rgba(255, 255, 255, 0.06);\n  color: var(--text, #fff);\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.icon-action-btn svg,\n.icon-action-btn i {\n  width: 1.05rem;\n  height: 1.05rem;\n  font-size: 0.95rem;\n  line-height: 1;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear {\n  position: relative;\n  display: inline-flex;\n  width: 1.1rem;\n  height: 1.1rem;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear .fa-filter {\n  font-size: 0.95rem;\n}\n.fa-filter-clear .fa-xmark {\n  position: absolute;\n  right: -0.15rem;\n  bottom: -0.2rem;\n  width: auto;\n  height: auto;\n  font-size: 0.55rem;\n  background: var(--surface-strong, #142036);\n  border-radius: 50%;\n  padding: 0.05rem;\n}\n.icon-action-btn:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.45);\n}\n.icon-action-btn.apply:hover:not(:disabled),\n.icon-action-btn.login-as:hover:not(:disabled),\n.icon-action-btn.activate:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.18);\n  border-color: rgba(95, 211, 188, 0.55);\n}\n.icon-action-btn.deactivate:hover:not(:disabled),\n.icon-action-btn.danger:hover:not(:disabled) {\n  background: rgba(255, 107, 107, 0.18);\n  border-color: rgba(255, 107, 107, 0.55);\n  color: #fff;\n}\n.icon-action-btn.ghost {\n  background: transparent;\n  border-color: transparent;\n}\n.icon-action-btn.ghost:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: var(--border-strong, rgba(255, 255, 255, 0.18));\n}\n.icon-action-btn:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n/*# sourceMappingURL=icon-action-button.component.css.map */\n"] }]
+  }], null, { kind: [{
+    type: Input,
+    args: [{ required: true }]
+  }], label: [{
+    type: Input
+  }], disabled: [{
+    type: Input
+  }], variant: [{
+    type: Input
+  }], action: [{
+    type: Output
+  }] });
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IconActionButtonComponent, { className: "IconActionButtonComponent", filePath: "src/app/shared/icon-action-button/icon-action-button.component.ts", lineNumber: 10 });
+})();
+
 // src/app/pages/parent-dashboard/parent-dashboard.component.ts
 var _c010 = (a0) => ({ name: a0 });
 var _c18 = () => [];
@@ -69399,10 +69594,18 @@ function ParentDashboardComponent_Conditional_28_For_45_Template(rf, ctx) {
     \u0275\u0275text(27);
     \u0275\u0275pipe(28, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(29, "a", 30);
-    \u0275\u0275text(30);
-    \u0275\u0275pipe(31, "t");
-    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(29, "div", 30)(30, "a", 31);
+    \u0275\u0275text(31);
+    \u0275\u0275pipe(32, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(33, "app-icon-action-button", 32);
+    \u0275\u0275pipe(34, "t");
+    \u0275\u0275listener("action", function ParentDashboardComponent_Conditional_28_For_45_Template_app_icon_action_button_action_33_listener() {
+      const child_r7 = \u0275\u0275restoreView(_r6).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r0.loginAs(child_r7.studentId));
+    });
+    \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
     const child_r7 = ctx.$implicit;
@@ -69412,25 +69615,27 @@ function ParentDashboardComponent_Conditional_28_For_45_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(child_r7.displayName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(8, 15, "common.grade"), ": ", ctx_r0.gradeLabel(child_r7.grade));
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(8, 17, "common.grade"), ": ", ctx_r0.gradeLabel(child_r7.grade));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(11, 17, "common.email"), ": ", child_r7.email || \u0275\u0275pipeBind1(12, 19, "common.emDash"));
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(11, 19, "common.email"), ": ", child_r7.email || \u0275\u0275pipeBind1(12, 21, "common.emDash"));
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(15, 21, "common.mobile"), ": ", child_r7.mobilePhone || \u0275\u0275pipeBind1(16, 23, "common.emDash"));
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(15, 23, "common.mobile"), ": ", child_r7.mobilePhone || \u0275\u0275pipeBind1(16, 25, "common.emDash"));
     \u0275\u0275advance(4);
     \u0275\u0275textInterpolate(ctx_r0.evaluationLine(child_r7.latestEvaluation));
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(21, 25, "parent.childSummary", \u0275\u0275pureFunction3(32, _c25, child_r7.totalXp, child_r7.completedSteps, child_r7.quizAttempts)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(21, 27, "parent.childSummary", \u0275\u0275pureFunction3(36, _c25, child_r7.totalXp, child_r7.completedSteps, child_r7.quizAttempts)));
     \u0275\u0275advance(3);
     \u0275\u0275repeater(child_r7.badges);
     \u0275\u0275advance(2);
     \u0275\u0275conditional(!child_r7.badges.length ? 25 : -1);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(28, 28, "parent.viewCourses"));
-    \u0275\u0275advance(2);
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(36, _c32, child_r7.studentId));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(28, 30, "parent.viewCourses"));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(40, _c32, child_r7.studentId));
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(31, 30, "parent.openStudyPlan"), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(32, 32, "parent.openStudyPlan"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("label", \u0275\u0275pipeBind1(34, 34, "common.loginAs"))("disabled", ctx_r0.impersonatingId() === child_r7.studentId);
   }
 }
 function ParentDashboardComponent_Conditional_28_ForEmpty_46_Template(rf, ctx) {
@@ -69544,7 +69749,7 @@ function ParentDashboardComponent_Conditional_28_Template(rf, ctx) {
     \u0275\u0275pipe(42, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(43, "div", 19);
-    \u0275\u0275repeaterCreate(44, ParentDashboardComponent_Conditional_28_For_45_Template, 32, 38, "article", 20, _forTrack15, false, ParentDashboardComponent_Conditional_28_ForEmpty_46_Template, 10, 10, "article", 8);
+    \u0275\u0275repeaterCreate(44, ParentDashboardComponent_Conditional_28_For_45_Template, 35, 42, "article", 20, _forTrack15, false, ParentDashboardComponent_Conditional_28_ForEmpty_46_Template, 10, 10, "article", 8);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -69607,7 +69812,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_4_Template(rf, ctx)
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "parent.backToCourses"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_32_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_34_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 18);
     \u0275\u0275text(1);
@@ -69619,7 +69824,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_32_Template(rf, ctx
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "common.loading"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_34_For_24_Conditional_3_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_34_For_24_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 18);
     \u0275\u0275text(1);
@@ -69631,11 +69836,11 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Co
     \u0275\u0275textInterpolate1(" \xB7 ", row_r12.teacherName);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_34_For_24_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_34_For_24_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr")(1, "td");
     \u0275\u0275text(2);
-    \u0275\u0275conditionalCreate(3, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_34_For_24_Conditional_3_Template, 2, 1, "span", 18);
+    \u0275\u0275conditionalCreate(3, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_34_For_24_Conditional_3_Template, 2, 1, "span", 18);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "td");
     \u0275\u0275text(5);
@@ -69672,9 +69877,9 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Co
     \u0275\u0275textInterpolate(ctx_r0.cameraLabel(row_r12.openCamera));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_34_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_34_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 39)(1, "table", 40)(2, "thead")(3, "tr")(4, "th");
+    \u0275\u0275elementStart(0, "div", 41)(1, "table", 42)(2, "thead")(3, "tr")(4, "th");
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd();
@@ -69699,7 +69904,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Co
     \u0275\u0275pipe(21, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(22, "tbody");
-    \u0275\u0275repeaterCreate(23, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_34_For_24_Template, 14, 7, "tr", null, _forTrack3);
+    \u0275\u0275repeaterCreate(23, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_34_For_24_Template, 14, 7, "tr", null, _forTrack3);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -69720,7 +69925,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Co
     \u0275\u0275repeater(childOverview_r13.evaluations);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_35_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_35_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 18);
     \u0275\u0275text(1);
@@ -69732,7 +69937,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Co
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "parent.noEvaluations"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r11 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "section", 8)(1, "header", 9)(2, "div")(3, "h2");
@@ -69744,7 +69949,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275pipe(8, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(9, "form", 11);
-    \u0275\u0275listener("ngSubmit", function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template_form_ngSubmit_9_listener() {
+    \u0275\u0275listener("ngSubmit", function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template_form_ngSubmit_9_listener() {
       \u0275\u0275restoreView(_r11);
       const ctx_r0 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r0.saveChildAccount());
@@ -69752,8 +69957,8 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275elementStart(10, "label");
     \u0275\u0275text(11);
     \u0275\u0275pipe(12, "t");
-    \u0275\u0275elementStart(13, "input", 35);
-    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template_input_ngModelChange_13_listener($event) {
+    \u0275\u0275elementStart(13, "input", 37);
+    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template_input_ngModelChange_13_listener($event) {
       \u0275\u0275restoreView(_r11);
       const ctx_r0 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r0.childEmail, $event) || (ctx_r0.childEmail = $event);
@@ -69765,8 +69970,8 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275elementStart(14, "label");
     \u0275\u0275text(15);
     \u0275\u0275pipe(16, "t");
-    \u0275\u0275elementStart(17, "input", 36);
-    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template_input_ngModelChange_17_listener($event) {
+    \u0275\u0275elementStart(17, "input", 38);
+    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template_input_ngModelChange_17_listener($event) {
       \u0275\u0275restoreView(_r11);
       const ctx_r0 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r0.childMobile, $event) || (ctx_r0.childMobile = $event);
@@ -69778,8 +69983,8 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275elementStart(18, "label");
     \u0275\u0275text(19);
     \u0275\u0275pipe(20, "t");
-    \u0275\u0275elementStart(21, "input", 37);
-    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template_input_ngModelChange_21_listener($event) {
+    \u0275\u0275elementStart(21, "input", 39);
+    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template_input_ngModelChange_21_listener($event) {
       \u0275\u0275restoreView(_r11);
       const ctx_r0 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r0.childPassword, $event) || (ctx_r0.childPassword = $event);
@@ -69791,8 +69996,8 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275elementStart(22, "label");
     \u0275\u0275text(23);
     \u0275\u0275pipe(24, "t");
-    \u0275\u0275elementStart(25, "input", 38);
-    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template_input_ngModelChange_25_listener($event) {
+    \u0275\u0275elementStart(25, "input", 40);
+    \u0275\u0275twoWayListener("ngModelChange", function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template_input_ngModelChange_25_listener($event) {
       \u0275\u0275restoreView(_r11);
       const ctx_r0 = \u0275\u0275nextContext(3);
       \u0275\u0275twoWayBindingSet(ctx_r0.childPasswordConfirm, $event) || (ctx_r0.childPasswordConfirm = $event);
@@ -69810,7 +70015,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275text(32);
     \u0275\u0275pipe(33, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(34, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_34_Template, 25, 18, "div", 39)(35, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Conditional_35_Template, 3, 3, "p", 18);
+    \u0275\u0275conditionalCreate(34, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_34_Template, 25, 18, "div", 41)(35, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Conditional_35_Template, 3, 3, "p", 18);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -69850,7 +70055,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Te
     \u0275\u0275conditional(childOverview_r13.evaluations.length ? 34 : 35);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_17_Conditional_6_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275text(0);
     \u0275\u0275pipe(1, "t");
@@ -69861,7 +70066,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate1(" \xB7 ", \u0275\u0275pipeBind2(1, 1, "parent.due", \u0275\u0275pureFunction1(4, _c62, ctx_r0.formatWhen(assignment_r14.dueAtUtc))), " ");
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_17_Conditional_7_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 18);
     \u0275\u0275text(1);
@@ -69874,18 +70079,18 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(2, 2, "parent.teacherFeedback"), ": ", assignment_r14.teacherFeedback);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_17_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "article", 44)(1, "div", 46)(2, "strong");
+    \u0275\u0275elementStart(0, "article", 46)(1, "div", 48)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
-    \u0275\u0275conditionalCreate(6, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_17_Conditional_6_Template, 2, 6);
+    \u0275\u0275conditionalCreate(6, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Conditional_6_Template, 2, 6);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(7, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_17_Conditional_7_Template, 3, 4, "p", 18);
+    \u0275\u0275conditionalCreate(7, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Conditional_7_Template, 3, 4, "p", 18);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "span", 47);
+    \u0275\u0275elementStart(8, "span", 49);
     \u0275\u0275text(9);
     \u0275\u0275elementEnd()();
   }
@@ -69906,9 +70111,9 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate(ctx_r0.scoreLabel(assignment_r14));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_ForEmpty_18_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_18_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 45);
+    \u0275\u0275elementStart(0, "p", 47);
     \u0275\u0275text(1);
     \u0275\u0275pipe(2, "t");
     \u0275\u0275elementEnd();
@@ -69918,7 +70123,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "parent.noAssignments"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_25_Conditional_6_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275text(0);
     \u0275\u0275pipe(1, "t");
@@ -69929,7 +70134,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate1(" \xB7 ", \u0275\u0275pipeBind2(1, 1, "parent.due", \u0275\u0275pureFunction1(4, _c62, ctx_r0.formatWhen(exam_r15.dueAtUtc))), " ");
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_25_Conditional_7_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 18);
     \u0275\u0275text(1);
@@ -69942,18 +70147,18 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(2, 2, "parent.teacherFeedback"), ": ", exam_r15.teacherFeedback);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_25_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "article", 44)(1, "div", 46)(2, "strong");
+    \u0275\u0275elementStart(0, "article", 46)(1, "div", 48)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
-    \u0275\u0275conditionalCreate(6, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_25_Conditional_6_Template, 2, 6);
+    \u0275\u0275conditionalCreate(6, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Conditional_6_Template, 2, 6);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(7, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_25_Conditional_7_Template, 3, 4, "p", 18);
+    \u0275\u0275conditionalCreate(7, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Conditional_7_Template, 3, 4, "p", 18);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "span", 47);
+    \u0275\u0275elementStart(8, "span", 49);
     \u0275\u0275text(9);
     \u0275\u0275elementEnd()();
   }
@@ -69974,9 +70179,9 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate(ctx_r0.scoreLabel(exam_r15));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_ForEmpty_26_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_26_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 45);
+    \u0275\u0275elementStart(0, "p", 47);
     \u0275\u0275text(1);
     \u0275\u0275pipe(2, "t");
     \u0275\u0275elementEnd();
@@ -69986,7 +70191,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "parent.noExams"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_33_Conditional_5_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275text(0);
     \u0275\u0275pipe(1, "t");
@@ -69997,7 +70202,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "parent.completed", \u0275\u0275pureFunction1(4, _c62, ctx_r0.formatWhen(quiz_r16.completedAtUtc))), " ");
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_33_Conditional_6_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275text(0);
     \u0275\u0275pipe(1, "t");
@@ -70006,17 +70211,17 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(1, 1, "parent.resultNotStarted"), " ");
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_33_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "article", 44)(1, "div", 46)(2, "strong");
+    \u0275\u0275elementStart(0, "article", 46)(1, "div", 48)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
-    \u0275\u0275conditionalCreate(5, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_33_Conditional_5_Template, 2, 6)(6, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_33_Conditional_6_Template, 2, 3);
+    \u0275\u0275conditionalCreate(5, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Conditional_5_Template, 2, 6)(6, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Conditional_6_Template, 2, 3);
     \u0275\u0275text(7);
     \u0275\u0275pipe(8, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "span", 47);
+    \u0275\u0275elementStart(9, "span", 49);
     \u0275\u0275text(10);
     \u0275\u0275elementEnd()();
   }
@@ -70035,9 +70240,9 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate1(" ", ctx_r0.quizScoreLabel(quiz_r16.score, quiz_r16.totalQuestions), " ");
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_ForEmpty_34_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_34_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 45);
+    \u0275\u0275elementStart(0, "p", 47);
     \u0275\u0275text(1);
     \u0275\u0275pipe(2, "t");
     \u0275\u0275elementEnd();
@@ -70047,7 +70252,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Fo
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "parent.noQuizzes"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 8)(1, "header", 9)(2, "div")(3, "h2");
     \u0275\u0275text(4);
@@ -70056,30 +70261,30 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Te
     \u0275\u0275elementStart(6, "p", 10);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "a", 41);
+    \u0275\u0275elementStart(8, "a", 43);
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(11, "div", 42)(12, "p", 21);
+    \u0275\u0275elementStart(11, "div", 44)(12, "p", 21);
     \u0275\u0275text(13);
     \u0275\u0275pipe(14, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(15, "div", 43);
-    \u0275\u0275repeaterCreate(16, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_17_Template, 10, 7, "article", 44, _forTrack010, false, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_ForEmpty_18_Template, 3, 3, "p", 45);
+    \u0275\u0275elementStart(15, "div", 45);
+    \u0275\u0275repeaterCreate(16, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Template, 10, 7, "article", 46, _forTrack010, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_18_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(19, "div", 42)(20, "p", 21);
+    \u0275\u0275elementStart(19, "div", 44)(20, "p", 21);
     \u0275\u0275text(21);
     \u0275\u0275pipe(22, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(23, "div", 43);
-    \u0275\u0275repeaterCreate(24, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_25_Template, 10, 7, "article", 44, _forTrack010, false, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_ForEmpty_26_Template, 3, 3, "p", 45);
+    \u0275\u0275elementStart(23, "div", 45);
+    \u0275\u0275repeaterCreate(24, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Template, 10, 7, "article", 46, _forTrack010, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_26_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(27, "div", 42)(28, "p", 21);
+    \u0275\u0275elementStart(27, "div", 44)(28, "p", 21);
     \u0275\u0275text(29);
     \u0275\u0275pipe(30, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(31, "div", 43);
-    \u0275\u0275repeaterCreate(32, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_For_33_Template, 11, 11, "article", 44, _forTrack010, false, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_ForEmpty_34_Template, 3, 3, "p", 45);
+    \u0275\u0275elementStart(31, "div", 45);
+    \u0275\u0275repeaterCreate(32, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Template, 11, 11, "article", 46, _forTrack010, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_34_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -70107,9 +70312,9 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Te
     \u0275\u0275repeater(course_r17.quizzes);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_For_11_Conditional_7_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_For_11_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 53);
+    \u0275\u0275elementStart(0, "span", 55);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -70119,27 +70324,27 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Fo
     \u0275\u0275textInterpolate(item_r19.theme);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_For_11_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_For_11_Template(rf, ctx) {
   if (rf & 1) {
     const _r18 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 50);
-    \u0275\u0275listener("click", function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_For_11_Template_button_click_0_listener() {
+    \u0275\u0275elementStart(0, "button", 52);
+    \u0275\u0275listener("click", function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_For_11_Template_button_click_0_listener() {
       const item_r19 = \u0275\u0275restoreView(_r18).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(4);
       return \u0275\u0275resetView(ctx_r0.selectCourse(item_r19));
     });
-    \u0275\u0275elementStart(1, "header", 51)(2, "div")(3, "h3");
+    \u0275\u0275elementStart(1, "header", 53)(2, "div")(3, "h3");
     \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "p", 52);
+    \u0275\u0275elementStart(5, "p", 54);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
-    \u0275\u0275conditionalCreate(7, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_For_11_Conditional_7_Template, 2, 1, "span", 53);
+    \u0275\u0275conditionalCreate(7, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_For_11_Conditional_7_Template, 2, 1, "span", 55);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(8, "p", 18);
     \u0275\u0275text(9);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "div", 54)(11, "span");
+    \u0275\u0275elementStart(10, "div", 56)(11, "span");
     \u0275\u0275text(12);
     \u0275\u0275pipe(13, "t");
     \u0275\u0275elementEnd();
@@ -70177,9 +70382,9 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Fo
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(22, 18, "parent.viewResults"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_ForEmpty_12_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_ForEmpty_12_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 45);
+    \u0275\u0275elementStart(0, "p", 47);
     \u0275\u0275text(1);
     \u0275\u0275pipe(2, "t");
     \u0275\u0275elementEnd();
@@ -70189,7 +70394,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Fo
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "parent.noCourses"));
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section")(1, "header", 9)(2, "div")(3, "h2");
     \u0275\u0275text(4);
@@ -70199,8 +70404,8 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Te
     \u0275\u0275text(7);
     \u0275\u0275pipe(8, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(9, "div", 48);
-    \u0275\u0275repeaterCreate(10, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_For_11_Template, 23, 20, "button", 49, _forTrack4, false, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_ForEmpty_12_Template, 3, 3, "p", 45);
+    \u0275\u0275elementStart(9, "div", 50);
+    \u0275\u0275repeaterCreate(10, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_For_11_Template, 23, 20, "button", 51, _forTrack4, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_ForEmpty_12_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -70213,10 +70418,10 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Te
     \u0275\u0275repeater(childOverview_r13.courses);
   }
 }
-function ParentDashboardComponent_Conditional_29_Conditional_33_Template(rf, ctx) {
+function ParentDashboardComponent_Conditional_29_Conditional_35_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275conditionalCreate(0, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_0_Template, 36, 32);
-    \u0275\u0275conditionalCreate(1, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_1_Template, 35, 28, "section", 8)(2, ParentDashboardComponent_Conditional_29_Conditional_33_Conditional_2_Template, 13, 7, "section");
+    \u0275\u0275conditionalCreate(0, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_0_Template, 36, 32);
+    \u0275\u0275conditionalCreate(1, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_Template, 35, 28, "section", 8)(2, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_2_Template, 13, 7, "section");
   }
   if (rf & 2) {
     let tmp_4_0;
@@ -70229,7 +70434,7 @@ function ParentDashboardComponent_Conditional_29_Conditional_33_Template(rf, ctx
 function ParentDashboardComponent_Conditional_29_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 31)(1, "button", 3);
+    \u0275\u0275elementStart(0, "div", 33)(1, "button", 3);
     \u0275\u0275listener("click", function ParentDashboardComponent_Conditional_29_Template_button_click_1_listener() {
       \u0275\u0275restoreView(_r9);
       const ctx_r0 = \u0275\u0275nextContext();
@@ -70238,9 +70443,9 @@ function ParentDashboardComponent_Conditional_29_Template(rf, ctx) {
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(4, ParentDashboardComponent_Conditional_29_Conditional_4_Template, 3, 3, "button", 32);
+    \u0275\u0275conditionalCreate(4, ParentDashboardComponent_Conditional_29_Conditional_4_Template, 3, 3, "button", 34);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "section", 33)(6, "div")(7, "p", 5);
+    \u0275\u0275elementStart(5, "section", 35)(6, "div")(7, "p", 5);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd();
@@ -70264,46 +70469,56 @@ function ParentDashboardComponent_Conditional_29_Template(rf, ctx) {
     \u0275\u0275elementStart(23, "p", 18);
     \u0275\u0275text(24);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(25, "div", 34)(26, "a", 30);
+    \u0275\u0275elementStart(25, "div", 36)(26, "a", 31);
     \u0275\u0275text(27);
     \u0275\u0275pipe(28, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(29, "p", 18);
-    \u0275\u0275text(30);
-    \u0275\u0275pipe(31, "t");
+    \u0275\u0275elementStart(29, "app-icon-action-button", 32);
+    \u0275\u0275pipe(30, "t");
+    \u0275\u0275listener("action", function ParentDashboardComponent_Conditional_29_Template_app_icon_action_button_action_29_listener() {
+      \u0275\u0275restoreView(_r9);
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.loginAs(ctx_r0.selectedChildId()));
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(31, "p", 18);
+    \u0275\u0275text(32);
+    \u0275\u0275pipe(33, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275conditionalCreate(32, ParentDashboardComponent_Conditional_29_Conditional_32_Template, 3, 3, "p", 18);
-    \u0275\u0275conditionalCreate(33, ParentDashboardComponent_Conditional_29_Conditional_33_Template, 3, 2);
+    \u0275\u0275conditionalCreate(34, ParentDashboardComponent_Conditional_29_Conditional_34_Template, 3, 3, "p", 18);
+    \u0275\u0275conditionalCreate(35, ParentDashboardComponent_Conditional_29_Conditional_35_Template, 3, 2);
   }
   if (rf & 2) {
-    let tmp_13_0;
+    let tmp_15_0;
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 16, "parent.backToChildren"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 18, "parent.backToChildren"));
     \u0275\u0275advance(2);
     \u0275\u0275conditional(ctx_r0.selectedCourseId() ? 4 : -1);
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 18, "common.student"));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 20, "common.student"));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(ctx_r0.selectedChild()?.displayName || ctx_r0.overview()?.displayName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(14, 20, "common.grade"), ": ", ctx_r0.gradeLabel(ctx_r0.selectedChild()?.grade ?? ctx_r0.overview()?.grade));
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(14, 22, "common.grade"), ": ", ctx_r0.gradeLabel(ctx_r0.selectedChild()?.grade ?? ctx_r0.overview()?.grade));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(17, 22, "common.email"), ": ", ctx_r0.selectedChild()?.email || \u0275\u0275pipeBind1(18, 24, "common.emDash"));
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(17, 24, "common.email"), ": ", ctx_r0.selectedChild()?.email || \u0275\u0275pipeBind1(18, 26, "common.emDash"));
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(21, 26, "common.mobile"), ": ", ctx_r0.selectedChild()?.mobilePhone || \u0275\u0275pipeBind1(22, 28, "common.emDash"));
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(21, 28, "common.mobile"), ": ", ctx_r0.selectedChild()?.mobilePhone || \u0275\u0275pipeBind1(22, 30, "common.emDash"));
     \u0275\u0275advance(4);
     \u0275\u0275textInterpolate(ctx_r0.evaluationLine(ctx_r0.latestEvaluation()));
     \u0275\u0275advance(2);
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(35, _c32, ctx_r0.selectedChildId()));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(39, _c32, ctx_r0.selectedChildId()));
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(28, 30, "parent.openStudyPlan"), " ");
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(31, 32, "parent.childSummary", \u0275\u0275pureFunction3(37, _c25, ctx_r0.selectedChild()?.totalXp || 0, ctx_r0.selectedChild()?.completedSteps || 0, ctx_r0.selectedChild()?.quizAttempts || 0)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(28, 32, "parent.openStudyPlan"), " ");
     \u0275\u0275advance(2);
-    \u0275\u0275conditional(ctx_r0.loadingChild() ? 32 : -1);
+    \u0275\u0275property("label", \u0275\u0275pipeBind1(30, 34, "common.loginAs"))("disabled", !!ctx_r0.selectedChildId() && ctx_r0.impersonatingId() === ctx_r0.selectedChildId());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(33, 36, "parent.childSummary", \u0275\u0275pureFunction3(41, _c25, ctx_r0.selectedChild()?.totalXp || 0, ctx_r0.selectedChild()?.completedSteps || 0, ctx_r0.selectedChild()?.quizAttempts || 0)), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275conditional(ctx_r0.loadingChild() ? 34 : -1);
     \u0275\u0275advance();
-    \u0275\u0275conditional((tmp_13_0 = ctx_r0.overview()) ? 33 : -1, tmp_13_0);
+    \u0275\u0275conditional((tmp_15_0 = ctx_r0.overview()) ? 35 : -1, tmp_15_0);
   }
 }
 var ParentDashboardComponent = class _ParentDashboardComponent {
@@ -70312,6 +70527,7 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
     this.api = inject2(LearningApiService);
     this.locale = inject2(LocaleService);
     this.route = inject2(ActivatedRoute);
+    this.router = inject2(Router);
     this.dashboard = signal(
       null,
       ...ngDevMode ? [{ debugName: "dashboard" }] : (
@@ -70371,6 +70587,13 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
     this.savingChild = signal(
       false,
       ...ngDevMode ? [{ debugName: "savingChild" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.impersonatingId = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "impersonatingId" }] : (
         /* istanbul ignore next */
         []
       )
@@ -70469,6 +70692,21 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
   }
   selectCourse(course) {
     this.selectedCourseId.set(course.courseId);
+  }
+  loginAs(childId) {
+    this.error.set("");
+    this.message.set("");
+    this.impersonatingId.set(childId);
+    this.auth.impersonateChildAsParent(childId).subscribe({
+      next: () => {
+        this.impersonatingId.set(null);
+        void this.router.navigateByUrl(this.auth.roleHome());
+      },
+      error: (err) => {
+        this.impersonatingId.set(null);
+        this.error.set(this.locale.fromApiError(err, "parent.loginAsFailed"));
+      }
+    });
   }
   backToChildren() {
     this.selectedChildId.set(null);
@@ -70654,7 +70892,7 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ParentDashboardComponent, selectors: [["app-parent-dashboard"]], decls: 30, vars: 21, consts: [[1, "page", "parent-page"], [1, "topbar"], [1, "topbar-actions"], ["type", "button", 1, "ghost", 3, "click"], [1, "hero-strip"], [1, "eyebrow"], [1, "feedback"], [1, "feedback", "ok"], [1, "block"], [1, "section-head"], [1, "section-hint"], [1, "meeting-form", 3, "ngSubmit"], ["name", "parentEmail", "type", "email", "autocomplete", "email", 3, "ngModelChange", "ngModel"], ["name", "parentMobile", "autocomplete", "tel", 3, "ngModelChange", "ngModel"], ["name", "parentPassword", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["name", "parentPasswordConfirm", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["type", "submit", 3, "disabled"], [1, "meeting-row"], [1, "meta"], [1, "grid-cards"], [1, "block", "child-card"], [1, "group-label"], ["target", "_blank", "rel", "noopener", 1, "chip", "quiz", 3, "href"], ["type", "button", 1, "child-card-main", 3, "click"], [1, "child-card-head"], [3, "photoUrl", "name"], [1, "grade-line"], [1, "chip-row"], [1, "chip"], [1, "action-ghost"], [1, "chip", "quiz", 3, "routerLink"], [1, "drill-nav"], ["type", "button", 1, "ghost"], [1, "block", "child-header"], [1, "child-header-actions"], ["name", "childEmail", "type", "email", "autocomplete", "email", 3, "ngModelChange", "ngModel"], ["name", "childMobile", "autocomplete", "tel", 3, "ngModelChange", "ngModel"], ["name", "childPassword", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["name", "childPasswordConfirm", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], [1, "table-wrap"], [1, "data-table"], [1, "chip", "quiz", 3, "routerLink", "queryParams"], [1, "task-group"], [1, "item-list"], [1, "item-row"], [1, "meta", "empty-state"], [1, "item-body"], [1, "score-chip"], [1, "course-grid"], ["type", "button", 1, "course-card"], ["type", "button", 1, "course-card", 3, "click"], [1, "course-head"], [1, "course-desc"], [1, "theme-tag"], [1, "course-counts"]], template: function ParentDashboardComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ParentDashboardComponent, selectors: [["app-parent-dashboard"]], decls: 30, vars: 21, consts: [[1, "page", "parent-page"], [1, "topbar"], [1, "topbar-actions"], ["type", "button", 1, "ghost", 3, "click"], [1, "hero-strip"], [1, "eyebrow"], [1, "feedback"], [1, "feedback", "ok"], [1, "block"], [1, "section-head"], [1, "section-hint"], [1, "meeting-form", 3, "ngSubmit"], ["name", "parentEmail", "type", "email", "autocomplete", "email", 3, "ngModelChange", "ngModel"], ["name", "parentMobile", "autocomplete", "tel", 3, "ngModelChange", "ngModel"], ["name", "parentPassword", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["name", "parentPasswordConfirm", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["type", "submit", 3, "disabled"], [1, "meeting-row"], [1, "meta"], [1, "grid-cards"], [1, "block", "child-card"], [1, "group-label"], ["target", "_blank", "rel", "noopener", 1, "chip", "quiz", 3, "href"], ["type", "button", 1, "child-card-main", 3, "click"], [1, "child-card-head"], [3, "photoUrl", "name"], [1, "grade-line"], [1, "chip-row"], [1, "chip"], [1, "action-ghost"], [1, "child-card-actions"], [1, "chip", "quiz", 3, "routerLink"], ["kind", "loginAs", 3, "action", "label", "disabled"], [1, "drill-nav"], ["type", "button", 1, "ghost"], [1, "block", "child-header"], [1, "child-header-actions"], ["name", "childEmail", "type", "email", "autocomplete", "email", 3, "ngModelChange", "ngModel"], ["name", "childMobile", "autocomplete", "tel", 3, "ngModelChange", "ngModel"], ["name", "childPassword", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["name", "childPasswordConfirm", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], [1, "table-wrap"], [1, "data-table"], [1, "chip", "quiz", 3, "routerLink", "queryParams"], [1, "task-group"], [1, "item-list"], [1, "item-row"], [1, "meta", "empty-state"], [1, "item-body"], [1, "score-chip"], [1, "course-grid"], ["type", "button", 1, "course-card"], ["type", "button", 1, "course-card", 3, "click"], [1, "course-head"], [1, "course-desc"], [1, "theme-tag"], [1, "course-counts"]], template: function ParentDashboardComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275element(1, "app-api-busy-indicator");
@@ -70687,7 +70925,7 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(26, ParentDashboardComponent_Conditional_26_Template, 2, 1, "p", 6);
         \u0275\u0275conditionalCreate(27, ParentDashboardComponent_Conditional_27_Template, 2, 1, "p", 7);
-        \u0275\u0275conditionalCreate(28, ParentDashboardComponent_Conditional_28_Template, 47, 38)(29, ParentDashboardComponent_Conditional_29_Template, 34, 41);
+        \u0275\u0275conditionalCreate(28, ParentDashboardComponent_Conditional_28_Template, 47, 38)(29, ParentDashboardComponent_Conditional_29_Template, 36, 45);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
@@ -70708,13 +70946,13 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
         \u0275\u0275advance();
         \u0275\u0275conditional(!ctx.selectedChildId() ? 28 : 29);
       }
-    }, dependencies: [FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, NgModel, NgForm, RouterLink, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, UserPhotoComponent, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: var(--prompt-fg) !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.parent-page[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_pageIn 0.4s ease;\n}\n.topbar-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  margin-bottom: 1rem;\n}\n.section-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint[_ngcontent-%COMP%] {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: center;\n  padding: 0.9rem 0;\n  border-bottom: 1px solid var(--border);\n}\n.child-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  text-align: start;\n  width: 100%;\n  font: inherit;\n  color: inherit;\n  transition: transform 0.2s ease, border-color 0.2s ease;\n}\n.child-card-main[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  width: 100%;\n  padding: 0;\n  border: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n}\n.child-card-main[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.child-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.65rem;\n  margin-bottom: 0.15rem;\n}\n.child-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.child-header-actions[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  justify-items: end;\n}\n.grade-line[_ngcontent-%COMP%] {\n  margin: 0;\n  font-weight: 700;\n  color: var(--teal);\n}\n.action-ghost[_ngcontent-%COMP%] {\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.drill-nav[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.65rem;\n  margin-bottom: 1rem;\n}\n.child-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: flex-start;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.9rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  text-align: start;\n  padding: 0.55rem 0.65rem;\n  border-bottom: 1px solid var(--border);\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n.course-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 1rem;\n}\n.course-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);\n}\n.course-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-desc[_ngcontent-%COMP%] {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-counts[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.task-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group[_ngcontent-%COMP%]    + .task-group[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.group-label[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.72rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-soft);\n}\n.item-list[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid transparent;\n}\n.item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  color: #fff;\n  font-size: 0.95rem;\n}\n.item-body[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.score-chip[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.08);\n  border: 1px solid var(--border);\n  font-size: 0.82rem;\n  font-weight: 700;\n  color: var(--text-soft);\n}\n.score-chip.done[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.3);\n  color: var(--teal);\n}\n.empty-state[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.feedback[_ngcontent-%COMP%] {\n  margin: 0 0 1rem;\n  color: #ffb4b4;\n}\n@media (max-width: 700px) {\n  .meeting-row[_ngcontent-%COMP%], \n   .item-row[_ngcontent-%COMP%], \n   .child-header[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .topbar-actions[_ngcontent-%COMP%] {\n    flex-wrap: wrap;\n    justify-content: flex-end;\n  }\n}\n/*# sourceMappingURL=parent-dashboard.component.css.map */"] });
+    }, dependencies: [FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, NgModel, NgForm, RouterLink, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, IconActionButtonComponent, UserPhotoComponent, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   *[_ngcontent-%COMP%] {\n  color: var(--prompt-fg) !important;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n\n.parent-page[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_pageIn 0.4s ease;\n}\n.topbar-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  margin-bottom: 1rem;\n}\n.section-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint[_ngcontent-%COMP%] {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: center;\n  padding: 0.9rem 0;\n  border-bottom: 1px solid var(--border);\n}\n.child-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  text-align: start;\n  width: 100%;\n  font: inherit;\n  color: inherit;\n  transition: transform 0.2s ease, border-color 0.2s ease;\n}\n.child-card-main[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  width: 100%;\n  padding: 0;\n  border: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n}\n.child-card-main[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.child-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.65rem;\n  margin-bottom: 0.15rem;\n}\n.child-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.child-card-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.child-header-actions[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  justify-items: end;\n}\n.grade-line[_ngcontent-%COMP%] {\n  margin: 0;\n  font-weight: 700;\n  color: var(--teal);\n}\n.action-ghost[_ngcontent-%COMP%] {\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.drill-nav[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.65rem;\n  margin-bottom: 1rem;\n}\n.child-header[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: flex-start;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.9rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  text-align: start;\n  padding: 0.55rem 0.65rem;\n  border-bottom: 1px solid var(--border);\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n.course-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 1rem;\n}\n.course-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);\n}\n.course-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-desc[_ngcontent-%COMP%] {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-counts[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.task-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group[_ngcontent-%COMP%]    + .task-group[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.group-label[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.72rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-soft);\n}\n.item-list[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid transparent;\n}\n.item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  color: #fff;\n  font-size: 0.95rem;\n}\n.item-body[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.score-chip[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.08);\n  border: 1px solid var(--border);\n  font-size: 0.82rem;\n  font-weight: 700;\n  color: var(--text-soft);\n}\n.score-chip.done[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.3);\n  color: var(--teal);\n}\n.empty-state[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.feedback[_ngcontent-%COMP%] {\n  margin: 0 0 1rem;\n  color: #ffb4b4;\n}\n@media (max-width: 700px) {\n  .meeting-row[_ngcontent-%COMP%], \n   .item-row[_ngcontent-%COMP%], \n   .child-header[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .topbar-actions[_ngcontent-%COMP%] {\n    flex-wrap: wrap;\n    justify-content: flex-end;\n  }\n}\n/*# sourceMappingURL=parent-dashboard.component.css.map */"] });
   }
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ParentDashboardComponent, [{
     type: Component,
-    args: [{ selector: "app-parent-dashboard", imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, UserPhotoComponent], template: `<div class="page parent-page">\r
+    args: [{ selector: "app-parent-dashboard", imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, IconActionButtonComponent, UserPhotoComponent], template: `<div class="page parent-page">\r
   <app-api-busy-indicator />\r
   <header class="topbar">\r
     <div>\r
@@ -70833,9 +71071,17 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
               </div>\r
               <span class="action-ghost">{{ 'parent.viewCourses' | t }}</span>\r
             </button>\r
-            <a class="chip quiz" [routerLink]="['/parent/study-plans', child.studentId]">\r
-              {{ 'parent.openStudyPlan' | t }}\r
-            </a>\r
+            <div class="child-card-actions">\r
+              <a class="chip quiz" [routerLink]="['/parent/study-plans', child.studentId]">\r
+                {{ 'parent.openStudyPlan' | t }}\r
+              </a>\r
+              <app-icon-action-button\r
+                kind="loginAs"\r
+                [label]="'common.loginAs' | t"\r
+                [disabled]="impersonatingId() === child.studentId"\r
+                (action)="loginAs(child.studentId)"\r
+              />\r
+            </div>\r
           </article>\r
         } @empty {\r
           <article class="block">\r
@@ -70867,6 +71113,12 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
         <a class="chip quiz" [routerLink]="['/parent/study-plans', selectedChildId()]">\r
           {{ 'parent.openStudyPlan' | t }}\r
         </a>\r
+        <app-icon-action-button\r
+          kind="loginAs"\r
+          [label]="'common.loginAs' | t"\r
+          [disabled]="!!selectedChildId() && impersonatingId() === selectedChildId()"\r
+          (action)="loginAs(selectedChildId()!)"\r
+        />\r
         <p class="meta">\r
           {{ 'parent.childSummary' | t:{\r
             xp: selectedChild()?.totalXp || 0,\r
@@ -71082,11 +71334,11 @@ var ParentDashboardComponent = class _ParentDashboardComponent {
     }\r
   }\r
 </div>\r
-`, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html,\n.prompt-html * {\n  color: var(--prompt-fg) !important;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n/* src/app/pages/parent-dashboard/parent-dashboard.component.css */\n.parent-page {\n  animation: pageIn 0.4s ease;\n}\n.topbar-actions {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  margin-bottom: 1rem;\n}\n.section-head h2 {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: center;\n  padding: 0.9rem 0;\n  border-bottom: 1px solid var(--border);\n}\n.child-card {\n  display: grid;\n  gap: 0.85rem;\n  text-align: start;\n  width: 100%;\n  font: inherit;\n  color: inherit;\n  transition: transform 0.2s ease, border-color 0.2s ease;\n}\n.child-card-main {\n  display: grid;\n  gap: 0.4rem;\n  width: 100%;\n  padding: 0;\n  border: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n}\n.child-card-main h3 {\n  margin: 0;\n}\n.child-card-head {\n  display: flex;\n  align-items: center;\n  gap: 0.65rem;\n  margin-bottom: 0.15rem;\n}\n.child-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.child-header-actions {\n  display: grid;\n  gap: 0.65rem;\n  justify-items: end;\n}\n.grade-line {\n  margin: 0;\n  font-weight: 700;\n  color: var(--teal);\n}\n.action-ghost {\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.drill-nav {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.65rem;\n  margin-bottom: 1rem;\n}\n.child-header {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: flex-start;\n}\n.table-wrap {\n  overflow-x: auto;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.9rem;\n}\n.data-table th,\n.data-table td {\n  text-align: start;\n  padding: 0.55rem 0.65rem;\n  border-bottom: 1px solid var(--border);\n}\n.data-table th {\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n.course-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 1rem;\n}\n.course-card {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);\n}\n.course-head {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head h3 {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-desc {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-counts {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts span {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.task-group {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group + .task-group {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.group-label {\n  margin: 0;\n  font-size: 0.72rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-soft);\n}\n.item-list {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid transparent;\n}\n.item-body strong {\n  display: block;\n  color: #fff;\n  font-size: 0.95rem;\n}\n.item-body .meta {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.score-chip {\n  flex-shrink: 0;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.08);\n  border: 1px solid var(--border);\n  font-size: 0.82rem;\n  font-weight: 700;\n  color: var(--text-soft);\n}\n.score-chip.done {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.3);\n  color: var(--teal);\n}\n.empty-state {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.feedback {\n  margin: 0 0 1rem;\n  color: #ffb4b4;\n}\n@media (max-width: 700px) {\n  .meeting-row,\n  .item-row,\n  .child-header {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .topbar-actions {\n    flex-wrap: wrap;\n    justify-content: flex-end;\n  }\n}\n/*# sourceMappingURL=parent-dashboard.component.css.map */\n"] }]
+`, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html,\n.prompt-html * {\n  color: var(--prompt-fg) !important;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n\n/* src/app/pages/parent-dashboard/parent-dashboard.component.css */\n.parent-page {\n  animation: pageIn 0.4s ease;\n}\n.topbar-actions {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  margin-bottom: 1rem;\n}\n.section-head h2 {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: center;\n  padding: 0.9rem 0;\n  border-bottom: 1px solid var(--border);\n}\n.child-card {\n  display: grid;\n  gap: 0.85rem;\n  text-align: start;\n  width: 100%;\n  font: inherit;\n  color: inherit;\n  transition: transform 0.2s ease, border-color 0.2s ease;\n}\n.child-card-main {\n  display: grid;\n  gap: 0.4rem;\n  width: 100%;\n  padding: 0;\n  border: none;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n}\n.child-card-main h3 {\n  margin: 0;\n}\n.child-card-head {\n  display: flex;\n  align-items: center;\n  gap: 0.65rem;\n  margin-bottom: 0.15rem;\n}\n.child-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.child-card-actions {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.child-header-actions {\n  display: grid;\n  gap: 0.65rem;\n  justify-items: end;\n}\n.grade-line {\n  margin: 0;\n  font-weight: 700;\n  color: var(--teal);\n}\n.action-ghost {\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.drill-nav {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.65rem;\n  margin-bottom: 1rem;\n}\n.child-header {\n  display: flex;\n  justify-content: space-between;\n  gap: 1rem;\n  align-items: flex-start;\n}\n.table-wrap {\n  overflow-x: auto;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.9rem;\n}\n.data-table th,\n.data-table td {\n  text-align: start;\n  padding: 0.55rem 0.65rem;\n  border-bottom: 1px solid var(--border);\n}\n.data-table th {\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n}\n.course-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 1rem;\n}\n.course-card {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  color: inherit;\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);\n}\n.course-head {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head h3 {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-desc {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-counts {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts span {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.06);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.task-group {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group + .task-group {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.group-label {\n  margin: 0;\n  font-size: 0.72rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-soft);\n}\n.item-list {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: rgba(255, 255, 255, 0.03);\n  border: 1px solid transparent;\n}\n.item-body strong {\n  display: block;\n  color: #fff;\n  font-size: 0.95rem;\n}\n.item-body .meta {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.score-chip {\n  flex-shrink: 0;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: rgba(255, 255, 255, 0.08);\n  border: 1px solid var(--border);\n  font-size: 0.82rem;\n  font-weight: 700;\n  color: var(--text-soft);\n}\n.score-chip.done {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.3);\n  color: var(--teal);\n}\n.empty-state {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.feedback {\n  margin: 0 0 1rem;\n  color: #ffb4b4;\n}\n@media (max-width: 700px) {\n  .meeting-row,\n  .item-row,\n  .child-header {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .topbar-actions {\n    flex-wrap: wrap;\n    justify-content: flex-end;\n  }\n}\n/*# sourceMappingURL=parent-dashboard.component.css.map */\n"] }]
   }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ParentDashboardComponent, { className: "ParentDashboardComponent", filePath: "src/app/pages/parent-dashboard/parent-dashboard.component.ts", lineNumber: 33 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ParentDashboardComponent, { className: "ParentDashboardComponent", filePath: "src/app/pages/parent-dashboard/parent-dashboard.component.ts", lineNumber: 34 });
 })();
 
 // src/app/export-image.util.ts
@@ -73206,194 +73458,6 @@ function paginate(rows, page, pageSize) {
 function totalPages(count, pageSize) {
   return Math.max(1, Math.ceil(Math.max(0, count) / Math.max(1, pageSize)));
 }
-
-// src/app/shared/icon-action-button/icon-action-button.component.ts
-function IconActionButtonComponent_Conditional_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275domElementStart(0, "svg", 1);
-    \u0275\u0275domElement(1, "path", 7)(2, "path", 8);
-    \u0275\u0275domElementEnd();
-  }
-}
-function IconActionButtonComponent_Conditional_2_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275domElementStart(0, "svg", 1);
-    \u0275\u0275domElement(1, "path", 9);
-    \u0275\u0275domElementEnd();
-  }
-}
-function IconActionButtonComponent_Conditional_3_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275domElement(0, "i", 2);
-  }
-}
-function IconActionButtonComponent_Conditional_4_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275domElementStart(0, "span", 3);
-    \u0275\u0275domElement(1, "i", 10)(2, "i", 11);
-    \u0275\u0275domElementEnd();
-  }
-}
-function IconActionButtonComponent_Conditional_5_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275domElement(0, "i", 4);
-  }
-}
-function IconActionButtonComponent_Conditional_6_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275domElement(0, "i", 5);
-  }
-}
-function IconActionButtonComponent_Conditional_7_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275domElement(0, "i", 6);
-  }
-}
-function IconActionButtonComponent_Conditional_8_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275domElementStart(0, "svg", 1);
-    \u0275\u0275domElement(1, "path", 12)(2, "path", 13);
-    \u0275\u0275domElementEnd();
-  }
-}
-var IconActionButtonComponent = class _IconActionButtonComponent {
-  constructor() {
-    this.label = "";
-    this.disabled = false;
-    this.variant = "default";
-    this.action = new EventEmitter();
-  }
-  ariaLabel() {
-    if (this.label)
-      return this.label;
-    if (this.kind === "edit")
-      return "Edit";
-    if (this.kind === "play")
-      return "Play";
-    if (this.kind === "apply")
-      return "Apply filters";
-    if (this.kind === "clear")
-      return "Clear filters";
-    if (this.kind === "loginAs")
-      return "Logged in as";
-    if (this.kind === "deactivate")
-      return "Deactivate";
-    if (this.kind === "activate")
-      return "Activate";
-    return "Delete";
-  }
-  static {
-    this.\u0275fac = function IconActionButtonComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _IconActionButtonComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IconActionButtonComponent, selectors: [["app-icon-action-button"]], inputs: { kind: "kind", label: "label", disabled: "disabled", variant: "variant" }, outputs: { action: "action" }, decls: 9, vars: 18, consts: [["type", "button", 1, "icon-action-btn", 3, "click", "title", "disabled"], ["viewBox", "0 0 24 24", "aria-hidden", "true"], ["aria-hidden", "true", 1, "fa-solid", "fa-filter"], ["aria-hidden", "true", 1, "fa-filter-clear"], ["aria-hidden", "true", 1, "fa-solid", "fa-right-to-bracket"], ["aria-hidden", "true", 1, "fa-solid", "fa-user-slash"], ["aria-hidden", "true", 1, "fa-solid", "fa-user-check"], ["d", "M4 20h4l10.5-10.5a1.8 1.8 0 0 0 0-2.5L16.5 4.5a1.8 1.8 0 0 0-2.5 0L4 14.5V20z", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round", "stroke-linejoin", "round"], ["d", "M13.5 6.5l4 4", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round"], ["d", "M8 5.5v13l10-6.5-10-6.5z", "fill", "currentColor", "stroke", "currentColor", "stroke-width", "0.5", "stroke-linejoin", "round"], [1, "fa-solid", "fa-filter"], [1, "fa-solid", "fa-xmark"], ["d", "M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7h12z", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round", "stroke-linejoin", "round"], ["d", "M10 11v6M14 11v6", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", "stroke-linecap", "round"]], template: function IconActionButtonComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275domElementStart(0, "button", 0);
-        \u0275\u0275domListener("click", function IconActionButtonComponent_Template_button_click_0_listener() {
-          return ctx.action.emit();
-        });
-        \u0275\u0275conditionalCreate(1, IconActionButtonComponent_Conditional_1_Template, 3, 0, ":svg:svg", 1)(2, IconActionButtonComponent_Conditional_2_Template, 2, 0, ":svg:svg", 1)(3, IconActionButtonComponent_Conditional_3_Template, 1, 0, "i", 2)(4, IconActionButtonComponent_Conditional_4_Template, 3, 0, "span", 3)(5, IconActionButtonComponent_Conditional_5_Template, 1, 0, "i", 4)(6, IconActionButtonComponent_Conditional_6_Template, 1, 0, "i", 5)(7, IconActionButtonComponent_Conditional_7_Template, 1, 0, "i", 6)(8, IconActionButtonComponent_Conditional_8_Template, 3, 0, ":svg:svg", 1);
-        \u0275\u0275domElementEnd();
-      }
-      if (rf & 2) {
-        \u0275\u0275classProp("danger", ctx.variant === "danger" || ctx.kind === "delete")("play", ctx.kind === "play")("login-as", ctx.kind === "loginAs")("deactivate", ctx.kind === "deactivate")("activate", ctx.kind === "activate")("apply", ctx.kind === "apply")("ghost", ctx.variant === "ghost");
-        \u0275\u0275domProperty("title", ctx.ariaLabel())("disabled", ctx.disabled);
-        \u0275\u0275attribute("aria-label", ctx.ariaLabel());
-        \u0275\u0275advance();
-        \u0275\u0275conditional(ctx.kind === "edit" ? 1 : ctx.kind === "play" ? 2 : ctx.kind === "apply" ? 3 : ctx.kind === "clear" ? 4 : ctx.kind === "loginAs" ? 5 : ctx.kind === "deactivate" ? 6 : ctx.kind === "activate" ? 7 : 8);
-      }
-    }, styles: ["\n.icon-action-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.15rem;\n  height: 2.15rem;\n  padding: 0;\n  border-radius: 10px;\n  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));\n  background: rgba(255, 255, 255, 0.06);\n  color: var(--text, #fff);\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.icon-action-btn[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%], \n.icon-action-btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  width: 1.05rem;\n  height: 1.05rem;\n  font-size: 0.95rem;\n  line-height: 1;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear[_ngcontent-%COMP%] {\n  position: relative;\n  display: inline-flex;\n  width: 1.1rem;\n  height: 1.1rem;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear[_ngcontent-%COMP%]   .fa-filter[_ngcontent-%COMP%] {\n  font-size: 0.95rem;\n}\n.fa-filter-clear[_ngcontent-%COMP%]   .fa-xmark[_ngcontent-%COMP%] {\n  position: absolute;\n  right: -0.15rem;\n  bottom: -0.2rem;\n  width: auto;\n  height: auto;\n  font-size: 0.55rem;\n  background: var(--surface-strong, #142036);\n  border-radius: 50%;\n  padding: 0.05rem;\n}\n.icon-action-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.45);\n}\n.icon-action-btn.apply[_ngcontent-%COMP%]:hover:not(:disabled), \n.icon-action-btn.login-as[_ngcontent-%COMP%]:hover:not(:disabled), \n.icon-action-btn.activate[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.18);\n  border-color: rgba(95, 211, 188, 0.55);\n}\n.icon-action-btn.deactivate[_ngcontent-%COMP%]:hover:not(:disabled), \n.icon-action-btn.danger[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 107, 107, 0.18);\n  border-color: rgba(255, 107, 107, 0.55);\n  color: #fff;\n}\n.icon-action-btn.ghost[_ngcontent-%COMP%] {\n  background: transparent;\n  border-color: transparent;\n}\n.icon-action-btn.ghost[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: var(--border-strong, rgba(255, 255, 255, 0.18));\n}\n.icon-action-btn[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n/*# sourceMappingURL=icon-action-button.component.css.map */"] });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IconActionButtonComponent, [{
-    type: Component,
-    args: [{ selector: "app-icon-action-button", template: `<button\r
-  type="button"\r
-  class="icon-action-btn"\r
-  [class.danger]="variant === 'danger' || kind === 'delete'"\r
-  [class.play]="kind === 'play'"\r
-  [class.login-as]="kind === 'loginAs'"\r
-  [class.deactivate]="kind === 'deactivate'"\r
-  [class.activate]="kind === 'activate'"\r
-  [class.apply]="kind === 'apply'"\r
-  [class.ghost]="variant === 'ghost'"\r
-  [attr.aria-label]="ariaLabel()"\r
-  [title]="ariaLabel()"\r
-  [disabled]="disabled"\r
-  (click)="action.emit()"\r
->\r
-  @if (kind === 'edit') {\r
-    <svg viewBox="0 0 24 24" aria-hidden="true">\r
-      <path\r
-        d="M4 20h4l10.5-10.5a1.8 1.8 0 0 0 0-2.5L16.5 4.5a1.8 1.8 0 0 0-2.5 0L4 14.5V20z"\r
-        fill="none"\r
-        stroke="currentColor"\r
-        stroke-width="1.8"\r
-        stroke-linecap="round"\r
-        stroke-linejoin="round"\r
-      />\r
-      <path d="M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />\r
-    </svg>\r
-  } @else if (kind === 'play') {\r
-    <svg viewBox="0 0 24 24" aria-hidden="true">\r
-      <path\r
-        d="M8 5.5v13l10-6.5-10-6.5z"\r
-        fill="currentColor"\r
-        stroke="currentColor"\r
-        stroke-width="0.5"\r
-        stroke-linejoin="round"\r
-      />\r
-    </svg>\r
-  } @else if (kind === 'apply') {\r
-    <i class="fa-solid fa-filter" aria-hidden="true"></i>\r
-  } @else if (kind === 'clear') {\r
-    <span class="fa-filter-clear" aria-hidden="true">\r
-      <i class="fa-solid fa-filter"></i>\r
-      <i class="fa-solid fa-xmark"></i>\r
-    </span>\r
-  } @else if (kind === 'loginAs') {\r
-    <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>\r
-  } @else if (kind === 'deactivate') {\r
-    <i class="fa-solid fa-user-slash" aria-hidden="true"></i>\r
-  } @else if (kind === 'activate') {\r
-    <i class="fa-solid fa-user-check" aria-hidden="true"></i>\r
-  } @else {\r
-    <svg viewBox="0 0 24 24" aria-hidden="true">\r
-      <path\r
-        d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m1 0v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7h12z"\r
-        fill="none"\r
-        stroke="currentColor"\r
-        stroke-width="1.8"\r
-        stroke-linecap="round"\r
-        stroke-linejoin="round"\r
-      />\r
-      <path d="M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />\r
-    </svg>\r
-  }\r
-</button>\r
-`, styles: ["/* src/app/shared/icon-action-button/icon-action-button.component.css */\n.icon-action-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.15rem;\n  height: 2.15rem;\n  padding: 0;\n  border-radius: 10px;\n  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));\n  background: rgba(255, 255, 255, 0.06);\n  color: var(--text, #fff);\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.icon-action-btn svg,\n.icon-action-btn i {\n  width: 1.05rem;\n  height: 1.05rem;\n  font-size: 0.95rem;\n  line-height: 1;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear {\n  position: relative;\n  display: inline-flex;\n  width: 1.1rem;\n  height: 1.1rem;\n  align-items: center;\n  justify-content: center;\n}\n.fa-filter-clear .fa-filter {\n  font-size: 0.95rem;\n}\n.fa-filter-clear .fa-xmark {\n  position: absolute;\n  right: -0.15rem;\n  bottom: -0.2rem;\n  width: auto;\n  height: auto;\n  font-size: 0.55rem;\n  background: var(--surface-strong, #142036);\n  border-radius: 50%;\n  padding: 0.05rem;\n}\n.icon-action-btn:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.45);\n}\n.icon-action-btn.apply:hover:not(:disabled),\n.icon-action-btn.login-as:hover:not(:disabled),\n.icon-action-btn.activate:hover:not(:disabled) {\n  background: rgba(95, 211, 188, 0.18);\n  border-color: rgba(95, 211, 188, 0.55);\n}\n.icon-action-btn.deactivate:hover:not(:disabled),\n.icon-action-btn.danger:hover:not(:disabled) {\n  background: rgba(255, 107, 107, 0.18);\n  border-color: rgba(255, 107, 107, 0.55);\n  color: #fff;\n}\n.icon-action-btn.ghost {\n  background: transparent;\n  border-color: transparent;\n}\n.icon-action-btn.ghost:hover:not(:disabled) {\n  background: rgba(255, 255, 255, 0.06);\n  border-color: var(--border-strong, rgba(255, 255, 255, 0.18));\n}\n.icon-action-btn:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n/*# sourceMappingURL=icon-action-button.component.css.map */\n"] }]
-  }], null, { kind: [{
-    type: Input,
-    args: [{ required: true }]
-  }], label: [{
-    type: Input
-  }], disabled: [{
-    type: Input
-  }], variant: [{
-    type: Input
-  }], action: [{
-    type: Output
-  }] });
-})();
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IconActionButtonComponent, { className: "IconActionButtonComponent", filePath: "src/app/shared/icon-action-button/icon-action-button.component.ts", lineNumber: 10 });
-})();
 
 // src/app/shared/searchable-multi-select/searchable-multi-select.component.ts
 var _c013 = ["panel"];
