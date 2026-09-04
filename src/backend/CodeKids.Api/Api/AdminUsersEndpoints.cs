@@ -176,6 +176,44 @@ public static class AdminUsersEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+        app.MapPost("/api/admin/users/{userId:guid}/active", async (
+
+            Guid userId,
+
+            SetManagedUserActiveRequest request,
+
+            HttpContext httpContext,
+
+            ICommandHandler<SetManagedUserActiveCommand, ManagedUserDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var adminId = CurrentUser.GetUserId(httpContext.User);
+
+                return Results.Ok(await handler.Handle(
+
+                    new SetManagedUserActiveCommand(adminId, userId, request.IsActive),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapDelete("/api/admin/users/{userId:guid}", async (
 
             Guid userId,

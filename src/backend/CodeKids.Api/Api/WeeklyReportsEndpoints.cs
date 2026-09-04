@@ -53,6 +53,26 @@ public static class WeeklyReportsEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapGet("/api/admin/weekly-reports", async (
+            Guid? teacherId,
+            int? grade,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            IQueryHandler<ListStudentWeeklyReportsQuery, IReadOnlyList<StudentWeeklyReportDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                return Results.Ok(await handler.Handle(
+                    new ListStudentWeeklyReportsQuery(teacherId, grade, fromDate, toDate),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPut("/api/weekly-reports", async (
             HttpContext httpContext,
             SaveWeeklyReportsRequest request,

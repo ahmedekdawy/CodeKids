@@ -657,6 +657,21 @@ export class LearningApiService {
     return this.http.get<StudentWeeklyReport[]>(`${this.baseUrl}/weekly-reports${query ? `?${query}` : ''}`);
   }
 
+  listAdminWeeklyReports(filters?: {
+    teacherId?: string;
+    grade?: number;
+    fromDate?: string;
+    toDate?: string;
+  }): Observable<StudentWeeklyReport[]> {
+    const params = new URLSearchParams();
+    if (filters?.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    const query = params.toString();
+    return this.http.get<StudentWeeklyReport[]>(`${this.baseUrl}/admin/weekly-reports${query ? `?${query}` : ''}`);
+  }
+
   saveWeeklyReports(payload: {
     weekStartDate: string;
     entries: SaveWeeklyReportEntry[];
@@ -937,6 +952,10 @@ export class LearningApiService {
 
   deleteUser(userId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/admin/users/${userId}`);
+  }
+
+  setUserActive(userId: string, isActive: boolean): Observable<ManagedUser> {
+    return this.http.post<ManagedUser>(`${this.baseUrl}/admin/users/${userId}/active`, { isActive });
   }
 
   getZoomStatus(): Observable<ZoomConnectionStatus> {

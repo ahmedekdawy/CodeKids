@@ -319,6 +319,7 @@ public sealed class CreateManagedUserCommandHandler(
             user.PrepAmount,
             user.SecondaryAmount,
             user.MonthlySalary,
+            user.IsActive,
             rates);
     }
 }

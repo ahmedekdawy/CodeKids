@@ -38,6 +38,11 @@ public sealed class ResetPasswordCommandHandler(
             throw new InvalidOperationException("Reset token is invalid or has expired.");
         }
 
+        if (!token.User.IsActive)
+        {
+            throw new InvalidOperationException("This account is inactive.");
+        }
+
         token.User.PasswordHash = passwordHasher.Hash(newPassword.Trim());
         token.UsedAtUtc = DateTimeOffset.UtcNow;
 

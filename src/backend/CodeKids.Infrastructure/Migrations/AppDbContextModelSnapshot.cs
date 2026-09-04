@@ -1938,6 +1938,11 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<DateTimeOffset?>("LastLoginDateUtc")
                         .HasColumnType("timestamp with time zone");
 

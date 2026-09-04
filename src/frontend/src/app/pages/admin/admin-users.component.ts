@@ -90,6 +90,7 @@ export class AdminUsersComponent {
   readonly filterEmail = signal('');
   readonly filterMobile = signal('');
   readonly filterParent = signal('');
+  readonly filterStatus = signal<'active' | 'inactive' | ''>('');
 
   readonly stages = STAGE_CODES;
   readonly stageOptions = computed<MultiSelectOption[]>(() => {
@@ -134,12 +135,15 @@ export class AdminUsersComponent {
     const email = this.filterEmail();
     const mobile = this.filterMobile();
     const parentQ = this.filterParent().trim().toLowerCase();
+    const status = this.filterStatus();
     const role = this.managedRole();
 
     return this.users().filter((user) => {
       if (!includesIgnoreCase(user.displayName, name)) return false;
       if (!includesIgnoreCase(user.email, email)) return false;
       if (!includesIgnoreCase(user.mobilePhone, mobile)) return false;
+      if (status === 'active' && !this.isActive(user)) return false;
+      if (status === 'inactive' && this.isActive(user)) return false;
       if (role === 'Parent' && parentQ) {
         const haystack = [user.displayName, user.email, user.mobilePhone, user.id]
           .map((v) => (v ?? '').toLowerCase())
@@ -227,6 +231,11 @@ export class AdminUsersComponent {
     this.onFilterChange();
   }
 
+  setFilterStatus(value: 'active' | 'inactive' | ''): void {
+    this.filterStatus.set(value);
+    this.onFilterChange();
+  }
+
   setPageSize(value: string | number): void {
     this.pageSize.set(Number(value) || 10);
     this.page.set(1);
@@ -241,6 +250,7 @@ export class AdminUsersComponent {
     this.filterEmail.set('');
     this.filterMobile.set('');
     this.filterParent.set('');
+    this.filterStatus.set('');
     this.page.set(1);
   }
 
@@ -249,7 +259,8 @@ export class AdminUsersComponent {
       this.filterName().trim() ||
       this.filterEmail().trim() ||
       this.filterMobile().trim() ||
-      this.filterParent().trim()
+      this.filterParent().trim() ||
+      this.filterStatus()
     );
   }
 
@@ -468,6 +479,25 @@ export class AdminUsersComponent {
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.deleteFailed'))
+    });
+  }
+
+  isActive(user: ManagedUser): boolean {
+    return user.isActive !== false;
+  }
+
+  toggleActive(user: ManagedUser): void {
+    const next = !this.isActive(user);
+    if (!next && !confirm(this.locale.t('admin.users.confirmDeactivate', { name: user.displayName }))) {
+      return;
+    }
+    this.clearStatus();
+    this.api.setUserActive(user.id, next).subscribe({
+      next: (updated) => {
+        this.users.update((list) => list.map((item) => (item.id === updated.id ? { ...item, ...updated } : item)));
+        this.message.set(this.locale.t(next ? 'admin.users.activated' : 'admin.users.deactivated'));
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.activeFailed'))
     });
   }
 

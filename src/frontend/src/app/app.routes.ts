@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './auth.guard';
+import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterTenantComponent } from './pages/register-tenant/register-tenant.component';
@@ -25,6 +26,7 @@ import { AdminSiteSettingsComponent } from './pages/admin/admin-site-settings.co
 import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.component';
 import { AdminTimetableComponent } from './pages/admin/admin-timetable.component';
 import { AdminStudyPlansComponent } from './pages/admin/admin-study-plans.component';
+import { AdminWeeklyReportsComponent } from './pages/admin/admin-weekly-reports.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
 import { AdminStudentAttendanceComponent } from './pages/admin/admin-student-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
@@ -57,7 +59,7 @@ import { StudentAskedQuestionsComponent } from './pages/student-asked-questions/
 import { StudentChatComponent } from './pages/student-chat/student-chat.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
+  { path: '', pathMatch: 'full', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-tenant', component: RegisterTenantComponent },
@@ -172,6 +174,7 @@ export const routes: Routes = [
       { path: 'appointments', component: AdminAppointmentsComponent },
       { path: 'timetable', component: AdminTimetableComponent },
       { path: 'study-plans', component: AdminStudyPlansComponent },
+      { path: 'weekly-reports', component: AdminWeeklyReportsComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
       { path: 'student-attendance', component: AdminStudentAttendanceComponent },
       { path: 'payroll', component: AdminPayrollComponent },

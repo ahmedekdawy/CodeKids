@@ -40,6 +40,7 @@ export class AdminStudentsComponent {
   readonly filterMobile = signal('');
   readonly filterParent = signal('');
   readonly filterSchoolType = signal('');
+  readonly filterStatus = signal<'active' | 'inactive' | ''>('');
   readonly pageSizeOptions = [10, 25, 50];
 
   studentEmail = '';
@@ -85,12 +86,15 @@ export class AdminStudentsComponent {
     const mobile = this.filterMobile();
     const parentQ = this.filterParent().trim().toLowerCase();
     const schoolType = this.filterSchoolType();
+    const status = this.filterStatus();
 
     return this.students().filter((student) => {
       if (!includesIgnoreCase(student.displayName, name)) return false;
       if (!includesIgnoreCase(student.email, email)) return false;
       if (!includesIgnoreCase(student.mobilePhone, mobile)) return false;
       if (schoolType && (student.schoolType || '') !== schoolType) return false;
+      if (status === 'active' && !this.isActive(student)) return false;
+      if (status === 'inactive' && this.isActive(student)) return false;
       if (parentQ) {
         const parentLabel = this.parentLabel(student.parentId).toLowerCase();
         const parentId = (student.parentId || '').toLowerCase();
@@ -192,6 +196,11 @@ export class AdminStudentsComponent {
     this.onFilterChange();
   }
 
+  setFilterStatus(value: 'active' | 'inactive' | ''): void {
+    this.filterStatus.set(value);
+    this.onFilterChange();
+  }
+
   setPageSize(value: string | number): void {
     this.pageSize.set(Number(value) || 10);
     this.page.set(1);
@@ -207,6 +216,7 @@ export class AdminStudentsComponent {
     this.filterMobile.set('');
     this.filterParent.set('');
     this.filterSchoolType.set('');
+    this.filterStatus.set('');
     this.page.set(1);
   }
 
@@ -216,7 +226,8 @@ export class AdminStudentsComponent {
       this.filterEmail().trim() ||
       this.filterMobile().trim() ||
       this.filterParent().trim() ||
-      this.filterSchoolType()
+      this.filterSchoolType() ||
+      this.filterStatus()
     );
   }
 
@@ -310,6 +321,27 @@ export class AdminStudentsComponent {
         this.reload();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.deleteFailed'))
+    });
+  }
+
+  isActive(user: ManagedUser): boolean {
+    return user.isActive !== false;
+  }
+
+  toggleActive(student: ManagedUser): void {
+    const next = !this.isActive(student);
+    if (!next && !confirm(this.locale.t('admin.users.confirmDeactivate', { name: student.displayName }))) {
+      return;
+    }
+    this.clearStatus();
+    this.api.setUserActive(student.id, next).subscribe({
+      next: (updated) => {
+        this.students.update((list) =>
+          list.map((item) => (item.id === updated.id ? { ...item, ...updated } : item))
+        );
+        this.message.set(this.locale.t(next ? 'admin.users.activated' : 'admin.users.deactivated'));
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.activeFailed'))
     });
   }
 

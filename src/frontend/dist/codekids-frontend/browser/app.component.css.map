@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["src/app/app/app.component.css"],
-  "sourcesContent": [":host {\r\n  display: block;\r\n  min-height: 100vh;\r\n}\r\n"],
-  "mappings": ";AAAA;AACE,WAAS;AACT,cAAY;AACd;",
+  "sourcesContent": [":host {\r\n  display: block;\r\n  min-height: 100vh;\r\n}\r\n\r\n.impersonation-banner {\r\n  position: sticky;\r\n  top: 0;\r\n  z-index: 3000;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  flex-wrap: wrap;\r\n  gap: 0.75rem 1rem;\r\n  padding: 0.55rem 1rem;\r\n  background: #c2410c;\r\n  color: #fff7ed;\r\n  font-size: 0.92rem;\r\n}\r\n\r\n.impersonation-banner button {\r\n  border: 1px solid rgba(255, 247, 237, 0.45);\r\n  background: rgba(255, 255, 255, 0.12);\r\n  color: inherit;\r\n  font: inherit;\r\n  padding: 0.3rem 0.75rem;\r\n  border-radius: 8px;\r\n  cursor: pointer;\r\n}\r\n\r\n.impersonation-banner button:hover {\r\n  background: rgba(255, 255, 255, 0.22);\r\n}\r\n\r\n"],
+  "mappings": ";AAAA;AACE,WAAS;AACT,cAAY;AACd;AAEA,CAAC;AACC,YAAU;AACV,OAAK;AACL,WAAS;AACT,WAAS;AACT,eAAa;AACb,mBAAiB;AACjB,aAAW;AACX,OAAK,QAAQ;AACb,WAAS,QAAQ;AACjB,cAAY;AACZ,SAAO;AACP,aAAW;AACb;AAEA,CAfC,qBAeqB;AACpB,UAAQ,IAAI,MAAM,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AACtC,cAAY,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AAChC,SAAO;AACP,QAAM;AACN,WAAS,OAAO;AAChB,iBAAe;AACf,UAAQ;AACV;AAEA,CAzBC,qBAyBqB,MAAM;AAC1B,cAAY,KAAK,GAAG,EAAE,GAAG,EAAE,GAAG,EAAE;AAClC;",
   "names": []
 }

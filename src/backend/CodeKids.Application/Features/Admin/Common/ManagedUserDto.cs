@@ -25,4 +25,5 @@ public sealed record ManagedUserDto(
     decimal? PrepAmount = null,
     decimal? SecondaryAmount = null,
     decimal? MonthlySalary = null,
+    bool IsActive = true,
     IReadOnlyList<TeacherCourseRateDto>? CourseRates = null);

@@ -35,6 +35,7 @@ public class User : TenantEntity
     public DateTimeOffset? ZoomTokenExpiresAt { get; set; }
     public string ZoomConnectedEmail { get; set; } = string.Empty;
     public int TotalXp { get; set; }
+    public bool IsActive { get; set; } = true;
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
     /// <summary>Set on each successful login; null until the user has signed in at least once.</summary>
     public DateTimeOffset? LastLoginDateUtc { get; set; }

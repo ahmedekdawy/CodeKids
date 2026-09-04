@@ -4,6 +4,8 @@
   [class.danger]="variant === 'danger' || kind === 'delete'"
   [class.play]="kind === 'play'"
   [class.login-as]="kind === 'loginAs'"
+  [class.deactivate]="kind === 'deactivate'"
+  [class.activate]="kind === 'activate'"
   [class.apply]="kind === 'apply'"
   [class.ghost]="variant === 'ghost'"
   [attr.aria-label]="ariaLabel()"
@@ -42,6 +44,10 @@
     </span>
   } @else if (kind === 'loginAs') {
     <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+  } @else if (kind === 'deactivate') {
+    <i class="fa-solid fa-user-slash" aria-hidden="true"></i>
+  } @else if (kind === 'activate') {
+    <i class="fa-solid fa-user-check" aria-hidden="true"></i>
   } @else {
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path

@@ -1,0 +1,232 @@
+<div class="landing">
+  <header class="landing-nav">
+    <div class="landing-container nav-inner">
+      <app-site-brand />
+
+      <nav class="nav-links">
+        <a href="#services">{{ 'landing.nav.services' | t }}</a>
+        <a href="#systems">{{ 'landing.nav.systems' | t }}</a>
+        <a href="#how">{{ 'landing.nav.how' | t }}</a>
+        <a href="#teachers">{{ 'landing.nav.teachers' | t }}</a>
+        <a href="#parents">{{ 'landing.nav.parents' | t }}</a>
+      </nav>
+
+      <div class="nav-actions">
+        <app-theme-switcher />
+        <app-language-switcher />
+        @if (auth.isLoggedIn()) {
+          <a class="btn btn-primary" [routerLink]="auth.roleHome()">{{ 'landing.nav.dashboard' | t }}</a>
+        } @else {
+          <a class="btn btn-primary" routerLink="/login">{{ 'landing.nav.signIn' | t }}</a>
+        }
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="landing-container hero-inner">
+        <div class="hero-copy">
+          <span class="pill">{{ 'landing.hero.badge' | t }}</span>
+          @if (brand.logoUrl(); as logo) {
+            <img class="hero-logo" [src]="logo" [alt]="brand.siteName()" />
+          }
+          <h1>{{ brand.siteName() }}</h1>
+          <p class="hero-tagline">{{ 'landing.hero.tagline' | t }}</p>
+          <p class="hero-text">{{ 'landing.hero.text' | t }}</p>
+
+          <div class="hero-chips">
+            <span class="chip">{{ 'landing.hero.chipLive' | t }}</span>
+            <span class="chip">{{ 'landing.hero.chipSessions' | t }}</span>
+            <span class="chip">{{ 'landing.hero.chipFollow' | t }}</span>
+          </div>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" routerLink="/login">{{ 'landing.hero.ctaPrimary' | t }}</a>
+            <a class="btn btn-ghost btn-lg" href="#services">{{ 'landing.hero.ctaSecondary' | t }}</a>
+          </div>
+
+          <dl class="hero-stats">
+            @for (stat of stats; track stat.labelKey) {
+              <div class="stat">
+                <dt>{{ stat.valueKey | t }}</dt>
+                <dd>{{ stat.labelKey | t }}</dd>
+              </div>
+            }
+          </dl>
+        </div>
+
+        <aside class="hero-visual" aria-hidden="true">
+          <div class="hero-glow"></div>
+          @if (brand.bannerUrl(); as banner) {
+            <img class="hero-banner" [src]="banner" [alt]="brand.siteName()" />
+          }
+          <div class="preview-card">
+            <p class="preview-title">{{ 'landing.preview.title' | t }}</p>
+            <ul class="preview-list">
+              <li><span class="preview-icon live">🔴</span>{{ 'landing.preview.live' | t }}</li>
+              <li><span class="preview-icon">📝</span>{{ 'landing.preview.homework' | t }}</li>
+              <li><span class="preview-icon">💬</span>{{ 'landing.preview.chat' | t }}</li>
+              <li><span class="preview-icon">📊</span>{{ 'landing.preview.report' | t }}</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="systems">
+      <div class="landing-container">
+        <header class="section-head">
+          <h2>{{ 'landing.types.title' | t }}</h2>
+          <p>{{ 'landing.types.text' | t }}</p>
+        </header>
+
+        <div class="type-grid">
+          @for (type of schoolTypes; track type.titleKey) {
+            <article class="type-card">
+              <span class="type-icon" aria-hidden="true">{{ type.icon }}</span>
+              <h3>{{ type.titleKey | t }}</h3>
+              <p>{{ type.textKey | t }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="services">
+      <div class="landing-container">
+        <header class="section-head">
+          <h2>{{ 'landing.services.title' | t }}</h2>
+          <p>{{ 'landing.services.subtitle' | t }}</p>
+        </header>
+
+        <div class="service-grid">
+          @for (service of services; track service.titleKey) {
+            <article class="service-card">
+              <span class="service-icon" aria-hidden="true">{{ service.icon }}</span>
+              <h3>{{ service.titleKey | t }}</h3>
+              <p>{{ service.textKey | t }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="landing-container">
+        <header class="section-head">
+          <h2>{{ 'landing.how.title' | t }}</h2>
+          <p>{{ 'landing.how.subtitle' | t }}</p>
+        </header>
+
+        <ol class="step-grid">
+          @for (step of steps; track step.titleKey) {
+            <li class="step-card">
+              <span class="step-number" aria-hidden="true">{{ step.icon }}</span>
+              <h3>{{ step.titleKey | t }}</h3>
+              <p>{{ step.textKey | t }}</p>
+            </li>
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="teachers">
+      <div class="landing-container split">
+        <div class="split-copy">
+          <span class="pill">{{ 'landing.teachers.badge' | t }}</span>
+          <h2>{{ 'landing.teachers.title' | t }}</h2>
+          <p>{{ 'landing.teachers.text' | t }}</p>
+          <ul class="check-list">
+            @for (point of teacherPoints; track point) {
+              <li>{{ point | t }}</li>
+            }
+          </ul>
+        </div>
+        <div class="split-visual" aria-hidden="true">
+          <div class="quote-card">
+            <p class="quote-text">{{ 'landing.teachers.quote' | t }}</p>
+            <p class="quote-author">{{ 'landing.teachers.quoteAuthor' | t }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="parents">
+      <div class="landing-container split reverse">
+        <div class="split-copy">
+          <span class="pill">{{ 'landing.parents.badge' | t }}</span>
+          <h2>{{ 'landing.parents.title' | t }}</h2>
+          <p>{{ 'landing.parents.text' | t }}</p>
+          <ul class="check-list">
+            @for (point of parentPoints; track point) {
+              <li>{{ point | t }}</li>
+            }
+          </ul>
+        </div>
+        <div class="split-visual" aria-hidden="true">
+          <div class="report-card">
+            <p class="report-title">{{ 'landing.parents.reportTitle' | t }}</p>
+            <div class="report-row">
+              <span>{{ 'landing.parents.reportAttendance' | t }}</span>
+              <span class="report-value good">96%</span>
+            </div>
+            <div class="report-row">
+              <span>{{ 'landing.parents.reportHomework' | t }}</span>
+              <span class="report-value good">9 / 10</span>
+            </div>
+            <div class="report-row">
+              <span>{{ 'landing.parents.reportExams' | t }}</span>
+              <span class="report-value">A</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section" id="contact">
+      <div class="landing-container cta-inner">
+        <h2>{{ 'landing.cta.title' | t }}</h2>
+        <p>{{ 'landing.cta.text' | t }}</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" routerLink="/register">{{ 'landing.cta.register' | t }}</a>
+          <a class="btn btn-ghost btn-lg" routerLink="/login">{{ 'landing.cta.signIn' | t }}</a>
+        </div>
+
+        <p class="contact-lead">{{ 'landing.contact.text' | t }}</p>
+        <div class="contact-actions">
+          <a class="btn btn-whatsapp" [href]="whatsAppUrl" target="_blank" rel="noopener">
+            <span aria-hidden="true">💬</span>
+            <span>{{ 'landing.contact.whatsapp' | t }}</span>
+            <span class="contact-number" dir="ltr">{{ contactPhoneDisplay }}</span>
+          </a>
+          <a class="btn btn-ghost" [href]="telUrl">
+            <span aria-hidden="true">📞</span>
+            <span>{{ 'landing.contact.call' | t }}</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a
+    class="whatsapp-fab"
+    [href]="whatsAppUrl"
+    target="_blank"
+    rel="noopener"
+    [title]="('landing.contact.whatsapp' | t) + ' ' + contactPhoneDisplay"
+    [attr.aria-label]="('landing.contact.whatsapp' | t) + ' ' + contactPhoneDisplay">
+    <span aria-hidden="true">💬</span>
+  </a>
+
+  <footer class="landing-footer">
+    <div class="landing-container footer-inner">
+      <app-site-brand [compact]="true" />
+      <p class="footer-contact">
+        <span>{{ 'landing.contact.footer' | t }}</span>
+        <a [href]="whatsAppUrl" target="_blank" rel="noopener" dir="ltr">{{ contactPhoneDisplay }}</a>
+      </p>
+      <p>© {{ year }} {{ brand.siteName() }} — {{ 'landing.footer.rights' | t }}</p>
+    </div>
+  </footer>
+</div>

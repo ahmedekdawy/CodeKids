@@ -109,6 +109,7 @@ public class AppDbContext : DbContext, IAppDbContext
                 .OnDelete(DeleteBehavior.Cascade);
             entity.Property(x => x.ZoomRefreshToken).HasMaxLength(2000).IsRequired();
             entity.Property(x => x.ZoomConnectedEmail).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.IsActive).HasDefaultValue(true);
             entity.HasOne(x => x.Parent)
                 .WithMany(x => x.Children)
                 .HasForeignKey(x => x.ParentId)

@@ -389,6 +389,7 @@ builder.Services.AddScoped<ICommandHandler<CreateManagedUserCommand, ManagedUser
 builder.Services.AddScoped<ICommandHandler<UpdateManagedUserCommand, ManagedUserDto>, UpdateManagedUserCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteManagedUserCommand, bool>, DeleteManagedUserCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetManagedUserActiveCommand, ManagedUserDto>, SetManagedUserActiveCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListManagedUsersQuery, IReadOnlyList<ManagedUserDto>>, ListManagedUsersQueryHandler>();
 
@@ -547,6 +548,46 @@ builder.Services
                 }
 
                 return Task.CompletedTask;
+
+            },
+
+            OnTokenValidated = async context =>
+
+            {
+
+                try
+
+                {
+
+                    var userId = CurrentUser.GetUserId(context.Principal!);
+
+                    var db = context.HttpContext.RequestServices.GetRequiredService<IAppDbContext>();
+
+                    var isActive = await db.Users.AsNoTracking()
+
+                        .Where(x => x.Id == userId)
+
+                        .Select(x => (bool?)x.IsActive)
+
+                        .FirstOrDefaultAsync();
+
+                    if (isActive != true)
+
+                    {
+
+                        context.Fail("This account is inactive.");
+
+                    }
+
+                }
+
+                catch
+
+                {
+
+                    context.Fail("This account is inactive.");
+
+                }
 
             }
 

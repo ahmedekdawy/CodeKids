@@ -28,7 +28,7 @@ public sealed class ForgotPasswordCommandHandler(
         }
 
         var user = await FindUserAsync(login, cancellationToken);
-        if (user is null || string.IsNullOrWhiteSpace(user.Email) || !user.Email.Contains('@'))
+        if (user is null || !user.IsActive || string.IsNullOrWhiteSpace(user.Email) || !user.Email.Contains('@'))
         {
             logger.LogInformation("Password reset requested for unknown or email-less login.");
             return new ForgotPasswordResult(true, acceptedMessage);

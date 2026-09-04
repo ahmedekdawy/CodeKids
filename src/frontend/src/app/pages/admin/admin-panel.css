@@ -114,6 +114,10 @@
   background: var(--table-row-hover);
 }
 
+.data-table tr.is-inactive td {
+  opacity: 0.58;
+}
+
 .data-table tr.total-row td {
   border-top: 2px solid var(--border);
   background: var(--table-row-total);

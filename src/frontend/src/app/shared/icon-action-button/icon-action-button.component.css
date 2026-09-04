@@ -55,11 +55,13 @@
 }
 
 .icon-action-btn.apply:hover:not(:disabled),
-.icon-action-btn.login-as:hover:not(:disabled) {
+.icon-action-btn.login-as:hover:not(:disabled),
+.icon-action-btn.activate:hover:not(:disabled) {
   background: rgba(95, 211, 188, 0.18);
   border-color: rgba(95, 211, 188, 0.55);
 }
 
+.icon-action-btn.deactivate:hover:not(:disabled),
 .icon-action-btn.danger:hover:not(:disabled) {
   background: rgba(255, 107, 107, 0.18);
   border-color: rgba(255, 107, 107, 0.55);

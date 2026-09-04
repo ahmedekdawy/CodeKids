@@ -138,6 +138,19 @@
         />
       </label>
       <label>
+        {{ 'common.status' | t }}
+        <app-searchable-select
+          [ngModel]="filterStatus()"
+          name="filterStatus"
+          (ngModelChange)="setFilterStatus($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="[
+            { value: 'active', label: ('admin.users.statusActive' | t) },
+            { value: 'inactive', label: ('admin.users.statusInactive' | t) }
+          ]"
+        />
+      </label>
+      <label>
         {{ 'common.rowsPerPage' | t }}
         <app-searchable-select
           [ngModel]="pageSize()"
@@ -163,12 +176,13 @@
             <th class="sortable" (click)="setSort('schoolType')">{{ 'common.schoolType' | t }} <span class="sort-mark">{{ sortMark('schoolType') }}</span></th>
             <th class="sortable" (click)="setSort('totalXp')">{{ 'common.xp' | t }} <span class="sort-mark">{{ sortMark('totalXp') }}</span></th>
             <th>{{ 'common.parentId' | t }}</th>
+            <th>{{ 'common.status' | t }}</th>
             <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
           @for (student of pagedStudents(); track student.id) {
-            <tr [class.selected]="editingId() === student.id">
+            <tr [class.selected]="editingId() === student.id" [class.is-inactive]="!isActive(student)">
               <td>{{ student.displayName }}</td>
               <td>{{ student.email || ('common.emDash' | t) }}</td>
               <td>{{ student.mobilePhone || ('common.emDash' | t) }}</td>
@@ -176,13 +190,20 @@
               <td>{{ schoolTypeLabel(student.schoolType) }}</td>
               <td>{{ student.totalXp }}</td>
               <td>{{ parentLabel(student.parentId) }}</td>
+              <td>{{ isActive(student) ? ('admin.users.statusActive' | t) : ('admin.users.statusInactive' | t) }}</td>
               <td>
                 <div class="row-actions">
                   <app-icon-action-button
                     kind="loginAs"
                     [label]="'common.loginAs' | t"
-                    [disabled]="impersonatingId() === student.id"
+                    [disabled]="impersonatingId() === student.id || !isActive(student)"
                     (action)="loginAs(student)"
+                  />
+                  <app-icon-action-button
+                    [kind]="isActive(student) ? 'deactivate' : 'activate'"
+                    [variant]="isActive(student) ? 'danger' : 'default'"
+                    [label]="isActive(student) ? ('admin.users.deactivate' | t) : ('admin.users.activate' | t)"
+                    (action)="toggleActive(student)"
                   />
                   <app-icon-action-button kind="edit" (action)="startEdit(student)" />
                   <app-icon-action-button kind="delete" variant="danger" (action)="deleteStudent(student)" />
@@ -191,7 +212,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="8">{{ 'common.noData' | t }}</td>
+              <td colspan="9">{{ 'common.noData' | t }}</td>
             </tr>
           }
         </tbody>

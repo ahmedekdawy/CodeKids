@@ -671,6 +671,7 @@ export interface StudentWeeklyReportGridRow {
 export interface StudentWeeklyReport {
   id: string;
   teacherId: string;
+  teacherName?: string;
   studentId: string;
   studentName: string;
   studentGrade?: number | null;
@@ -912,6 +913,7 @@ export interface ManagedUser {
   prepAmount?: number | null;
   secondaryAmount?: number | null;
   monthlySalary?: number | null;
+  isActive?: boolean;
   courseRates?: TeacherCourseRate[];
 }
 

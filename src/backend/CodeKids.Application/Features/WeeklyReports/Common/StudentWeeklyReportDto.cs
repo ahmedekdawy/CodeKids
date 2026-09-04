@@ -3,6 +3,7 @@ namespace CodeKids.Application.Features.WeeklyReports;
 public sealed record StudentWeeklyReportDto(
     Guid Id,
     Guid TeacherId,
+    string TeacherName,
     Guid StudentId,
     string StudentName,
     int? StudentGrade,

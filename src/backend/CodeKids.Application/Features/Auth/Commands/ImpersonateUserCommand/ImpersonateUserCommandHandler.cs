@@ -54,6 +54,11 @@ public sealed class ImpersonateUserCommandHandler(
             throw new InvalidOperationException("Only Super Admin can impersonate users.");
         }
 
+        if (!user.IsActive)
+        {
+            throw new InvalidOperationException("This account is inactive.");
+        }
+
         return new AuthResponse(jwtTokenService.CreateToken(user), RegisterCommandHandler.ToDto(user));
     }
 }

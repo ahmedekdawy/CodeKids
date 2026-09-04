@@ -8,7 +8,7 @@ public sealed record GetWeeklyReportGridQuery(
     int? Grade) : IQuery<IReadOnlyList<StudentWeeklyReportGridRowDto>>;
 
 public sealed record ListStudentWeeklyReportsQuery(
-    Guid TeacherId,
+    Guid? TeacherId,
     int? Grade,
     DateOnly? FromDate,
     DateOnly? ToDate) : IQuery<IReadOnlyList<StudentWeeklyReportDto>>;

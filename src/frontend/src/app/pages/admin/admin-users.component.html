@@ -248,6 +248,19 @@
         </label>
       }
       <label>
+        {{ 'common.status' | t }}
+        <app-searchable-select
+          [ngModel]="filterStatus()"
+          name="filterStatus"
+          (ngModelChange)="setFilterStatus($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="[
+            { value: 'active', label: ('admin.users.statusActive' | t) },
+            { value: 'inactive', label: ('admin.users.statusInactive' | t) }
+          ]"
+        />
+      </label>
+      <label>
         {{ 'common.rowsPerPage' | t }}
         <app-searchable-select
           [ngModel]="pageSize()"
@@ -275,12 +288,13 @@
               <th>{{ 'admin.users.stages' | t }}</th>
               <th>{{ 'admin.users.primaryAmount' | t }}</th>
             }
+            <th>{{ 'common.status' | t }}</th>
             <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
         <tbody>
           @for (user of pagedUsers(); track user.id) {
-            <tr>
+            <tr [class.is-inactive]="!isActive(user)">
               <td>{{ user.displayName }}</td>
               <td>{{ user.email || ('common.emDash' | t) }}</td>
               <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
@@ -290,16 +304,23 @@
                 <td>{{ stagesLabel(user.stages) }}</td>
                 <td>{{ moneyLabel(user.primaryAmount) }}</td>
               }
+              <td>{{ isActive(user) ? ('admin.users.statusActive' | t) : ('admin.users.statusInactive' | t) }}</td>
               <td>
                 <div class="row-actions">
                   @if (managedRole() !== 'SuperAdmin') {
                     <app-icon-action-button
                       kind="loginAs"
                       [label]="'common.loginAs' | t"
-                      [disabled]="impersonatingId() === user.id"
+                      [disabled]="impersonatingId() === user.id || !isActive(user)"
                       (action)="loginAs(user)"
                     />
                   }
+                  <app-icon-action-button
+                    [kind]="isActive(user) ? 'deactivate' : 'activate'"
+                    [variant]="isActive(user) ? 'danger' : 'default'"
+                    [label]="isActive(user) ? ('admin.users.deactivate' | t) : ('admin.users.activate' | t)"
+                    (action)="toggleActive(user)"
+                  />
                   <app-icon-action-button kind="edit" (action)="startEdit(user)" />
                   <app-icon-action-button kind="delete" variant="danger" (action)="deleteUser(user)" />
                 </div>
@@ -307,7 +328,7 @@
             </tr>
           } @empty {
             <tr>
-              <td [attr.colspan]="managedRole() === 'Teacher' ? 8 : 4">{{ 'common.noData' | t }}</td>
+              <td [attr.colspan]="managedRole() === 'Teacher' ? 9 : 5">{{ 'common.noData' | t }}</td>
             </tr>
           }
         </tbody>

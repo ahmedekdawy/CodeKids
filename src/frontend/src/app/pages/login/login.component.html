@@ -1,6 +1,6 @@
 <section class="auth-shell">
   <div class="auth-panel">
-    <app-api-busy-indicator />
+    <app-api-busy-indicator [busy]="loading()" />
     <div class="auth-panel-top">
       <app-site-brand />
       <div class="toolbar-prefs">
@@ -30,7 +30,6 @@
 
     <div class="auth-links">
       <a routerLink="/forgot-password">{{ 'auth.forgot.link' | t }}</a>
-      <a routerLink="/register-tenant">{{ 'auth.tenant.registerLink' | t }}</a>
     </div>
   </div>
 
