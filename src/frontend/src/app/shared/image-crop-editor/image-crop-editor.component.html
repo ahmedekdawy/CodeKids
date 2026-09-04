@@ -1,0 +1,115 @@
+<div class="crop-editor">
+  <p class="meta">{{ 'teacher.questionImage.cropHint' | t }}</p>
+
+  <div class="crop-toolbar">
+    <div class="tool-group" role="group" [attr.aria-label]="'teacher.questionImage.toolRotate' | t">
+      <button type="button" class="ghost-btn" (click)="rotate(-1)" [disabled]="!ready()" [title]="'teacher.questionImage.rotateLeft' | t">
+        ↺ 90°
+      </button>
+      <button type="button" class="ghost-btn" (click)="rotate(1)" [disabled]="!ready()" [title]="'teacher.questionImage.rotateRight' | t">
+        ↻ 90°
+      </button>
+      <button type="button" class="ghost-btn" [class.active]="flipH()" (click)="toggleFlipH()" [disabled]="!ready()" [title]="'teacher.questionImage.flipH' | t">
+        ⇋
+      </button>
+      <button type="button" class="ghost-btn" [class.active]="flipV()" (click)="toggleFlipV()" [disabled]="!ready()" [title]="'teacher.questionImage.flipV' | t">
+        ⇅
+      </button>
+    </div>
+
+    <div class="tool-group" role="group" [attr.aria-label]="'teacher.questionImage.toolRatio' | t">
+      @for (preset of aspectPresets; track preset.key) {
+        <button
+          type="button"
+          class="ghost-btn"
+          [class.active]="aspectKey() === preset.key"
+          (click)="setAspect(preset.key)"
+          [disabled]="!ready()"
+        >
+          {{ preset.labelKey | t }}
+        </button>
+      }
+    </div>
+
+    <div class="tool-group" role="group" [attr.aria-label]="'teacher.questionImage.toolSelection' | t">
+      <button type="button" class="ghost-btn" (click)="selectAll()" [disabled]="!ready()">
+        {{ 'teacher.questionImage.selectAll' | t }}
+      </button>
+      <button type="button" class="ghost-btn" [class.active]="grid()" (click)="toggleGrid()" [disabled]="!ready()">
+        {{ 'teacher.questionImage.gridToggle' | t }}
+      </button>
+      <button type="button" class="ghost-btn" (click)="resetAll()" [disabled]="!ready()">
+        {{ 'teacher.questionImage.cropReset' | t }}
+      </button>
+    </div>
+  </div>
+
+  <div class="crop-stage">
+    <canvas #workCanvas class="crop-image"></canvas>
+    @if (ready()) {
+      <div class="crop-surface" (pointerdown)="startDrag($event, 'new')">
+        <div
+          class="crop-rect"
+          [class.show-grid]="grid()"
+          [style.left.%]="rect().x * 100"
+          [style.top.%]="rect().y * 100"
+          [style.width.%]="rect().w * 100"
+          [style.height.%]="rect().h * 100"
+          (pointerdown)="startDrag($event, 'move')"
+        >
+          @for (handle of cornerHandles; track handle) {
+            <span class="handle corner" [class]="'handle corner ' + handle" (pointerdown)="startDrag($event, handle)"></span>
+          }
+          @for (handle of edgeHandles; track handle) {
+            <span class="handle edge" [class]="'handle edge ' + handle" (pointerdown)="startDrag($event, handle)"></span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="crop-sizing">
+    <label class="crop-scale">
+      {{ 'teacher.questionImage.cropScale' | t: { percent: scalePercent() } }}
+      <input
+        type="range"
+        min="10"
+        max="100"
+        step="5"
+        [value]="scalePercent()"
+        (input)="setScale($any($event.target).value)"
+        [disabled]="!ready()"
+      />
+    </label>
+    <label class="crop-width">
+      {{ 'teacher.questionImage.outputWidth' | t }}
+      <input
+        type="number"
+        min="1"
+        step="10"
+        [value]="outputSize().width"
+        (change)="setOutputWidth($any($event.target).value)"
+        [disabled]="!ready()"
+      />
+    </label>
+  </div>
+
+  <span class="meta">
+    {{ 'teacher.questionImage.cropSelection' | t: { width: cropPixels().width, height: cropPixels().height } }}
+    ·
+    {{ 'teacher.questionImage.cropOutput' | t: { width: outputSize().width, height: outputSize().height } }}
+  </span>
+
+  <div class="crop-actions">
+    <button type="button" (click)="apply()" [disabled]="!ready() || working()">
+      {{ 'teacher.questionImage.cropApply' | t }}
+    </button>
+    <button type="button" class="ghost-btn" (click)="cancelled.emit()" [disabled]="working()">
+      {{ 'common.cancel' | t }}
+    </button>
+  </div>
+
+  @if (error()) {
+    <span class="error">{{ error() }}</span>
+  }
+</div>

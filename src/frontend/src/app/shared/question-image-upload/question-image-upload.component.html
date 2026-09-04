@@ -7,8 +7,45 @@
   }
   <label class="upload-label">
     {{ 'teacher.questionImage.upload' | t }}
-    <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" (change)="onFileSelected($event)" [disabled]="uploading()" />
+    <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf" (change)="onFileSelected($event)" [disabled]="uploading() || capturing()" />
   </label>
+  <input
+    #cameraFile
+    class="sr-only"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    (change)="onFileSelected($event)"
+    [disabled]="uploading() || capturing()"
+    tabindex="-1"
+  />
+  <div class="upload-actions">
+    <button type="button" class="ghost-btn" (click)="armPaste()" [disabled]="uploading() || capturing()">
+      {{ 'teacher.questionImage.paste' | t }}
+    </button>
+    <button type="button" class="ghost-btn" (click)="openCamera()" [disabled]="uploading() || capturing()">
+      {{ 'teacher.questionImage.capture' | t }}
+    </button>
+  </div>
+  @if (pasteArmed()) {
+    <span class="meta">{{ 'teacher.questionImage.pasteReady' | t }}</span>
+  }
+  @if (capturing()) {
+    <div class="camera-panel">
+      <video #cameraVideo autoplay playsinline muted></video>
+      <div class="camera-actions">
+        <button type="button" (click)="snapPhoto()">{{ 'teacher.questionImage.snap' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="cancelCamera()">{{ 'common.cancel' | t }}</button>
+      </div>
+    </div>
+  }
+  @if (editingFile(); as pending) {
+    <app-image-crop-editor
+      [source]="pending"
+      (applied)="onCropApplied($event)"
+      (cancelled)="cancelCrop()"
+    />
+  }
   @if (uploading()) {
     <span class="meta">{{ 'teacher.questionImage.uploading' | t }}</span>
   }
