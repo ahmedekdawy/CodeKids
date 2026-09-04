@@ -5,6 +5,7 @@ import { SiteBrandService } from '../../site-brand.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
+import { TopStudentsBoardComponent } from '../../shared/top-students-board/top-students-board.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 
 interface LandingCard {
@@ -21,7 +22,7 @@ interface LandingStat {
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent],
+  imports: [RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, TopStudentsBoardComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })

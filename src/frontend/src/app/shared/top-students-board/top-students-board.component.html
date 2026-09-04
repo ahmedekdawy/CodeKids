@@ -1,0 +1,30 @@
+@if (loaded() && students().length > 0) {
+  <section
+    class="top-board"
+    [class.compact]="variant() === 'compact'"
+    [class.section]="variant() === 'section'"
+    [attr.id]="variant() === 'section' ? 'top-students' : null">
+    <header class="top-board-head">
+      <span class="top-board-badge" aria-hidden="true">⭐</span>
+      <div>
+        <h2>{{ 'topStudents.title' | t }}</h2>
+        <p>{{ 'topStudents.subtitle' | t }}</p>
+      </div>
+    </header>
+
+    <ol class="top-board-list">
+      @for (student of students(); track student.studentName + student.studentGrade + $index; let i = $index) {
+        <li>
+          <span class="rank" [attr.aria-label]="('topStudents.rank' | t) + ' ' + (i + 1)">{{ rankMedal(i) }}</span>
+          <div class="student">
+            <strong>{{ student.studentName }}</strong>
+            @if (student.studentGrade != null) {
+              <span class="meta">{{ gradeLabel(student.studentGrade) }}</span>
+            }
+          </div>
+          <span class="score">{{ student.performancePercent }}%</span>
+        </li>
+      }
+    </ol>
+  </section>
+}

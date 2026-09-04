@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { finalize } from 'rxjs';
 import { ApiBusyService } from './api-busy.service';
 
-const silentUrlParts = ['/media/watch-events'];
+const silentUrlParts = ['/media/watch-events', '/weekly-reports/top-students'];
 
 export const apiBusyInterceptor: HttpInterceptorFn = (req, next) => {
   if (silentUrlParts.some((part) => req.url.includes(part))) {

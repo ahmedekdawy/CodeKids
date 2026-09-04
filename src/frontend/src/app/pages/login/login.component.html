@@ -31,6 +31,8 @@
     <div class="auth-links">
       <a routerLink="/forgot-password">{{ 'auth.forgot.link' | t }}</a>
     </div>
+
+    <app-top-students-board variant="compact" />
   </div>
 
   <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">

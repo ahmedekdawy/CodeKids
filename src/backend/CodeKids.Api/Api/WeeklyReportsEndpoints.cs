@@ -32,6 +32,16 @@ public static class WeeklyReportsEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
+        app.MapGet("/api/weekly-reports/top-students", async (
+            DateOnly? weekStart,
+            IQueryHandler<ListTopWeeklyStudentsQuery, IReadOnlyList<TopWeeklyStudentDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            return Results.Ok(await handler.Handle(
+                new ListTopWeeklyStudentsQuery(weekStart),
+                cancellationToken));
+        }).AllowAnonymous();
+
         app.MapGet("/api/weekly-reports", async (
             HttpContext httpContext,
             int? grade,

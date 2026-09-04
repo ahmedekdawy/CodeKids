@@ -37,3 +37,10 @@ public sealed record SaveWeeklyReportEntryDto(
 public sealed record SaveWeeklyReportsRequest(
     DateOnly WeekStartDate,
     IReadOnlyList<SaveWeeklyReportEntryDto> Entries);
+
+/// <summary>Public-facing row for distinguished students (performance ≥ 90).</summary>
+public sealed record TopWeeklyStudentDto(
+    string StudentName,
+    int? StudentGrade,
+    int PerformancePercent,
+    DateOnly WeekStartDate);

@@ -692,6 +692,13 @@ export interface SaveWeeklyReportEntry {
   openCamera?: boolean | null;
 }
 
+export interface TopWeeklyStudent {
+  studentName: string;
+  studentGrade?: number | null;
+  performancePercent: number;
+  weekStartDate: string;
+}
+
 export interface WeeklyStudyPlanTopic {
   id: string;
   title: string;

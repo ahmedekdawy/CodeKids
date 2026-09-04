@@ -213,6 +213,7 @@ export const EN: Record<string, string> = {
   'nav.admin.expenses': 'Other expenses',
   'nav.admin.settings': 'Site branding',
 
+  'landing.nav.topStudents': 'Top students',
   'landing.nav.services': 'Services',
   'landing.nav.systems': 'Study systems',
   'landing.nav.how': 'How it works',
@@ -330,6 +331,10 @@ export const EN: Record<string, string> = {
   'landing.contact.footer': 'WhatsApp & calls:',
 
   'landing.footer.rights': 'All rights reserved.',
+
+  'topStudents.title': 'Distinguished students this week',
+  'topStudents.subtitle': 'Students who scored 90% or higher in this week’s evaluation.',
+  'topStudents.rank': 'Rank',
 
   'auth.login.title': 'Welcome back, young coder.',
   'auth.login.subtitle': 'Sign in as a student, parent, or teacher.',

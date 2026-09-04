@@ -480,6 +480,8 @@ builder.Services.AddScoped<IQueryHandler<GetWeeklyReportGridQuery, IReadOnlyList
 
 builder.Services.AddScoped<IQueryHandler<ListStudentWeeklyReportsQuery, IReadOnlyList<StudentWeeklyReportDto>>, ListStudentWeeklyReportsQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListTopWeeklyStudentsQuery, IReadOnlyList<TopWeeklyStudentDto>>, ListTopWeeklyStudentsQueryHandler>();
+
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyList<StudentWeeklyReportGridRowDto>>, SaveWeeklyReportsCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();

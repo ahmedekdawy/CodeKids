@@ -39,6 +39,7 @@ import {
   StudentWeeklyReportGridRow,
   StudentWeeklyReport,
   SaveWeeklyReportEntry,
+  TopWeeklyStudent,
   WeeklyStudyPlan,
   SaveWeeklyStudyPlanWeek,
   GeneratedStudyPlan,
@@ -677,6 +678,15 @@ export class LearningApiService {
     entries: SaveWeeklyReportEntry[];
   }): Observable<StudentWeeklyReportGridRow[]> {
     return this.http.put<StudentWeeklyReportGridRow[]>(`${this.baseUrl}/weekly-reports`, payload);
+  }
+
+  listTopWeeklyStudents(weekStart?: string): Observable<TopWeeklyStudent[]> {
+    const params = new URLSearchParams();
+    if (weekStart) params.set('weekStart', weekStart);
+    const query = params.toString();
+    return this.http.get<TopWeeklyStudent[]>(
+      `${this.baseUrl}/weekly-reports/top-students${query ? `?${query}` : ''}`
+    );
   }
 
   listStudyPlans(filters?: {

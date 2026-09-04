@@ -17,3 +17,6 @@ public sealed record SaveWeeklyReportsCommand(
     Guid TeacherId,
     DateOnly WeekStartDate,
     IReadOnlyList<SaveWeeklyReportEntryDto> Entries) : ICommand<IReadOnlyList<StudentWeeklyReportGridRowDto>>;
+
+public sealed record ListTopWeeklyStudentsQuery(DateOnly? WeekStartDate = null)
+    : IQuery<IReadOnlyList<TopWeeklyStudentDto>>;

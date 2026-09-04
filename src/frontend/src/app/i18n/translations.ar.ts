@@ -213,6 +213,7 @@ export const AR: Record<string, string> = {
   'nav.admin.expenses': 'مصروفات أخرى',
   'nav.admin.settings': 'هوية الموقع',
 
+  'landing.nav.topStudents': 'الطلاب المتميزون',
   'landing.nav.services': 'الخدمات',
   'landing.nav.systems': 'الأنظمة الدراسية',
   'landing.nav.how': 'كيف تبدأ',
@@ -330,6 +331,10 @@ export const AR: Record<string, string> = {
   'landing.contact.footer': 'واتساب ومكالمات:',
 
   'landing.footer.rights': 'جميع الحقوق محفوظة.',
+
+  'topStudents.title': 'الطلاب المتميزون هذا الأسبوع',
+  'topStudents.subtitle': 'من حصلوا على تقييم 90% فأعلى في التقييم الأسبوعي الحالي.',
+  'topStudents.rank': 'المركز',
 
   'auth.login.title': 'مرحباً بعودتك أيها المبرمج الصغير.',
   'auth.login.subtitle': 'سجّل الدخول كطالب أو ولي أمر أو معلم.',

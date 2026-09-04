@@ -10,12 +10,13 @@ import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { TopStudentsBoardComponent } from '../../shared/top-students-board/top-students-board.component';
 import { setCurrentTenantId } from '../../tenant';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent, TopStudentsBoardComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
