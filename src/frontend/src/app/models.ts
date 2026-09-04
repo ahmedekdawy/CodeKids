@@ -1117,7 +1117,8 @@ export type BankQuestionType =
   | 'MultiChoice'
   | 'Paragraph'
   | 'Underline'
-  | 'FreeText';
+  | 'FreeText'
+  | 'ShortAnswer';
 
 export interface BankQuestion {
   id: string;

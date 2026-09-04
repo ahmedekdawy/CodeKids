@@ -49,7 +49,8 @@ public static class TypedQuestionSupport
         AssignmentQuestionType.Paragraph => BankQuestionType.Paragraph,
         AssignmentQuestionType.Underline => BankQuestionType.Underline,
         AssignmentQuestionType.FreeText => BankQuestionType.FreeText,
-        _ => throw new InvalidOperationException("ShortAnswer is not a bank question type.")
+        AssignmentQuestionType.ShortAnswer => BankQuestionType.ShortAnswer,
+        _ => throw new InvalidOperationException(AssignmentTypeError)
     };
 
     public static IReadOnlyList<ChoiceOptionDto> ResolveOptions(
@@ -73,9 +74,7 @@ public static class TypedQuestionSupport
     public static string NormalizeCorrect(BankQuestionType type, string? correct) =>
         type == BankQuestionType.MultiChoice
             ? string.Join(',', ExamGrading.NormalizeMultiAnswer(correct ?? string.Empty))
-            : type == BankQuestionType.FreeText
-                ? string.Empty
-                : (correct ?? string.Empty).Trim();
+            : (correct ?? string.Empty).Trim();
 
     public static void ValidateAssignment(
         AssignmentQuestionType type,
@@ -115,7 +114,7 @@ public static class TypedQuestionSupport
             passageText,
             options);
 
-        ValidateChildren(bankType, passageText, children, allowShortAnswerChildren: true);
+        ValidateChildren(bankType, passageText, children, allowTextAnswerChildren: true);
     }
 
     public static void ValidateQuiz(
@@ -129,11 +128,6 @@ public static class TypedQuestionSupport
         IReadOnlyList<string>? options,
         IReadOnlyList<QuizChildSpec>? children)
     {
-        if (BankQuestionValidator.IsFreeText(type))
-        {
-            throw new InvalidOperationException("FreeText questions are not supported in quizzes.");
-        }
-
         BankQuestionValidator.ValidateLeaf(
             type,
             prompt,
@@ -160,8 +154,7 @@ public static class TypedQuestionSupport
                 c.SortOrder,
                 c.PromptImageMediaAssetId,
                 c.Id)).ToList(),
-            allowShortAnswerChildren: false,
-            allowFreeTextChildren: false);
+            allowTextAnswerChildren: true);
     }
 
     public static IReadOnlyList<Guid> FlattenIds<T>(IEnumerable<T> items, Func<T, Guid?> idSelector, Func<T, IEnumerable<T>?> childrenSelector)
@@ -191,8 +184,7 @@ public static class TypedQuestionSupport
         BankQuestionType parentType,
         string? passageText,
         IReadOnlyList<AssignmentChildSpec>? children,
-        bool allowShortAnswerChildren,
-        bool allowFreeTextChildren = true)
+        bool allowTextAnswerChildren)
     {
         if (BankQuestionValidator.IsComposite(parentType))
         {
@@ -210,7 +202,7 @@ public static class TypedQuestionSupport
             {
                 if (IsShortAnswerChild(child.QuestionType))
                 {
-                    if (!allowShortAnswerChildren)
+                    if (!allowTextAnswerChildren)
                     {
                         throw new InvalidOperationException("ShortAnswer child questions are only allowed in assignments.");
                     }
@@ -229,9 +221,9 @@ public static class TypedQuestionSupport
                     throw new InvalidOperationException("Child questions cannot be Paragraph or Underline.");
                 }
 
-                if (BankQuestionValidator.IsFreeText(childType) && !allowFreeTextChildren)
+                if (BankQuestionValidator.IsTextAnswer(childType) && !allowTextAnswerChildren)
                 {
-                    throw new InvalidOperationException("FreeText questions are not supported in quizzes.");
+                    throw new InvalidOperationException("Text-answer child questions are not supported here.");
                 }
 
                 BankQuestionValidator.ValidateLeaf(
@@ -255,7 +247,8 @@ public static class TypedQuestionSupport
     }
 
     private static bool IsShortAnswerChild(string? questionType) =>
-        string.Equals(questionType, nameof(AssignmentQuestionType.ShortAnswer), StringComparison.OrdinalIgnoreCase);
+        string.Equals(questionType, nameof(AssignmentQuestionType.ShortAnswer), StringComparison.OrdinalIgnoreCase)
+        || string.Equals(questionType, nameof(BankQuestionType.ShortAnswer), StringComparison.OrdinalIgnoreCase);
 }
 
 public sealed record AssignmentChildSpec(

@@ -14,12 +14,23 @@ public static class BankQuestionValidator
     public static bool IsFreeText(BankQuestionType type) =>
         type is BankQuestionType.FreeText;
 
+    public static bool IsShortAnswer(BankQuestionType type) =>
+        type is BankQuestionType.ShortAnswer;
+
+    public static bool IsTextAnswer(BankQuestionType type) =>
+        IsFreeText(type) || IsShortAnswer(type);
+
     public static BankQuestionType ParseType(string value)
     {
+        if (string.Equals(value, "MultipleChoice", StringComparison.OrdinalIgnoreCase))
+        {
+            return BankQuestionType.SingleChoice;
+        }
+
         if (!Enum.TryParse<BankQuestionType>(value, true, out var type) || !Enum.IsDefined(type))
         {
             throw new InvalidOperationException(
-                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, or FreeText.");
+                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, or ShortAnswer.");
         }
 
         return type;
@@ -46,7 +57,7 @@ public static class BankQuestionValidator
             return;
         }
 
-        if (IsFreeText(type))
+        if (IsTextAnswer(type))
         {
             return;
         }

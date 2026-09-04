@@ -75,6 +75,14 @@
               </label>
             } @else {
               <p class="meta">{{ 'teacher.qbank.freeTextHint' | t }}</p>
+              <label class="qb-field">
+                <span>{{ 'teacher.qbank.modelAnswerOptional' | t }}</span>
+                <input
+                  [(ngModel)]="child.correctAnswer"
+                  [name]="namePrefix + '-cCorrect-' + i"
+                  [placeholder]="'teacher.qbank.modelAnswerPlaceholder' | t"
+                />
+              </label>
             }
           } @else if (child.questionType === 'TrueFalse') {
             <label class="qb-field">
@@ -162,6 +170,14 @@
     </label>
   } @else if (isFreeText()) {
     <p class="meta">{{ 'teacher.qbank.freeTextHint' | t }}</p>
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.modelAnswerOptional' | t }}</span>
+      <input
+        [(ngModel)]="draft.correctAnswer"
+        [name]="namePrefix + '-correct'"
+        [placeholder]="'teacher.qbank.modelAnswerPlaceholder' | t"
+      />
+    </label>
   } @else if (isShortAnswer()) {
     <label class="qb-field">
       <span>{{ 'common.correctAnswer' | t }}</span>

@@ -74,14 +74,27 @@ export function editorTypes(
   allowShortAnswer: boolean,
   allowFreeText = true
 ): AssessmentQuestionType[] {
-  const bank = allowFreeText
-    ? BANK_QUESTION_TYPES
-    : BANK_QUESTION_TYPES.filter((type) => type !== 'FreeText');
-  return allowShortAnswer ? ['ShortAnswer', ...bank] : [...bank];
+  let bank = [...BANK_QUESTION_TYPES];
+  if (!allowFreeText) {
+    bank = bank.filter((type) => type !== 'FreeText');
+  }
+  // ShortAnswer is already in BANK_QUESTION_TYPES; the legacy flag still prepends it for
+  // assignment editors that used AssessmentQuestionType before it lived on the bank enum.
+  if (allowShortAnswer && !bank.includes('ShortAnswer')) {
+    return ['ShortAnswer', ...bank];
+  }
+  if (!allowShortAnswer) {
+    bank = bank.filter((type) => type !== 'ShortAnswer');
+  }
+  return bank;
 }
 
 export function childQuestionTypes(allowShortAnswer: boolean): AssessmentQuestionType[] {
-  return allowShortAnswer ? ['ShortAnswer', ...CHILD_QUESTION_TYPES] : [...CHILD_QUESTION_TYPES];
+  const types = [...CHILD_QUESTION_TYPES];
+  if (!allowShortAnswer) {
+    return types.filter((type) => type !== 'ShortAnswer');
+  }
+  return types;
 }
 
 export function normalizeType(type: string | null | undefined): AssessmentQuestionType {
@@ -107,9 +120,6 @@ export function applyTypeDefaults(draft: QuestionDraft): void {
     if (draft.options.length < 2) draft.options = [{ text: '' }, { text: '' }];
   } else {
     draft.correctKeys = [];
-    if (isFreeText(draft.questionType)) {
-      draft.correctAnswer = '';
-    }
   }
 }
 
@@ -176,7 +186,7 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
   const filled = filledOptions(draft.options);
   let correct = draft.correctAnswer;
   if (isMulti(type)) correct = draft.correctKeys.join(',');
-  if (isParagraph(type) || isFreeText(type)) correct = '';
+  if (isParagraph(type)) correct = '';
   return {
     id: draft.id || undefined,
     prompt: (draft.prompt || '').trim(),

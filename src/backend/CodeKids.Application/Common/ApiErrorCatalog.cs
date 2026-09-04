@@ -88,7 +88,7 @@ public static class ApiErrorCatalog
         ["Assignment title is required."] = "api.errors.assignment.titleRequired",
         ["Add at least one question."] = "api.errors.assignment.questionsRequired",
         ["Question type must be ShortAnswer, MultipleChoice, Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, or FreeText."] = "api.errors.assignment.questionTypeInvalid",
-        ["Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, or FreeText."] = "api.errors.questionBank.questionTypeInvalid",
+        ["Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, or ShortAnswer."] = "api.errors.questionBank.questionTypeInvalid",
         ["FreeText questions are not supported in quizzes."] = "api.errors.quiz.freeTextUnsupported",
         ["ShortAnswer child questions are only allowed in assignments."] = "api.errors.assignment.shortAnswerChildOnly",
         ["Assignment already submitted."] = "api.errors.assignment.alreadySubmitted",
