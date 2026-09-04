@@ -172,6 +172,7 @@ public static class EgyptianCurriculumSeedData
                     AgeMin = ageMin,
                     AgeMax = ageMax,
                     SortOrder = sortOrder++,
+                    IsPublished = true,
                 };
                 dbContext.Courses.Add(course);
                 courses.Add(course);

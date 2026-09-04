@@ -68,5 +68,6 @@ internal static class CourseDtoMapper
             course.SourceTocUrl,
             course.Notes,
             course.Variants,
-            course.StudentAskEnabled);
+            course.StudentAskEnabled,
+            course.IsPublished);
 }

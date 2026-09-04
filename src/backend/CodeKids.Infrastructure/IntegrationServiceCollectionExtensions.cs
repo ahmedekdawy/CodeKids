@@ -74,6 +74,14 @@ public static class IntegrationServiceCollectionExtensions
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         });
         services.AddSingleton<IWhatsAppClient, WhatsAppClient>();
+
+        services.Configure<BaileysGatewayOptions>(configuration.GetSection(BaileysGatewayOptions.SectionName));
+        services.AddHttpClient(nameof(BaileysWhatsAppSender), client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(120);
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        });
+        services.AddSingleton<IWhatsAppMessageSender, BaileysWhatsAppSender>();
         return services;
     }
 

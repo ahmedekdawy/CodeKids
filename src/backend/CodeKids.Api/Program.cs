@@ -243,6 +243,7 @@ builder.Services.AddScoped<ICommandHandler<RemoveProfilePhotoCommand, AuthUserDt
 builder.Services.AddScoped<ICommandHandler<CreateCourseCommand, IReadOnlyList<CourseSummaryDto>>, CreateCourseCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<UpdateCourseCommand, CourseSummaryDto>, UpdateCourseCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetCoursePublishedCommand, CourseSummaryDto>, SetCoursePublishedCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteCourseCommand, bool>, DeleteCourseCommandHandler>();
 
@@ -396,6 +397,7 @@ builder.Services.AddScoped<ICommandHandler<UpdateManagedUserCommand, ManagedUser
 
 builder.Services.AddScoped<ICommandHandler<DeleteManagedUserCommand, bool>, DeleteManagedUserCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<SetManagedUserActiveCommand, ManagedUserDto>, SetManagedUserActiveCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SendAdminWhatsAppCommand, SendAdminWhatsAppResultDto>, SendAdminWhatsAppCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListManagedUsersQuery, IReadOnlyList<ManagedUserDto>>, ListManagedUsersQueryHandler>();
 

@@ -34,6 +34,10 @@ public sealed class UpdateCourseCommandHandler(IAppDbContext dbContext)
         course.StageId = audience.StageId;
         course.SchoolType = CreateCourseCommandHandler.ParseSchoolType(command.SchoolType);
         course.SortOrder = command.SortOrder ?? 0;
+        if (command.IsPublished is bool isPublished)
+        {
+            course.IsPublished = isPublished;
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return CreateCourseCommandHandler.ToSummary(course);

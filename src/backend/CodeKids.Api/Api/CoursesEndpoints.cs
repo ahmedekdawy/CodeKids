@@ -163,7 +163,9 @@ public static class CoursesEndpoints
 
                         request.SortOrder,
 
-                        request.SchoolType),
+                        request.SchoolType,
+
+                        request.IsPublished),
 
                     cancellationToken));
 
@@ -219,7 +221,43 @@ public static class CoursesEndpoints
 
                         request.SortOrder,
 
-                        request.SchoolType),
+                        request.SchoolType,
+
+                        request.IsPublished),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapPost("/api/admin/courses/{courseId:guid}/published", async (
+
+            Guid courseId,
+
+            SetCoursePublishedRequest request,
+
+            ICommandHandler<SetCoursePublishedCommand, CourseSummaryDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                return Results.Ok(await handler.Handle(
+
+                    new SetCoursePublishedCommand(courseId, request.IsPublished),
 
                     cancellationToken));
 

@@ -1,5 +1,6 @@
 using CodeKids.Application.Features.Lessons;
 using CodeKids.Domain.Abstractions;
+using System.Security.Claims;
 
 namespace CodeKids.Api;
 
@@ -9,10 +10,13 @@ public static class LessonsEndpoints
     {
         app.MapGet("/api/lessons", async (
             Guid? courseId,
+            HttpContext httpContext,
             IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>> handler,
             CancellationToken cancellationToken) =>
         {
-            return Results.Ok(await handler.Handle(new GetLessonsQuery(courseId), cancellationToken));
+            var role = httpContext.User.FindFirst(ClaimTypes.Role)?.Value
+                ?? httpContext.User.FindFirst("role")?.Value;
+            return Results.Ok(await handler.Handle(new GetLessonsQuery(courseId, role), cancellationToken));
         }).RequireAuthorization();
 
         app.MapGet("/api/lessons/{lessonId:guid}", async (

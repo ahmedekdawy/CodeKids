@@ -63,6 +63,7 @@ import {
   QuizAttemptReview,
   TeacherQuizListItem,
   TeacherQuizDetail,
+  SendAdminWhatsAppResult,
   SendClassroomWhatsAppResult,
   StudentSummary,
   SubmitQuizResponse,
@@ -1027,8 +1028,13 @@ export class LearningApiService {
     stageId?: number | null;
     schoolType?: string | null;
     sortOrder?: number | null;
+    isPublished?: boolean;
   }): Observable<Course[]> {
     return this.http.post<Course[]>(`${this.baseUrl}/admin/courses`, payload);
+  }
+
+  setCoursePublished(courseId: string, isPublished: boolean): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}/admin/courses/${courseId}/published`, { isPublished });
   }
 
   updateCourse(
@@ -1044,6 +1050,7 @@ export class LearningApiService {
       stageId?: number | null;
       schoolType?: string | null;
       sortOrder?: number | null;
+      isPublished?: boolean;
     }
   ): Observable<Course> {
     return this.http.put<Course>(`${this.baseUrl}/admin/courses/${courseId}`, payload);
@@ -1263,6 +1270,10 @@ export class LearningApiService {
       `${this.baseUrl}/classrooms/${classroomId}/whatsapp/send`,
       payload
     );
+  }
+
+  sendAdminWhatsApp(payload: { phones: string[]; message: string }): Observable<SendAdminWhatsAppResult> {
+    return this.http.post<SendAdminWhatsAppResult>(`${this.baseUrl}/admin/whatsapp/send`, payload);
   }
 
   getAssignments(classroomId?: string): Observable<Assignment[]> {

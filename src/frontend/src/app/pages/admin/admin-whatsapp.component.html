@@ -1,0 +1,94 @@
+<div class="panel-page">
+  <h2>{{ 'admin.whatsapp.title' | t }}</h2>
+  <p class="meta">{{ 'admin.whatsapp.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <form class="meeting-form" (ngSubmit)="send()">
+      <label>
+        {{ 'admin.whatsapp.phone' | t }}
+        <input
+          [(ngModel)]="phoneInput"
+          name="phoneInput"
+          [placeholder]="'admin.whatsapp.phonePlaceholder' | t"
+          (keydown.enter)="$event.preventDefault(); addPhone()"
+        />
+        <span class="meta">{{ 'admin.whatsapp.phoneHint' | t }}</span>
+      </label>
+      <button type="button" class="ghost-btn" (click)="addPhone()">{{ 'admin.whatsapp.addPhone' | t }}</button>
+
+      @if (phones().length) {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'admin.whatsapp.phone' | t }}</th>
+                <th>{{ 'common.actions' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (phone of phones(); track phone) {
+                <tr>
+                  <td>{{ phone }}</td>
+                  <td>
+                    <div class="row-actions">
+                      <app-icon-action-button
+                        kind="delete"
+                        variant="danger"
+                        [label]="'admin.whatsapp.removePhone' | t"
+                        (action)="removePhone(phone)"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <button type="button" class="ghost-btn" (click)="clearPhones()">{{ 'admin.whatsapp.clearPhones' | t }}</button>
+      }
+
+      <label>
+        {{ 'admin.whatsapp.message' | t }}
+        <textarea [(ngModel)]="body" name="body" rows="5" [placeholder]="'admin.whatsapp.messagePlaceholder' | t"></textarea>
+      </label>
+
+      <button type="submit" [disabled]="!canSend()">
+        {{ (sending() ? 'admin.whatsapp.sending' : 'admin.whatsapp.send') | t }}
+      </button>
+    </form>
+  </section>
+
+  @if (recipients().length) {
+    <section class="block">
+      <h3>{{ 'admin.whatsapp.results' | t }}</h3>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'admin.whatsapp.phone' | t }}</th>
+              <th>{{ 'common.status' | t }}</th>
+              <th>{{ 'admin.whatsapp.detail' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of recipients(); track row.phone) {
+              <tr>
+                <td>{{ row.phone }}</td>
+                <td>{{ (row.sent ? 'admin.whatsapp.statusSent' : 'admin.whatsapp.statusFailed') | t }}</td>
+                <td>{{ row.detail }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (shareUrl()) {
+        <p class="meta">
+          {{ 'admin.whatsapp.shareHint' | t }}
+          <a [href]="shareUrl()" target="_blank" rel="noopener">{{ 'admin.whatsapp.shareLink' | t }}</a>
+        </p>
+      }
+    </section>
+  }
+</div>

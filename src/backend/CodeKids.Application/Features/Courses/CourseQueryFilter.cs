@@ -15,6 +15,11 @@ internal static class CourseQueryFilter
         string? role,
         CancellationToken cancellationToken)
     {
+        if (!PublishedCourseAccess.CanViewUnpublished(role))
+        {
+            coursesQuery = coursesQuery.Where(c => c.IsPublished);
+        }
+
         if (queryRoleIs(role, UserRole.Student) && userId is Guid studentId)
         {
             var student = await dbContext.Users

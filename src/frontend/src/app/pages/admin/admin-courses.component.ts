@@ -36,6 +36,7 @@ export class AdminCoursesComponent {
   readonly pageSize = signal(10);
   readonly pageSizeOptions = [10, 25, 50];
   readonly editingId = signal<string | null>(null);
+  readonly publishingId = signal<string | null>(null);
   readonly filterName = signal('');
   /** Empty string = all stages. */
   readonly filterStage = signal<number | ''>('');
@@ -89,6 +90,7 @@ export class AdminCoursesComponent {
   courseStageId: number | '' = '';
   courseSchoolType: CourseSchoolType = 'All';
   courseSort: number | null = 10;
+  courseIsPublished = false;
 
   editTitle = '';
   editTheme = '';
@@ -100,6 +102,7 @@ export class AdminCoursesComponent {
   editStageId: number | '' = '';
   editSchoolType: CourseSchoolType = 'All';
   editSort: number | null = 0;
+  editIsPublished = false;
 
   readonly filterGradeOptions = computed(() => {
     this.locale.lang();
@@ -342,7 +345,8 @@ export class AdminCoursesComponent {
         grades: this.courseGrades,
         stageId: this.courseStageId === '' ? null : this.courseStageId,
         schoolType: this.courseSchoolType,
-        sortOrder: this.courseSort ?? 0
+        sortOrder: this.courseSort ?? 0,
+        isPublished: this.courseIsPublished
       })
       .subscribe({
         next: (created) => {
@@ -360,6 +364,7 @@ export class AdminCoursesComponent {
           this.courseAgeMin = 8;
           this.courseAgeMax = 12;
           this.courseSort = 10;
+          this.courseIsPublished = false;
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.createFailed'))
@@ -379,6 +384,7 @@ export class AdminCoursesComponent {
     this.editSchoolType =
       course.schoolType === 'Arabic' || course.schoolType === 'Language' ? course.schoolType : 'All';
     this.editSort = course.sortOrder;
+    this.editIsPublished = course.isPublished === true;
   }
 
   cancelEdit(): void {
@@ -398,7 +404,8 @@ export class AdminCoursesComponent {
         grade: this.editGrade,
         stageId: this.editStageId === '' ? null : this.editStageId,
         schoolType: this.editSchoolType,
-        sortOrder: this.editSort ?? 0
+        sortOrder: this.editSort ?? 0,
+        isPublished: this.editIsPublished
       })
       .subscribe({
         next: () => {
@@ -408,6 +415,37 @@ export class AdminCoursesComponent {
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.updateFailed'))
       });
+  }
+
+  isPublished(course: Course): boolean {
+    return course.isPublished === true;
+  }
+
+  isPublishing(courseId: string): boolean {
+    return this.publishingId() === courseId;
+  }
+
+  togglePublished(course: Course): void {
+    if (this.publishingId()) return;
+    const next = !this.isPublished(course);
+    if (!next && !confirm(this.locale.t('admin.courses.confirmUnpublish', { title: course.title }))) {
+      return;
+    }
+    this.clearStatus();
+    this.publishingId.set(course.id);
+    this.api.setCoursePublished(course.id, next).subscribe({
+      next: (updated) => {
+        this.publishingId.set(null);
+        this.courses.update((list) =>
+          list.map((item) => (item.id === course.id ? { ...item, isPublished: updated.isPublished } : item))
+        );
+        this.message.set(this.locale.t(next ? 'admin.courses.published' : 'admin.courses.unpublished'));
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'admin.courses.publishFailed'));
+      }
+    });
   }
 
   deleteCourse(course: Course): void {

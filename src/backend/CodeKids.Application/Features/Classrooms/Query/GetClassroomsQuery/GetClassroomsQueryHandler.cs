@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Admin;
+using CodeKids.Application.Features.Courses;
 using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -82,6 +83,21 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
             classrooms = classrooms
                 .Where(x => x.Students.Any(s => childIds.Contains(s.StudentId)))
                 .ToList();
+        }
+
+        if (!PublishedCourseAccess.CanViewUnpublished(query.ViewerRole))
+        {
+            foreach (var classroom in classrooms)
+            {
+                classroom.Courses = classroom.Courses
+                    .Where(c => c.Course?.IsPublished ?? false)
+                    .ToList();
+                if (classroom.Course is { IsPublished: false })
+                {
+                    classroom.Course = null;
+                    classroom.CourseId = null;
+                }
+            }
         }
 
         return classrooms.Select(CreateClassroomCommandHandler.Map).ToList();

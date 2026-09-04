@@ -18,7 +18,8 @@ public sealed record UpdateCourseRequest(
     int? Grade,
     int? StageId,
     int? SortOrder,
-    string? SchoolType = null);
+    string? SchoolType = null,
+    bool? IsPublished = null);
 
 public sealed record UpdateCourseCommand(
     Guid CourseId,
@@ -31,4 +32,5 @@ public sealed record UpdateCourseCommand(
     int? Grade,
     int? StageId,
     int? SortOrder,
-    string? SchoolType = null) : ICommand<CourseSummaryDto>;
+    string? SchoolType = null,
+    bool? IsPublished = null) : ICommand<CourseSummaryDto>;

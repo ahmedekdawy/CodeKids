@@ -89,6 +89,7 @@ export interface Course {
   notes?: string;
   variants?: string;
   studentAskEnabled?: boolean;
+  isPublished?: boolean;
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
@@ -1048,6 +1049,19 @@ export interface SendClassroomWhatsAppResult {
   failedCount: number;
   status: string;
   groupShareUrl?: string | null;
+}
+
+export interface AdminWhatsAppRecipient {
+  phone: string;
+  sent: boolean;
+  detail: string;
+}
+
+export interface SendAdminWhatsAppResult {
+  sentCount: number;
+  failedCount: number;
+  recipients: AdminWhatsAppRecipient[];
+  shareUrl: string;
 }
 
 export interface AssignmentQuestion {

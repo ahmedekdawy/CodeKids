@@ -37,6 +37,7 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.accountReport', path: '/admin/account-report', icon: '%' },
     { labelKey: 'nav.admin.payments', path: '/admin/payments', icon: 'F' },
     { labelKey: 'nav.admin.expenses', path: '/admin/other-expenses', icon: 'X' },
+    { labelKey: 'nav.admin.whatsapp', path: '/admin/whatsapp', icon: 'W' },
     { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B' }
   ];
 }

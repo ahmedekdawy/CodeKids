@@ -25,4 +25,5 @@ public sealed record CourseSummaryDto(
     string Category = "",
     string TrackCode = "",
     string TrackName = "",
-    string VerificationStatus = "");
+    string VerificationStatus = "",
+    bool IsPublished = false);

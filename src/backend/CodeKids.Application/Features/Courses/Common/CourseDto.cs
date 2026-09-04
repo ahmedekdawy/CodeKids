@@ -25,4 +25,5 @@ public sealed record CourseDto(
     string SourceTocUrl = "",
     string Notes = "",
     string Variants = "",
-    bool StudentAskEnabled = false);
+    bool StudentAskEnabled = false,
+    bool IsPublished = false);

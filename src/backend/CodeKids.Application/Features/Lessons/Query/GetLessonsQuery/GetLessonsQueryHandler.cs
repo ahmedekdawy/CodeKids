@@ -16,6 +16,11 @@ public sealed class GetLessonsQueryHandler(IAppDbContext dbContext)
             coursesQuery = coursesQuery.Where(x => x.Id == courseId);
         }
 
+        if (!PublishedCourseAccess.CanViewUnpublished(query.ViewerRole))
+        {
+            coursesQuery = coursesQuery.Where(x => x.IsPublished);
+        }
+
         var courses = await coursesQuery.ToListAsync(cancellationToken);
         var outlines = await CourseOutlineResolver.ResolveManyAsync(dbContext, courses, cancellationToken);
         var result = new List<LessonDto>();
