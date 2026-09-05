@@ -47,6 +47,8 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Exam already submitted.");
         }
 
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
         if (attempt is null)
         {
             attempt = new ExamAttempt
@@ -59,7 +61,26 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             };
             dbContext.ExamAttempts.Add(attempt);
         }
+        else
+        {
+            // Claim the attempt in a single statement so only one of two overlapping
+            // submissions (submit button racing the expiry timer, or a retried request)
+            // goes on to replace the answer rows below.
+            var claimed = await dbContext.ExamAttempts
+                .Where(x => x.Id == attempt.Id && x.Status == ExamAttemptStatus.InProgress)
+                .ExecuteUpdateAsync(
+                    x => x.SetProperty(a => a.Status, ExamAttemptStatus.Submitted),
+                    cancellationToken);
+            if (claimed == 0)
+            {
+                throw new InvalidOperationException("Exam already submitted.");
+            }
+        }
 
+        // Delete through the set rather than by emptying the navigation: answers added to a
+        // navigation on an already-persisted attempt are tracked as Modified (their keys are
+        // pre-assigned), which makes EF issue UPDATEs for rows that were never inserted.
+        dbContext.ExamAnswers.RemoveRange(attempt.Answers);
         attempt.Answers.Clear();
         attempt.Status = ExamAttemptStatus.Submitted;
         attempt.SubmittedAtUtc = DateTimeOffset.UtcNow;
@@ -85,7 +106,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             if (answerImageId is not null || !ExamGrading.IsAutoGradable(question.QuestionType))
             {
                 allAutoGradable = false;
-                attempt.Answers.Add(new ExamAnswer
+                dbContext.ExamAnswers.Add(new ExamAnswer
                 {
                     Id = Guid.NewGuid(),
                     AttemptId = attempt.Id,
@@ -102,7 +123,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             var points = isCorrect ? question.Points : 0;
             if (isCorrect) autoScore += question.Points;
 
-            attempt.Answers.Add(new ExamAnswer
+            dbContext.ExamAnswers.Add(new ExamAnswer
             {
                 Id = Guid.NewGuid(),
                 AttemptId = attempt.Id,
@@ -127,6 +148,8 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
         await BadgeAwarder.AwardEligibleAsync(dbContext, student, cancellationToken);
         return (await LoadAttempt(dbContext, attempt.Id, cancellationToken))!;
     }

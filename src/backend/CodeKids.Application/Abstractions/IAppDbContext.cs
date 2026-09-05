@@ -1,5 +1,6 @@
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace CodeKids.Application.Abstractions;
 
@@ -61,6 +62,8 @@ public interface IAppDbContext
     DbSet<TenantSignup> TenantSignups { get; }
 
     string? CurrentTenantId { get; }
+
+    DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
