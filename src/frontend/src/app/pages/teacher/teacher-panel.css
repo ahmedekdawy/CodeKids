@@ -6,7 +6,7 @@
   padding: 1rem;
   margin: 0.85rem 0;
   border-radius: var(--radius-md, 12px);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--elevated-bg);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
 }
 
@@ -34,7 +34,7 @@
   padding: 0.9rem;
   margin-top: 0.25rem;
   border-radius: var(--radius-md, 12px);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--elevated-bg);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
 }
 
@@ -89,7 +89,7 @@
   margin-top: 0.75rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--elevated-bg);
 }
 
 .grade-roster-head {
@@ -162,13 +162,13 @@
 }
 
 .status-badge.published {
-  color: #8ef0d8;
-  background: rgba(95, 211, 188, 0.14);
-  border-color: rgba(95, 211, 188, 0.35);
+  color: var(--badge-ok-fg);
+  background: var(--badge-ok-bg);
+  border-color: var(--badge-ok-border);
 }
 
 .status-badge.draft {
-  color: #ffd28a;
-  background: rgba(255, 193, 94, 0.12);
-  border-color: rgba(255, 193, 94, 0.35);
+  color: var(--badge-warn-fg);
+  background: var(--badge-warn-bg);
+  border-color: var(--badge-warn-border);
 }

@@ -69,7 +69,7 @@
   height: 42px;
   object-fit: contain;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--elevated-bg-hover);
   padding: 0.2rem;
   margin-bottom: 0.15rem;
 }

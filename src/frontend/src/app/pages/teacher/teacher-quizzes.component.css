@@ -63,7 +63,7 @@
   padding: 1rem;
   margin: 0.75rem 0;
   border-radius: var(--radius-md, 12px);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--elevated-bg);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
 }
 
@@ -93,7 +93,7 @@
   padding: 0.9rem;
   margin: 0.35rem 0 0;
   border-radius: var(--radius-md, 12px);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--elevated-bg);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
 }
 
@@ -145,7 +145,7 @@
   padding: 0.75rem 0.9rem;
   border-radius: var(--radius-md, 12px);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--elevated-bg);
 }
 
 .answer-row.correct {

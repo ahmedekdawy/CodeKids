@@ -14,7 +14,7 @@
   overflow: hidden;
   height: 0.55rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--elevated-bg-hover);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
 }
 
@@ -39,8 +39,7 @@
   margin: 1rem 0 1.35rem;
   padding: 0.35rem 0.35rem 0;
   border-radius: var(--radius-lg, 20px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025));
+  background: var(--surface);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
   box-shadow: var(--shadow-sm, 0 8px 24px rgba(0, 0, 0, 0.18));
 }
@@ -89,9 +88,9 @@
 }
 
 .video-tab:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--elevated-bg-hover);
   color: var(--text, #f4f7fb);
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--border);
 }
 
 .video-tab:focus-visible {
@@ -119,7 +118,7 @@
   width: 2.35rem;
   height: 2.35rem;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--elevated-bg-hover);
   color: var(--teal, #5fd3bc);
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
@@ -157,7 +156,7 @@
 }
 
 .video-tab.active .tab-hint {
-  color: rgba(244, 247, 251, 0.72);
+  color: var(--text-muted);
 }
 
 .tab-count {
@@ -165,8 +164,8 @@
   min-width: 1.75rem;
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-pill, 999px);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--elevated-bg-hover);
+  border: 1px solid var(--border);
   font-size: 0.78rem;
   font-weight: 800;
   text-align: center;
@@ -228,8 +227,8 @@
   width: 100%;
   border-radius: var(--radius-sm, 8px);
   border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
-  background: rgba(6, 14, 28, 0.72);
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--text);
   padding: 0.55rem 0.65rem;
   font: inherit;
 }
@@ -265,7 +264,7 @@
 }
 
 .data-table tr:hover td {
-  background: rgba(255, 255, 255, 0.035);
+  background: var(--table-row-hover);
 }
 
 .video-row-clickable {
@@ -320,8 +319,8 @@
   overflow: auto;
   border-radius: 16px;
   border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
-  background: #0b1528;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  background: var(--modal-bg);
+  box-shadow: var(--modal-shadow);
   padding: 1rem 1rem 1.25rem;
 }
 
@@ -336,7 +335,7 @@
 .video-modal-head h3 {
   margin: 0;
   font-size: 1.05rem;
-  color: #fff;
+  color: var(--text);
 }
 
 .modal-close {
@@ -344,15 +343,15 @@
   height: 2.2rem;
   border: 0;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: var(--elevated-bg-hover);
+  color: var(--text);
   font-size: 1.35rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--surface-strong);
 }
 
 @media (max-width: 960px) {

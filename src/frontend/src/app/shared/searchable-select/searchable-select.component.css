@@ -37,8 +37,8 @@
   padding: 0.5rem 0.65rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-strong);
-  background: rgba(6, 14, 28, 0.72);
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -92,8 +92,8 @@
   flex-direction: column;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-strong);
-  background: rgba(8, 18, 36, 0.98);
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
@@ -120,7 +120,7 @@
   border-bottom: 1px solid var(--border);
   border-radius: 0;
   background: transparent;
-  color: #fff;
+  color: var(--text);
   padding: 0.65rem 0.75rem;
   font: inherit;
   flex-shrink: 0;
@@ -128,7 +128,7 @@
 
 .ss-search:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--elevated-bg);
 }
 
 .ss-options {
@@ -147,7 +147,7 @@
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: #fff;
+  color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -155,7 +155,7 @@
 }
 
 .ss-option:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--elevated-bg-hover);
 }
 
 .ss-option:disabled {
