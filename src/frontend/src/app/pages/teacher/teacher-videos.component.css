@@ -130,7 +130,7 @@
 
 .video-tab.active .tab-icon {
   background: rgba(255, 214, 10, 0.16);
-  color: var(--accent, #ffd60a);
+  color: var(--accent-fg);
   transform: translateY(-1px);
 }
 
@@ -175,7 +175,7 @@
 .video-tab.active .tab-count {
   background: rgba(255, 214, 10, 0.18);
   border-color: rgba(255, 214, 10, 0.35);
-  color: var(--accent, #ffd60a);
+  color: var(--accent-fg);
 }
 
 .video-tab-panel {

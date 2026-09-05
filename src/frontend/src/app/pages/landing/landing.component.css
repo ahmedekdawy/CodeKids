@@ -182,7 +182,7 @@
   margin: 0;
   font-size: clamp(1.05rem, 2.2vw, 1.35rem);
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-fg);
 }
 
 .hero-text {
@@ -526,7 +526,7 @@
   border-radius: 50%;
   background: var(--chip-bg);
   border: 1px solid var(--chip-border);
-  color: var(--accent);
+  color: var(--accent-fg);
   font-size: 0.8rem;
   font-weight: 800;
 }
@@ -689,7 +689,7 @@
 }
 
 .footer-contact a {
-  color: var(--accent);
+  color: var(--accent-fg);
   font-weight: 800;
   text-decoration: none;
 }

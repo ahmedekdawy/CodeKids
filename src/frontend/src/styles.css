@@ -17,6 +17,8 @@
   --accent: #ffd60a;
   --accent-hot: #ff9f1c;
   --accent-ink: #08203c;
+  /* Accent tuned for text; the raw accent is a fill colour and fails contrast on light surfaces. */
+  --accent-fg: #ffd60a;
   --teal: #5fd3bc;
   --danger: #ff8f8f;
   --success: #7ddea0;
@@ -135,11 +137,12 @@
 
   --text: #0f172a;
   --text-muted: #475569;
-  --text-soft: #64748b;
+  --text-soft: #5d6b80;
 
   --accent: #c99700;
   --accent-hot: #e6ad00;
   --accent-ink: #1a1200;
+  --accent-fg: #8a6400;
   --teal: #0d7a68;
   --danger: #c53030;
   --success: #1f7a4a;
@@ -184,7 +187,7 @@
   --page-glow-2: rgba(201, 151, 0, 0.04);
   --welcome-bg: linear-gradient(135deg, #ffffff 0%, #f8fafc 52%, #f1f5f9 100%);
   --welcome-border: #e2e8f0;
-  --welcome-sub: #64748b;
+  --welcome-sub: #5d6b80;
   --table-row-hover: rgba(15, 23, 42, 0.03);
   --table-row-total: #f8fafc;
   --feedback-error-fg: #b91c1c;

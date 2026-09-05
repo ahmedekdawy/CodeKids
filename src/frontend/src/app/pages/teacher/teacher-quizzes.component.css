@@ -128,7 +128,7 @@
 
 .option-key {
   font-weight: 800;
-  color: var(--accent, #ffd60a);
+  color: var(--accent-fg);
   text-align: center;
 }
 

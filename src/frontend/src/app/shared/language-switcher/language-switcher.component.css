@@ -27,7 +27,7 @@
 
 .lang-btn.active {
   background: var(--switcher-active-bg);
-  color: var(--accent, #ffd60a);
+  color: var(--accent-fg);
 }
 
 :host-context(.shell.collapsed) .lang-switch {

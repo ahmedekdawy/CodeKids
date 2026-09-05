@@ -62,7 +62,7 @@
 .notify-head .ghost {
   border: 0;
   background: transparent;
-  color: var(--accent, #2563eb);
+  color: var(--accent-fg);
   cursor: pointer;
   font-size: 0.85rem;
 }

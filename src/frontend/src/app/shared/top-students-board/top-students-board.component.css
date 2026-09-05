@@ -91,7 +91,7 @@
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 1rem;
-  color: var(--accent);
+  color: var(--accent-fg);
   white-space: nowrap;
 }
 

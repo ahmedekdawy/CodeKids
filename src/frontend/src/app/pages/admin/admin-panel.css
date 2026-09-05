@@ -109,7 +109,7 @@
 }
 
 .data-table th.sortable:hover {
-  color: var(--accent);
+  color: var(--accent-fg);
 }
 
 .data-table th .sort-mark {

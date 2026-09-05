@@ -30,7 +30,7 @@
 
 .theme-btn.active {
   background: var(--switcher-active-bg);
-  color: var(--accent);
+  color: var(--accent-fg);
 }
 
 :host-context(.shell.collapsed) .theme-switch {
