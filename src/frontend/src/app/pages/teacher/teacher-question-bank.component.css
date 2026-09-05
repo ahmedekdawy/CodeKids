@@ -151,7 +151,7 @@
 }
 
 .prompt-html {
-  color: #fff;
+  color: var(--prompt-fg);
   line-height: 1.45;
 }
 

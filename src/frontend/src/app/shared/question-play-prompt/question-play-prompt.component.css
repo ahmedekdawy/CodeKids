@@ -7,28 +7,28 @@ label {
   white-space: pre-wrap;
   margin: 0.75rem 0;
   padding: 0.75rem;
-  border-left: 3px solid #5fd3bc;
-  color: #f4f7fb;
-  background: rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--teal);
+  color: var(--prompt-fg);
+  background: var(--elevated-bg);
   border-radius: 0 12px 12px 0;
 }
 
 .passage.underline-text {
-  border-left-color: #ff9f1c;
+  border-left-color: var(--accent-hot);
 }
 
 .child-question {
   margin: 0.75rem 0 0.75rem 1rem;
   padding-left: 0.75rem;
-  border-left: 2px solid rgba(255, 255, 255, 0.25);
-  color: #f4f7fb;
+  border-left: 2px solid var(--border-strong);
+  color: var(--prompt-fg);
 }
 
 .prompt-html,
 .prompt-html * {
   font-weight: 700;
   margin-bottom: 0.35rem;
-  color: #f4f7fb !important;
+  color: var(--prompt-fg) !important;
 }
 
 .question-play input[type='text'],
@@ -38,9 +38,9 @@ label {
   margin-top: 0.4rem;
   padding: 0.65rem 0.8rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.95);
-  color: #12263f;
+  border: 1px solid var(--border-strong);
+  background: var(--input-bg);
+  color: var(--text);
   font: inherit;
 }
 
