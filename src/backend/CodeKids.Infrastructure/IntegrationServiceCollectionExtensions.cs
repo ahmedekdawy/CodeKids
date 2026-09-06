@@ -81,7 +81,24 @@ public static class IntegrationServiceCollectionExtensions
             client.Timeout = TimeSpan.FromSeconds(120);
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         });
-        services.AddSingleton<IWhatsAppMessageSender, BaileysWhatsAppSender>();
+
+        services.Configure<WhatsProOptions>(configuration.GetSection(WhatsProOptions.SectionName));
+        services.AddHttpClient(nameof(WhatsProSender), client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(120);
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        });
+
+        var sender = configuration.GetSection(WhatsAppOptions.SectionName).GetValue<string>("Provider") ?? "Baileys";
+        if (string.Equals(sender, "WhatsPro", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddSingleton<IWhatsAppMessageSender, WhatsProSender>();
+        }
+        else
+        {
+            services.AddSingleton<IWhatsAppMessageSender, BaileysWhatsAppSender>();
+        }
+
         return services;
     }
 
