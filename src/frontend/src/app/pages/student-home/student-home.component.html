@@ -116,12 +116,12 @@
       <span>{{ 'student.totalXp' | t }}</span>
     </div>
     <div class="stat-card">
-      <strong>{{ meetings().length }}</strong>
-      <span>{{ 'student.liveClasses' | t }}</span>
+      <strong>{{ publishedAssignments().length }}</strong>
+      <span>{{ 'student.assignments' | t }}</span>
     </div>
     <div class="stat-card">
-      <strong>{{ openTasks() }}</strong>
-      <span>{{ 'student.tasksOpen' | t }}</span>
+      <strong>{{ publishedExams().length }}</strong>
+      <span>{{ 'student.exams' | t }}</span>
     </div>
   </section>
 
@@ -140,7 +140,7 @@
             <article class="course-card">
               <header class="course-head">
                 <div>
-                  <h3>{{ course.title }}</h3>
+                  <h3 class="course-title">{{ course.title }}</h3>
                   <p class="course-desc">{{ course.description }}</p>
                 </div>
                 <span class="theme-tag">{{ course.theme }}</span>
@@ -153,6 +153,8 @@
 
               <div class="course-counts">
                 <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
+                <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>
+                <span>{{ 'student.examCount' | t: { count: courseExams(course).length } }}</span>
                 <span>{{ 'student.quizCount' | t: { count: publishedQuizzes(course).length } }}</span>
                 @if (courseVideos(course).length) {
                   <span>{{ 'student.videoCount' | t: { count: courseVideos(course).length } }}</span>
@@ -183,8 +185,8 @@
               }
 
               @if (publishedQuizzes(course).length) {
-                <div class="link-group">
-                  <p class="group-label">{{ 'student.quizzes' | t }}</p>
+                <div class="link-group quizzes">
+                  <p class="group-label quiz">{{ 'student.quizzes' | t }}</p>
                   <div class="chip-row">
                     @for (quiz of publishedQuizzes(course); track quiz.id) {
                       <a class="chip quiz" [routerLink]="['/quizzes', quiz.id]">{{ quiz.title }}</a>
@@ -192,6 +194,40 @@
                   </div>
                 </div>
               }
+
+              <div class="task-group assignments">
+                <p class="group-label assignment">{{ 'student.assignments' | t }}</p>
+                <div class="item-list">
+                  @for (assignment of courseAssignments(course); track assignment.id) {
+                    <a class="item-row link-row assignment" [routerLink]="['/assignments', assignment.id]">
+                      <div class="item-body">
+                        <strong>{{ assignment.title }}</strong>
+                        <p class="meta">{{ assignment.classroomName }} · {{ 'student.xpLabel' | t: { xp: assignment.xpReward } }}</p>
+                      </div>
+                      <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+                    </a>
+                  } @empty {
+                    <p class="meta empty-state">{{ 'student.noAssignments' | t }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="task-group exams">
+                <p class="group-label exam">{{ 'student.exams' | t }}</p>
+                <div class="item-list">
+                  @for (exam of courseExams(course); track exam.id) {
+                    <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
+                      <div class="item-body">
+                        <strong>{{ exam.title }}</strong>
+                        <p class="meta">{{ exam.classroomName }} · {{ 'student.xpLabel' | t: { xp: exam.xpReward } }}</p>
+                      </div>
+                      <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+                    </a>
+                  } @empty {
+                    <p class="meta empty-state">{{ 'student.noExams' | t }}</p>
+                  }
+                </div>
+              </div>
 
               @if (course.studentAskEnabled) {
                 <app-student-ask-panel [courseId]="course.id" titleKey="studentAsk.courseTitle" />
@@ -202,104 +238,51 @@
           }
         </div>
       </section>
-    </main>
 
-    <aside class="student-aside">
-      <section class="section-card">
-        <header class="section-head">
-          <div>
-            <h2>{{ 'student.zoomTitle' | t }}</h2>
-            <p class="section-hint">{{ 'student.upcoming' | t }}</p>
-          </div>
-        </header>
+      @if (leftoverAssignments().length || leftoverExams().length) {
+        <section class="section-card">
+          <header class="section-head">
+            <div>
+              <h2>{{ 'student.tasks' | t }}</h2>
+              <p class="section-hint">{{ 'student.otherTasksHint' | t }}</p>
+            </div>
+          </header>
 
-        @if (classroomsWithZoom().length) {
-          <div class="task-group">
-            <p class="group-label">{{ 'classroom.zoomLinkTitle' | t }}</p>
-            <div class="item-list">
-              @for (room of classroomsWithZoom(); track room.id) {
-                @for (link of room.zoomLinks; track link.url + link.name) {
-                  <div class="item-row">
+          @if (leftoverAssignments().length) {
+            <div class="task-group assignments">
+              <p class="group-label assignment">{{ 'student.assignments' | t }}</p>
+              <div class="item-list">
+                @for (assignment of leftoverAssignments(); track assignment.id) {
+                  <a class="item-row link-row assignment" [routerLink]="['/assignments', assignment.id]">
                     <div class="item-body">
-                      <strong>{{ link.name }}</strong>
-                      <p class="meta">{{ room.name }}</p>
+                      <strong>{{ assignment.title }}</strong>
+                      <p class="meta">{{ assignment.classroomName }} · {{ 'student.xpLabel' | t: { xp: assignment.xpReward } }}</p>
                     </div>
-                    <a class="action-btn" [href]="link.url" target="_blank" rel="noopener">{{ link.name }}</a>
-                  </div>
+                    <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+                  </a>
                 }
-              }
-            </div>
-          </div>
-        }
-
-        <div class="item-list">
-          @for (meeting of meetings(); track meeting.id) {
-            <div class="item-row">
-              <div class="item-body">
-                <strong>{{ meeting.title }}</strong>
-                <p class="meta">
-                  {{ formatWhen(meeting.startsAtUtc) }}
-                  · {{ meeting.durationMinutes }} {{ 'student.minutes' | t }}
-                </p>
-                <p class="meta">
-                  {{ 'student.withHost' | t: { name: meeting.hostName } }}
-                  @if (meeting.classroomName) {
-                    · {{ meeting.classroomName }}
-                  }
-                </p>
               </div>
-              <a class="action-btn" [href]="meeting.joinUrl" target="_blank" rel="noopener">
-                {{ 'student.joinZoom' | t }}
-              </a>
             </div>
-          } @empty {
-            <p class="meta empty-state">{{ 'student.noMeetings' | t }}</p>
           }
-        </div>
-      </section>
 
-      <section class="section-card">
-        <header class="section-head">
-          <div>
-            <h2>{{ 'student.tasks' | t }}</h2>
-            <p class="section-hint">{{ 'student.tasksHint' | t }}</p>
-          </div>
-        </header>
-
-        <div class="task-group">
-          <p class="group-label">{{ 'student.assignments' | t }}</p>
-          <div class="item-list">
-            @for (assignment of publishedAssignments(); track assignment.id) {
-              <a class="item-row link-row" [routerLink]="['/assignments', assignment.id]">
-                <div class="item-body">
-                  <strong>{{ assignment.title }}</strong>
-                  <p class="meta">{{ assignment.classroomName }} · {{ 'student.xpLabel' | t: { xp: assignment.xpReward } }}</p>
-                </div>
-                <span class="action-ghost">{{ 'student.openTask' | t }}</span>
-              </a>
-            } @empty {
-              <p class="meta empty-state">{{ 'student.noAssignments' | t }}</p>
-            }
-          </div>
-        </div>
-
-        <div class="task-group">
-          <p class="group-label">{{ 'student.exams' | t }}</p>
-          <div class="item-list">
-            @for (exam of publishedExams(); track exam.id) {
-              <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
-                <div class="item-body">
-                  <strong>{{ exam.title }}</strong>
-                  <p class="meta">{{ exam.classroomName }} · {{ 'student.xpLabel' | t: { xp: exam.xpReward } }}</p>
-                </div>
-                <span class="action-ghost">{{ 'student.openTask' | t }}</span>
-              </a>
-            } @empty {
-              <p class="meta empty-state">{{ 'student.noExams' | t }}</p>
-            }
-          </div>
-        </div>
-      </section>
-    </aside>
+          @if (leftoverExams().length) {
+            <div class="task-group exams">
+              <p class="group-label exam">{{ 'student.exams' | t }}</p>
+              <div class="item-list">
+                @for (exam of leftoverExams(); track exam.id) {
+                  <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
+                    <div class="item-body">
+                      <strong>{{ exam.title }}</strong>
+                      <p class="meta">{{ exam.classroomName }} · {{ 'student.xpLabel' | t: { xp: exam.xpReward } }}</p>
+                    </div>
+                    <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        </section>
+      }
+    </main>
   </div>
 </div>

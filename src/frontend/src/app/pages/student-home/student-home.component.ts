@@ -3,14 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Avatar, Badge, Classroom, Course, CourseQuiz, CourseTerm, CourseVideoSummary, Exam, LiveSession, StudentSummary } from '../../models';
+import { Assignment, Avatar, Badge, Classroom, Course, CourseQuiz, CourseTerm, CourseVideoSummary, Exam, StudentSummary } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
-import { classroomHasZoomLinks } from '../../shared/classroom-zoom-links/classroom-zoom-links.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
 import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
@@ -45,7 +44,6 @@ export class StudentHomeComponent {
   readonly summary = signal<StudentSummary | null>(null);
   readonly badges = signal<Badge[]>([]);
   readonly avatars = signal<Avatar[]>([]);
-  readonly meetings = signal<LiveSession[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
   readonly assignments = signal<Assignment[]>([]);
   readonly exams = signal<Exam[]>([]);
@@ -58,15 +56,18 @@ export class StudentHomeComponent {
   readonly earnedBadges = computed(() => this.badges().filter((b) => b.isEarned));
   readonly publishedAssignments = computed(() => this.assignments().filter((a) => a.isPublished === true));
   readonly publishedExams = computed(() => this.exams().filter((e) => e.isPublished === true));
-  readonly openTasks = computed(() => this.publishedAssignments().length + this.publishedExams().length);
-  readonly classroomsWithZoom = computed(() => this.classrooms().filter((room) => classroomHasZoomLinks(room)));
+  readonly leftoverAssignments = computed(() =>
+    this.publishedAssignments().filter((assignment) => !this.courses().some((course) => this.assignmentBelongsToCourse(assignment, course)))
+  );
+  readonly leftoverExams = computed(() =>
+    this.publishedExams().filter((exam) => !this.courses().some((course) => this.examBelongsToCourse(exam, course)))
+  );
 
   constructor() {
     this.api.getCourses().subscribe((courses) => this.courses.set(courses));
     this.api.getStudentSummary().subscribe((summary) => this.summary.set(summary));
     this.api.getBadges().subscribe((badges) => this.badges.set(badges));
     this.api.getAvatars().subscribe((avatars) => this.avatars.set(avatars));
-    this.api.getMeetings().subscribe((meetings) => this.meetings.set(meetings));
     this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
     this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
     this.api.getExams().subscribe((exams) => this.exams.set(exams));
@@ -129,8 +130,12 @@ export class StudentHomeComponent {
       : `${base} (${this.locale.t('student.needsXp', { xp: option.unlockXp })})`;
   }
 
-  formatWhen(iso: string): string {
-    return new Date(iso).toLocaleString(this.locale.lang());
+  courseAssignments(course: Course): Assignment[] {
+    return this.publishedAssignments().filter((assignment) => this.assignmentBelongsToCourse(assignment, course));
+  }
+
+  courseExams(course: Course): Exam[] {
+    return this.publishedExams().filter((exam) => this.examBelongsToCourse(exam, course));
   }
 
   termLabel(term: CourseTerm | string | null | undefined): string {
@@ -150,5 +155,21 @@ export class StudentHomeComponent {
 
   publishedQuizzes(course: Course): CourseQuiz[] {
     return (course.quizzes ?? []).filter((quiz) => quiz.isPublished === true);
+  }
+
+  private assignmentBelongsToCourse(assignment: Assignment, course: Course): boolean {
+    return this.classroomHasCourse(assignment.classroomId, course.id);
+  }
+
+  private examBelongsToCourse(exam: Exam, course: Course): boolean {
+    if (exam.courseId) return exam.courseId === course.id;
+    return this.classroomHasCourse(exam.classroomId, course.id);
+  }
+
+  private classroomHasCourse(classroomId: string, courseId: string): boolean {
+    const room = this.classrooms().find((classroom) => classroom.id === classroomId);
+    if (!room) return false;
+    if (room.courseId === courseId) return true;
+    return (room.courses ?? []).some((course) => course.courseId === courseId);
   }
 }
