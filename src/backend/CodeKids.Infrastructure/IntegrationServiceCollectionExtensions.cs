@@ -89,14 +89,14 @@ public static class IntegrationServiceCollectionExtensions
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         });
 
-        var sender = configuration.GetSection(WhatsAppOptions.SectionName).GetValue<string>("Provider") ?? "Baileys";
-        if (string.Equals(sender, "WhatsPro", StringComparison.OrdinalIgnoreCase))
+        var sender = configuration.GetSection(WhatsAppOptions.SectionName).GetValue<string>("Provider");
+        if (string.Equals(sender, "Baileys", StringComparison.OrdinalIgnoreCase))
         {
-            services.AddSingleton<IWhatsAppMessageSender, WhatsProSender>();
+            services.AddSingleton<IWhatsAppMessageSender, BaileysWhatsAppSender>();
         }
         else
         {
-            services.AddSingleton<IWhatsAppMessageSender, BaileysWhatsAppSender>();
+            services.AddSingleton<IWhatsAppMessageSender, WhatsProSender>();
         }
 
         return services;
