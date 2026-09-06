@@ -338,7 +338,7 @@ export const EN: Record<string, string> = {
   'topStudents.rank': 'Rank',
   'topStudents.subjectCount': '{count} subjects',
 
-  'auth.login.title': 'Welcome back, young coder.',
+  'auth.login.title': 'Welcome back, young genius.',
   'auth.login.subtitle': 'Sign in as a student, parent, or teacher.',
   'auth.email': 'Email',
   'auth.loginOrMobile': 'Email or mobile',

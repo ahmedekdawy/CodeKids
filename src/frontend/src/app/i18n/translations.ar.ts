@@ -338,7 +338,7 @@ export const AR: Record<string, string> = {
   'topStudents.rank': 'المركز',
   'topStudents.subjectCount': '{count} مواد',
 
-  'auth.login.title': 'مرحباً بعودتك أيها المبرمج الصغير.',
+  'auth.login.title': 'مرحباً بعودتك أيها العبقري الصغير.',
   'auth.login.subtitle': 'سجّل الدخول كطالب أو ولي أمر أو معلم.',
   'auth.email': 'البريد الإلكتروني',
   'auth.loginOrMobile': 'البريد الإلكتروني أو الجوال',
