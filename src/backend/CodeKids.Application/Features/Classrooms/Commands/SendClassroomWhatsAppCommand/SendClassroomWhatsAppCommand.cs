@@ -11,11 +11,15 @@ namespace CodeKids.Application.Features.Classrooms;
 public sealed record SendClassroomWhatsAppRequest(
     string Message,
     IReadOnlyList<Guid>? StudentIds,
-    bool IncludeGroupInviteLink = true);
+    bool IncludeGroupInviteLink = true,
+    bool SendToGroup = false,
+    string? GroupId = null);
 
 public sealed record SendClassroomWhatsAppCommand(
     Guid TeacherUserId,
     Guid ClassroomId,
     string Message,
     IReadOnlyList<Guid>? StudentIds,
-    bool IncludeGroupInviteLink) : ICommand<SendClassroomWhatsAppResultDto>;
+    bool IncludeGroupInviteLink,
+    bool SendToGroup,
+    string? GroupId) : ICommand<SendClassroomWhatsAppResultDto>;

@@ -7,8 +7,6 @@
     </div>
     <div class="topbar-actions">
       <a routerLink="/student/study-plans" class="chip">{{ 'student.studyPlans' | t }}</a>
-      <a routerLink="/student/asked-questions" class="chip">{{ 'askedQuestions.nav' | t }}</a>
-      <a routerLink="/student/chat" class="chip">{{ 'chat.nav' | t }}</a>
       <app-notification-bell />
       <app-theme-switcher />
       <app-language-switcher />
@@ -84,13 +82,11 @@
       </div>
 
       <div class="badge-panel">
-        <div class="badge-panel-head">
-          <h3>{{ 'student.badges' | t }}</h3>
-          @if (earnedBadges().length) {
-            <span class="count-pill">{{ earnedBadges().length }}</span>
-          }
-        </div>
         @if (earnedBadges().length) {
+          <div class="badge-panel-head">
+            <h3>{{ 'student.badges' | t }}</h3>
+            <span class="count-pill">{{ earnedBadges().length }}</span>
+          </div>
           <div class="badge-row">
             @for (badge of earnedBadges(); track badge.id) {
               <div class="badge-chip" [title]="badge.description">
@@ -99,8 +95,6 @@
               </div>
             }
           </div>
-        } @else {
-          <p class="meta empty-hint">{{ 'student.noBadges' | t }}</p>
         }
       </div>
     </div>
@@ -115,14 +109,18 @@
       <strong>{{ summary()?.totalXp || 0 }}</strong>
       <span>{{ 'student.totalXp' | t }}</span>
     </div>
-    <div class="stat-card">
-      <strong>{{ publishedAssignments().length }}</strong>
-      <span>{{ 'student.assignments' | t }}</span>
-    </div>
-    <div class="stat-card">
-      <strong>{{ publishedExams().length }}</strong>
-      <span>{{ 'student.exams' | t }}</span>
-    </div>
+    @if (publishedAssignments().length) {
+      <div class="stat-card">
+        <strong>{{ publishedAssignments().length }}</strong>
+        <span>{{ 'student.assignments' | t }}</span>
+      </div>
+    }
+    @if (publishedExams().length) {
+      <div class="stat-card">
+        <strong>{{ publishedExams().length }}</strong>
+        <span>{{ 'student.exams' | t }}</span>
+      </div>
+    }
   </section>
 
   <div class="student-layout">
@@ -151,15 +149,31 @@
                 · {{ 'student.ages' | t: { min: course.ageMin, max: course.ageMax } }}
               </p>
 
-              <div class="course-counts">
-                <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
-                <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>
-                <span>{{ 'student.examCount' | t: { count: courseExams(course).length } }}</span>
-                <span>{{ 'student.quizCount' | t: { count: publishedQuizzes(course).length } }}</span>
-                @if (courseVideos(course).length) {
-                  <span>{{ 'student.videoCount' | t: { count: courseVideos(course).length } }}</span>
-                }
-              </div>
+              @if (
+                course.lessons.length ||
+                courseAssignments(course).length ||
+                courseExams(course).length ||
+                publishedQuizzes(course).length ||
+                courseVideos(course).length
+              ) {
+                <div class="course-counts">
+                  @if (course.lessons.length) {
+                    <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
+                  }
+                  @if (courseAssignments(course).length) {
+                    <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>
+                  }
+                  @if (courseExams(course).length) {
+                    <span>{{ 'student.examCount' | t: { count: courseExams(course).length } }}</span>
+                  }
+                  @if (publishedQuizzes(course).length) {
+                    <span>{{ 'student.quizCount' | t: { count: publishedQuizzes(course).length } }}</span>
+                  }
+                  @if (courseVideos(course).length) {
+                    <span>{{ 'student.videoCount' | t: { count: courseVideos(course).length } }}</span>
+                  }
+                </div>
+              }
 
               @if (courseVideos(course).length) {
                 <div class="link-group">
@@ -195,42 +209,38 @@
                 </div>
               }
 
-              <div class="task-group assignments">
-                <p class="group-label assignment">{{ 'student.assignments' | t }}</p>
-                <div class="item-list">
-                  @for (assignment of courseAssignments(course); track assignment.id) {
-                    <a class="item-row link-row assignment" [routerLink]="['/assignments', assignment.id]">
-                      <div class="item-body">
-                        <strong>{{ assignment.title }}</strong>
-                        <p class="meta">{{ assignment.classroomName }} · {{ 'student.xpLabel' | t: { xp: assignment.xpReward } }}</p>
-                      </div>
-                      <span class="action-ghost">{{ 'student.openTask' | t }}</span>
-                    </a>
-                  } @empty {
-                    <p class="meta empty-state">{{ 'student.noAssignments' | t }}</p>
-                  }
+              @if (courseAssignments(course).length) {
+                <div class="task-group assignments">
+                  <p class="group-label assignment">{{ 'student.assignments' | t }}</p>
+                  <div class="item-list">
+                    @for (assignment of courseAssignments(course); track assignment.id) {
+                      <a class="item-row link-row assignment" [routerLink]="['/assignments', assignment.id]">
+                        <div class="item-body">
+                          <strong>{{ assignment.title }}</strong>
+                          <p class="meta">{{ assignment.classroomName }} · {{ 'student.xpLabel' | t: { xp: assignment.xpReward } }}</p>
+                        </div>
+                        <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+                      </a>
+                    }
+                  </div>
                 </div>
-              </div>
+              }
 
-              <div class="task-group exams">
-                <p class="group-label exam">{{ 'student.exams' | t }}</p>
-                <div class="item-list">
-                  @for (exam of courseExams(course); track exam.id) {
-                    <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
-                      <div class="item-body">
-                        <strong>{{ exam.title }}</strong>
-                        <p class="meta">{{ exam.classroomName }} · {{ 'student.xpLabel' | t: { xp: exam.xpReward } }}</p>
-                      </div>
-                      <span class="action-ghost">{{ 'student.openTask' | t }}</span>
-                    </a>
-                  } @empty {
-                    <p class="meta empty-state">{{ 'student.noExams' | t }}</p>
-                  }
+              @if (courseExams(course).length) {
+                <div class="task-group exams">
+                  <p class="group-label exam">{{ 'student.exams' | t }}</p>
+                  <div class="item-list">
+                    @for (exam of courseExams(course); track exam.id) {
+                      <a class="item-row link-row exam" [routerLink]="['/exams', exam.id]">
+                        <div class="item-body">
+                          <strong>{{ exam.title }}</strong>
+                          <p class="meta">{{ exam.classroomName }} · {{ 'student.xpLabel' | t: { xp: exam.xpReward } }}</p>
+                        </div>
+                        <span class="action-ghost">{{ 'student.openTask' | t }}</span>
+                      </a>
+                    }
+                  </div>
                 </div>
-              </div>
-
-              @if (course.studentAskEnabled) {
-                <app-student-ask-panel [courseId]="course.id" titleKey="studentAsk.courseTitle" />
               }
             </article>
           } @empty {
@@ -284,5 +294,15 @@
         </section>
       }
     </main>
+  </div>
+
+  <div class="student-side-tools">
+    <a routerLink="/student/chat" class="side-tab chat-tab">
+      <span class="side-tab-icon" aria-hidden="true">💬</span>
+      <span class="side-tab-label">{{ 'chat.nav' | t }}</span>
+    </a>
+    @if (askCourses().length) {
+      <app-student-ask-panel titleKey="studentAsk.courseTitle" [courseChoices]="askCourses()" />
+    }
   </div>
 </div>

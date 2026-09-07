@@ -603,3 +603,60 @@ button.stat-card-link.active {
     align-items: flex-start;
   }
 }
+
+.student-side-tools {
+  position: fixed;
+  inset-inline-end: 0;
+  top: 38%;
+  z-index: 46;
+  display: grid;
+  gap: 0.55rem;
+  justify-items: end;
+}
+
+.student-side-tools .side-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-inline-end: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  background: var(--surface);
+  color: var(--heading);
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: var(--shadow-md);
+  max-width: 2.75rem;
+  overflow: hidden;
+  transition: max-width 0.2s ease;
+}
+
+html[dir='rtl'] .student-side-tools .side-tab {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.student-side-tools .side-tab-icon {
+  flex-shrink: 0;
+  width: 1.2rem;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.student-side-tools .side-tab-label {
+  white-space: nowrap;
+  font-size: 0.88rem;
+}
+
+.student-side-tools .side-tab:hover,
+.student-side-tools .side-tab:focus-visible {
+  max-width: 12rem;
+}
+
+@media (max-width: 700px) {
+  .student-side-tools {
+    top: auto;
+    inset-block-end: 5.25rem;
+  }
+}

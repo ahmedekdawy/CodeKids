@@ -36,7 +36,7 @@ public sealed class BaileysWhatsAppSender(
         var jid = WhatsAppPhone.ToJid(phone);
         if (jid is null)
         {
-            return WhatsAppMessageResult.Fail("رقم هاتف غير صالح");
+            return WhatsAppMessageResult.Fail("رقم هاتف أو مجموعة غير صالح");
         }
 
         if (!_options.IsConfigured)

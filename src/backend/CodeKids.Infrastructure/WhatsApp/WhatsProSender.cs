@@ -39,10 +39,9 @@ public sealed class WhatsProSender(
         string? ruleKey = null,
         string username = "system")
     {
-        var destination = WhatsAppPhone.ToDigits(phone);
-        if (destination is null)
+        if (!WhatsAppPhone.TryParseTarget(phone, out var target))
         {
-            return WhatsAppMessageResult.Fail("رقم هاتف غير صالح");
+            return WhatsAppMessageResult.Fail("رقم هاتف أو مجموعة غير صالح");
         }
 
         if (!_options.IsConfigured)
@@ -60,22 +59,33 @@ public sealed class WhatsProSender(
             //    [_options.PhoneField] = destination,
             //    [_options.MessageField] = message
             //};
-            var payload = new
-            {
-                send_phone = true,
-                phones = new[]
+            var payload = target.IsGroup
+                ? (object)new
                 {
-        "+"+destination
-    },
-                send_group = false,
-                group_id = 0,
-                send_client = false,
-                client_ids = Array.Empty<int>(),
-                img = (string?)null,
-                client_default_phone = true,
-                send_all_clients = false,
-                message = message
-            };
+                    send_phone = false,
+                    phones = Array.Empty<string>(),
+                    send_group = true,
+                    group_id = target.GroupId,
+                    send_client = false,
+                    client_ids = Array.Empty<int>(),
+                    img = (string?)null,
+                    client_default_phone = true,
+                    send_all_clients = false,
+                    message
+                }
+                : new
+                {
+                    send_phone = true,
+                    phones = new[] { "+" + target.PhoneDigits },
+                    send_group = false,
+                    group_id = 0,
+                    send_client = false,
+                    client_ids = Array.Empty<int>(),
+                    img = (string?)null,
+                    client_default_phone = true,
+                    send_all_clients = false,
+                    message
+                };
 
             using var response = await SendWithRetryAsync(_options.SendRoute, payload, timeout.Token);
             var body = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -117,7 +127,7 @@ public sealed class WhatsProSender(
 
     /// <summary>The gateway exposes no number lookup, so a well-formed number is treated as reachable.</summary>
     public Task<bool> IsNumberOnWhatsAppAsync(string phone, CancellationToken cancellationToken) =>
-        Task.FromResult(_options.IsConfigured && WhatsAppPhone.ToDigits(phone) is not null);
+        Task.FromResult(_options.IsConfigured && WhatsAppPhone.TryParseTarget(phone, out _));
 
     private async Task<HttpResponseMessage> SendWithRetryAsync(
         string route,

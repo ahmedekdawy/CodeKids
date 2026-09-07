@@ -1264,6 +1264,8 @@ export class LearningApiService {
       message: string;
       studentIds?: string[] | null;
       includeGroupInviteLink?: boolean;
+      sendToGroup?: boolean;
+      groupId?: string | null;
     }
   ): Observable<SendClassroomWhatsAppResult> {
     return this.http.post<SendClassroomWhatsAppResult>(

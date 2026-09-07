@@ -264,7 +264,9 @@ public static class ClassroomsEndpoints
 
                         request.StudentIds,
 
-                        request.IncludeGroupInviteLink),
+                        request.IncludeGroupInviteLink,
+                        request.SendToGroup,
+                        request.GroupId),
 
                     cancellationToken));
 

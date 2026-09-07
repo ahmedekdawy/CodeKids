@@ -1,0 +1,52 @@
+<div class="ask-dock" [class.open]="open()">
+  <button
+    type="button"
+    class="ask-tab"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="'studentAsk.fab' | t"
+    (click)="toggle()"
+  >
+    <span class="ask-tab-icon" aria-hidden="true">?</span>
+    <span class="ask-tab-label">{{ 'studentAsk.fab' | t }}</span>
+  </button>
+
+  <section class="ask-sheet student-ask" role="dialog" [attr.aria-label]="'studentAsk.fab' | t">
+    <header class="ask-sheet-head">
+      <h3>{{ titleKey() | t }}</h3>
+      <button type="button" class="ask-close" (click)="close()">{{ 'common.close' | t }}</button>
+    </header>
+    <p class="meta">{{ 'studentAsk.hint' | t }}</p>
+
+    @if (courseChoices().length > 1) {
+      <label class="ask-course">
+        <span>{{ 'student.courses' | t }}</span>
+        <app-searchable-select
+          [ngModel]="selectedCourseId()"
+          (ngModelChange)="onCourseSelected($event)"
+          name="askCourseId"
+          [options]="courseChoices().map(c => ({ value: c.id, label: c.title }))"
+        />
+      </label>
+    }
+
+    <form (ngSubmit)="submit()">
+      <textarea
+        [(ngModel)]="question"
+        name="studentAskQuestion"
+        rows="4"
+        [placeholder]="'studentAsk.placeholder' | t"
+      ></textarea>
+      <button type="submit" [disabled]="loading()">{{ 'studentAsk.submit' | t }}</button>
+    </form>
+    <p class="meta"><a routerLink="/student/asked-questions">{{ 'askedQuestions.seeAll' | t }}</a></p>
+    @if (error()) {
+      <p class="meta student-ask-error">{{ error() }}</p>
+    }
+    @if (answer(); as text) {
+      <div class="student-ask-answer" [class.out]="!inScope()">
+        <strong>{{ inScope() ? ('studentAsk.answer' | t) : ('studentAsk.outOfScope' | t) }}</strong>
+        <p>{{ text }}</p>
+      </div>
+    }
+  </section>
+</div>

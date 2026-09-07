@@ -26,6 +26,8 @@ export class TeacherWhatsAppComponent {
   classroomId = '';
   message = '';
   includeGroupInviteLink = true;
+  sendToGroup = false;
+  groupId = '';
   dailyReportsEnabled = true;
 
   readonly selectedClassroom = computed(() =>
@@ -124,8 +126,12 @@ export class TeacherWhatsAppComponent {
       this.error.set(this.locale.t('teacher.whatsapp.enterMessage'));
       return;
     }
-    if (this.selectedIds().size === 0) {
+    if (!this.sendToGroup && this.selectedIds().size === 0) {
       this.error.set(this.locale.t('teacher.whatsapp.selectStudent'));
+      return;
+    }
+    if (this.sendToGroup && !this.groupId.trim()) {
+      this.error.set(this.locale.t('teacher.whatsapp.enterGroupId'));
       return;
     }
 
@@ -134,7 +140,9 @@ export class TeacherWhatsAppComponent {
       .sendClassroomWhatsApp(this.classroomId, {
         message: this.message.trim(),
         studentIds: [...this.selectedIds()],
-        includeGroupInviteLink: this.includeGroupInviteLink
+        includeGroupInviteLink: this.includeGroupInviteLink,
+        sendToGroup: this.sendToGroup,
+        groupId: this.groupId.trim() || null
       })
       .subscribe({
         next: (result) => {

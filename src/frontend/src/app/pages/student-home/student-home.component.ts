@@ -11,7 +11,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { LocaleService } from '../../i18n/locale.service';
 import { formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
-import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
+import { StudentAskPanelComponent, StudentAskCourseChoice } from '../../shared/student-ask-panel/student-ask-panel.component';
 import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
@@ -61,6 +61,11 @@ export class StudentHomeComponent {
   );
   readonly leftoverExams = computed(() =>
     this.publishedExams().filter((exam) => !this.courses().some((course) => this.examBelongsToCourse(exam, course)))
+  );
+  readonly askCourses = computed<StudentAskCourseChoice[]>(() =>
+    this.courses()
+      .filter((course) => course.studentAskEnabled)
+      .map((course) => ({ id: course.id, title: course.title }))
   );
 
   constructor() {
@@ -158,18 +163,21 @@ export class StudentHomeComponent {
   }
 
   private assignmentBelongsToCourse(assignment: Assignment, course: Course): boolean {
-    return this.classroomHasCourse(assignment.classroomId, course.id);
+    return this.classroomLinksOnlyCourse(assignment.classroomId, course.id);
   }
 
   private examBelongsToCourse(exam: Exam, course: Course): boolean {
     if (exam.courseId) return exam.courseId === course.id;
-    return this.classroomHasCourse(exam.classroomId, course.id);
+    return this.classroomLinksOnlyCourse(exam.classroomId, course.id);
   }
 
-  private classroomHasCourse(classroomId: string, courseId: string): boolean {
+  /** Match a classroom task to a subject only when the room clearly points at that one course. */
+  private classroomLinksOnlyCourse(classroomId: string, courseId: string): boolean {
     const room = this.classrooms().find((classroom) => classroom.id === classroomId);
     if (!room) return false;
-    if (room.courseId === courseId) return true;
-    return (room.courses ?? []).some((course) => course.courseId === courseId);
+    if (room.courseId) return room.courseId === courseId;
+    const linked = room.courses ?? [];
+    if (linked.length === 1) return linked[0].courseId === courseId;
+    return false;
   }
 }

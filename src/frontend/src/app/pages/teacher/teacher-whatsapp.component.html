@@ -77,6 +77,18 @@
         {{ 'teacher.whatsapp.appendInvite' | t }}
       </label>
 
+      <label class="checkbox">
+        <input type="checkbox" [(ngModel)]="sendToGroup" name="sendToGroup" />
+        {{ 'teacher.whatsapp.sendToGroup' | t }}
+      </label>
+      @if (sendToGroup) {
+        <label>
+          {{ 'teacher.whatsapp.groupId' | t }}
+          <input [(ngModel)]="groupId" name="groupId" [placeholder]="'teacher.whatsapp.groupIdPlaceholder' | t" />
+          <span class="meta">{{ 'teacher.whatsapp.groupIdHint' | t }}</span>
+        </label>
+      }
+
       <div class="chip-row">
         <button type="submit" [disabled]="sending()">
           {{ sending() ? ('common.sending' | t) : ('teacher.whatsapp.sendSelected' | t) }}

@@ -10,7 +10,8 @@ namespace CodeKids.Application.Features.Classrooms;
 
 public sealed class SendClassroomWhatsAppCommandHandler(
     IAppDbContext dbContext,
-    IWhatsAppClient whatsAppClient) : ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto>
+    IWhatsAppClient whatsAppClient,
+    IWhatsAppMessageSender whatsAppSender) : ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto>
 {
     public async Task<SendClassroomWhatsAppResultDto> Handle(
         SendClassroomWhatsAppCommand command,
@@ -55,7 +56,30 @@ public sealed class SendClassroomWhatsAppCommandHandler(
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        if (phones.Count == 0)
+        var sent = 0;
+        var failed = 0;
+        var details = new List<string>();
+
+        if (command.SendToGroup)
+        {
+            var groupId = command.GroupId?.Trim() ?? string.Empty;
+            if (groupId.Length == 0)
+            {
+                throw new InvalidOperationException("Group id is required when sending to a WhatsApp group.");
+            }
+
+            var groupResult = await whatsAppSender.SendMessageAsync(
+                groupId,
+                body,
+                cancellationToken,
+                ruleKey: "classroom_group",
+                username: "teacher");
+            details.Add($"group {groupId}: {(groupResult.Success ? "Sent" : groupResult.Error ?? "Send failed.")}");
+            if (groupResult.Success) sent++;
+            else failed++;
+        }
+
+        if (phones.Count == 0 && !command.SendToGroup)
         {
             return new SendClassroomWhatsAppResultDto(
                 0,
@@ -64,15 +88,15 @@ public sealed class SendClassroomWhatsAppCommandHandler(
                 groupShareUrl);
         }
 
-        var sent = 0;
-        var failed = 0;
-        var details = new List<string>();
-        foreach (var phone in phones)
+        if (!command.SendToGroup)
         {
-            var result = await whatsAppClient.SendTextAsync(phone, body, cancellationToken);
-            details.Add($"{phone}: {result.Detail}");
-            if (result.Sent) sent++;
-            else failed++;
+            foreach (var phone in phones)
+            {
+                var result = await whatsAppClient.SendTextAsync(phone, body, cancellationToken);
+                details.Add($"{phone}: {result.Detail}");
+                if (result.Sent) sent++;
+                else failed++;
+            }
         }
 
         return new SendClassroomWhatsAppResultDto(
