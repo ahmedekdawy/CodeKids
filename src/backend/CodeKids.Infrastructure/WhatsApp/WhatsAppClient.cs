@@ -8,7 +8,8 @@ namespace CodeKids.Infrastructure.WhatsApp;
 
 public sealed class WhatsAppClient(
     IHttpClientFactory httpClientFactory,
-    IOptions<WhatsAppOptions> options) : IWhatsAppClient
+    IOptions<WhatsAppOptions> options,
+    IWhatsAppMessageSender messageSender) : IWhatsAppClient
 {
     private readonly WhatsAppOptions _options = options.Value;
 
@@ -17,6 +18,14 @@ public sealed class WhatsAppClient(
 
     public async Task<WhatsAppSendResult> SendTextAsync(string phoneE164, string message, CancellationToken cancellationToken)
     {
+        if (!_options.UseCloudApi)
+        {
+            var gateway = await messageSender.SendMessageAsync(phoneE164, message, cancellationToken);
+            return new WhatsAppSendResult(
+                gateway.Success,
+                gateway.Success ? "Sent" : gateway.Error ?? "Send failed.");
+        }
+
         var phone = NormalizePhone(phoneE164);
         if (string.IsNullOrWhiteSpace(phone))
         {
