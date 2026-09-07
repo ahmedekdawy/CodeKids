@@ -7,7 +7,7 @@
   padding: 0;
   border-radius: 10px;
   border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--elevated-bg-hover);
   color: var(--text, #fff);
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
@@ -54,15 +54,18 @@
   border-color: rgba(95, 211, 188, 0.45);
 }
 
-.icon-action-btn.apply:hover:not(:disabled) {
+.icon-action-btn.apply:hover:not(:disabled),
+.icon-action-btn.login-as:hover:not(:disabled),
+.icon-action-btn.activate:hover:not(:disabled) {
   background: rgba(95, 211, 188, 0.18);
   border-color: rgba(95, 211, 188, 0.55);
 }
 
+.icon-action-btn.deactivate:hover:not(:disabled),
 .icon-action-btn.danger:hover:not(:disabled) {
-  background: rgba(255, 107, 107, 0.18);
+  background: var(--danger-soft-bg);
   border-color: rgba(255, 107, 107, 0.55);
-  color: #fff;
+  color: var(--danger-soft-fg);
 }
 
 .icon-action-btn.ghost {
@@ -71,7 +74,7 @@
 }
 
 .icon-action-btn.ghost:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--elevated-bg-hover);
   border-color: var(--border-strong, rgba(255, 255, 255, 0.18));
 }
 

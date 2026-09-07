@@ -41,6 +41,9 @@ public class Exam : TenantEntity
     public string Description { get; set; } = string.Empty;
     public DateTimeOffset? DueAtUtc { get; set; }
     public int XpReward { get; set; }
+    /// <summary>Time allowed to solve the exam once started; null means untimed.</summary>
+    public int? DurationMinutes { get; set; }
+    public bool IsPublished { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public Classroom? Classroom { get; set; }
@@ -87,12 +90,14 @@ public class ExamAttempt : TenantEntity
     public int? Score { get; set; }
     public int? MaxScore { get; set; }
     public string? TeacherFeedback { get; set; }
+    public Guid? FeedbackImageMediaAssetId { get; set; }
     public DateTimeOffset StartedAtUtc { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? SubmittedAtUtc { get; set; }
     public DateTimeOffset? GradedAtUtc { get; set; }
 
     public Exam? Exam { get; set; }
     public User? Student { get; set; }
+    public MediaAsset? FeedbackImage { get; set; }
     public List<ExamAnswer> Answers { get; set; } = [];
 
     public int? DurationSeconds =>
@@ -107,9 +112,11 @@ public class ExamAnswer : TenantEntity
     public Guid AttemptId { get; set; }
     public Guid ExamQuestionId { get; set; }
     public string AnswerText { get; set; } = string.Empty;
+    public Guid? AnswerImageMediaAssetId { get; set; }
     public bool? IsCorrect { get; set; }
     public int? PointsAwarded { get; set; }
 
     public ExamAttempt? Attempt { get; set; }
     public ExamQuestion? Question { get; set; }
+    public MediaAsset? AnswerImage { get; set; }
 }

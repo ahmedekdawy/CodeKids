@@ -160,6 +160,32 @@ public static class CourseTreeEndpoints
             }
         }).RequireAuthorization(TeacherOrAdmin);
 
+        app.MapPost("/api/admin/courses/{courseId:guid}/tree/generate", async (
+            Guid courseId,
+            GenerateCourseTreeRequest request,
+            HttpContext httpContext,
+            IAppDbContext dbContext,
+            ICommandHandler<GenerateCourseTreeCommand, GenerateCourseTreeResult> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                await EnsureCanManageCourseAsync(httpContext, dbContext, courseId, cancellationToken);
+                return Results.Ok(await handler.Handle(
+                    new GenerateCourseTreeCommand(
+                        courseId,
+                        request.Mode,
+                        request.Prompt,
+                        request.Language,
+                        request.Apply),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(TeacherOrAdmin);
+
         return app;
     }
 

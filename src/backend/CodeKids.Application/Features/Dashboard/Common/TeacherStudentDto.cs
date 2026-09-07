@@ -18,4 +18,5 @@ public sealed record TeacherStudentDto(
     int QuizAttempts,
     int WeakLessonCount,
     string? ParentName,
-    string? Signal);
+    string? Signal,
+    string? ProfilePhotoUrl);

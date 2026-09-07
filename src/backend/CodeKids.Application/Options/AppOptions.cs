@@ -20,13 +20,24 @@ public sealed class FrontendOptions
     public string BaseUrl { get; set; } = "http://localhost:4200";
 }
 
+public sealed class NotificationOptions
+{
+    public const string SectionName = "Notifications";
+
+    /// <summary>Send a WhatsApp message with a deep link when an assignment, quiz, or exam is published.</summary>
+    public bool WhatsAppOnAssessmentPublish { get; set; } = true;
+
+    /// <summary>Also message the parent of every notified student.</summary>
+    public bool NotifyParentsOnAssessmentPublish { get; set; } = true;
+}
+
 public sealed class AiOptions
 {
     public const string SectionName = "Ai";
 
-    /// <summary>gemini, groq, openai, or pollinations. Gemini uses generateContent.</summary>
-    public string Provider { get; set; } = "gemini";
+    /// <summary>gemini, grok, groq, openai, or pollinations. Gemini uses generateContent; grok/groq/openai use chat completions.</summary>
+    public string Provider { get; set; } = "grok";
     public string ApiKey { get; set; } = string.Empty;
-    public string Model { get; set; } = "gemini-flash-latest";
-    public string BaseUrl { get; set; } = "https://generativelanguage.googleapis.com/v1beta";
+    public string Model { get; set; } = "grok-4.6";
+    public string BaseUrl { get; set; } = "https://api.x.ai/v1/";
 }

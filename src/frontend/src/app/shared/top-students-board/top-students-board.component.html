@@ -1,0 +1,29 @@
+@if (hasStudents()) {
+  <section
+    class="top-board"
+    [class.showcase]="variant() === 'showcase'"
+    [class.section]="variant() === 'section'"
+    [attr.id]="variant() === 'section' ? 'top-students' : null">
+    <header class="top-board-head">
+      <span class="top-board-badge" aria-hidden="true">⭐</span>
+      <div>
+        <h2>{{ 'topStudents.title' | t }}</h2>
+        <p>{{ 'topStudents.subtitle' | t }}</p>
+      </div>
+    </header>
+
+    <ol class="top-board-list">
+      @for (student of students(); track student.studentId; let i = $index) {
+        <li [class.podium]="i < 3">
+          <span class="rank" [attr.aria-label]="('topStudents.rank' | t) + ' ' + (i + 1)">{{ rankMedal(i) }}</span>
+          <app-user-photo [photoUrl]="student.profilePhotoUrl" [name]="student.studentName" />
+          <div class="student">
+            <strong>{{ student.studentName }}</strong>
+            <span class="meta">{{ metaLine(student) }}</span>
+          </div>
+          <span class="score">{{ student.performancePercent }}%</span>
+        </li>
+      }
+    </ol>
+  </section>
+}

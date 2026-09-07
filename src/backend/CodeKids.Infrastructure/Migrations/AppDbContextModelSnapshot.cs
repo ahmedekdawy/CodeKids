@@ -424,6 +424,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<string>("ZoomLinksJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
@@ -1933,6 +1937,11 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTimeOffset?>("LastLoginDateUtc")
                         .HasColumnType("timestamp with time zone");

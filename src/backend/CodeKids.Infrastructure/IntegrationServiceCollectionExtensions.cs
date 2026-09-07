@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Application.Options;
 using CodeKids.Infrastructure.Ai;
 using CodeKids.Infrastructure.Email;
@@ -16,7 +17,26 @@ public static class IntegrationServiceCollectionExtensions
     public static IServiceCollection AddMediaStorage(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<MediaOptions>(configuration.GetSection(MediaOptions.SectionName));
-        services.AddSingleton<IFileStorage, LocalFileStorage>();
+        services.Configure<TeraboxOptions>(configuration.GetSection(TeraboxOptions.SectionName));
+
+        var provider = configuration.GetSection(MediaOptions.SectionName).GetValue<string>("Provider") ?? "Local";
+        if (string.Equals(provider, "Terabox", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddHttpClient(nameof(TeraboxClient), client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(30);
+            });
+            services.AddSingleton<TeraboxOAuthTokenManager>();
+            services.AddSingleton<TeraboxClient>();
+            services.AddSingleton<IFileStorage, TeraboxFileStorage>();
+            services.AddSingleton<ITeraboxDirectLinkResolver, TeraboxDirectLinkResolver>();
+        }
+        else
+        {
+            services.AddSingleton<IFileStorage, LocalFileStorage>();
+            services.AddSingleton<ITeraboxDirectLinkResolver, NullTeraboxDirectLinkResolver>();
+        }
+
         services.AddSingleton<IMediaAccessTokenService, MediaAccessTokenService>();
         services.AddHostedService<DailyReportHostedService>();
         return services;
@@ -55,6 +75,37 @@ public static class IntegrationServiceCollectionExtensions
             client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         });
         services.AddSingleton<IWhatsAppClient, WhatsAppClient>();
+
+        services.Configure<BaileysGatewayOptions>(configuration.GetSection(BaileysGatewayOptions.SectionName));
+        services.AddHttpClient(nameof(BaileysWhatsAppSender), client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(120);
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        });
+
+        services.Configure<WhatsProOptions>(configuration.GetSection(WhatsProOptions.SectionName));
+        services.AddHttpClient(nameof(WhatsProSender), client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(120);
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        });
+
+        var sender = configuration.GetSection(WhatsAppOptions.SectionName).GetValue<string>("Provider");
+        if (string.Equals(sender, "Baileys", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddSingleton<IWhatsAppMessageSender, BaileysWhatsAppSender>();
+        }
+        else
+        {
+            services.AddSingleton<IWhatsAppMessageSender, WhatsProSender>();
+        }
+
+        services.Configure<NotificationOptions>(configuration.GetSection(NotificationOptions.SectionName));
+        services.AddSingleton<AssessmentPublishNotificationQueue>();
+        services.AddSingleton<IAssessmentPublishNotificationQueue>(sp =>
+            sp.GetRequiredService<AssessmentPublishNotificationQueue>());
+        services.AddHostedService<AssessmentPublishNotificationWorker>();
+
         return services;
     }
 

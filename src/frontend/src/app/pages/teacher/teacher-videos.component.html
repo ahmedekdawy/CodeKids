@@ -27,6 +27,23 @@
         type="button"
         role="tab"
         class="video-tab"
+        [class.active]="tab() === 'course'"
+        [attr.aria-selected]="tab() === 'course'"
+        (click)="setTab('course')"
+      >
+        <span class="tab-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16v11H4z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 7V5h8v2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10 12 5 3-5 3v-6Z" fill="currentColor"/></svg>
+        </span>
+        <span class="tab-copy">
+          <span class="tab-label">{{ 'videos.tab.course' | t }}</span>
+          <span class="tab-hint">{{ 'videos.tab.courseHint' | t }}</span>
+        </span>
+        <span class="tab-count">{{ courseVideos().length }}</span>
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="video-tab"
         [class.active]="tab() === 'solution'"
         [attr.aria-selected]="tab() === 'solution'"
         (click)="setTab('solution')"
@@ -88,7 +105,7 @@
           <app-searchable-select
             [(ngModel)]="selectedLessonId"
             name="lessonId"
-            [emptyLabel]="'common.lesson' | t"
+            [emptyLabel]="'videos.optionalLesson' | t"
             [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
           />
         </label>
@@ -100,12 +117,37 @@
             [(ngModel)]="lessonVideoUrl"
             name="lessonVideoUrl"
             [placeholder]="'videos.videoLinkPlaceholder' | t"
-            required
           />
         </label>
-        <button type="submit" [disabled]="uploading()">
-          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
-        </button>
+        <label>
+          {{ 'videos.videoFile' | t }}
+          <input
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime"
+            (change)="onLessonFileSelected($event)"
+            [disabled]="uploading()"
+          />
+        </label>
+        @if (uploadProgress() != null) {
+          <div class="upload-progress" aria-live="polite">
+            <div class="upload-progress-bar">
+              <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
+            </div>
+            <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+          </div>
+        }
+        <div class="video-upload-actions">
+          <button type="submit" [disabled]="uploading() || !lessonVideoUrl.trim()">
+            {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+          </button>
+          <button type="button" [disabled]="uploading() || !lessonVideoFile()" (click)="attachLessonVideoFile()">
+            {{
+              uploadProgress() != null
+                ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
+            }}
+          </button>
+        </div>
       </form>
     </section>
 
@@ -198,6 +240,84 @@
     </section>
   }
 
+  @if (tab() === 'course') {
+    <section class="block">
+      <div class="video-table-head">
+        <h3>{{ 'videos.courseList' | t }}</h3>
+        <p class="meta">{{ shownLabel(filteredCourseVideos().length, courseVideos().length) }}</p>
+      </div>
+      <p class="meta">{{ 'videos.teacherCourseHint' | t }}</p>
+      <div class="video-filters">
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            [ngModel]="courseFilterCourseId()"
+            (ngModelChange)="courseFilterCourseId.set($event)"
+            name="courseFilterCourse"
+            [emptyLabel]="'videos.allCourses' | t"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.search' | t }}
+          <input
+            [ngModel]="courseSearch()"
+            (ngModelChange)="courseSearch.set($event)"
+            name="courseSearch"
+            [placeholder]="'videos.searchCourse' | t"
+          />
+        </label>
+        @if (courseFilterCourseId() || courseSearch().trim()) {
+          <button type="button" class="ghost-btn" (click)="clearCourseFilters()">{{ 'common.clearFilters' | t }}</button>
+        }
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table video-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.title' | t }}</th>
+              <th>{{ 'common.course' | t }}</th>
+              <th>{{ 'videos.link' | t }}</th>
+              <th>{{ 'common.uploaded' | t }}</th>
+              <th>{{ 'common.actions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (video of filteredCourseVideos(); track video.id) {
+              <tr
+                class="video-row-clickable"
+                tabindex="0"
+                [attr.aria-label]="'Play ' + video.title"
+                (click)="playCourseVideo(video)"
+                (keydown.enter)="playCourseVideo(video)"
+                (keydown.space)="$event.preventDefault(); playCourseVideo(video)"
+              >
+                <td><strong>{{ video.title }}</strong></td>
+                <td>{{ courseLabelById(video.courseId, video.courseTitle) }}</td>
+                <td class="mono">{{ video.fileName }}</td>
+                <td>{{ formatDate(video.createdAtUtc) }}</td>
+                <td class="row-actions-cell" (click)="$event.stopPropagation()">
+                  <div class="row-actions">
+                    <app-icon-action-button kind="play" [label]="'videos.playVideo' | t" (action)="playCourseVideo(video)" />
+                    <a class="ghost-btn small-btn" [routerLink]="['/courses', video.courseId]" [queryParams]="{ video: video.id }">
+                      {{ 'videos.openStudentView' | t }}
+                    </a>
+                    <button type="button" class="ghost-btn small-btn" (click)="inspectWatch(video.mediaAssetId)">{{ 'videos.analytics' | t }}</button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="meta">{{ courseVideos().length ? ('videos.noCourseMatch' | t) : ('videos.noCourseYet' | t) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
   @if (tab() === 'solution') {
     <section class="block">
       <h3>{{ 'videos.uploadSolution' | t }}</h3>
@@ -217,12 +337,37 @@
             [(ngModel)]="solutionVideoUrl"
             name="solutionVideoUrl"
             [placeholder]="'videos.videoLinkPlaceholder' | t"
-            required
           />
         </label>
-        <button type="submit" [disabled]="uploading()">
-          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
-        </button>
+        <label>
+          {{ 'videos.videoFile' | t }}
+          <input
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime"
+            (change)="onSolutionFileSelected($event)"
+            [disabled]="uploading()"
+          />
+        </label>
+        @if (uploadProgress() != null) {
+          <div class="upload-progress" aria-live="polite">
+            <div class="upload-progress-bar">
+              <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
+            </div>
+            <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+          </div>
+        }
+        <div class="video-upload-actions">
+          <button type="submit" [disabled]="uploading() || !solutionVideoUrl.trim()">
+            {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+          </button>
+          <button type="button" [disabled]="uploading() || !solutionVideoFile()" (click)="attachSolutionVideoFile()">
+            {{
+              uploadProgress() != null
+                ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
+            }}
+          </button>
+        </div>
       </form>
     </section>
 

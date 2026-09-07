@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import {
   Appointment,
   Assignment,
@@ -12,16 +12,25 @@ import {
   ChatMessage,
   ChatRoom,
   ChatUnreadSummary,
+  AppNotification,
+  NotificationUnreadSummary,
   Classroom,
   ClassroomCourseAssignment,
+  ClassroomZoomLink,
   CompleteStepResponse,
   Course,
   CourseLesson,
   CourseUnit,
+  CourseVideoLibraryItem,
   CreateMeetingPayload,
   ClassroomDiagnosis,
   DailyWhatsAppReportsResult,
   EnrollStudentResult,
+  PagedClassroomEnrollments,
+  PagedCourses,
+  PagedWeeklyStudyPlans,
+  PagedStudentClassroomAttendance,
+  StudentClassroomAttendance,
   Exam,
   ExamAttempt,
   FixedTimetableEntry,
@@ -30,9 +39,11 @@ import {
   StudentWeeklyReportGridRow,
   StudentWeeklyReport,
   SaveWeeklyReportEntry,
+  TopWeeklyStudent,
   WeeklyStudyPlan,
   SaveWeeklyStudyPlanWeek,
   GeneratedStudyPlan,
+  GeneratedCourseTree,
   GeneratedAssessmentDraft,
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
@@ -51,6 +62,8 @@ import {
   Quiz,
   QuizAttemptReview,
   TeacherQuizListItem,
+  TeacherQuizDetail,
+  SendAdminWhatsAppResult,
   SendClassroomWhatsAppResult,
   StudentSummary,
   SubmitQuizResponse,
@@ -66,12 +79,12 @@ import {
   Subject
 } from './models';
 import { normalizePmStartMinutes } from './fixed-timetable.util';
-import { environment } from '../environments/environment';
+import { resolveApiBaseUrl } from './api-base-url';
 
 @Injectable({ providedIn: 'root' })
 export class LearningApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = environment.apiBaseUrl;
+  private readonly baseUrl = resolveApiBaseUrl();
 
   getCourses(includeContent = true): Observable<Course[]> {
     const query = includeContent ? '' : '?includeContent=false';
@@ -169,6 +182,22 @@ export class LearningApiService {
     return this.http.get<ChatUnreadSummary>(`${this.baseUrl}/chat/unread`);
   }
 
+  listNotifications(limit = 30): Observable<AppNotification[]> {
+    return this.http.get<AppNotification[]>(`${this.baseUrl}/notifications`, { params: { limit } });
+  }
+
+  getNotificationUnreadSummary(): Observable<NotificationUnreadSummary> {
+    return this.http.get<NotificationUnreadSummary>(`${this.baseUrl}/notifications/unread`);
+  }
+
+  markNotificationRead(id: string): Observable<AppNotification> {
+    return this.http.post<AppNotification>(`${this.baseUrl}/notifications/${id}/read`, {});
+  }
+
+  markAllNotificationsRead(): Observable<number> {
+    return this.http.post<number>(`${this.baseUrl}/notifications/read-all`, {});
+  }
+
   markChatRoomRead(roomId: string): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/chat/rooms/${roomId}/read`, {});
   }
@@ -229,15 +258,23 @@ export class LearningApiService {
     title: string;
     description?: string;
     xpReward: number;
+    durationMinutes?: number | null;
+    isPublished: boolean;
     questions: {
+      id?: string | null;
       prompt: string;
+      questionType?: string;
+      passageText?: string;
       optionA?: string | null;
       optionB?: string | null;
       optionC?: string | null;
       options?: string[];
-      correctOption: string;
+      correctOption?: string;
+      correctAnswer?: string;
+      points?: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
+      children?: unknown[];
     }[];
   }): Observable<Quiz> {
     return this.http.post<Quiz>(`${this.baseUrl}/quizzes`, payload);
@@ -258,6 +295,49 @@ export class LearningApiService {
     return this.http.get<TeacherQuizListItem[]>(
       `${this.baseUrl}/teacher/quizzes${query ? `?${query}` : ''}`
     );
+  }
+
+  getTeacherQuiz(quizId: string): Observable<TeacherQuizDetail> {
+    return this.http.get<TeacherQuizDetail>(`${this.baseUrl}/teacher/quizzes/${quizId}`);
+  }
+
+  updateQuiz(
+    quizId: string,
+    payload: {
+      courseId: string;
+      classroomId?: string | null;
+      title: string;
+      description?: string;
+      xpReward: number;
+      durationMinutes?: number | null;
+      isPublished: boolean;
+      questions: {
+        id?: string | null;
+        prompt: string;
+        questionType?: string;
+        passageText?: string;
+        optionA?: string | null;
+        optionB?: string | null;
+        optionC?: string | null;
+        options?: string[];
+        correctOption?: string;
+        correctAnswer?: string;
+        points?: number;
+        sortOrder: number;
+        promptImageMediaAssetId?: string | null;
+        children?: unknown[];
+      }[];
+    }
+  ): Observable<Quiz> {
+    return this.http.put<Quiz>(`${this.baseUrl}/teacher/quizzes/${quizId}`, payload);
+  }
+
+  deleteQuiz(quizId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/teacher/quizzes/${quizId}`);
+  }
+
+  publishQuiz(quizId: string): Observable<Quiz> {
+    return this.http.post<Quiz>(`${this.baseUrl}/teacher/quizzes/${quizId}/publish`, {});
   }
 
   getQuizAttempts(quizId: string): Observable<QuizAttemptReview[]> {
@@ -485,6 +565,82 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/session-attendance/${attendanceId}`);
   }
 
+  getStudentAttendance(params: {
+    classroomId?: string;
+    gradeId?: number;
+    fromDate?: string;
+    toDate?: string;
+    studentSearch?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedStudentClassroomAttendance> {
+    const query = new URLSearchParams();
+    if (params.classroomId) query.set('classroomId', params.classroomId);
+    if (params.gradeId != null) query.set('gradeId', String(params.gradeId));
+    if (params.fromDate) query.set('fromDate', params.fromDate);
+    if (params.toDate) query.set('toDate', params.toDate);
+    if (params.studentSearch?.trim()) query.set('studentSearch', params.studentSearch.trim());
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedStudentClassroomAttendance>(`${this.baseUrl}/student-attendance${qs ? `?${qs}` : ''}`);
+  }
+
+  createStudentAttendance(payload: {
+    studentId: string;
+    classroomId: string;
+    attendanceDate: string;
+    status?: string;
+  }): Observable<StudentClassroomAttendance> {
+    return this.http.post<StudentClassroomAttendance>(`${this.baseUrl}/student-attendance`, payload);
+  }
+
+  deleteStudentAttendance(attendanceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/student-attendance/${attendanceId}`);
+  }
+
+  getAdminStudentAttendance(params: {
+    classroomId?: string;
+    gradeId?: number;
+    fromDate?: string;
+    toDate?: string;
+    studentSearch?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedStudentClassroomAttendance> {
+    const query = new URLSearchParams();
+    if (params.classroomId) query.set('classroomId', params.classroomId);
+    if (params.gradeId != null) query.set('gradeId', String(params.gradeId));
+    if (params.fromDate) query.set('fromDate', params.fromDate);
+    if (params.toDate) query.set('toDate', params.toDate);
+    if (params.studentSearch?.trim()) query.set('studentSearch', params.studentSearch.trim());
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedStudentClassroomAttendance>(`${this.baseUrl}/admin/student-attendance${qs ? `?${qs}` : ''}`);
+  }
+
+  createAdminStudentAttendance(payload: {
+    studentId: string;
+    classroomId: string;
+    attendanceDate: string;
+    status?: string;
+  }): Observable<StudentClassroomAttendance> {
+    return this.http.post<StudentClassroomAttendance>(`${this.baseUrl}/admin/student-attendance`, payload);
+  }
+
+  deleteAdminStudentAttendance(attendanceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/student-attendance/${attendanceId}`);
+  }
+
   getWeeklyReportGrid(filters: { weekStart: string; grade?: number }): Observable<StudentWeeklyReportGridRow[]> {
     const params = new URLSearchParams();
     params.set('weekStart', filters.weekStart);
@@ -505,11 +661,35 @@ export class LearningApiService {
     return this.http.get<StudentWeeklyReport[]>(`${this.baseUrl}/weekly-reports${query ? `?${query}` : ''}`);
   }
 
+  listAdminWeeklyReports(filters?: {
+    teacherId?: string;
+    grade?: number;
+    fromDate?: string;
+    toDate?: string;
+  }): Observable<StudentWeeklyReport[]> {
+    const params = new URLSearchParams();
+    if (filters?.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters?.grade != null) params.set('grade', String(filters.grade));
+    if (filters?.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters?.toDate) params.set('toDate', filters.toDate);
+    const query = params.toString();
+    return this.http.get<StudentWeeklyReport[]>(`${this.baseUrl}/admin/weekly-reports${query ? `?${query}` : ''}`);
+  }
+
   saveWeeklyReports(payload: {
     weekStartDate: string;
     entries: SaveWeeklyReportEntry[];
   }): Observable<StudentWeeklyReportGridRow[]> {
     return this.http.put<StudentWeeklyReportGridRow[]>(`${this.baseUrl}/weekly-reports`, payload);
+  }
+
+  listTopWeeklyStudents(weekStart?: string): Observable<TopWeeklyStudent[]> {
+    const params = new URLSearchParams();
+    if (weekStart) params.set('weekStart', weekStart);
+    const query = params.toString();
+    return this.http.get<TopWeeklyStudent[]>(
+      `${this.baseUrl}/weekly-reports/top-students${query ? `?${query}` : ''}`
+    );
   }
 
   listStudyPlans(filters?: {
@@ -529,6 +709,29 @@ export class LearningApiService {
     return this.http.get<WeeklyStudyPlan[]>(`${this.baseUrl}/study-plans${query ? `?${query}` : ''}`);
   }
 
+  getAdminStudyPlans(params: {
+    teacherId?: string;
+    courseId?: string;
+    fromDate?: string;
+    toDate?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedWeeklyStudyPlans> {
+    const query = new URLSearchParams();
+    if (params.teacherId) query.set('teacherId', params.teacherId);
+    if (params.courseId) query.set('courseId', params.courseId);
+    if (params.fromDate) query.set('fromDate', params.fromDate);
+    if (params.toDate) query.set('toDate', params.toDate);
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedWeeklyStudyPlans>(`${this.baseUrl}/admin/study-plans${qs ? `?${qs}` : ''}`);
+  }
+
   saveStudyPlan(payload: {
     id?: string | null;
     courseId: string;
@@ -545,6 +748,7 @@ export class LearningApiService {
     fromDate: string;
     toDate: string;
     language?: string;
+    prompt?: string;
   }): Observable<GeneratedStudyPlan> {
     return this.http.post<GeneratedStudyPlan>(`${this.baseUrl}/study-plans/generate`, payload);
   }
@@ -763,6 +967,10 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/admin/users/${userId}`);
   }
 
+  setUserActive(userId: string, isActive: boolean): Observable<ManagedUser> {
+    return this.http.post<ManagedUser>(`${this.baseUrl}/admin/users/${userId}/active`, { isActive });
+  }
+
   getZoomStatus(): Observable<ZoomConnectionStatus> {
     return this.http.get<ZoomConnectionStatus>(`${this.baseUrl}/zoom/status`);
   }
@@ -788,6 +996,27 @@ export class LearningApiService {
     return this.http.put<ZoomOAuthSettings>(`${this.baseUrl}/zoom/oauth-settings`, payload);
   }
 
+  getAdminCourses(params: {
+    titleSearch?: string;
+    stageId?: number;
+    grade?: number;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedCourses> {
+    const query = new URLSearchParams();
+    if (params.titleSearch?.trim()) query.set('titleSearch', params.titleSearch.trim());
+    if (params.stageId != null) query.set('stageId', String(params.stageId));
+    if (params.grade != null) query.set('grade', String(params.grade));
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedCourses>(`${this.baseUrl}/admin/courses${qs ? `?${qs}` : ''}`);
+  }
+
   createCourse(payload: {
     title: string;
     theme: string;
@@ -799,8 +1028,13 @@ export class LearningApiService {
     stageId?: number | null;
     schoolType?: string | null;
     sortOrder?: number | null;
+    isPublished?: boolean;
   }): Observable<Course[]> {
     return this.http.post<Course[]>(`${this.baseUrl}/admin/courses`, payload);
+  }
+
+  setCoursePublished(courseId: string, isPublished: boolean): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}/admin/courses/${courseId}/published`, { isPublished });
   }
 
   updateCourse(
@@ -816,6 +1050,7 @@ export class LearningApiService {
       stageId?: number | null;
       schoolType?: string | null;
       sortOrder?: number | null;
+      isPublished?: boolean;
     }
   ): Observable<Course> {
     return this.http.put<Course>(`${this.baseUrl}/admin/courses/${courseId}`, payload);
@@ -872,6 +1107,21 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/admin/lessons/${lessonId}`);
   }
 
+  generateCourseTree(
+    courseId: string,
+    payload: {
+      mode: 'rebuild' | 'update';
+      prompt?: string;
+      language?: string;
+      apply?: boolean;
+    }
+  ): Observable<GeneratedCourseTree> {
+    return this.http.post<GeneratedCourseTree>(
+      `${this.baseUrl}/admin/courses/${courseId}/tree/generate`,
+      payload
+    );
+  }
+
   getSiteSettings(): Observable<SiteSettings> {
     return this.http
       .get<SiteSettings>(`${this.baseUrl}/site-settings`)
@@ -917,12 +1167,36 @@ export class LearningApiService {
     return this.http.get<Classroom[]>(`${this.baseUrl}/classrooms`);
   }
 
+  getClassroomEnrollments(params: {
+    classroomId?: string;
+    courseId?: string;
+    studentSearch?: string;
+    sortKey?: string;
+    sortDir?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedClassroomEnrollments> {
+    const query = new URLSearchParams();
+    if (params.classroomId) query.set('classroomId', params.classroomId);
+    if (params.courseId) query.set('courseId', params.courseId);
+    if (params.studentSearch?.trim()) query.set('studentSearch', params.studentSearch.trim());
+    if (params.sortKey) query.set('sortKey', params.sortKey);
+    if (params.sortDir) query.set('sortDir', params.sortDir);
+    if (params.page) query.set('page', String(params.page));
+    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    const qs = query.toString();
+    return this.http.get<PagedClassroomEnrollments>(
+      `${this.baseUrl}/classrooms/enrollments${qs ? `?${qs}` : ''}`
+    );
+  }
+
   createClassroom(payload: {
     name: string;
     description?: string;
     grade?: number | null;
     courses?: ClassroomCourseAssignment[] | null;
     whatsAppGroupInviteUrl?: string;
+    zoomLinks?: ClassroomZoomLink[];
     whatsAppNotifyPhones?: string;
   }): Observable<Classroom> {
     return this.http.post<Classroom>(`${this.baseUrl}/classrooms`, payload);
@@ -936,6 +1210,7 @@ export class LearningApiService {
       grade?: number | null;
       courses?: ClassroomCourseAssignment[] | null;
       whatsAppGroupInviteUrl?: string;
+      zoomLinks?: ClassroomZoomLink[];
       whatsAppNotifyPhones?: string;
     }
   ): Observable<Classroom> {
@@ -979,18 +1254,33 @@ export class LearningApiService {
     return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/whatsapp`, payload);
   }
 
+  updateClassroomZoom(classroomId: string, payload: { zoomLinks?: ClassroomZoomLink[] }): Observable<Classroom> {
+    return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/zoom`, payload);
+  }
+
   sendClassroomWhatsApp(
     classroomId: string,
     payload: {
       message: string;
       studentIds?: string[] | null;
       includeGroupInviteLink?: boolean;
+      sendToGroup?: boolean;
+      groupId?: string | null;
     }
   ): Observable<SendClassroomWhatsAppResult> {
     return this.http.post<SendClassroomWhatsAppResult>(
       `${this.baseUrl}/classrooms/${classroomId}/whatsapp/send`,
       payload
     );
+  }
+
+  sendAdminWhatsApp(payload: {
+    message: string;
+    sendToGroup?: boolean;
+    phones?: string[] | null;
+    groupId?: string | null;
+  }): Observable<SendAdminWhatsAppResult> {
+    return this.http.post<SendAdminWhatsAppResult>(`${this.baseUrl}/admin/whatsapp/send`, payload);
   }
 
   getAssignments(classroomId?: string): Observable<Assignment[]> {
@@ -1008,24 +1298,66 @@ export class LearningApiService {
     description?: string;
     dueAtUtc?: string | null;
     xpReward: number;
+    isPublished: boolean;
     questions: {
       prompt: string;
       questionType: string;
+      passageText?: string;
       optionA?: string | null;
       optionB?: string | null;
       optionC?: string | null;
+      options?: string[];
       correctAnswer: string;
       points: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
+      id?: string | null;
+      children?: unknown[];
     }[];
   }): Observable<Assignment> {
     return this.http.post<Assignment>(`${this.baseUrl}/assignments`, payload);
   }
 
+  updateAssignment(
+    assignmentId: string,
+    payload: {
+      classroomId: string;
+      title: string;
+      description?: string;
+      dueAtUtc?: string | null;
+      xpReward: number;
+      isPublished: boolean;
+      questions: {
+        prompt: string;
+        questionType: string;
+        passageText?: string;
+        optionA?: string | null;
+        optionB?: string | null;
+        optionC?: string | null;
+        options?: string[];
+        correctAnswer: string;
+        points: number;
+        sortOrder: number;
+        promptImageMediaAssetId?: string | null;
+        id?: string | null;
+        children?: unknown[];
+      }[];
+    }
+  ): Observable<Assignment> {
+    return this.http.put<Assignment>(`${this.baseUrl}/assignments/${assignmentId}`, payload);
+  }
+
+  deleteAssignment(assignmentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}`);
+  }
+
+  publishAssignment(assignmentId: string): Observable<Assignment> {
+    return this.http.post<Assignment>(`${this.baseUrl}/assignments/${assignmentId}/publish`, {});
+  }
+
   submitAssignment(payload: {
     assignmentId: string;
-    answers: { questionId: string; answerText: string }[];
+    answers: { questionId: string; answerText: string; answerImageMediaAssetId?: string | null }[];
   }): Observable<AssignmentSubmission> {
     return this.http.post<AssignmentSubmission>(`${this.baseUrl}/assignments/submit`, payload);
   }
@@ -1037,6 +1369,7 @@ export class LearningApiService {
   gradeSubmission(payload: {
     submissionId: string;
     teacherFeedback?: string;
+    feedbackImageMediaAssetId?: string | null;
     answers?: { questionId: string; isCorrect: boolean; pointsAwarded: number }[];
   }): Observable<AssignmentSubmission> {
     return this.http.post<AssignmentSubmission>(`${this.baseUrl}/assignments/submissions/grade`, payload);
@@ -1099,14 +1432,20 @@ export class LearningApiService {
     description?: string;
     dueAtUtc?: string | null;
     xpReward: number;
+    durationMinutes?: number | null;
+    isPublished: boolean;
     questionIds: string[];
   }): Observable<Exam> {
     return this.http.post<Exam>(`${this.baseUrl}/exams`, payload);
   }
 
+  publishExam(examId: string): Observable<Exam> {
+    return this.http.post<Exam>(`${this.baseUrl}/exams/${examId}/publish`, {});
+  }
+
   submitExam(payload: {
     examId: string;
-    answers: { questionId: string; answerText: string }[];
+    answers: { questionId: string; answerText: string; answerImageMediaAssetId?: string | null }[];
   }): Observable<ExamAttempt> {
     return this.http.post<ExamAttempt>(`${this.baseUrl}/exams/submit`, payload);
   }
@@ -1119,6 +1458,15 @@ export class LearningApiService {
     return this.http.get<ExamAttempt[]>(`${this.baseUrl}/exams/${examId}/attempts`);
   }
 
+  gradeExamAttempt(payload: {
+    attemptId: string;
+    teacherFeedback?: string;
+    feedbackImageMediaAssetId?: string | null;
+    answers?: { questionId: string; isCorrect: boolean; pointsAwarded: number }[];
+  }): Observable<ExamAttempt> {
+    return this.http.post<ExamAttempt>(`${this.baseUrl}/exams/attempts/grade`, payload);
+  }
+
   uploadMedia(file: File, durationSeconds?: number): Observable<MediaAsset> {
     const form = new FormData();
     form.append('file', file, file.name);
@@ -1126,6 +1474,37 @@ export class LearningApiService {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/upload`, form);
+  }
+
+  uploadMediaWithProgress(
+    file: File,
+    durationSeconds?: number
+  ): Observable<{ progress: number; asset?: MediaAsset }> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    if (durationSeconds && durationSeconds > 0) {
+      form.append('durationSeconds', String(Math.round(durationSeconds)));
+    }
+
+    return this.http
+      .post<MediaAsset>(`${this.baseUrl}/media/upload`, form, {
+        reportProgress: true,
+        observe: 'events'
+      })
+      .pipe(
+        map((event) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            const total = event.total ?? 0;
+            const progress = total > 0 ? Math.round((100 * event.loaded) / total) : 0;
+            return { progress };
+          }
+          if (event.type === HttpEventType.Response) {
+            return { progress: 100, asset: event.body ?? undefined };
+          }
+          return null;
+        }),
+        filter((update): update is { progress: number; asset?: MediaAsset } => update !== null)
+      );
   }
 
   uploadQuestionImage(file: File): Observable<{ id: string; url: string; contentType: string }> {
@@ -1159,6 +1538,24 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/lessons/videos/${lessonVideoId}`);
   }
 
+  getCourseVideoLibrary(): Observable<CourseVideoLibraryItem[]> {
+    return this.http.get<CourseVideoLibraryItem[]>(`${this.baseUrl}/media/course-videos`);
+  }
+
+  attachCourseVideo(
+    courseId: string,
+    payload: { mediaAssetId: string; title?: string; sortOrder?: number }
+  ): Observable<{ id: string; courseId: string; mediaAssetId: string; title: string }> {
+    return this.http.post<{ id: string; courseId: string; mediaAssetId: string; title: string }>(
+      `${this.baseUrl}/courses/${courseId}/videos`,
+      payload
+    );
+  }
+
+  deleteCourseVideo(courseVideoId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/courses/videos/${courseVideoId}`);
+  }
+
   attachAssignmentSolutionVideo(assignmentId: string, mediaAssetId: string): Observable<MediaAsset> {
     return this.http.post<MediaAsset>(`${this.baseUrl}/assignments/${assignmentId}/solution-video`, {
       mediaAssetId
@@ -1170,7 +1567,29 @@ export class LearningApiService {
   }
 
   getPlayback(mediaAssetId: string): Observable<PlaybackInfo> {
-    return this.http.get<PlaybackInfo>(`${this.baseUrl}/media/${mediaAssetId}/playback`);
+    const params = { apiBase: this.baseUrl };
+    return this.http.get<PlaybackInfo>(`${this.baseUrl}/media/${mediaAssetId}/playback`, { params }).pipe(
+      map((info) => ({
+        ...info,
+        playbackUrl: this.normalizeMediaPlaybackUrl(info)
+      }))
+    );
+  }
+
+  private normalizeMediaPlaybackUrl(info: PlaybackInfo): string {
+    const url = info.playbackUrl;
+    if (!url) return url;
+
+    try {
+      const parsed = new URL(url);
+      if (parsed.pathname.endsWith('/media/stream')) {
+        return `${this.baseUrl}/media/stream${parsed.search}`;
+      }
+    } catch {
+      // Relative URLs are returned as-is.
+    }
+
+    return url;
   }
 
   recordWatchEvents(payload: {

@@ -5,7 +5,7 @@
   <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block">
-    <h3>{{ 'teacher.assignments.create' | t }}</h3>
+    <h3>{{ (editingAssignmentId ? 'teacher.assignments.edit' : 'teacher.assignments.create') | t }}</h3>
     <form class="meeting-form" (ngSubmit)="createAssignment()">
       <label>{{ 'common.title' | t }} <input [(ngModel)]="assignmentTitle" name="assignmentTitle" required /></label>
       <label>{{ 'common.description' | t }} <input [(ngModel)]="assignmentDescription" name="assignmentDescription" /></label>
@@ -49,6 +49,10 @@
         />
       </label>
       <label>XP <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" /></label>
+      <label class="checkbox">
+        <input type="checkbox" [(ngModel)]="assignmentIsPublished" name="assignmentIsPublished" />
+        {{ 'teacher.assessments.publish' | t }}
+      </label>
       <label>
         {{ 'teacher.ai.questionCount' | t }}
         <input
@@ -61,11 +65,10 @@
         />
       </label>
       <label>
-        {{ 'common.type' | t }}
+        {{ 'teacher.ai.preferredType' | t }}
         <app-searchable-select
           [(ngModel)]="assignmentType"
           name="assignmentType"
-          (ngModelChange)="onTypeChange()"
           [options]="[{ value: 'ShortAnswer', label: ('assignType.shortAnswer' | t) }, { value: 'MultipleChoice', label: ('assignType.multipleChoice' | t) }]"
         />
       </label>
@@ -75,26 +78,7 @@
           <div class="question-card-head">
             <strong>{{ 'teacher.assignments.question' | t }} {{ qi + 1 }}</strong>
           </div>
-          <label class="question-prompt">
-            {{ 'teacher.assignments.question' | t }}
-            <textarea [(ngModel)]="question.prompt" [name]="'assignmentPrompt-' + qi" rows="2" required></textarea>
-          </label>
-          <app-question-image-upload
-            [mediaAssetId]="question.promptImageMediaAssetId ?? null"
-            [imageUrl]="question.promptImageUrl ?? null"
-            (mediaAssetIdChange)="question.promptImageMediaAssetId = $event"
-            (imageUrlChange)="question.promptImageUrl = $event"
-          />
-          <div class="options-editor">
-            @if (question.questionType === 'MultipleChoice') {
-              <label>A <input [(ngModel)]="question.optionA" [name]="'assignmentOptionA-' + qi" /></label>
-              <label>B <input [(ngModel)]="question.optionB" [name]="'assignmentOptionB-' + qi" /></label>
-              <label>C <input [(ngModel)]="question.optionC" [name]="'assignmentOptionC-' + qi" /></label>
-            }
-            <label>{{ 'common.correctAnswer' | t }}
-              <input [(ngModel)]="question.correct" [name]="'assignmentCorrect-' + qi" required />
-            </label>
-          </div>
+          <app-question-draft-editor [draft]="question" [namePrefix]="'asg-' + qi" [allowShortAnswer]="true" />
         </div>
       }
       </div>
@@ -106,7 +90,10 @@
           (click)="generate()">
           {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
         </button>
-        <button type="submit">{{ 'teacher.assignments.create' | t }}</button>
+        <button type="submit">{{ (editingAssignmentId ? 'teacher.assignments.save' : 'teacher.assignments.create') | t }}</button>
+        @if (editingAssignmentId) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
       </div>
     </form>
   </section>
@@ -116,8 +103,26 @@
     @for (assignment of assignments(); track assignment.id) {
       <div class="meeting-row">
         <div>
-          <strong>{{ assignment.title }}</strong>
+          <div class="list-title-row">
+            <strong>{{ assignment.title }}</strong>
+            <span class="status-badge" [class.published]="assignment.isPublished" [class.draft]="!assignment.isPublished">
+              {{ (assignment.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
+            </span>
+          </div>
           <p class="meta">{{ assignment.classroomName }} · {{ assignment.xpReward }} XP · {{ assignment.questions.length }} {{ 'common.questions' | t }}</p>
+        </div>
+        <div class="row-actions">
+          @if (!assignment.isPublished) {
+            <button type="button" class="ghost-btn" [disabled]="isPublishing(assignment.id)" (click)="publishAssignment(assignment)">
+              {{ isPublishing(assignment.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
+            </button>
+          } @else {
+            <button type="button" class="ghost-btn" (click)="copyStudentLink(assignment.id)">
+              {{ 'teacher.assessments.copyStudentLink' | t }}
+            </button>
+          }
+          <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
+          <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteAssignment(assignment)" />
         </div>
       </div>
     } @empty {

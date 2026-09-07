@@ -6,7 +6,8 @@ public sealed record GenerateWeeklyStudyPlanRequest(
     Guid CourseId,
     DateOnly FromDate,
     DateOnly ToDate,
-    string? Language);
+    string? Language,
+    string? Prompt);
 
 public sealed record GenerateWeeklyStudyPlanResult(
     string Notes,
@@ -17,4 +18,5 @@ public sealed record GenerateWeeklyStudyPlanCommand(
     Guid CourseId,
     DateOnly FromDate,
     DateOnly ToDate,
-    string? Language) : ICommand<GenerateWeeklyStudyPlanResult>;
+    string? Language,
+    string? Prompt) : ICommand<GenerateWeeklyStudyPlanResult>;

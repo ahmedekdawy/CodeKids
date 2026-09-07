@@ -205,6 +205,37 @@
   margin: 0.75rem 0 0.35rem;
 }
 
+.study-plan-prompt-field {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.75rem 0 0.35rem;
+  width: 100%;
+  max-width: 42rem;
+}
+
+.study-plan-prompt-field > span:first-child {
+  font-weight: 650;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.study-plan-prompt-field textarea {
+  width: 100%;
+  min-height: 5.5rem;
+  resize: vertical;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.study-plan-generate-row {
+  margin-top: 0.35rem;
+}
+
 @media (max-width: 1100px) {
   .study-plan-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

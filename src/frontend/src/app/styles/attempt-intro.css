@@ -1,0 +1,38 @@
+/* Start screen shown before a timed quiz or exam begins. Imported by the play pages. */
+.attempt-intro {
+  display: grid;
+  justify-items: start;
+  gap: 0.9rem;
+  max-width: 34rem;
+}
+
+.attempt-intro h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--heading);
+}
+
+.attempt-facts {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-muted);
+}
+
+.attempt-facts .limit {
+  color: var(--heading);
+  font-weight: 600;
+}
+
+.attempt-rules {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-muted);
+  line-height: 1.6;
+}

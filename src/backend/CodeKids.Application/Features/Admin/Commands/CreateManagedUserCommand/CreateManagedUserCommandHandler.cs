@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Auth;
+using CodeKids.Application.Features.Profile;
 using CodeKids.Domain;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -319,6 +320,8 @@ public sealed class CreateManagedUserCommandHandler(
             user.PrepAmount,
             user.SecondaryAmount,
             user.MonthlySalary,
-            rates);
+            user.IsActive,
+            rates,
+            ProfilePhotoUrls.Build(user));
     }
 }

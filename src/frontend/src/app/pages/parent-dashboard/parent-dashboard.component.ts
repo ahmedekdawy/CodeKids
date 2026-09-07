@@ -1,13 +1,15 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { formatGradeLabel } from '../../grade.util';
+import { classroomHasZoomLinks } from '../../shared/classroom-zoom-links/classroom-zoom-links.util';
 import {
   ChildEvaluationSummary,
   ChildProgress,
+  Classroom,
   LiveSession,
   ParentAssessmentItem,
   ParentChildCourse,
@@ -15,13 +17,17 @@ import {
   ParentDashboard
 } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { NotificationBellComponent } from '../../shared/notification-bell/notification-bell.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ApiBusyIndicatorComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, IconActionButtonComponent, UserPhotoComponent],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })
@@ -29,15 +35,19 @@ export class ParentDashboardComponent {
   readonly auth = inject(AuthService);
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly dashboard = signal<ParentDashboard | null>(null);
   readonly meetings = signal<LiveSession[]>([]);
+  readonly classrooms = signal<Classroom[]>([]);
   readonly selectedChildId = signal<string | null>(null);
   readonly overview = signal<ParentChildOverview | null>(null);
   readonly selectedCourseId = signal<string | null>(null);
   readonly loadingChild = signal(false);
   readonly savingParent = signal(false);
   readonly savingChild = signal(false);
+  readonly impersonatingId = signal<string | null>(null);
   readonly message = signal('');
   readonly error = signal('');
 
@@ -64,9 +74,20 @@ export class ParentDashboardComponent {
     () => this.selectedChild()?.latestEvaluation ?? this.overview()?.evaluations[0] ?? null
   );
 
+  readonly classroomsWithZoom = computed(() => this.classrooms().filter((room) => classroomHasZoomLinks(room)));
+
   constructor() {
     this.reloadDashboard();
     this.api.getMeetings().subscribe((meetings) => this.meetings.set(meetings));
+    this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
+    this.route.queryParamMap.subscribe((params) => {
+      const childId = params.get('child');
+      if (!childId) return;
+      const child = this.dashboard()?.children.find((c) => c.studentId === childId);
+      if (child) {
+        this.selectChild(child);
+      }
+    });
   }
 
   selectChild(child: ChildProgress): void {
@@ -96,6 +117,22 @@ export class ParentDashboardComponent {
 
   selectCourse(course: ParentChildCourse): void {
     this.selectedCourseId.set(course.courseId);
+  }
+
+  loginAs(childId: string): void {
+    this.error.set('');
+    this.message.set('');
+    this.impersonatingId.set(childId);
+    this.auth.impersonateChildAsParent(childId).subscribe({
+      next: () => {
+        this.impersonatingId.set(null);
+        void this.router.navigateByUrl(this.auth.roleHome());
+      },
+      error: (err) => {
+        this.impersonatingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'parent.loginAsFailed'));
+      }
+    });
   }
 
   backToChildren(): void {
@@ -186,10 +223,15 @@ export class ParentDashboardComponent {
         this.dashboard.set(dashboard);
         this.parentEmail = dashboard.parentEmail ?? '';
         this.parentMobile = dashboard.parentMobilePhone ?? '';
-        const childId = keepChildId ?? this.selectedChildId();
+        const childId = keepChildId ?? this.selectedChildId() ?? this.route.snapshot.queryParamMap.get('child');
         if (childId) {
           const child = dashboard.children.find((c) => c.studentId === childId);
-          if (child) this.fillChildForm(child);
+          if (child) {
+            this.fillChildForm(child);
+            if (!this.overview() || this.selectedChildId() !== childId) {
+              this.selectChild(child);
+            }
+          }
         }
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'parent.loadChildFailed'))

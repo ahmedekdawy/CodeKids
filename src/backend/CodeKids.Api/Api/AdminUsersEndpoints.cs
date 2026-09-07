@@ -1,5 +1,7 @@
 using CodeKids.Application.Features.Admin;
 
+using CodeKids.Application.Features.Auth;
+
 using CodeKids.Domain.Abstractions;
 
 using CodeKids.Infrastructure;
@@ -174,6 +176,44 @@ public static class AdminUsersEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+        app.MapPost("/api/admin/users/{userId:guid}/active", async (
+
+            Guid userId,
+
+            SetManagedUserActiveRequest request,
+
+            HttpContext httpContext,
+
+            ICommandHandler<SetManagedUserActiveCommand, ManagedUserDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var adminId = CurrentUser.GetUserId(httpContext.User);
+
+                return Results.Ok(await handler.Handle(
+
+                    new SetManagedUserActiveCommand(adminId, userId, request.IsActive),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapDelete("/api/admin/users/{userId:guid}", async (
 
             Guid userId,
@@ -195,6 +235,79 @@ public static class AdminUsersEndpoints
                 await handler.Handle(new DeleteManagedUserCommand(adminId, userId), cancellationToken);
 
                 return Results.NoContent();
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapPost("/api/admin/users/{userId:guid}/impersonate", async (
+
+            Guid userId,
+
+            HttpContext httpContext,
+
+            ICommandHandler<ImpersonateUserCommand, AuthResponse> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var adminId = CurrentUser.GetUserId(httpContext.User);
+
+                return Results.Ok(await handler.Handle(new ImpersonateUserCommand(adminId, userId), cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapPost("/api/admin/whatsapp/send", async (
+
+            SendAdminWhatsAppRequest request,
+
+            HttpContext httpContext,
+
+            ICommandHandler<SendAdminWhatsAppCommand, SendAdminWhatsAppResultDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var adminId = CurrentUser.GetUserId(httpContext.User);
+
+                return Results.Ok(await handler.Handle(
+
+                    new SendAdminWhatsAppCommand(
+                        adminId,
+                        request.Message,
+                        request.SendToGroup,
+                        request.Phones,
+                        request.GroupId),
+
+                    cancellationToken));
 
             }
 

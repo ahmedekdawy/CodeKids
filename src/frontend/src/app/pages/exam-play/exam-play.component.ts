@@ -1,19 +1,25 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { ChoiceOption, Exam, ExamAttempt, ExamQuestion } from '../../models';
+import { Exam, ExamAttempt } from '../../models';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { QuestionPlayPromptComponent } from '../../shared/question-play-prompt/question-play-prompt.component';
+import { AnswerImageDraft } from '../../shared/question-play-prompt/playable-question';
+import { AttemptGuardComponent } from '../../shared/timed-attempt/attempt-guard.component';
+import { TimedAttemptService } from '../../shared/timed-attempt/timed-attempt.service';
+import { answerableQuestions, flattenQuestions } from '../../shared/question-draft/question-draft.util';
 
 @Component({
   selector: 'app-exam-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent, AttemptGuardComponent],
+  providers: [TimedAttemptService],
   templateUrl: './exam-play.component.html',
   styleUrl: './exam-play.component.css'
 })
@@ -22,11 +28,24 @@ export class ExamPlayComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly locale = inject(LocaleService);
 
+  readonly attempt = inject(TimedAttemptService);
+
   readonly exam = signal<Exam | null>(null);
   readonly result = signal<ExamAttempt | null>(null);
   readonly error = signal('');
   readonly answers = signal<Record<string, string>>({});
   readonly multiAnswers = signal<Record<string, Set<string>>>({});
+  readonly answerImages = signal<Record<string, AnswerImageDraft>>({});
+
+  /** Questions stay hidden until the student starts, so the clock matches what they can see. */
+  readonly started = signal(false);
+  readonly starting = signal(false);
+  readonly timedOut = signal(false);
+
+  readonly questionCount = computed(() => {
+    const exam = this.exam();
+    return exam ? answerableQuestions(exam.questions).length : 0;
+  });
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('examId');
@@ -36,41 +55,47 @@ export class ExamPlayComponent {
         this.exam.set(exam);
         const seed: Record<string, string> = {};
         const multi: Record<string, Set<string>> = {};
-        for (const q of this.flatten(exam.questions)) {
+        const images: Record<string, AnswerImageDraft> = {};
+        for (const q of flattenQuestions(exam.questions)) {
           seed[q.id] = '';
           if (q.questionType === 'MultiChoice') multi[q.id] = new Set();
+          images[q.id] = { mediaAssetId: null, imageUrl: null };
         }
         this.answers.set(seed);
         this.multiAnswers.set(multi);
-        this.api.startExam(exam.id).subscribe({
-          error: (err) => {
-            if (!this.locale.hasApiErrorCode(err, 'api.errors.exam.alreadySubmitted')) {
-              this.error.set(this.locale.fromApiError(err, 'play.examStartFailed'));
-            }
-          }
-        });
+        this.answerImages.set(images);
       },
       error: () => this.error.set(this.locale.t('play.examNotFound'))
     });
   }
 
-  choiceOptions(question: ExamQuestion): ChoiceOption[] {
-    if (question.options?.length) return question.options;
-    const legacy: ChoiceOption[] = [];
-    if (question.optionA) legacy.push({ key: 'A', text: question.optionA });
-    if (question.optionB) legacy.push({ key: 'B', text: question.optionB });
-    if (question.optionC) legacy.push({ key: 'C', text: question.optionC });
-    if (question.optionD) legacy.push({ key: 'D', text: question.optionD });
-    return legacy;
-  }
+  begin(): void {
+    const exam = this.exam();
+    if (!exam || this.started() || this.starting()) return;
 
-  flatten(questions: ExamQuestion[]): ExamQuestion[] {
-    const list: ExamQuestion[] = [];
-    for (const q of questions) {
-      list.push(q);
-      list.push(...this.flatten(q.children || []));
-    }
-    return list;
+    this.starting.set(true);
+    this.error.set('');
+    this.api.startExam(exam.id).subscribe({
+      next: (attempt) => {
+        this.starting.set(false);
+        this.started.set(true);
+        this.attempt.start({
+          durationMinutes: exam.durationMinutes,
+          // Anchored on the server start time so reloading the page cannot buy extra minutes.
+          deadline: exam.durationMinutes
+            ? Date.parse(attempt.startedAtUtc) + exam.durationMinutes * 60_000
+            : null,
+          onExpire: () => {
+            this.timedOut.set(true);
+            this.submit();
+          }
+        });
+      },
+      error: (err) => {
+        this.starting.set(false);
+        this.error.set(this.locale.fromApiError(err, 'play.examStartFailed'));
+      }
+    });
   }
 
   setAnswer(questionId: string, value: string): void {
@@ -90,16 +115,25 @@ export class ExamPlayComponent {
     return this.multiAnswers()[questionId]?.has(key) === true;
   }
 
+  setAnswerImage(questionId: string, mediaAssetId: string | null, imageUrl: string | null): void {
+    this.answerImages.update((current) => ({
+      ...current,
+      [questionId]: { mediaAssetId, imageUrl }
+    }));
+  }
+
   submit(): void {
     const exam = this.exam();
     if (!exam) return;
-    const answerable = this.flatten(exam.questions).filter((q) => q.questionType !== 'Paragraph');
+    this.attempt.stop();
+    const answerable = answerableQuestions(exam.questions);
     this.api
       .submitExam({
         examId: exam.id,
         answers: answerable.map((q) => ({
           questionId: q.id,
-          answerText: this.answers()[q.id] || ''
+          answerText: this.answers()[q.id] || '',
+          answerImageMediaAssetId: this.answerImages()[q.id]?.mediaAssetId || null
         }))
       })
       .subscribe({

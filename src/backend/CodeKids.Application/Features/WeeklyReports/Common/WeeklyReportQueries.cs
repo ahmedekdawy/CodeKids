@@ -8,7 +8,7 @@ public sealed record GetWeeklyReportGridQuery(
     int? Grade) : IQuery<IReadOnlyList<StudentWeeklyReportGridRowDto>>;
 
 public sealed record ListStudentWeeklyReportsQuery(
-    Guid TeacherId,
+    Guid? TeacherId,
     int? Grade,
     DateOnly? FromDate,
     DateOnly? ToDate) : IQuery<IReadOnlyList<StudentWeeklyReportDto>>;
@@ -17,3 +17,6 @@ public sealed record SaveWeeklyReportsCommand(
     Guid TeacherId,
     DateOnly WeekStartDate,
     IReadOnlyList<SaveWeeklyReportEntryDto> Entries) : ICommand<IReadOnlyList<StudentWeeklyReportGridRowDto>>;
+
+public sealed record ListTopWeeklyStudentsQuery(DateOnly? WeekStartDate = null)
+    : IQuery<IReadOnlyList<TopWeeklyStudentDto>>;

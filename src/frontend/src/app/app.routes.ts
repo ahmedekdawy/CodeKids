@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, roleGuard } from './auth.guard';
+import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { RegisterTenantComponent } from './pages/register-tenant/register-tenant.component';
@@ -22,14 +23,19 @@ import { AdminCreateClassroomComponent } from './pages/admin/admin-create-classr
 import { AdminAssignClassroomComponent } from './pages/admin/admin-assign-classroom.component';
 import { AdminEnrollStudentComponent } from './pages/admin/admin-enroll-student.component';
 import { AdminSiteSettingsComponent } from './pages/admin/admin-site-settings.component';
+import { AdminWhatsAppComponent } from './pages/admin/admin-whatsapp.component';
 import { AdminAppointmentsComponent } from './pages/admin/admin-appointments.component';
 import { AdminTimetableComponent } from './pages/admin/admin-timetable.component';
 import { AdminStudyPlansComponent } from './pages/admin/admin-study-plans.component';
+import { AdminWeeklyReportsComponent } from './pages/admin/admin-weekly-reports.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
+import { AdminStudentAttendanceComponent } from './pages/admin/admin-student-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
 import { AdminAccountReportComponent } from './pages/admin/admin-account-report.component';
 import { AdminPaymentsComponent } from './pages/admin/admin-payments.component';
 import { AdminOtherExpensesComponent } from './pages/admin/admin-other-expenses.component';
+import { CoursePlayComponent } from './pages/course-play/course-play.component';
+import { AdminVideosComponent } from './pages/admin/admin-videos.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
 import { TeacherOverviewComponent } from './pages/teacher/teacher-overview.component';
 import { TeacherZoomComponent } from './pages/teacher/teacher-zoom.component';
@@ -44,6 +50,7 @@ import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.compo
 import { TeacherAppointmentsComponent } from './pages/teacher/teacher-appointments.component';
 import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.component';
 import { TeacherAttendanceComponent } from './pages/teacher/teacher-attendance.component';
+import { TeacherStudentAttendanceComponent } from './pages/teacher/teacher-student-attendance.component';
 import { TeacherWeeklyReportsComponent } from './pages/teacher/teacher-weekly-reports.component';
 import { TeacherStudyPlansComponent } from './pages/teacher/teacher-study-plans.component';
 import { TeacherAskedQuestionsComponent } from './pages/teacher/teacher-asked-questions.component';
@@ -53,7 +60,7 @@ import { StudentAskedQuestionsComponent } from './pages/student-asked-questions/
 import { StudentChatComponent } from './pages/student-chat/student-chat.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
+  { path: '', pathMatch: 'full', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'register-tenant', component: RegisterTenantComponent },
@@ -84,6 +91,11 @@ export const routes: Routes = [
     path: 'lessons/:lessonId',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: LessonPlayComponent
+  },
+  {
+    path: 'courses/:courseId',
+    canActivate: [authGuard, roleGuard(['Student', 'Teacher', 'SuperAdmin'])],
+    component: CoursePlayComponent
   },
   {
     path: 'quizzes/:quizId',
@@ -130,6 +142,7 @@ export const routes: Routes = [
       { path: 'appointments', component: TeacherAppointmentsComponent },
       { path: 'timetable', component: TeacherTimetableComponent },
       { path: 'attendance', component: TeacherAttendanceComponent },
+      { path: 'student-attendance', component: TeacherStudentAttendanceComponent },
       { path: 'weekly-reports', component: TeacherWeeklyReportsComponent },
       { path: 'study-plans', component: TeacherStudyPlansComponent },
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
@@ -155,17 +168,21 @@ export const routes: Routes = [
       { path: 'students', component: AdminStudentsComponent },
       { path: 'courses', component: AdminCoursesComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
+      { path: 'videos', component: AdminVideosComponent },
       { path: 'create-classroom', component: AdminCreateClassroomComponent },
       { path: 'assign-classroom', component: AdminAssignClassroomComponent },
       { path: 'enroll-student', component: AdminEnrollStudentComponent },
       { path: 'appointments', component: AdminAppointmentsComponent },
       { path: 'timetable', component: AdminTimetableComponent },
       { path: 'study-plans', component: AdminStudyPlansComponent },
+      { path: 'weekly-reports', component: AdminWeeklyReportsComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
+      { path: 'student-attendance', component: AdminStudentAttendanceComponent },
       { path: 'payroll', component: AdminPayrollComponent },
       { path: 'account-report', component: AdminAccountReportComponent },
       { path: 'payments', component: AdminPaymentsComponent },
       { path: 'other-expenses', component: AdminOtherExpensesComponent },
+      { path: 'whatsapp', component: AdminWhatsAppComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' }
     ]

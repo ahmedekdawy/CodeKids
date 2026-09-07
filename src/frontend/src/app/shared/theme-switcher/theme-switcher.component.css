@@ -1,0 +1,45 @@
+.theme-switch {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border-radius: var(--radius-pill, 999px);
+  background: var(--surface, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--radius-pill, 999px);
+  padding: 0;
+  background: transparent;
+  color: var(--text-muted, rgba(244, 247, 251, 0.72));
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-btn:hover {
+  color: var(--text, #fff);
+  background: var(--surface, rgba(255, 255, 255, 0.06));
+}
+
+.theme-btn.active {
+  background: var(--switcher-active-bg);
+  color: var(--accent-fg);
+}
+
+:host-context(.shell.collapsed) .theme-switch {
+  width: 100%;
+  justify-content: center;
+}
+
+:host-context(.shell.collapsed) .theme-btn {
+  width: auto;
+  flex: 1;
+  height: 1.85rem;
+}

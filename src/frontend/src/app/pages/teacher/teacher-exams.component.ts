@@ -9,7 +9,14 @@ import { SearchableSelectComponent } from '../../shared/searchable-select/search
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
+
+interface AttemptDraft {
+  feedback: string;
+  feedbackImageMediaAssetId: string | null;
+  feedbackImageUrl: string | null;
+}
 
 @Component({
   selector: 'app-teacher-exams',
@@ -20,6 +27,7 @@ import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
     FormsModule,
     TranslatePipe,
     QuestionImageDisplayComponent,
+    QuestionImageUploadComponent,
     SafeHtmlPipe
   ],
   templateUrl: './teacher-exams.component.html',
@@ -37,6 +45,7 @@ export class TeacherExamsComponent {
   readonly error = signal('');
   readonly info = signal('');
   readonly generating = signal(false);
+  readonly publishingId = signal<string | null>(null);
 
   title = '';
   description = '';
@@ -45,8 +54,12 @@ export class TeacherExamsComponent {
   unitIds: string[] = [];
   lessonIds: string[] = [];
   xpReward = 40;
+  /** 0 keeps the exam untimed. */
+  durationMinutes = 0;
+  isPublished = false;
   questionCount = 6;
   reviewExamId = '';
+  private readonly attemptDrafts = signal<Record<string, AttemptDraft>>({});
 
   constructor() {
     this.api.getCourses().subscribe((courses) => {
@@ -215,6 +228,8 @@ export class TeacherExamsComponent {
         title: this.title.trim(),
         description: this.description.trim() || undefined,
         xpReward: this.xpReward,
+        durationMinutes: this.durationMinutes > 0 ? this.durationMinutes : null,
+        isPublished: this.isPublished,
         questionIds
       })
       .subscribe({
@@ -222,6 +237,7 @@ export class TeacherExamsComponent {
           this.info.set(this.locale.t('teacher.exams.created'));
           this.title = '';
           this.description = '';
+          this.isPublished = false;
           this.selectedIds.set(new Set());
           this.reloadExams();
         },
@@ -229,12 +245,125 @@ export class TeacherExamsComponent {
       });
   }
 
+  publishExam(exam: Exam): void {
+    if (exam.isPublished || this.publishingId()) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.publishingId.set(exam.id);
+    this.api.publishExam(exam.id).subscribe({
+      next: () => {
+        this.publishingId.set(null);
+        this.info.set(this.locale.t('teacher.assessments.publishedSuccess'));
+        this.reloadExams();
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
+      }
+    });
+  }
+
+  isPublishing(id: string): boolean {
+    return this.publishingId() === id;
+  }
+
   reviewExam(exam: Exam): void {
     this.reviewExamId = exam.id;
     this.api.getExamAttempts(exam.id).subscribe({
-      next: (attempts) => this.attempts.set(attempts),
+      next: (attempts) => {
+        this.attempts.set(attempts);
+        const drafts: Record<string, AttemptDraft> = {};
+        for (const attempt of attempts) {
+          drafts[attempt.id] = {
+            feedback: attempt.teacherFeedback || '',
+            feedbackImageMediaAssetId: null,
+            feedbackImageUrl: attempt.feedbackImageUrl || null
+          };
+        }
+        this.attemptDrafts.set(drafts);
+      },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.exams.loadAttemptsFailed'))
     });
+  }
+
+  attemptDraftFor(attemptId: string): AttemptDraft {
+    return this.attemptDrafts()[attemptId] || { feedback: '', feedbackImageMediaAssetId: null, feedbackImageUrl: null };
+  }
+
+  setAttemptFeedback(attemptId: string, feedback: string): void {
+    this.attemptDrafts.update((current) => ({
+      ...current,
+      [attemptId]: { ...this.attemptDraftFor(attemptId), feedback }
+    }));
+  }
+
+  setAttemptFeedbackImage(attemptId: string, mediaAssetId: string | null, imageUrl: string | null): void {
+    this.attemptDrafts.update((current) => ({
+      ...current,
+      [attemptId]: {
+        ...this.attemptDraftFor(attemptId),
+        feedbackImageMediaAssetId: mediaAssetId,
+        feedbackImageUrl: imageUrl
+      }
+    }));
+  }
+
+  markExamAnswer(attemptId: string, questionId: string, correct: boolean): void {
+    this.attempts.update((list) =>
+      list.map((attempt) => {
+        if (attempt.id !== attemptId) return attempt;
+        return {
+          ...attempt,
+          answers: attempt.answers.map((a) =>
+            a.questionId === questionId
+              ? { ...a, isCorrect: correct, pointsAwarded: correct ? a.points : 0 }
+              : a
+          )
+        };
+      })
+    );
+  }
+
+  setExamPoints(attemptId: string, questionId: string, points: number): void {
+    this.attempts.update((list) =>
+      list.map((attempt) => {
+        if (attempt.id !== attemptId) return attempt;
+        return {
+          ...attempt,
+          answers: attempt.answers.map((a) => {
+            if (a.questionId !== questionId) return a;
+            const awarded = Math.max(0, Math.min(a.points, points));
+            return { ...a, pointsAwarded: awarded, isCorrect: awarded >= a.points };
+          })
+        };
+      })
+    );
+  }
+
+  gradeAttempt(attempt: ExamAttempt): void {
+    const draft = this.attemptDraftFor(attempt.id);
+    this.api
+      .gradeExamAttempt({
+        attemptId: attempt.id,
+        teacherFeedback: draft.feedback,
+        feedbackImageMediaAssetId: draft.feedbackImageMediaAssetId,
+        answers: attempt.answers.map((a) => ({
+          questionId: a.questionId,
+          isCorrect: a.isCorrect ?? false,
+          pointsAwarded: a.pointsAwarded ?? (a.isCorrect ? a.points : 0)
+        }))
+      })
+      .subscribe({
+        next: () => {
+          this.info.set(this.locale.t('teacher.review.graded'));
+          const exam = this.exams().find((e) => e.id === this.reviewExamId);
+          if (exam) this.reviewExam(exam);
+        },
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.review.gradeFailed'))
+      });
   }
 
   private reloadBank(): void {

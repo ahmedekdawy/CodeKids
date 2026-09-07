@@ -4,4 +4,4 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Lessons;
 
-public sealed record GetLessonsQuery(Guid? CourseId = null) : IQuery<IReadOnlyList<LessonDto>>;
+public sealed record GetLessonsQuery(Guid? CourseId = null, string? ViewerRole = null) : IQuery<IReadOnlyList<LessonDto>>;

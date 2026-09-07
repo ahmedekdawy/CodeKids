@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
@@ -12,7 +13,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'
 })
@@ -23,7 +24,8 @@ export class ForgotPasswordComponent {
   readonly brand = inject(SiteBrandService);
 
   readonly form = this.fb.nonNullable.group({
-    login: ['', Validators.required]
+    login: ['', Validators.required],
+    channel: this.fb.nonNullable.control<'whatsapp' | 'email'>('whatsapp', Validators.required)
   });
   readonly loading = signal(false);
   readonly error = signal('');
@@ -35,14 +37,16 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    const { login } = this.form.getRawValue();
+    const { login, channel } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set('');
     this.success.set('');
-    this.auth.forgotPassword(login.trim()).subscribe({
+    this.auth.forgotPassword(login.trim(), channel).subscribe({
       next: () => {
         this.loading.set(false);
-        this.success.set(this.locale.t('auth.forgot.success'));
+        this.success.set(
+          this.locale.t(channel === 'email' ? 'auth.forgot.successEmail' : 'auth.forgot.successWhatsApp')
+        );
       },
       error: (err) => {
         this.loading.set(false);

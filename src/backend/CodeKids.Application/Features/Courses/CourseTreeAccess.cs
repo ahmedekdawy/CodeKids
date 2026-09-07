@@ -7,6 +7,7 @@ namespace CodeKids.Application.Features.Courses;
 public static class CourseTreeAccess
 {
     public const string TeacherOnlyMessage = "You can only edit the course tree for courses assigned to you.";
+    public const int PromptMax = 2000;
 
     public static async Task EnsureCanManageCourseAsync(
         IAppDbContext dbContext,

@@ -2,6 +2,7 @@ using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Profile;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -70,7 +71,8 @@ public sealed class RegisterCommandHandler(
             user.TotalXp,
             user.MobilePhone,
             user.WorkShift?.ToString(),
-            user.TenantId);
+            user.TenantId,
+            ProfilePhotoUrls.Build(user));
 
     /// <summary>Keeps digits and an optional leading +.</summary>
     internal static string NormalizePhone(string? phone)

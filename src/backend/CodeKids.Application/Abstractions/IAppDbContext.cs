@@ -1,5 +1,6 @@
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace CodeKids.Application.Abstractions;
 
@@ -25,6 +26,7 @@ public interface IAppDbContext
     DbSet<Appointment> Appointments { get; }
     DbSet<FixedTimetableEntry> FixedTimetableEntries { get; }
     DbSet<TeacherSessionAttendance> TeacherSessionAttendances { get; }
+    DbSet<StudentClassroomAttendance> StudentClassroomAttendances { get; }
     DbSet<StudentWeeklyReport> StudentWeeklyReports { get; }
     DbSet<WeeklyStudyPlan> WeeklyStudyPlans { get; }
     DbSet<WeeklyStudyPlanItem> WeeklyStudyPlanItems { get; }
@@ -55,10 +57,13 @@ public interface IAppDbContext
     DbSet<ChatRoom> ChatRooms { get; }
     DbSet<ChatRoomMember> ChatRoomMembers { get; }
     DbSet<ChatMessage> ChatMessages { get; }
+    DbSet<UserNotification> UserNotifications { get; }
     DbSet<SiteSettings> SiteSettings { get; }
     DbSet<TenantSignup> TenantSignups { get; }
 
     string? CurrentTenantId { get; }
+
+    DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

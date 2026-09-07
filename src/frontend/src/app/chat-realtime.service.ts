@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ChatMember, ChatMessage } from './models';
 import { currentTenantId } from './tenant';
-import { environment } from '../environments/environment';
+import { resolveApiOrigin } from './api-base-url';
 
 @Injectable({ providedIn: 'root' })
 export class ChatRealtimeService {
@@ -34,7 +34,7 @@ export class ChatRealtimeService {
   }
 
   hubUrl(): string {
-    return `${environment.apiBaseUrl.replace(/\/api\/?$/, '')}/hubs/chat`;
+    return `${resolveApiOrigin()}/hubs/chat`;
   }
 
   async ensureConnected(): Promise<signalR.HubConnection> {

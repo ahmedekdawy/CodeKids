@@ -14,4 +14,6 @@ public sealed record PlaybackDto(
     int? DurationSeconds,
     string ContentType,
     string FileName,
-    bool IsExternalLink = false);
+    bool IsExternalLink = false,
+    bool IsTeraboxHosted = false,
+    string? TeraboxBaseUrl = null);

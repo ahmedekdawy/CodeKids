@@ -26,6 +26,8 @@ export class TeacherWhatsAppComponent {
   classroomId = '';
   message = '';
   includeGroupInviteLink = true;
+  destination: 'phones' | 'group' = 'phones';
+  groupId = '';
   dailyReportsEnabled = true;
 
   readonly selectedClassroom = computed(() =>
@@ -50,6 +52,12 @@ export class TeacherWhatsAppComponent {
     this.lastGroupShareUrl.set(null);
     const room = this.selectedClassroom();
     this.dailyReportsEnabled = room?.dailyWhatsAppReportsEnabled !== false;
+  }
+
+  setDestination(mode: 'phones' | 'group'): void {
+    this.destination = mode;
+    this.error.set('');
+    this.info.set('');
   }
 
   saveDailyReportsSetting(): void {
@@ -124,8 +132,12 @@ export class TeacherWhatsAppComponent {
       this.error.set(this.locale.t('teacher.whatsapp.enterMessage'));
       return;
     }
-    if (this.selectedIds().size === 0) {
+    if (this.destination === 'phones' && this.selectedIds().size === 0) {
       this.error.set(this.locale.t('teacher.whatsapp.selectStudent'));
+      return;
+    }
+    if (this.destination === 'group' && !this.groupId.trim()) {
+      this.error.set(this.locale.t('teacher.whatsapp.enterGroupId'));
       return;
     }
 
@@ -133,8 +145,10 @@ export class TeacherWhatsAppComponent {
     this.api
       .sendClassroomWhatsApp(this.classroomId, {
         message: this.message.trim(),
-        studentIds: [...this.selectedIds()],
-        includeGroupInviteLink: this.includeGroupInviteLink
+        studentIds: this.destination === 'phones' ? [...this.selectedIds()] : [],
+        includeGroupInviteLink: this.destination === 'phones' && this.includeGroupInviteLink,
+        sendToGroup: this.destination === 'group',
+        groupId: this.destination === 'group' ? this.groupId.trim() : null
       })
       .subscribe({
         next: (result) => {

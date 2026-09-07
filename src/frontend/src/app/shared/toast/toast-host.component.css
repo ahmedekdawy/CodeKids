@@ -39,6 +39,13 @@
   color: #e8fbff;
 }
 
+.toast.notification {
+  display: grid;
+  gap: 0.25rem;
+  border-color: rgba(147, 180, 255, 0.45);
+  color: #eef3ff;
+}
+
 .toast-title {
   font-size: 0.95rem;
 }

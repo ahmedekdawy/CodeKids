@@ -57,6 +57,59 @@ export function formatGradeLabel(
   return t('common.gradeN', { n: grade });
 }
 
+export type ClassroomGradeSource = {
+  grade?: number | null;
+  courseGrade?: number | null;
+  courses?: { courseGrade?: number | null }[] | null;
+};
+
+export function classroomEffectiveGrade(room: ClassroomGradeSource): number | null {
+  if (room.grade != null) return room.grade;
+  if (room.courseGrade != null) return room.courseGrade;
+  const fromCourse = room.courses?.find((course) => course.courseGrade != null)?.courseGrade;
+  return fromCourse ?? null;
+}
+
+export type GradeClassroomGroup<T extends { name: string }> = {
+  grade: number | null;
+  gradeLabel: string;
+  classrooms: T[];
+};
+
+export function groupClassroomsByGrade<T extends ClassroomGradeSource & { name: string }>(
+  classrooms: T[],
+  t: (key: string, params?: Record<string, string | number>) => string
+): GradeClassroomGroup<T>[] {
+  const byGrade = new Map<string, GradeClassroomGroup<T>>();
+
+  for (const room of classrooms) {
+    const grade = classroomEffectiveGrade(room);
+    const key = grade == null ? 'all' : String(grade);
+    let group = byGrade.get(key);
+    if (!group) {
+      group = {
+        grade,
+        gradeLabel: formatGradeLabel(t, grade),
+        classrooms: []
+      };
+      byGrade.set(key, group);
+    }
+    group.classrooms.push(room);
+  }
+
+  return [...byGrade.values()]
+    .map((group) => ({
+      ...group,
+      classrooms: [...group.classrooms].sort((a, b) => a.name.localeCompare(b.name))
+    }))
+    .sort((a, b) => {
+      if (a.grade == null && b.grade == null) return 0;
+      if (a.grade == null) return 1;
+      if (b.grade == null) return -1;
+      return a.grade - b.grade;
+    });
+}
+
 /** Display label for a course: "Grade - Title". */
 export function formatCourseLabel(
   t: (key: string, params?: Record<string, string | number>) => string,

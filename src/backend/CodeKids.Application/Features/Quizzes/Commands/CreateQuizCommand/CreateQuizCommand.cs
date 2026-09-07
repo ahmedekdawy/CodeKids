@@ -1,19 +1,6 @@
 using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
-using CodeKids.Application.Features.Badges;
-using CodeKids.Application.Features.QuestionBank;
-using CodeKids.Application.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
-
-public sealed record CreateQuizRequest(
-    Guid CourseId,
-    Guid? ClassroomId,
-    string Title,
-    string? Description,
-    int XpReward,
-    IReadOnlyList<CreateQuizQuestionInput> Questions);
 
 public sealed record CreateQuizCommand(
     Guid TeacherUserId,
@@ -22,4 +9,6 @@ public sealed record CreateQuizCommand(
     string Title,
     string? Description,
     int XpReward,
-    IReadOnlyList<CreateQuizQuestionInput> Questions) : ICommand<QuizDto>;
+    bool IsPublished,
+    IReadOnlyList<CreateQuizQuestionInput> Questions,
+    int? DurationMinutes = null) : ICommand<QuizDto>;

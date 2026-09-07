@@ -10,6 +10,7 @@ public sealed record TeacherQuizListDto(
     string Title,
     string Description,
     int XpReward,
+    bool IsPublished,
     int QuestionCount,
     int AttemptCount,
     DateTimeOffset CreatedAtUtc);

@@ -1,5 +1,7 @@
 using CodeKids.Application.Features.Analytics;
 
+using CodeKids.Application.Features.Auth;
+
 using CodeKids.Application.Features.Dashboard;
 
 using CodeKids.Domain.Abstractions;
@@ -99,6 +101,42 @@ public static class DashboardEndpoints
                 return Results.Ok(await handler.Handle(
 
                     new GetTeacherStudentDetailQuery(userId, studentId),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapPost("/api/dashboard/teacher/students/{studentId:guid}/impersonate", async (
+
+            Guid studentId,
+
+            HttpContext httpContext,
+
+            ICommandHandler<ImpersonateUserCommand, AuthResponse> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                var teacherId = CurrentUser.GetUserId(httpContext.User);
+
+                return Results.Ok(await handler.Handle(
+
+                    new ImpersonateUserCommand(teacherId, studentId),
 
                     cancellationToken));
 

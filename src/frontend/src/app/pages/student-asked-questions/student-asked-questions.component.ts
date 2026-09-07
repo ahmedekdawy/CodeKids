@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { AskedQuestionsBoardComponent } from '../../shared/asked-questions-board/asked-questions-board.component';
@@ -13,6 +14,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
     RouterLink,
     TranslatePipe,
     LanguageSwitcherComponent,
+    ThemeSwitcherComponent,
     SiteBrandComponent,
     AskedQuestionsBoardComponent,
     ApiBusyIndicatorComponent
@@ -26,6 +28,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
           <h1>{{ 'askedQuestions.studentTitle' | t }}</h1>
         </div>
         <div class="topbar-actions">
+          <app-theme-switcher />
           <app-language-switcher />
           <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
         </div>

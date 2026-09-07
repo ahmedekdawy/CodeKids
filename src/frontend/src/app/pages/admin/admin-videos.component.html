@@ -1,0 +1,133 @@
+<div class="panel-page">
+  <h2>{{ 'videos.adminTitle' | t }}</h2>
+  <p class="meta">{{ 'videos.adminSubtitle' | t }}</p>
+
+  <app-page-feedback [ok]="info()" [error]="error()" />
+
+  <section class="block">
+    <h3>{{ 'videos.uploadCourse' | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="attachLink()">
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [(ngModel)]="selectedCourseId"
+          name="courseId"
+          [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <label>{{ 'common.title' | t }} <input [(ngModel)]="videoTitle" name="videoTitle" [placeholder]="'videos.optionalTitle' | t" /></label>
+      <label>
+        {{ 'videos.videoLink' | t }}
+        <input
+          type="url"
+          [(ngModel)]="videoUrl"
+          name="videoUrl"
+          [placeholder]="'videos.videoLinkPlaceholder' | t"
+        />
+      </label>
+      <label>
+        {{ 'videos.videoFile' | t }}
+        <input
+          type="file"
+          accept="video/mp4,video/webm,video/quicktime"
+          (change)="onFileSelected($event)"
+          [disabled]="uploading()"
+        />
+      </label>
+      <div class="video-upload-actions">
+        <button type="submit" [disabled]="uploading() || !videoUrl.trim()">
+          {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+        </button>
+        <button type="button" [disabled]="uploading() || !videoFile()" (click)="attachFile()">
+          {{ (uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="block">
+    <div class="video-table-head">
+      <h3>{{ 'videos.courseList' | t }}</h3>
+      <p class="meta">{{ shownLabel(filteredVideos().length, videos().length) }}</p>
+    </div>
+    <div class="video-filters">
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [ngModel]="filterCourseId()"
+          (ngModelChange)="filterCourseId.set($event)"
+          name="filterCourseId"
+          [emptyLabel]="'videos.allCourses' | t"
+          [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+        />
+      </label>
+      <label>
+        {{ 'common.search' | t }}
+        <input [ngModel]="search()" (ngModelChange)="search.set($event)" name="search" [placeholder]="'videos.searchCourse' | t" />
+      </label>
+      @if (filterCourseId() || search().trim()) {
+        <button type="button" class="ghost-btn" (click)="clearFilters()">{{ 'common.clearFilters' | t }}</button>
+      }
+    </div>
+    <div class="table-wrap">
+      <table class="data-table video-table">
+        <thead>
+          <tr>
+            <th>{{ 'common.title' | t }}</th>
+            <th>{{ 'common.course' | t }}</th>
+            <th>{{ 'videos.link' | t }}</th>
+            <th>{{ 'common.uploaded' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (video of filteredVideos(); track video.id) {
+            <tr
+              class="video-row-clickable"
+              tabindex="0"
+              [attr.aria-label]="'Play ' + video.title"
+              (click)="playVideo(video)"
+              (keydown.enter)="playVideo(video)"
+              (keydown.space)="$event.preventDefault(); playVideo(video)"
+            >
+              <td><strong>{{ video.title }}</strong></td>
+              <td>{{ courseLabelById(video.courseId, video.courseTitle) }}</td>
+              <td class="mono">{{ video.fileName }}</td>
+              <td>{{ formatDate(video.createdAtUtc) }}</td>
+              <td class="row-actions-cell" (click)="$event.stopPropagation()">
+                <div class="row-actions">
+                  <app-icon-action-button kind="play" [label]="'videos.playVideo' | t" (action)="playVideo(video)" />
+                  <app-icon-action-button kind="delete" variant="danger" [label]="'videos.deleteCourse' | t" (action)="deleteVideo(video)" />
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="meta">{{ videos().length ? ('videos.noCourseMatch' | t) : ('videos.noCourseYet' | t) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+@if (preview(); as item) {
+  <div class="video-modal-backdrop" role="dialog" aria-modal="true" aria-label="Video player" (click)="closePreview()">
+    <div class="video-modal" (click)="$event.stopPropagation()">
+      <header class="video-modal-head">
+        <h3>{{ item.title }}</h3>
+        <button type="button" class="modal-close" (click)="closePreview()" [attr.aria-label]="'videos.close' | t">×</button>
+      </header>
+      @for (key of [previewKey()]; track key) {
+        <app-protected-video-player
+          [mediaAssetId]="item.mediaAssetId"
+          [title]="item.title"
+          [autoLoad]="true"
+          [autoplay]="true"
+          [compact]="true"
+        />
+      }
+    </div>
+  </div>
+}

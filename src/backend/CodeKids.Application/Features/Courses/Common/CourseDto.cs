@@ -16,6 +16,7 @@ public sealed record CourseDto(
     IReadOnlyList<CourseUnitDto> Units,
     IReadOnlyList<CourseLessonDto> Lessons,
     IReadOnlyList<CourseQuizDto> Quizzes,
+    IReadOnlyList<CourseVideoSummaryDto> Videos,
     string SubjectCode = "",
     string Category = "",
     string TrackCode = "",
@@ -24,4 +25,5 @@ public sealed record CourseDto(
     string SourceTocUrl = "",
     string Notes = "",
     string Variants = "",
-    bool StudentAskEnabled = false);
+    bool StudentAskEnabled = false,
+    bool IsPublished = false);

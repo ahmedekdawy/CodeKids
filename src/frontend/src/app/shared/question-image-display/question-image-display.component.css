@@ -11,3 +11,20 @@
   max-height: 120px;
   margin: 0.35rem 0;
 }
+
+.question-pdf {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  max-height: 640px;
+  margin: 0.5rem 0 0.75rem;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  border-radius: 8px;
+  background: var(--surface, rgba(255, 255, 255, 0.04));
+}
+
+.question-pdf.compact {
+  min-height: 240px;
+  max-height: 320px;
+  margin: 0.35rem 0;
+}

@@ -52,6 +52,50 @@
 
   <section class="block">
     <h3>{{ 'admin.enroll.list' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          [ngModel]="filterClassroomId()"
+          name="filterClassroomId"
+          (ngModelChange)="setFilterClassroom($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="classroomFilterOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.course' | t }}
+        <app-searchable-select
+          [ngModel]="filterCourseId()"
+          name="filterCourseId"
+          (ngModelChange)="setFilterCourse($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="courseFilterOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.student' | t }}
+        <input
+          [ngModel]="filterStudent()"
+          name="filterStudent"
+          (ngModelChange)="setFilterStudent($event)"
+          [placeholder]="'admin.enroll.studentSearch' | t"
+        />
+      </label>
+      <label>
+        {{ 'common.rowsPerPage' | t }}
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="pageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
+        />
+      </label>
+      @if (hasActiveFilters()) {
+        <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
+      }
+      <span class="meta">{{ 'common.ofShown' | t: { shown: enrollmentRows().length, total: totalCount() } }}</span>
+    </div>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
@@ -78,11 +122,21 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="meta">{{ 'admin.enroll.empty' | t }}</td>
+              <td colspan="5" class="meta">{{ (totalCount() || hasActiveFilters() ? 'common.noData' : 'admin.enroll.empty') | t }}</td>
             </tr>
           }
         </tbody>
       </table>
+    </div>
+
+    <div class="list-pager">
+      <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ 'common.previous' | t }}
+      </button>
+      <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+      <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ 'common.next' | t }}
+      </button>
     </div>
   </section>
 </div>

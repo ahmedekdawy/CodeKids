@@ -30,7 +30,9 @@
           </button>
         </div>
         <p class="meta">{{ 'admin.classrooms.coursesTeachersHint' | t }}</p>
-        @if (assignClassroomId() && courseOptions().length === 0) {
+        @if (assignClassroomId() && allCourses().length === 0) {
+          <p class="meta">{{ 'admin.assign.loadCoursesFailed' | t }}</p>
+        } @else if (assignClassroomId() && courseOptions().length === 0) {
           <p class="meta">{{ 'admin.assign.noCoursesForFilter' | t }}</p>
         }
         @for (row of courseRows(); track $index; let i = $index) {

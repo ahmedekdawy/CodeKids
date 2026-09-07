@@ -13,6 +13,7 @@ using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Assignments;
 
 using CodeKids.Application.Features.Attendance;
+using CodeKids.Application.Features.StudentAttendance;
 
 using CodeKids.Application.Features.Auth;
 
@@ -44,6 +45,8 @@ using CodeKids.Application.Features.Meetings;
 
 using CodeKids.Application.Features.Payments;
 
+using CodeKids.Application.Features.Profile;
+
 using CodeKids.Application.Features.Progress;
 
 using CodeKids.Application.Features.QuestionBank;
@@ -59,6 +62,8 @@ using CodeKids.Application.Features.StudyPlans;
 using CodeKids.Application.Features.StudentAsk;
 
 using CodeKids.Application.Features.Chat;
+
+using CodeKids.Application.Features.Notifications;
 
 using CodeKids.Api.Hubs;
 
@@ -86,6 +91,12 @@ using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.PropertyNameCaseInsensitive = true;
+});
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -197,6 +208,8 @@ builder.Services.AddScoped<ICommandHandler<RegisterCommand, AuthResponse>, Regis
 
 builder.Services.AddScoped<ICommandHandler<LoginCommand, AuthResponse>, LoginCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<ImpersonateUserCommand, AuthResponse>, ImpersonateUserCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<ForgotPasswordCommand, ForgotPasswordResult>, ForgotPasswordCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<ResetPasswordCommand, bool>, ResetPasswordCommandHandler>();
@@ -209,6 +222,7 @@ builder.Services.AddScoped<ICommandHandler<VerifyTenantCommand, VerifyTenantResu
 
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetCourseByIdQuery, CourseDto?>, GetCourseByIdQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListAdminCoursesQuery, PagedCoursesResultDto>, ListAdminCoursesQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListStagesQuery, IReadOnlyList<StageDto>>, ListStagesQueryHandler>();
 
@@ -222,9 +236,14 @@ builder.Services.AddScoped<ICommandHandler<UpdateSiteSettingsCommand, SiteSettin
 
 builder.Services.AddScoped<ICommandHandler<UploadSiteImageCommand, SiteSettingsDto>, UploadSiteImageCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<SaveProfilePhotoCommand, AuthUserDto>, SaveProfilePhotoCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<RemoveProfilePhotoCommand, AuthUserDto>, RemoveProfilePhotoCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<CreateCourseCommand, IReadOnlyList<CourseSummaryDto>>, CreateCourseCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<UpdateCourseCommand, CourseSummaryDto>, UpdateCourseCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetCoursePublishedCommand, CourseSummaryDto>, SetCoursePublishedCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteCourseCommand, bool>, DeleteCourseCommandHandler>();
 
@@ -234,6 +253,7 @@ builder.Services.AddScoped<ICommandHandler<DeleteCourseUnitCommand, bool>, Delet
 builder.Services.AddScoped<ICommandHandler<CreateCourseLessonCommand, CourseLessonDto>, CreateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<UpdateCourseLessonCommand, CourseLessonDto>, UpdateCourseLessonCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<DeleteCourseLessonCommand, bool>, DeleteCourseLessonCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<GenerateCourseTreeCommand, GenerateCourseTreeResult>, GenerateCourseTreeCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<SetStudentAskEnabledCommand, StudentAskSettingsDto>, SetStudentAskEnabledCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<AskStudentQuestionCommand, StudentAskAnswerDto>, AskStudentQuestionCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<ListStudentAskedQuestionsQuery, IReadOnlyList<StudentAskedQuestionDto>>, ListStudentAskedQuestionsQueryHandler>();
@@ -248,6 +268,13 @@ builder.Services.AddScoped<ICommandHandler<DeleteChatMessageCommand, ChatMessage
 builder.Services.AddScoped<ICommandHandler<SetChatMemberBlockedCommand, ChatMemberDto>, SetChatMemberBlockedCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<MarkChatRoomReadCommand, int>, MarkChatRoomReadCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetChatUnreadSummaryQuery, ChatUnreadSummaryDto>, GetChatUnreadSummaryQueryHandler>();
+
+builder.Services.AddScoped<INotificationRealtime, NotificationRealtime>();
+builder.Services.AddScoped<NotificationPublisher>();
+builder.Services.AddScoped<IQueryHandler<ListNotificationsQuery, IReadOnlyList<NotificationDto>>, ListNotificationsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetNotificationUnreadSummaryQuery, NotificationUnreadSummaryDto>, GetNotificationUnreadSummaryQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<MarkNotificationReadCommand, NotificationDto>, MarkNotificationReadCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<MarkAllNotificationsReadCommand, int>, MarkAllNotificationsReadCommandHandler>();
 builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IQueryHandler<GetLessonsQuery, IReadOnlyList<LessonDto>>, GetLessonsQueryHandler>();
@@ -266,7 +293,15 @@ builder.Services.AddScoped<ICommandHandler<SubmitQuizCommand, SubmitQuizResponse
 
 builder.Services.AddScoped<ICommandHandler<CreateQuizCommand, QuizDto>, CreateQuizCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<UpdateQuizCommand, QuizDto>, UpdateQuizCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<PublishQuizCommand, QuizDto>, PublishQuizCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteQuizCommand, bool>, DeleteQuizCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetTeacherQuizzesQuery, IReadOnlyList<TeacherQuizListDto>>, GetTeacherQuizzesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetTeacherQuizByIdQuery, TeacherQuizDetailDto?>, GetTeacherQuizByIdQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetQuizAttemptsQuery, IReadOnlyList<QuizAttemptReviewDto>>, GetQuizAttemptsQueryHandler>();
 
@@ -316,6 +351,10 @@ builder.Services.AddScoped<ICommandHandler<CreateTeacherSessionAttendanceCommand
 
 builder.Services.AddScoped<ICommandHandler<DeleteTeacherSessionAttendanceCommand, bool>, DeleteTeacherSessionAttendanceCommandHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListStudentClassroomAttendanceQuery, PagedStudentClassroomAttendanceResultDto>, ListStudentClassroomAttendanceQueryHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateStudentClassroomAttendanceCommand, StudentClassroomAttendanceDto>, CreateStudentClassroomAttendanceCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteStudentClassroomAttendanceCommand, bool>, DeleteStudentClassroomAttendanceCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetTeacherPayrollReportQuery, TeacherPayrollReportDto>, GetTeacherPayrollReportQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListTeacherPayrollAdjustmentsQuery, IReadOnlyList<TeacherPayrollAdjustmentDto>>, ListTeacherPayrollAdjustmentsQueryHandler>();
@@ -357,6 +396,8 @@ builder.Services.AddScoped<ICommandHandler<CreateManagedUserCommand, ManagedUser
 builder.Services.AddScoped<ICommandHandler<UpdateManagedUserCommand, ManagedUserDto>, UpdateManagedUserCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteManagedUserCommand, bool>, DeleteManagedUserCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SetManagedUserActiveCommand, ManagedUserDto>, SetManagedUserActiveCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SendAdminWhatsAppCommand, SendAdminWhatsAppResultDto>, SendAdminWhatsAppCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListManagedUsersQuery, IReadOnlyList<ManagedUserDto>>, ListManagedUsersQueryHandler>();
 
@@ -373,14 +414,20 @@ builder.Services.AddScoped<ICommandHandler<AddStudentToClassroomCommand, EnrollS
 builder.Services.AddScoped<ICommandHandler<RemoveStudentFromClassroomCommand, ClassroomDto>, RemoveStudentFromClassroomCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomWhatsAppCommand, ClassroomDto>, UpdateClassroomWhatsAppCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateClassroomZoomCommand, ClassroomDto>, UpdateClassroomZoomCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<SendClassroomWhatsAppCommand, SendClassroomWhatsAppResultDto>, SendClassroomWhatsAppCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetClassroomsQuery, IReadOnlyList<ClassroomDto>>, GetClassroomsQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListClassroomEnrollmentsQuery, PagedClassroomEnrollmentsResultDto>, ListClassroomEnrollmentsQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetClassroomByIdQuery, ClassroomDto?>, GetClassroomByIdQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateAssignmentCommand, AssignmentDto>, CreateAssignmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateAssignmentCommand, AssignmentDto>, UpdateAssignmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<PublishAssignmentCommand, AssignmentDto>, PublishAssignmentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<DeleteAssignmentCommand, bool>, DeleteAssignmentCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetAssignmentsQuery, IReadOnlyList<AssignmentDto>>, GetAssignmentsQueryHandler>();
 
@@ -401,6 +448,7 @@ builder.Services.AddScoped<ICommandHandler<UpdateBankQuestionCommand, BankQuesti
 builder.Services.AddScoped<ICommandHandler<DeleteBankQuestionCommand, bool>, DeleteBankQuestionCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<CreateExamCommand, ExamDto>, CreateExamCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<PublishExamCommand, ExamDto>, PublishExamCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetExamsQuery, IReadOnlyList<ExamDto>>, GetExamsQueryHandler>();
 
@@ -411,6 +459,8 @@ builder.Services.AddScoped<ICommandHandler<SubmitExamCommand, ExamAttemptDto>, S
 builder.Services.AddScoped<ICommandHandler<StartExamCommand, ExamAttemptDto>, StartExamCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetExamAttemptsQuery, IReadOnlyList<ExamAttemptDto>>, GetExamAttemptsQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<GradeExamAttemptCommand, ExamAttemptDto>, GradeExamAttemptCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<AttachLessonVideoCommand, LessonVideoDto>, AttachLessonVideoCommandHandler>();
 
@@ -424,6 +474,8 @@ builder.Services.AddScoped<IQueryHandler<GetTeacherVideoLibraryQuery, TeacherVid
 
 builder.Services.AddScoped<ICommandHandler<DeleteLessonVideoCommand, bool>, DeleteLessonVideoCommandHandler>();
 
+builder.Services.AddScoped<IQueryHandler<GetCourseVideoLibraryQuery, IReadOnlyList<CourseVideoLibraryItemDto>>, GetCourseVideoLibraryQueryHandler>();
+
 builder.Services.AddScoped<ICommandHandler<DeleteAssignmentSolutionVideoCommand, bool>, DeleteAssignmentSolutionVideoCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetPlaybackQuery, PlaybackDto>, GetPlaybackQueryHandler>();
@@ -436,9 +488,12 @@ builder.Services.AddScoped<IQueryHandler<GetWeeklyReportGridQuery, IReadOnlyList
 
 builder.Services.AddScoped<IQueryHandler<ListStudentWeeklyReportsQuery, IReadOnlyList<StudentWeeklyReportDto>>, ListStudentWeeklyReportsQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListTopWeeklyStudentsQuery, IReadOnlyList<TopWeeklyStudentDto>>, ListTopWeeklyStudentsQueryHandler>();
+
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyList<StudentWeeklyReportGridRowDto>>, SaveWeeklyReportsCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<ListAdminWeeklyStudyPlansQuery, PagedWeeklyStudyPlansResultDto>, ListAdminWeeklyStudyPlansQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyStudyPlanCommand, WeeklyStudyPlanDto>, SaveWeeklyStudyPlanCommandHandler>();
 
@@ -503,6 +558,46 @@ builder.Services
                 }
 
                 return Task.CompletedTask;
+
+            },
+
+            OnTokenValidated = async context =>
+
+            {
+
+                try
+
+                {
+
+                    var userId = CurrentUser.GetUserId(context.Principal!);
+
+                    var db = context.HttpContext.RequestServices.GetRequiredService<IAppDbContext>();
+
+                    var isActive = await db.Users.AsNoTracking()
+
+                        .Where(x => x.Id == userId)
+
+                        .Select(x => (bool?)x.IsActive)
+
+                        .FirstOrDefaultAsync();
+
+                    if (isActive != true)
+
+                    {
+
+                        context.Fail("This account is inactive.");
+
+                    }
+
+                }
+
+                catch
+
+                {
+
+                    context.Fail("This account is inactive.");
+
+                }
 
             }
 
@@ -609,11 +704,16 @@ app.MapStudentAskEndpoints();
 
 app.MapChatEndpoints();
 
+app.MapNotificationEndpoints();
+
 app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
+app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
 
 app.MapMediaEndpoints();
 
 app.MapQuestionImageEndpoints();
+
+app.MapProfilePhotoEndpoints();
 
 app.MapMeetingsEndpoints();
 

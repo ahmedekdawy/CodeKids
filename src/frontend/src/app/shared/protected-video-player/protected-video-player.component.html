@@ -32,6 +32,7 @@
           controlsList="nodownload noplaybackrate"
           disablePictureInPicture
           (canplay)="onCanPlay()"
+          (error)="onVideoError()"
           (play)="onPlay()"
           (pause)="onPause()"
           (ended)="onEnded()"

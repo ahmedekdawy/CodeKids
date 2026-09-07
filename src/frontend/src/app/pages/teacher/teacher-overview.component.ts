@@ -13,6 +13,7 @@ type GradeStudentGroup = {
   gradeLabel: string;
   courseTitles: string[];
   students: { studentId: string; displayName: string }[];
+  zoomLinks: { classroomName: string; name: string; url: string }[];
 };
 
 @Component({
@@ -44,7 +45,12 @@ export class TeacherOverviewComponent {
 
     const byGrade = new Map<
       string,
-      { grade: number | null; courses: Set<string>; students: Map<string, string> }
+      {
+        grade: number | null;
+        courses: Set<string>;
+        students: Map<string, string>;
+        zoomLinks: { classroomName: string; name: string; url: string }[];
+      }
     >();
 
     for (const room of this.classrooms()) {
@@ -68,10 +74,18 @@ export class TeacherOverviewComponent {
         const key = grade == null ? 'all' : String(grade);
         let group = byGrade.get(key);
         if (!group) {
-          group = { grade, courses: new Set(), students: new Map() };
+          group = { grade, courses: new Set(), students: new Map(), zoomLinks: [] };
           byGrade.set(key, group);
         }
         if (course.courseTitle) group.courses.add(course.courseTitle);
+        for (const link of room.zoomLinks ?? []) {
+          const name = (link.name || '').trim();
+          const url = (link.url || '').trim();
+          if (!name || !url) continue;
+          if (!group.zoomLinks.some((existing) => existing.classroomName === room.name && existing.url === url)) {
+            group.zoomLinks.push({ classroomName: room.name, name, url });
+          }
+        }
         for (const student of room.students ?? []) {
           group.students.set(student.studentId, student.displayName);
         }
@@ -85,7 +99,8 @@ export class TeacherOverviewComponent {
         courseTitles: [...group.courses].sort((a, b) => a.localeCompare(b)),
         students: [...group.students.entries()]
           .map(([studentId, displayName]) => ({ studentId, displayName }))
-          .sort((a, b) => a.displayName.localeCompare(b.displayName))
+          .sort((a, b) => a.displayName.localeCompare(b.displayName)),
+        zoomLinks: [...group.zoomLinks].sort((a, b) => a.name.localeCompare(b.name))
       }))
       .sort((a, b) => {
         if (a.grade == null && b.grade == null) return 0;

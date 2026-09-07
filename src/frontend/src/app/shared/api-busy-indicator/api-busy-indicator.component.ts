@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { ApiBusyService } from '../../api-busy.service';
 import { TranslatePipe } from '../translate.pipe';
 
@@ -6,7 +6,7 @@ import { TranslatePipe } from '../translate.pipe';
   selector: 'app-api-busy-indicator',
   imports: [TranslatePipe],
   template: `
-    @if (apiBusy.busy()) {
+    @if (busy() ?? apiBusy.busy()) {
       <div class="api-busy" role="status" aria-live="polite" aria-busy="true">
         <span class="api-busy-spinner" aria-hidden="true"></span>
         <p>{{ 'common.loading' | t }}</p>
@@ -59,4 +59,6 @@ import { TranslatePipe } from '../translate.pipe';
 })
 export class ApiBusyIndicatorComponent {
   readonly apiBusy = inject(ApiBusyService);
+  /** When set, ignore global HTTP busy and show only for this flag (e.g. login submit). */
+  readonly busy = input<boolean | undefined>(undefined);
 }

@@ -48,14 +48,14 @@ public static class StudentCourseVisibility
         var assigned = await (
             from cc in dbContext.ClassroomCourses.AsNoTracking()
             join course in dbContext.Courses.AsNoTracking() on cc.CourseId equals course.Id
-            where classroomIds.Contains(cc.ClassroomId)
+            where classroomIds.Contains(cc.ClassroomId) && course.IsPublished
             select new { cc.ClassroomId, cc.CourseId, course.Grade, course.StageId, course.SchoolType }
         ).ToListAsync(cancellationToken);
 
         var legacy = await (
             from room in dbContext.Classrooms.AsNoTracking()
             join course in dbContext.Courses.AsNoTracking() on room.CourseId equals course.Id
-            where classroomIds.Contains(room.Id) && room.CourseId != null
+            where classroomIds.Contains(room.Id) && room.CourseId != null && course.IsPublished
             select new { ClassroomId = room.Id, CourseId = course.Id, course.Grade, course.StageId, course.SchoolType }
         ).ToListAsync(cancellationToken);
 
@@ -75,7 +75,7 @@ public static class StudentCourseVisibility
         {
             var extra = await dbContext.Courses
                 .AsNoTracking()
-                .Where(c => missingIds.Contains(c.Id))
+                .Where(c => missingIds.Contains(c.Id) && c.IsPublished)
                 .Select(c => new { c.Id, c.Grade, c.StageId, c.SchoolType })
                 .ToListAsync(cancellationToken);
             foreach (var row in extra)

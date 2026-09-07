@@ -51,15 +51,17 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                     a.Question?.OptionB,
                     a.Question?.OptionC);
                 var selected = a.SelectedOption ?? string.Empty;
-                var correct = a.Question?.CorrectOption ?? string.Empty;
+                var correct = string.IsNullOrWhiteSpace(a.Question?.CorrectAnswer)
+                    ? (a.Question?.CorrectOption ?? string.Empty)
+                    : a.Question!.CorrectAnswer;
                 return new QuizAnswerReviewDto(
                     a.QuestionId,
                     a.Question?.Prompt ?? string.Empty,
                     a.Question?.SortOrder ?? 0,
                     selected,
-                    OptionText(options, selected),
+                    AnswerDisplay(options, selected),
                     correct,
-                    OptionText(options, correct),
+                    AnswerDisplay(options, correct),
                     a.IsCorrect,
                     QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId));
             })
@@ -75,6 +77,27 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
             attempt.EarnedXp,
             attempt.CompletedAtUtc,
             answers);
+    }
+
+    private static string AnswerDisplay(IReadOnlyList<ChoiceOptionDto> options, string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return string.Empty;
+        }
+
+        if (options.Count == 0)
+        {
+            return key;
+        }
+
+        var parts = ExamGrading.NormalizeMultiAnswer(key);
+        if (parts.Count > 1)
+        {
+            return string.Join(", ", parts.Select(part => OptionText(options, part)));
+        }
+
+        return OptionText(options, key);
     }
 
     private static string OptionText(IReadOnlyList<ChoiceOptionDto> options, string key)

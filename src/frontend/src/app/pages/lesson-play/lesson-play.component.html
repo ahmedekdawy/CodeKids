@@ -28,7 +28,8 @@
           <app-protected-video-player
             [mediaAssetId]="video.mediaAssetId"
             [lessonId]="current.id"
-            [title]="video.title" />
+            [title]="video.title"
+            [autoLoad]="true" />
         }
       </section>
     }
@@ -67,11 +68,13 @@
       }
     </section>
     @if (current.studentAskEnabled) {
-      <app-student-ask-panel
-        [courseId]="current.courseId"
-        [unitId]="current.unitId ?? null"
-        [lessonId]="current.id"
-      />
+      <div class="student-side-tools">
+        <app-student-ask-panel
+          [courseId]="current.courseId"
+          [unitId]="current.unitId ?? null"
+          [lessonId]="current.id"
+        />
+      </div>
     }
   }
 </div>

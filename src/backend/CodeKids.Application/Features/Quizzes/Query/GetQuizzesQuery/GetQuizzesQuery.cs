@@ -7,4 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
 
-public sealed record GetQuizzesQuery(Guid? CourseId = null, Guid? ClassroomId = null) : IQuery<IReadOnlyList<QuizDto>>;
+public sealed record GetQuizzesQuery(
+    Guid? CourseId = null,
+    Guid? ClassroomId = null,
+    Guid? ViewerUserId = null,
+    string? ViewerRole = null) : IQuery<IReadOnlyList<QuizDto>>;

@@ -49,6 +49,8 @@ export function applyDropdownPanelStyle(
   panel.style.maxWidth = `${width}px`;
   panel.style.zIndex = '2500';
   panel.style.maxHeight = `${maxHeight}px`;
+  panel.style.visibility = 'visible';
+  panel.classList.add('ss-panel--placed', 'ms-panel--placed');
 
   if (openUp) {
     panel.style.top = 'auto';
@@ -59,19 +61,28 @@ export function applyDropdownPanelStyle(
   }
 }
 
+function createsFixedContainingBlock(style: CSSStyleDeclaration): boolean {
+  if (style.transform !== 'none') return true;
+  if (style.translate && style.translate !== 'none') return true;
+  if (style.scale && style.scale !== 'none') return true;
+  if (style.rotate && style.rotate !== 'none') return true;
+  if (style.filter !== 'none') return true;
+  if (style.backdropFilter && style.backdropFilter !== 'none') return true;
+  if (style.perspective !== 'none') return true;
+  if (/paint|layout|strict|content/.test(style.contain)) return true;
+  if (/\b(transform|filter|perspective)\b/.test(style.willChange)) return true;
+  const zoom = style.zoom;
+  if (zoom && zoom !== 'normal' && zoom !== '1') return true;
+  return false;
+}
+
 function fixedContainingOrigin(el: HTMLElement): DOMRect {
   let node: HTMLElement | null = el.parentElement;
-  while (node && node !== document.body && node !== document.documentElement) {
-    const style = getComputedStyle(node);
-    const transform = style.transform !== 'none';
-    const filter = style.filter !== 'none';
-    const backdrop = Boolean(style.backdropFilter && style.backdropFilter !== 'none');
-    const perspective = style.perspective !== 'none';
-    const contain = /paint|layout|strict|content/.test(style.contain);
-    const willChange = /\b(transform|filter|perspective)\b/.test(style.willChange);
-    if (transform || filter || backdrop || perspective || contain || willChange) {
+  while (node && node !== document.documentElement) {
+    if (createsFixedContainingBlock(getComputedStyle(node))) {
       return node.getBoundingClientRect();
     }
+    if (node === document.body) break;
     node = node.parentElement;
   }
   return new DOMRect(0, 0, window.innerWidth, window.innerHeight);

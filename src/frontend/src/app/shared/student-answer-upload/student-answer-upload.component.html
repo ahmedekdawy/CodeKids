@@ -1,0 +1,23 @@
+<div class="student-answer-upload">
+  @if (imageUrl()) {
+    <div class="preview-wrap">
+      <app-question-image-display [url]="imageUrl()" />
+      <button type="button" class="ghost-btn" (click)="clear()" [disabled]="disabled()">{{ 'common.remove' | t }}</button>
+    </div>
+  }
+  <label class="upload-label">
+    {{ 'student.answerImage.upload' | t }}
+    <input
+      type="file"
+      accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf"
+      (change)="onFileSelected($event)"
+      [disabled]="disabled() || uploading()"
+    />
+  </label>
+  @if (uploading()) {
+    <span class="meta">{{ 'student.answerImage.uploading' | t }}</span>
+  }
+  @if (error()) {
+    <span class="error">{{ error() }}</span>
+  }
+</div>

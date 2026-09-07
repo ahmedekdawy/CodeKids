@@ -8,4 +8,5 @@ namespace CodeKids.Application.Features.Media;
 
 public sealed record TeacherVideoLibraryDto(
     IReadOnlyList<TeacherLessonVideoDto> LessonVideos,
-    IReadOnlyList<TeacherSolutionVideoDto> SolutionVideos);
+    IReadOnlyList<TeacherSolutionVideoDto> SolutionVideos,
+    IReadOnlyList<CourseVideoLibraryItemDto> CourseVideos);

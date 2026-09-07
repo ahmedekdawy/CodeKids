@@ -83,6 +83,50 @@ public static class CoursesEndpoints
             return course is null ? Results.NotFound() : Results.Ok(course);
         }).RequireAuthorization();
 
+        app.MapGet("/api/admin/courses", async (
+
+            string? titleSearch,
+
+            int? stageId,
+
+            int? grade,
+
+            string? sortKey,
+
+            string? sortDir,
+
+            int? page,
+
+            int? pageSize,
+
+            IQueryHandler<ListAdminCoursesQuery, PagedCoursesResultDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            return Results.Ok(await handler.Handle(
+
+                new ListAdminCoursesQuery(
+
+                    titleSearch,
+
+                    stageId,
+
+                    grade,
+
+                    sortKey ?? "title",
+
+                    sortDir ?? "asc",
+
+                    page ?? 1,
+
+                    pageSize ?? 10),
+
+                cancellationToken));
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPost("/api/admin/courses", async (
 
             CreateCourseRequest request,
@@ -119,7 +163,9 @@ public static class CoursesEndpoints
 
                         request.SortOrder,
 
-                        request.SchoolType),
+                        request.SchoolType,
+
+                        request.IsPublished),
 
                     cancellationToken));
 
@@ -175,7 +221,43 @@ public static class CoursesEndpoints
 
                         request.SortOrder,
 
-                        request.SchoolType),
+                        request.SchoolType,
+
+                        request.IsPublished),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
+        app.MapPost("/api/admin/courses/{courseId:guid}/published", async (
+
+            Guid courseId,
+
+            SetCoursePublishedRequest request,
+
+            ICommandHandler<SetCoursePublishedCommand, CourseSummaryDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                return Results.Ok(await handler.Handle(
+
+                    new SetCoursePublishedCommand(courseId, request.IsPublished),
 
                     cancellationToken));
 

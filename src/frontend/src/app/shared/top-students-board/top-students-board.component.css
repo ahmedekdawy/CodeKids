@@ -1,0 +1,165 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.top-board {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.top-board-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.top-board-badge {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.top-board-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: var(--heading);
+}
+
+.top-board-head p {
+  margin: 0.25rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.top-board-list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.top-board-list li {
+  display: grid;
+  grid-template-columns: 1.9rem auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-md);
+  background: var(--elevated-bg);
+  border: 1px solid var(--border);
+}
+
+.top-board-list li.podium {
+  border-color: rgba(255, 214, 10, 0.4);
+}
+
+.rank {
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.student {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.student strong {
+  font-size: 0.95rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--accent-fg);
+  white-space: nowrap;
+}
+
+/* showcase — login page, sits over the banner column */
+.top-board.showcase {
+  position: relative;
+  z-index: 1;
+  width: min(27rem, 86%);
+  max-height: min(32rem, 70vh);
+  overflow: auto;
+  padding: 1.4rem 1.3rem;
+  border-radius: 24px;
+  background: var(--auth-form-bg);
+  border: 1px solid var(--auth-form-border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
+}
+
+.top-board.showcase .top-board-head h2 {
+  font-size: 1.05rem;
+}
+
+/* section — landing page */
+.top-board.section {
+  gap: 1.25rem;
+  padding-block: clamp(3rem, 7vw, 5.5rem);
+  scroll-margin-top: 5rem;
+  background: var(--elevated-bg);
+  border-block: 1px solid var(--border);
+}
+
+.top-board.section .top-board-head {
+  justify-content: center;
+  text-align: center;
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+.top-board.section .top-board-head h2 {
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+}
+
+.top-board.section .top-board-head p {
+  font-size: 1rem;
+}
+
+.top-board.section .top-board-list {
+  width: min(1160px, 100%);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 0.75rem;
+}
+
+.top-board.section .top-board-list li {
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.top-board.section .top-board-list li:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-board.section .top-board-list li:hover {
+    transform: none;
+  }
+}

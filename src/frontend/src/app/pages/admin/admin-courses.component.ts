@@ -9,9 +9,9 @@ import {
   SearchableMultiSelectComponent
 } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
-import { SortDir, nextSort, sortBy } from '../../sort.util';
+import { SortDir, nextSort } from '../../sort.util';
 import { GRADE_CODES, formatCourseAudienceLabel, formatGradeLabel } from '../../grade.util';
-import { includesIgnoreCase } from '../../list-query.util';
+import { totalPages } from '../../list-query.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 
@@ -24,12 +24,19 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
 export class AdminCoursesComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private nameSearchTimer: ReturnType<typeof setTimeout> | null = null;
+
   readonly courses = signal<Course[]>([]);
+  readonly totalCount = signal(0);
   readonly message = signal('');
   readonly error = signal('');
   readonly sortKey = signal('title');
   readonly sortDir = signal<SortDir>('asc');
+  readonly page = signal(1);
+  readonly pageSize = signal(10);
+  readonly pageSizeOptions = [10, 25, 50];
   readonly editingId = signal<string | null>(null);
+  readonly publishingId = signal<string | null>(null);
   readonly filterName = signal('');
   /** Empty string = all stages. */
   readonly filterStage = signal<number | ''>('');
@@ -83,6 +90,7 @@ export class AdminCoursesComponent {
   courseStageId: number | '' = '';
   courseSchoolType: CourseSchoolType = 'All';
   courseSort: number | null = 10;
+  courseIsPublished = false;
 
   editTitle = '';
   editTheme = '';
@@ -94,6 +102,7 @@ export class AdminCoursesComponent {
   editStageId: number | '' = '';
   editSchoolType: CourseSchoolType = 'All';
   editSort: number | null = 0;
+  editIsPublished = false;
 
   readonly filterGradeOptions = computed(() => {
     this.locale.lang();
@@ -111,21 +120,7 @@ export class AdminCoursesComponent {
     }));
   });
 
-  readonly filteredCourses = computed(() => {
-    const name = this.filterName();
-    const stage = this.filterStage();
-    const grade = this.filterGrade();
-    return this.courses().filter((course) => {
-      if (!includesIgnoreCase(course.title, name)) return false;
-      if (stage !== '' && !this.courseMatchesStage(course, stage)) return false;
-      if (grade !== '' && !this.courseMatchesGrade(course, grade)) return false;
-      return true;
-    });
-  });
-
-  readonly sortedCourses = computed(() =>
-    sortBy(this.filteredCourses(), this.sortKey(), this.sortDir())
-  );
+  readonly totalPages = computed(() => totalPages(this.totalCount(), this.pageSize()));
 
   constructor() {
     this.reload();
@@ -134,12 +129,49 @@ export class AdminCoursesComponent {
   }
 
   reload(): void {
-    this.api.getCourses().subscribe((courses) => this.courses.set(courses));
+    this.loadCourses();
+  }
+
+  loadCourses(): void {
+    const stageId = this.filterStage();
+    const grade = this.filterGrade();
+    this.api
+      .getAdminCourses({
+        titleSearch: this.filterName() || undefined,
+        stageId: stageId === '' ? undefined : stageId,
+        grade: grade === '' ? undefined : grade,
+        sortKey: this.sortKey(),
+        sortDir: this.sortDir(),
+        page: this.page(),
+        pageSize: this.pageSize()
+      })
+      .subscribe({
+        next: (result) => {
+          this.totalCount.set(result.totalCount);
+          if (this.page() > totalPages(result.totalCount, this.pageSize())) {
+            this.page.set(Math.max(1, totalPages(result.totalCount, this.pageSize())));
+            if (this.page() !== result.page) {
+              this.loadCourses();
+              return;
+            }
+          }
+          this.courses.set(
+            result.items.map((item) => ({
+              ...item,
+              lessons: item.lessons ?? [],
+              quizzes: item.quizzes ?? []
+            }))
+          );
+        },
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.listFailed'))
+      });
   }
 
   setSort(key: string): void {
     this.sortDir.set(nextSort(this.sortKey(), key, this.sortDir()));
     this.sortKey.set(key);
+    this.page.set(1);
+    this.loadCourses();
   }
 
   sortMark(key: string): string {
@@ -149,6 +181,11 @@ export class AdminCoursesComponent {
 
   setFilterName(value: string): void {
     this.filterName.set(value);
+    if (this.nameSearchTimer) clearTimeout(this.nameSearchTimer);
+    this.nameSearchTimer = setTimeout(() => {
+      this.page.set(1);
+      this.loadCourses();
+    }, 300);
   }
 
   onFilterStageChange(value: string): void {
@@ -158,10 +195,14 @@ export class AdminCoursesComponent {
     if (grade !== '' && stage !== '' && this.gradeToStage(grade) !== stage) {
       this.filterGrade.set('');
     }
+    this.page.set(1);
+    this.loadCourses();
   }
 
   onFilterGradeChange(value: string): void {
     this.filterGrade.set(value === '' ? '' : Number(value));
+    this.page.set(1);
+    this.loadCourses();
   }
 
   hasActiveFilters(): boolean {
@@ -172,6 +213,19 @@ export class AdminCoursesComponent {
     this.filterName.set('');
     this.filterStage.set('');
     this.filterGrade.set('');
+    this.page.set(1);
+    this.loadCourses();
+  }
+
+  setPageSize(value: string | number): void {
+    this.pageSize.set(Number(value) || 10);
+    this.page.set(1);
+    this.loadCourses();
+  }
+
+  goToPage(nextPage: number): void {
+    this.page.set(Math.min(Math.max(1, nextPage), this.totalPages()));
+    this.loadCourses();
   }
 
   termLabel(term: string | null | undefined): string {
@@ -216,17 +270,6 @@ export class AdminCoursesComponent {
   gradesForStage(stageId: number | ''): number[] {
     if (stageId === '') return [...this.grades];
     return this.grades.filter((g) => this.gradeToStage(g) === stageId);
-  }
-
-  private courseMatchesStage(course: Course, stage: number): boolean {
-    if (course.stageId === stage) return true;
-    return course.grade != null && this.gradeToStage(course.grade) === stage;
-  }
-
-  private courseMatchesGrade(course: Course, grade: number): boolean {
-    if (course.grade === grade) return true;
-    if (course.grade != null) return false;
-    return course.stageId == null || course.stageId === this.gradeToStage(grade);
   }
 
   gradeToStage(grade: number): number | null {
@@ -302,7 +345,8 @@ export class AdminCoursesComponent {
         grades: this.courseGrades,
         stageId: this.courseStageId === '' ? null : this.courseStageId,
         schoolType: this.courseSchoolType,
-        sortOrder: this.courseSort ?? 0
+        sortOrder: this.courseSort ?? 0,
+        isPublished: this.courseIsPublished
       })
       .subscribe({
         next: (created) => {
@@ -320,6 +364,7 @@ export class AdminCoursesComponent {
           this.courseAgeMin = 8;
           this.courseAgeMax = 12;
           this.courseSort = 10;
+          this.courseIsPublished = false;
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.createFailed'))
@@ -339,6 +384,7 @@ export class AdminCoursesComponent {
     this.editSchoolType =
       course.schoolType === 'Arabic' || course.schoolType === 'Language' ? course.schoolType : 'All';
     this.editSort = course.sortOrder;
+    this.editIsPublished = course.isPublished === true;
   }
 
   cancelEdit(): void {
@@ -358,7 +404,8 @@ export class AdminCoursesComponent {
         grade: this.editGrade,
         stageId: this.editStageId === '' ? null : this.editStageId,
         schoolType: this.editSchoolType,
-        sortOrder: this.editSort ?? 0
+        sortOrder: this.editSort ?? 0,
+        isPublished: this.editIsPublished
       })
       .subscribe({
         next: () => {
@@ -368,6 +415,37 @@ export class AdminCoursesComponent {
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.courses.updateFailed'))
       });
+  }
+
+  isPublished(course: Course): boolean {
+    return course.isPublished === true;
+  }
+
+  isPublishing(courseId: string): boolean {
+    return this.publishingId() === courseId;
+  }
+
+  togglePublished(course: Course): void {
+    if (this.publishingId()) return;
+    const next = !this.isPublished(course);
+    if (!next && !confirm(this.locale.t('admin.courses.confirmUnpublish', { title: course.title }))) {
+      return;
+    }
+    this.clearStatus();
+    this.publishingId.set(course.id);
+    this.api.setCoursePublished(course.id, next).subscribe({
+      next: (updated) => {
+        this.publishingId.set(null);
+        this.courses.update((list) =>
+          list.map((item) => (item.id === course.id ? { ...item, isPublished: updated.isPublished } : item))
+        );
+        this.message.set(this.locale.t(next ? 'admin.courses.published' : 'admin.courses.unpublished'));
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'admin.courses.publishFailed'));
+      }
+    });
   }
 
   deleteCourse(course: Course): void {

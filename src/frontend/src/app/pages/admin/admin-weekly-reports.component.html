@@ -1,0 +1,93 @@
+<div class="panel-page">
+  <h2>{{ 'admin.weeklyReports.title' | t }}</h2>
+  <p class="meta">{{ 'admin.weeklyReports.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <h3>{{ 'teacher.weeklyReports.historyTitle' | t }}</h3>
+    <div class="list-filters">
+      <label>
+        {{ 'common.teacher' | t }}
+        <app-searchable-select
+          [ngModel]="filterTeacherId()"
+          name="filterTeacherId"
+          (ngModelChange)="setFilterTeacher($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="teacherOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.grade' | t }}
+        <app-searchable-select
+          [ngModel]="filterGrade()"
+          name="filterGrade"
+          (ngModelChange)="setFilterGrade($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="gradeOptions()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input
+          type="date"
+          [ngModel]="filterFromDate()"
+          name="filterFromDate"
+          (ngModelChange)="filterFromDate.set($event); loadRows()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input
+          type="date"
+          [ngModel]="filterToDate()"
+          name="filterToDate"
+          (ngModelChange)="filterToDate.set($event); loadRows()"
+        />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+      <button type="button" class="ghost-btn" (click)="loadRows()">
+        {{ 'teacher.weeklyReports.reload' | t }}
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'teacher.weeklyReports.weekStart' | t }}</th>
+            <th>{{ 'common.teacher' | t }}</th>
+            <th>{{ 'common.student' | t }}</th>
+            <th>{{ 'common.grade' | t }}</th>
+            <th>{{ 'teacher.weeklyReports.performance' | t }}</th>
+            <th>{{ 'teacher.weeklyReports.attendance' | t }}</th>
+            <th>{{ 'teacher.weeklyReports.homework' | t }}</th>
+            <th>{{ 'teacher.weeklyReports.interaction' | t }}</th>
+            <th>{{ 'teacher.weeklyReports.openCamera' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.weekStartDate }}</td>
+              <td>{{ row.teacherName || ('common.emDash' | t) }}</td>
+              <td>{{ row.studentName }}</td>
+              <td>{{ gradeLabel(row.studentGrade) }}</td>
+              <td>{{ row.performancePercent ?? ('common.emDash' | t) }}</td>
+              <td>{{ row.attendancePercent ?? ('common.emDash' | t) }}</td>
+              <td>{{ row.homeworkPercent ?? ('common.emDash' | t) }}</td>
+              <td>{{ interactionLabel(row.interactionDuringSession) }}</td>
+              <td>{{ openCameraLabel(row.openCamera) }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9">{{ 'admin.weeklyReports.noReports' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

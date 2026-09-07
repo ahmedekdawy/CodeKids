@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
@@ -9,25 +9,17 @@ import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, Teacher
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
-import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
+import { QuestionDraftEditorComponent } from '../../shared/question-draft-editor/question-draft-editor.component';
+import { QuestionDraft } from '../../shared/question-draft/question-draft.model';
+import {
+  draftFromGenerated,
+  draftFromQuizQuestion,
+  emptyQuestionDraft,
+  toQuestionPayload,
+  validateQuestionDraft
+} from '../../shared/question-draft/question-draft.util';
 import { paginate, totalPages } from '../../list-query.util';
-
-interface OptionDraft {
-  text: string;
-}
-
-interface QuestionDraft {
-  prompt: string;
-  options: OptionDraft[];
-  correct: string;
-  promptImageMediaAssetId?: string | null;
-  promptImageUrl?: string | null;
-}
-
-function emptyQuestion(): QuestionDraft {
-  return { prompt: '', options: [{ text: '' }, { text: '' }], correct: '' };
-}
 
 @Component({
   selector: 'app-teacher-quizzes',
@@ -36,9 +28,10 @@ function emptyQuestion(): QuestionDraft {
     SearchableSelectComponent,
     SearchableMultiSelectComponent,
     FormsModule,
+    ReactiveFormsModule,
     IconActionButtonComponent,
     TranslatePipe,
-    QuestionImageUploadComponent,
+    QuestionDraftEditorComponent,
     QuestionImageDisplayComponent
   ],
   templateUrl: './teacher-quizzes.component.html',
@@ -47,6 +40,8 @@ function emptyQuestion(): QuestionDraft {
 export class TeacherQuizzesComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly fb = inject(FormBuilder);
+
   readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
   readonly quizzes = signal<TeacherQuizListItem[]>([]);
@@ -55,16 +50,23 @@ export class TeacherQuizzesComponent {
   readonly info = signal('');
   readonly grades = GRADE_CODES;
 
-  quizTitle = '';
-  quizDescription = '';
-  quizXp = 30;
-  quizQuestionCount = 1;
-  quizCourseId = '';
-  quizUnitIds: string[] = [];
-  quizLessonIds: string[] = [];
-  quizClassroomId = '';
-  questions: QuestionDraft[] = [emptyQuestion()];
+  readonly quizForm = this.fb.nonNullable.group({
+    title: ['', Validators.required],
+    description: [''],
+    courseId: ['', Validators.required],
+    unitIds: [[] as string[]],
+    lessonIds: [[] as string[]],
+    classroomId: [''],
+    xp: [30],
+    durationMinutes: [0],
+    isPublished: [false],
+    questionCount: [1]
+  });
+  questions: QuestionDraft[] = [emptyQuestionDraft()];
+
   readonly generating = signal(false);
+  readonly publishingId = signal<string | null>(null);
+  editingQuizId: string | null = null;
 
   filterFromDate = startOfMonthLocal();
   filterToDate = endOfMonthLocal();
@@ -73,29 +75,37 @@ export class TeacherQuizzesComponent {
   reviewQuizId = '';
   expandedAttemptId = '';
 
-  readonly reviewPageSize = 2;
+  readonly quizListPageSize = 10;
+  readonly attemptsPageSize = 5;
   readonly quizListPage = signal(1);
   readonly attemptsPage = signal(1);
 
-  readonly quizTotalPages = computed(() => totalPages(this.quizzes().length, this.reviewPageSize));
+  readonly quizTotalPages = computed(() => totalPages(this.quizzes().length, this.quizListPageSize));
   readonly pagedQuizzes = computed(() =>
-    paginate(this.quizzes(), this.quizListPage(), this.reviewPageSize)
+    paginate(this.quizzes(), this.quizListPage(), this.quizListPageSize)
   );
-  readonly attemptsTotalPages = computed(() => totalPages(this.attempts().length, this.reviewPageSize));
+  readonly attemptsTotalPages = computed(() => totalPages(this.attempts().length, this.attemptsPageSize));
   readonly pagedAttempts = computed(() =>
-    paginate(this.attempts(), this.attemptsPage(), this.reviewPageSize)
+    paginate(this.attempts(), this.attemptsPage(), this.attemptsPageSize)
   );
 
   constructor() {
     this.api.getCourses().subscribe((courses) => {
       this.courses.set(courses);
-      if (!this.quizCourseId && courses[0]) this.quizCourseId = courses[0].id;
+      if (!this.quizForm.controls.courseId.value && courses[0]) {
+        this.quizForm.patchValue({ courseId: courses[0].id });
+      }
     });
     this.api.getClassrooms().subscribe((classrooms) => {
       this.classrooms.set(classrooms);
-      if (!this.quizClassroomId && classrooms[0]) this.quizClassroomId = classrooms[0].id;
+      if (!this.quizForm.controls.classroomId.value && classrooms[0]) {
+        this.quizForm.patchValue({ classroomId: classrooms[0].id });
+      }
     });
     this.reloadQuizzes();
+
+    this.quizForm.controls.courseId.valueChanges.subscribe(() => this.onCourseChange());
+    this.quizForm.controls.unitIds.valueChanges.subscribe(() => this.onUnitsChange());
   }
 
   courseLabel(course: Course): string {
@@ -113,50 +123,26 @@ export class TeacherQuizzesComponent {
     return d.toLocaleString();
   }
 
-  optionLabel(index: number): string {
-    return String.fromCharCode(65 + index);
-  }
-
-  filledOptions(question: QuestionDraft): { key: string; text: string }[] {
-    return question.options
-      .map((o, i) => ({ key: this.optionLabel(i), text: (o.text || '').trim() }))
-      .filter((o) => o.text.length > 0);
-  }
-
   addQuestion(): void {
-    this.questions.push(emptyQuestion());
-    this.quizQuestionCount = this.questions.length;
+    this.questions.push(emptyQuestionDraft());
+    this.quizForm.patchValue({ questionCount: this.questions.length });
   }
 
   removeQuestion(index: number): void {
     if (this.questions.length <= 1) return;
     this.questions.splice(index, 1);
-    this.quizQuestionCount = this.questions.length;
+    this.quizForm.patchValue({ questionCount: this.questions.length });
   }
 
   onQuestionCountChange(): void {
-    const count = this.clampQuestionCount(this.quizQuestionCount, 1);
-    this.quizQuestionCount = count;
-    while (this.questions.length < count) this.questions.push(emptyQuestion());
-    if (this.questions.length > count) this.questions = this.questions.slice(0, count);
-  }
-
-  addOption(questionIndex: number): void {
-    const question = this.questions[questionIndex];
-    if (!question || question.options.length >= 26) return;
-    question.options.push({ text: '' });
-  }
-
-  removeOption(questionIndex: number, optionIndex: number): void {
-    const question = this.questions[questionIndex];
-    if (!question || question.options.length <= 2) return;
-    question.options.splice(optionIndex, 1);
-    this.onOptionTextChange(question);
-  }
-
-  onOptionTextChange(question: QuestionDraft): void {
-    const keys = new Set(this.filledOptions(question).map((o) => o.key));
-    if (question.correct && !keys.has(question.correct)) question.correct = '';
+    const count = this.clampQuestionCount(this.quizForm.controls.questionCount.value, 1);
+    this.quizForm.patchValue({ questionCount: count });
+    while (this.questions.length < count) {
+      this.questions.push(emptyQuestionDraft());
+    }
+    if (this.questions.length > count) {
+      this.questions = this.questions.slice(0, count);
+    }
   }
 
   resetFilters(): void {
@@ -215,28 +201,31 @@ export class TeacherQuizzesComponent {
   }
 
   onCourseChange(): void {
-    this.quizUnitIds = [];
-    this.quizLessonIds = [];
+    this.quizForm.patchValue({ unitIds: [], lessonIds: [] });
   }
 
   onUnitsChange(): void {
-    const allowed = new Set(this.lessonsForUnits().map((l) => l.id));
-    this.quizLessonIds = this.quizLessonIds.filter((id) => allowed.has(id));
+    const allowed = new Set(this.lessonsForUnits().map((lesson) => lesson.id));
+    const lessonIds = this.quizForm.controls.lessonIds.value.filter((id) => allowed.has(id));
+    this.quizForm.patchValue({ lessonIds });
   }
 
   unitsForCourse(): CourseUnit[] {
-    const units = [...(this.courses().find((c) => c.id === this.quizCourseId)?.units ?? [])];
+    const courseId = this.quizForm.controls.courseId.value;
+    const units = [...(this.courses().find((course) => course.id === courseId)?.units ?? [])];
     return units.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
   }
 
   lessonsForUnits(): CourseLesson[] {
-    const course = this.courses().find((c) => c.id === this.quizCourseId);
-    if (!course || !this.quizUnitIds.length) return [];
-    const selected = new Set(this.quizUnitIds);
+    const courseId = this.quizForm.controls.courseId.value;
+    const unitIds = this.quizForm.controls.unitIds.value;
+    const course = this.courses().find((item) => item.id === courseId);
+    if (!course || !unitIds.length) return [];
+    const selected = new Set(unitIds);
     const lessons = (course.units ?? [])
-      .filter((u) => selected.has(u.id))
-      .flatMap((u) => u.lessons ?? []);
-    const extra = (course.lessons ?? []).filter((l) => l.unitId && selected.has(l.unitId));
+      .filter((unit) => selected.has(unit.id))
+      .flatMap((unit) => unit.lessons ?? []);
+    const extra = (course.lessons ?? []).filter((lesson) => lesson.unitId && selected.has(lesson.unitId));
     const byId = new Map<string, CourseLesson>();
     for (const lesson of [...lessons, ...extra]) byId.set(lesson.id, lesson);
     return [...byId.values()].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
@@ -245,7 +234,8 @@ export class TeacherQuizzesComponent {
   generate(): void {
     this.error.set('');
     this.info.set('');
-    if (!this.quizCourseId) {
+    const { courseId, classroomId, unitIds, lessonIds, questionCount } = this.quizForm.getRawValue();
+    if (!courseId) {
       this.error.set(this.locale.t('teacher.ai.needScope'));
       return;
     }
@@ -254,26 +244,24 @@ export class TeacherQuizzesComponent {
     this.api
       .generateAssessment({
         kind: 'Quiz',
-        courseId: this.quizCourseId,
-        classroomId: this.quizClassroomId || null,
-        unitIds: this.quizUnitIds,
-        lessonIds: this.quizLessonIds,
-        questionCount: this.clampQuestionCount(this.quizQuestionCount, 1),
+        courseId,
+        classroomId: classroomId || null,
+        unitIds,
+        lessonIds,
+        questionCount: this.clampQuestionCount(questionCount, 1),
         language: this.locale.lang()
       })
       .subscribe({
         next: (draft) => {
           this.generating.set(false);
-          this.quizTitle = draft.title;
-          this.quizDescription = draft.description;
           this.questions = draft.questions.length
-            ? draft.questions.map((question) => ({
-                prompt: question.prompt,
-                options: (question.options?.length ? question.options : ['', '']).map((text) => ({ text })),
-                correct: question.correctOption || ''
-              }))
-            : [emptyQuestion()];
-          this.quizQuestionCount = this.questions.length;
+            ? draft.questions.map((question) => draftFromGenerated(question))
+            : [emptyQuestionDraft()];
+          this.quizForm.patchValue({
+            title: draft.title,
+            description: draft.description,
+            questionCount: this.questions.length
+          });
           this.info.set(this.locale.t('teacher.ai.generated'));
         },
         error: (err) => {
@@ -284,69 +272,193 @@ export class TeacherQuizzesComponent {
   }
 
   createQuiz(): void {
+    this.saveQuiz();
+  }
+
+  startEdit(quiz: TeacherQuizListItem): void {
+    this.error.set('');
+    this.info.set('');
+    this.editingQuizId = quiz.id;
+    this.reviewQuizId = '';
+    this.quizForm.patchValue({
+      title: quiz.title,
+      description: quiz.description,
+      courseId: quiz.courseId,
+      classroomId: quiz.classroomId || '',
+      xp: quiz.xpReward,
+      isPublished: quiz.isPublished
+    });
+    this.api.getTeacherQuiz(quiz.id).subscribe({
+      next: (detail) => {
+        this.questions = detail.questions.length
+          ? detail.questions.map((question) => draftFromQuizQuestion(question))
+          : [emptyQuestionDraft()];
+        this.quizForm.patchValue({
+          title: detail.title,
+          description: detail.description,
+          courseId: detail.courseId,
+          classroomId: detail.classroomId || '',
+          xp: detail.xpReward,
+          durationMinutes: detail.durationMinutes ?? 0,
+          isPublished: detail.isPublished,
+          questionCount: this.questions.length
+        });
+        document.getElementById('quiz-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.quizzes.loadQuizFailed'))
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingQuizId = null;
+    this.resetQuizForm();
+    this.error.set('');
+    this.info.set('');
+  }
+
+  deleteQuiz(quiz: TeacherQuizListItem): void {
+    if (!confirm(this.locale.t('teacher.quizzes.confirmDelete', { title: quiz.title }))) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.api.deleteQuiz(quiz.id).subscribe({
+      next: () => {
+        if (this.editingQuizId === quiz.id) {
+          this.cancelEdit();
+        }
+        if (this.reviewQuizId === quiz.id) {
+          this.reviewQuizId = '';
+          this.attempts.set([]);
+        }
+        this.info.set(this.locale.t('teacher.quizzes.deleted'));
+        this.reloadQuizzes();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.quizzes.deleteFailed'))
+    });
+  }
+
+  publishQuiz(quiz: TeacherQuizListItem): void {
+    if (quiz.isPublished || this.publishingId()) {
+      return;
+    }
+
+    this.error.set('');
+    this.info.set('');
+    this.publishingId.set(quiz.id);
+    this.api.publishQuiz(quiz.id).subscribe({
+      next: () => {
+        this.publishingId.set(null);
+        this.info.set(this.locale.t('teacher.assessments.publishedSuccess'));
+        this.reloadQuizzes();
+      },
+      error: (err) => {
+        this.publishingId.set(null);
+        this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
+      }
+    });
+  }
+
+  copyStudentLink(quizId: string): void {
+    const url = `${window.location.origin}/quizzes/${quizId}`;
+    void navigator.clipboard?.writeText(url).then(
+      () => {
+        this.error.set('');
+        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
+      },
+      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
+    );
+  }
+
+  isPublishing(id: string): boolean {
+    return this.publishingId() === id;
+  }
+
+  private saveQuiz(): void {
     this.error.set('');
     this.info.set('');
 
-    if (!this.quizCourseId) {
+    const title = this.quizForm.controls.title.value.trim();
+    if (!title) {
+      this.quizForm.controls.title.markAsTouched();
+      this.error.set(this.locale.t('teacher.quizzes.titleRequired'));
+      return;
+    }
+
+    const courseId = this.quizForm.controls.courseId.value.trim();
+    if (!courseId) {
+      this.quizForm.controls.courseId.markAsTouched();
       this.error.set(this.locale.t('teacher.ai.needScope'));
       return;
     }
 
-    const payloads: {
-      prompt: string;
-      options: string[];
-      correctOption: string;
-      sortOrder: number;
-      promptImageMediaAssetId?: string | null;
-    }[] = [];
-
-    for (let i = 0; i < this.questions.length; i++) {
-      const question = this.questions[i];
-      const prompt = (question.prompt || '').trim();
-      if (!prompt) {
-        this.error.set(this.locale.t('teacher.quizzes.promptRequired', { n: i + 1 }));
+    const formValue = this.quizForm.getRawValue();
+    const payloads = [];
+    for (let index = 0; index < this.questions.length; index++) {
+      const errorKey = validateQuestionDraft(this.questions[index], index + 1);
+      if (errorKey) {
+        this.error.set(this.locale.t(errorKey));
         return;
       }
-
-      const filled = this.filledOptions(question);
-      if (filled.length < 2) {
-        this.error.set(this.locale.t('teacher.quizzes.minOptionsForQuestion', { n: i + 1 }));
-        return;
-      }
-      if (!question.correct) {
-        this.error.set(this.locale.t('teacher.quizzes.selectCorrectForQuestion', { n: i + 1 }));
-        return;
-      }
-
-      payloads.push({
-        prompt,
-        options: filled.map((o) => o.text),
-        correctOption: question.correct,
-        sortOrder: i + 1,
-        promptImageMediaAssetId: question.promptImageMediaAssetId || null
-      });
+      payloads.push(toQuestionPayload(this.questions[index], index + 1));
     }
 
-    this.api
-      .createQuiz({
-        courseId: this.quizCourseId,
-        classroomId: this.quizClassroomId || null,
-        title: this.quizTitle,
-        description: this.quizDescription,
-        xpReward: this.quizXp,
-        questions: payloads
-      })
-      .subscribe({
-        next: () => {
-          this.info.set(this.locale.t('teacher.quizzes.created'));
-          this.quizTitle = '';
-          this.quizDescription = '';
-          this.questions = [emptyQuestion()];
-          this.quizQuestionCount = 1;
-          this.reloadQuizzes();
-        },
-        error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.quizzes.createFailed'))
-      });
+    if (!payloads.length) {
+      this.error.set(this.locale.t('teacher.quizzes.promptRequired', { n: 1 }));
+      return;
+    }
+
+    const payload = {
+      courseId,
+      classroomId: formValue.classroomId.trim() || null,
+      title,
+      description: formValue.description.trim() || undefined,
+      xpReward: Number(formValue.xp) || 0,
+      durationMinutes: Number(formValue.durationMinutes) > 0 ? Number(formValue.durationMinutes) : null,
+      isPublished: !!formValue.isPublished,
+      questions: payloads
+    };
+
+    const editingId = this.editingQuizId;
+    const request = editingId
+      ? this.api.updateQuiz(editingId, payload)
+      : this.api.createQuiz(payload);
+
+    request.subscribe({
+      next: () => {
+        this.cancelEdit();
+        this.info.set(
+          this.locale.t(editingId ? 'teacher.quizzes.updated' : 'teacher.quizzes.created')
+        );
+        this.reloadQuizzes();
+      },
+      error: (err) =>
+        this.error.set(
+          this.locale.fromApiError(
+            err,
+            editingId ? 'teacher.quizzes.updateFailed' : 'teacher.quizzes.createFailed'
+          )
+        )
+    });
+  }
+
+  private resetQuizForm(): void {
+    const courses = this.courses();
+    const classrooms = this.classrooms();
+    this.quizForm.reset({
+      title: '',
+      description: '',
+      courseId: courses[0]?.id ?? '',
+      unitIds: [],
+      lessonIds: [],
+      classroomId: classrooms[0]?.id ?? '',
+      xp: 30,
+      durationMinutes: 0,
+      isPublished: false,
+      questionCount: 1
+    });
+    this.questions = [emptyQuestionDraft()];
   }
 
   private clampQuestionCount(value: number, fallback: number): number {

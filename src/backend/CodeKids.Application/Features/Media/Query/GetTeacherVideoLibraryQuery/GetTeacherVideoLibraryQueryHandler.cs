@@ -21,18 +21,19 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
         var lessonVideos = await dbContext.LessonVideos
             .AsNoTracking()
             .Include(x => x.MediaAsset)
+            .Where(x => x.LessonId != null)
             .Where(x => isAdmin || x.MediaAsset!.UploadedByUserId == query.TeacherUserId)
             .OrderByDescending(x => x.CreatedAtUtc)
             .ToListAsync(cancellationToken);
         var lessonIndex = await CourseOutlineResolver.IndexLessonsAsync(dbContext, cancellationToken);
         var lessonVideoDtos = lessonVideos.Select(x =>
         {
-            lessonIndex.TryGetValue(x.LessonId, out var found);
+            lessonIndex.TryGetValue(x.LessonId!.Value, out var found);
             return new TeacherLessonVideoDto(
                 x.Id,
-                x.LessonId,
+                x.LessonId.Value,
                 found.Lesson?.Title ?? "Lesson",
-                found.Course?.Id ?? Guid.Empty,
+                x.CourseId ?? found.Course?.Id ?? Guid.Empty,
                 found.Course?.Title ?? "",
                 x.MediaAssetId,
                 x.Title,
@@ -65,6 +66,40 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
                 x.SolutionVideo.CreatedAtUtc))
             .ToListAsync(cancellationToken);
 
-        return new TeacherVideoLibraryDto(lessonVideoDtos, solutionVideos);
+        var courseVideosQuery = dbContext.LessonVideos
+            .AsNoTracking()
+            .Include(x => x.Course)
+            .Include(x => x.MediaAsset)
+            .Where(x => x.LessonId == null && x.CourseId != null);
+
+        if (!isAdmin)
+        {
+            var teacherCourseIds = await dbContext.ClassroomCourses
+                .AsNoTracking()
+                .Where(x => x.TeacherId == query.TeacherUserId)
+                .Select(x => x.CourseId)
+                .Distinct()
+                .ToListAsync(cancellationToken);
+            var relatedCourseIds = await CourseVideoLoader.GetRelatedCourseIdsAsync(
+                dbContext, teacherCourseIds, cancellationToken);
+            courseVideosQuery = courseVideosQuery.Where(x => relatedCourseIds.Contains(x.CourseId!.Value));
+        }
+
+        var courseVideos = await courseVideosQuery
+            .OrderByDescending(x => x.CreatedAtUtc)
+            .Select(x => new CourseVideoLibraryItemDto(
+                x.Id,
+                x.CourseId ?? Guid.Empty,
+                x.Course != null ? x.Course.Title : "",
+                x.MediaAssetId,
+                x.Title,
+                x.MediaAsset!.FileName,
+                x.MediaAsset.SizeBytes,
+                x.MediaAsset.DurationSeconds,
+                x.SortOrder,
+                x.CreatedAtUtc))
+            .ToListAsync(cancellationToken);
+
+        return new TeacherVideoLibraryDto(lessonVideoDtos, solutionVideos, courseVideos);
     }
 }

@@ -11,12 +11,26 @@ public static class BankQuestionValidator
     public static bool IsComposite(BankQuestionType type) =>
         type is BankQuestionType.Paragraph;
 
+    public static bool IsFreeText(BankQuestionType type) =>
+        type is BankQuestionType.FreeText;
+
+    public static bool IsShortAnswer(BankQuestionType type) =>
+        type is BankQuestionType.ShortAnswer;
+
+    public static bool IsTextAnswer(BankQuestionType type) =>
+        IsFreeText(type) || IsShortAnswer(type);
+
     public static BankQuestionType ParseType(string value)
     {
-        if (!Enum.TryParse<BankQuestionType>(value, true, out var type))
+        if (string.Equals(value, "MultipleChoice", StringComparison.OrdinalIgnoreCase))
+        {
+            return BankQuestionType.SingleChoice;
+        }
+
+        if (!Enum.TryParse<BankQuestionType>(value, true, out var type) || !Enum.IsDefined(type))
         {
             throw new InvalidOperationException(
-                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, or Underline.");
+                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, or ShortAnswer.");
         }
 
         return type;
@@ -39,6 +53,11 @@ public static class BankQuestionValidator
         }
 
         if (IsComposite(type))
+        {
+            return;
+        }
+
+        if (IsTextAnswer(type))
         {
             return;
         }

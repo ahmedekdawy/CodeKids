@@ -64,7 +64,7 @@ public static class QuestionImageEndpoints
             {
                 return ApiResults.ProblemFromException(ex);
             }
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" })
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin,Student" })
             .DisableAntiforgery();
 
         app.MapGet("/api/question-images/{mediaAssetId:guid}", async (

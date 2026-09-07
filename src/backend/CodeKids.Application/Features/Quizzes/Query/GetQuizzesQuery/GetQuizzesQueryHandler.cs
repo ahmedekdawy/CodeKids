@@ -1,5 +1,7 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
+using CodeKids.Domain.Enums;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
@@ -28,6 +30,13 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
             quizzesQuery = quizzesQuery.Where(x => x.ClassroomId == null || x.ClassroomId == classroomId);
         }
 
+        var isTeacher = string.Equals(query.ViewerRole, nameof(UserRole.Teacher), StringComparison.OrdinalIgnoreCase);
+        var isAdmin = string.Equals(query.ViewerRole, nameof(UserRole.SuperAdmin), StringComparison.OrdinalIgnoreCase);
+        if (!PublishedAssessmentAccess.CanViewUnpublished(query.ViewerRole))
+        {
+            quizzesQuery = quizzesQuery.Where(x => x.IsPublished);
+        }
+
         var quizzes = await quizzesQuery.ToListAsync(cancellationToken);
         return quizzes.Select(Map).ToList();
     }
@@ -40,16 +49,7 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
             quiz.Title,
             quiz.Description,
             quiz.XpReward,
-            quiz.Questions
-                .OrderBy(x => x.SortOrder)
-                .Select(x => new QuizQuestionDto(
-                    x.Id,
-                    x.Prompt,
-                    x.OptionA,
-                    x.OptionB,
-                    x.OptionC,
-                    ChoiceOptions.Parse(x.OptionsJson, x.OptionA, x.OptionB, x.OptionC),
-                    x.SortOrder,
-                    QuestionImageUrls.Build(x.PromptImageMediaAssetId)))
-                .ToList());
+            quiz.DurationMinutes,
+            quiz.IsPublished,
+            QuizQuestionSync.MapTree(quiz.Questions));
 }

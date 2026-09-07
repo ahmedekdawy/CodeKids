@@ -13,5 +13,6 @@ public sealed record ChildProgressDto(
     int CompletedSteps,
     int QuizAttempts,
     Guid? AvatarId,
+    string? ProfilePhotoUrl,
     IReadOnlyList<string> Badges,
     ChildEvaluationSummaryDto? LatestEvaluation);

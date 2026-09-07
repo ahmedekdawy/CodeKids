@@ -17,4 +17,5 @@ public sealed record ExamAnswerReviewDto(
     bool? IsCorrect,
     int? PointsAwarded,
     int Points,
-    string? PromptImageUrl);
+    string? PromptImageUrl,
+    string? AnswerImageUrl);

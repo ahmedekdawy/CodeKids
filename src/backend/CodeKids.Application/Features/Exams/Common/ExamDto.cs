@@ -18,6 +18,8 @@ public sealed record ExamDto(
     string Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    int? DurationMinutes,
+    bool IsPublished,
     Guid CreatedByUserId,
     string CreatedByName,
     IReadOnlyList<ExamQuestionDto> Questions);

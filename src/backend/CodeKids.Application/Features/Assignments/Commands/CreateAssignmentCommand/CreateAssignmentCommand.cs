@@ -13,6 +13,7 @@ public sealed record CreateAssignmentRequest(
     string? Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<AssignmentQuestionInput> Questions);
 
 public sealed record CreateAssignmentCommand(
@@ -22,4 +23,5 @@ public sealed record CreateAssignmentCommand(
     string? Description,
     DateTimeOffset? DueAtUtc,
     int XpReward,
+    bool IsPublished,
     IReadOnlyList<AssignmentQuestionInput> Questions) : ICommand<AssignmentDto>;

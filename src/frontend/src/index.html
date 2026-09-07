@@ -18,6 +18,15 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('codekids_theme') === 'light') {
+            document.documentElement.dataset.theme = 'light';
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

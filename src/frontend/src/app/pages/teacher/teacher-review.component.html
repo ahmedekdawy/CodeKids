@@ -15,7 +15,6 @@
           [options]="assignments().map(a => ({ value: a.id, label: a.title }))"
         />
       </label>
-      <label>{{ 'common.feedback' | t }} <input [(ngModel)]="gradeFeedback" name="gradeFeedback" /></label>
       <button type="submit">{{ 'teacher.review.load' | t }}</button>
     </form>
   </section>
@@ -24,18 +23,46 @@
     <section class="block">
       <strong>{{ submission.studentName }}</strong>
       <p class="meta">{{ submission.status }} · {{ 'teacher.review.scoreLine' | t:{ score: submission.score ?? ('common.emDash' | t), max: submission.maxScore ?? ('common.emDash' | t) } }}</p>
+
       @for (answer of submission.answers; track answer.questionId) {
         <div class="question">
           <p>{{ answer.prompt }}</p>
           <app-question-image-display [url]="answer.promptImageUrl" />
-          <p>{{ 'common.answer' | t }}: {{ answer.answerText }}</p>
-          <p class="meta">{{ 'common.key' | t }}: {{ answer.correctAnswer }}</p>
+          <p>{{ 'common.answer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
+          <app-question-image-display [url]="answer.answerImageUrl" />
+          <p class="meta">{{ 'common.key' | t }}: {{ answer.correctAnswer || ('common.emDash' | t) }}</p>
+          <label class="points-field">
+            {{ 'teacher.review.points' | t }}
+            <input
+              type="number"
+              min="0"
+              [max]="answer.points"
+              [value]="answer.pointsAwarded ?? 0"
+              (input)="setPoints(submission.id, answer.questionId, +$any($event.target).value)"
+            />
+            / {{ answer.points }}
+          </label>
           <div class="chip-row">
             <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, true)">{{ 'common.correct' | t }}</button>
             <button type="button" class="chip" (click)="markAnswer(submission.id, answer.questionId, false)">{{ 'common.wrong' | t }}</button>
           </div>
         </div>
       }
+
+      <label>{{ 'common.feedback' | t }}
+        <textarea
+          rows="3"
+          [value]="draftFor(submission.id).feedback"
+          (input)="setFeedback(submission.id, $any($event.target).value)"
+        ></textarea>
+      </label>
+      <app-question-image-upload
+        [mediaAssetId]="draftFor(submission.id).feedbackImageMediaAssetId"
+        [imageUrl]="draftFor(submission.id).feedbackImageUrl"
+        (mediaAssetIdChange)="setFeedbackImage(submission.id, $event, draftFor(submission.id).feedbackImageUrl)"
+        (imageUrlChange)="setFeedbackImage(submission.id, draftFor(submission.id).feedbackImageMediaAssetId, $event)"
+      />
+
       <button type="button" (click)="grade(submission)">{{ 'teacher.review.saveGrade' | t }}</button>
     </section>
   }

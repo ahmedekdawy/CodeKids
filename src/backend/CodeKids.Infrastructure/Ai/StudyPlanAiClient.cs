@@ -50,7 +50,7 @@ public sealed class StudyPlanAiClient(
         return await CompleteOpenAiAsync(
             "https://text.pollinations.ai/",
             apiKey: null,
-            model: string.IsNullOrWhiteSpace(settings.Model) || provider is "groq" or "openai"
+            model: string.IsNullOrWhiteSpace(settings.Model) || provider is "groq" or "openai" or "grok"
                 ? "openai"
                 : settings.Model.Trim(),
             systemPrompt,
@@ -348,7 +348,13 @@ public sealed class StudyPlanAiClient(
     }
 
     private static string DefaultModel(string provider) =>
-        provider == "gemini" ? "gemini-flash-latest" : "llama-3.1-8b-instant";
+        provider switch
+        {
+            "gemini" => "gemini-flash-latest",
+            "grok" => "grok-4.6",
+            "openai" => "gpt-4o-mini",
+            _ => "llama-3.1-8b-instant"
+        };
 
     private static string NormalizeGeminiModel(string? model)
     {
@@ -390,9 +396,12 @@ public sealed class StudyPlanAiClient(
         var value = (baseUrl ?? string.Empty).Trim();
         if (string.IsNullOrWhiteSpace(value))
         {
-            value = provider == "openai"
-                ? "https://api.openai.com/v1/"
-                : "https://api.groq.com/openai/v1/";
+            value = provider switch
+            {
+                "openai" => "https://api.openai.com/v1/",
+                "grok" => "https://api.x.ai/v1/",
+                _ => "https://api.groq.com/openai/v1/"
+            };
         }
 
         return value.EndsWith('/') ? value : value + "/";

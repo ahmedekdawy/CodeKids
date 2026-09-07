@@ -23,6 +23,7 @@ export interface AuthUser {
   mobilePhone?: string;
   workShift?: TeacherWorkShift | string | null;
   tenantId?: string | null;
+  profilePhotoUrl?: string | null;
 }
 
 export interface AuthResponse {
@@ -61,6 +62,7 @@ export interface CourseQuiz {
   description: string;
   xpReward: number;
   questionCount: number;
+  isPublished?: boolean;
 }
 
 export type CourseTerm = 'FirstTerm' | 'SecondTerm' | 'FullYear';
@@ -87,9 +89,11 @@ export interface Course {
   notes?: string;
   variants?: string;
   studentAskEnabled?: boolean;
+  isPublished?: boolean;
   units?: CourseUnit[];
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
+  videos?: CourseVideoSummary[];
 }
 
 export interface Stage {
@@ -138,6 +142,27 @@ export interface LessonVideoSummary {
   title: string;
   sortOrder: number;
   durationSeconds?: number | null;
+}
+
+export interface CourseVideoSummary {
+  id: string;
+  mediaAssetId: string;
+  title: string;
+  sortOrder: number;
+  durationSeconds?: number | null;
+}
+
+export interface CourseVideoLibraryItem {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  mediaAssetId: string;
+  title: string;
+  fileName: string;
+  sizeBytes: number;
+  durationSeconds?: number | null;
+  sortOrder: number;
+  createdAtUtc: string;
 }
 
 export interface Lesson {
@@ -194,6 +219,7 @@ export interface TeacherSolutionVideo {
 export interface TeacherVideoLibrary {
   lessonVideos: TeacherLessonVideo[];
   solutionVideos: TeacherSolutionVideo[];
+  courseVideos?: CourseVideoLibraryItem[];
 }
 
 export interface PlaybackInfo {
@@ -205,6 +231,8 @@ export interface PlaybackInfo {
   contentType: string;
   fileName: string;
   isExternalLink?: boolean;
+  isTeraboxHosted?: boolean;
+  teraboxBaseUrl?: string | null;
 }
 
 export interface WatchSession {
@@ -247,12 +275,15 @@ export interface ChoiceOption {
 export interface QuizQuestion {
   id: string;
   prompt: string;
+  questionType: string;
+  passageText?: string;
   optionA: string;
   optionB: string;
   optionC: string;
   options?: ChoiceOption[];
   sortOrder: number;
   promptImageUrl?: string | null;
+  children?: QuizQuestion[];
 }
 
 export interface Quiz {
@@ -262,6 +293,8 @@ export interface Quiz {
   title: string;
   description: string;
   xpReward: number;
+  durationMinutes?: number | null;
+  isPublished: boolean;
   questions: QuizQuestion[];
 }
 
@@ -275,9 +308,37 @@ export interface TeacherQuizListItem {
   title: string;
   description: string;
   xpReward: number;
+  isPublished: boolean;
   questionCount: number;
   attemptCount: number;
   createdAtUtc: string;
+}
+
+export interface TeacherQuizQuestionDetail {
+  id: string;
+  prompt: string;
+  questionType?: string;
+  passageText?: string;
+  options: ChoiceOption[];
+  correctOption: string;
+  correctAnswer?: string;
+  points?: number;
+  sortOrder: number;
+  promptImageMediaAssetId?: string | null;
+  promptImageUrl?: string | null;
+  children?: TeacherQuizQuestionDetail[];
+}
+
+export interface TeacherQuizDetail {
+  id: string;
+  courseId: string;
+  classroomId?: string | null;
+  title: string;
+  description: string;
+  xpReward: number;
+  durationMinutes?: number | null;
+  isPublished: boolean;
+  questions: TeacherQuizQuestionDetail[];
 }
 
 export interface QuizAnswerReview {
@@ -356,6 +417,7 @@ export interface ChildProgress {
   completedSteps: number;
   quizAttempts: number;
   avatarId?: string | null;
+  profilePhotoUrl?: string | null;
   badges: string[];
   latestEvaluation?: ChildEvaluationSummary | null;
 }
@@ -432,6 +494,7 @@ export interface TeacherStudent {
   weakLessonCount: number;
   parentName?: string | null;
   signal?: string | null;
+  profilePhotoUrl?: string | null;
 }
 
 export interface TeacherDashboard {
@@ -574,6 +637,30 @@ export interface TeacherSessionAttendance {
   label: string;
 }
 
+export type StudentAttendanceStatus = 'Present' | 'Absent';
+
+export interface StudentClassroomAttendance {
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  studentGradeId?: number | null;
+  classroomId: string;
+  classroomName: string;
+  attendanceDate: string;
+  status: StudentAttendanceStatus | string;
+  recordedByTeacherId: string;
+  recordedByTeacherName: string;
+  createdAtUtc: string;
+}
+
+export interface PagedStudentClassroomAttendance {
+  items: StudentClassroomAttendance[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface StudentWeeklyReportGridRow {
   reportId?: string | null;
   studentId: string;
@@ -590,6 +677,7 @@ export interface StudentWeeklyReportGridRow {
 export interface StudentWeeklyReport {
   id: string;
   teacherId: string;
+  teacherName?: string;
   studentId: string;
   studentName: string;
   studentGrade?: number | null;
@@ -608,6 +696,17 @@ export interface SaveWeeklyReportEntry {
   homeworkPercent?: number | null;
   interactionDuringSession: string;
   openCamera?: boolean | null;
+}
+
+export interface TopWeeklyStudent {
+  studentId: string;
+  studentName: string;
+  studentGrade?: number | null;
+  /** Average across every subject the student was evaluated in that week. */
+  performancePercent: number;
+  subjectCount: number;
+  profilePhotoUrl?: string | null;
+  weekStartDate: string;
 }
 
 export interface WeeklyStudyPlanTopic {
@@ -656,6 +755,24 @@ export interface SaveWeeklyStudyPlanWeek {
 export interface GeneratedStudyPlan {
   notes: string;
   weeks: SaveWeeklyStudyPlanWeek[];
+}
+
+export interface GeneratedCourseTreeLesson {
+  title: string;
+  sortOrder: number;
+}
+
+export interface GeneratedCourseTreeUnit {
+  title: string;
+  sortOrder: number;
+  lessons: GeneratedCourseTreeLesson[];
+}
+
+export interface GeneratedCourseTree {
+  notes: string;
+  mode: string;
+  applied: boolean;
+  units: GeneratedCourseTreeUnit[];
 }
 
 export interface GeneratedAssessmentQuestion {
@@ -813,7 +930,9 @@ export interface ManagedUser {
   prepAmount?: number | null;
   secondaryAmount?: number | null;
   monthlySalary?: number | null;
+  isActive?: boolean;
   courseRates?: TeacherCourseRate[];
+  profilePhotoUrl?: string | null;
 }
 
 export interface ZoomConnectionStatus {
@@ -865,6 +984,11 @@ export interface ClassroomCourseAssignment {
   teacherId: string;
 }
 
+export interface ClassroomZoomLink {
+  name: string;
+  url: string;
+}
+
 export interface Classroom {
   id: string;
   name: string;
@@ -878,6 +1002,7 @@ export interface Classroom {
   courseStageId?: number | null;
   courseSchoolType?: CourseSchoolType | string | null;
   whatsAppGroupInviteUrl: string;
+  zoomLinks: ClassroomZoomLink[];
   whatsAppNotifyPhones: string;
   dailyWhatsAppReportsEnabled?: boolean;
   students: ClassroomStudent[];
@@ -888,6 +1013,37 @@ export interface EnrollStudentResult {
   whatsAppStatus: string;
 }
 
+export interface ClassroomEnrollmentListItem {
+  classroomId: string;
+  classroomName: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  enrolledCourseIds: string[];
+  enrolledCourseTitles: string[];
+}
+
+export interface PagedClassroomEnrollments {
+  items: ClassroomEnrollmentListItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface PagedCourses {
+  items: Course[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface PagedWeeklyStudyPlans {
+  items: WeeklyStudyPlan[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface SendClassroomWhatsAppResult {
   sentCount: number;
   failedCount: number;
@@ -895,17 +1051,34 @@ export interface SendClassroomWhatsAppResult {
   groupShareUrl?: string | null;
 }
 
+export interface AdminWhatsAppRecipient {
+  phone: string;
+  sent: boolean;
+  detail: string;
+}
+
+export interface SendAdminWhatsAppResult {
+  sentCount: number;
+  failedCount: number;
+  recipients: AdminWhatsAppRecipient[];
+  shareUrl: string;
+}
+
 export interface AssignmentQuestion {
   id: string;
   prompt: string;
   questionType: string;
+  passageText?: string;
   optionA?: string | null;
   optionB?: string | null;
   optionC?: string | null;
+  options?: ChoiceOption[];
   points: number;
   sortOrder: number;
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
+  promptImageMediaAssetId?: string | null;
+  children?: AssignmentQuestion[];
 }
 
 export interface Assignment {
@@ -916,6 +1089,7 @@ export interface Assignment {
   description: string;
   dueAtUtc?: string | null;
   xpReward: number;
+  isPublished: boolean;
   createdByUserId: string;
   createdByName: string;
   solutionVideoMediaAssetId?: string | null;
@@ -931,6 +1105,7 @@ export interface AssignmentAnswerReview {
   pointsAwarded?: number | null;
   points: number;
   promptImageUrl?: string | null;
+  answerImageUrl?: string | null;
 }
 
 export interface AssignmentSubmission {
@@ -943,6 +1118,7 @@ export interface AssignmentSubmission {
   score?: number | null;
   maxScore?: number | null;
   teacherFeedback?: string | null;
+  feedbackImageUrl?: string | null;
   startedAtUtc?: string | null;
   submittedAtUtc: string;
   gradedAtUtc?: string | null;
@@ -956,7 +1132,9 @@ export type BankQuestionType =
   | 'SingleChoice'
   | 'MultiChoice'
   | 'Paragraph'
-  | 'Underline';
+  | 'Underline'
+  | 'FreeText'
+  | 'ShortAnswer';
 
 export interface BankQuestion {
   id: string;
@@ -1010,6 +1188,8 @@ export interface Exam {
   description: string;
   dueAtUtc?: string | null;
   xpReward: number;
+  durationMinutes?: number | null;
+  isPublished: boolean;
   createdByUserId: string;
   createdByName: string;
   questions: ExamQuestion[];
@@ -1025,6 +1205,7 @@ export interface ExamAnswerReview {
   pointsAwarded?: number | null;
   points: number;
   promptImageUrl?: string | null;
+  answerImageUrl?: string | null;
 }
 
 export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;
@@ -1069,6 +1250,22 @@ export interface ChatUnreadSummary {
   roomTitle: string;
 }
 
+export interface AppNotification {
+  id: string;
+  kind: string;
+  title: string;
+  body: string;
+  targetUrl: string;
+  entityId?: string | null;
+  relatedStudentId?: string | null;
+  isRead: boolean;
+  createdAtUtc: string;
+}
+
+export interface NotificationUnreadSummary {
+  unreadCount: number;
+}
+
 export interface ExamAttempt {
   id: string;
   examId: string;
@@ -1079,6 +1276,7 @@ export interface ExamAttempt {
   score?: number | null;
   maxScore?: number | null;
   teacherFeedback?: string | null;
+  feedbackImageUrl?: string | null;
   startedAtUtc: string;
   submittedAtUtc?: string | null;
   gradedAtUtc?: string | null;

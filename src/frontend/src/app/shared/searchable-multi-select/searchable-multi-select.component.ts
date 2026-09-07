@@ -3,6 +3,8 @@ import {
   DestroyRef,
   ElementRef,
   HostListener,
+  Injector,
+  afterNextRender,
   computed,
   forwardRef,
   inject,
@@ -44,6 +46,7 @@ export interface MultiSelectOption {
 export class SearchableMultiSelectComponent implements ControlValueAccessor {
   private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
   private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
 
   readonly options = input.required<MultiSelectOption[]>();
@@ -135,10 +138,13 @@ export class SearchableMultiSelectComponent implements ControlValueAccessor {
     }
     this.query.set('');
     this.open.set(true);
-    requestAnimationFrame(() => {
-      this.positionPanel();
-      this.panel()?.nativeElement.querySelector<HTMLInputElement>('.ms-search')?.focus();
-    });
+    afterNextRender(
+      () => {
+        this.positionPanel();
+        this.panel()?.nativeElement.querySelector<HTMLInputElement>('.ms-search')?.focus();
+      },
+      { injector: this.injector }
+    );
   }
 
   isSelected(value: string | number): boolean {

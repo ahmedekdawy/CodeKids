@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Assignments;
 
-public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
+public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<CreateAssignmentCommand, AssignmentDto>
 {
     public async Task<AssignmentDto> Handle(CreateAssignmentCommand command, CancellationToken cancellationToken)
@@ -43,37 +44,18 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
             Description = (command.Description ?? string.Empty).Trim(),
             DueAtUtc = command.DueAtUtc?.ToUniversalTime(),
             XpReward = Math.Max(0, command.XpReward),
+            IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
-        var order = 1;
-        foreach (var q in command.Questions)
-        {
-            if (!Enum.TryParse<AssignmentQuestionType>(q.QuestionType, true, out var type))
-            {
-                throw new InvalidOperationException("Question type must be ShortAnswer or MultipleChoice.");
-            }
-
-            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, q.PromptImageMediaAssetId, cancellationToken);
-            assignment.Questions.Add(new AssignmentQuestion
-            {
-                Id = Guid.NewGuid(),
-                AssignmentId = assignment.Id,
-                Prompt = q.Prompt.Trim(),
-                QuestionType = type,
-                OptionA = q.OptionA,
-                OptionB = q.OptionB,
-                OptionC = q.OptionC,
-                CorrectAnswer = q.CorrectAnswer.Trim(),
-                Points = q.Points <= 0 ? 1 : q.Points,
-                SortOrder = q.SortOrder <= 0 ? order : q.SortOrder,
-                PromptImageMediaAssetId = q.PromptImageMediaAssetId
-            });
-            order++;
-        }
+        await AssignmentQuestionSync.ApplyAsync(dbContext, assignment, command.Questions, cancellationToken);
 
         dbContext.Assignments.Add(assignment);
         await dbContext.SaveChangesAsync(cancellationToken);
+        if (assignment.IsPublished)
+        {
+            await notifications.NotifyAssignmentCreatedAsync(assignment, cancellationToken);
+        }
         return (await LoadAssignment(dbContext, assignment.Id, includeAnswerKey: true, cancellationToken))!;
     }
 
@@ -103,21 +85,9 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext)
             assignment.Description,
             assignment.DueAtUtc,
             assignment.XpReward,
+            assignment.IsPublished,
             assignment.CreatedByUserId,
             assignment.CreatedBy?.DisplayName ?? "Teacher",
             includeSolutionVideo ? assignment.SolutionVideoMediaAssetId : null,
-            assignment.Questions
-                .OrderBy(x => x.SortOrder)
-                .Select(q => new AssignmentQuestionDto(
-                    q.Id,
-                    q.Prompt,
-                    q.QuestionType.ToString(),
-                    q.OptionA,
-                    q.OptionB,
-                    q.OptionC,
-                    q.Points,
-                    q.SortOrder,
-                    includeAnswerKey ? q.CorrectAnswer : null,
-                    QuestionImageUrls.Build(q.PromptImageMediaAssetId)))
-                .ToList());
+            AssignmentQuestionSync.MapTree(assignment.Questions, includeAnswerKey));
 }

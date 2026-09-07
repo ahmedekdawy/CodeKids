@@ -44,6 +44,11 @@ public sealed class LoginCommandHandler(
             throw new InvalidOperationException("Invalid email, mobile, or password.");
         }
 
+        if (!user.IsActive)
+        {
+            throw new InvalidOperationException("This account is inactive.");
+        }
+
         user.LastLoginDateUtc = DateTimeOffset.UtcNow;
         await dbContext.SaveChangesAsync(cancellationToken);
 

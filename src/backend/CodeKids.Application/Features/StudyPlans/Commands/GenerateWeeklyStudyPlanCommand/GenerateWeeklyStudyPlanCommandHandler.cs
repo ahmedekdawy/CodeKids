@@ -39,13 +39,14 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
                 : null);
 
         var weeks = StudyPlanAccess.BuildSchoolWeeks(command.FromDate, command.ToDate);
+        var teacherPrompt = StudyPlanAccess.Clamp(command.Prompt, StudyPlanAccess.PromptMax);
         var arabic = IsArabic(command.Language);
         DraftPlan? draft = null;
         try
         {
             var json = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(arabic),
-                BuildUserPrompt(course, grade, stage, weeks, arabic, outline),
+                BuildUserPrompt(course, grade, stage, weeks, arabic, outline, teacherPrompt),
                 cancellationToken);
             draft = ParseDraft(json);
         }
@@ -93,6 +94,7 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
               - إذا زاد عدد الدروس عن الأسابيع اجمع درسين متتاليين من نفس الوحدة في أسبوع واحد مع الإبقاء على الاسمين.
               - إذا قلّ عدد الدروس أضف أسابيع مراجعة أو تقييم من نفس أسماء الوحدات فقط وحدد highlight=true لها.
               - highlight للمراجعة أو الاختبار فقط.
+              - إذا قدّم المعلم تعليمات إضافية، اتبعها ما لم تتعارض مع القواعد أعلاه.
               """
             : """
               You are a curriculum planner for the Egyptian Ministry of Education.
@@ -109,6 +111,7 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
               - If there are more lessons than weeks, combine two consecutive lessons from the same unit in one week and keep both names.
               - If there are fewer lessons than weeks, add review or assessment weeks from the same unit names only and set highlight=true.
               - highlight only a review or quiz week.
+              - If the teacher provides extra instructions, follow them when they do not conflict with the rules above.
               """;
 
     private static string BuildUserPrompt(
@@ -117,7 +120,8 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
         Stage? stage,
         IReadOnlyList<(int WeekNumber, DateOnly FromDate, DateOnly ToDate)> weeks,
         bool arabic,
-        CourseContentOutline content)
+        CourseContentOutline content,
+        string? teacherPrompt)
     {
         var academicYear = AcademicYearLabel(weeks[0].FromDate, weeks[^1].ToDate);
         var gradeName = GradeLabel(grade, course.Grade, arabic);
@@ -187,7 +191,31 @@ public sealed class GenerateWeeklyStudyPlanCommandHandler(
             sb.AppendLine($"Create a complete plan for {weeks.Count} weeks using only the content above.");
         }
 
+        AppendTeacherPrompt(sb, teacherPrompt, arabic);
         return sb.ToString();
+    }
+
+    private static void AppendTeacherPrompt(StringBuilder sb, string? teacherPrompt, bool arabic)
+    {
+        var text = (teacherPrompt ?? string.Empty).Trim();
+        if (text.Length == 0)
+        {
+            return;
+        }
+
+        sb.AppendLine();
+        if (arabic)
+        {
+            sb.AppendLine("تعليمات إضافية من المعلم:");
+            sb.AppendLine(text);
+            sb.AppendLine("التزم بهذه التعليمات عند توزيع الدروس على الأسابيع.");
+        }
+        else
+        {
+            sb.AppendLine("Additional teacher instructions:");
+            sb.AppendLine(text);
+            sb.AppendLine("Follow these instructions when distributing lessons across weeks.");
+        }
     }
 
     private static void AppendCurriculum(StringBuilder sb, IReadOnlyList<CurriculumUnit> outline, bool arabic)

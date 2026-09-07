@@ -96,7 +96,11 @@ public static class ExamsEndpoints
 
                         request.XpReward,
 
-                        request.QuestionIds),
+                        request.IsPublished,
+
+                        request.QuestionIds,
+
+                        request.DurationMinutes),
 
                     cancellationToken));
 
@@ -110,6 +114,23 @@ public static class ExamsEndpoints
 
             }
 
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapPost("/api/exams/{examId:guid}/publish", async (
+            Guid examId,
+            HttpContext httpContext,
+            ICommandHandler<PublishExamCommand, ExamDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(new PublishExamCommand(userId, examId), cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
         app.MapPost("/api/exams/{examId:guid}/start", async (
@@ -210,6 +231,25 @@ public static class ExamsEndpoints
 
             }
 
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+
+        app.MapPost("/api/exams/attempts/grade", async (
+            GradeExamAttemptRequest request,
+            HttpContext httpContext,
+            ICommandHandler<GradeExamAttemptCommand, ExamAttemptDto> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                var userId = CurrentUser.GetUserId(httpContext.User);
+                return Results.Ok(await handler.Handle(
+                    new GradeExamAttemptCommand(userId, request.AttemptId, request.TeacherFeedback, request.FeedbackImageMediaAssetId, request.Answers),
+                    cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
 
         return app;

@@ -19,12 +19,14 @@ public class MediaAsset : TenantEntity
 public class LessonVideo : TenantEntity
 {
     public Guid Id { get; set; }
-    public Guid LessonId { get; set; }
+    public Guid? LessonId { get; set; }
+    public Guid? CourseId { get; set; }
     public Guid MediaAssetId { get; set; }
     public string Title { get; set; } = string.Empty;
     public int SortOrder { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
+    public Course? Course { get; set; }
     public MediaAsset? MediaAsset { get; set; }
 }
 

@@ -40,7 +40,8 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             Grade = audience.Grade,
             StageId = audience.StageId,
             SchoolType = schoolType,
-            SortOrder = sortOrder
+            SortOrder = sortOrder,
+            IsPublished = command.IsPublished
         }).ToList();
 
         dbContext.Courses.AddRange(courses);
@@ -173,5 +174,6 @@ public sealed class CreateCourseCommandHandler(IAppDbContext dbContext)
             course.Category,
             course.TrackCode,
             course.TrackName,
-            course.VerificationStatus);
+            course.VerificationStatus,
+            course.IsPublished);
 }

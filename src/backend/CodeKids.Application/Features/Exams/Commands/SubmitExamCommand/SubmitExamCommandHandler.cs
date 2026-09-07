@@ -28,6 +28,11 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Student is not in this classroom.");
         }
 
+        if (!exam.IsPublished)
+        {
+            throw new InvalidOperationException("Exam is not available.");
+        }
+
         var student = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.StudentId, cancellationToken)
             ?? throw new InvalidOperationException("Student not found.");
 
@@ -42,6 +47,8 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Exam already submitted.");
         }
 
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
         if (attempt is null)
         {
             attempt = new ExamAttempt
@@ -54,7 +61,26 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             };
             dbContext.ExamAttempts.Add(attempt);
         }
+        else
+        {
+            // Claim the attempt in a single statement so only one of two overlapping
+            // submissions (submit button racing the expiry timer, or a retried request)
+            // goes on to replace the answer rows below.
+            var claimed = await dbContext.ExamAttempts
+                .Where(x => x.Id == attempt.Id && x.Status == ExamAttemptStatus.InProgress)
+                .ExecuteUpdateAsync(
+                    x => x.SetProperty(a => a.Status, ExamAttemptStatus.Submitted),
+                    cancellationToken);
+            if (claimed == 0)
+            {
+                throw new InvalidOperationException("Exam already submitted.");
+            }
+        }
 
+        // Delete through the set rather than by emptying the navigation: answers added to a
+        // navigation on an already-persisted attempt are tracked as Modified (their keys are
+        // pre-assigned), which makes EF issue UPDATEs for rows that were never inserted.
+        dbContext.ExamAnswers.RemoveRange(attempt.Answers);
         attempt.Answers.Clear();
         attempt.Status = ExamAttemptStatus.Submitted;
         attempt.SubmittedAtUtc = DateTimeOffset.UtcNow;
@@ -70,21 +96,40 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
         {
             var input = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
             var answerText = (input?.AnswerText ?? string.Empty).Trim();
+            var answerImageId = input?.AnswerImageMediaAssetId;
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, answerImageId, cancellationToken);
             if (question.QuestionType == BankQuestionType.MultiChoice)
             {
                 answerText = string.Join(',', ExamGrading.NormalizeMultiAnswer(answerText));
+            }
+
+            if (answerImageId is not null || !ExamGrading.IsAutoGradable(question.QuestionType))
+            {
+                allAutoGradable = false;
+                dbContext.ExamAnswers.Add(new ExamAnswer
+                {
+                    Id = Guid.NewGuid(),
+                    AttemptId = attempt.Id,
+                    ExamQuestionId = question.Id,
+                    AnswerText = answerText,
+                    AnswerImageMediaAssetId = answerImageId,
+                    IsCorrect = null,
+                    PointsAwarded = null
+                });
+                continue;
             }
 
             var isCorrect = ExamGrading.AnswersMatch(question.QuestionType, answerText, question.CorrectAnswer);
             var points = isCorrect ? question.Points : 0;
             if (isCorrect) autoScore += question.Points;
 
-            attempt.Answers.Add(new ExamAnswer
+            dbContext.ExamAnswers.Add(new ExamAnswer
             {
                 Id = Guid.NewGuid(),
                 AttemptId = attempt.Id,
                 ExamQuestionId = question.Id,
                 AnswerText = answerText,
+                AnswerImageMediaAssetId = answerImageId,
                 IsCorrect = isCorrect,
                 PointsAwarded = points
             });
@@ -103,6 +148,8 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
         await BadgeAwarder.AwardEligibleAsync(dbContext, student, cancellationToken);
         return (await LoadAttempt(dbContext, attempt.Id, cancellationToken))!;
     }
@@ -133,6 +180,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             attempt.Score,
             attempt.MaxScore,
             attempt.TeacherFeedback,
+            QuestionImageUrls.Build(attempt.FeedbackImageMediaAssetId),
             attempt.StartedAtUtc,
             attempt.SubmittedAtUtc,
             attempt.GradedAtUtc,
@@ -146,5 +194,6 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
                 a.IsCorrect,
                 a.PointsAwarded,
                 a.Question?.Points ?? 0,
-                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId))).ToList());
+                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                QuestionImageUrls.Build(a.AnswerImageMediaAssetId))).ToList());
 }

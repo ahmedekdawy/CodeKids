@@ -1,2 +1,8 @@
+@if (auth.impersonator()) {
+  <div class="impersonation-banner">
+    <span>{{ 'auth.impersonating' | t: { name: auth.user()?.displayName || '' } }}</span>
+    <button type="button" (click)="auth.stopImpersonating()">{{ 'auth.stopImpersonating' | t }}</button>
+  </div>
+}
 <router-outlet />
 <app-toast-host />

@@ -18,6 +18,7 @@ public sealed record ExamAttemptDto(
     int? Score,
     int? MaxScore,
     string? TeacherFeedback,
+    string? FeedbackImageUrl,
     DateTimeOffset StartedAtUtc,
     DateTimeOffset? SubmittedAtUtc,
     DateTimeOffset? GradedAtUtc,

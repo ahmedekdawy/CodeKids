@@ -94,7 +94,7 @@ public static class AnalyticsQueries
             : "Focus: " + string.Join(", ", weaknesses.Take(2).Select(w => w.LessonTitle));
 
         return
-            $"CodeKids daily report for {student.DisplayName}\n" +
+            $"Abakera daily report for {student.DisplayName}\n" +
             $"Level {level.LevelNumber} ({level.Name}) · {student.TotalXp} XP\n" +
             $"Today: {completedToday} steps · {watchToday}s video watched\n" +
             weakText;

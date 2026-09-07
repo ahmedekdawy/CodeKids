@@ -5,6 +5,7 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { WeeklyStudyPlan } from '../../models';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { StudyPlanViewerComponent } from '../../shared/study-plan-sheet/study-plan-viewer.component';
 import { normalizeStudyPlans } from '../../shared/study-plan-sheet/study-plan.util';
@@ -18,6 +19,7 @@ import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-b
     TranslatePipe,
     SiteBrandComponent,
     LanguageSwitcherComponent,
+    ThemeSwitcherComponent,
     StudyPlanViewerComponent,
     ApiBusyIndicatorComponent
   ],

@@ -18,7 +18,8 @@ public sealed record CreateCourseRequest(
     IReadOnlyList<int>? Grades,
     int? StageId,
     int? SortOrder,
-    string? SchoolType = null);
+    string? SchoolType = null,
+    bool IsPublished = false);
 
 public sealed record CreateCourseCommand(
     string Title,
@@ -30,4 +31,5 @@ public sealed record CreateCourseCommand(
     IReadOnlyList<int>? Grades,
     int? StageId,
     int? SortOrder,
-    string? SchoolType = null) : ICommand<IReadOnlyList<CourseSummaryDto>>;
+    string? SchoolType = null,
+    bool IsPublished = false) : ICommand<IReadOnlyList<CourseSummaryDto>>;

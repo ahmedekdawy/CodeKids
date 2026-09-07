@@ -74,6 +74,10 @@ export class ProtectedVideoPlayerComponent implements OnInit, OnDestroy {
     video.play().catch(() => undefined);
   }
 
+  onVideoError(): void {
+    this.error.set(this.locale.t('player.loadFailed'));
+  }
+
   onPlay(): void {
     this.emit('play');
     this.startHeartbeat();

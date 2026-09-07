@@ -2,19 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { safeReturnUrl } from '../../auth.guard';
 import { AuthService } from '../../auth.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
+import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
 import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { TopStudentsBoardComponent } from '../../shared/top-students-board/top-students-board.component';
 import { setCurrentTenantId } from '../../tenant';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent, TopStudentsBoardComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -38,6 +41,10 @@ export class LoginComponent implements OnInit {
     if (tenant) {
       setCurrentTenantId(tenant);
     }
+
+    if (this.auth.isLoggedIn()) {
+      void this.router.navigateByUrl(this.postLoginUrl());
+    }
   }
 
   submit(): void {
@@ -52,12 +59,16 @@ export class LoginComponent implements OnInit {
     this.auth.login(login.trim(), password).subscribe({
       next: () => {
         this.loading.set(false);
-        void this.router.navigateByUrl(this.auth.roleHome());
+        void this.router.navigateByUrl(this.postLoginUrl());
       },
       error: (err) => {
         this.loading.set(false);
         this.error.set(this.locale.fromApiError(err, 'auth.signInFailed'));
       }
     });
+  }
+
+  private postLoginUrl(): string {
+    return safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')) ?? this.auth.roleHome();
   }
 }

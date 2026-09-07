@@ -33,6 +33,8 @@ public class Course : TenantEntity
     public string Variants { get; set; } = string.Empty;
     /// <summary>When true, students may use Ask on this course and all of its units/lessons.</summary>
     public bool StudentAskEnabled { get; set; }
+    /// <summary>Draft courses stay hidden from students and parents until an admin publishes them.</summary>
+    public bool IsPublished { get; set; }
     public Subject? ExternalSubject { get; set; }
     public Stage? Stage { get; set; }
     public List<Quiz> Quizzes { get; set; } = [];

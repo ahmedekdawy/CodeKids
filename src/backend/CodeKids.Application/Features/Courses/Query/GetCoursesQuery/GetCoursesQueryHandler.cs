@@ -1,5 +1,6 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Courses;
@@ -34,6 +35,16 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
         }
 
         var outlines = await CourseOutlineResolver.ResolveManyAsync(dbContext, courses, cancellationToken);
-        return courses.Select(course => CourseDtoMapper.Map(course, query.IncludeContent, outlines[course.Id])).ToList();
+        var videosByCourse = await CourseVideoLoader.LoadByCourseIdsAsync(
+            dbContext,
+            courses.Select(c => c.Id).ToList(),
+            cancellationToken);
+        var includeUnpublishedQuizzes = PublishedAssessmentAccess.CanViewUnpublished(query.Role);
+        return courses.Select(course => CourseDtoMapper.Map(
+            course,
+            query.IncludeContent,
+            outlines[course.Id],
+            videosByCourse.GetValueOrDefault(course.Id, []),
+            includeUnpublishedQuizzes)).ToList();
     }
 }

@@ -1,9 +1,12 @@
 <section class="auth-shell">
   <div class="auth-panel">
-    <app-api-busy-indicator />
+    <app-api-busy-indicator [busy]="loading()" />
     <div class="auth-panel-top">
       <app-site-brand />
-      <app-language-switcher />
+      <div class="toolbar-prefs">
+        <app-theme-switcher />
+        <app-language-switcher />
+      </div>
     </div>
     <h1>{{ 'auth.login.title' | t }}</h1>
     <p class="supporting">{{ 'auth.login.subtitle' | t }}</p>
@@ -27,16 +30,20 @@
 
     <div class="auth-links">
       <a routerLink="/forgot-password">{{ 'auth.forgot.link' | t }}</a>
-      <a routerLink="/register-tenant">{{ 'auth.tenant.registerLink' | t }}</a>
     </div>
   </div>
 
-  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()">
     @if (brand.bannerUrl(); as banner) {
-      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" aria-hidden="true" />
     } @else {
-      <div class="glow"></div>
-      <div class="code-card">
+      <div class="glow" aria-hidden="true"></div>
+    }
+
+    <app-top-students-board #topStudents variant="showcase" />
+
+    @if (topStudents.loaded() && !topStudents.hasStudents() && !brand.bannerUrl()) {
+      <div class="code-card" aria-hidden="true">
         <span>LOOP 3 FORWARD</span>
         <span>IF asteroid THEN dodge</span>
       </div>

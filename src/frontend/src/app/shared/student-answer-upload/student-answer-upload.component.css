@@ -1,0 +1,19 @@
+.student-answer-upload {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.preview-wrap {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.upload-label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.ghost-btn {
+  justify-self: start;
+}

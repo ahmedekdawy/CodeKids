@@ -7,7 +7,10 @@ public enum BankQuestionType
     SingleChoice = 2,
     MultiChoice = 3,
     Paragraph = 4,
-    Underline = 5
+    Underline = 5,
+    FreeText = 6,
+    /// <summary>Text answer with an optional model answer for auto-grading (quizzes / bank).</summary>
+    ShortAnswer = 7
 }
 
 public enum ExamAttemptStatus

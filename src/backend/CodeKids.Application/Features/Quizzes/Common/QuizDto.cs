@@ -14,4 +14,6 @@ public sealed record QuizDto(
     string Title,
     string Description,
     int XpReward,
+    int? DurationMinutes,
+    bool IsPublished,
     IReadOnlyList<QuizQuestionDto> Questions);

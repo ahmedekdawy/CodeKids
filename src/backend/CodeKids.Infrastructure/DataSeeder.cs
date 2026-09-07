@@ -79,6 +79,7 @@ public static class DataSeeder
                     Grade = 3,
                     StageId = 1,
                     SortOrder = 1,
+                    IsPublished = true,
                     Quizzes =
                     [
                         new Quiz
@@ -128,6 +129,7 @@ public static class DataSeeder
                     Grade = 5,
                     StageId = 1,
                     SortOrder = 2,
+                    IsPublished = true,
                     Quizzes =
                     [
                         new Quiz

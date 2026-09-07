@@ -1,5 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -7,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Assignments;
 
-public sealed class GradeSubmissionCommandHandler(IAppDbContext dbContext)
+public sealed class GradeSubmissionCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<GradeSubmissionCommand, AssignmentSubmissionDto>
 {
     public async Task<AssignmentSubmissionDto> Handle(GradeSubmissionCommand command, CancellationToken cancellationToken)
@@ -43,6 +45,8 @@ public sealed class GradeSubmissionCommandHandler(IAppDbContext dbContext)
         submission.Score = submission.Answers.Sum(x => x.PointsAwarded ?? 0);
         submission.MaxScore = submission.Assignment.Questions.Sum(x => x.Points);
         submission.TeacherFeedback = command.TeacherFeedback?.Trim();
+        await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, command.FeedbackImageMediaAssetId, cancellationToken);
+        submission.FeedbackImageMediaAssetId = command.FeedbackImageMediaAssetId;
         submission.Status = AssignmentSubmissionStatus.Graded;
         submission.GradedAtUtc = DateTimeOffset.UtcNow;
 
@@ -56,6 +60,7 @@ public sealed class GradeSubmissionCommandHandler(IAppDbContext dbContext)
 
         await dbContext.SaveChangesAsync(cancellationToken);
         await BadgeAwarder.AwardEligibleAsync(dbContext, student, cancellationToken);
+        await notifications.NotifyAssignmentGradedAsync(submission, cancellationToken);
 
         return (await SubmitAssignmentCommandHandler.LoadSubmission(dbContext, submission.Id, cancellationToken))!;
     }

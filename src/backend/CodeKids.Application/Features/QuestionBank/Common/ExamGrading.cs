@@ -23,6 +23,13 @@ public static class ExamGrading
             return false;
         }
 
+        if (BankQuestionValidator.IsTextAnswer(type))
+        {
+            // Text answers auto-grade only when a model answer was provided.
+            return !string.IsNullOrWhiteSpace(correctAnswer)
+                && string.Equals(studentAnswer.Trim(), correctAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+        }
+
         if (type == BankQuestionType.MultiChoice)
         {
             var left = NormalizeMultiAnswer(studentAnswer);
@@ -38,5 +45,7 @@ public static class ExamGrading
             or BankQuestionType.TrueFalse
             or BankQuestionType.SingleChoice
             or BankQuestionType.MultiChoice
-            or BankQuestionType.Underline;
+            or BankQuestionType.Underline
+            or BankQuestionType.ShortAnswer
+            or BankQuestionType.FreeText;
 }

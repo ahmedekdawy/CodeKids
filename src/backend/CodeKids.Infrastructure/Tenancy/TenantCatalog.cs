@@ -2,7 +2,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace CodeKids.Infrastructure.Tenancy;
 
-public sealed record TenantInfo(string Id, string ConnectionString, IReadOnlyList<string> Hosts);
+public sealed record TenantInfo(
+    string Id,
+    string ConnectionString,
+    IReadOnlyList<string> Hosts,
+    string? ApiBaseUrl = null,
+    string? FrontendBaseUrl = null);
 
 public sealed class TenantCatalog
 {
@@ -43,20 +48,32 @@ public sealed class TenantCatalog
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
-            items.Add(new TenantInfo(id, connection, hosts));
+            var apiBaseUrl = child["ApiBaseUrl"]?.Trim();
+            if (string.IsNullOrWhiteSpace(apiBaseUrl))
+            {
+                apiBaseUrl = null;
+            }
+
+            var frontendBaseUrl = child["FrontendBaseUrl"]?.Trim();
+            if (string.IsNullOrWhiteSpace(frontendBaseUrl))
+            {
+                frontendBaseUrl = null;
+            }
+
+            items.Add(new TenantInfo(id, connection, hosts, apiBaseUrl, frontendBaseUrl));
         }
 
         if (items.Count == 0)
         {
             if (!string.IsNullOrWhiteSpace(defaultConnection))
             {
-                items.Add(new TenantInfo("abakera", defaultConnection, ["localhost", "abakera.runasp.net", "abakeraadmin.runasp.net", "www.abakeraadmin.runasp.net"]));
+                items.Add(new TenantInfo("abakera", defaultConnection, ["localhost", "abakera.runasp.net", "abakeraadmin.runasp.net", "www.abakeraadmin.runasp.net"], "https://abakera.runasp.net/api"));
             }
 
             var esraa = configuration.GetConnectionString("EsraaConnection");
             if (!string.IsNullOrWhiteSpace(esraa))
             {
-                items.Add(new TenantInfo("esraa", esraa, ["schoolacadmy.runasp.net", "www.schoolacadmy.runasp.net"]));
+                items.Add(new TenantInfo("esraa", esraa, ["schoolacadmy.runasp.net", "www.schoolacadmy.runasp.net"], "http://schoolacadmyapi.runasp.net/api"));
             }
         }
 

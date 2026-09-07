@@ -1,7 +1,9 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -9,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Exams;
 
-public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
+public sealed class CreateExamCommandHandler(IAppDbContext dbContext, NotificationPublisher notifications)
     : ICommandHandler<CreateExamCommand, ExamDto>
 {
     public async Task<ExamDto> Handle(CreateExamCommand command, CancellationToken cancellationToken)
@@ -76,6 +78,8 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
             Description = (command.Description ?? string.Empty).Trim(),
             DueAtUtc = command.DueAtUtc?.ToUniversalTime(),
             XpReward = Math.Max(0, command.XpReward),
+            DurationMinutes = AssessmentDuration.Normalize(command.DurationMinutes),
+            IsPublished = command.IsPublished,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -94,6 +98,10 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
 
         dbContext.Exams.Add(exam);
         await dbContext.SaveChangesAsync(cancellationToken);
+        if (exam.IsPublished)
+        {
+            await notifications.NotifyExamCreatedAsync(exam, cancellationToken);
+        }
         return (await LoadExam(dbContext, exam.Id, includeAnswerKey: true, cancellationToken))!;
     }
 
@@ -154,6 +162,8 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext)
             exam.Description,
             exam.DueAtUtc,
             exam.XpReward,
+            exam.DurationMinutes,
+            exam.IsPublished,
             exam.CreatedByUserId,
             exam.CreatedBy?.DisplayName ?? "Teacher",
             roots);

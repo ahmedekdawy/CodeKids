@@ -1,4 +1,5 @@
 using CodeKids.Application.Features.Analytics;
+using CodeKids.Application.Features.Profile;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Enums;
 using CodeKids.Application.Abstractions;
@@ -80,7 +81,8 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
                 quizCounts.GetValueOrDefault(student.Id),
                 weak.Count,
                 student.Parent?.DisplayName,
-                signal));
+                signal,
+                ProfilePhotoUrls.Build(student)));
         }
 
         return new TeacherDashboardDto(

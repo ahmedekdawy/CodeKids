@@ -5,12 +5,17 @@
       class="toast"
       [class.ok]="item.kind === 'success'"
       [class.chat]="item.kind === 'chat'"
+      [class.notification]="item.kind === 'notification'"
       (click)="activate(item)"
     >
       @if (item.kind === 'chat') {
         <strong class="toast-title">{{ item.title || ('chat.newMessage' | t) }}</strong>
         <span class="toast-body">{{ item.text }}</span>
         <span class="toast-hint">{{ 'chat.openConversation' | t }}</span>
+      } @else if (item.kind === 'notification') {
+        <strong class="toast-title">{{ item.title || ('notifications.defaultTitle' | t) }}</strong>
+        <span class="toast-body">{{ item.text }}</span>
+        <span class="toast-hint">{{ 'notifications.open' | t }}</span>
       } @else {
         {{ item.text }}
       }
