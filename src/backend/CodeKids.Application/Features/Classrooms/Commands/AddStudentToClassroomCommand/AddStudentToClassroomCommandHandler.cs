@@ -105,8 +105,8 @@ public sealed class AddStudentToClassroomCommandHandler(
 
             var invite = classroom.WhatsAppGroupInviteUrl?.Trim() ?? string.Empty;
             var message = string.IsNullOrWhiteSpace(invite)
-                ? $"CodeKids: You were enrolled in classroom \"{classroom.Name}\"."
-                : $"CodeKids: You were enrolled in classroom \"{classroom.Name}\".\nJoin the WhatsApp group:\n{invite}";
+                ? $"Abakera: You were enrolled in classroom \"{classroom.Name}\"."
+                : $"Abakera: You were enrolled in classroom \"{classroom.Name}\".\nJoin the WhatsApp group:\n{invite}";
 
             var send = await whatsAppClient.SendTextAsync(mobile, message, cancellationToken);
             whatsAppStatus = string.IsNullOrWhiteSpace(invite)
