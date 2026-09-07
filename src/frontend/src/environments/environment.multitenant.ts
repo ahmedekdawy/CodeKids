@@ -17,7 +17,7 @@ export const environment = {
     'abakera.runasp.net': 'https://abakera.runasp.net/api',
     'abakeraadmin.runasp.net': 'https://abakera.runasp.net/api',
     'www.abakeraadmin.runasp.net': 'https://abakera.runasp.net/api',
-    'schoolacadmy.runasp.net': 'http://schoolacadmyapi.runasp.net/api',
-    'www.schoolacadmy.runasp.net': 'http://schoolacadmyapi.runasp.net/api'
+    'schoolacadmy.runasp.net': 'https://schoolacadmyapi.runasp.net/api',
+    'www.schoolacadmy.runasp.net': 'https://schoolacadmyapi.runasp.net/api'
   } as Record<string, string>
 };
