@@ -1,4 +1,7 @@
 <div class="ask-dock" [class.open]="open()">
+  @if (open()) {
+    <button type="button" class="ask-backdrop" [attr.aria-label]="'common.close' | t" (click)="close()"></button>
+  }
   <button
     type="button"
     class="ask-tab"

@@ -658,5 +658,6 @@ html[dir='rtl'] .student-side-tools .side-tab {
   .student-side-tools {
     top: auto;
     inset-block-end: 5.25rem;
+    z-index: 62;
   }
 }
