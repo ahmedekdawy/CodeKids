@@ -50,20 +50,28 @@ public static class NotificationRecipients
         Guid? classroomId,
         CancellationToken cancellationToken)
     {
+        // Prefer students explicitly enrolled in this course (matches "enrolled on this course").
+        var enrollmentQuery = dbContext.StudentCourseEnrollments
+            .AsNoTracking()
+            .Where(x => x.CourseId == courseId);
+        if (classroomId is Guid scopedClassroomId)
+        {
+            enrollmentQuery = enrollmentQuery.Where(x => x.ClassroomId == scopedClassroomId);
+        }
+
+        var enrolled = await enrollmentQuery
+            .Select(x => x.StudentId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+        if (enrolled.Count > 0)
+        {
+            return enrolled;
+        }
+
+        // No course enrollments yet — notify classroom members for the quiz scope.
         if (classroomId is Guid cid)
         {
-            var studentIds = await StudentsForAssignmentAsync(dbContext, cid, cancellationToken);
-            var eligible = new List<Guid>();
-            foreach (var studentId in studentIds)
-            {
-                var visible = await StudentCourseVisibility.GetVisibleCourseIdsAsync(dbContext, studentId, cancellationToken);
-                if (visible.Contains(courseId))
-                {
-                    eligible.Add(studentId);
-                }
-            }
-
-            return eligible;
+            return await StudentsForAssignmentAsync(dbContext, cid, cancellationToken);
         }
 
         var classroomIds = await dbContext.ClassroomCourses
@@ -78,24 +86,12 @@ public static class NotificationRecipients
             return [];
         }
 
-        var students = await dbContext.ClassroomStudents
+        return await dbContext.ClassroomStudents
             .AsNoTracking()
             .Where(x => classroomIds.Contains(x.ClassroomId))
             .Select(x => x.StudentId)
             .Distinct()
             .ToListAsync(cancellationToken);
-
-        var filtered = new List<Guid>();
-        foreach (var studentId in students)
-        {
-            var visible = await StudentCourseVisibility.GetVisibleCourseIdsAsync(dbContext, studentId, cancellationToken);
-            if (visible.Contains(courseId))
-            {
-                filtered.Add(studentId);
-            }
-        }
-
-        return filtered;
     }
 
     public static async Task<Guid?> ParentIdForStudentAsync(
@@ -107,20 +103,72 @@ public static class NotificationRecipients
             .Where(x => x.Id == studentId)
             .Select(x => x.ParentId)
             .FirstOrDefaultAsync(cancellationToken);
+
+    public static async Task<IReadOnlyList<Guid>> TeachersForAssessmentAsync(
+        IAppDbContext dbContext,
+        Guid? classroomId,
+        Guid? courseId,
+        Guid? createdByUserId,
+        CancellationToken cancellationToken)
+    {
+        var teacherIds = new HashSet<Guid>();
+        if (createdByUserId is Guid creatorId && creatorId != Guid.Empty)
+        {
+            teacherIds.Add(creatorId);
+        }
+
+        if (classroomId is not null || courseId is not null)
+        {
+            var query = dbContext.ClassroomCourses.AsNoTracking().AsQueryable();
+            if (classroomId is Guid cid)
+            {
+                query = query.Where(x => x.ClassroomId == cid);
+            }
+
+            if (courseId is Guid course)
+            {
+                query = query.Where(x => x.CourseId == course);
+            }
+
+            foreach (var id in await query.Select(x => x.TeacherId).Distinct().ToListAsync(cancellationToken))
+            {
+                teacherIds.Add(id);
+            }
+        }
+
+        return teacherIds.ToList();
+    }
+
+    public static string TeacherTargetPath(string kind) => kind switch
+    {
+        "Assignment" => "/teacher/assignments",
+        "Quiz" => "/teacher/quizzes",
+        "Exam" => "/teacher/exams",
+        _ => "/teacher"
+    };
 }
 
-public sealed class NotificationPublisher(IAppDbContext dbContext, INotificationRealtime? realtime = null)
+public sealed class NotificationPublisher(
+    IAppDbContext dbContext,
+    IAssessmentPublishNotificationQueue whatsAppQueue,
+    INotificationRealtime? realtime = null)
 {
     public Task NotifyAssignmentCreatedAsync(
         Assignment assignment,
         CancellationToken cancellationToken) =>
         NotifyStudentsAsync(
             NotificationKind.AssignmentCreated,
-            assignment.Title,
             $"New assignment: {assignment.Title}",
-            $"/assignments/{assignment.Id}",
-            assignment.Id,
-            relatedStudentId: null,
+            new AssessmentPublishInfo(
+                "Assignment",
+                "واجب",
+                assignment.Id,
+                assignment.Title,
+                $"/assignments/{assignment.Id}",
+                assignment.DueAtUtc,
+                assignment.ClassroomId,
+                CourseId: null,
+                assignment.CreatedByUserId),
             () => NotificationRecipients.StudentsForAssignmentAsync(dbContext, assignment.ClassroomId, cancellationToken),
             cancellationToken);
 
@@ -129,11 +177,17 @@ public sealed class NotificationPublisher(IAppDbContext dbContext, INotification
         CancellationToken cancellationToken) =>
         NotifyStudentsAsync(
             NotificationKind.ExamCreated,
-            exam.Title,
             $"New exam: {exam.Title}",
-            $"/exams/{exam.Id}",
-            exam.Id,
-            relatedStudentId: null,
+            new AssessmentPublishInfo(
+                "Exam",
+                "امتحان",
+                exam.Id,
+                exam.Title,
+                $"/exams/{exam.Id}",
+                exam.DueAtUtc,
+                exam.ClassroomId,
+                exam.CourseId,
+                exam.CreatedByUserId),
             () => NotificationRecipients.StudentsForExamAsync(dbContext, exam.ClassroomId, exam.CourseId, cancellationToken),
             cancellationToken);
 
@@ -142,11 +196,17 @@ public sealed class NotificationPublisher(IAppDbContext dbContext, INotification
         CancellationToken cancellationToken) =>
         NotifyStudentsAsync(
             NotificationKind.QuizCreated,
-            quiz.Title,
             $"New quiz: {quiz.Title}",
-            $"/quizzes/{quiz.Id}",
-            quiz.Id,
-            relatedStudentId: null,
+            new AssessmentPublishInfo(
+                "Quiz",
+                "كويز",
+                quiz.Id,
+                quiz.Title,
+                $"/quizzes/{quiz.Id}",
+                DueAtUtc: null,
+                quiz.ClassroomId,
+                quiz.CourseId,
+                quiz.CreatedByUserId),
             () => NotificationRecipients.StudentsForQuizAsync(dbContext, quiz.CourseId, quiz.ClassroomId, cancellationToken),
             cancellationToken);
 
@@ -220,25 +280,46 @@ public sealed class NotificationPublisher(IAppDbContext dbContext, INotification
 
     private async Task NotifyStudentsAsync(
         NotificationKind kind,
-        string title,
         string body,
-        string targetUrl,
-        Guid entityId,
-        Guid? relatedStudentId,
+        AssessmentPublishInfo publishInfo,
         Func<Task<IReadOnlyList<Guid>>> resolveStudents,
         CancellationToken cancellationToken)
     {
-        var studentIds = await resolveStudents();
-        foreach (var studentId in studentIds.Distinct())
+        var studentIds = (await resolveStudents()).Distinct().ToList();
+
+        // Queue WhatsApp first so a slow/failing in-app fan-out cannot skip messaging.
+        whatsAppQueue.Enqueue(dbContext.CurrentTenantId, publishInfo, studentIds);
+
+        foreach (var studentId in studentIds)
         {
             await NotifyUserAsync(
                 studentId,
                 kind,
-                title,
+                publishInfo.Title,
                 body,
-                targetUrl,
-                entityId,
-                relatedStudentId,
+                publishInfo.TargetPath,
+                publishInfo.EntityId,
+                relatedStudentId: null,
+                cancellationToken);
+        }
+
+        var teacherIds = await NotificationRecipients.TeachersForAssessmentAsync(
+            dbContext,
+            publishInfo.ClassroomId,
+            publishInfo.CourseId,
+            publishInfo.CreatedByUserId,
+            cancellationToken);
+        var teacherPath = NotificationRecipients.TeacherTargetPath(publishInfo.Kind);
+        foreach (var teacherId in teacherIds)
+        {
+            await NotifyUserAsync(
+                teacherId,
+                kind,
+                publishInfo.Title,
+                body,
+                teacherPath,
+                publishInfo.EntityId,
+                relatedStudentId: null,
                 cancellationToken);
         }
     }

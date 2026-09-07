@@ -39,11 +39,35 @@ public sealed class WhatsProSender(
         string? ruleKey = null,
         string username = "system")
     {
-        if (!WhatsAppPhone.TryParseTarget(phone, out var target))
+        if (!WhatsAppPhone.TryParseTarget(phone, out var target, WhatsAppDestinationMode.Phone))
         {
-            return WhatsAppMessageResult.Fail("رقم هاتف أو مجموعة غير صالح");
+            return WhatsAppMessageResult.Fail("رقم هاتف غير صالح");
         }
 
+        return await SendTargetAsync(target, message, cancellationToken, ruleKey);
+    }
+
+    public async Task<WhatsAppMessageResult> SendGroupMessageAsync(
+        string groupId,
+        string message,
+        CancellationToken cancellationToken,
+        string? ruleKey = null,
+        string username = "system")
+    {
+        if (!WhatsAppPhone.TryParseTarget(groupId, out var target, WhatsAppDestinationMode.Group) || !target.IsGroup)
+        {
+            return WhatsAppMessageResult.Fail("معرّف مجموعة غير صالح");
+        }
+
+        return await SendTargetAsync(target, message, cancellationToken, ruleKey);
+    }
+
+    private async Task<WhatsAppMessageResult> SendTargetAsync(
+        WhatsAppTarget target,
+        string message,
+        CancellationToken cancellationToken,
+        string? ruleKey)
+    {
         if (!_options.IsConfigured)
         {
             return WhatsAppMessageResult.Fail("WhatsApp gateway not configured.");
@@ -54,11 +78,6 @@ public sealed class WhatsProSender(
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(TimeSpan.FromSeconds(_options.SendTimeoutSeconds));
 
-            //var payload = new Dictionary<string, string>
-            //{
-            //    [_options.PhoneField] = destination,
-            //    [_options.MessageField] = message
-            //};
             var payload = target.IsGroup
                 ? (object)new
                 {

@@ -33,12 +33,36 @@ public sealed class BaileysWhatsAppSender(
         string? ruleKey = null,
         string username = "system")
     {
-        var jid = WhatsAppPhone.ToJid(phone);
-        if (jid is null)
+        if (!WhatsAppPhone.TryParseTarget(phone, out var target, WhatsAppDestinationMode.Phone))
         {
-            return WhatsAppMessageResult.Fail("رقم هاتف أو مجموعة غير صالح");
+            return WhatsAppMessageResult.Fail("رقم هاتف غير صالح");
         }
 
+        return await SendJidAsync(target.PhoneDigits + WhatsAppPhone.JidSuffix, message, cancellationToken, ruleKey, username);
+    }
+
+    public async Task<WhatsAppMessageResult> SendGroupMessageAsync(
+        string groupId,
+        string message,
+        CancellationToken cancellationToken,
+        string? ruleKey = null,
+        string username = "system")
+    {
+        if (!WhatsAppPhone.TryParseTarget(groupId, out var target, WhatsAppDestinationMode.Group) || !target.IsGroup)
+        {
+            return WhatsAppMessageResult.Fail("معرّف مجموعة غير صالح");
+        }
+
+        return await SendJidAsync(target.GroupJid, message, cancellationToken, ruleKey, username);
+    }
+
+    private async Task<WhatsAppMessageResult> SendJidAsync(
+        string jid,
+        string message,
+        CancellationToken cancellationToken,
+        string? ruleKey,
+        string username)
+    {
         if (!_options.IsConfigured)
         {
             return WhatsAppMessageResult.Fail("WhatsApp gateway not configured.");

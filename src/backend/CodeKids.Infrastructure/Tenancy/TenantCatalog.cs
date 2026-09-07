@@ -2,7 +2,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace CodeKids.Infrastructure.Tenancy;
 
-public sealed record TenantInfo(string Id, string ConnectionString, IReadOnlyList<string> Hosts, string? ApiBaseUrl = null);
+public sealed record TenantInfo(
+    string Id,
+    string ConnectionString,
+    IReadOnlyList<string> Hosts,
+    string? ApiBaseUrl = null,
+    string? FrontendBaseUrl = null);
 
 public sealed class TenantCatalog
 {
@@ -49,7 +54,13 @@ public sealed class TenantCatalog
                 apiBaseUrl = null;
             }
 
-            items.Add(new TenantInfo(id, connection, hosts, apiBaseUrl));
+            var frontendBaseUrl = child["FrontendBaseUrl"]?.Trim();
+            if (string.IsNullOrWhiteSpace(frontendBaseUrl))
+            {
+                frontendBaseUrl = null;
+            }
+
+            items.Add(new TenantInfo(id, connection, hosts, apiBaseUrl, frontendBaseUrl));
         }
 
         if (items.Count == 0)

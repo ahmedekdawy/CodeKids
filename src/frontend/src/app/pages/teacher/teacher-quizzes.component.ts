@@ -360,6 +360,17 @@ export class TeacherQuizzesComponent {
     });
   }
 
+  copyStudentLink(quizId: string): void {
+    const url = `${window.location.origin}/quizzes/${quizId}`;
+    void navigator.clipboard?.writeText(url).then(
+      () => {
+        this.error.set('');
+        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
+      },
+      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
+    );
+  }
+
   isPublishing(id: string): boolean {
     return this.publishingId() === id;
   }

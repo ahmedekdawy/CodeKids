@@ -8,6 +8,20 @@
   border: 1px solid var(--border);
 }
 
+.wa-destination {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.wa-destination legend {
+  padding: 0 0.35rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+
 .wa-students-head {
   display: flex;
   flex-wrap: wrap;

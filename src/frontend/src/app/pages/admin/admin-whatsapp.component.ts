@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -6,6 +6,8 @@ import { AdminWhatsAppRecipient } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+
+type WhatsAppDestination = 'phones' | 'group';
 
 @Component({
   selector: 'app-admin-whatsapp',
@@ -24,10 +26,21 @@ export class AdminWhatsAppComponent {
   readonly message = signal('');
   readonly error = signal('');
 
+  destination: WhatsAppDestination = 'phones';
   phoneInput = '';
+  groupId = '';
   body = '';
 
-  readonly canSend = computed(() => this.phones().length > 0 && !this.sending());
+  canSend(): boolean {
+    if (this.sending()) return false;
+    if (this.destination === 'group') return this.groupId.trim().length > 0;
+    return this.phones().length > 0 || this.phoneInput.trim().length > 0;
+  }
+
+  setDestination(mode: WhatsAppDestination): void {
+    this.destination = mode;
+    this.clearStatus();
+  }
 
   addPhone(): void {
     const parsed = this.phoneInput
@@ -64,22 +77,40 @@ export class AdminWhatsAppComponent {
     this.recipients.set([]);
     this.shareUrl.set(null);
 
-    // Let the admin send without pressing "add" first.
-    if (this.phoneInput.trim()) {
-      this.addPhone();
-    }
-
-    if (!this.phones().length) {
-      this.error.set(this.locale.t('admin.whatsapp.enterPhone'));
-      return;
-    }
     if (!this.body.trim()) {
       this.error.set(this.locale.t('admin.whatsapp.enterMessage'));
       return;
     }
 
+    const payload =
+      this.destination === 'group'
+        ? {
+            message: this.body.trim(),
+            sendToGroup: true,
+            groupId: this.groupId.trim(),
+            phones: null as string[] | null
+          }
+        : {
+            message: this.body.trim(),
+            sendToGroup: false,
+            phones: (() => {
+              if (this.phoneInput.trim()) this.addPhone();
+              return this.phones();
+            })(),
+            groupId: null as string | null
+          };
+
+    if (payload.sendToGroup && !payload.groupId) {
+      this.error.set(this.locale.t('admin.whatsapp.enterGroup'));
+      return;
+    }
+    if (!payload.sendToGroup && (!payload.phones || payload.phones.length === 0)) {
+      this.error.set(this.locale.t('admin.whatsapp.enterPhone'));
+      return;
+    }
+
     this.sending.set(true);
-    this.api.sendAdminWhatsApp({ phones: this.phones(), message: this.body.trim() }).subscribe({
+    this.api.sendAdminWhatsApp(payload).subscribe({
       next: (result) => {
         this.sending.set(false);
         this.recipients.set(result.recipients);

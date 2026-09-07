@@ -300,7 +300,12 @@ public static class AdminUsersEndpoints
 
                 return Results.Ok(await handler.Handle(
 
-                    new SendAdminWhatsAppCommand(adminId, request.Phones, request.Message),
+                    new SendAdminWhatsAppCommand(
+                        adminId,
+                        request.Message,
+                        request.SendToGroup,
+                        request.Phones,
+                        request.GroupId),
 
                     cancellationToken));
 

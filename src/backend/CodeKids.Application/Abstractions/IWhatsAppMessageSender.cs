@@ -9,6 +9,13 @@ public interface IWhatsAppMessageSender
         string? ruleKey = null,
         string username = "system");
 
+    Task<WhatsAppMessageResult> SendGroupMessageAsync(
+        string groupId,
+        string message,
+        CancellationToken cancellationToken,
+        string? ruleKey = null,
+        string username = "system");
+
     Task<WhatsAppMessageResult> SendNotificationAsync(
         string phone,
         string template,

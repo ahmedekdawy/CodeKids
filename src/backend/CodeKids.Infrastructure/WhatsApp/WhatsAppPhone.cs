@@ -26,7 +26,10 @@ public static class WhatsAppPhone
             : target.PhoneDigits + JidSuffix;
     }
 
-    public static bool TryParseTarget(string? input, out WhatsAppTarget target)
+    public static bool TryParseTarget(string? input, out WhatsAppTarget target) =>
+        TryParseTarget(input, out target, WhatsAppDestinationMode.Auto);
+
+    public static bool TryParseTarget(string? input, out WhatsAppTarget target, WhatsAppDestinationMode mode)
     {
         target = default;
         if (string.IsNullOrWhiteSpace(input))
@@ -38,10 +41,12 @@ public static class WhatsAppPhone
         if (trimmed.StartsWith("group:", StringComparison.OrdinalIgnoreCase))
         {
             trimmed = trimmed["group:".Length..].Trim();
+            mode = WhatsAppDestinationMode.Group;
         }
         else if (trimmed.StartsWith("g:", StringComparison.OrdinalIgnoreCase))
         {
             trimmed = trimmed[2..].Trim();
+            mode = WhatsAppDestinationMode.Group;
         }
 
         var at = trimmed.IndexOf('@');
@@ -53,12 +58,31 @@ public static class WhatsAppPhone
                 return false;
             }
 
+            if (mode == WhatsAppDestinationMode.Phone)
+            {
+                return false;
+            }
+
             target = WhatsAppTarget.Group(groupId, groupId + GroupJidSuffix);
             return true;
         }
 
         var rawDigits = DigitsOnly(trimmed);
-        if (rawDigits.Length is > 0 and < 8 && long.TryParse(rawDigits, out var shortGroupId) && shortGroupId > 0)
+        if (mode == WhatsAppDestinationMode.Group)
+        {
+            if (!long.TryParse(rawDigits, out var forcedGroupId) || forcedGroupId <= 0)
+            {
+                return false;
+            }
+
+            target = WhatsAppTarget.Group(forcedGroupId, forcedGroupId + GroupJidSuffix);
+            return true;
+        }
+
+        if (mode == WhatsAppDestinationMode.Auto
+            && rawDigits.Length is > 0 and < 8
+            && long.TryParse(rawDigits, out var shortGroupId)
+            && shortGroupId > 0)
         {
             target = WhatsAppTarget.Group(shortGroupId, shortGroupId + GroupJidSuffix);
             return true;
@@ -127,4 +151,11 @@ public readonly record struct WhatsAppTarget(bool IsGroup, string PhoneDigits, l
     public static WhatsAppTarget Phone(string digits) => new(false, digits, 0, string.Empty);
 
     public static WhatsAppTarget Group(long groupId, string groupJid) => new(true, string.Empty, groupId, groupJid);
+}
+
+public enum WhatsAppDestinationMode
+{
+    Auto,
+    Phone,
+    Group
 }

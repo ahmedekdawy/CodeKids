@@ -20,6 +20,17 @@ public sealed class FrontendOptions
     public string BaseUrl { get; set; } = "http://localhost:4200";
 }
 
+public sealed class NotificationOptions
+{
+    public const string SectionName = "Notifications";
+
+    /// <summary>Send a WhatsApp message with a deep link when an assignment, quiz, or exam is published.</summary>
+    public bool WhatsAppOnAssessmentPublish { get; set; } = true;
+
+    /// <summary>Also message the parent of every notified student.</summary>
+    public bool NotifyParentsOnAssessmentPublish { get; set; } = true;
+}
+
 public sealed class AiOptions
 {
     public const string SectionName = "Ai";

@@ -68,7 +68,7 @@ public sealed class SendClassroomWhatsAppCommandHandler(
                 throw new InvalidOperationException("Group id is required when sending to a WhatsApp group.");
             }
 
-            var groupResult = await whatsAppSender.SendMessageAsync(
+            var groupResult = await whatsAppSender.SendGroupMessageAsync(
                 groupId,
                 body,
                 cancellationToken,

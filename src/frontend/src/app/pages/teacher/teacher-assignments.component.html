@@ -116,6 +116,10 @@
             <button type="button" class="ghost-btn" [disabled]="isPublishing(assignment.id)" (click)="publishAssignment(assignment)">
               {{ isPublishing(assignment.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
             </button>
+          } @else {
+            <button type="button" class="ghost-btn" (click)="copyStudentLink(assignment.id)">
+              {{ 'teacher.assessments.copyStudentLink' | t }}
+            </button>
           }
           <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
           <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteAssignment(assignment)" />

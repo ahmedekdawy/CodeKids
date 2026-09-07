@@ -91,7 +91,8 @@ public static class AuthEndpoints
 
             {
 
-                var result = await handler.Handle(new ForgotPasswordCommand(request.Email), cancellationToken);
+                var channel = string.IsNullOrWhiteSpace(request.Channel) ? "whatsapp" : request.Channel;
+                var result = await handler.Handle(new ForgotPasswordCommand(request.Email, channel), cancellationToken);
 
                 return Results.Ok(result);
 

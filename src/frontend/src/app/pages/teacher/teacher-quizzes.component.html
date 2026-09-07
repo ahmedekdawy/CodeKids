@@ -210,6 +210,10 @@
             <button type="button" class="ghost-btn" [disabled]="isPublishing(quiz.id)" (click)="publishQuiz(quiz)">
               {{ isPublishing(quiz.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
             </button>
+          } @else {
+            <button type="button" class="ghost-btn" (click)="copyStudentLink(quiz.id)">
+              {{ 'teacher.assessments.copyStudentLink' | t }}
+            </button>
           }
           <button type="button" class="ghost-btn" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
           <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(quiz)" />

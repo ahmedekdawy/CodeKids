@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Notifications;
 using CodeKids.Application.Options;
 using CodeKids.Infrastructure.Ai;
 using CodeKids.Infrastructure.Email;
@@ -98,6 +99,12 @@ public static class IntegrationServiceCollectionExtensions
         {
             services.AddSingleton<IWhatsAppMessageSender, WhatsProSender>();
         }
+
+        services.Configure<NotificationOptions>(configuration.GetSection(NotificationOptions.SectionName));
+        services.AddSingleton<AssessmentPublishNotificationQueue>();
+        services.AddSingleton<IAssessmentPublishNotificationQueue>(sp =>
+            sp.GetRequiredService<AssessmentPublishNotificationQueue>());
+        services.AddHostedService<AssessmentPublishNotificationWorker>();
 
         return services;
     }

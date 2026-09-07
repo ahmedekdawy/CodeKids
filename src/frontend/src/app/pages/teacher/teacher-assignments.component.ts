@@ -323,6 +323,17 @@ export class TeacherAssignmentsComponent {
     });
   }
 
+  copyStudentLink(assignmentId: string): void {
+    const url = `${window.location.origin}/assignments/${assignmentId}`;
+    void navigator.clipboard?.writeText(url).then(
+      () => {
+        this.error.set('');
+        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
+      },
+      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
+    );
+  }
+
   isPublishing(id: string): boolean {
     return this.publishingId() === id;
   }

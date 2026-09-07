@@ -24,7 +24,8 @@ export class ForgotPasswordComponent {
   readonly brand = inject(SiteBrandService);
 
   readonly form = this.fb.nonNullable.group({
-    login: ['', Validators.required]
+    login: ['', Validators.required],
+    channel: this.fb.nonNullable.control<'whatsapp' | 'email'>('whatsapp', Validators.required)
   });
   readonly loading = signal(false);
   readonly error = signal('');
@@ -36,14 +37,16 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    const { login } = this.form.getRawValue();
+    const { login, channel } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set('');
     this.success.set('');
-    this.auth.forgotPassword(login.trim()).subscribe({
+    this.auth.forgotPassword(login.trim(), channel).subscribe({
       next: () => {
         this.loading.set(false);
-        this.success.set(this.locale.t('auth.forgot.success'));
+        this.success.set(
+          this.locale.t(channel === 'email' ? 'auth.forgot.successEmail' : 'auth.forgot.successWhatsApp')
+        );
       },
       error: (err) => {
         this.loading.set(false);

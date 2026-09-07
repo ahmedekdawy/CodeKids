@@ -1274,7 +1274,12 @@ export class LearningApiService {
     );
   }
 
-  sendAdminWhatsApp(payload: { phones: string[]; message: string }): Observable<SendAdminWhatsAppResult> {
+  sendAdminWhatsApp(payload: {
+    message: string;
+    sendToGroup?: boolean;
+    phones?: string[] | null;
+    groupId?: string | null;
+  }): Observable<SendAdminWhatsAppResult> {
     return this.http.post<SendAdminWhatsAppResult>(`${this.baseUrl}/admin/whatsapp/send`, payload);
   }
 

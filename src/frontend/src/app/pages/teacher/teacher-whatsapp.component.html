@@ -34,54 +34,69 @@
         <button type="button" class="ghost-btn" (click)="runDailyDigest()">{{ 'teacher.whatsapp.runDigest' | t }}</button>
       }
 
-      <div class="wa-students">
-        <div class="wa-students-head">
-          <h3>{{ 'common.students' | t }}</h3>
-          <div class="chip-row">
-            <button type="button" class="ghost-btn" (click)="selectAllWithMobile()">{{ 'teacher.whatsapp.selectAllMobile' | t }}</button>
-            <button type="button" class="ghost-btn" (click)="clearSelection()">{{ 'teacher.whatsapp.clear' | t }}</button>
+      <fieldset class="wa-destination">
+        <legend>{{ 'teacher.whatsapp.destination' | t }}</legend>
+        <div class="chip-row">
+          <label class="checkbox">
+            <input
+              type="radio"
+              name="destination"
+              [checked]="destination === 'phones'"
+              (change)="setDestination('phones')"
+            />
+            {{ 'teacher.whatsapp.toPhones' | t }}
+          </label>
+          <label class="checkbox">
+            <input
+              type="radio"
+              name="destination"
+              [checked]="destination === 'group'"
+              (change)="setDestination('group')"
+            />
+            {{ 'teacher.whatsapp.toGroup' | t }}
+          </label>
+        </div>
+      </fieldset>
+
+      @if (destination === 'phones') {
+        <div class="wa-students">
+          <div class="wa-students-head">
+            <h3>{{ 'common.students' | t }}</h3>
+            <div class="chip-row">
+              <button type="button" class="ghost-btn" (click)="selectAllWithMobile()">{{ 'teacher.whatsapp.selectAllMobile' | t }}</button>
+              <button type="button" class="ghost-btn" (click)="clearSelection()">{{ 'teacher.whatsapp.clear' | t }}</button>
+            </div>
           </div>
+
+          @for (student of students(); track student.studentId) {
+            <label class="checkbox wa-student" [class.disabled]="!hasMobile(student)">
+              <input
+                type="checkbox"
+                [checked]="isSelected(student.studentId)"
+                [disabled]="!hasMobile(student)"
+                (change)="toggleStudent(student.studentId)"
+              />
+              <span>
+                <strong>{{ student.displayName }}</strong>
+                <span class="meta">
+                  @if (hasMobile(student)) {
+                    {{ student.mobilePhone }}
+                  } @else {
+                    {{ 'teacher.whatsapp.noMobile' | t }}
+                  }
+                </span>
+              </span>
+            </label>
+          } @empty {
+            <p class="meta">{{ 'teacher.whatsapp.noStudents' | t }}</p>
+          }
         </div>
 
-        @for (student of students(); track student.studentId) {
-          <label class="checkbox wa-student" [class.disabled]="!hasMobile(student)">
-            <input
-              type="checkbox"
-              [checked]="isSelected(student.studentId)"
-              [disabled]="!hasMobile(student)"
-              (change)="toggleStudent(student.studentId)"
-            />
-            <span>
-              <strong>{{ student.displayName }}</strong>
-              <span class="meta">
-                @if (hasMobile(student)) {
-                  {{ student.mobilePhone }}
-                } @else {
-                  {{ 'teacher.whatsapp.noMobile' | t }}
-                }
-              </span>
-            </span>
-          </label>
-        } @empty {
-          <p class="meta">{{ 'teacher.whatsapp.noStudents' | t }}</p>
-        }
-      </div>
-
-      <label>
-        {{ 'common.message' | t }}
-        <textarea [(ngModel)]="message" name="message" rows="5" required [placeholder]="'teacher.whatsapp.messagePlaceholder' | t"></textarea>
-      </label>
-
-      <label class="checkbox">
-        <input type="checkbox" [(ngModel)]="includeGroupInviteLink" name="includeGroupInviteLink" />
-        {{ 'teacher.whatsapp.appendInvite' | t }}
-      </label>
-
-      <label class="checkbox">
-        <input type="checkbox" [(ngModel)]="sendToGroup" name="sendToGroup" />
-        {{ 'teacher.whatsapp.sendToGroup' | t }}
-      </label>
-      @if (sendToGroup) {
+        <label class="checkbox">
+          <input type="checkbox" [(ngModel)]="includeGroupInviteLink" name="includeGroupInviteLink" />
+          {{ 'teacher.whatsapp.appendInvite' | t }}
+        </label>
+      } @else {
         <label>
           {{ 'teacher.whatsapp.groupId' | t }}
           <input [(ngModel)]="groupId" name="groupId" [placeholder]="'teacher.whatsapp.groupIdPlaceholder' | t" />
@@ -89,9 +104,18 @@
         </label>
       }
 
+      <label>
+        {{ 'common.message' | t }}
+        <textarea [(ngModel)]="message" name="message" rows="5" required [placeholder]="'teacher.whatsapp.messagePlaceholder' | t"></textarea>
+      </label>
+
       <div class="chip-row">
         <button type="submit" [disabled]="sending()">
-          {{ sending() ? ('common.sending' | t) : ('teacher.whatsapp.sendSelected' | t) }}
+          {{
+            sending()
+              ? ('common.sending' | t)
+              : (destination === 'group' ? 'teacher.whatsapp.sendGroup' : 'teacher.whatsapp.sendSelected') | t
+          }}
         </button>
         @if (lastGroupShareUrl()) {
           <a class="chip" [href]="lastGroupShareUrl()!" target="_blank" rel="noopener">{{ 'teacher.whatsapp.openShare' | t }}</a>

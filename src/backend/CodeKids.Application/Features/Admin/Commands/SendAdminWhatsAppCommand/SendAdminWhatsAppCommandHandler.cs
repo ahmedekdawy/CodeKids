@@ -19,6 +19,43 @@ public sealed class SendAdminWhatsAppCommandHandler(
             throw new InvalidOperationException("Message is required.");
         }
 
+        var admin = await dbContext.Users
+            .Where(x => x.Id == command.AdminUserId)
+            .Select(x => new { x.Email, x.DisplayName })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        var username = admin?.Email ?? admin?.DisplayName ?? "admin";
+        var shareUrl = whatsAppClient.BuildShareUrl(message);
+
+        if (command.SendToGroup)
+        {
+            var groupId = command.GroupId?.Trim() ?? string.Empty;
+            if (groupId.Length == 0)
+            {
+                throw new InvalidOperationException("Group id is required when sending to a WhatsApp group.");
+            }
+
+            var groupResult = await sender.SendGroupMessageAsync(
+                groupId,
+                message,
+                cancellationToken,
+                ruleKey: "admin_group",
+                username: username);
+
+            return new SendAdminWhatsAppResultDto(
+                groupResult.Success ? 1 : 0,
+                groupResult.Success ? 0 : 1,
+                [
+                    new AdminWhatsAppRecipientDto(
+                        groupId,
+                        groupResult.Success,
+                        groupResult.Success
+                            ? $"Sent to group via {groupResult.SessionId}."
+                            : groupResult.Error ?? "Send failed.")
+                ],
+                shareUrl);
+        }
+
         var phones = (command.Phones ?? [])
             .Select(p => p?.Trim() ?? string.Empty)
             .Where(p => p.Length > 0)
@@ -29,14 +66,6 @@ public sealed class SendAdminWhatsAppCommandHandler(
         {
             throw new InvalidOperationException("At least one phone number is required.");
         }
-
-        var admin = await dbContext.Users
-            .Where(x => x.Id == command.AdminUserId)
-            .Select(x => new { x.Email, x.DisplayName })
-            .FirstOrDefaultAsync(cancellationToken);
-
-        var username = admin?.Email ?? admin?.DisplayName ?? "admin";
-        var shareUrl = whatsAppClient.BuildShareUrl(message);
 
         var recipients = new List<AdminWhatsAppRecipientDto>(phones.Count);
         var sent = 0;

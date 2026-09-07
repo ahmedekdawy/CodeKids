@@ -60,8 +60,11 @@ export class AuthService {
       .pipe(tap((result) => setCurrentTenantId(result.tenantId)));
   }
 
-  forgotPassword(email: string): Observable<{ accepted: boolean; message: string }> {
-    return this.http.post<{ accepted: boolean; message: string }>(`${this.baseUrl}/forgot-password`, { email });
+  forgotPassword(email: string, channel: 'whatsapp' | 'email' = 'whatsapp'): Observable<{ accepted: boolean; message: string }> {
+    return this.http.post<{ accepted: boolean; message: string }>(`${this.baseUrl}/forgot-password`, {
+      email,
+      channel
+    });
   }
 
   resetPassword(token: string, newPassword: string): Observable<{ accepted: boolean }> {

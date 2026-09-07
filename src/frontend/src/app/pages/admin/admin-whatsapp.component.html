@@ -6,47 +6,83 @@
 
   <section class="block">
     <form class="meeting-form" (ngSubmit)="send()">
-      <label>
-        {{ 'admin.whatsapp.phone' | t }}
-        <input
-          [(ngModel)]="phoneInput"
-          name="phoneInput"
-          [placeholder]="'admin.whatsapp.phonePlaceholder' | t"
-          (keydown.enter)="$event.preventDefault(); addPhone()"
-        />
-        <span class="meta">{{ 'admin.whatsapp.phoneHint' | t }}</span>
-      </label>
-      <button type="button" class="ghost-btn" (click)="addPhone()">{{ 'admin.whatsapp.addPhone' | t }}</button>
-
-      @if (phones().length) {
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>{{ 'admin.whatsapp.phone' | t }}</th>
-                <th>{{ 'common.actions' | t }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (phone of phones(); track phone) {
-                <tr>
-                  <td>{{ phone }}</td>
-                  <td>
-                    <div class="row-actions">
-                      <app-icon-action-button
-                        kind="delete"
-                        variant="danger"
-                        [label]="'admin.whatsapp.removePhone' | t"
-                        (action)="removePhone(phone)"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+      <fieldset class="wa-destination">
+        <legend>{{ 'admin.whatsapp.destination' | t }}</legend>
+        <div class="chip-row">
+          <label class="checkbox">
+            <input
+              type="radio"
+              name="destination"
+              [checked]="destination === 'phones'"
+              (change)="setDestination('phones')"
+            />
+            {{ 'admin.whatsapp.toPhones' | t }}
+          </label>
+          <label class="checkbox">
+            <input
+              type="radio"
+              name="destination"
+              [checked]="destination === 'group'"
+              (change)="setDestination('group')"
+            />
+            {{ 'admin.whatsapp.toGroup' | t }}
+          </label>
         </div>
-        <button type="button" class="ghost-btn" (click)="clearPhones()">{{ 'admin.whatsapp.clearPhones' | t }}</button>
+      </fieldset>
+
+      @if (destination === 'phones') {
+        <label>
+          {{ 'admin.whatsapp.phone' | t }}
+          <input
+            [(ngModel)]="phoneInput"
+            name="phoneInput"
+            [placeholder]="'admin.whatsapp.phonePlaceholder' | t"
+            (keydown.enter)="$event.preventDefault(); addPhone()"
+          />
+          <span class="meta">{{ 'admin.whatsapp.phoneHint' | t }}</span>
+        </label>
+        <button type="button" class="ghost-btn" (click)="addPhone()">{{ 'admin.whatsapp.addPhone' | t }}</button>
+
+        @if (phones().length) {
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>{{ 'admin.whatsapp.phone' | t }}</th>
+                  <th>{{ 'common.actions' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (phone of phones(); track phone) {
+                  <tr>
+                    <td>{{ phone }}</td>
+                    <td>
+                      <div class="row-actions">
+                        <app-icon-action-button
+                          kind="delete"
+                          variant="danger"
+                          [label]="'admin.whatsapp.removePhone' | t"
+                          (action)="removePhone(phone)"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <button type="button" class="ghost-btn" (click)="clearPhones()">{{ 'admin.whatsapp.clearPhones' | t }}</button>
+        }
+      } @else {
+        <label>
+          {{ 'admin.whatsapp.groupId' | t }}
+          <input
+            [(ngModel)]="groupId"
+            name="groupId"
+            [placeholder]="'admin.whatsapp.groupIdPlaceholder' | t"
+          />
+          <span class="meta">{{ 'admin.whatsapp.groupIdHint' | t }}</span>
+        </label>
       }
 
       <label>
@@ -67,7 +103,7 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>{{ 'admin.whatsapp.phone' | t }}</th>
+              <th>{{ 'admin.whatsapp.recipient' | t }}</th>
               <th>{{ 'common.status' | t }}</th>
               <th>{{ 'admin.whatsapp.detail' | t }}</th>
             </tr>
