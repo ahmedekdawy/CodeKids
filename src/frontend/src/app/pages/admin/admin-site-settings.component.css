@@ -1,0 +1,124 @@
+.settings-head h2 {
+  margin: 0;
+}
+
+.settings-head .meta {
+  margin: 0.3rem 0 0;
+  max-width: 46rem;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.settings-grid > .block {
+  margin: 0;
+  align-content: start;
+}
+
+.settings-grid > .block.span-all {
+  grid-column: 1 / -1;
+}
+
+.card-head {
+  display: grid;
+  gap: 0.3rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-head h3 {
+  margin: 0;
+}
+
+.card-head .meta {
+  margin: 0;
+}
+
+.identity-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.logo-tile {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 7rem;
+  height: 7rem;
+  padding: 0.55rem;
+  overflow: hidden;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-strong);
+  background: var(--elevated-bg);
+}
+
+.logo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.identity-fields {
+  flex: 1 1 16rem;
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.field-grid .span-all {
+  grid-column: 1 / -1;
+}
+
+.field-grid label {
+  margin: 0;
+}
+
+.settings-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-bar .save-state {
+  margin: 0;
+  margin-inline-end: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.save-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--badge-ok-fg);
+}
+
+.save-state.is-dirty .save-dot {
+  background: var(--badge-warn-fg);
+}

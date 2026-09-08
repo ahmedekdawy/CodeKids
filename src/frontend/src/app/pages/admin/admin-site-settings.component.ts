@@ -23,7 +23,7 @@ import {
   selector: 'app-admin-site-settings',
   imports: [PageFeedbackComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-site-settings.component.html',
-  styleUrl: './admin-panel.css'
+  styleUrls: ['./admin-panel.css', './admin-site-settings.component.css']
 })
 export class AdminSiteSettingsComponent {
   private readonly api = inject(LearningApiService);
@@ -47,21 +47,30 @@ export class AdminSiteSettingsComponent {
   readonly minPmStartTime = minutesToTimeInput(MIN_PM_START_MINUTES);
   readonly maxPmStartTime = minutesToTimeInput(MAX_PM_START_MINUTES);
 
+  /** Snapshot of the last loaded/saved values, used to enable the save bar. */
+  private savedSnapshot = '';
+
   constructor() {
     this.reload();
   }
 
   reload(): void {
     this.api.getSiteSettings().subscribe({
-      next: (settings) => {
-        this.settings.set(settings);
-        this.siteName = settings.siteName;
-        this.applyTimetableWeek(settings);
-        this.applySessionCounts(settings);
-        this.brand.apply(settings);
-      },
+      next: (settings) => this.applySettings(settings),
       error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.site.loadFailed'))
     });
+  }
+
+  isDirty(): boolean {
+    return !!this.settings() && this.snapshot() !== this.savedSnapshot;
+  }
+
+  discardChanges(): void {
+    const settings = this.settings();
+    if (!settings) return;
+    this.message.set('');
+    this.error.set('');
+    this.applySettings(settings);
   }
 
   logoUrl(): string | null {
@@ -116,10 +125,7 @@ export class AdminSiteSettingsComponent {
     this.api.updateSiteSettings(this.buildSavePayload()).subscribe({
       next: (settings) => {
         this.saving.set(false);
-        this.settings.set(settings);
-        this.applyTimetableWeek(settings);
-        this.applySessionCounts(settings);
-        this.brand.apply(settings);
+        this.applySettings(settings);
         this.message.set(this.locale.t('admin.site.saved'));
       },
       error: (err) => {
@@ -163,10 +169,7 @@ export class AdminSiteSettingsComponent {
       })
       .subscribe({
         next: (settings) => {
-          this.settings.set(settings);
-          this.applyTimetableWeek(settings);
-          this.applySessionCounts(settings);
-          this.brand.apply(settings);
+          this.applySettings(settings);
           this.message.set(this.locale.t('admin.site.saved'));
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.site.saveFailed'))
@@ -200,6 +203,26 @@ export class AdminSiteSettingsComponent {
       timetableWeekStartUtc: weekStart.toISOString(),
       ...counts
     };
+  }
+
+  private applySettings(settings: SiteSettings): void {
+    this.settings.set(settings);
+    this.siteName = settings.siteName;
+    this.applyTimetableWeek(settings);
+    this.applySessionCounts(settings);
+    this.brand.apply(settings);
+    this.savedSnapshot = this.snapshot();
+  }
+
+  private snapshot(): string {
+    return JSON.stringify({
+      siteName: this.siteName.trim(),
+      useCurrentTimetableWeek: this.useCurrentTimetableWeek,
+      timetableWeek: this.useCurrentTimetableWeek ? '' : this.timetableWeekLocal,
+      amSessionCount: Number(this.amSessionCount),
+      pmSessionCount: Number(this.pmSessionCount),
+      pmStartTime: this.pmStartTime
+    });
   }
 
   private applyTimetableWeek(settings: SiteSettings): void {
