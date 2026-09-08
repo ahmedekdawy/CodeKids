@@ -3,11 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { BankQuestion, Classroom, Course, CourseLesson, CourseUnit, Exam, ExamAttempt } from '../../models';
-import { formatCourseLabel } from '../../grade.util';
+import { classroomEffectiveGrade, formatCourseLabel, formatGradeLabel } from '../../grade.util';
+import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
 import { QuestionImageUploadComponent } from '../../shared/question-image-upload/question-image-upload.component';
 import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
@@ -22,6 +24,7 @@ interface AttemptDraft {
   selector: 'app-teacher-exams',
   imports: [
     PageFeedbackComponent,
+    IconActionButtonComponent,
     SearchableSelectComponent,
     SearchableMultiSelectComponent,
     FormsModule,
@@ -264,6 +267,40 @@ export class TeacherExamsComponent {
         this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
       }
     });
+  }
+
+  copyStudentLink(examId: string): void {
+    const url = `${window.location.origin}/exams/${examId}`;
+    void navigator.clipboard?.writeText(url).then(
+      () => {
+        this.error.set('');
+        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
+      },
+      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
+    );
+  }
+
+  whatsAppShareUrl(exam: Exam): string {
+    const room = this.classrooms().find((item) => item.id === exam.classroomId);
+    const grade = classroomEffectiveGrade(room ?? {});
+    const course =
+      exam.courseTitle?.trim() ||
+      room?.courseTitle?.trim() ||
+      (room?.courses ?? []).map((c) => c.courseTitle).find((title) => !!title?.trim()) ||
+      '';
+    return assessmentWhatsAppShareUrl({
+      kindLabel: this.locale.t('nav.teacher.exams'),
+      name: exam.title,
+      gradeLabel: grade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), grade),
+      courseLabel: course,
+      studentPath: `/exams/${exam.id}`,
+      gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
+      courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
+    });
+  }
+
+  shareOnWhatsApp(exam: Exam): void {
+    window.open(this.whatsAppShareUrl(exam), '_blank', 'noopener');
   }
 
   isPublishing(id: string): boolean {

@@ -120,6 +120,11 @@
             <button type="button" class="ghost-btn" (click)="copyStudentLink(assignment.id)">
               {{ 'teacher.assessments.copyStudentLink' | t }}
             </button>
+            <app-icon-action-button
+              kind="share"
+              [label]="'teacher.assessments.shareWhatsApp' | t"
+              (action)="shareOnWhatsApp(assignment)"
+            />
           }
           <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
           <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteAssignment(assignment)" />

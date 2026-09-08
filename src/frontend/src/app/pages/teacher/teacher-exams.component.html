@@ -115,6 +115,15 @@
             <button type="button" class="ghost-btn" [disabled]="isPublishing(exam.id)" (click)="publishExam(exam)">
               {{ isPublishing(exam.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
             </button>
+          } @else {
+            <button type="button" class="ghost-btn" (click)="copyStudentLink(exam.id)">
+              {{ 'teacher.assessments.copyStudentLink' | t }}
+            </button>
+            <app-icon-action-button
+              kind="share"
+              [label]="'teacher.assessments.shareWhatsApp' | t"
+              (action)="shareOnWhatsApp(exam)"
+            />
           }
           <button type="button" (click)="reviewExam(exam)">{{ 'teacher.exams.viewAttempts' | t }}</button>
         </div>

@@ -214,6 +214,11 @@
             <button type="button" class="ghost-btn" (click)="copyStudentLink(quiz.id)">
               {{ 'teacher.assessments.copyStudentLink' | t }}
             </button>
+            <app-icon-action-button
+              kind="share"
+              [label]="'teacher.assessments.shareWhatsApp' | t"
+              (action)="shareOnWhatsApp(quiz)"
+            />
           }
           <button type="button" class="ghost-btn" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
           <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(quiz)" />
