@@ -1,95 +1,147 @@
 <div class="panel-page">
-  <h2>{{ 'teacher.assignments.title' | t }}</h2>
-  <p class="meta">{{ 'teacher.assignments.subtitle' | t }}</p>
+  <header class="assignments-head">
+    <h2>{{ 'teacher.assignments.title' | t }}</h2>
+    <p class="meta">{{ 'teacher.assignments.subtitle' | t }}</p>
+  </header>
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
-  <section class="block">
-    <h3>{{ (editingAssignmentId ? 'teacher.assignments.edit' : 'teacher.assignments.create') | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createAssignment()">
-      <label>{{ 'common.title' | t }} <input [(ngModel)]="assignmentTitle" name="assignmentTitle" required /></label>
-      <label>{{ 'common.description' | t }} <input [(ngModel)]="assignmentDescription" name="assignmentDescription" /></label>
-      <label>
-        {{ 'common.classroom' | t }}
-        <app-searchable-select
-          [(ngModel)]="assignmentClassroomId"
-          name="assignmentClassroomId"
-          (ngModelChange)="onClassroomChange()"
-          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
-        />
-      </label>
-      <label>
-        {{ 'common.course' | t }}
-        <app-searchable-select
-          [(ngModel)]="assignmentCourseId"
-          name="assignmentCourseId"
-          (ngModelChange)="onCourseChange()"
-          required
-          [emptyLabel]="'common.selectCourse' | t"
-          [options]="coursesForClassroom().map(c => ({ value: c.id, label: courseLabel(c) }))"
-        />
-      </label>
-      <label>
-        {{ 'common.units' | t }}
-        <app-searchable-multi-select
-          [(ngModel)]="assignmentUnitIds"
-          name="assignmentUnitIds"
-          (ngModelChange)="onUnitsChange()"
-          [placeholder]="'common.selectUnits' | t"
-          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
-        />
-      </label>
-      <label>
-        {{ 'common.lessons' | t }}
-        <app-searchable-multi-select
-          [(ngModel)]="assignmentLessonIds"
-          name="assignmentLessonIds"
-          [placeholder]="'common.selectLessons' | t"
-          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
-        />
-      </label>
-      <label>XP <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" /></label>
-      <label class="checkbox">
-        <input type="checkbox" [(ngModel)]="assignmentIsPublished" name="assignmentIsPublished" />
-        {{ 'teacher.assessments.publish' | t }}
-      </label>
-      <label>
-        {{ 'teacher.ai.questionCount' | t }}
-        <input
-          type="number"
-          [(ngModel)]="assignmentQuestionCount"
-          name="assignmentQuestionCount"
-          min="1"
-          max="12"
-          (ngModelChange)="onQuestionCountChange()"
-        />
-      </label>
-      <label>
-        {{ 'teacher.ai.preferredType' | t }}
-        <app-searchable-select
-          [(ngModel)]="assignmentType"
-          name="assignmentType"
-          [options]="[{ value: 'ShortAnswer', label: ('assignType.shortAnswer' | t) }, { value: 'MultipleChoice', label: ('assignType.multipleChoice' | t) }]"
-        />
-      </label>
-      <div class="questions-group">
-      @for (question of questions; track $index; let qi = $index) {
-        <div class="question-card">
-          <div class="question-card-head">
-            <strong>{{ 'teacher.assignments.question' | t }} {{ qi + 1 }}</strong>
-          </div>
-          <app-question-draft-editor [draft]="question" [namePrefix]="'asg-' + qi" [allowShortAnswer]="true" />
-        </div>
-      }
+  <section class="block" id="assignment-form">
+    <div class="card-head row">
+      <div class="card-head-title">
+        <h3>{{ (editingAssignmentId ? 'teacher.assignments.edit' : 'teacher.assignments.create') | t }}</h3>
+        @if (editingAssignmentId) {
+          <span class="edit-pill">{{ 'teacher.assignments.editing' | t }}</span>
+        }
       </div>
-      <div class="form-actions">
-        <button
-          type="button"
-          class="ghost-btn"
-          [disabled]="generating() || !assignmentClassroomId || !assignmentCourseId"
-          (click)="generate()">
-          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+      @if (editingAssignmentId) {
+        <button type="button" class="ghost-btn small-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+      }
+    </div>
+
+    <form class="assignment-form" (ngSubmit)="createAssignment()">
+      <div class="field-grid">
+        <label class="span-2">
+          {{ 'common.title' | t }}
+          <input [(ngModel)]="assignmentTitle" name="assignmentTitle" required />
+        </label>
+        <label class="span-2">
+          {{ 'common.description' | t }}
+          <input [(ngModel)]="assignmentDescription" name="assignmentDescription" />
+        </label>
+        <label>
+          {{ 'common.classroom' | t }}
+          <app-searchable-select
+            [(ngModel)]="assignmentClassroomId"
+            name="assignmentClassroomId"
+            (ngModelChange)="onClassroomChange()"
+            [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+          />
+        </label>
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            [(ngModel)]="assignmentCourseId"
+            name="assignmentCourseId"
+            (ngModelChange)="onCourseChange()"
+            required
+            [emptyLabel]="'common.selectCourse' | t"
+            [options]="coursesForClassroom().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.units' | t }}
+          <app-searchable-multi-select
+            [(ngModel)]="assignmentUnitIds"
+            name="assignmentUnitIds"
+            (ngModelChange)="onUnitsChange()"
+            [placeholder]="'common.selectUnits' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.lessons' | t }}
+          <app-searchable-multi-select
+            [(ngModel)]="assignmentLessonIds"
+            name="assignmentLessonIds"
+            [placeholder]="'common.selectLessons' | t"
+            [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.xpReward' | t }}
+          <input type="number" [(ngModel)]="assignmentXp" name="assignmentXp" min="0" />
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" [(ngModel)]="assignmentIsPublished" name="assignmentIsPublished" />
+          <span>{{ 'teacher.assessments.publish' | t }}</span>
+        </label>
+      </div>
+
+      <div class="ai-panel">
+        <div class="ai-panel-copy">
+          <strong>{{ 'teacher.assignments.aiSettings' | t }}</strong>
+          <span class="meta">{{ 'teacher.ai.needScope' | t }}</span>
+        </div>
+        <div class="ai-panel-fields">
+          <label>
+            {{ 'teacher.ai.questionCount' | t }}
+            <input
+              type="number"
+              [(ngModel)]="assignmentQuestionCount"
+              name="assignmentQuestionCount"
+              min="1"
+              max="12"
+              (ngModelChange)="onQuestionCountChange()"
+            />
+          </label>
+          <label>
+            {{ 'teacher.ai.preferredType' | t }}
+            <app-searchable-select
+              [(ngModel)]="assignmentType"
+              name="assignmentType"
+              [options]="[{ value: 'ShortAnswer', label: ('assignType.shortAnswer' | t) }, { value: 'MultipleChoice', label: ('assignType.multipleChoice' | t) }]"
+            />
+          </label>
+          <button
+            type="button"
+            class="ghost-btn"
+            [disabled]="generating() || !assignmentClassroomId || !assignmentCourseId"
+            (click)="generate()"
+          >
+            {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+          </button>
+        </div>
+      </div>
+
+      <div class="questions-panel">
+        <div class="questions-head">
+          <h4>{{ 'teacher.assignments.question' | t }}</h4>
+          <span class="count-pill">{{ questions.length }}</span>
+        </div>
+
+        @for (question of questions; track $index; let qi = $index) {
+          <div class="question-card">
+            <div class="question-card-head">
+              <strong>{{ 'teacher.assignments.question' | t }} {{ qi + 1 }}</strong>
+              <app-icon-action-button
+                kind="delete"
+                variant="ghost"
+                [label]="'teacher.assignments.removeQuestion' | t"
+                [disabled]="questions.length <= 1"
+                (action)="removeQuestion(qi)"
+              />
+            </div>
+            <app-question-draft-editor [draft]="question" [namePrefix]="'asg-' + qi" [allowShortAnswer]="true" />
+          </div>
+        }
+
+        <button type="button" class="ghost-btn add-question-btn" (click)="addQuestion()">
+          {{ 'teacher.assignments.addQuestion' | t }}
         </button>
+      </div>
+
+      <div class="form-actions">
         <button type="submit">{{ (editingAssignmentId ? 'teacher.assignments.save' : 'teacher.assignments.create') | t }}</button>
         @if (editingAssignmentId) {
           <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
@@ -99,39 +151,95 @@
   </section>
 
   <section class="block">
-    <h3>{{ 'teacher.assignments.list' | t }}</h3>
-    @for (assignment of assignments(); track assignment.id) {
-      <div class="meeting-row">
-        <div>
-          <div class="list-title-row">
-            <strong>{{ assignment.title }}</strong>
+    <div class="card-head row">
+      <h3>{{ 'teacher.assignments.list' | t }}</h3>
+      <p class="meta">{{ shownLabel(filteredAssignments().length, assignments().length) }}</p>
+    </div>
+
+    <div class="list-filters-row">
+      <label>
+        {{ 'common.search' | t }}
+        <input [(ngModel)]="assignmentSearch" name="assignmentSearch" [placeholder]="'teacher.assignments.searchPlaceholder' | t" />
+      </label>
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          [(ngModel)]="listClassroomId"
+          name="listClassroomId"
+          [emptyLabel]="'teacher.assignments.allClassrooms' | t"
+          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+        />
+      </label>
+      <label>
+        {{ 'teacher.assignments.status' | t }}
+        <app-searchable-select
+          [(ngModel)]="listStatus"
+          name="listStatus"
+          [options]="statusOptions()"
+        />
+      </label>
+      @if (hasListFilters()) {
+        <button type="button" class="ghost-btn" (click)="clearListFilters()">{{ 'common.clearFilters' | t }}</button>
+      }
+    </div>
+
+    <div class="assignment-grid">
+      @for (assignment of filteredAssignments(); track assignment.id) {
+        <article class="assignment-card" [class.is-editing]="editingAssignmentId === assignment.id">
+          <div class="assignment-card-head">
+            <strong class="assignment-card-title">{{ assignment.title }}</strong>
             <span class="status-badge" [class.published]="assignment.isPublished" [class.draft]="!assignment.isPublished">
               {{ (assignment.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
             </span>
           </div>
-          <p class="meta">{{ assignment.classroomName }} · {{ assignment.xpReward }} XP · {{ assignment.questions.length }} {{ 'common.questions' | t }}</p>
-        </div>
-        <div class="row-actions">
-          @if (!assignment.isPublished) {
-            <button type="button" class="ghost-btn" [disabled]="isPublishing(assignment.id)" (click)="publishAssignment(assignment)">
-              {{ isPublishing(assignment.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
-            </button>
-          } @else {
-            <button type="button" class="ghost-btn" (click)="copyStudentLink(assignment.id)">
-              {{ 'teacher.assessments.copyStudentLink' | t }}
-            </button>
-            <app-icon-action-button
-              kind="share"
-              [label]="'teacher.assessments.shareWhatsApp' | t"
-              (action)="shareOnWhatsApp(assignment)"
-            />
+
+          @if (assignment.description) {
+            <p class="meta assignment-card-desc">{{ assignment.description }}</p>
           }
-          <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
-          <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteAssignment(assignment)" />
-        </div>
-      </div>
-    } @empty {
-      <p class="meta">{{ 'teacher.assignments.empty' | t }}</p>
-    }
+
+          <div class="assignment-chips">
+            <span class="assignment-chip">{{ assignment.classroomName }}</span>
+            <span class="assignment-chip subtle">{{ assignment.questions.length }} {{ 'common.questions' | t }}</span>
+            <span class="assignment-chip subtle">{{ assignment.xpReward }} {{ 'common.xp' | t }}</span>
+            @if (assignment.dueAtUtc) {
+              <span class="assignment-chip subtle">{{ 'teacher.assignments.due' | t }} {{ formatDate(assignment.dueAtUtc) }}</span>
+            }
+          </div>
+
+          <div class="assignment-card-actions">
+            @if (!assignment.isPublished) {
+              <button
+                type="button"
+                class="ghost-btn small-btn"
+                [disabled]="isPublishing(assignment.id)"
+                (click)="publishAssignment(assignment)"
+              >
+                {{ isPublishing(assignment.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
+              </button>
+            } @else {
+              <button type="button" class="ghost-btn small-btn" (click)="copyStudentLink(assignment.id)">
+                {{ 'teacher.assessments.copyStudentLink' | t }}
+              </button>
+              <app-icon-action-button
+                kind="share"
+                [label]="'teacher.assessments.shareWhatsApp' | t"
+                (action)="shareOnWhatsApp(assignment)"
+              />
+            }
+            <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
+            <app-icon-action-button
+              kind="delete"
+              variant="danger"
+              [label]="'common.delete' | t"
+              (action)="deleteAssignment(assignment)"
+            />
+          </div>
+        </article>
+      } @empty {
+        <p class="meta assignment-empty">
+          {{ (assignments().length ? 'teacher.assignments.noMatch' : 'teacher.assignments.empty') | t }}
+        </p>
+      }
+    </div>
   </section>
 </div>
