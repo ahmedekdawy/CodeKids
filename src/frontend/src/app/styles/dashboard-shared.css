@@ -398,8 +398,16 @@ label > span {
   color: var(--text);
 }
 
-.prompt-html,
-.prompt-html * {
+.prompt-html {
+  color: var(--prompt-fg) !important;
+}
+
+.prompt-html *:not(.math-frac):not(.math-frac *) {
+  color: var(--prompt-fg) !important;
+}
+
+.prompt-html .math-frac,
+.prompt-html .math-frac * {
   color: var(--prompt-fg) !important;
 }
 

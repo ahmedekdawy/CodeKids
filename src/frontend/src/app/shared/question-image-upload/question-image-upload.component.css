@@ -29,7 +29,52 @@
 .upload-actions {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.tool-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong, rgba(0, 0, 0, 0.12));
+  background: var(--elevated-bg-hover, rgba(255, 255, 255, 0.08));
+  color: var(--text, inherit);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.tool-icon-btn i {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.tool-icon-btn:hover:not(:disabled) {
+  background: rgba(255, 214, 10, 0.18);
+  border-color: rgba(255, 214, 10, 0.55);
+  transform: none;
+  box-shadow: none;
+}
+
+.tool-icon-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.tool-icon-btn.primary {
+  background: rgba(255, 214, 10, 0.28);
+  border-color: rgba(255, 214, 10, 0.55);
+}
+
+.camera-actions {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .sr-only {
@@ -55,12 +100,6 @@
   object-fit: cover;
   border-radius: 8px;
   background: #111;
-}
-
-.camera-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 .error {

@@ -45,11 +45,11 @@
       </div>
       @for (child of draft.children; track $index; let i = $index) {
         <div class="qb-child">
+          <div class="qb-field">
+            <span>{{ 'teacher.qbank.childPrompt' | t }}</span>
+            <app-math-prompt-editor [(ngModel)]="child.prompt" [name]="namePrefix + '-cPrompt-' + i" />
+          </div>
           <div class="qb-row two">
-            <label class="qb-field">
-              <span>{{ 'teacher.qbank.childPrompt' | t }}</span>
-              <input [(ngModel)]="child.prompt" [name]="namePrefix + '-cPrompt-' + i" />
-            </label>
             <label class="qb-field">
               <span>{{ 'common.type' | t }}</span>
               <app-searchable-select
@@ -58,6 +58,10 @@
                 (ngModelChange)="applyTypeDefaults(child)"
                 [options]="childTypes().map(t => ({ value: t, label: typeLabel(t) }))"
               />
+            </label>
+            <label class="qb-field">
+              <span>{{ 'common.points' | t }}</span>
+              <input type="number" [(ngModel)]="child.points" [name]="namePrefix + '-cPts-' + i" min="1" />
             </label>
           </div>
           <app-question-image-upload
@@ -137,10 +141,6 @@
             }
           }
 
-          <label class="qb-field">
-            <span>{{ 'common.points' | t }}</span>
-            <input type="number" [(ngModel)]="child.points" [name]="namePrefix + '-cPts-' + i" min="1" />
-          </label>
           <app-icon-action-button kind="delete" variant="ghost" [label]="'teacher.qbank.removeChild' | t" (action)="removeChild(i)" />
         </div>
       }
