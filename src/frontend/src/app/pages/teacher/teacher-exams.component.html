@@ -175,9 +175,11 @@
           </div>
 
           <div class="exam-card-actions">
-            <button type="button" class="ghost-btn small-btn" (click)="reviewExam(exam)">
-              {{ 'teacher.exams.viewAttempts' | t }}
-            </button>
+            <app-icon-action-button
+              kind="review"
+              [label]="'teacher.exams.viewAttempts' | t"
+              (action)="reviewExam(exam)"
+            />
             @if (!exam.isPublished) {
               <button
                 type="button"
@@ -188,9 +190,11 @@
                 {{ isPublishing(exam.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
               </button>
             } @else {
-              <button type="button" class="ghost-btn small-btn" (click)="copyStudentLink(exam.id)">
-                {{ 'teacher.assessments.copyStudentLink' | t }}
-              </button>
+              <app-icon-action-button
+                kind="copyLink"
+                [label]="'teacher.assessments.copyStudentLink' | t"
+                (action)="copyStudentLink(exam.id)"
+              />
               <app-icon-action-button
                 kind="share"
                 [label]="'teacher.assessments.shareWhatsApp' | t"

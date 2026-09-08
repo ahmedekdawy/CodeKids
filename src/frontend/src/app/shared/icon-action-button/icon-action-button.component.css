@@ -61,7 +61,9 @@
   border-color: rgba(95, 211, 188, 0.55);
 }
 
-.icon-action-btn.share {
+.icon-action-btn.share,
+.icon-action-btn.copy-link,
+.icon-action-btn.review {
   width: 2.55rem;
   height: 2.55rem;
 }
@@ -70,6 +72,13 @@
   width: 1.45rem;
   height: 1.45rem;
   font-size: 1.45rem;
+}
+
+.icon-action-btn.copy-link i,
+.icon-action-btn.review i {
+  width: 1.2rem;
+  height: 1.2rem;
+  font-size: 1.15rem;
 }
 
 .icon-action-btn.share:hover:not(:disabled) {

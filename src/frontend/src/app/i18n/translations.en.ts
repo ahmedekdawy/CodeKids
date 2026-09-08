@@ -1576,6 +1576,11 @@ export const EN: Record<string, string> = {
   'teacher.quizzes.deleteFailed': 'Could not delete quiz.',
   'teacher.quizzes.loadQuizFailed': 'Could not load quiz.',
   'teacher.quizzes.createFailed': 'Could not create quiz.',
+  'teacher.quizzes.editing': 'Editing',
+  'teacher.quizzes.aiSettings': 'AI question draft',
+  'teacher.quizzes.closeReview': 'Close review',
+  'teacher.quizzes.countLabel': '{count} quizzes',
+  'teacher.quizzes.createdAt': 'Created',
 
   'teacher.qbank.title': 'Question bank',
   'teacher.qbank.subtitle': 'Add reusable course questions, then pick them when creating an exam.',

@@ -1575,6 +1575,11 @@ export const AR: Record<string, string> = {
   'teacher.quizzes.deleteFailed': 'تعذّر حذف الاختبار.',
   'teacher.quizzes.loadQuizFailed': 'تعذّر تحميل الاختبار.',
   'teacher.quizzes.createFailed': 'تعذّر إنشاء الاختبار.',
+  'teacher.quizzes.editing': 'جاري التعديل',
+  'teacher.quizzes.aiSettings': 'مسودة أسئلة بالذكاء الاصطناعي',
+  'teacher.quizzes.closeReview': 'إغلاق المراجعة',
+  'teacher.quizzes.countLabel': '{count} اختبار',
+  'teacher.quizzes.createdAt': 'تاريخ الإنشاء',
 
   'teacher.qbank.title': 'بنك الأسئلة',
   'teacher.qbank.subtitle': 'أضف أسئلة قابلة لإعادة الاستخدام، ثم اخترها عند إنشاء امتحان.',

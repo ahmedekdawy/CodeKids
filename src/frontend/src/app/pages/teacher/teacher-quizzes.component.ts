@@ -201,6 +201,13 @@ export class TeacherQuizzesComponent {
     return this.quizzes().find((q) => q.id === this.reviewQuizId)?.title ?? '';
   }
 
+  closeReview(): void {
+    this.reviewQuizId = '';
+    this.expandedAttemptId = '';
+    this.attempts.set([]);
+    this.attemptsPage.set(1);
+  }
+
   onCourseChange(): void {
     this.quizForm.patchValue({ unitIds: [], lessonIds: [] });
   }

@@ -1,67 +1,107 @@
 <div class="panel-page">
-  <h2>{{ 'teacher.quizzes.title' | t }}</h2>
-  <p class="meta">{{ 'teacher.quizzes.subtitle' | t }}</p>
+  <header class="quizzes-head">
+    <h2>{{ 'teacher.quizzes.title' | t }}</h2>
+    <p class="meta">{{ 'teacher.quizzes.subtitle' | t }}</p>
+  </header>
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block" id="quiz-form-section">
-    <h3>{{ (editingQuizId ? 'teacher.quizzes.edit' : 'teacher.quizzes.create') | t }}</h3>
-    <form class="meeting-form" [formGroup]="quizForm" novalidate (ngSubmit)="createQuiz()">
-      <label>{{ 'common.title' | t }} <input formControlName="title" /></label>
-      <label>{{ 'common.description' | t }} <input formControlName="description" /></label>
-      <label>
-        {{ 'common.course' | t }}
-        <app-searchable-select
-          formControlName="courseId"
-          [emptyLabel]="'common.selectCourse' | t"
-          [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
-        />
-      </label>
-      <label>
-        {{ 'common.units' | t }}
-        <app-searchable-multi-select
-          formControlName="unitIds"
-          [placeholder]="'common.selectUnits' | t"
-          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
-        />
-      </label>
-      <label>
-        {{ 'common.lessons' | t }}
-        <app-searchable-multi-select
-          formControlName="lessonIds"
-          [placeholder]="'common.selectLessons' | t"
-          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
-        />
-      </label>
-      <label>
-        {{ 'common.classroom' | t }}
-        <app-searchable-select
-          formControlName="classroomId"
-          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
-        />
-      </label>
-      <label>XP <input type="number" formControlName="xp" /></label>
-      <label>
-        {{ 'teacher.assessments.durationMinutes' | t }}
-        <input type="number" formControlName="durationMinutes" min="0" max="600" />
-        <small>{{ 'teacher.assessments.durationHint' | t }}</small>
-      </label>
-      <label class="checkbox">
-        <input type="checkbox" formControlName="isPublished" />
-        {{ 'teacher.assessments.publish' | t }}
-      </label>
-      <label>
-        {{ 'teacher.ai.questionCount' | t }}
-        <input
-          type="number"
-          formControlName="questionCount"
-          min="1"
-          max="12"
-          (change)="onQuestionCountChange()"
-        />
-      </label>
+    <div class="card-head row">
+      <div class="card-head-title">
+        <h3>{{ (editingQuizId ? 'teacher.quizzes.edit' : 'teacher.quizzes.create') | t }}</h3>
+        @if (editingQuizId) {
+          <span class="edit-pill">{{ 'teacher.quizzes.editing' | t }}</span>
+        }
+      </div>
+      @if (editingQuizId) {
+        <button type="button" class="ghost-btn small-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+      }
+    </div>
 
-      <div class="questions-group">
+    <form class="quiz-form" [formGroup]="quizForm" novalidate (ngSubmit)="createQuiz()">
+      <div class="field-grid">
+        <label class="span-2">
+          {{ 'common.title' | t }}
+          <input formControlName="title" />
+        </label>
+        <label class="span-2">
+          {{ 'common.description' | t }}
+          <input formControlName="description" />
+        </label>
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            formControlName="courseId"
+            [emptyLabel]="'common.selectCourse' | t"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.classroom' | t }}
+          <app-searchable-select
+            formControlName="classroomId"
+            [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+          />
+        </label>
+        <label>
+          {{ 'common.units' | t }}
+          <app-searchable-multi-select
+            formControlName="unitIds"
+            [placeholder]="'common.selectUnits' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.lessons' | t }}
+          <app-searchable-multi-select
+            formControlName="lessonIds"
+            [placeholder]="'common.selectLessons' | t"
+            [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.xpReward' | t }}
+          <input type="number" formControlName="xp" min="0" />
+        </label>
+        <label>
+          {{ 'teacher.assessments.durationMinutes' | t }}
+          <input type="number" formControlName="durationMinutes" min="0" max="600" />
+          <small>{{ 'teacher.assessments.durationHint' | t }}</small>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" formControlName="isPublished" />
+          <span>{{ 'teacher.assessments.publish' | t }}</span>
+        </label>
+      </div>
+
+      <div class="ai-panel">
+        <div class="ai-panel-copy">
+          <strong>{{ 'teacher.quizzes.aiSettings' | t }}</strong>
+          <span class="meta">{{ 'teacher.ai.needScope' | t }}</span>
+        </div>
+        <div class="ai-panel-fields">
+          <label>
+            {{ 'teacher.ai.questionCount' | t }}
+            <input type="number" formControlName="questionCount" min="1" max="12" (change)="onQuestionCountChange()" />
+          </label>
+          <button
+            type="button"
+            class="ghost-btn"
+            [disabled]="generating() || !quizForm.controls.courseId.value"
+            (click)="generate()"
+          >
+            {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+          </button>
+        </div>
+      </div>
+
+      <div class="questions-panel">
+        <div class="questions-head">
+          <h4>{{ 'teacher.quizzes.questions' | t }}</h4>
+          <span class="count-pill">{{ questions.length }}</span>
+        </div>
+
         @for (question of questions; track $index; let qi = $index) {
           <div class="question-card">
             <div class="question-card-head">
@@ -77,15 +117,13 @@
             <app-question-draft-editor [draft]="question" [namePrefix]="'quiz-' + qi" [allowShortAnswer]="true" />
           </div>
         }
-      </div>
-      <div class="form-actions">
-        <button
-          type="button"
-          class="ghost-btn"
-          [disabled]="generating() || !quizForm.controls.courseId.value"
-          (click)="generate()">
-          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+
+        <button type="button" class="ghost-btn add-question-btn" (click)="addQuestion()">
+          {{ 'teacher.quizzes.addQuestion' | t }}
         </button>
+      </div>
+
+      <div class="form-actions">
         <button type="submit">{{ (editingQuizId ? 'teacher.quizzes.save' : 'teacher.quizzes.create') | t }}</button>
         @if (editingQuizId) {
           <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
@@ -95,45 +133,64 @@
   </section>
 
   @if (reviewQuizId) {
-    <section class="block">
-      <h3>{{ 'teacher.quizzes.attempts' | t }} — {{ reviewQuizTitle() }}</h3>
-      @for (attempt of pagedAttempts(); track attempt.id) {
-        <div class="meeting-row">
-          <div>
-            <strong>{{ attempt.studentName }}</strong>
-            <p class="meta">
-              {{ attempt.score }}/{{ attempt.totalQuestions }}
-              · {{ attempt.earnedXp }} XP
-              · {{ dateLabel(attempt.completedAtUtc) }}
-            </p>
-          </div>
-          <button type="button" class="ghost-btn" (click)="toggleAttempt(attempt.id)">
-            {{ (expandedAttemptId === attempt.id ? 'teacher.quizzes.hideAnswers' : 'teacher.quizzes.viewAnswers') | t }}
-          </button>
+    <section class="block" id="quiz-review-section">
+      <div class="card-head row">
+        <div class="card-head-title">
+          <h3>{{ 'teacher.quizzes.attempts' | t }}</h3>
+          <span class="review-target">{{ reviewQuizTitle() }}</span>
         </div>
-        @if (expandedAttemptId === attempt.id) {
-          <div class="answers-review">
-            @for (answer of attempt.answers; track answer.questionId) {
-              <div class="answer-row" [class.correct]="answer.isCorrect" [class.wrong]="!answer.isCorrect">
-                <strong>{{ answer.sortOrder }}. {{ answer.prompt }}</strong>
-                <app-question-image-display [url]="answer.promptImageUrl" />
-                <p class="meta">
-                  {{ 'teacher.quizzes.studentAnswer' | t }}:
-                  {{ answer.selectedText || ('common.emDash' | t) }}
-                </p>
-                <p class="meta">
-                  {{ 'common.correctAnswer' | t }}:
-                  {{ answer.correctText || ('common.emDash' | t) }}
-                </p>
+        <button type="button" class="ghost-btn small-btn" (click)="closeReview()">
+          {{ 'teacher.quizzes.closeReview' | t }}
+        </button>
+      </div>
+
+      <div class="attempts-list">
+        @for (attempt of pagedAttempts(); track attempt.id) {
+          <article class="attempt-card" [class.is-open]="expandedAttemptId === attempt.id">
+            <div class="attempt-head">
+              <div class="attempt-who">
+                <strong>{{ attempt.studentName }}</strong>
+                <span class="meta">{{ dateLabel(attempt.completedAtUtc) }}</span>
               </div>
-            } @empty {
-              <p class="meta">{{ 'teacher.quizzes.noSavedAnswers' | t }}</p>
+              <div class="attempt-stats">
+                <span class="score-pill">{{ attempt.score }}/{{ attempt.totalQuestions }}</span>
+                <span class="attempt-chip">{{ attempt.earnedXp }} {{ 'common.xp' | t }}</span>
+                <button type="button" class="ghost-btn small-btn" (click)="toggleAttempt(attempt.id)">
+                  {{ (expandedAttemptId === attempt.id ? 'teacher.quizzes.hideAnswers' : 'teacher.quizzes.viewAnswers') | t }}
+                </button>
+              </div>
+            </div>
+
+            @if (expandedAttemptId === attempt.id) {
+              <div class="answers-list">
+                @for (answer of attempt.answers; track answer.questionId) {
+                  <div class="answer-card" [class.correct]="answer.isCorrect" [class.wrong]="!answer.isCorrect">
+                    <div class="answer-prompt">
+                      <span class="answer-index">{{ answer.sortOrder }}</span>
+                      <strong>{{ answer.prompt }}</strong>
+                    </div>
+                    <app-question-image-display [url]="answer.promptImageUrl" />
+                    <dl class="answer-facts">
+                      <div>
+                        <dt>{{ 'teacher.quizzes.studentAnswer' | t }}</dt>
+                        <dd>{{ answer.selectedText || ('common.emDash' | t) }}</dd>
+                      </div>
+                      <div>
+                        <dt>{{ 'common.correctAnswer' | t }}</dt>
+                        <dd>{{ answer.correctText || ('common.emDash' | t) }}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                } @empty {
+                  <p class="meta">{{ 'teacher.quizzes.noSavedAnswers' | t }}</p>
+                }
+              </div>
             }
-          </div>
+          </article>
+        } @empty {
+          <p class="meta list-empty">{{ 'teacher.quizzes.noAttempts' | t }}</p>
         }
-      } @empty {
-        <p class="meta">{{ 'teacher.quizzes.noAttempts' | t }}</p>
-      }
+      </div>
 
       @if (attempts().length) {
         <div class="list-pager">
@@ -150,8 +207,12 @@
   }
 
   <section class="block">
-    <h3>{{ 'teacher.quizzes.list' | t }}</h3>
-    <div class="list-filters">
+    <div class="card-head row">
+      <h3>{{ 'teacher.quizzes.list' | t }}</h3>
+      <p class="meta">{{ 'teacher.quizzes.countLabel' | t: { count: quizzes().length } }}</p>
+    </div>
+
+    <div class="list-filters-row">
       <label>
         {{ 'teacher.quizzes.dateFrom' | t }}
         <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" [ngModelOptions]="{ standalone: true }" (ngModelChange)="reloadQuizzes()" />
@@ -187,46 +248,76 @@
       </button>
     </div>
 
-    @for (quiz of pagedQuizzes(); track quiz.id) {
-      <div class="meeting-row">
-        <div>
-          <div class="list-title-row">
-            <strong>{{ quiz.title }}</strong>
-            <span class="status-badge" [class.published]="quiz.isPublished" [class.draft]="!quiz.isPublished">
-              {{ (quiz.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
-            </span>
-          </div>
-          <p class="meta">
-            {{ quiz.courseTitle }}
-            · {{ gradeLabel(quiz.courseGrade) }}
-            @if (quiz.classroomName) { · {{ quiz.classroomName }} }
-            · {{ quiz.questionCount }} {{ 'common.questions' | t }}
-            · {{ quiz.attemptCount }} {{ 'teacher.quizzes.attemptsCount' | t }}
-            · {{ dateLabel(quiz.createdAtUtc) }}
-          </p>
-        </div>
-        <div class="row-actions">
-          @if (!quiz.isPublished) {
-            <button type="button" class="ghost-btn" [disabled]="isPublishing(quiz.id)" (click)="publishQuiz(quiz)">
-              {{ isPublishing(quiz.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
-            </button>
-          } @else {
-            <button type="button" class="ghost-btn" (click)="copyStudentLink(quiz.id)">
-              {{ 'teacher.assessments.copyStudentLink' | t }}
-            </button>
-            <app-icon-action-button
-              kind="share"
-              [label]="'teacher.assessments.shareWhatsApp' | t"
-              (action)="shareOnWhatsApp(quiz)"
-            />
-          }
-          <button type="button" class="ghost-btn" (click)="reviewQuiz(quiz)">{{ 'teacher.quizzes.review' | t }}</button>
-          <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(quiz)" />
-          <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteQuiz(quiz)" />
-        </div>
+    @if (pagedQuizzes().length) {
+      <div class="table-wrap quiz-table-wrap">
+        <table class="data-table quiz-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.title' | t }}</th>
+              <th>{{ 'common.course' | t }}</th>
+              <th>{{ 'common.grade' | t }}</th>
+              <th>{{ 'common.classroom' | t }}</th>
+              <th class="num">{{ 'common.questions' | t }}</th>
+              <th class="num">{{ 'teacher.quizzes.attemptsCount' | t }}</th>
+              <th>{{ 'teacher.quizzes.createdAt' | t }}</th>
+              <th>{{ 'common.status' | t }}</th>
+              <th>{{ 'common.actions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (quiz of pagedQuizzes(); track quiz.id) {
+              <tr [class.is-editing]="editingQuizId === quiz.id" [class.is-reviewing]="reviewQuizId === quiz.id">
+                <td class="title-cell">
+                  <strong>{{ quiz.title }}</strong>
+                  @if (quiz.description) {
+                    <span class="meta">{{ quiz.description }}</span>
+                  }
+                </td>
+                <td>{{ quiz.courseTitle }}</td>
+                <td>{{ gradeLabel(quiz.courseGrade) }}</td>
+                <td>{{ quiz.classroomName || ('common.emDash' | t) }}</td>
+                <td class="num">{{ quiz.questionCount }}</td>
+                <td class="num">{{ quiz.attemptCount }}</td>
+                <td class="nowrap">{{ dateLabel(quiz.createdAtUtc) }}</td>
+                <td>
+                  <span class="status-badge" [class.published]="quiz.isPublished" [class.draft]="!quiz.isPublished">
+                    {{ (quiz.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
+                  </span>
+                </td>
+                <td>
+                  <div class="row-actions">
+                    @if (!quiz.isPublished) {
+                      <button type="button" class="ghost-btn small-btn" [disabled]="isPublishing(quiz.id)" (click)="publishQuiz(quiz)">
+                        {{ isPublishing(quiz.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
+                      </button>
+                    } @else {
+                      <app-icon-action-button
+                        kind="copyLink"
+                        [label]="'teacher.assessments.copyStudentLink' | t"
+                        (action)="copyStudentLink(quiz.id)"
+                      />
+                      <app-icon-action-button
+                        kind="share"
+                        [label]="'teacher.assessments.shareWhatsApp' | t"
+                        (action)="shareOnWhatsApp(quiz)"
+                      />
+                    }
+                    <app-icon-action-button
+                      kind="review"
+                      [label]="'teacher.quizzes.review' | t"
+                      (action)="reviewQuiz(quiz)"
+                    />
+                    <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(quiz)" />
+                    <app-icon-action-button kind="delete" variant="danger" [label]="'common.delete' | t" (action)="deleteQuiz(quiz)" />
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
-    } @empty {
-      <p class="meta">{{ 'teacher.quizzes.empty' | t }}</p>
+    } @else {
+      <p class="meta list-empty">{{ 'teacher.quizzes.empty' | t }}</p>
     }
 
     @if (quizzes().length) {
