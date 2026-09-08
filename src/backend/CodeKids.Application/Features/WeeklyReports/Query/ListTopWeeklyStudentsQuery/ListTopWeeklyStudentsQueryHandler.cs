@@ -13,7 +13,7 @@ public sealed class ListTopWeeklyStudentsQueryHandler(IAppDbContext dbContext)
         ListTopWeeklyStudentsQuery query,
         CancellationToken cancellationToken)
     {
-        var weekStart = query.WeekStartDate ?? StartOfWeek(DateOnly.FromDateTime(DateTime.UtcNow));
+        var weekStart = await ResolveBoardWeekStartAsync(dbContext, query.WeekStartDate, cancellationToken);
 
         var rows = await ScoredReportsForWeek(dbContext, weekStart)
             .Select(x => new
@@ -49,6 +49,29 @@ public sealed class ListTopWeeklyStudentsQueryHandler(IAppDbContext dbContext)
             .ToList();
     }
 
+    /// <summary>
+    /// Public board (no week specified) stays on last week until the current week has any ratings.
+    /// An explicit week is always used as-is.
+    /// </summary>
+    public static async Task<DateOnly> ResolveBoardWeekStartAsync(
+        IAppDbContext dbContext,
+        DateOnly? requestedWeekStart,
+        CancellationToken cancellationToken)
+    {
+        if (requestedWeekStart.HasValue)
+        {
+            return requestedWeekStart.Value;
+        }
+
+        var currentWeek = StartOfWeek(DateOnly.FromDateTime(DateTime.UtcNow));
+        if (await HasScoredReportsAsync(dbContext, currentWeek, cancellationToken))
+        {
+            return currentWeek;
+        }
+
+        return currentWeek.AddDays(-7);
+    }
+
     /// <summary>Guards the anonymous honour-board photo route: only students on the board are served.</summary>
     public static async Task<bool> QualifiesForBoardAsync(
         IAppDbContext dbContext,
@@ -63,6 +86,12 @@ public sealed class ListTopWeeklyStudentsQueryHandler(IAppDbContext dbContext)
 
         return scores.Count > 0 && scores.Average() >= MinPerformancePercent;
     }
+
+    private static Task<bool> HasScoredReportsAsync(
+        IAppDbContext dbContext,
+        DateOnly weekStart,
+        CancellationToken cancellationToken) =>
+        ScoredReportsForWeek(dbContext, weekStart).AnyAsync(cancellationToken);
 
     private static IQueryable<Domain.Entities.StudentWeeklyReport> ScoredReportsForWeek(
         IAppDbContext dbContext,
