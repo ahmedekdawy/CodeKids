@@ -48,6 +48,8 @@ import {
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
+  TeacherAssessmentReportItem,
+  PagedTeacherAssessments,
   AdminLoginDashboard,
   TuitionPayment,
   OtherExpense,
@@ -828,6 +830,31 @@ export class LearningApiService {
     );
   }
 
+  getTeacherAssessmentsReport(filters: {
+    teacherId?: string;
+    classroomId?: string;
+    fromDate?: string;
+    toDate?: string;
+    status?: string;
+    kind?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedTeacherAssessments> {
+    const params = new URLSearchParams();
+    if (filters.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters.classroomId) params.set('classroomId', filters.classroomId);
+    if (filters.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters.toDate) params.set('toDate', filters.toDate);
+    if (filters.status) params.set('status', filters.status);
+    if (filters.kind) params.set('kind', filters.kind);
+    if (filters.page) params.set('page', String(filters.page));
+    if (filters.pageSize) params.set('pageSize', String(filters.pageSize));
+    const query = params.toString();
+    return this.http.get<PagedTeacherAssessments>(
+      `${this.baseUrl}/admin/teacher-assessments${query ? `?${query}` : ''}`
+    );
+  }
+
   getAdminLoginDashboard(filters: {
     fromDate: string;
     toDate: string;
@@ -1235,6 +1262,16 @@ export class LearningApiService {
   ): Observable<EnrollStudentResult> {
     return this.http.post<EnrollStudentResult>(`${this.baseUrl}/classrooms/${classroomId}/students`, {
       studentId,
+      courseIds: courseIds?.length ? courseIds : null
+    });
+  }
+
+  updateStudentClassroomEnrollment(
+    classroomId: string,
+    studentId: string,
+    courseIds?: string[]
+  ): Observable<Classroom> {
+    return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/students/${studentId}`, {
       courseIds: courseIds?.length ? courseIds : null
     });
   }

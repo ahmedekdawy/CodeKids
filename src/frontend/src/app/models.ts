@@ -833,6 +833,26 @@ export interface AccountReport {
   netAmount: number;
 }
 
+export interface TeacherAssessmentReportItem {
+  kind: 'Assignment' | 'Quiz' | 'Exam' | string;
+  id: string;
+  title: string;
+  teacherId?: string | null;
+  teacherName: string;
+  classroomId?: string | null;
+  classroomName: string;
+  courseTitle?: string | null;
+  createdAtUtc: string;
+  isPublished: boolean;
+}
+
+export interface PagedTeacherAssessments {
+  items: TeacherAssessmentReportItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface StudentAskedQuestion {
   id: string;
   studentId: string;

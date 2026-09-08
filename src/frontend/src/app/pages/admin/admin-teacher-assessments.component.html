@@ -1,0 +1,153 @@
+<div class="panel-page">
+  <h2>{{ 'admin.teacherAssessments.title' | t }}</h2>
+  <p class="meta">{{ 'admin.teacherAssessments.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <div class="list-filters">
+      <label>
+        {{ 'common.teacher' | t }}
+        <app-searchable-select
+          [ngModel]="filterTeacherId()"
+          name="filterTeacherId"
+          (ngModelChange)="setFilterTeacher($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="teacherOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.classroom' | t }}
+        <app-searchable-select
+          [ngModel]="filterClassroomId()"
+          name="filterClassroomId"
+          (ngModelChange)="setFilterClassroom($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="classroomOptions()"
+        />
+      </label>
+      <label>
+        {{ 'admin.teacherAssessments.kind' | t }}
+        <app-searchable-select
+          [ngModel]="filterKind()"
+          name="filterKind"
+          (ngModelChange)="setFilterKind($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="kindOptions()"
+        />
+      </label>
+      <label>
+        {{ 'common.status' | t }}
+        <app-searchable-select
+          [ngModel]="filterStatus()"
+          name="filterStatus"
+          (ngModelChange)="setFilterStatus($event)"
+          [emptyLabel]="'common.all' | t"
+          [options]="statusOptions()"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateFrom' | t }}
+        <input
+          type="date"
+          [ngModel]="filterFromDate()"
+          name="filterFromDate"
+          (ngModelChange)="setFilterFromDate($event)"
+        />
+      </label>
+      <label>
+        {{ 'teacher.attendance.dateTo' | t }}
+        <input
+          type="date"
+          [ngModel]="filterToDate()"
+          name="filterToDate"
+          (ngModelChange)="setFilterToDate($event)"
+        />
+      </label>
+      <label>
+        {{ 'common.rowsPerPage' | t }}
+        <app-searchable-select
+          [ngModel]="pageSize()"
+          name="pageSize"
+          (ngModelChange)="setPageSize($event)"
+          [options]="pageSizeOptions.map(s => ({ value: s, label: '' + s }))"
+        />
+      </label>
+      @if (hasActiveFilters()) {
+        <button type="button" class="ghost-btn" (click)="resetFilters()">{{ 'common.clearFilters' | t }}</button>
+      }
+      <button type="button" class="search-btn" (click)="search()">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        {{ 'common.search' | t }}
+      </button>
+      <span class="meta">{{ 'common.ofShown' | t: { shown: rows().length, total: totalCount() } }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.teacherAssessments.kind' | t }}</th>
+            <th>{{ 'common.title' | t }}</th>
+            <th>{{ 'common.teacher' | t }}</th>
+            <th>{{ 'common.classroom' | t }}</th>
+            <th>{{ 'common.course' | t }}</th>
+            <th>{{ 'admin.teacherAssessments.createdAt' | t }}</th>
+            <th>{{ 'common.status' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.kind + row.id) {
+            <tr>
+              <td>{{ kindLabel(row.kind) }}</td>
+              <td>{{ row.title }}</td>
+              <td>{{ row.teacherName || ('common.emDash' | t) }}</td>
+              <td>{{ row.classroomName || ('common.emDash' | t) }}</td>
+              <td>{{ row.courseTitle || ('common.emDash' | t) }}</td>
+              <td>{{ formatDate(row.createdAtUtc) }}</td>
+              <td>
+                {{
+                  (row.isPublished
+                    ? 'admin.teacherAssessments.statusPublished'
+                    : 'admin.teacherAssessments.statusDraft'
+                  ) | t
+                }}
+              </td>
+              <td>
+                <div class="row-actions">
+                  @if (!row.isPublished) {
+                    <button
+                      type="button"
+                      class="ghost-btn"
+                      [disabled]="busyId() === row.id"
+                      (click)="publish(row)"
+                    >
+                      {{ 'admin.teacherAssessments.publish' | t }}
+                    </button>
+                  } @else {
+                    <span class="meta">{{ 'common.emDash' | t }}</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="meta">{{ (totalCount() || hasActiveFilters() ? 'common.noData' : 'admin.teacherAssessments.empty') | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="list-pager">
+      <button type="button" class="ghost-btn" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ 'common.previous' | t }}
+      </button>
+      <span class="meta">{{ 'common.pageOf' | t: { page: page(), pages: totalPages() } }}</span>
+      <button type="button" class="ghost-btn" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ 'common.next' | t }}
+      </button>
+    </div>
+  </section>
+</div>

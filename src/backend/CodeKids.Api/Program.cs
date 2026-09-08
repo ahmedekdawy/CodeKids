@@ -364,6 +364,7 @@ builder.Services.AddScoped<ICommandHandler<CreateTeacherPayrollAdjustmentCommand
 builder.Services.AddScoped<ICommandHandler<DeleteTeacherPayrollAdjustmentCommand, bool>, DeleteTeacherPayrollAdjustmentCommandHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetAccountReportQuery, AccountReportDto>, GetAccountReportQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetTeacherAssessmentsReportQuery, PagedTeacherAssessmentsResultDto>, GetTeacherAssessmentsReportQueryHandler>();
 
 builder.Services.AddScoped<IQueryHandler<GetAdminLoginDashboardQuery, AdminLoginDashboardDto>, GetAdminLoginDashboardQueryHandler>();
 
@@ -410,6 +411,8 @@ builder.Services.AddScoped<ICommandHandler<DeleteClassroomCommand, bool>, Delete
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomAssignmentsCommand, ClassroomDto>, UpdateClassroomAssignmentsCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<AddStudentToClassroomCommand, EnrollStudentResultDto>, AddStudentToClassroomCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<UpdateStudentClassroomEnrollmentCommand, ClassroomDto>, UpdateStudentClassroomEnrollmentCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<RemoveStudentFromClassroomCommand, ClassroomDto>, RemoveStudentFromClassroomCommandHandler>();
 
@@ -665,6 +668,7 @@ app.UseAuthorization();
 
 
 app.MapAccountReportEndpoints();
+app.MapTeacherAssessmentsReportEndpoints();
 
 app.MapAdminUsersEndpoints();
 
