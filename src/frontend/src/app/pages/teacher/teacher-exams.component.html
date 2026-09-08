@@ -1,188 +1,301 @@
 <div class="panel-page">
-  <h2>{{ 'teacher.exams.title' | t }}</h2>
-  <p class="meta">{{ 'teacher.exams.subtitle' | t }}</p>
+  <header class="exams-head">
+    <h2>{{ 'teacher.exams.title' | t }}</h2>
+    <p class="meta">{{ 'teacher.exams.subtitle' | t }}</p>
+  </header>
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
   <section class="block">
-    <h3>{{ 'teacher.exams.create' | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="createExam()">
-      <label>{{ 'common.title' | t }} <input [(ngModel)]="title" name="title" required /></label>
-      <label>{{ 'common.description' | t }} <input [(ngModel)]="description" name="description" /></label>
-      <label>
-        {{ 'common.classroom' | t }}
-        <app-searchable-select
-          [(ngModel)]="classroomId"
-          name="classroomId"
-          (ngModelChange)="onClassroomChange()"
-          required
-          [emptyLabel]="'common.selectClassroom' | t"
-          [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
-        />
-      </label>
-      <label>
-        {{ 'common.course' | t }}
-        <app-searchable-select
-          [(ngModel)]="courseId"
-          name="courseId"
-          (ngModelChange)="onCourseChange()"
-          required
-          [emptyLabel]="'common.selectCourse' | t"
-          [options]="coursesForClassroom().map(c => ({ value: c.id, label: courseLabel(c) }))"
-        />
-      </label>
-      <label>
-        {{ 'common.units' | t }}
-        <app-searchable-multi-select
-          [(ngModel)]="unitIds"
-          name="unitIds"
-          (ngModelChange)="onUnitsChange()"
-          [placeholder]="'common.selectUnits' | t"
-          [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
-        />
-      </label>
-      <label>
-        {{ 'common.lessons' | t }}
-        <app-searchable-multi-select
-          [(ngModel)]="lessonIds"
-          name="lessonIds"
-          [placeholder]="'common.selectLessons' | t"
-          [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
-        />
-      </label>
-      <label>{{ 'common.xpReward' | t }} <input type="number" [(ngModel)]="xpReward" name="xpReward" min="0" /></label>
-      <label>
-        {{ 'teacher.assessments.durationMinutes' | t }}
-        <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="0" max="600" />
-        <small>{{ 'teacher.assessments.durationHint' | t }}</small>
-      </label>
-      <label class="checkbox">
-        <input type="checkbox" [(ngModel)]="isPublished" name="isPublished" />
-        {{ 'teacher.assessments.publish' | t }}
-      </label>
-      <label>
-        {{ 'teacher.ai.questionCount' | t }}
-        <input type="number" [(ngModel)]="questionCount" name="questionCount" min="1" max="12" />
-      </label>
+    <div class="card-head row">
+      <div>
+        <h3>{{ 'teacher.exams.create' | t }}</h3>
+        <p class="meta">{{ 'teacher.exams.basics' | t }}</p>
+      </div>
+      <button
+        type="button"
+        class="ghost-btn"
+        [disabled]="generating() || !classroomId || !courseId"
+        (click)="generate()"
+      >
+        {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
+      </button>
+    </div>
+
+    <form class="exam-form" (ngSubmit)="createExam()">
+      <div class="field-grid">
+        <label class="span-2">
+          {{ 'common.title' | t }}
+          <input [(ngModel)]="title" name="title" required />
+        </label>
+        <label class="span-2">
+          {{ 'common.description' | t }}
+          <input [(ngModel)]="description" name="description" />
+        </label>
+        <label>
+          {{ 'common.classroom' | t }}
+          <app-searchable-select
+            [(ngModel)]="classroomId"
+            name="classroomId"
+            (ngModelChange)="onClassroomChange()"
+            required
+            [emptyLabel]="'common.selectClassroom' | t"
+            [options]="classrooms().map(r => ({ value: r.id, label: r.name }))"
+          />
+        </label>
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            [(ngModel)]="courseId"
+            name="courseId"
+            (ngModelChange)="onCourseChange()"
+            required
+            [emptyLabel]="'common.selectCourse' | t"
+            [options]="coursesForClassroom().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.units' | t }}
+          <app-searchable-multi-select
+            [(ngModel)]="unitIds"
+            name="unitIds"
+            (ngModelChange)="onUnitsChange()"
+            [placeholder]="'common.selectUnits' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.lessons' | t }}
+          <app-searchable-multi-select
+            [(ngModel)]="lessonIds"
+            name="lessonIds"
+            [placeholder]="'common.selectLessons' | t"
+            [options]="lessonsForUnits().map(l => ({ value: l.id, label: l.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.xpReward' | t }}
+          <input type="number" [(ngModel)]="xpReward" name="xpReward" min="0" />
+        </label>
+        <label>
+          {{ 'teacher.assessments.durationMinutes' | t }}
+          <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="0" max="600" />
+          <span class="meta">{{ 'teacher.assessments.durationHint' | t }}</span>
+        </label>
+        <label>
+          {{ 'teacher.ai.questionCount' | t }}
+          <input type="number" [(ngModel)]="questionCount" name="questionCount" min="1" max="12" />
+        </label>
+        <label class="checkbox span-2">
+          <input type="checkbox" [(ngModel)]="isPublished" name="isPublished" />
+          <span>{{ 'teacher.assessments.publish' | t }}</span>
+        </label>
+      </div>
+
+      <div class="bank-panel">
+        <div class="bank-head">
+          <div class="bank-head-title">
+            <h4>{{ 'teacher.exams.selectQuestions' | t }}</h4>
+            <span class="count-pill" [class.empty]="!selectedCount()">
+              {{ 'teacher.exams.selectedCount' | t: { count: selectedCount() } }}
+            </span>
+          </div>
+          <div class="bank-head-tools">
+            <input
+              class="bank-search"
+              [(ngModel)]="bankSearch"
+              name="bankSearch"
+              [placeholder]="'teacher.exams.searchBank' | t"
+            />
+            @if (selectedCount()) {
+              <button type="button" class="ghost-btn small-btn" (click)="clearSelection()">
+                {{ 'teacher.exams.clearSelection' | t }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="bank-list">
+          @for (question of visibleBank(); track question.id) {
+            <label class="bank-item" [class.selected]="isSelected(question.id)">
+              <input type="checkbox" [checked]="isSelected(question.id)" (change)="toggleQuestion(question.id)" />
+              <span class="bank-item-body">
+                <span class="prompt-html" [innerHTML]="question.prompt | safeHtml"></span>
+                <app-question-image-display [url]="question.promptImageUrl" [compact]="true" />
+                <span class="bank-item-meta">
+                  <span class="exam-chip">{{ questionTypeLabel(question.questionType) }}</span>
+                  <span class="exam-chip subtle">{{ question.points }} {{ 'common.pts' | t }}</span>
+                </span>
+              </span>
+            </label>
+          } @empty {
+            <p class="meta bank-empty">
+              {{ (bank().length ? 'teacher.exams.noBankMatch' : 'teacher.exams.noBank') | t }}
+            </p>
+          }
+        </div>
+      </div>
 
       <div class="form-actions">
-        <button
-          type="button"
-          class="ghost-btn"
-          [disabled]="generating() || !classroomId || !courseId"
-          (click)="generate()">
-          {{ generating() ? ('teacher.ai.generating' | t) : ('teacher.ai.generate' | t) }}
-        </button>
+        <button type="submit" [disabled]="!selectedCount()">{{ 'teacher.exams.create' | t }}</button>
       </div>
-
-      <div class="block">
-        <h4>{{ 'teacher.exams.selectQuestions' | t }}</h4>
-        @for (question of visibleBank(); track question.id) {
-          <label class="checkbox bank-question-row">
-            <input type="checkbox" [checked]="isSelected(question.id)" (change)="toggleQuestion(question.id)" />
-            <span class="bank-question-label">
-              <span class="prompt-html" [innerHTML]="question.prompt | safeHtml"></span>
-              <app-question-image-display [url]="question.promptImageUrl" [compact]="true" />
-              <span class="meta">({{ questionTypeLabel(question.questionType) }} · {{ question.points }} {{ 'common.pts' | t }})</span>
-            </span>
-          </label>
-        } @empty {
-          <p class="meta">{{ 'teacher.exams.noBank' | t }}</p>
-        }
-      </div>
-
-      <button type="submit">{{ 'teacher.exams.create' | t }}</button>
     </form>
   </section>
 
   <section class="block">
-    <h3>{{ 'teacher.exams.list' | t }}</h3>
-    @for (exam of exams(); track exam.id) {
-      <div class="meeting-row">
-        <div>
-          <div class="list-title-row">
-            <strong>{{ exam.title }}</strong>
+    <div class="card-head row">
+      <h3>{{ 'teacher.exams.list' | t }}</h3>
+      <p class="meta">{{ exams().length }}</p>
+    </div>
+
+    <div class="exam-grid">
+      @for (exam of exams(); track exam.id) {
+        <article class="exam-card" [class.is-review]="reviewExamId === exam.id">
+          <div class="exam-card-head">
+            <strong class="exam-card-title">{{ exam.title }}</strong>
             <span class="status-badge" [class.published]="exam.isPublished" [class.draft]="!exam.isPublished">
               {{ (exam.isPublished ? 'teacher.assessments.published' : 'teacher.assessments.draft') | t }}
             </span>
           </div>
-          <p class="meta">
-            {{ exam.classroomName }} · {{ exam.questions.length }} {{ 'common.questions' | t }} · {{ exam.xpReward }} XP
-          </p>
-        </div>
-        <div class="row-actions">
-          @if (!exam.isPublished) {
-            <button type="button" class="ghost-btn" [disabled]="isPublishing(exam.id)" (click)="publishExam(exam)">
-              {{ isPublishing(exam.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
-            </button>
-          } @else {
-            <button type="button" class="ghost-btn" (click)="copyStudentLink(exam.id)">
-              {{ 'teacher.assessments.copyStudentLink' | t }}
-            </button>
-            <app-icon-action-button
-              kind="share"
-              [label]="'teacher.assessments.shareWhatsApp' | t"
-              (action)="shareOnWhatsApp(exam)"
-            />
+
+          @if (exam.description) {
+            <p class="meta exam-card-desc">{{ exam.description }}</p>
           }
-          <button type="button" (click)="reviewExam(exam)">{{ 'teacher.exams.viewAttempts' | t }}</button>
-        </div>
-      </div>
-    } @empty {
-      <p class="meta">{{ 'teacher.exams.empty' | t }}</p>
-    }
+
+          <div class="exam-chips">
+            <span class="exam-chip">{{ exam.classroomName }}</span>
+            @if (exam.courseTitle) {
+              <span class="exam-chip">{{ exam.courseTitle }}</span>
+            }
+            <span class="exam-chip subtle">{{ exam.questions.length }} {{ 'common.questions' | t }}</span>
+            <span class="exam-chip subtle">{{ exam.xpReward }} {{ 'common.xp' | t }}</span>
+            @if (exam.durationMinutes) {
+              <span class="exam-chip subtle">{{ exam.durationMinutes }} {{ 'common.min' | t }}</span>
+            }
+          </div>
+
+          <div class="exam-card-actions">
+            <button type="button" class="ghost-btn small-btn" (click)="reviewExam(exam)">
+              {{ 'teacher.exams.viewAttempts' | t }}
+            </button>
+            @if (!exam.isPublished) {
+              <button
+                type="button"
+                class="ghost-btn small-btn"
+                [disabled]="isPublishing(exam.id)"
+                (click)="publishExam(exam)"
+              >
+                {{ isPublishing(exam.id) ? ('common.saving' | t) : ('teacher.assessments.publishNow' | t) }}
+              </button>
+            } @else {
+              <button type="button" class="ghost-btn small-btn" (click)="copyStudentLink(exam.id)">
+                {{ 'teacher.assessments.copyStudentLink' | t }}
+              </button>
+              <app-icon-action-button
+                kind="share"
+                [label]="'teacher.assessments.shareWhatsApp' | t"
+                (action)="shareOnWhatsApp(exam)"
+              />
+            }
+          </div>
+        </article>
+      } @empty {
+        <p class="meta exam-empty">{{ 'teacher.exams.empty' | t }}</p>
+      }
+    </div>
   </section>
 
   @if (reviewExamId) {
     <section class="block">
-      <h3>{{ 'teacher.exams.attempts' | t }}</h3>
-      @for (attempt of attempts(); track attempt.id) {
-        <div class="block">
-          <strong>{{ attempt.studentName }}</strong>
-          <p class="meta">
-            {{ attempt.status }} · {{ attempt.score ?? ('common.emDash' | t) }}/{{ attempt.maxScore ?? ('common.emDash' | t) }}
-            @if (attempt.durationSeconds != null) { · {{ attempt.durationSeconds }}s }
-          </p>
-          @for (answer of attempt.answers; track answer.questionId) {
-            <div class="question">
-              <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
-              <app-question-image-display [url]="answer.promptImageUrl" />
-              <p>{{ 'common.answer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
-              <app-question-image-display [url]="answer.answerImageUrl" />
-              <label class="points-field">
-                {{ 'teacher.review.points' | t }}
-                <input
-                  type="number"
-                  min="0"
-                  [max]="answer.points"
-                  [value]="answer.pointsAwarded ?? 0"
-                  (input)="setExamPoints(attempt.id, answer.questionId, +$any($event.target).value)"
-                />
-                / {{ answer.points }}
-              </label>
-              <div class="chip-row">
-                <button type="button" class="chip" (click)="markExamAnswer(attempt.id, answer.questionId, true)">{{ 'common.correct' | t }}</button>
-                <button type="button" class="chip" (click)="markExamAnswer(attempt.id, answer.questionId, false)">{{ 'common.wrong' | t }}</button>
-              </div>
-            </div>
-          }
-          <label>{{ 'common.feedback' | t }}
-            <textarea
-              rows="3"
-              [value]="attemptDraftFor(attempt.id).feedback"
-              (input)="setAttemptFeedback(attempt.id, $any($event.target).value)"
-            ></textarea>
-          </label>
-          <app-question-image-upload
-            [mediaAssetId]="attemptDraftFor(attempt.id).feedbackImageMediaAssetId"
-            [imageUrl]="attemptDraftFor(attempt.id).feedbackImageUrl"
-            (mediaAssetIdChange)="setAttemptFeedbackImage(attempt.id, $event, attemptDraftFor(attempt.id).feedbackImageUrl)"
-            (imageUrlChange)="setAttemptFeedbackImage(attempt.id, attemptDraftFor(attempt.id).feedbackImageMediaAssetId, $event)"
-          />
-          <button type="button" (click)="gradeAttempt(attempt)">{{ 'teacher.review.saveGrade' | t }}</button>
+      <div class="card-head row">
+        <div>
+          <h3>{{ 'teacher.exams.attempts' | t }}</h3>
+          <p class="meta">{{ reviewExamTitle() }}</p>
         </div>
+        <button type="button" class="ghost-btn small-btn" (click)="closeReview()">{{ 'common.close' | t }}</button>
+      </div>
+
+      @for (attempt of attempts(); track attempt.id) {
+        <article class="attempt-card">
+          <header class="attempt-head">
+            <strong>{{ attempt.studentName }}</strong>
+            <div class="exam-chips">
+              <span class="exam-chip">{{ attemptStatusLabel(attempt.status) }}</span>
+              <span class="exam-chip subtle">
+                {{ attemptAwarded(attempt) }}/{{ attemptMaxPoints(attempt) }} {{ 'common.pts' | t }}
+              </span>
+              @if (attempt.durationSeconds != null) {
+                <span class="exam-chip subtle">{{ formatSeconds(attempt.durationSeconds) }}</span>
+              }
+            </div>
+          </header>
+
+          <div class="answers-list">
+            @for (answer of attempt.answers; track answer.questionId) {
+              <div
+                class="answer-card"
+                [class.correct]="answer.isCorrect === true"
+                [class.wrong]="answer.isCorrect === false"
+              >
+                <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
+                <app-question-image-display [url]="answer.promptImageUrl" />
+
+                <p class="answer-text">
+                  <span class="answer-label">{{ 'common.answer' | t }}</span>
+                  {{ answer.answerText || ('common.emDash' | t) }}
+                </p>
+                <app-question-image-display [url]="answer.answerImageUrl" />
+
+                <div class="answer-grade">
+                  <label class="points-field">
+                    {{ 'teacher.review.points' | t }}
+                    <span class="points-input">
+                      <input
+                        type="number"
+                        min="0"
+                        [max]="answer.points"
+                        [value]="answer.pointsAwarded ?? 0"
+                        (input)="setExamPoints(attempt.id, answer.questionId, +$any($event.target).value)"
+                      />
+                      <span class="points-max">/ {{ answer.points }}</span>
+                    </span>
+                  </label>
+                  <div class="chip-row">
+                    <button type="button" class="chip" (click)="markExamAnswer(attempt.id, answer.questionId, true)">
+                      {{ 'common.correct' | t }}
+                    </button>
+                    <button type="button" class="chip" (click)="markExamAnswer(attempt.id, answer.questionId, false)">
+                      {{ 'common.wrong' | t }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="attempt-feedback">
+            <label>
+              {{ 'common.feedback' | t }}
+              <textarea
+                rows="3"
+                [value]="attemptDraftFor(attempt.id).feedback"
+                (input)="setAttemptFeedback(attempt.id, $any($event.target).value)"
+              ></textarea>
+            </label>
+            <app-question-image-upload
+              [mediaAssetId]="attemptDraftFor(attempt.id).feedbackImageMediaAssetId"
+              [imageUrl]="attemptDraftFor(attempt.id).feedbackImageUrl"
+              (mediaAssetIdChange)="setAttemptFeedbackImage(attempt.id, $event, attemptDraftFor(attempt.id).feedbackImageUrl)"
+              (imageUrlChange)="setAttemptFeedbackImage(attempt.id, attemptDraftFor(attempt.id).feedbackImageMediaAssetId, $event)"
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="button" (click)="gradeAttempt(attempt)">{{ 'teacher.review.saveGrade' | t }}</button>
+          </div>
+        </article>
       } @empty {
-        <p class="meta">{{ 'teacher.exams.noAttempts' | t }}</p>
+        <p class="meta exam-empty">{{ 'teacher.exams.noAttempts' | t }}</p>
       }
     </section>
   }

@@ -34,7 +34,7 @@ interface AttemptDraft {
     SafeHtmlPipe
   ],
   templateUrl: './teacher-exams.component.html',
-  styleUrl: './teacher-panel.css'
+  styleUrls: ['./teacher-panel.css', './teacher-exams.component.css']
 })
 export class TeacherExamsComponent {
   private readonly locale = inject(LocaleService);
@@ -62,6 +62,7 @@ export class TeacherExamsComponent {
   isPublished = false;
   questionCount = 6;
   reviewExamId = '';
+  bankSearch = '';
   private readonly attemptDrafts = signal<Record<string, AttemptDraft>>({});
 
   constructor() {
@@ -116,14 +117,17 @@ export class TeacherExamsComponent {
   }
 
   visibleBank(): BankQuestion[] {
-    const questions = this.bank();
+    let questions = this.bank();
     if (this.lessonIds.length) {
       const ids = new Set(this.lessonIds);
-      return questions.filter((q) => !q.lessonId || ids.has(q.lessonId));
-    }
-    if (this.unitIds.length) {
+      questions = questions.filter((q) => !q.lessonId || ids.has(q.lessonId));
+    } else if (this.unitIds.length) {
       const ids = new Set(this.lessonsForUnits().map((l) => l.id));
-      return questions.filter((q) => !q.lessonId || ids.has(q.lessonId));
+      questions = questions.filter((q) => !q.lessonId || ids.has(q.lessonId));
+    }
+    const search = this.bankSearch.trim().toLowerCase();
+    if (search) {
+      questions = questions.filter((q) => q.prompt.toLowerCase().includes(search));
     }
     return questions;
   }
@@ -176,6 +180,14 @@ export class TeacherExamsComponent {
 
   isSelected(id: string): boolean {
     return this.selectedIds().has(id);
+  }
+
+  selectedCount(): number {
+    return this.selectedIds().size;
+  }
+
+  clearSelection(): void {
+    this.selectedIds.set(new Set());
   }
 
   generate(): void {
@@ -324,6 +336,35 @@ export class TeacherExamsComponent {
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.exams.loadAttemptsFailed'))
     });
+  }
+
+  closeReview(): void {
+    this.reviewExamId = '';
+    this.attempts.set([]);
+  }
+
+  reviewExamTitle(): string {
+    return this.exams().find((exam) => exam.id === this.reviewExamId)?.title ?? '';
+  }
+
+  attemptStatusLabel(status: string): string {
+    const key = `parent.status.${status}`;
+    const label = this.locale.t(key);
+    return label === key ? status : label;
+  }
+
+  attemptAwarded(attempt: ExamAttempt): number {
+    return attempt.answers.reduce((total, answer) => total + (answer.pointsAwarded ?? 0), 0);
+  }
+
+  attemptMaxPoints(attempt: ExamAttempt): number {
+    return attempt.answers.reduce((total, answer) => total + answer.points, 0);
+  }
+
+  formatSeconds(seconds: number): string {
+    const total = Math.max(0, Math.round(seconds));
+    const minutes = Math.floor(total / 60);
+    return `${minutes}:${String(total % 60).padStart(2, '0')}`;
   }
 
   attemptDraftFor(attemptId: string): AttemptDraft {
