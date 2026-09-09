@@ -283,6 +283,7 @@ export interface QuizQuestion {
   options?: ChoiceOption[];
   sortOrder: number;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: QuizQuestion[];
 }
 
@@ -326,6 +327,7 @@ export interface TeacherQuizQuestionDetail {
   sortOrder: number;
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: TeacherQuizQuestionDetail[];
 }
 
@@ -1099,6 +1101,7 @@ export interface AssignmentQuestion {
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
   promptImageMediaAssetId?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: AssignmentQuestion[];
 }
 
@@ -1158,7 +1161,16 @@ export type BankQuestionType =
   | 'Underline'
   | 'FreeText'
   | 'ShortAnswer'
-  | 'Order';
+  | 'Order'
+  | 'Map';
+
+export interface MapMarker {
+  id: string;
+  x: number;
+  y: number;
+  label: string;
+  kind: 'number' | 'arrow';
+}
 
 export interface BankQuestion {
   id: string;
@@ -1180,6 +1192,8 @@ export interface BankQuestion {
   points: number;
   sortOrder: number;
   promptImageUrl?: string | null;
+  promptImageMediaAssetId?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children: BankQuestion[];
 }
 
@@ -1199,6 +1213,7 @@ export interface ExamQuestion {
   sortOrder: number;
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children: ExamQuestion[];
 }
 

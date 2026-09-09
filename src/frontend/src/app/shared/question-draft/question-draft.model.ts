@@ -1,9 +1,13 @@
-import { BankQuestionType } from '../../models';
+import { BankQuestionType, MapMarker } from '../../models';
 
 export type AssessmentQuestionType = BankQuestionType | 'ShortAnswer' | 'MultipleChoice';
 
 export interface QuestionOptionDraft {
   text: string;
+}
+
+export interface MapMarkerDraft extends MapMarker {
+  correctAnswer: string;
 }
 
 export interface QuestionDraft {
@@ -18,6 +22,7 @@ export interface QuestionDraft {
   children: QuestionDraft[];
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers: MapMarkerDraft[];
 }
 
 export const BANK_QUESTION_TYPES: BankQuestionType[] = [
@@ -26,6 +31,7 @@ export const BANK_QUESTION_TYPES: BankQuestionType[] = [
   'SingleChoice',
   'MultiChoice',
   'Order',
+  'Map',
   'Paragraph',
   'Underline',
   'FreeText',

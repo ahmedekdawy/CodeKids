@@ -63,7 +63,11 @@ public static class QuizQuestionSync
 
         TeacherQuizQuestionDetailDto MapOne(QuizQuestion q)
         {
-            var options = ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC);
+            var isMap = q.QuestionType == BankQuestionType.Map;
+            var options = isMap
+                ? Array.Empty<ChoiceOptionDto>()
+                : ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC);
+            var mapMarkers = isMap ? MapMarkers.Parse(q.OptionsJson) : null;
             var nested = children.TryGetValue(q.Id, out var kids)
                 ? kids.Select(MapOne).ToList()
                 : [];
@@ -80,7 +84,8 @@ public static class QuizQuestionSync
                 q.SortOrder,
                 q.PromptImageMediaAssetId,
                 QuestionImageUrls.Build(q.PromptImageMediaAssetId),
-                nested);
+                nested,
+                mapMarkers);
         }
 
         return Roots(list).Select(MapOne).ToList();
@@ -88,7 +93,11 @@ public static class QuizQuestionSync
 
     private static QuizQuestionDto MapStudent(QuizQuestion q, IReadOnlyList<QuizQuestionDto> children)
     {
-        var options = ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC);
+        var isMap = q.QuestionType == BankQuestionType.Map;
+        var options = isMap
+            ? Array.Empty<ChoiceOptionDto>()
+            : ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC);
+        var mapMarkers = isMap ? MapMarkers.Parse(q.OptionsJson) : null;
         return new QuizQuestionDto(
             q.Id,
             q.Prompt,
@@ -100,7 +109,8 @@ public static class QuizQuestionSync
             options,
             q.SortOrder,
             QuestionImageUrls.Build(q.PromptImageMediaAssetId),
-            children);
+            children,
+            mapMarkers);
     }
 
     private static IReadOnlyList<T> MapTree<T>(
@@ -143,27 +153,48 @@ public static class QuizQuestionSync
             ? (input.CorrectOption ?? string.Empty)
             : input.CorrectAnswer;
 
-        TypedQuestionSupport.ValidateQuiz(
-            type,
-            input.Prompt,
-            input.OptionA,
-            input.OptionB,
-            input.OptionC,
-            correct,
-            input.PassageText,
-            input.Options,
-            children.Select(c => new QuizChildSpec(
-                c.Prompt,
-                c.QuestionType ?? nameof(BankQuestionType.SingleChoice),
-                c.OptionA,
-                c.OptionB,
-                c.OptionC,
-                c.Options,
-                string.IsNullOrWhiteSpace(c.CorrectAnswer) ? (c.CorrectOption ?? string.Empty) : c.CorrectAnswer!,
-                c.Points,
-                c.SortOrder,
-                c.PromptImageMediaAssetId,
-                c.Id)).ToList());
+        if (type == BankQuestionType.Map)
+        {
+            BankQuestionValidator.ValidateLeaf(
+                type,
+                input.Prompt,
+                input.OptionA,
+                input.OptionB,
+                input.OptionC,
+                null,
+                correct,
+                input.PassageText,
+                input.Options,
+                input.MapMarkers);
+            if (input.PromptImageMediaAssetId is null)
+            {
+                throw new InvalidOperationException("Map questions require a map image.");
+            }
+        }
+        else
+        {
+            TypedQuestionSupport.ValidateQuiz(
+                type,
+                input.Prompt,
+                input.OptionA,
+                input.OptionB,
+                input.OptionC,
+                correct,
+                input.PassageText,
+                input.Options,
+                children.Select(c => new QuizChildSpec(
+                    c.Prompt,
+                    c.QuestionType ?? nameof(BankQuestionType.SingleChoice),
+                    c.OptionA,
+                    c.OptionB,
+                    c.OptionC,
+                    c.Options,
+                    string.IsNullOrWhiteSpace(c.CorrectAnswer) ? (c.CorrectOption ?? string.Empty) : c.CorrectAnswer!,
+                    c.Points,
+                    c.SortOrder,
+                    c.PromptImageMediaAssetId,
+                    c.Id)).ToList());
+        }
 
         await TypedQuestionSupport.EnsureImageAsync(dbContext, input.PromptImageMediaAssetId, cancellationToken);
 
@@ -176,7 +207,19 @@ public static class QuizQuestionSync
             QuizId = quiz.Id
         };
 
-        var options = TypedQuestionSupport.ResolveOptions(type, input.Options, input.OptionA, input.OptionB, input.OptionC);
+        IReadOnlyList<ChoiceOptionDto> options = [];
+        string optionsJson;
+        if (type == BankQuestionType.Map)
+        {
+            var markers = MapMarkers.Normalize(input.MapMarkers);
+            optionsJson = MapMarkers.ToJson(markers);
+        }
+        else
+        {
+            options = TypedQuestionSupport.ResolveOptions(type, input.Options, input.OptionA, input.OptionB, input.OptionC);
+            optionsJson = ChoiceOptions.ToJson(options);
+        }
+
         var (legacyA, legacyB, legacyC, _) = ChoiceOptions.ToLegacy(options);
         var normalized = TypedQuestionSupport.NormalizeCorrect(type, correct);
 
@@ -187,9 +230,11 @@ public static class QuizQuestionSync
         entity.OptionA = legacyA ?? string.Empty;
         entity.OptionB = legacyB ?? string.Empty;
         entity.OptionC = legacyC ?? string.Empty;
-        entity.OptionsJson = ChoiceOptions.ToJson(options);
+        entity.OptionsJson = optionsJson;
         entity.CorrectAnswer = normalized;
-        entity.CorrectOption = string.IsNullOrWhiteSpace(normalized) ? "A" : normalized;
+        entity.CorrectOption = type == BankQuestionType.Map
+            ? "MAP"
+            : string.IsNullOrWhiteSpace(normalized) ? "A" : normalized;
         entity.Points = input.Points <= 0 ? 1 : input.Points;
         entity.SortOrder = input.SortOrder <= 0 ? sortOrder : input.SortOrder;
         entity.PromptImageMediaAssetId = input.PromptImageMediaAssetId ?? existing?.PromptImageMediaAssetId;

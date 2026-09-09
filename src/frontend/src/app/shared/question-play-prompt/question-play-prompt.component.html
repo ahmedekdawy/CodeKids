@@ -1,6 +1,8 @@
 <div class="question-play">
   <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
-  <app-question-image-display [url]="question.promptImageUrl" />
+  @if (question.questionType !== 'Map') {
+    <app-question-image-display [url]="question.promptImageUrl" />
+  }
   @if (question.passageText) {
     <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
   }
@@ -74,6 +76,15 @@
         </div>
       }
     </div>
+  } @else if (question.questionType === 'Map') {
+    <app-map-question-board
+      mode="play"
+      [imageUrl]="question.promptImageUrl"
+      [markers]="mapMarkers(question)"
+      [answerJson]="answers[question.id] || ''"
+      [namePrefix]="question.id"
+      (answerJsonChange)="setAnswer(question.id, $event)"
+    />
   } @else {
     @for (opt of choiceOptions(question); track opt.key) {
       <label>

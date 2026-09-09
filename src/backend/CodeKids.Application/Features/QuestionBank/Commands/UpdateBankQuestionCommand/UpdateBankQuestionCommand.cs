@@ -1,8 +1,4 @@
-using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.QuestionBank;
 
@@ -17,7 +13,9 @@ public sealed record UpdateBankQuestionRequest(
     IReadOnlyList<string>? Options,
     string? CorrectAnswer,
     int Points,
-    int SortOrder);
+    int SortOrder,
+    Guid? PromptImageMediaAssetId = null,
+    IReadOnlyList<MapMarkerInput>? MapMarkers = null);
 
 public sealed record UpdateBankQuestionCommand(
     Guid TeacherUserId,
@@ -32,4 +30,6 @@ public sealed record UpdateBankQuestionCommand(
     IReadOnlyList<string>? Options,
     string? CorrectAnswer,
     int Points,
-    int SortOrder) : ICommand<BankQuestionDto>;
+    int SortOrder,
+    Guid? PromptImageMediaAssetId = null,
+    IReadOnlyList<MapMarkerInput>? MapMarkers = null) : ICommand<BankQuestionDto>;

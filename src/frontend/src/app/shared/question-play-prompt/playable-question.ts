@@ -1,4 +1,4 @@
-import { ChoiceOption } from '../../models';
+import { ChoiceOption, MapMarker } from '../../models';
 
 export interface PlayableQuestion {
   id: string;
@@ -11,6 +11,7 @@ export interface PlayableQuestion {
   optionD?: string | null;
   options?: ChoiceOption[] | null;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: PlayableQuestion[] | null;
 }
 

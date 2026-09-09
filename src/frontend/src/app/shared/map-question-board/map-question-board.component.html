@@ -1,0 +1,114 @@
+@if (!blobUrl()) {
+  <p class="meta">{{ 'teacher.qbank.mapImageHint' | t }}</p>
+} @else {
+  @if (mode === 'edit') {
+    <div class="map-toolbar">
+      <button type="button" class="ghost-btn add-btn" (click)="addMarker('number')">
+        + {{ 'teacher.qbank.mapKindNumber' | t }}
+      </button>
+      <button type="button" class="ghost-btn add-btn" (click)="addMarker('arrow')">
+        + {{ 'teacher.qbank.mapKindArrow' | t }}
+      </button>
+      <span class="toolbar-sep" aria-hidden="true"></span>
+      <span>{{ 'teacher.qbank.mapPlaceKind' | t }}</span>
+      <button
+        type="button"
+        class="ghost-btn"
+        [class.active]="placeKind === 'number'"
+        (click)="placeKind = 'number'">
+        {{ 'teacher.qbank.mapKindNumber' | t }}
+      </button>
+      <button
+        type="button"
+        class="ghost-btn"
+        [class.active]="placeKind === 'arrow'"
+        (click)="placeKind = 'arrow'">
+        {{ 'teacher.qbank.mapKindArrow' | t }}
+      </button>
+      <span class="meta">{{ 'teacher.qbank.mapClickHint' | t }}</span>
+    </div>
+  } @else {
+    <p class="meta">{{ 'play.mapHint' | t }}</p>
+  }
+
+  <div
+    class="map-board"
+    [class.editable]="mode === 'edit'"
+    (click)="onBoardClick($event)"
+    (pointermove)="onBoardPointerMove($event)"
+    (pointerup)="onBoardPointerUp()"
+    (pointercancel)="onBoardPointerUp()"
+    (pointerleave)="onBoardPointerUp()">
+    <img [src]="blobUrl()!" alt="" class="map-image" draggable="false" />
+    @for (marker of localMarkers(); track marker.id) {
+      <button
+        type="button"
+        class="map-marker"
+        [class.arrow]="marker.kind === 'arrow'"
+        [class.number]="marker.kind !== 'arrow'"
+        [style.left.%]="marker.x"
+        [style.top.%]="marker.y"
+        (pointerdown)="onMarkerPointerDown($event, marker.id)"
+        (click)="$event.stopPropagation()"
+        [attr.aria-label]="answerLabel(marker)">
+        @if (marker.kind === 'arrow') {
+          <span class="arrow-icon" aria-hidden="true">➤</span>
+        } @else {
+          {{ numberLabel(marker) }}
+        }
+      </button>
+    }
+  </div>
+
+  <div class="map-answers">
+    <h4>{{ (mode === 'edit' ? 'teacher.qbank.mapAnswers' : 'play.mapAnswers') | t }}</h4>
+    @for (marker of localMarkers(); track marker.id) {
+      <div class="map-answer-row">
+        <span class="map-answer-key">{{ answerLabel(marker) }}</span>
+        @if (mode === 'edit') {
+          <div class="map-answer-fields">
+            <div class="kind-toggle">
+              <button
+                type="button"
+                class="ghost-btn tiny"
+                [class.active]="marker.kind === 'number'"
+                (click)="setMarkerKind(marker.id, 'number')">
+                {{ 'teacher.qbank.mapKindNumber' | t }}
+              </button>
+              <button
+                type="button"
+                class="ghost-btn tiny"
+                [class.active]="marker.kind === 'arrow'"
+                (click)="setMarkerKind(marker.id, 'arrow')">
+                {{ 'teacher.qbank.mapKindArrow' | t }}
+              </button>
+            </div>
+            <input
+              type="text"
+              [name]="namePrefix + '-ans-' + marker.id"
+              [ngModel]="marker.correctAnswer"
+              (ngModelChange)="onCorrectAnswerChange(marker.id, $event)"
+              [placeholder]="'teacher.qbank.mapAnswerPlaceholder' | t"
+            />
+          </div>
+          <app-icon-action-button
+            kind="delete"
+            variant="ghost"
+            [label]="'common.remove' | t"
+            (action)="removeMarker(marker.id)"
+          />
+        } @else {
+          <input
+            type="text"
+            [name]="namePrefix + '-play-' + marker.id"
+            [value]="playAnswers[marker.id] || ''"
+            (input)="onPlayAnswerChange(marker.id, $any($event.target).value)"
+            [placeholder]="'play.mapAnswerPlaceholder' | t"
+          />
+        }
+      </div>
+    } @empty {
+      <p class="meta">{{ 'teacher.qbank.mapNoMarkers' | t }}</p>
+    }
+  </div>
+}

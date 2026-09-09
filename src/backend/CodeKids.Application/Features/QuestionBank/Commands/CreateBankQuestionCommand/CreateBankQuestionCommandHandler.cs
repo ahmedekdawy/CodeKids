@@ -35,7 +35,13 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             command.OptionD,
             command.CorrectAnswer ?? string.Empty,
             command.PassageText,
-            command.Options);
+            command.Options,
+            command.MapMarkers);
+
+        if (type == BankQuestionType.Map && command.PromptImageMediaAssetId is null)
+        {
+            throw new InvalidOperationException("Map questions require a map image.");
+        }
 
         if (BankQuestionValidator.IsComposite(type))
         {
@@ -54,7 +60,20 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Only Paragraph questions can have child questions.");
         }
 
-        var rootOptions = ResolveOptions(type, command.Options, command.OptionA, command.OptionB, command.OptionC, command.OptionD);
+        IReadOnlyList<ChoiceOptionDto> rootOptions = [];
+        IReadOnlyList<MapMarkerDto> mapMarkers = [];
+        string optionsJson;
+        if (type == BankQuestionType.Map)
+        {
+            mapMarkers = MapMarkers.Normalize(command.MapMarkers);
+            optionsJson = MapMarkers.ToJson(mapMarkers);
+        }
+        else
+        {
+            rootOptions = ResolveOptions(type, command.Options, command.OptionA, command.OptionB, command.OptionC, command.OptionD);
+            optionsJson = ChoiceOptions.ToJson(rootOptions);
+        }
+
         var (legacyA, legacyB, legacyC, legacyD) = ChoiceOptions.ToLegacy(rootOptions);
         await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, command.PromptImageMediaAssetId, cancellationToken);
 
@@ -71,7 +90,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             OptionB = legacyB,
             OptionC = legacyC,
             OptionD = legacyD,
-            OptionsJson = ChoiceOptions.ToJson(rootOptions),
+            OptionsJson = optionsJson,
             CorrectAnswer = TypedQuestionSupport.NormalizeCorrect(type, command.CorrectAnswer),
             Points = command.Points <= 0 ? 1 : command.Points,
             SortOrder = command.SortOrder <= 0 ? 1 : command.SortOrder,
@@ -202,7 +221,11 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
 
     internal static BankQuestionDto Map(BankQuestion q)
     {
-        var options = ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC, q.OptionD);
+        var isMap = q.QuestionType == BankQuestionType.Map;
+        var options = isMap
+            ? Array.Empty<ChoiceOptionDto>()
+            : ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC, q.OptionD);
+        var mapMarkers = isMap ? MapMarkers.Parse(q.OptionsJson) : null;
         return new(
             q.Id,
             q.CourseId,
@@ -226,6 +249,8 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             q.Children
                 .OrderBy(c => c.SortOrder)
                 .Select(Map)
-                .ToList());
+                .ToList(),
+            q.PromptImageMediaAssetId,
+            mapMarkers);
     }
 }

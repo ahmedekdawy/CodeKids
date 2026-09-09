@@ -11,7 +11,8 @@ public enum AssignmentQuestionType
     Paragraph = 6,
     Underline = 7,
     FreeText = 8,
-    Order = 9
+    Order = 9,
+    Map = 10
 }
 
 public enum AssignmentSubmissionStatus

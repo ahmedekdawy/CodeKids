@@ -17,7 +17,8 @@ export function emptyQuestionDraft(type: AssessmentQuestionType = 'SingleChoice'
     correctAnswer: normalized === 'TrueFalse' ? 'True' : '',
     correctKeys: [],
     points: 1,
-    children: normalized === 'Paragraph' ? [emptyQuestionDraft('SingleChoice')] : []
+    children: normalized === 'Paragraph' ? [emptyQuestionDraft('SingleChoice')] : [],
+    mapMarkers: []
   };
 }
 
@@ -55,8 +56,41 @@ export function isOrder(type: string): boolean {
   return type === 'Order';
 }
 
+export function isMap(type: string): boolean {
+  return type === 'Map';
+}
+
+export function encodeMapAnswers(markers: { id: string; correctAnswer?: string }[]): string {
+  const answers: Record<string, string> = {};
+  for (const marker of markers) {
+    answers[marker.id] = (marker.correctAnswer || '').trim();
+  }
+  return JSON.stringify(answers);
+}
+
+export function parseMapAnswers(value: string | null | undefined): Record<string, string> {
+  if (!value?.trim()) return {};
+  try {
+    const parsed = JSON.parse(value) as Record<string, unknown>;
+    const result: Record<string, string> = {};
+    for (const [key, answer] of Object.entries(parsed || {})) {
+      result[key] = String(answer ?? '').trim();
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
 export function optionLabel(index: number): string {
   return String.fromCharCode(65 + index);
+}
+
+export function formatMapAnswer(value: string | null | undefined): string {
+  const answers = parseMapAnswers(value);
+  const entries = Object.entries(answers);
+  if (!entries.length) return (value || '').trim();
+  return entries.map(([id, answer]) => `${id}: ${answer}`).join(', ');
 }
 
 /** Show stored keys (A / A,C) together with the option text for teacher review. */
@@ -66,6 +100,10 @@ export function formatChoiceAnswer(
 ): string {
   const raw = (value || '').trim();
   if (!raw) return '';
+  if (raw.startsWith('{')) {
+    const mapFormatted = formatMapAnswer(raw);
+    if (mapFormatted) return mapFormatted;
+  }
   if (!options?.length) return raw;
   return raw
     .split(',')
@@ -102,6 +140,7 @@ export function questionTypeLabelKey(type: string): string {
     SingleChoice: 'qtype.singleChoice',
     MultiChoice: 'qtype.multiChoice',
     Order: 'qtype.order',
+    Map: 'qtype.map',
     Paragraph: 'qtype.paragraph',
     Underline: 'qtype.underline',
     FreeText: 'qtype.freeText'
@@ -163,6 +202,11 @@ export function applyTypeDefaults(draft: QuestionDraft): void {
         .map((option) => option.key)
         .join(',');
     }
+  } else if (isMap(draft.questionType)) {
+    draft.options = [];
+    draft.correctKeys = [];
+    if (!draft.mapMarkers) draft.mapMarkers = [];
+    draft.correctAnswer = encodeMapAnswers(draft.mapMarkers);
   } else {
     draft.correctKeys = [];
   }
@@ -195,6 +239,14 @@ export function validateQuestionDraft(draft: QuestionDraft, index = 1): string |
   if (isTeacherGradedText(draft.questionType)) {
     return prompt ? null : 'teacher.qbank.required';
   }
+  if (isMap(draft.questionType)) {
+    if (!draft.promptImageMediaAssetId) return 'teacher.qbank.mapImageRequired';
+    if (!draft.mapMarkers?.length) return 'teacher.qbank.mapMarkersRequired';
+    if (draft.mapMarkers.some((marker) => !(marker.correctAnswer || '').trim())) {
+      return 'teacher.qbank.mapAnswersRequired';
+    }
+    return null;
+  }
   if (needsOptions(draft.questionType)) {
     const filled = filledOptions(draft.options);
     if (filled.length < 2) {
@@ -226,6 +278,7 @@ export interface QuestionPayload {
   points: number;
   sortOrder: number;
   promptImageMediaAssetId?: string | null;
+  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
   children?: QuestionPayload[];
 }
 
@@ -235,6 +288,7 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
   let correct = draft.correctAnswer;
   if (isMulti(type)) correct = draft.correctKeys.join(',');
   if (isOrder(type)) correct = filled.map((option) => option.key).join(',');
+  if (isMap(type)) correct = encodeMapAnswers(draft.mapMarkers || []);
   if (isParagraph(type)) correct = '';
   return {
     id: draft.id || undefined,
@@ -247,6 +301,15 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
     points: draft.points > 0 ? draft.points : 1,
     sortOrder,
     promptImageMediaAssetId: draft.promptImageMediaAssetId || null,
+    mapMarkers: isMap(type)
+      ? (draft.mapMarkers || []).map((marker) => ({
+          id: marker.id,
+          x: marker.x,
+          y: marker.y,
+          label: marker.label,
+          kind: marker.kind
+        }))
+      : undefined,
     children: isParagraph(type)
       ? draft.children.map((child, index) => toQuestionPayload(child, index + 1))
       : undefined
@@ -267,6 +330,7 @@ export function draftFromAssignmentQuestion(question: AssignmentQuestion): Quest
     points: question.points,
     promptImageMediaAssetId: question.promptImageMediaAssetId,
     promptImageUrl: question.promptImageUrl,
+    mapMarkers: question.mapMarkers,
     children: question.children
   });
 }
@@ -282,6 +346,7 @@ export function draftFromQuizQuestion(question: TeacherQuizQuestionDetail): Ques
     points: question.points,
     promptImageMediaAssetId: question.promptImageMediaAssetId,
     promptImageUrl: question.promptImageUrl,
+    mapMarkers: question.mapMarkers,
     children: question.children
   });
 }
@@ -299,6 +364,7 @@ function draftFromApi(question: {
   points?: number | null;
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[] | null;
   children?: AssignmentQuestion[] | TeacherQuizQuestionDetail[] | null;
 }): QuestionDraft {
   const type = normalizeType(question.questionType);
@@ -306,6 +372,7 @@ function draftFromApi(question: {
     ? question.options.map((option) => option.text)
     : [question.optionA, question.optionB, question.optionC].filter((text): text is string => !!text);
   const correct = question.correctAnswer || '';
+  const mapAnswers = isMap(type) ? parseMapAnswers(correct) : {};
   const childSource = (question.children ?? []) as Array<AssignmentQuestion | TeacherQuizQuestionDetail>;
   return {
     id: question.id,
@@ -327,7 +394,18 @@ function draftFromApi(question: {
       'correctOption' in child ? draftFromQuizQuestion(child) : draftFromAssignmentQuestion(child)
     ),
     promptImageMediaAssetId: question.promptImageMediaAssetId || null,
-    promptImageUrl: question.promptImageUrl || null
+    promptImageUrl: question.promptImageUrl || null,
+    mapMarkers: (question.mapMarkers || []).map((marker) => ({
+      id: marker.id,
+      x: marker.x,
+      y: marker.y,
+      label: marker.label || marker.id,
+      kind: marker.kind === 'arrow' ? 'arrow' : 'number',
+      correctAnswer:
+        mapAnswers[marker.id] ||
+        Object.entries(mapAnswers).find(([key]) => key.toLowerCase() === marker.id.toLowerCase())?.[1] ||
+        ''
+    }))
   };
 }
 
@@ -360,7 +438,8 @@ export function draftFromGenerated(question: {
             .filter(Boolean)
         : [],
     points: 1,
-    children: []
+    children: [],
+    mapMarkers: []
   };
 }
 

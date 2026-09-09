@@ -54,15 +54,22 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                 var correct = string.IsNullOrWhiteSpace(a.Question?.CorrectAnswer)
                     ? (a.Question?.CorrectOption ?? string.Empty)
                     : a.Question!.CorrectAnswer;
+                var isMap = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Map;
                 var preserveOrder = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Order;
+                var selectedText = isMap
+                    ? FormatMapAnswers(selected)
+                    : ChoiceOptions.FormatAnswer(options, selected, preserveOrder);
+                var correctText = isMap
+                    ? FormatMapAnswers(correct)
+                    : ChoiceOptions.FormatAnswer(options, correct, preserveOrder);
                 return new QuizAnswerReviewDto(
                     a.QuestionId,
                     a.Question?.Prompt ?? string.Empty,
                     a.Question?.SortOrder ?? 0,
                     selected,
-                    ChoiceOptions.FormatAnswer(options, selected, preserveOrder),
+                    selectedText,
                     correct,
-                    ChoiceOptions.FormatAnswer(options, correct, preserveOrder),
+                    correctText,
                     a.IsCorrect,
                     QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
                     QuestionImageUrls.Build(a.AnswerImageMediaAssetId));
@@ -79,5 +86,16 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
             attempt.EarnedXp,
             attempt.CompletedAtUtc,
             answers);
+    }
+
+    private static string FormatMapAnswers(string? json)
+    {
+        var answers = MapMarkers.ParseAnswers(json);
+        if (answers.Count == 0)
+        {
+            return (json ?? string.Empty).Trim();
+        }
+
+        return string.Join(", ", answers.Select(pair => $"{pair.Key}: {pair.Value}"));
     }
 }

@@ -2,17 +2,20 @@ import { Component, Input, inject } from '@angular/core';
 import { ControlContainer, FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { IconActionButtonComponent } from '../icon-action-button/icon-action-button.component';
+import { MapQuestionBoardComponent } from '../map-question-board/map-question-board.component';
 import { MathPromptEditorComponent } from '../math-prompt-editor/math-prompt-editor.component';
 import { QuestionImageUploadComponent } from '../question-image-upload/question-image-upload.component';
 import { SearchableSelectComponent } from '../searchable-select/searchable-select.component';
 import { TranslatePipe } from '../translate.pipe';
-import { QuestionDraft } from '../question-draft/question-draft.model';
+import { MapMarkerDraft, QuestionDraft } from '../question-draft/question-draft.model';
 import {
   applyTypeDefaults,
   childQuestionTypes,
   editorTypes,
+  encodeMapAnswers,
   filledOptions,
   isFreeText,
+  isMap,
   isMulti,
   isOrder,
   isParagraph,
@@ -31,7 +34,8 @@ import {
     SearchableSelectComponent,
     TranslatePipe,
     QuestionImageUploadComponent,
-    IconActionButtonComponent
+    IconActionButtonComponent,
+    MapQuestionBoardComponent
   ],
   templateUrl: './question-draft-editor.component.html',
   styleUrl: './question-draft-editor.component.css',
@@ -93,6 +97,10 @@ export class QuestionDraftEditorComponent {
     return isOrder(type);
   }
 
+  isMap(type: string = this.draft.questionType): boolean {
+    return isMap(type);
+  }
+
   optionLabel(index: number): string {
     return optionLabel(index);
   }
@@ -106,6 +114,11 @@ export class QuestionDraftEditorComponent {
   }
 
   applyTypeDefaults = applyTypeDefaults;
+
+  onMapMarkersChange(markers: MapMarkerDraft[]): void {
+    this.draft.mapMarkers = markers;
+    this.draft.correctAnswer = encodeMapAnswers(markers);
+  }
 
   addOption(): void {
     if (this.draft.options.length >= 26) return;
@@ -197,7 +210,8 @@ export class QuestionDraftEditorComponent {
       correctAnswer: '',
       correctKeys: [],
       points: 1,
-      children: []
+      children: [],
+      mapMarkers: []
     });
   }
 

@@ -1,6 +1,6 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,27 +35,53 @@ public sealed class UpdateBankQuestionCommandHandler(IAppDbContext dbContext)
             command.OptionD,
             command.CorrectAnswer ?? string.Empty,
             command.PassageText,
-            command.Options);
+            command.Options,
+            command.MapMarkers);
+
+        if (question.QuestionType == BankQuestionType.Map)
+        {
+            var imageId = command.PromptImageMediaAssetId ?? question.PromptImageMediaAssetId;
+            if (imageId is null)
+            {
+                throw new InvalidOperationException("Map questions require a map image.");
+            }
+
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, imageId, cancellationToken);
+            question.PromptImageMediaAssetId = imageId;
+        }
 
         question.Prompt = command.Prompt.Trim();
         question.PassageText = (command.PassageText ?? string.Empty).Trim();
         question.LessonId = command.LessonId;
 
-        var resolved = question.QuestionType is BankQuestionType.Choose
-            or BankQuestionType.SingleChoice
-            or BankQuestionType.MultiChoice
-            or BankQuestionType.Order
-            ? (command.Options is { Count: > 0 }
-                ? ChoiceOptions.FromTexts(command.Options)
-                : ChoiceOptions.Parse(null, command.OptionA, command.OptionB, command.OptionC, command.OptionD))
-            : Array.Empty<ChoiceOptionDto>();
+        if (question.QuestionType == BankQuestionType.Map)
+        {
+            var markers = MapMarkers.Normalize(command.MapMarkers);
+            question.OptionA = null;
+            question.OptionB = null;
+            question.OptionC = null;
+            question.OptionD = null;
+            question.OptionsJson = MapMarkers.ToJson(markers);
+        }
+        else
+        {
+            var resolved = question.QuestionType is BankQuestionType.Choose
+                or BankQuestionType.SingleChoice
+                or BankQuestionType.MultiChoice
+                or BankQuestionType.Order
+                ? (command.Options is { Count: > 0 }
+                    ? ChoiceOptions.FromTexts(command.Options)
+                    : ChoiceOptions.Parse(null, command.OptionA, command.OptionB, command.OptionC, command.OptionD))
+                : Array.Empty<ChoiceOptionDto>();
 
-        var (legacyA, legacyB, legacyC, legacyD) = ChoiceOptions.ToLegacy(resolved);
-        question.OptionA = legacyA;
-        question.OptionB = legacyB;
-        question.OptionC = legacyC;
-        question.OptionD = legacyD;
-        question.OptionsJson = ChoiceOptions.ToJson(resolved);
+            var (legacyA, legacyB, legacyC, legacyD) = ChoiceOptions.ToLegacy(resolved);
+            question.OptionA = legacyA;
+            question.OptionB = legacyB;
+            question.OptionC = legacyC;
+            question.OptionD = legacyD;
+            question.OptionsJson = ChoiceOptions.ToJson(resolved);
+        }
+
         question.CorrectAnswer = BankQuestionValidator.IsComposite(question.QuestionType)
             ? string.Empty
             : TypedQuestionSupport.NormalizeCorrect(question.QuestionType, command.CorrectAnswer);

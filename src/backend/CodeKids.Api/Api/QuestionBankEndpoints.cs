@@ -88,7 +88,9 @@ public static class QuestionBankEndpoints
 
                         request.PromptImageMediaAssetId,
 
-                        request.Children),
+                        request.Children,
+
+                        request.MapMarkers),
 
                     cancellationToken));
 
@@ -152,7 +154,11 @@ public static class QuestionBankEndpoints
 
                         request.Points,
 
-                        request.SortOrder),
+                        request.SortOrder,
+
+                        request.PromptImageMediaAssetId,
+
+                        request.MapMarkers),
 
                     cancellationToken));
 

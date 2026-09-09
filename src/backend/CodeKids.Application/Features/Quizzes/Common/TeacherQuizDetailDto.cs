@@ -14,7 +14,8 @@ public sealed record TeacherQuizQuestionDetailDto(
     int SortOrder,
     Guid? PromptImageMediaAssetId,
     string? PromptImageUrl,
-    IReadOnlyList<TeacherQuizQuestionDetailDto> Children);
+    IReadOnlyList<TeacherQuizQuestionDetailDto> Children,
+    IReadOnlyList<MapMarkerDto>? MapMarkers = null);
 
 public sealed record TeacherQuizDetailDto(
     Guid Id,

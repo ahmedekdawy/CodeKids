@@ -30,7 +30,7 @@ public static class BankQuestionValidator
         if (!Enum.TryParse<BankQuestionType>(value, true, out var type) || !Enum.IsDefined(type))
         {
             throw new InvalidOperationException(
-                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, ShortAnswer, or Order.");
+                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, ShortAnswer, Order, or Map.");
         }
 
         return type;
@@ -45,7 +45,8 @@ public static class BankQuestionValidator
         string? optionD,
         string correctAnswer,
         string? passageText = null,
-        IReadOnlyList<string>? options = null)
+        IReadOnlyList<string>? options = null,
+        IReadOnlyList<MapMarkerInput>? mapMarkers = null)
     {
         if (string.IsNullOrWhiteSpace(StripHtml(prompt)))
         {
@@ -72,6 +73,31 @@ public static class BankQuestionValidator
             if (string.IsNullOrWhiteSpace(correctAnswer))
             {
                 throw new InvalidOperationException("Underline questions require the correct underlined phrase.");
+            }
+
+            return;
+        }
+
+        if (type == BankQuestionType.Map)
+        {
+            var markers = MapMarkers.Normalize(mapMarkers);
+            if (markers.Count == 0)
+            {
+                throw new InvalidOperationException("Map questions need at least one marker on the image.");
+            }
+
+            var answers = MapMarkers.ParseAnswers(correctAnswer);
+            if (answers.Count == 0)
+            {
+                throw new InvalidOperationException("Map questions require a correct answer for each marker.");
+            }
+
+            foreach (var marker in markers)
+            {
+                if (!answers.TryGetValue(marker.Id, out var value) || string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidOperationException("Map questions require a correct answer for each marker.");
+                }
             }
 
             return;

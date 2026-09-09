@@ -6,6 +6,8 @@ import { SafeHtmlPipe } from '../safe-html.pipe';
 import { StudentAnswerUploadComponent } from '../student-answer-upload/student-answer-upload.component';
 import { TranslatePipe } from '../translate.pipe';
 import { AnswerImageDraft, PlayableQuestion } from './playable-question';
+import { MapQuestionBoardComponent } from '../map-question-board/map-question-board.component';
+import { MapMarkerDraft } from '../question-draft/question-draft.model';
 
 @Component({
   selector: 'app-question-play-prompt',
@@ -14,7 +16,8 @@ import { AnswerImageDraft, PlayableQuestion } from './playable-question';
     SafeHtmlPipe,
     TranslatePipe,
     QuestionImageDisplayComponent,
-    StudentAnswerUploadComponent
+    StudentAnswerUploadComponent,
+    MapQuestionBoardComponent
   ],
   templateUrl: './question-play-prompt.component.html',
   styleUrl: './question-play-prompt.component.css'
@@ -46,6 +49,10 @@ export class QuestionPlayPromptComponent {
     if (question.optionC) legacy.push({ key: 'C', text: question.optionC });
     if (question.optionD) legacy.push({ key: 'D', text: question.optionD });
     return legacy;
+  }
+
+  mapMarkers(question: PlayableQuestion): MapMarkerDraft[] {
+    return (question.mapMarkers ?? []) as MapMarkerDraft[];
   }
 
   orderedOptions(question: PlayableQuestion): ChoiceOption[] {

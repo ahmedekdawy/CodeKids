@@ -16,4 +16,5 @@ public sealed record AssignmentQuestionDto(
     string? CorrectAnswer,
     string? PromptImageUrl,
     Guid? PromptImageMediaAssetId,
-    IReadOnlyList<AssignmentQuestionDto> Children);
+    IReadOnlyList<AssignmentQuestionDto> Children,
+    IReadOnlyList<MapMarkerDto>? MapMarkers = null);

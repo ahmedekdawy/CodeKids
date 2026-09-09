@@ -199,6 +199,15 @@
       <span>{{ 'common.correctAnswer' | t }}</span>
       <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" />
     </label>
+  } @else if (isMap()) {
+    <p class="meta">{{ 'teacher.qbank.mapHint' | t }}</p>
+    <app-map-question-board
+      mode="edit"
+      [imageUrl]="draft.promptImageUrl"
+      [markers]="draft.mapMarkers"
+      [namePrefix]="namePrefix"
+      (markersChange)="onMapMarkersChange($event)"
+    />
   } @else {
     <div class="options-editor">
       <div class="qb-children-head">

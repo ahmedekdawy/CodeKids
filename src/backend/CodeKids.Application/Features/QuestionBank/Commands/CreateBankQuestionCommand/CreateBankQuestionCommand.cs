@@ -1,8 +1,4 @@
-using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.QuestionBank;
 
@@ -21,7 +17,8 @@ public sealed record CreateBankQuestionRequest(
     int Points,
     int SortOrder,
     Guid? PromptImageMediaAssetId,
-    IReadOnlyList<BankChildQuestionInput>? Children);
+    IReadOnlyList<BankChildQuestionInput>? Children,
+    IReadOnlyList<MapMarkerInput>? MapMarkers = null);
 
 public sealed record CreateBankQuestionCommand(
     Guid TeacherUserId,
@@ -39,4 +36,5 @@ public sealed record CreateBankQuestionCommand(
     int Points,
     int SortOrder,
     Guid? PromptImageMediaAssetId,
-    IReadOnlyList<BankChildQuestionInput>? Children) : ICommand<BankQuestionDto>;
+    IReadOnlyList<BankChildQuestionInput>? Children,
+    IReadOnlyList<MapMarkerInput>? MapMarkers = null) : ICommand<BankQuestionDto>;

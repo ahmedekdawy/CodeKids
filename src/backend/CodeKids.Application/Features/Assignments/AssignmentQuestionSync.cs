@@ -65,7 +65,11 @@ public static class AssignmentQuestionSync
 
         AssignmentQuestionDto MapOne(AssignmentQuestion q)
         {
-            var options = ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC);
+            var isMap = q.QuestionType == AssignmentQuestionType.Map;
+            var options = isMap
+                ? Array.Empty<ChoiceOptionDto>()
+                : ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC);
+            var mapMarkers = isMap ? MapMarkers.Parse(q.OptionsJson) : null;
             var nested = children.TryGetValue(q.Id, out var kids)
                 ? kids.Select(MapOne).ToList()
                 : [];
@@ -83,7 +87,8 @@ public static class AssignmentQuestionSync
                 includeAnswerKey ? q.CorrectAnswer : null,
                 QuestionImageUrls.Build(q.PromptImageMediaAssetId),
                 q.PromptImageMediaAssetId,
-                nested);
+                nested,
+                mapMarkers);
         }
 
         return list
@@ -103,27 +108,49 @@ public static class AssignmentQuestionSync
     {
         var type = TypedQuestionSupport.ParseAssignmentType(input.QuestionType);
         var children = input.Children ?? [];
-        TypedQuestionSupport.ValidateAssignment(
-            type,
-            input.Prompt,
-            input.OptionA,
-            input.OptionB,
-            input.OptionC,
-            input.CorrectAnswer ?? string.Empty,
-            input.PassageText,
-            input.Options,
-            children.Select(c => new AssignmentChildSpec(
-                c.Prompt,
-                c.QuestionType,
-                c.OptionA,
-                c.OptionB,
-                c.OptionC,
-                c.Options,
-                c.CorrectAnswer,
-                c.Points,
-                c.SortOrder,
-                c.PromptImageMediaAssetId,
-                c.Id)).ToList());
+
+        if (type == AssignmentQuestionType.Map)
+        {
+            BankQuestionValidator.ValidateLeaf(
+                BankQuestionType.Map,
+                input.Prompt,
+                input.OptionA,
+                input.OptionB,
+                input.OptionC,
+                null,
+                input.CorrectAnswer ?? string.Empty,
+                input.PassageText,
+                input.Options,
+                input.MapMarkers);
+            if (input.PromptImageMediaAssetId is null)
+            {
+                throw new InvalidOperationException("Map questions require a map image.");
+            }
+        }
+        else
+        {
+            TypedQuestionSupport.ValidateAssignment(
+                type,
+                input.Prompt,
+                input.OptionA,
+                input.OptionB,
+                input.OptionC,
+                input.CorrectAnswer ?? string.Empty,
+                input.PassageText,
+                input.Options,
+                children.Select(c => new AssignmentChildSpec(
+                    c.Prompt,
+                    c.QuestionType,
+                    c.OptionA,
+                    c.OptionB,
+                    c.OptionC,
+                    c.Options,
+                    c.CorrectAnswer,
+                    c.Points,
+                    c.SortOrder,
+                    c.PromptImageMediaAssetId,
+                    c.Id)).ToList());
+        }
 
         await TypedQuestionSupport.EnsureImageAsync(dbContext, input.PromptImageMediaAssetId, cancellationToken);
 
@@ -139,9 +166,22 @@ public static class AssignmentQuestionSync
         var bankType = TypedQuestionSupport.IsShortAnswer(type)
             ? (BankQuestionType?)null
             : TypedQuestionSupport.ToBankType(type);
-        var options = bankType is BankQuestionType resolved
-            ? TypedQuestionSupport.ResolveOptions(resolved, input.Options, input.OptionA, input.OptionB, input.OptionC)
-            : [];
+
+        IReadOnlyList<ChoiceOptionDto> options = [];
+        string optionsJson;
+        if (type == AssignmentQuestionType.Map)
+        {
+            var markers = MapMarkers.Normalize(input.MapMarkers);
+            optionsJson = MapMarkers.ToJson(markers);
+        }
+        else
+        {
+            options = bankType is BankQuestionType resolved
+                ? TypedQuestionSupport.ResolveOptions(resolved, input.Options, input.OptionA, input.OptionB, input.OptionC)
+                : [];
+            optionsJson = ChoiceOptions.ToJson(options);
+        }
+
         var (legacyA, legacyB, legacyC, _) = ChoiceOptions.ToLegacy(options);
 
         entity.ParentQuestionId = parentId;
@@ -151,7 +191,7 @@ public static class AssignmentQuestionSync
         entity.OptionA = legacyA;
         entity.OptionB = legacyB;
         entity.OptionC = legacyC;
-        entity.OptionsJson = ChoiceOptions.ToJson(options);
+        entity.OptionsJson = optionsJson;
         entity.CorrectAnswer = TypedQuestionSupport.IsFreeText(type)
             ? string.Empty
             : bankType is BankQuestionType bt

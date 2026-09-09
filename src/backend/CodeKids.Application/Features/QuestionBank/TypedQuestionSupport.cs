@@ -8,7 +8,7 @@ namespace CodeKids.Application.Features.QuestionBank;
 public static class TypedQuestionSupport
 {
     public const string AssignmentTypeError =
-        "Question type must be ShortAnswer, MultipleChoice, Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, or Order.";
+        "Question type must be ShortAnswer, MultipleChoice, Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, Order, or Map.";
 
     public static AssignmentQuestionType ParseAssignmentType(string? value)
     {
@@ -51,6 +51,7 @@ public static class TypedQuestionSupport
         AssignmentQuestionType.FreeText => BankQuestionType.FreeText,
         AssignmentQuestionType.ShortAnswer => BankQuestionType.ShortAnswer,
         AssignmentQuestionType.Order => BankQuestionType.Order,
+        AssignmentQuestionType.Map => BankQuestionType.Map,
         _ => throw new InvalidOperationException(AssignmentTypeError)
     };
 
@@ -80,6 +81,7 @@ public static class TypedQuestionSupport
         {
             BankQuestionType.MultiChoice => string.Join(',', ExamGrading.NormalizeMultiAnswer(correct ?? string.Empty)),
             BankQuestionType.Order => ExamGrading.JoinOrderedKeys(ExamGrading.ParseOrderedKeys(correct ?? string.Empty)),
+            BankQuestionType.Map => MapMarkers.JoinAnswers(MapMarkers.ParseAnswers(correct)),
             _ => (correct ?? string.Empty).Trim()
         };
 

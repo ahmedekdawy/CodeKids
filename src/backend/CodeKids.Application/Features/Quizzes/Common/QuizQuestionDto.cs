@@ -13,4 +13,5 @@ public sealed record QuizQuestionDto(
     IReadOnlyList<ChoiceOptionDto> Options,
     int SortOrder,
     string? PromptImageUrl,
-    IReadOnlyList<QuizQuestionDto> Children);
+    IReadOnlyList<QuizQuestionDto> Children,
+    IReadOnlyList<MapMarkerDto>? MapMarkers = null);

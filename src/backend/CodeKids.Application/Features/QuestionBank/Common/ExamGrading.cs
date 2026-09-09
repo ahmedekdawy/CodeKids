@@ -51,6 +51,11 @@ public static class ExamGrading
             return left.Count == right.Count && left.SequenceEqual(right, StringComparer.OrdinalIgnoreCase);
         }
 
+        if (type == BankQuestionType.Map)
+        {
+            return MapMarkers.AnswersMatch(studentAnswer, correctAnswer);
+        }
+
         return string.Equals(studentAnswer.Trim(), correctAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
@@ -60,6 +65,7 @@ public static class ExamGrading
             or BankQuestionType.SingleChoice
             or BankQuestionType.MultiChoice
             or BankQuestionType.Order
+            or BankQuestionType.Map
             or BankQuestionType.Underline
             or BankQuestionType.ShortAnswer
             or BankQuestionType.FreeText;

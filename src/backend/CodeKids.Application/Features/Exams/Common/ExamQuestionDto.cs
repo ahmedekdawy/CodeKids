@@ -24,4 +24,5 @@ public sealed record ExamQuestionDto(
     int SortOrder,
     string? CorrectAnswer,
     string? PromptImageUrl,
-    IReadOnlyList<ExamQuestionDto> Children);
+    IReadOnlyList<ExamQuestionDto> Children,
+    IReadOnlyList<MapMarkerDto>? MapMarkers = null);

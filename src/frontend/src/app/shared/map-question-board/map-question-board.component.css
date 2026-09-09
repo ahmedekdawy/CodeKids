@@ -1,0 +1,161 @@
+.meta {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.map-toolbar .ghost-btn.active,
+.kind-toggle .ghost-btn.active {
+  border-color: var(--accent-fg);
+  color: var(--accent-fg);
+  font-weight: 700;
+}
+
+.map-toolbar .add-btn {
+  font-weight: 700;
+  border-color: var(--border-strong);
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 1.4rem;
+  background: var(--border-strong);
+  margin: 0 0.15rem;
+}
+
+.map-board {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--border-strong);
+  overflow: hidden;
+  background: var(--elevated-bg);
+  touch-action: none;
+  user-select: none;
+}
+
+.map-board.editable {
+  cursor: crosshair;
+}
+
+.map-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  border: none;
+  padding: 0;
+  cursor: grab;
+  background: transparent;
+}
+
+.map-marker:active {
+  cursor: grabbing;
+}
+
+.map-board:not(.editable) .map-marker {
+  cursor: default;
+  pointer-events: none;
+}
+
+.map-marker.number {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 999px;
+  background: var(--accent-fg, #0b6e4f);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  line-height: 1.85rem;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.map-marker.arrow {
+  width: 2.1rem;
+  height: 2.1rem;
+  color: var(--accent-hot, #c0392b);
+  font-size: 1.45rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.arrow-icon {
+  display: block;
+  transform: rotate(-45deg);
+}
+
+.map-answers {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-width: 40rem;
+}
+
+.map-answers h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.map-answer-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  gap: 0.55rem;
+  align-items: start;
+  margin: 0;
+}
+
+.map-answer-key {
+  font-weight: 800;
+  text-align: center;
+  color: var(--accent-fg);
+  line-height: 2.2rem;
+}
+
+.map-answer-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.kind-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.ghost-btn.tiny {
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  min-height: 0;
+}
+
+.map-answer-row input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md, 10px);
+  padding: 0.65rem 0.8rem;
+  background: var(--input-bg);
+  color: var(--text);
+  font: inherit;
+}
