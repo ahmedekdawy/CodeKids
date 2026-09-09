@@ -2,7 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, AssignmentSubmission } from '../../models';
+import { Assignment, AssignmentSubmission, ChoiceOption } from '../../models';
+import { choiceKeySelected, formatChoiceAnswer } from '../../shared/question-draft/question-draft.util';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
@@ -97,6 +98,14 @@ export class TeacherReviewComponent {
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.review.gradeFailed'))
       });
+  }
+
+  formatChoice(value: string | null | undefined, options?: ChoiceOption[] | null): string {
+    return formatChoiceAnswer(value, options);
+  }
+
+  isChoiceSelected(value: string | null | undefined, key: string): boolean {
+    return choiceKeySelected(value, key);
   }
 
   markAnswer(submissionId: string, questionId: string, correct: boolean): void {

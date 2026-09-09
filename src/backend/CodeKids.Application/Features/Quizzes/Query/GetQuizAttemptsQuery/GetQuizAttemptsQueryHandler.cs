@@ -59,9 +59,9 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                     a.Question?.Prompt ?? string.Empty,
                     a.Question?.SortOrder ?? 0,
                     selected,
-                    AnswerDisplay(options, selected),
+                    ChoiceOptions.FormatAnswer(options, selected),
                     correct,
-                    AnswerDisplay(options, correct),
+                    ChoiceOptions.FormatAnswer(options, correct),
                     a.IsCorrect,
                     QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId));
             })
@@ -77,37 +77,5 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
             attempt.EarnedXp,
             attempt.CompletedAtUtc,
             answers);
-    }
-
-    private static string AnswerDisplay(IReadOnlyList<ChoiceOptionDto> options, string key)
-    {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return string.Empty;
-        }
-
-        if (options.Count == 0)
-        {
-            return key;
-        }
-
-        var parts = ExamGrading.NormalizeMultiAnswer(key);
-        if (parts.Count > 1)
-        {
-            return string.Join(", ", parts.Select(part => OptionText(options, part)));
-        }
-
-        return OptionText(options, key);
-    }
-
-    private static string OptionText(IReadOnlyList<ChoiceOptionDto> options, string key)
-    {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return string.Empty;
-        }
-
-        var match = options.FirstOrDefault(o => string.Equals(o.Key, key, StringComparison.OrdinalIgnoreCase));
-        return match is null ? key : $"{match.Key}) {match.Text}";
     }
 }

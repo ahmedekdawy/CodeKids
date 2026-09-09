@@ -1,4 +1,5 @@
 using CodeKids.Domain.Entities;
+using CodeKids.Domain.Enums;
 using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,11 +17,28 @@ public static class BadgeAwarder
             .Select(x => x.BadgeId)
             .ToListAsync(cancellationToken);
 
-        var eligible = await dbContext.Badges
-            .Where(x => !ownedBadgeIds.Contains(x.Id)
-                        && user.TotalXp >= x.RequiredXp
-                        && completedSteps >= x.RequiredSteps)
+        var unowned = await dbContext.Badges
+            .Where(x => !ownedBadgeIds.Contains(x.Id))
             .ToListAsync(cancellationToken);
+
+        var eligible = new List<Badge>();
+        foreach (var badge in unowned)
+        {
+            if (AchievementBadgeCodes.All.Contains(badge.Code))
+            {
+                if (await MeetsAchievementAsync(dbContext, user.Id, badge.Code, cancellationToken))
+                {
+                    eligible.Add(badge);
+                }
+
+                continue;
+            }
+
+            if (user.TotalXp >= badge.RequiredXp && completedSteps >= badge.RequiredSteps)
+            {
+                eligible.Add(badge);
+            }
+        }
 
         foreach (var badge in eligible)
         {
@@ -38,4 +56,38 @@ public static class BadgeAwarder
             await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
+
+    private static Task<bool> MeetsAchievementAsync(
+        IAppDbContext dbContext,
+        Guid userId,
+        string code,
+        CancellationToken cancellationToken) =>
+        code switch
+        {
+            AchievementBadgeCodes.WeeklyStar => dbContext.StudentWeeklyReports.AnyAsync(
+                x => x.StudentId == userId && x.PerformancePercent != null && x.PerformancePercent > 90,
+                cancellationToken),
+            AchievementBadgeCodes.AssignmentAce => dbContext.AssignmentSubmissions.AnyAsync(
+                x => x.StudentId == userId
+                     && x.Status == AssignmentSubmissionStatus.Graded
+                     && x.Score != null
+                     && x.MaxScore != null
+                     && x.MaxScore > 0
+                     && x.Score * 100 >= 98 * x.MaxScore,
+                cancellationToken),
+            AchievementBadgeCodes.ExamStar => dbContext.ExamAttempts.AnyAsync(
+                x => x.StudentId == userId
+                     && x.Status == ExamAttemptStatus.Graded
+                     && x.Score != null
+                     && x.MaxScore != null
+                     && x.MaxScore > 0
+                     && x.Score * 100 > 95 * x.MaxScore,
+                cancellationToken),
+            AchievementBadgeCodes.QuizAce => dbContext.QuizAttempts.AnyAsync(
+                x => x.UserId == userId
+                     && x.TotalQuestions > 0
+                     && x.Score * 100 >= 98 * x.TotalQuestions,
+                cancellationToken),
+            _ => Task.FromResult(false)
+        };
 }

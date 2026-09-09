@@ -185,15 +185,25 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             attempt.SubmittedAtUtc,
             attempt.GradedAtUtc,
             attempt.DurationSeconds,
-            attempt.Answers.Select(a => new ExamAnswerReviewDto(
-                a.ExamQuestionId,
-                a.Question?.Prompt ?? "",
-                a.Question?.QuestionType.ToString() ?? "",
-                a.AnswerText,
-                a.Question?.CorrectAnswer,
-                a.IsCorrect,
-                a.PointsAwarded,
-                a.Question?.Points ?? 0,
-                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
-                QuestionImageUrls.Build(a.AnswerImageMediaAssetId))).ToList());
+            attempt.Answers.Select(a =>
+            {
+                var options = ChoiceOptions.Parse(
+                    a.Question?.OptionsJson,
+                    a.Question?.OptionA,
+                    a.Question?.OptionB,
+                    a.Question?.OptionC,
+                    a.Question?.OptionD);
+                return new ExamAnswerReviewDto(
+                    a.ExamQuestionId,
+                    a.Question?.Prompt ?? "",
+                    a.Question?.QuestionType.ToString() ?? "",
+                    a.AnswerText,
+                    a.Question?.CorrectAnswer,
+                    a.IsCorrect,
+                    a.PointsAwarded,
+                    a.Question?.Points ?? 0,
+                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                    QuestionImageUrls.Build(a.AnswerImageMediaAssetId),
+                    options);
+            }).ToList());
 }

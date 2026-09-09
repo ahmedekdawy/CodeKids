@@ -1126,6 +1126,8 @@ export interface AssignmentAnswerReview {
   points: number;
   promptImageUrl?: string | null;
   answerImageUrl?: string | null;
+  questionType?: string;
+  options?: ChoiceOption[];
 }
 
 export interface AssignmentSubmission {
@@ -1226,6 +1228,7 @@ export interface ExamAnswerReview {
   points: number;
   promptImageUrl?: string | null;
   answerImageUrl?: string | null;
+  options?: ChoiceOption[];
 }
 
 export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;

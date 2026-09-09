@@ -49,6 +49,34 @@ export function optionLabel(index: number): string {
   return String.fromCharCode(65 + index);
 }
 
+/** Show stored keys (A / A,C) together with the option text for teacher review. */
+export function formatChoiceAnswer(
+  value: string | null | undefined,
+  options?: ChoiceOption[] | null
+): string {
+  const raw = (value || '').trim();
+  if (!raw) return '';
+  if (!options?.length) return raw;
+  return raw
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((key) => {
+      const match = options.find((option) => option.key.toUpperCase() === key.toUpperCase());
+      return match ? `${match.key}) ${match.text}` : key;
+    })
+    .join(', ');
+}
+
+export function choiceKeySelected(value: string | null | undefined, key: string): boolean {
+  const raw = (value || '').trim();
+  if (!raw) return false;
+  return raw
+    .split(',')
+    .map((part) => part.trim().toUpperCase())
+    .includes(key.toUpperCase());
+}
+
 export function filledOptions(list: QuestionOptionDraft[]): { key: string; text: string }[] {
   return list
     .map((option, index) => ({ key: optionLabel(index), text: (option.text || '').trim() }))

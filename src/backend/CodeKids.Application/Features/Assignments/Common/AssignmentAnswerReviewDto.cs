@@ -1,9 +1,4 @@
-using CodeKids.Application.Abstractions;
-using CodeKids.Application.Features.Badges;
-using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
+using CodeKids.Application.Features.QuestionBank;
 
 namespace CodeKids.Application.Features.Assignments;
 
@@ -16,4 +11,6 @@ public sealed record AssignmentAnswerReviewDto(
     int? PointsAwarded,
     int Points,
     string? PromptImageUrl,
-    string? AnswerImageUrl);
+    string? AnswerImageUrl,
+    string QuestionType,
+    IReadOnlyList<ChoiceOptionDto> Options);

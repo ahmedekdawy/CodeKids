@@ -246,8 +246,24 @@
 
                 <p class="answer-text">
                   <span class="answer-label">{{ 'common.answer' | t }}</span>
-                  {{ answer.answerText || ('common.emDash' | t) }}
+                  {{ formatChoice(answer.answerText, answer.options) || ('common.emDash' | t) }}
                 </p>
+                @if (answer.options?.length) {
+                  <ul class="choice-options">
+                    @for (option of answer.options; track option.key) {
+                      <li
+                        [class.is-student]="isChoiceSelected(answer.answerText, option.key)"
+                        [class.is-key]="isChoiceSelected(answer.correctAnswer, option.key)"
+                      >
+                        <strong>{{ option.key }}</strong>
+                        <span>{{ option.text }}</span>
+                      </li>
+                    }
+                  </ul>
+                }
+                @if (answer.correctAnswer) {
+                  <p class="meta">{{ 'common.key' | t }}: {{ formatChoice(answer.correctAnswer, answer.options) }}</p>
+                }
                 <app-question-image-display [url]="answer.answerImageUrl" />
 
                 <div class="answer-grade">

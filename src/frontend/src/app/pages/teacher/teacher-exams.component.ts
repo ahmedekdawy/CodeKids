@@ -2,7 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
-import { BankQuestion, Classroom, Course, CourseLesson, CourseUnit, Exam, ExamAttempt } from '../../models';
+import { BankQuestion, ChoiceOption, Classroom, Course, CourseLesson, CourseUnit, Exam, ExamAttempt } from '../../models';
+import { choiceKeySelected, formatChoiceAnswer } from '../../shared/question-draft/question-draft.util';
 import { classroomEffectiveGrade, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
 import { TranslatePipe } from '../../shared/translate.pipe';
@@ -351,6 +352,14 @@ export class TeacherExamsComponent {
     const key = `parent.status.${status}`;
     const label = this.locale.t(key);
     return label === key ? status : label;
+  }
+
+  formatChoice(value: string | null | undefined, options?: ChoiceOption[] | null): string {
+    return formatChoiceAnswer(value, options);
+  }
+
+  isChoiceSelected(value: string | null | undefined, key: string): boolean {
+    return choiceKeySelected(value, key);
   }
 
   attemptAwarded(attempt: ExamAttempt): number {

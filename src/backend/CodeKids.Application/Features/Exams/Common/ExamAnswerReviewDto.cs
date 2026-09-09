@@ -18,4 +18,5 @@ public sealed record ExamAnswerReviewDto(
     int? PointsAwarded,
     int Points,
     string? PromptImageUrl,
-    string? AnswerImageUrl);
+    string? AnswerImageUrl,
+    IReadOnlyList<ChoiceOptionDto> Options);

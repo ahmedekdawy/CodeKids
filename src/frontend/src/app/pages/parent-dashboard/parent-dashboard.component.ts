@@ -263,6 +263,17 @@ export class ParentDashboardComponent {
     return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
   }
 
+  badgeLabel(name: string): string {
+    const byName: Record<string, string> = {
+      'Weekly Star': 'badge.WEEKLY_STAR',
+      'Assignment Ace': 'badge.ASSIGNMENT_ACE',
+      'Exam Star': 'badge.EXAM_STAR',
+      'Quiz Ace': 'badge.QUIZ_ACE'
+    };
+    const key = byName[name];
+    return key ? this.locale.t(key) : name;
+  }
+
   formatWhen(iso: string): string {
     return new Date(iso).toLocaleString(this.locale.lang());
   }
