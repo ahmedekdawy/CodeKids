@@ -30,7 +30,7 @@ public static class BankQuestionValidator
         if (!Enum.TryParse<BankQuestionType>(value, true, out var type) || !Enum.IsDefined(type))
         {
             throw new InvalidOperationException(
-                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, or ShortAnswer.");
+                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, ShortAnswer, or Order.");
         }
 
         return type;
@@ -92,7 +92,10 @@ public static class BankQuestionValidator
             return;
         }
 
-        if (type is BankQuestionType.Choose or BankQuestionType.SingleChoice or BankQuestionType.MultiChoice)
+        if (type is BankQuestionType.Choose
+            or BankQuestionType.SingleChoice
+            or BankQuestionType.MultiChoice
+            or BankQuestionType.Order)
         {
             var choiceOptions = options is { Count: > 0 }
                 ? ChoiceOptions.FromTexts(options)
@@ -104,6 +107,20 @@ public static class BankQuestionValidator
             }
 
             var allowed = ChoiceOptions.AllowedKeys(choiceOptions);
+            if (type == BankQuestionType.Order)
+            {
+                var ordered = ExamGrading.ParseOrderedKeys(correctAnswer);
+                if (ordered.Count != choiceOptions.Count
+                    || ordered.Distinct(StringComparer.OrdinalIgnoreCase).Count() != ordered.Count
+                    || ordered.Any(k => !allowed.Contains(k)))
+                {
+                    throw new InvalidOperationException(
+                        "Order questions require each option exactly once in the correct sequence.");
+                }
+
+                return;
+            }
+
             var keys = ExamGrading.NormalizeMultiAnswer(correctAnswer);
             if (keys.Count == 0)
             {

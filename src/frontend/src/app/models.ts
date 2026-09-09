@@ -351,6 +351,7 @@ export interface QuizAnswerReview {
   correctText: string;
   isCorrect: boolean;
   promptImageUrl?: string | null;
+  answerImageUrl?: string | null;
 }
 
 export interface QuizAttemptReview {
@@ -1156,7 +1157,8 @@ export type BankQuestionType =
   | 'Paragraph'
   | 'Underline'
   | 'FreeText'
-  | 'ShortAnswer';
+  | 'ShortAnswer'
+  | 'Order';
 
 export interface BankQuestion {
   id: string;

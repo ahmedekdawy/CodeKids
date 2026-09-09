@@ -14,6 +14,7 @@ import {
   filledOptions,
   isFreeText,
   isMulti,
+  isOrder,
   isParagraph,
   isShortAnswer,
   isTeacherGradedText,
@@ -44,6 +45,9 @@ export class QuestionDraftEditorComponent {
   @Input() allowShortAnswer = false;
   @Input() allowComposite = true;
   @Input() allowFreeText = true;
+
+  dragIndex: number | null = null;
+  dragScope: string | null = null;
 
   types(): ReturnType<typeof editorTypes> {
     return editorTypes(this.allowShortAnswer, this.allowFreeText).filter(
@@ -85,6 +89,10 @@ export class QuestionDraftEditorComponent {
     return isMulti(type);
   }
 
+  isOrder(type: string = this.draft.questionType): boolean {
+    return isOrder(type);
+  }
+
   optionLabel(index: number): string {
     return optionLabel(index);
   }
@@ -102,6 +110,7 @@ export class QuestionDraftEditorComponent {
   addOption(): void {
     if (this.draft.options.length >= 26) return;
     this.draft.options.push({ text: '' });
+    this.syncCorrect();
   }
 
   removeOption(index: number): void {
@@ -112,6 +121,13 @@ export class QuestionDraftEditorComponent {
 
   syncCorrect(): void {
     const keys = new Set(this.filled().map((option) => option.key));
+    if (this.isOrder()) {
+      this.draft.correctKeys = [];
+      this.draft.correctAnswer = this.filled()
+        .map((option) => option.key)
+        .join(',');
+      return;
+    }
     if (this.isMulti()) {
       this.draft.correctKeys = this.draft.correctKeys.filter((key) => keys.has(key));
       this.draft.correctAnswer = this.draft.correctKeys.join(',');
@@ -126,6 +142,50 @@ export class QuestionDraftEditorComponent {
     else set.add(key);
     this.draft.correctKeys = [...set].sort();
     this.draft.correctAnswer = this.draft.correctKeys.join(',');
+  }
+
+  onDragStart(event: DragEvent, index: number, scope: string): void {
+    this.dragIndex = index;
+    this.dragScope = scope;
+    event.dataTransfer?.setData('text/plain', String(index));
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+  }
+
+  onDragEnd(): void {
+    this.dragIndex = null;
+    this.dragScope = null;
+  }
+
+  onRootDrop(event: DragEvent, targetIndex: number): void {
+    event.preventDefault();
+    if (this.dragIndex == null || this.dragScope !== 'root') return;
+    this.moveOption(this.draft.options, this.dragIndex, targetIndex);
+    this.syncCorrect();
+    this.onDragEnd();
+  }
+
+  onChildDrop(event: DragEvent, child: QuestionDraft, targetIndex: number): void {
+    event.preventDefault();
+    if (this.dragIndex == null || !this.dragScope?.startsWith('c')) return;
+    this.moveOption(child.options, this.dragIndex, targetIndex);
+    if (isOrder(child.questionType)) {
+      child.correctKeys = [];
+      child.correctAnswer = filledOptions(child.options)
+        .map((option) => option.key)
+        .join(',');
+    }
+    this.onDragEnd();
+  }
+
+  private moveOption(list: { text: string }[], from: number, to: number): void {
+    if (from === to || from < 0 || to < 0 || from >= list.length || to >= list.length) return;
+    const [item] = list.splice(from, 1);
+    list.splice(to, 0, item);
   }
 
   addChild(): void {
@@ -148,6 +208,11 @@ export class QuestionDraftEditorComponent {
   addChildOption(child: QuestionDraft): void {
     if (child.options.length >= 26) return;
     child.options.push({ text: '' });
+    if (isOrder(child.questionType)) {
+      child.correctAnswer = filledOptions(child.options)
+        .map((option) => option.key)
+        .join(',');
+    }
   }
 
   removeChildOption(child: QuestionDraft, index: number): void {
@@ -157,6 +222,11 @@ export class QuestionDraftEditorComponent {
     if (child.questionType === 'MultiChoice') {
       child.correctKeys = child.correctKeys.filter((key) => keys.has(key));
       child.correctAnswer = child.correctKeys.join(',');
+    } else if (isOrder(child.questionType)) {
+      child.correctKeys = [];
+      child.correctAnswer = filledOptions(child.options)
+        .map((option) => option.key)
+        .join(',');
     } else if (child.correctAnswer && !keys.has(child.correctAnswer)) {
       child.correctAnswer = '';
     }

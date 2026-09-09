@@ -10,7 +10,9 @@ public enum BankQuestionType
     Underline = 5,
     FreeText = 6,
     /// <summary>Text answer with an optional model answer for auto-grading (quizzes / bank).</summary>
-    ShortAnswer = 7
+    ShortAnswer = 7,
+    /// <summary>Student reorders shuffled items to match the teacher’s correct sequence.</summary>
+    Order = 8
 }
 
 public enum ExamAttemptStatus

@@ -1,9 +1,10 @@
+using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
-using CodeKids.Application.Features.Badges;
-using CodeKids.Application.Features.QuestionBank;
-using CodeKids.Application.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
@@ -30,10 +31,15 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             .Where(x => x.QuestionType != BankQuestionType.Paragraph)
             .ToList();
         var score = 0;
-        foreach (var question in answerable)
+        var gradedAnswers = new List<(QuizQuestion Question, string Selected, Guid? AnswerImageId, bool IsCorrect)>();
+
+        foreach (var question in answerable.OrderBy(x => x.SortOrder))
         {
             var answer = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
             var selected = answer?.SelectedOption?.Trim() ?? string.Empty;
+            var answerImageId = answer?.AnswerImageMediaAssetId;
+            await QuestionImageAssetValidator.EnsureExistsAsync(dbContext, answerImageId, cancellationToken);
+
             if (question.QuestionType == BankQuestionType.MultiChoice)
             {
                 selected = string.Join(',', ExamGrading.NormalizeMultiAnswer(selected));
@@ -42,10 +48,13 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             var correct = string.IsNullOrWhiteSpace(question.CorrectAnswer)
                 ? question.CorrectOption
                 : question.CorrectAnswer;
-            if (ExamGrading.AnswersMatch(question.QuestionType, selected, correct))
+            var isCorrect = ExamGrading.AnswersMatch(question.QuestionType, selected, correct);
+            if (isCorrect)
             {
                 score++;
             }
+
+            gradedAnswers.Add((question, selected, answerImageId, isCorrect));
         }
 
         var total = answerable.Count;
@@ -63,24 +72,15 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             CompletedAtUtc = DateTimeOffset.UtcNow
         };
 
-        foreach (var question in answerable.OrderBy(x => x.SortOrder))
+        foreach (var (question, selected, answerImageId, isCorrect) in gradedAnswers)
         {
-            var answer = command.Answers.FirstOrDefault(x => x.QuestionId == question.Id);
-            var selected = answer?.SelectedOption?.Trim() ?? string.Empty;
-            if (question.QuestionType == BankQuestionType.MultiChoice)
-            {
-                selected = string.Join(',', ExamGrading.NormalizeMultiAnswer(selected));
-            }
-
-            var correct = string.IsNullOrWhiteSpace(question.CorrectAnswer)
-                ? question.CorrectOption
-                : question.CorrectAnswer;
             attempt.Answers.Add(new QuizAttemptAnswer
             {
                 Id = Guid.NewGuid(),
                 QuestionId = question.Id,
                 SelectedOption = selected,
-                IsCorrect = ExamGrading.AnswersMatch(question.QuestionType, selected, correct)
+                AnswerImageMediaAssetId = answerImageId,
+                IsCorrect = isCorrect
             });
         }
 

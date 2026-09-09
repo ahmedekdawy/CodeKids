@@ -54,16 +54,18 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                 var correct = string.IsNullOrWhiteSpace(a.Question?.CorrectAnswer)
                     ? (a.Question?.CorrectOption ?? string.Empty)
                     : a.Question!.CorrectAnswer;
+                var preserveOrder = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Order;
                 return new QuizAnswerReviewDto(
                     a.QuestionId,
                     a.Question?.Prompt ?? string.Empty,
                     a.Question?.SortOrder ?? 0,
                     selected,
-                    ChoiceOptions.FormatAnswer(options, selected),
+                    ChoiceOptions.FormatAnswer(options, selected, preserveOrder),
                     correct,
-                    ChoiceOptions.FormatAnswer(options, correct),
+                    ChoiceOptions.FormatAnswer(options, correct, preserveOrder),
                     a.IsCorrect,
-                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId));
+                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                    QuestionImageUrls.Build(a.AnswerImageMediaAssetId));
             })
             .ToList();
 

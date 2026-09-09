@@ -79,7 +79,7 @@ public static class ChoiceOptions
         options.Select(x => x.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>Turns stored keys such as "A" or "A,C" into "A) option text".</summary>
-    public static string FormatAnswer(IReadOnlyList<ChoiceOptionDto> options, string? keys)
+    public static string FormatAnswer(IReadOnlyList<ChoiceOptionDto> options, string? keys, bool preserveOrder = false)
     {
         if (string.IsNullOrWhiteSpace(keys))
         {
@@ -91,7 +91,9 @@ public static class ChoiceOptions
             return keys.Trim();
         }
 
-        var parts = ExamGrading.NormalizeMultiAnswer(keys);
+        var parts = preserveOrder
+            ? ExamGrading.ParseOrderedKeys(keys)
+            : ExamGrading.NormalizeMultiAnswer(keys);
         return string.Join(", ", parts.Select(part =>
         {
             var match = options.FirstOrDefault(o => string.Equals(o.Key, part, StringComparison.OrdinalIgnoreCase));

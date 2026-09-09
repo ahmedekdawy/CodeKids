@@ -1,8 +1,4 @@
-using CodeKids.Application.Abstractions;
-using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.QuestionBank;
 
@@ -15,6 +11,17 @@ public static class ExamGrading
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
             .ToList();
+
+    /// <summary>Preserves sequence (Order questions). Drops empties; does not sort or dedupe.</summary>
+    public static IReadOnlyList<string> ParseOrderedKeys(string value) =>
+        value
+            .Split([',', ';', '|'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(x => x.ToUpperInvariant())
+            .Where(x => x.Length > 0)
+            .ToList();
+
+    public static string JoinOrderedKeys(IEnumerable<string> keys) =>
+        string.Join(',', keys.Select(x => x.Trim().ToUpperInvariant()).Where(x => x.Length > 0));
 
     public static bool AnswersMatch(BankQuestionType type, string studentAnswer, string correctAnswer)
     {
@@ -37,6 +44,13 @@ public static class ExamGrading
             return left.Count == right.Count && left.SequenceEqual(right, StringComparer.OrdinalIgnoreCase);
         }
 
+        if (type == BankQuestionType.Order)
+        {
+            var left = ParseOrderedKeys(studentAnswer);
+            var right = ParseOrderedKeys(correctAnswer);
+            return left.Count == right.Count && left.SequenceEqual(right, StringComparer.OrdinalIgnoreCase);
+        }
+
         return string.Equals(studentAnswer.Trim(), correctAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
@@ -45,6 +59,7 @@ public static class ExamGrading
             or BankQuestionType.TrueFalse
             or BankQuestionType.SingleChoice
             or BankQuestionType.MultiChoice
+            or BankQuestionType.Order
             or BankQuestionType.Underline
             or BankQuestionType.ShortAnswer
             or BankQuestionType.FreeText;

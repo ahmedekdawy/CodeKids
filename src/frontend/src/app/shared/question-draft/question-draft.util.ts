@@ -38,11 +38,21 @@ export function isTeacherGradedText(type: string): boolean {
 }
 
 export function needsOptions(type: string): boolean {
-  return type === 'Choose' || type === 'SingleChoice' || type === 'MultiChoice' || type === 'MultipleChoice';
+  return (
+    type === 'Choose' ||
+    type === 'SingleChoice' ||
+    type === 'MultiChoice' ||
+    type === 'MultipleChoice' ||
+    type === 'Order'
+  );
 }
 
 export function isMulti(type: string): boolean {
   return type === 'MultiChoice';
+}
+
+export function isOrder(type: string): boolean {
+  return type === 'Order';
 }
 
 export function optionLabel(index: number): string {
@@ -91,6 +101,7 @@ export function questionTypeLabelKey(type: string): string {
     TrueFalse: 'qtype.trueFalse',
     SingleChoice: 'qtype.singleChoice',
     MultiChoice: 'qtype.multiChoice',
+    Order: 'qtype.order',
     Paragraph: 'qtype.paragraph',
     Underline: 'qtype.underline',
     FreeText: 'qtype.freeText'
@@ -146,6 +157,12 @@ export function applyTypeDefaults(draft: QuestionDraft): void {
     draft.correctKeys = [];
   } else if (needsOptions(draft.questionType)) {
     if (draft.options.length < 2) draft.options = [{ text: '' }, { text: '' }];
+    if (isOrder(draft.questionType)) {
+      draft.correctKeys = [];
+      draft.correctAnswer = filledOptions(draft.options)
+        .map((option) => option.key)
+        .join(',');
+    }
   } else {
     draft.correctKeys = [];
   }
@@ -183,6 +200,9 @@ export function validateQuestionDraft(draft: QuestionDraft, index = 1): string |
     if (filled.length < 2) {
       return 'teacher.qbank.minOptions';
     }
+    if (isOrder(draft.questionType)) {
+      return null;
+    }
     if (isMulti(draft.questionType)) {
       if (!draft.correctKeys.length) return 'teacher.qbank.selectMulti';
     } else if (!draft.correctAnswer) {
@@ -214,6 +234,7 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
   const filled = filledOptions(draft.options);
   let correct = draft.correctAnswer;
   if (isMulti(type)) correct = draft.correctKeys.join(',');
+  if (isOrder(type)) correct = filled.map((option) => option.key).join(',');
   if (isParagraph(type)) correct = '';
   return {
     id: draft.id || undefined,

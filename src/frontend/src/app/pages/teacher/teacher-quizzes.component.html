@@ -170,6 +170,7 @@
                       <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
                     </div>
                     <app-question-image-display [url]="answer.promptImageUrl" />
+                    <app-question-image-display [url]="answer.answerImageUrl" />
                     <dl class="answer-facts">
                       <div>
                         <dt>{{ 'teacher.quizzes.studentAnswer' | t }}</dt>

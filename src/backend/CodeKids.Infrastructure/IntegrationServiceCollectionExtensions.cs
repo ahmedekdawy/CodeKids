@@ -38,7 +38,9 @@ public static class IntegrationServiceCollectionExtensions
         }
 
         services.AddSingleton<IMediaAccessTokenService, MediaAccessTokenService>();
+        services.Configure<BackupOptions>(configuration.GetSection(BackupOptions.SectionName));
         services.AddHostedService<DailyReportHostedService>();
+        services.AddHostedService<DatabaseBackupHostedService>();
         return services;
     }
 

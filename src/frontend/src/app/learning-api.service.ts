@@ -348,7 +348,7 @@ export class LearningApiService {
 
   submitQuiz(payload: {
     quizId: string;
-    answers: { questionId: string; selectedOption: string }[];
+    answers: { questionId: string; selectedOption: string; answerImageMediaAssetId?: string | null }[];
   }): Observable<SubmitQuizResponse> {
     return this.http.post<SubmitQuizResponse>(`${this.baseUrl}/quizzes/submit`, payload);
   }

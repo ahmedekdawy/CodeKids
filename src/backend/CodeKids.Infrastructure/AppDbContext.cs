@@ -325,6 +325,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.QuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.AnswerImage)
+                .WithMany()
+                .HasForeignKey(x => x.AnswerImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Badge>(entity =>

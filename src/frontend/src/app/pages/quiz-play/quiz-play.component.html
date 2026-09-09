@@ -42,9 +42,11 @@
               [question]="question"
               [answers]="answers()"
               [multiAnswers]="multiAnswers()"
-              answerUpload="none"
+              [answerImages]="answerImages()"
+              answerUpload="all"
               (answerChange)="setAnswer($event.questionId, $event.value)"
               (multiToggle)="toggleMulti($event.questionId, $event.key)"
+              (answerImageChange)="setAnswerImage($event.questionId, $event.mediaAssetId, $event.imageUrl)"
             />
           </div>
         }

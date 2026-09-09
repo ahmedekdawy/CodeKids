@@ -58,3 +58,58 @@ label {
   min-height: 5rem;
   resize: vertical;
 }
+
+.order-hint {
+  margin: 0.5rem 0 0.65rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.order-list {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 36rem;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1.25rem 2rem 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--elevated-bg);
+  color: var(--text);
+  cursor: grab;
+}
+
+.order-item:active {
+  cursor: grabbing;
+}
+
+.order-handle {
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.order-index {
+  font-weight: 800;
+  color: var(--accent-fg);
+  text-align: center;
+}
+
+.order-text {
+  margin: 0 !important;
+  font-weight: 600 !important;
+}
+
+.order-move {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.order-move .ghost-btn {
+  min-width: 2rem;
+  padding: 0.25rem 0.4rem;
+}

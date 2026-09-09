@@ -6,6 +6,7 @@ import { Quiz, SubmitQuizResponse } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { QuestionPlayPromptComponent } from '../../shared/question-play-prompt/question-play-prompt.component';
+import { AnswerImageDraft } from '../../shared/question-play-prompt/playable-question';
 import { AttemptGuardComponent } from '../../shared/timed-attempt/attempt-guard.component';
 import { TimedAttemptService } from '../../shared/timed-attempt/timed-attempt.service';
 import { answerableQuestions, flattenQuestions } from '../../shared/question-draft/question-draft.util';
@@ -30,6 +31,7 @@ export class QuizPlayComponent {
   readonly error = signal('');
   readonly answers = signal<Record<string, string>>({});
   readonly multiAnswers = signal<Record<string, Set<string>>>({});
+  readonly answerImages = signal<Record<string, AnswerImageDraft>>({});
 
   /** Questions stay hidden until the student starts, so the clock matches what they can see. */
   readonly started = signal(false);
@@ -46,12 +48,15 @@ export class QuizPlayComponent {
       this.quiz.set(quiz);
       const seed: Record<string, string> = {};
       const multi: Record<string, Set<string>> = {};
+      const images: Record<string, AnswerImageDraft> = {};
       for (const question of flattenQuestions(quiz.questions)) {
         seed[question.id] = '';
         if (question.questionType === 'MultiChoice') multi[question.id] = new Set();
+        images[question.id] = { mediaAssetId: null, imageUrl: null };
       }
       this.answers.set(seed);
       this.multiAnswers.set(multi);
+      this.answerImages.set(images);
     });
   }
 
@@ -81,6 +86,13 @@ export class QuizPlayComponent {
     this.setAnswer(questionId, [...set].sort().join(','));
   }
 
+  setAnswerImage(questionId: string, mediaAssetId: string | null, imageUrl: string | null): void {
+    this.answerImages.update((current) => ({
+      ...current,
+      [questionId]: { mediaAssetId, imageUrl }
+    }));
+  }
+
   submit(): void {
     const quiz = this.quiz();
     if (!quiz || this.loading()) return;
@@ -92,7 +104,8 @@ export class QuizPlayComponent {
       quizId: quiz.id,
       answers: answerableQuestions(quiz.questions).map((question) => ({
         questionId: question.id,
-        selectedOption: this.answers()[question.id] || ''
+        selectedOption: this.answers()[question.id] || '',
+        answerImageMediaAssetId: this.answerImages()[question.id]?.mediaAssetId || null
       }))
     }).subscribe({
       next: (response) => {

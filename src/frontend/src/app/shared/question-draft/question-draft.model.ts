@@ -25,6 +25,7 @@ export const BANK_QUESTION_TYPES: BankQuestionType[] = [
   'TrueFalse',
   'SingleChoice',
   'MultiChoice',
+  'Order',
   'Paragraph',
   'Underline',
   'FreeText',
@@ -36,7 +37,7 @@ export const CHILD_QUESTION_TYPES: AssessmentQuestionType[] = [
   'TrueFalse',
   'SingleChoice',
   'MultiChoice',
+  'Order',
   'FreeText',
   'ShortAnswer'
 ];
-

@@ -47,6 +47,33 @@
         {{ opt.key }}. <span class="prompt-html" [innerHTML]="opt.text | safeHtml"></span>
       </label>
     }
+  } @else if (question.questionType === 'Order') {
+    <p class="order-hint">{{ 'play.orderHint' | t }}</p>
+    <div class="order-list">
+      @for (opt of orderedOptions(question); track opt.key; let i = $index) {
+        <div
+          class="order-item"
+          draggable="true"
+          (dragstart)="onOrderDragStart($event, question.id, i)"
+          (dragover)="onOrderDragOver($event)"
+          (drop)="onOrderDrop($event, question.id, i)"
+          (dragend)="onOrderDragEnd()">
+          <span class="order-handle" aria-hidden="true">⠿</span>
+          <span class="order-index">{{ i + 1 }}</span>
+          <span class="order-text prompt-html" [innerHTML]="opt.text | safeHtml"></span>
+          <div class="order-move">
+            <button type="button" class="ghost-btn" [disabled]="i === 0" (click)="moveOrderItem(question.id, i, -1)">↑</button>
+            <button
+              type="button"
+              class="ghost-btn"
+              [disabled]="i === orderedOptions(question).length - 1"
+              (click)="moveOrderItem(question.id, i, 1)">
+              ↓
+            </button>
+          </div>
+        </div>
+      }
+    </div>
   } @else {
     @for (opt of choiceOptions(question); track opt.key) {
       <label>

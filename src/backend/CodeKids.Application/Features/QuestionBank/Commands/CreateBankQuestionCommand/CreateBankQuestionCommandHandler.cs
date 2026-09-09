@@ -72,11 +72,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             OptionC = legacyC,
             OptionD = legacyD,
             OptionsJson = ChoiceOptions.ToJson(rootOptions),
-            CorrectAnswer = type == BankQuestionType.FreeText
-                ? string.Empty
-                : type == BankQuestionType.MultiChoice
-                    ? string.Join(',', ExamGrading.NormalizeMultiAnswer(command.CorrectAnswer ?? string.Empty))
-                    : (command.CorrectAnswer ?? string.Empty).Trim(),
+            CorrectAnswer = TypedQuestionSupport.NormalizeCorrect(type, command.CorrectAnswer),
             Points = command.Points <= 0 ? 1 : command.Points,
             SortOrder = command.SortOrder <= 0 ? 1 : command.SortOrder,
             PromptImageMediaAssetId = command.PromptImageMediaAssetId,
@@ -125,11 +121,7 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
                     OptionC = cC,
                     OptionD = cD,
                     OptionsJson = ChoiceOptions.ToJson(childOptions),
-                    CorrectAnswer = childType == BankQuestionType.FreeText
-                        ? string.Empty
-                        : childType == BankQuestionType.MultiChoice
-                            ? string.Join(',', ExamGrading.NormalizeMultiAnswer(child.CorrectAnswer))
-                            : child.CorrectAnswer.Trim(),
+                    CorrectAnswer = TypedQuestionSupport.NormalizeCorrect(childType, child.CorrectAnswer),
                     Points = points,
                     SortOrder = child.SortOrder <= 0 ? childOrder : child.SortOrder,
                     PromptImageMediaAssetId = child.PromptImageMediaAssetId,
@@ -155,7 +147,10 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
         string? optionC,
         string? optionD)
     {
-        if (type is not (BankQuestionType.Choose or BankQuestionType.SingleChoice or BankQuestionType.MultiChoice))
+        if (type is not (BankQuestionType.Choose
+            or BankQuestionType.SingleChoice
+            or BankQuestionType.MultiChoice
+            or BankQuestionType.Order))
         {
             return [];
         }
