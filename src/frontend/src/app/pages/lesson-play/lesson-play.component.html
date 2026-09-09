@@ -47,7 +47,7 @@
       @if (selectedStep(); as step) {
         <article class="block">
           <h3>{{ step.title }}</h3>
-          <p>{{ step.prompt }}</p>
+          <div class="prompt-html" [innerHTML]="step.prompt | safeHtml"></div>
           <form [formGroup]="form" (ngSubmit)="submit()">
             <textarea formControlName="answer" rows="6" [placeholder]="'play.answerPlaceholder' | t"></textarea>
             <button type="submit" [disabled]="loading() || form.invalid">{{ 'play.checkAnswer' | t }}</button>

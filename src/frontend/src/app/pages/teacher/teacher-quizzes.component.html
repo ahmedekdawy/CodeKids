@@ -167,7 +167,7 @@
                   <div class="answer-card" [class.correct]="answer.isCorrect" [class.wrong]="!answer.isCorrect">
                     <div class="answer-prompt">
                       <span class="answer-index">{{ answer.sortOrder }}</span>
-                      <strong>{{ answer.prompt }}</strong>
+                      <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
                     </div>
                     <app-question-image-display [url]="answer.promptImageUrl" />
                     <dl class="answer-facts">

@@ -26,7 +26,7 @@
 
       @for (answer of submission.answers; track answer.questionId) {
         <div class="question">
-          <p>{{ answer.prompt }}</p>
+          <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
           <app-question-image-display [url]="answer.promptImageUrl" />
           <p>{{ 'common.answer' | t }}: {{ formatChoice(answer.answerText, answer.options) || ('common.emDash' | t) }}</p>
           <app-question-image-display [url]="answer.answerImageUrl" />
@@ -38,7 +38,7 @@
                   [class.is-key]="isChoiceSelected(answer.correctAnswer, option.key)"
                 >
                   <strong>{{ option.key }}</strong>
-                  <span>{{ option.text }}</span>
+                  <span class="prompt-html" [innerHTML]="option.text | safeHtml"></span>
                 </li>
               }
             </ul>

@@ -3,6 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, TeacherQuizListItem } from '../../models';
@@ -32,6 +33,7 @@ import { paginate, totalPages } from '../../list-query.util';
     ReactiveFormsModule,
     IconActionButtonComponent,
     TranslatePipe,
+    SafeHtmlPipe,
     QuestionDraftEditorComponent,
     QuestionImageDisplayComponent
   ],

@@ -256,7 +256,7 @@
                         [class.is-key]="isChoiceSelected(answer.correctAnswer, option.key)"
                       >
                         <strong>{{ option.key }}</strong>
-                        <span>{{ option.text }}</span>
+                        <span class="prompt-html" [innerHTML]="option.text | safeHtml"></span>
                       </li>
                     }
                   </ul>

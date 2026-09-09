@@ -4,6 +4,7 @@ import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, AssignmentSubmission, ChoiceOption } from '../../models';
 import { choiceKeySelected, formatChoiceAnswer } from '../../shared/question-draft/question-draft.util';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
@@ -18,7 +19,7 @@ interface SubmissionDraft {
 
 @Component({
   selector: 'app-teacher-review',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe, QuestionImageDisplayComponent, QuestionImageUploadComponent],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, SafeHtmlPipe, TranslatePipe, QuestionImageDisplayComponent, QuestionImageUploadComponent],
   templateUrl: './teacher-review.component.html',
   styleUrl: './teacher-panel.css'
 })

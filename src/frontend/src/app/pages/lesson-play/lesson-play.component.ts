@@ -6,12 +6,13 @@ import { LearningApiService } from '../../learning-api.service';
 import { CompleteStepResponse, Lesson, LessonStep, LessonVideoSummary } from '../../models';
 import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
 import { StudentAskPanelComponent } from '../../shared/student-ask-panel/student-ask-panel.component';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 
 @Component({
   selector: 'app-lesson-play',
-  imports: [ReactiveFormsModule, RouterLink, ProtectedVideoPlayerComponent, StudentAskPanelComponent, TranslatePipe, ApiBusyIndicatorComponent],
+  imports: [ReactiveFormsModule, RouterLink, ProtectedVideoPlayerComponent, StudentAskPanelComponent, SafeHtmlPipe, TranslatePipe, ApiBusyIndicatorComponent],
   templateUrl: './lesson-play.component.html',
   styleUrl: './lesson-play.component.css'
 })

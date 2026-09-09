@@ -44,14 +44,14 @@
     @for (opt of choiceOptions(question); track opt.key) {
       <label>
         <input type="checkbox" [checked]="isMultiChecked(question.id, opt.key)" (change)="toggleMulti(question.id, opt.key)" />
-        {{ opt.key }}. {{ opt.text }}
+        {{ opt.key }}. <span class="prompt-html" [innerHTML]="opt.text | safeHtml"></span>
       </label>
     }
   } @else {
     @for (opt of choiceOptions(question); track opt.key) {
       <label>
         <input type="radio" [name]="question.id" [checked]="answers[question.id] === opt.key" (change)="setAnswer(question.id, opt.key)" />
-        {{ opt.key }}. {{ opt.text }}
+        {{ opt.key }}. <span class="prompt-html" [innerHTML]="opt.text | safeHtml"></span>
       </label>
     }
   }
