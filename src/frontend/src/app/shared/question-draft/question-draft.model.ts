@@ -35,7 +35,8 @@ export const BANK_QUESTION_TYPES: BankQuestionType[] = [
   'Paragraph',
   'Underline',
   'FreeText',
-  'ShortAnswer'
+  'ShortAnswer',
+  'Complete'
 ];
 
 export const CHILD_QUESTION_TYPES: AssessmentQuestionType[] = [

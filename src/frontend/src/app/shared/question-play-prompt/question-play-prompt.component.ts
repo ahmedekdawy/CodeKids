@@ -8,6 +8,11 @@ import { TranslatePipe } from '../translate.pipe';
 import { AnswerImageDraft, PlayableQuestion } from './playable-question';
 import { MapQuestionBoardComponent } from '../map-question-board/map-question-board.component';
 import { MapMarkerDraft } from '../question-draft/question-draft.model';
+import {
+  encodeCompleteAnswers,
+  parseCompleteAnswers,
+  parseCompleteParts
+} from '../question-draft/question-draft.util';
 
 @Component({
   selector: 'app-question-play-prompt',
@@ -53,6 +58,37 @@ export class QuestionPlayPromptComponent {
 
   mapMarkers(question: PlayableQuestion): MapMarkerDraft[] {
     return (question.mapMarkers ?? []) as MapMarkerDraft[];
+  }
+
+  completeParts(question: PlayableQuestion) {
+    return parseCompleteParts(question.passageText || '');
+  }
+
+  completeValue(question: PlayableQuestion, index: number): string {
+    return parseCompleteAnswers(this.answers[question.id] || '')[index] || '';
+  }
+
+  blankWidth(expected: string): number {
+    return Math.max(8, (expected || '').length + 2);
+  }
+
+  blankState(question: PlayableQuestion, index: number): 'correct' | 'incorrect' | '' {
+    const part = this.completeParts(question).find((item) => item.kind === 'blank' && item.index === index);
+    const answerExpected = part && part.kind === 'blank' ? part.expected : '';
+    if (!answerExpected) return '';
+    const value = this.completeValue(question, index).trim();
+    if (!value) return '';
+    return value.localeCompare(answerExpected, undefined, { sensitivity: 'accent' }) === 0
+      ? 'correct'
+      : 'incorrect';
+  }
+
+  setCompleteBlank(question: PlayableQuestion, index: number, value: string): void {
+    const parts = this.completeParts(question).filter((part) => part.kind === 'blank');
+    const values = parseCompleteAnswers(this.answers[question.id] || '');
+    while (values.length < parts.length) values.push('');
+    values[index] = value;
+    this.setAnswer(question.id, encodeCompleteAnswers(values.slice(0, parts.length)));
   }
 
   orderedOptions(question: PlayableQuestion): ChoiceOption[] {

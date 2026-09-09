@@ -77,7 +77,7 @@ public static class AssignmentQuestionSync
                 q.Id,
                 q.Prompt,
                 q.QuestionType.ToString(),
-                q.PassageText,
+                CompleteBlanks.PassageForClient(q.QuestionType.ToString(), q.PassageText, includeAnswerKey),
                 q.OptionA,
                 q.OptionB,
                 q.OptionC,
@@ -194,6 +194,8 @@ public static class AssignmentQuestionSync
         entity.OptionsJson = optionsJson;
         entity.CorrectAnswer = TypedQuestionSupport.IsFreeText(type)
             ? string.Empty
+            : type == AssignmentQuestionType.Complete
+                ? CompleteBlanks.Join(CompleteBlanks.Extract(input.PassageText))
             : bankType is BankQuestionType bt
                 ? TypedQuestionSupport.NormalizeCorrect(bt, input.CorrectAnswer)
                 : (input.CorrectAnswer ?? string.Empty).Trim();

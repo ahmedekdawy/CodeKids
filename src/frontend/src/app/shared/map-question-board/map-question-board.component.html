@@ -52,7 +52,10 @@
         (click)="$event.stopPropagation()"
         [attr.aria-label]="answerLabel(marker)">
         @if (marker.kind === 'arrow') {
-          <span class="arrow-icon" aria-hidden="true">➤</span>
+          <svg class="arrow-pointer" viewBox="0 0 12 34" aria-hidden="true">
+            <path class="arrow-shaft" d="M6 1.5 V23.5" />
+            <path class="arrow-head" d="M6 33 L1.25 21.5 H10.75 Z" />
+          </svg>
         } @else {
           {{ numberLabel(marker) }}
         }

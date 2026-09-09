@@ -14,7 +14,9 @@ public enum BankQuestionType
     /// <summary>Student reorders shuffled items to match the teacher’s correct sequence.</summary>
     Order = 8,
     /// <summary>Map image with numbered/arrow markers; student fills an answer per marker.</summary>
-    Map = 9
+    Map = 9,
+    /// <summary>Sentence with answers wrapped in ##answer##; students type into each blank.</summary>
+    Complete = 10
 }
 
 public enum ExamAttemptStatus

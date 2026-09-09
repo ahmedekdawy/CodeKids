@@ -8,7 +8,7 @@ namespace CodeKids.Application.Features.QuestionBank;
 public static class TypedQuestionSupport
 {
     public const string AssignmentTypeError =
-        "Question type must be ShortAnswer, MultipleChoice, Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, Order, or Map.";
+        "Question type must be ShortAnswer, MultipleChoice, Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, Order, Map, or Complete.";
 
     public static AssignmentQuestionType ParseAssignmentType(string? value)
     {
@@ -52,6 +52,7 @@ public static class TypedQuestionSupport
         AssignmentQuestionType.ShortAnswer => BankQuestionType.ShortAnswer,
         AssignmentQuestionType.Order => BankQuestionType.Order,
         AssignmentQuestionType.Map => BankQuestionType.Map,
+        AssignmentQuestionType.Complete => BankQuestionType.Complete,
         _ => throw new InvalidOperationException(AssignmentTypeError)
     };
 
@@ -82,6 +83,7 @@ public static class TypedQuestionSupport
             BankQuestionType.MultiChoice => string.Join(',', ExamGrading.NormalizeMultiAnswer(correct ?? string.Empty)),
             BankQuestionType.Order => ExamGrading.JoinOrderedKeys(ExamGrading.ParseOrderedKeys(correct ?? string.Empty)),
             BankQuestionType.Map => MapMarkers.JoinAnswers(MapMarkers.ParseAnswers(correct)),
+            BankQuestionType.Complete => CompleteBlanks.Join(CompleteBlanks.Parse(correct)),
             _ => (correct ?? string.Empty).Trim()
         };
 
@@ -225,7 +227,9 @@ public static class TypedQuestionSupport
                 }
 
                 var childType = BankQuestionValidator.ParseType(child.QuestionType);
-                if (BankQuestionValidator.IsComposite(childType) || childType == BankQuestionType.Underline)
+                if (BankQuestionValidator.IsComposite(childType)
+                    || childType == BankQuestionType.Underline
+                    || childType == BankQuestionType.Complete)
                 {
                     throw new InvalidOperationException("Child questions cannot be Paragraph or Underline.");
                 }

@@ -55,12 +55,17 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                     ? (a.Question?.CorrectOption ?? string.Empty)
                     : a.Question!.CorrectAnswer;
                 var isMap = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Map;
+                var isComplete = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Complete;
                 var preserveOrder = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Order;
                 var selectedText = isMap
                     ? FormatMapAnswers(selected)
+                    : isComplete
+                        ? CompleteBlanks.Format(selected)
                     : ChoiceOptions.FormatAnswer(options, selected, preserveOrder);
                 var correctText = isMap
                     ? FormatMapAnswers(correct)
+                    : isComplete
+                        ? CompleteBlanks.Format(correct)
                     : ChoiceOptions.FormatAnswer(options, correct, preserveOrder);
                 return new QuizAnswerReviewDto(
                     a.QuestionId,

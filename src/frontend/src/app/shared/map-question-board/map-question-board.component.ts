@@ -201,7 +201,7 @@ export class MapQuestionBoardComponent implements OnChanges {
     if (marker.kind === 'arrow') {
       const arrows = this.localMarkers().filter((m) => m.kind === 'arrow');
       const index = arrows.findIndex((m) => m.id === marker.id) + 1;
-      return `➤${index}`;
+      return `↓${index}`;
     }
     return this.numberLabel(marker);
   }

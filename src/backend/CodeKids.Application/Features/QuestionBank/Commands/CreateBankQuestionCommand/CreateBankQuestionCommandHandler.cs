@@ -91,7 +91,9 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             OptionC = legacyC,
             OptionD = legacyD,
             OptionsJson = optionsJson,
-            CorrectAnswer = TypedQuestionSupport.NormalizeCorrect(type, command.CorrectAnswer),
+            CorrectAnswer = type == BankQuestionType.Complete
+                ? CompleteBlanks.Join(CompleteBlanks.Extract(command.PassageText))
+                : TypedQuestionSupport.NormalizeCorrect(type, command.CorrectAnswer),
             Points = command.Points <= 0 ? 1 : command.Points,
             SortOrder = command.SortOrder <= 0 ? 1 : command.SortOrder,
             PromptImageMediaAssetId = command.PromptImageMediaAssetId,
@@ -105,7 +107,9 @@ public sealed class CreateBankQuestionCommandHandler(IAppDbContext dbContext)
             foreach (var child in command.Children!)
             {
                 var childType = BankQuestionValidator.ParseType(child.QuestionType);
-                if (BankQuestionValidator.IsComposite(childType) || childType == BankQuestionType.Underline)
+                if (BankQuestionValidator.IsComposite(childType)
+                    || childType == BankQuestionType.Underline
+                    || childType == BankQuestionType.Complete)
                 {
                     throw new InvalidOperationException("Child questions cannot be Paragraph or Underline.");
                 }

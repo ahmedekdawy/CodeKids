@@ -30,7 +30,7 @@ public static class BankQuestionValidator
         if (!Enum.TryParse<BankQuestionType>(value, true, out var type) || !Enum.IsDefined(type))
         {
             throw new InvalidOperationException(
-                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, ShortAnswer, Order, or Map.");
+                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, ShortAnswer, Order, Map, or Complete.");
         }
 
         return type;
@@ -73,6 +73,22 @@ public static class BankQuestionValidator
             if (string.IsNullOrWhiteSpace(correctAnswer))
             {
                 throw new InvalidOperationException("Underline questions require the correct underlined phrase.");
+            }
+
+            return;
+        }
+
+        if (type == BankQuestionType.Complete)
+        {
+            if (string.IsNullOrWhiteSpace(passageText))
+            {
+                throw new InvalidOperationException("Complete questions require the sentence with answers between ##.");
+            }
+
+            var blanks = CompleteBlanks.Extract(passageText);
+            if (blanks.Count == 0)
+            {
+                throw new InvalidOperationException("Complete questions require at least one answer wrapped in ##.");
             }
 
             return;

@@ -102,7 +102,7 @@ public static class QuizQuestionSync
             q.Id,
             q.Prompt,
             q.QuestionType.ToString(),
-            q.PassageText,
+            CompleteBlanks.PassageForClient(q.QuestionType.ToString(), q.PassageText, includeAnswerKey: false),
             q.OptionA,
             q.OptionB,
             q.OptionC,
@@ -221,7 +221,9 @@ public static class QuizQuestionSync
         }
 
         var (legacyA, legacyB, legacyC, _) = ChoiceOptions.ToLegacy(options);
-        var normalized = TypedQuestionSupport.NormalizeCorrect(type, correct);
+        var normalized = type == BankQuestionType.Complete
+            ? CompleteBlanks.Join(CompleteBlanks.Extract(input.PassageText))
+            : TypedQuestionSupport.NormalizeCorrect(type, correct);
 
         entity.ParentQuestionId = parentId;
         entity.QuestionType = type;
@@ -234,6 +236,8 @@ public static class QuizQuestionSync
         entity.CorrectAnswer = normalized;
         entity.CorrectOption = type == BankQuestionType.Map
             ? "MAP"
+            : type == BankQuestionType.Complete
+                ? "COMPLETE"
             : string.IsNullOrWhiteSpace(normalized) ? "A" : normalized;
         entity.Points = input.Points <= 0 ? 1 : input.Points;
         entity.SortOrder = input.SortOrder <= 0 ? sortOrder : input.SortOrder;

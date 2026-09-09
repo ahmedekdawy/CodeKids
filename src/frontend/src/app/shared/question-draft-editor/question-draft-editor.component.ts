@@ -16,6 +16,7 @@ import {
   filledOptions,
   isFreeText,
   isMap,
+  isComplete,
   isMulti,
   isOrder,
   isParagraph,
@@ -99,6 +100,10 @@ export class QuestionDraftEditorComponent {
 
   isMap(type: string = this.draft.questionType): boolean {
     return isMap(type);
+  }
+
+  isComplete(type: string = this.draft.questionType): boolean {
+    return isComplete(type);
   }
 
   optionLabel(index: number): string {

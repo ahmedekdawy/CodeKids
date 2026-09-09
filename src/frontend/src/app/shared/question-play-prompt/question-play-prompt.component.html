@@ -3,7 +3,7 @@
   @if (question.questionType !== 'Map') {
     <app-question-image-display [url]="question.promptImageUrl" />
   }
-  @if (question.passageText) {
+  @if (question.passageText && question.questionType !== 'Complete') {
     <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
   }
 
@@ -39,6 +39,25 @@
         [placeholder]="'play.underlinePlaceholder' | t"
       />
     </label>
+  } @else if (question.questionType === 'Complete') {
+    <p class="passage complete-line">
+      @for (part of completeParts(question); track $index) {
+        @if (part.kind === 'text') {
+          <span>{{ part.text }}</span>
+        } @else {
+          <input
+            type="text"
+            class="complete-blank"
+            [class.correct]="blankState(question, part.index) === 'correct'"
+            [class.incorrect]="blankState(question, part.index) === 'incorrect'"
+            [value]="completeValue(question, part.index)"
+            [attr.aria-label]="'play.completeBlank' | t"
+            [style.width.ch]="blankWidth(part.expected)"
+            (input)="setCompleteBlank(question, part.index, $any($event.target).value)"
+          />
+        }
+      }
+    </p>
   } @else if (question.questionType === 'TrueFalse') {
     <label><input type="radio" [name]="question.id" [checked]="answers[question.id] === 'True'" (change)="setAnswer(question.id, 'True')" /> {{ 'common.true' | t }}</label>
     <label><input type="radio" [name]="question.id" [checked]="answers[question.id] === 'False'" (change)="setAnswer(question.id, 'False')" /> {{ 'common.false' | t }}</label>

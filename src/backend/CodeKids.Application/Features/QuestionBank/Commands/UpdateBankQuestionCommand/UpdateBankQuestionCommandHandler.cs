@@ -84,7 +84,9 @@ public sealed class UpdateBankQuestionCommandHandler(IAppDbContext dbContext)
 
         question.CorrectAnswer = BankQuestionValidator.IsComposite(question.QuestionType)
             ? string.Empty
-            : TypedQuestionSupport.NormalizeCorrect(question.QuestionType, command.CorrectAnswer);
+            : question.QuestionType == BankQuestionType.Complete
+                ? CompleteBlanks.Join(CompleteBlanks.Extract(command.PassageText))
+                : TypedQuestionSupport.NormalizeCorrect(question.QuestionType, command.CorrectAnswer);
         if (!BankQuestionValidator.IsComposite(question.QuestionType))
         {
             question.Points = command.Points <= 0 ? 1 : command.Points;

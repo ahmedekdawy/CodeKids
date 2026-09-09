@@ -1162,7 +1162,8 @@ export type BankQuestionType =
   | 'FreeText'
   | 'ShortAnswer'
   | 'Order'
-  | 'Map';
+  | 'Map'
+  | 'Complete';
 
 export interface MapMarker {
   id: string;

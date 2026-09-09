@@ -175,6 +175,17 @@
       <span>{{ 'teacher.qbank.underlinePhrase' | t }}</span>
       <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" [placeholder]="'teacher.qbank.underlinePlaceholder' | t" />
     </label>
+  } @else if (isComplete()) {
+    <p class="meta">{{ 'teacher.qbank.completeHint' | t }}</p>
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.completeText' | t }}</span>
+      <textarea
+        [(ngModel)]="draft.passageText"
+        [name]="namePrefix + '-passage'"
+        rows="4"
+        [placeholder]="'teacher.qbank.completePlaceholder' | t"
+      ></textarea>
+    </label>
   } @else if (draft.questionType === 'TrueFalse') {
     <label class="qb-field">
       <span>{{ 'common.correctAnswer' | t }}</span>

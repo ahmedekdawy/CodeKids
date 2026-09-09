@@ -17,6 +17,30 @@ label {
   border-left-color: var(--accent-hot);
 }
 
+.complete-line {
+  display: block;
+  line-height: 2.1;
+}
+
+.question-play input.complete-blank {
+  display: inline-block;
+  width: auto;
+  min-width: 6rem;
+  max-width: 100%;
+  margin: 0 0.2rem;
+  padding: 0.25rem 0.45rem;
+  vertical-align: baseline;
+}
+
+.question-play input.complete-blank.correct {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 12%, var(--input-bg));
+}
+
+.question-play input.complete-blank.incorrect {
+  border-color: var(--accent-hot);
+}
+
 .child-question {
   margin: 0.75rem 0 0.75rem 1rem;
   padding-left: 0.75rem;

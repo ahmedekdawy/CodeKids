@@ -56,6 +56,11 @@ public static class ExamGrading
             return MapMarkers.AnswersMatch(studentAnswer, correctAnswer);
         }
 
+        if (type == BankQuestionType.Complete)
+        {
+            return CompleteBlanks.AnswersMatch(studentAnswer, correctAnswer);
+        }
+
         return string.Equals(studentAnswer.Trim(), correctAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
@@ -67,6 +72,7 @@ public static class ExamGrading
             or BankQuestionType.Order
             or BankQuestionType.Map
             or BankQuestionType.Underline
+            or BankQuestionType.Complete
             or BankQuestionType.ShortAnswer
             or BankQuestionType.FreeText;
 }

@@ -181,7 +181,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             q.ParentExamQuestionId,
             q.QuestionType.ToString(),
             q.Prompt,
-            q.PassageText,
+            CompleteBlanks.PassageForClient(q.QuestionType.ToString(), q.PassageText, includeAnswerKey),
             q.OptionA,
             q.OptionB,
             q.OptionC,

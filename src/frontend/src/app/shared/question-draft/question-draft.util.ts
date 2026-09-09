@@ -60,6 +60,59 @@ export function isMap(type: string): boolean {
   return type === 'Map';
 }
 
+export function isComplete(type: string): boolean {
+  return type === 'Complete';
+}
+
+export type CompletePart =
+  | { kind: 'text'; text: string }
+  | { kind: 'blank'; index: number; expected: string };
+
+export function parseCompleteParts(text: string | null | undefined): CompletePart[] {
+  const source = text || '';
+  const parts: CompletePart[] = [];
+  const re = /\{\{blank\}\}|##([\s\S]*?)##/g;
+  let last = 0;
+  let index = 0;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(source))) {
+    if (match.index > last) {
+      parts.push({ kind: 'text', text: source.slice(last, match.index) });
+    }
+    parts.push({ kind: 'blank', index, expected: (match[1] || '').trim() });
+    index += 1;
+    last = match.index + match[0].length;
+  }
+  if (last < source.length || parts.length === 0) {
+    if (last < source.length) parts.push({ kind: 'text', text: source.slice(last) });
+  }
+  return parts;
+}
+
+export function extractCompleteAnswers(text: string | null | undefined): string[] {
+  return parseCompleteParts(text)
+    .filter((part): part is Extract<CompletePart, { kind: 'blank' }> => part.kind === 'blank')
+    .map((part) => part.expected)
+    .filter((value) => value.length > 0);
+}
+
+export function encodeCompleteAnswers(values: string[]): string {
+  return JSON.stringify(values.map((value) => (value || '').trim()));
+}
+
+export function parseCompleteAnswers(value: string | null | undefined): string[] {
+  if (!value?.trim()) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (Array.isArray(parsed)) {
+      return parsed.map((item) => String(item ?? '').trim());
+    }
+  } catch {
+    return extractCompleteAnswers(value);
+  }
+  return extractCompleteAnswers(value);
+}
+
 export function encodeMapAnswers(markers: { id: string; correctAnswer?: string }[]): string {
   const answers: Record<string, string> = {};
   for (const marker of markers) {
@@ -100,6 +153,10 @@ export function formatChoiceAnswer(
 ): string {
   const raw = (value || '').trim();
   if (!raw) return '';
+  if (raw.startsWith('[')) {
+    const complete = parseCompleteAnswers(raw);
+    if (complete.length) return complete.join(', ');
+  }
   if (raw.startsWith('{')) {
     const mapFormatted = formatMapAnswer(raw);
     if (mapFormatted) return mapFormatted;
@@ -143,6 +200,7 @@ export function questionTypeLabelKey(type: string): string {
     Map: 'qtype.map',
     Paragraph: 'qtype.paragraph',
     Underline: 'qtype.underline',
+    Complete: 'qtype.complete',
     FreeText: 'qtype.freeText'
   };
   return map[type] ?? type;
@@ -207,6 +265,10 @@ export function applyTypeDefaults(draft: QuestionDraft): void {
     draft.correctKeys = [];
     if (!draft.mapMarkers) draft.mapMarkers = [];
     draft.correctAnswer = encodeMapAnswers(draft.mapMarkers);
+  } else if (isComplete(draft.questionType)) {
+    draft.options = [];
+    draft.correctKeys = [];
+    draft.correctAnswer = encodeCompleteAnswers(extractCompleteAnswers(draft.passageText));
   } else {
     draft.correctKeys = [];
   }
@@ -233,6 +295,12 @@ export function validateQuestionDraft(draft: QuestionDraft, index = 1): string |
   if (draft.questionType === 'Underline') {
     if (!(draft.passageText || '').trim() || !(draft.correctAnswer || '').trim()) {
       return 'teacher.qbank.underlinePhrase';
+    }
+    return null;
+  }
+  if (isComplete(draft.questionType)) {
+    if (!(draft.passageText || '').trim() || extractCompleteAnswers(draft.passageText).length === 0) {
+      return 'teacher.qbank.completeBlanksRequired';
     }
     return null;
   }
@@ -289,6 +357,7 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
   if (isMulti(type)) correct = draft.correctKeys.join(',');
   if (isOrder(type)) correct = filled.map((option) => option.key).join(',');
   if (isMap(type)) correct = encodeMapAnswers(draft.mapMarkers || []);
+  if (isComplete(type)) correct = encodeCompleteAnswers(extractCompleteAnswers(draft.passageText));
   if (isParagraph(type)) correct = '';
   return {
     id: draft.id || undefined,
