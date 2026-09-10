@@ -39,11 +39,24 @@
       </button>
     </div>
 
-    <div class="timetable-wrap" dir="rtl" #timetableWrap>
+    <div class="timetable-wrap timetable-board" dir="rtl" #timetableWrap>
+      <div class="timetable-deco timetable-deco-tl" aria-hidden="true">📚</div>
+      <div class="timetable-deco timetable-deco-tr" aria-hidden="true">🌍</div>
+      <div class="timetable-deco timetable-deco-bl" aria-hidden="true">✏️</div>
+      <div class="timetable-deco timetable-deco-br" aria-hidden="true">🎓</div>
+
+      <header class="timetable-banner">
+        <span class="timetable-banner-crown" aria-hidden="true">👑</span>
+        <h3 class="timetable-banner-title">{{ 'admin.timetable.boardTitle' | t }}</h3>
+      </header>
+
       <table class="timetable">
         <thead>
           <tr>
-            <th class="timetable-day-col" rowspan="2">{{ 'admin.timetable.day' | t }}</th>
+            <th class="timetable-day-col" rowspan="2">
+              <span class="timetable-day-col-icon" aria-hidden="true">📅</span>
+              {{ 'admin.timetable.day' | t }}
+            </th>
             @if (amSlots().length) {
               <th class="timetable-shift" [attr.colspan]="amSlots().length">{{ shiftLabel('am') }}</th>
             }
@@ -54,8 +67,11 @@
           <tr>
             @for (slot of sessionSlots(); track slot.key) {
               <th class="timetable-period">
-                <div class="timetable-session-id">{{ slot.sessionNumber }}</div>
-                <div class="timetable-session-time">{{ slot.timeLabel }}</div>
+                <div class="timetable-session-id">{{ sessionOrdinal(slot.sessionNumber) }}</div>
+                <div class="timetable-session-time">
+                  <span class="timetable-clock" aria-hidden="true">🕒</span>
+                  {{ slot.timeLabel }}
+                </div>
               </th>
             }
           </tr>
@@ -63,11 +79,28 @@
         <tbody>
           @for (day of timetableDays(); track day.dayOfWeek) {
             <tr>
-              <th class="timetable-day">{{ day.label }}</th>
+              <th class="timetable-day">
+                <span class="timetable-day-icon" aria-hidden="true">{{ dayIcon(day.dayOfWeek) }}</span>
+                <span>{{ day.label }}</span>
+              </th>
               @for (slot of sessionSlots(); track slot.key) {
-                <td class="timetable-cell" [class.pm]="slot.period === 'pm'">
+                <td
+                  class="timetable-cell"
+                  [class.pm]="slot.period === 'pm'"
+                  [class.empty]="!day.cells[slot.key].length"
+                >
+                  @if (!day.cells[slot.key].length) {
+                    <span class="timetable-empty">—</span>
+                  }
                   @for (cell of day.cells[slot.key]; track cell.entry.id) {
-                    <div class="timetable-entry" [title]="cell.entry.label">
+                    <div
+                      class="timetable-entry"
+                      [attr.data-tone]="subjectTone(cell.entry.courseName)"
+                      [title]="cell.entry.label"
+                    >
+                      <span class="timetable-subject-icon" aria-hidden="true">{{
+                        subjectIcon(cell.entry.courseName)
+                      }}</span>
                       <div class="timetable-course">{{ cell.courseLine }}</div>
                     </div>
                   }
@@ -77,6 +110,12 @@
           }
         </tbody>
       </table>
+
+      <footer class="timetable-motto">
+        <span aria-hidden="true">💖</span>
+        <span>{{ 'admin.timetable.motto' | t }}</span>
+        <span aria-hidden="true">⭐</span>
+      </footer>
     </div>
     <p class="meta">{{ 'teacher.timetable.hint' | t }}</p>
   </section>

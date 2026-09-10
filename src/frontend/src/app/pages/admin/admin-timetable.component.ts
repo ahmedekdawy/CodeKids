@@ -28,6 +28,12 @@ import {
   sessionNumbers,
   visibleSessionSlots
 } from '../../fixed-timetable.util';
+import {
+  timetableDayIcon,
+  timetableSessionOrdinalKey,
+  timetableSubjectIcon,
+  timetableSubjectTone
+} from '../../timetable-theme.util';
 
 type TimetableCell = {
   entry: FixedTimetableEntry;
@@ -313,6 +319,26 @@ export class AdminTimetableComponent {
 
   shiftLabel(shift: 'am' | 'pm'): string {
     return this.locale.t(shift === 'am' ? 'admin.timetable.am' : 'admin.timetable.pm');
+  }
+
+  sessionOrdinal(sessionNumber: number): string {
+    const key = timetableSessionOrdinalKey(sessionNumber);
+    const label = this.locale.t(key);
+    return label === key
+      ? `${this.locale.t('admin.timetable.session')} ${sessionNumber}`
+      : label;
+  }
+
+  dayIcon(dayOfWeek: number): string {
+    return timetableDayIcon(dayOfWeek);
+  }
+
+  subjectIcon(courseName: string | null | undefined): string {
+    return timetableSubjectIcon(courseName);
+  }
+
+  subjectTone(courseName: string | null | undefined): number {
+    return timetableSubjectTone(courseName);
   }
 
   cellKey(dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): string {

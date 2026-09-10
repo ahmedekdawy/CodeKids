@@ -2,7 +2,7 @@ import html2canvas from 'html2canvas';
 
 function defaultExportBackground(element: HTMLElement): string {
   if (element.classList.contains('timetable-wrap')) {
-    return '#ffffff';
+    return '#fffdf7';
   }
   return document.documentElement.dataset['theme'] === 'light' ? '#f6f8fb' : '#0a182a';
 }
@@ -13,81 +13,99 @@ function inlineTimetableExportStyles(root: HTMLElement): void {
     : root.querySelector<HTMLElement>('.timetable-wrap');
   if (!wrap) return;
 
-  wrap.style.background = '#ffffff';
-  wrap.style.color = '#0f172a';
+  wrap.style.background =
+    'radial-gradient(circle at 8% 12%, rgba(255, 214, 120, 0.35), transparent 22%), radial-gradient(circle at 92% 10%, rgba(168, 216, 255, 0.28), transparent 24%), linear-gradient(180deg, #fff8e8 0%, #fffdf7 48%, #f7fbff 100%)';
+  wrap.style.color = '#1f2a44';
   wrap.style.overflow = 'visible';
   wrap.style.maxHeight = 'none';
   wrap.style.height = 'auto';
-  wrap.style.borderColor = '#334155';
+  wrap.style.borderColor = '#e8c46a';
+  wrap.style.borderWidth = '3px';
+  wrap.style.borderStyle = 'solid';
+  wrap.style.borderRadius = '28px';
+  wrap.style.padding = '1.1rem 1rem 1.25rem';
 
   const table = wrap.querySelector<HTMLElement>('.timetable');
   if (table) {
-    table.style.fontFamily = "'Cairo', 'Space Grotesk', 'Segoe UI', Tahoma, sans-serif";
-    table.style.color = '#0f172a';
+    table.style.fontFamily = "'Cairo', 'Baloo 2', 'Segoe UI', Tahoma, sans-serif";
+    table.style.color = '#1f2a44';
+    table.style.borderSpacing = '0.45rem';
   }
 
   wrap.querySelectorAll<HTMLElement>('.timetable thead th').forEach((el) => {
-    el.style.background = '#f1f5f9';
-    el.style.color = '#0f172a';
+    el.style.background = 'linear-gradient(180deg, #ffe9a8, #f0c75a)';
+    el.style.color = '#1d3a75';
     el.style.position = 'static';
-    el.style.borderColor = '#334155';
+    el.style.border = '2px solid #e0b13a';
+    el.style.borderRadius = '16px';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-day-col, .timetable-day').forEach((el) => {
-    el.style.background = '#e2e8f0';
-    el.style.color = '#0f172a';
+    el.style.background = 'linear-gradient(180deg, #ffe082, #ffd54f)';
+    el.style.color = '#1d3a75';
     el.style.position = 'static';
-    el.style.borderColor = '#334155';
+    el.style.border = '2px solid #e0b13a';
+    el.style.borderRadius = '18px';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-shift:not(.pm)').forEach((el) => {
-    el.style.background = '#fef9c3';
-    el.style.color = '#0f172a';
+    el.style.background = 'linear-gradient(180deg, #fff3c4, #f5d36a)';
+    el.style.color = '#1d3a75';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-shift.pm').forEach((el) => {
-    el.style.background = '#ecfdf5';
-    el.style.color = '#0f172a';
+    el.style.background = 'linear-gradient(180deg, #d8f5e8, #9ed9bf)';
+    el.style.color = '#14553a';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-session-id').forEach((el) => {
-    el.style.color = '#0f172a';
+    el.style.color = '#1d3a75';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-session-time').forEach((el) => {
-    el.style.color = '#1e293b';
+    el.style.color = '#4a3b12';
   });
 
-  wrap.querySelectorAll<HTMLElement>('.timetable-cell:not(.pm)').forEach((el) => {
-    el.style.background = '#ffffff';
-    el.style.borderColor = '#334155';
+  wrap.querySelectorAll<HTMLElement>('.timetable-cell').forEach((el) => {
+    el.style.background = 'rgba(255, 255, 255, 0.55)';
+    el.style.border = '2px dashed rgba(180, 150, 90, 0.35)';
+    el.style.borderRadius = '18px';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-cell.pm').forEach((el) => {
-    el.style.background = '#f8fafc';
-    el.style.borderColor = '#334155';
+    el.style.background = 'rgba(232, 255, 246, 0.55)';
   });
 
+  const toneColors: Record<string, { bg: string; border: string }> = {
+    '0': { bg: '#ffe0e8', border: '#f5a3b8' },
+    '1': { bg: '#e8d8ff', border: '#c4a6f5' },
+    '2': { bg: '#d8ecff', border: '#9ec4f0' },
+    '3': { bg: '#fff0b8', border: '#e6c85a' },
+    '4': { bg: '#d8f5e8', border: '#8fd0b0' },
+    '5': { bg: '#ffe6cc', border: '#f0b878' },
+    '6': { bg: '#e0f0ff', border: '#9ebfe8' },
+    '7': { bg: '#f3e0ff', border: '#d0a8ef' }
+  };
+
   wrap.querySelectorAll<HTMLElement>('.timetable-entry').forEach((el) => {
-    el.style.background = '#ffffff';
-    el.style.color = '#0f172a';
-    el.style.borderColor = '#64748b';
+    const tone = el.getAttribute('data-tone') ?? '0';
+    const colors = toneColors[tone] ?? toneColors['0'];
+    el.style.background = colors.bg;
+    el.style.color = '#1f2a44';
+    el.style.border = `2px solid ${colors.border}`;
+    el.style.borderRadius = '16px';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-course').forEach((el) => {
-    el.style.color = '#0f172a';
+    el.style.color = '#1f2a44';
   });
 
   wrap.querySelectorAll<HTMLElement>('.timetable-teacher').forEach((el) => {
-    el.style.color = '#475569';
+    el.style.color = '#4b5568';
   });
 
   wrap.querySelectorAll<HTMLElement>('.row-actions').forEach((el) => {
     el.style.display = 'none';
-  });
-
-  wrap.querySelectorAll<HTMLElement>('th, td').forEach((el) => {
-    el.style.borderColor = '#334155';
   });
 }
 
