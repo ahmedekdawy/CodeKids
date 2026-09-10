@@ -7,7 +7,13 @@ public static class CompleteBlanks
 {
     public const string StudentPlaceholder = "{{blank}}";
 
-    private static readonly Regex BlankPattern = new(@"##(.*?)##", RegexOptions.Singleline | RegexOptions.Compiled);
+    /// <summary>
+    /// Blank answers are wrapped in a single # (e.g. #Cairo#).
+    /// Legacy ##Cairo## is still accepted.
+    /// </summary>
+    private static readonly Regex BlankPattern = new(
+        @"#+([^#]+)#+",
+        RegexOptions.Singleline | RegexOptions.Compiled);
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {

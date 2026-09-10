@@ -15,6 +15,13 @@
     </label>
   </div>
 
+  @if (typePatternSampleKey(); as sampleKey) {
+    <p class="pattern-sample">
+      <span class="pattern-sample-label">{{ 'teacher.qbank.patternSample' | t }}</span>
+      <code>{{ sampleKey | t }}</code>
+    </p>
+  }
+
   <div class="qb-field">
     <span>{{ 'teacher.qbank.prompt' | t }}</span>
     <app-math-prompt-editor [(ngModel)]="draft.prompt" [name]="namePrefix + '-prompt'"></app-math-prompt-editor>
@@ -64,6 +71,12 @@
               <input type="number" [(ngModel)]="child.points" [name]="namePrefix + '-cPts-' + i" min="1" />
             </label>
           </div>
+          @if (typePatternSampleKey(child.questionType); as childSampleKey) {
+            <p class="pattern-sample">
+              <span class="pattern-sample-label">{{ 'teacher.qbank.patternSample' | t }}</span>
+              <code>{{ childSampleKey | t }}</code>
+            </p>
+          }
           <app-question-image-upload
             [mediaAssetId]="child.promptImageMediaAssetId ?? null"
             [imageUrl]="child.promptImageUrl ?? null"
@@ -111,18 +124,26 @@
                   class="option-row"
                   [class.order-row]="isOrder(child.questionType)"
                   [class.dragging]="dragIndex === oi && dragScope === 'c' + i"
-                  [attr.draggable]="isOrder(child.questionType)"
-                  (dragstart)="onDragStart($event, oi, 'c' + i)"
                   (dragover)="onDragOver($event)"
                   (drop)="onChildDrop($event, child, oi)"
                   (dragend)="onDragEnd()">
                   @if (isOrder(child.questionType)) {
-                    <span class="order-handle" aria-hidden="true">⠿</span>
+                    <span
+                      class="order-handle"
+                      draggable="true"
+                      aria-hidden="true"
+                      (dragstart)="onDragStart($event, oi, 'c' + i)"
+                      (dragend)="onDragEnd()">⠿</span>
                     <span class="option-key">{{ oi + 1 }}</span>
                   } @else {
                     <span class="option-key">{{ optionLabel(oi) }}</span>
                   }
-                  <input [(ngModel)]="opt.text" [name]="namePrefix + '-cOpt-' + i + '-' + oi" [placeholder]="'common.optionText' | t" />
+                  <app-math-prompt-editor
+                    compact
+                    [(ngModel)]="opt.text"
+                    [name]="namePrefix + '-cOpt-' + i + '-' + oi"
+                    placeholderKey="common.optionText"
+                  />
                   <app-icon-action-button
                     kind="delete"
                     variant="ghost"
@@ -140,7 +161,7 @@
                 @for (opt of filled(child.options); track opt.key) {
                   <label class="checkbox">
                     <input type="checkbox" [checked]="child.correctKeys.includes(opt.key)" (change)="toggleChildCorrectKey(child, opt.key)" />
-                    {{ opt.key }} — {{ opt.text }}
+                    {{ opt.key }} — {{ plain(opt.text) }}
                   </label>
                 }
               </div>
@@ -151,7 +172,7 @@
                   [(ngModel)]="child.correctAnswer"
                   [name]="namePrefix + '-cCorrect-' + i"
                   [emptyLabel]="'common.selectCorrect' | t"
-                  [options]="filled(child.options).map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+                  [options]="filled(child.options).map(o => ({ value: o.key, label: o.key + ' — ' + plain(o.text) }))"
                 />
               </label>
             }
@@ -176,7 +197,6 @@
       <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" [placeholder]="'teacher.qbank.underlinePlaceholder' | t" />
     </label>
   } @else if (isComplete()) {
-    <p class="meta">{{ 'teacher.qbank.completeHint' | t }}</p>
     <label class="qb-field">
       <span>{{ 'teacher.qbank.completeText' | t }}</span>
       <textarea
@@ -233,21 +253,25 @@
           class="option-row"
           [class.order-row]="isOrder()"
           [class.dragging]="dragIndex === oi && dragScope === 'root'"
-          [attr.draggable]="isOrder()"
-          (dragstart)="onDragStart($event, oi, 'root')"
           (dragover)="onDragOver($event)"
           (drop)="onRootDrop($event, oi)"
           (dragend)="onDragEnd()">
           @if (isOrder()) {
-            <span class="order-handle" aria-hidden="true">⠿</span>
+            <span
+              class="order-handle"
+              draggable="true"
+              aria-hidden="true"
+              (dragstart)="onDragStart($event, oi, 'root')"
+              (dragend)="onDragEnd()">⠿</span>
             <span class="option-key">{{ oi + 1 }}</span>
           } @else {
             <span class="option-key">{{ optionLabel(oi) }}</span>
           }
-          <input
+          <app-math-prompt-editor
+            compact
             [(ngModel)]="opt.text"
             [name]="namePrefix + '-opt-' + oi"
-            [placeholder]="'common.optionText' | t"
+            placeholderKey="common.optionText"
             (ngModelChange)="syncCorrect()"
           />
           <app-icon-action-button
@@ -267,7 +291,7 @@
         @for (opt of filled(); track opt.key) {
           <label class="checkbox">
             <input type="checkbox" [checked]="draft.correctKeys.includes(opt.key)" (change)="toggleCorrectKey(opt.key)" />
-            {{ opt.key }} — {{ opt.text }}
+            {{ opt.key }} — {{ plain(opt.text) }}
           </label>
         }
       </div>
@@ -278,7 +302,7 @@
           [(ngModel)]="draft.correctAnswer"
           [name]="namePrefix + '-correct'"
           [emptyLabel]="'common.selectCorrect' | t"
-          [options]="filled().map(o => ({ value: o.key, label: o.key + ' — ' + o.text }))"
+          [options]="filled().map(o => ({ value: o.key, label: o.key + ' — ' + plain(o.text) }))"
         />
       </label>
     }

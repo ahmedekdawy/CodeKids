@@ -82,13 +82,13 @@ public static class BankQuestionValidator
         {
             if (string.IsNullOrWhiteSpace(passageText))
             {
-                throw new InvalidOperationException("Complete questions require the sentence with answers between ##.");
+                throw new InvalidOperationException("Complete questions require the sentence with answers between #.");
             }
 
             var blanks = CompleteBlanks.Extract(passageText);
             if (blanks.Count == 0)
             {
-                throw new InvalidOperationException("Complete questions require at least one answer wrapped in ##.");
+                throw new InvalidOperationException("Complete questions require at least one answer wrapped in #.");
             }
 
             return;

@@ -161,6 +161,13 @@
   min-height: 0;
 }
 
+.map-marker-prompt {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
 .map-answer-row input {
   width: 100%;
   box-sizing: border-box;

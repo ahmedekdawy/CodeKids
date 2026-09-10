@@ -88,6 +88,13 @@
             </div>
             <input
               type="text"
+              [name]="namePrefix + '-q-' + marker.id"
+              [ngModel]="marker.prompt"
+              (ngModelChange)="onPromptChange(marker.id, $event)"
+              [placeholder]="'teacher.qbank.mapQuestionPlaceholder' | t"
+            />
+            <input
+              type="text"
               [name]="namePrefix + '-ans-' + marker.id"
               [ngModel]="marker.correctAnswer"
               (ngModelChange)="onCorrectAnswerChange(marker.id, $event)"
@@ -101,13 +108,18 @@
             (action)="removeMarker(marker.id)"
           />
         } @else {
-          <input
-            type="text"
-            [name]="namePrefix + '-play-' + marker.id"
-            [value]="playAnswers[marker.id] || ''"
-            (input)="onPlayAnswerChange(marker.id, $any($event.target).value)"
-            [placeholder]="'play.mapAnswerPlaceholder' | t"
-          />
+          <div class="map-answer-fields">
+            @if (marker.prompt) {
+              <p class="map-marker-prompt">{{ marker.prompt }}</p>
+            }
+            <input
+              type="text"
+              [name]="namePrefix + '-play-' + marker.id"
+              [value]="playAnswers[marker.id] || ''"
+              (input)="onPlayAnswerChange(marker.id, $any($event.target).value)"
+              [placeholder]="'play.mapAnswerPlaceholder' | t"
+            />
+          </div>
         }
       </div>
     } @empty {

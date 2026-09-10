@@ -110,6 +110,8 @@ public static class ApiErrorCatalog
         ["Question prompt is required."] = "api.errors.questionBank.promptRequired",
         ["Underline questions require the sentence/text to underline in."] = "api.errors.questionBank.underlineTextRequired",
         ["Underline questions require the correct underlined phrase."] = "api.errors.questionBank.underlinePhraseRequired",
+        ["Complete questions require the sentence with answers between #."] = "api.errors.questionBank.completeTextRequired",
+        ["Complete questions require at least one answer wrapped in #."] = "api.errors.questionBank.completeBlanksRequired",
         ["Complete questions require the sentence with answers between ##."] = "api.errors.questionBank.completeTextRequired",
         ["Complete questions require at least one answer wrapped in ##."] = "api.errors.questionBank.completeBlanksRequired",
         ["Correct answer is required."] = "api.errors.questionBank.correctAnswerRequired",

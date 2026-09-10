@@ -24,7 +24,9 @@ import {
   isTeacherGradedText,
   needsOptions,
   optionLabel,
-  questionTypeLabelKey
+  plainPrompt,
+  questionTypeLabelKey,
+  questionTypePatternSampleKey
 } from '../question-draft/question-draft.util';
 
 @Component({
@@ -70,6 +72,10 @@ export class QuestionDraftEditorComponent {
     return this.locale.t(questionTypeLabelKey(type));
   }
 
+  typePatternSampleKey(type: string = this.draft.questionType): string | null {
+    return questionTypePatternSampleKey(type);
+  }
+
   isParagraph(type: string = this.draft.questionType): boolean {
     return isParagraph(type);
   }
@@ -108,6 +114,10 @@ export class QuestionDraftEditorComponent {
 
   optionLabel(index: number): string {
     return optionLabel(index);
+  }
+
+  plain(text: string): string {
+    return plainPrompt(text);
   }
 
   filled(list = this.draft.options) {

@@ -1171,6 +1171,7 @@ export interface MapMarker {
   y: number;
   label: string;
   kind: 'number' | 'arrow';
+  prompt?: string;
 }
 
 export interface BankQuestion {

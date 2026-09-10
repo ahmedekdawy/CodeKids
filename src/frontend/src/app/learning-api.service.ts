@@ -276,7 +276,7 @@ export class LearningApiService {
       points?: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
-      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
       children?: unknown[];
     }[];
   }): Observable<Quiz> {
@@ -328,7 +328,7 @@ export class LearningApiService {
         points?: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
-        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
         children?: unknown[];
       }[];
     }
@@ -1350,7 +1350,7 @@ export class LearningApiService {
       points: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
-      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
       id?: string | null;
       children?: unknown[];
     }[];
@@ -1379,7 +1379,7 @@ export class LearningApiService {
         points: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
-        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
         id?: string | null;
         children?: unknown[];
       }[];
@@ -1436,7 +1436,7 @@ export class LearningApiService {
     points: number;
     sortOrder: number;
     promptImageMediaAssetId?: string | null;
-    mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+    mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
     children?: {
       prompt: string;
       questionType: string;
