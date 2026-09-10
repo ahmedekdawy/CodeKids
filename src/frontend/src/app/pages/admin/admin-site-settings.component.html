@@ -1,122 +1,168 @@
-<div class="panel-page">
-  <h2>{{ 'admin.site.title' | t }}</h2>
-  <p class="meta">{{ 'admin.site.subtitle' | t }}</p>
+<form class="panel-page" (ngSubmit)="save()">
+  <header class="settings-head">
+    <h2>{{ 'admin.site.title' | t }}</h2>
+    <p class="meta">{{ 'admin.site.subtitle' | t }}</p>
+  </header>
 
   <app-page-feedback [ok]="message()" [error]="error()" />
 
-  <section class="block">
-    <h3>{{ 'admin.site.branding' | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="save()">
-      <label>
-        {{ 'admin.site.siteName' | t }}
-        <input [(ngModel)]="siteName" name="siteName" required maxlength="120" />
-      </label>
-
-      <label class="checkbox">
-        <input
-          type="checkbox"
-          [ngModel]="useCurrentTimetableWeek"
-          name="useCurrentTimetableWeek"
-          (ngModelChange)="onUseCurrentWeekChange($event)"
-        />
-        <span>{{ 'admin.site.useCurrentTimetableWeek' | t }}</span>
-      </label>
-
-      @if (!useCurrentTimetableWeek) {
-        <label>
-          {{ 'admin.site.timetableWeekStart' | t }}
-          <input type="date" [(ngModel)]="timetableWeekLocal" name="timetableWeekLocal" required />
-          <span class="meta">{{ 'admin.site.timetableWeekHint' | t }}</span>
-        </label>
-      }
-
-      <label>
-        {{ 'admin.site.amSessionCount' | t }}
-        <input
-          type="number"
-          [(ngModel)]="amSessionCount"
-          name="amSessionCount"
-          required
-          [min]="minSessionCount"
-          [max]="maxSessionCount"
-          step="1"
-        />
-      </label>
-      <label>
-        {{ 'admin.site.pmSessionCount' | t }}
-        <input
-          type="number"
-          [(ngModel)]="pmSessionCount"
-          name="pmSessionCount"
-          required
-          [min]="minSessionCount"
-          [max]="maxSessionCount"
-          step="1"
-        />
-        <span class="meta">{{ 'admin.site.sessionCountHint' | t: { min: minSessionCount, max: maxSessionCount } }}</span>
-      </label>
-      <label>
-        {{ 'admin.site.pmStart' | t }}
-        <input
-          type="time"
-          [(ngModel)]="pmStartTime"
-          name="pmStartTime"
-          required
-          [min]="minPmStartTime"
-          [max]="maxPmStartTime"
-          step="300"
-        />
-        <span class="meta">{{ 'admin.site.pmStartHint' | t: { min: minPmStartTime, max: maxPmStartTime } }}</span>
-      </label>
-
-      <button type="submit" [disabled]="saving()">
-        {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}
-      </button>
-    </form>
-  </section>
-
-  <section class="block">
-    <h3>{{ 'admin.site.logo' | t }}</h3>
-    <p class="meta">{{ 'admin.site.logoHint' | t }}</p>
-    @if (logoUrl(); as src) {
-      <img class="brand-preview logo" [src]="src" [alt]="'admin.site.logo' | t" />
-    } @else {
-      <p class="meta">{{ 'admin.site.noLogo' | t }}</p>
-    }
-    <div class="form-actions">
-      <label class="file-btn">
-        {{ uploading() === 'logo' ? ('common.loading' | t) : ('admin.site.uploadLogo' | t) }}
-        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" hidden (change)="onFile('logo', $event)" />
-      </label>
-      @if (logoUrl()) {
-        <button type="button" class="ghost-btn" (click)="clearImage('logo')">{{ 'admin.site.clearLogo' | t }}</button>
-      }
-    </div>
-  </section>
-
-  <section class="block">
-    <h3>{{ 'admin.site.banner' | t }}</h3>
-    <p class="meta">{{ 'admin.site.bannerHint' | t }}</p>
-    <div class="login-preview">
-      <div class="login-preview-form" aria-hidden="true">
-        <span>{{ 'admin.site.loginPreviewLeft' | t }}</span>
+  <div class="settings-grid">
+    <section class="block">
+      <div class="card-head">
+        <h3>{{ 'admin.site.identity' | t }}</h3>
+        <p class="meta">{{ 'admin.site.logoHint' | t }}</p>
       </div>
-      <div class="login-preview-visual">
-        @if (bannerUrl(); as src) {
-          <img [src]="src" [alt]="'admin.site.banner' | t" />
-        } @else {
-          <span>{{ 'admin.site.noBanner' | t }}</span>
+
+      <div class="identity-row">
+        <div class="logo-tile">
+          @if (logoUrl(); as src) {
+            <img [src]="src" [alt]="'admin.site.logo' | t" />
+          } @else {
+            <span>{{ 'admin.site.noLogo' | t }}</span>
+          }
+        </div>
+
+        <div class="identity-fields">
+          <label>
+            {{ 'admin.site.siteName' | t }}
+            <input [(ngModel)]="siteName" name="siteName" required maxlength="120" />
+          </label>
+
+          <div class="form-actions">
+            <label class="file-btn">
+              {{ uploading() === 'logo' ? ('common.loading' | t) : ('admin.site.uploadLogo' | t) }}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                hidden
+                (change)="onFile('logo', $event)"
+              />
+            </label>
+            @if (logoUrl()) {
+              <button type="button" class="ghost-btn" (click)="clearImage('logo')">
+                {{ 'admin.site.clearLogo' | t }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="card-head">
+        <h3>{{ 'admin.site.banner' | t }}</h3>
+        <p class="meta">{{ 'admin.site.bannerHint' | t }}</p>
+      </div>
+
+      <div class="login-preview">
+        <div class="login-preview-form" aria-hidden="true">
+          <span>{{ 'admin.site.loginPreviewLeft' | t }}</span>
+        </div>
+        <div class="login-preview-visual">
+          @if (bannerUrl(); as src) {
+            <img [src]="src" [alt]="'admin.site.banner' | t" />
+          } @else {
+            <span>{{ 'admin.site.noBanner' | t }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <label class="file-btn">
+          {{ uploading() === 'banner' ? ('common.loading' | t) : ('admin.site.uploadBanner' | t) }}
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+            hidden
+            (change)="onFile('banner', $event)"
+          />
+        </label>
+        @if (bannerUrl()) {
+          <button type="button" class="ghost-btn" (click)="clearImage('banner')">
+            {{ 'admin.site.clearBanner' | t }}
+          </button>
         }
       </div>
-    </div>
-    <div class="form-actions">
-      <label class="file-btn">
-        {{ uploading() === 'banner' ? ('common.loading' | t) : ('admin.site.uploadBanner' | t) }}
-        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" hidden (change)="onFile('banner', $event)" />
-      </label>
-      @if (bannerUrl()) {
-        <button type="button" class="ghost-btn" (click)="clearImage('banner')">{{ 'admin.site.clearBanner' | t }}</button>
-      }
-    </div>
-  </section>
-</div>
+    </section>
+
+    <section class="block span-all">
+      <div class="card-head">
+        <h3>{{ 'admin.site.timetableDefaults' | t }}</h3>
+        <p class="meta">{{ 'admin.site.timetableWeekHint' | t }}</p>
+      </div>
+
+      <div class="field-grid">
+        <label class="checkbox span-all">
+          <input
+            type="checkbox"
+            [ngModel]="useCurrentTimetableWeek"
+            name="useCurrentTimetableWeek"
+            (ngModelChange)="onUseCurrentWeekChange($event)"
+          />
+          <span>{{ 'admin.site.useCurrentTimetableWeek' | t }}</span>
+        </label>
+
+        @if (!useCurrentTimetableWeek) {
+          <label>
+            {{ 'admin.site.timetableWeekStart' | t }}
+            <input type="date" [(ngModel)]="timetableWeekLocal" name="timetableWeekLocal" required />
+          </label>
+        }
+
+        <label>
+          {{ 'admin.site.amSessionCount' | t }}
+          <input
+            type="number"
+            [(ngModel)]="amSessionCount"
+            name="amSessionCount"
+            required
+            [min]="minSessionCount"
+            [max]="maxSessionCount"
+            step="1"
+          />
+        </label>
+
+        <label>
+          {{ 'admin.site.pmSessionCount' | t }}
+          <input
+            type="number"
+            [(ngModel)]="pmSessionCount"
+            name="pmSessionCount"
+            required
+            [min]="minSessionCount"
+            [max]="maxSessionCount"
+            step="1"
+          />
+          <span class="meta">{{ 'admin.site.sessionCountHint' | t: { min: minSessionCount, max: maxSessionCount } }}</span>
+        </label>
+
+        <label>
+          {{ 'admin.site.pmStart' | t }}
+          <input
+            type="time"
+            [(ngModel)]="pmStartTime"
+            name="pmStartTime"
+            required
+            [min]="minPmStartTime"
+            [max]="maxPmStartTime"
+            step="300"
+          />
+          <span class="meta">{{ 'admin.site.pmStartHint' | t: { min: minPmStartTime, max: maxPmStartTime } }}</span>
+        </label>
+      </div>
+    </section>
+  </div>
+
+  <div class="settings-bar">
+    <p class="meta save-state" [class.is-dirty]="isDirty()">
+      <span class="save-dot" aria-hidden="true"></span>
+      {{ (isDirty() ? 'admin.site.unsavedChanges' : 'admin.site.allSaved') | t }}
+    </p>
+    @if (isDirty()) {
+      <button type="button" class="ghost-btn" (click)="discardChanges()">{{ 'common.cancel' | t }}</button>
+    }
+    <button type="submit" [disabled]="saving() || !isDirty()">
+      {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}
+    </button>
+  </div>
+</form>

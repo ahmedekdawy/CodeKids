@@ -89,9 +89,9 @@
           </div>
           <div class="badge-row">
             @for (badge of earnedBadges(); track badge.id) {
-              <div class="badge-chip" [title]="badge.description">
+              <div class="badge-chip" [title]="badgeDescription(badge)">
                 <span>{{ badge.icon }}</span>
-                <strong>{{ badge.name }}</strong>
+                <strong>{{ badgeTitle(badge) }}</strong>
               </div>
             }
           </div>

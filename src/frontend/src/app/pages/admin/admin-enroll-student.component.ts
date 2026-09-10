@@ -47,11 +47,14 @@ export class AdminEnrollStudentComponent {
   readonly enrollStudentId = signal('');
   readonly enrollClassroomId = signal('');
   readonly enrollCourseIds = signal<string[]>([]);
+  readonly editingClassroomId = signal<string | null>(null);
+  readonly editingStudentId = signal<string | null>(null);
   readonly filterClassroomId = signal('');
   readonly filterCourseId = signal('');
   readonly filterStudent = signal('');
 
   readonly totalPages = computed(() => totalPages(this.totalCount(), this.pageSize()));
+  readonly editing = computed(() => !!(this.editingClassroomId() && this.editingStudentId()));
 
   readonly selectedStudent = computed(() =>
     this.students().find((s) => s.id === this.enrollStudentId()) ?? null
@@ -263,6 +266,7 @@ export class AdminEnrollStudentComponent {
   }
 
   onStudentChange(studentId: string): void {
+    if (this.editing()) return;
     this.enrollStudentId.set(studentId);
     this.enrollCourseIds.set([]);
     const allowed = this.enrollableClassrooms();
@@ -272,6 +276,7 @@ export class AdminEnrollStudentComponent {
   }
 
   onClassroomChange(classroomId: string): void {
+    if (this.editing()) return;
     this.enrollClassroomId.set(classroomId);
     this.enrollCourseIds.set([]);
   }
@@ -280,7 +285,24 @@ export class AdminEnrollStudentComponent {
     this.enrollCourseIds.set((ids ?? []).map(String));
   }
 
-  enrollStudent(): void {
+  startEdit(row: EnrollmentRow): void {
+    this.clearStatus();
+    this.editingClassroomId.set(row.classroomId);
+    this.editingStudentId.set(row.studentId);
+    this.enrollStudentId.set(row.studentId);
+    this.enrollClassroomId.set(row.classroomId);
+    this.enrollCourseIds.set([...(row.enrolledCourseIds ?? [])]);
+  }
+
+  cancelEdit(): void {
+    this.editingClassroomId.set(null);
+    this.editingStudentId.set(null);
+    this.enrollStudentId.set('');
+    this.enrollClassroomId.set('');
+    this.enrollCourseIds.set([]);
+  }
+
+  saveEnrollment(): void {
     this.clearStatus();
     const classroomId = this.enrollClassroomId();
     const studentId = this.enrollStudentId();
@@ -294,6 +316,19 @@ export class AdminEnrollStudentComponent {
       this.error.set(this.locale.t('admin.enroll.gradeMismatch'));
       return;
     }
+
+    if (this.editing()) {
+      this.api.updateStudentClassroomEnrollment(classroomId, studentId, this.enrollCourseIds()).subscribe({
+        next: () => {
+          this.message.set(this.locale.t('admin.enroll.updated'));
+          this.cancelEdit();
+          this.reload();
+        },
+        error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.enroll.updateFailed'))
+      });
+      return;
+    }
+
     this.api.addStudentToClassroom(classroomId, studentId, this.enrollCourseIds()).subscribe({
       next: (result) => {
         this.message.set(this.locale.t('admin.enroll.enrolled', { status: result.whatsAppStatus }));
@@ -307,6 +342,9 @@ export class AdminEnrollStudentComponent {
   removeEnrollment(row: EnrollmentRow): void {
     if (!confirm(this.locale.t('admin.enroll.confirmRemove', { student: row.studentName, classroom: row.classroomName }))) return;
     this.clearStatus();
+    if (this.editingClassroomId() === row.classroomId && this.editingStudentId() === row.studentId) {
+      this.cancelEdit();
+    }
     this.api.removeStudentFromClassroom(row.classroomId, row.studentId).subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.enroll.removed'));

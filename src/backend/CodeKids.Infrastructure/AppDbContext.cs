@@ -288,7 +288,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.OptionC).HasMaxLength(200).IsRequired();
             entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
             entity.Property(x => x.CorrectOption).HasMaxLength(500).IsRequired();
-            entity.Property(x => x.CorrectAnswer).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(4000).IsRequired();
             entity.HasOne(x => x.PromptImage)
                 .WithMany()
                 .HasForeignKey(x => x.PromptImageMediaAssetId)
@@ -325,6 +325,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.QuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.AnswerImage)
+                .WithMany()
+                .HasForeignKey(x => x.AnswerImageMediaAssetId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Badge>(entity =>
@@ -664,7 +668,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.OptionB).HasMaxLength(200);
             entity.Property(x => x.OptionC).HasMaxLength(200);
             entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
-            entity.Property(x => x.CorrectAnswer).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(4000).IsRequired();
             entity.HasOne(x => x.PromptImage)
                 .WithMany()
                 .HasForeignKey(x => x.PromptImageMediaAssetId)
@@ -720,7 +724,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.OptionC).HasMaxLength(200);
             entity.Property(x => x.OptionD).HasMaxLength(200);
             entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
-            entity.Property(x => x.CorrectAnswer).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(4000).IsRequired();
             entity.HasOne(x => x.Course)
                 .WithMany()
                 .HasForeignKey(x => x.CourseId)
@@ -778,7 +782,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.OptionC).HasMaxLength(200);
             entity.Property(x => x.OptionD).HasMaxLength(200);
             entity.Property(x => x.OptionsJson).HasMaxLength(8000).IsRequired();
-            entity.Property(x => x.CorrectAnswer).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.CorrectAnswer).HasMaxLength(4000).IsRequired();
             entity.HasOne(x => x.BankQuestion)
                 .WithMany()
                 .HasForeignKey(x => x.BankQuestionId)

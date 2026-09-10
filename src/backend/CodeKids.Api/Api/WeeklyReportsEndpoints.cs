@@ -55,8 +55,8 @@ public static class WeeklyReportsEndpoints
             IFileStorage fileStorage,
             CancellationToken cancellationToken) =>
         {
-            var weekStart = week ?? ListTopWeeklyStudentsQueryHandler.StartOfWeek(
-                DateOnly.FromDateTime(DateTime.UtcNow));
+            var weekStart = await ListTopWeeklyStudentsQueryHandler.ResolveBoardWeekStartAsync(
+                dbContext, week, cancellationToken);
             if (!await ListTopWeeklyStudentsQueryHandler.QualifiesForBoardAsync(
                     dbContext, studentId, weekStart, cancellationToken))
             {

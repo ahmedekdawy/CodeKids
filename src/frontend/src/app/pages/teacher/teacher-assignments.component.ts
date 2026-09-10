@@ -4,7 +4,13 @@ import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { Assignment, Classroom, ClassroomCourse, Course, CourseLesson, CourseUnit } from '../../models';
-import { courseMatchesClassroomGrade, formatCourseLabel } from '../../grade.util';
+import {
+  classroomEffectiveGrade,
+  courseMatchesClassroomGrade,
+  formatCourseLabel,
+  formatGradeLabel
+} from '../../grade.util';
+import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
@@ -32,7 +38,7 @@ import {
     IconActionButtonComponent
   ],
   templateUrl: './teacher-assignments.component.html',
-  styleUrl: './teacher-panel.css'
+  styleUrls: ['./teacher-panel.css', './teacher-assignments.component.css']
 })
 export class TeacherAssignmentsComponent {
   private readonly api = inject(LearningApiService);
@@ -59,6 +65,9 @@ export class TeacherAssignmentsComponent {
   questions: QuestionDraft[] = [emptyQuestionDraft('ShortAnswer')];
   editingAssignmentId: string | null = null;
   editingDueAtUtc: string | null = null;
+  assignmentSearch = '';
+  listClassroomId = '';
+  listStatus = 'all';
 
   constructor() {
     this.api.getCourses().subscribe({
@@ -211,6 +220,61 @@ export class TeacherAssignmentsComponent {
     }
   }
 
+  addQuestion(): void {
+    if (this.questions.length >= 12) return;
+    this.questions = [...this.questions, emptyQuestionDraft(this.assignmentType)];
+    this.assignmentQuestionCount = this.questions.length;
+  }
+
+  removeQuestion(index: number): void {
+    if (this.questions.length <= 1) return;
+    this.questions = this.questions.filter((_, i) => i !== index);
+    this.assignmentQuestionCount = this.questions.length;
+  }
+
+  statusOptions(): { value: string; label: string }[] {
+    return [
+      { value: 'all', label: this.locale.t('teacher.assignments.statusAll') },
+      { value: 'published', label: this.locale.t('teacher.assessments.published') },
+      { value: 'draft', label: this.locale.t('teacher.assessments.draft') }
+    ];
+  }
+
+  filteredAssignments(): Assignment[] {
+    const term = this.assignmentSearch.trim().toLowerCase();
+    return this.assignments().filter((assignment) => {
+      if (this.listClassroomId && assignment.classroomId !== this.listClassroomId) return false;
+      if (this.listStatus === 'published' && !assignment.isPublished) return false;
+      if (this.listStatus === 'draft' && assignment.isPublished) return false;
+      if (!term) return true;
+      return [assignment.title, assignment.description, assignment.classroomName]
+        .some((field) => (field ?? '').toLowerCase().includes(term));
+    });
+  }
+
+  hasListFilters(): boolean {
+    return !!this.assignmentSearch.trim() || !!this.listClassroomId || this.listStatus !== 'all';
+  }
+
+  clearListFilters(): void {
+    this.assignmentSearch = '';
+    this.listClassroomId = '';
+    this.listStatus = 'all';
+  }
+
+  shownLabel(shown: number, total: number): string {
+    return this.locale.t('teacher.assignments.shown', { shown, total });
+  }
+
+  formatDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString(this.locale.lang() === 'ar' ? 'ar-EG' : 'en-US', {
+      day: 'numeric',
+      month: 'short'
+    });
+  }
+
   generate(): void {
     this.error.set('');
     this.info.set('');
@@ -269,6 +333,7 @@ export class TeacherAssignmentsComponent {
       : [emptyQuestionDraft(this.assignmentType)];
     this.assignmentQuestionCount = this.questions.length;
     this.onClassroomChange();
+    document.getElementById('assignment-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   cancelEdit(): void {
@@ -332,6 +397,35 @@ export class TeacherAssignmentsComponent {
       },
       () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
     );
+  }
+
+  whatsAppShareUrl(assignment: Assignment): string {
+    const room = this.classrooms().find((item) => item.id === assignment.classroomId);
+    const grade = classroomEffectiveGrade(room ?? {});
+    return assessmentWhatsAppShareUrl({
+      kindLabel: this.locale.t('nav.teacher.assignments'),
+      name: assignment.title,
+      gradeLabel: grade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), grade),
+      courseLabel: this.classroomCourseLabel(room),
+      studentPath: `/assignments/${assignment.id}`,
+      gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
+      courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
+    });
+  }
+
+  private classroomCourseLabel(room: Classroom | undefined): string {
+    if (!room) return '';
+    const titles = [
+      room.courseTitle,
+      ...(room.courses ?? []).map((course) => course.courseTitle)
+    ]
+      .map((title) => title?.trim())
+      .filter((title): title is string => !!title);
+    return [...new Set(titles)].join(', ');
+  }
+
+  shareOnWhatsApp(assignment: Assignment): void {
+    window.open(this.whatsAppShareUrl(assignment), '_blank', 'noopener');
   }
 
   isPublishing(id: string): boolean {

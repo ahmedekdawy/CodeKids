@@ -20,11 +20,25 @@
     tabindex="-1"
   />
   <div class="upload-actions">
-    <button type="button" class="ghost-btn" (click)="armPaste()" [disabled]="uploading() || capturing()">
-      {{ 'teacher.questionImage.paste' | t }}
+    <button
+      type="button"
+      class="tool-icon-btn"
+      (click)="armPaste()"
+      [disabled]="uploading() || capturing()"
+      [attr.title]="'teacher.questionImage.paste' | t"
+      [attr.aria-label]="'teacher.questionImage.paste' | t"
+    >
+      <i class="fa-regular fa-clipboard" aria-hidden="true"></i>
     </button>
-    <button type="button" class="ghost-btn" (click)="openCamera()" [disabled]="uploading() || capturing()">
-      {{ 'teacher.questionImage.capture' | t }}
+    <button
+      type="button"
+      class="tool-icon-btn"
+      (click)="openCamera()"
+      [disabled]="uploading() || capturing()"
+      [attr.title]="'teacher.questionImage.capture' | t"
+      [attr.aria-label]="'teacher.questionImage.capture' | t"
+    >
+      <i class="fa-solid fa-camera" aria-hidden="true"></i>
     </button>
   </div>
   @if (pasteArmed()) {
@@ -34,7 +48,15 @@
     <div class="camera-panel">
       <video #cameraVideo autoplay playsinline muted></video>
       <div class="camera-actions">
-        <button type="button" (click)="snapPhoto()">{{ 'teacher.questionImage.snap' | t }}</button>
+        <button
+          type="button"
+          class="tool-icon-btn primary"
+          (click)="snapPhoto()"
+          [attr.title]="'teacher.questionImage.snap' | t"
+          [attr.aria-label]="'teacher.questionImage.snap' | t"
+        >
+          <i class="fa-solid fa-camera" aria-hidden="true"></i>
+        </button>
         <button type="button" class="ghost-btn" (click)="cancelCamera()">{{ 'common.cancel' | t }}</button>
       </div>
     </div>

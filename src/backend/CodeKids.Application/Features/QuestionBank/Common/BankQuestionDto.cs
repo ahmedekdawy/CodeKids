@@ -1,8 +1,4 @@
-using CodeKids.Application.Abstractions;
-using CodeKids.Domain.Abstractions;
-using CodeKids.Domain.Entities;
-using CodeKids.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
+using CodeKids.Application.Features.QuestionBank;
 
 namespace CodeKids.Application.Features.QuestionBank;
 
@@ -26,4 +22,6 @@ public sealed record BankQuestionDto(
     int Points,
     int SortOrder,
     string? PromptImageUrl,
-    IReadOnlyList<BankQuestionDto> Children);
+    IReadOnlyList<BankQuestionDto> Children,
+    Guid? PromptImageMediaAssetId = null,
+    IReadOnlyList<MapMarkerDto>? MapMarkers = null);

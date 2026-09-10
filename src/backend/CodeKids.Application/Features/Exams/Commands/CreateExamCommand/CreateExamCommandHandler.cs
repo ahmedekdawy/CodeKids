@@ -172,19 +172,21 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
     private static ExamQuestionDto MapQuestion(
         ExamQuestion q,
         IEnumerable<ExamQuestion> all,
-        bool includeAnswerKey) =>
-        new(
+        bool includeAnswerKey)
+    {
+        var isMap = q.QuestionType == BankQuestionType.Map;
+        return new(
             q.Id,
             q.BankQuestionId,
             q.ParentExamQuestionId,
             q.QuestionType.ToString(),
             q.Prompt,
-            q.PassageText,
+            CompleteBlanks.PassageForClient(q.QuestionType.ToString(), q.PassageText, includeAnswerKey),
             q.OptionA,
             q.OptionB,
             q.OptionC,
             q.OptionD,
-            ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC, q.OptionD),
+            isMap ? [] : ChoiceOptions.Parse(q.OptionsJson, q.OptionA, q.OptionB, q.OptionC, q.OptionD),
             q.Points,
             q.SortOrder,
             includeAnswerKey ? q.CorrectAnswer : null,
@@ -192,5 +194,7 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             all.Where(c => c.ParentExamQuestionId == q.Id)
                 .OrderBy(c => c.SortOrder)
                 .Select(c => MapQuestion(c, all, includeAnswerKey))
-                .ToList());
+                .ToList(),
+            isMap ? MapMarkers.Parse(q.OptionsJson) : null);
+    }
 }

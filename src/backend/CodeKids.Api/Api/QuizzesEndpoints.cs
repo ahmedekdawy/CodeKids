@@ -239,7 +239,7 @@ public static class QuizzesEndpoints
             {
                 return ApiResults.ProblemFromException(ex);
             }
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
 
         app.MapDelete("/api/teacher/quizzes/{quizId:guid}", async (
             Guid quizId,

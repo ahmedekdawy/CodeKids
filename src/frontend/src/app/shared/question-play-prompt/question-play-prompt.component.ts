@@ -6,6 +6,13 @@ import { SafeHtmlPipe } from '../safe-html.pipe';
 import { StudentAnswerUploadComponent } from '../student-answer-upload/student-answer-upload.component';
 import { TranslatePipe } from '../translate.pipe';
 import { AnswerImageDraft, PlayableQuestion } from './playable-question';
+import { MapQuestionBoardComponent } from '../map-question-board/map-question-board.component';
+import { MapMarkerDraft } from '../question-draft/question-draft.model';
+import {
+  encodeCompleteAnswers,
+  parseCompleteAnswers,
+  parseCompleteParts
+} from '../question-draft/question-draft.util';
 
 @Component({
   selector: 'app-question-play-prompt',
@@ -14,7 +21,8 @@ import { AnswerImageDraft, PlayableQuestion } from './playable-question';
     SafeHtmlPipe,
     TranslatePipe,
     QuestionImageDisplayComponent,
-    StudentAnswerUploadComponent
+    StudentAnswerUploadComponent,
+    MapQuestionBoardComponent
   ],
   templateUrl: './question-play-prompt.component.html',
   styleUrl: './question-play-prompt.component.css'
@@ -34,6 +42,10 @@ export class QuestionPlayPromptComponent {
     imageUrl: string | null;
   }>();
 
+  private readonly orderLists = new Map<string, ChoiceOption[]>();
+  private orderDragFrom: number | null = null;
+  private orderDragQuestionId: string | null = null;
+
   choiceOptions(question: PlayableQuestion): ChoiceOption[] {
     if (question.options?.length) return question.options;
     const legacy: ChoiceOption[] = [];
@@ -42,6 +54,54 @@ export class QuestionPlayPromptComponent {
     if (question.optionC) legacy.push({ key: 'C', text: question.optionC });
     if (question.optionD) legacy.push({ key: 'D', text: question.optionD });
     return legacy;
+  }
+
+  mapMarkers(question: PlayableQuestion): MapMarkerDraft[] {
+    return (question.mapMarkers ?? []) as MapMarkerDraft[];
+  }
+
+  completeParts(question: PlayableQuestion) {
+    return parseCompleteParts(question.passageText || '');
+  }
+
+  completeValue(question: PlayableQuestion, index: number): string {
+    return parseCompleteAnswers(this.answers[question.id] || '')[index] || '';
+  }
+
+  blankWidth(expected: string): number {
+    return Math.max(8, (expected || '').length + 2);
+  }
+
+  blankState(question: PlayableQuestion, index: number): 'correct' | 'incorrect' | '' {
+    const part = this.completeParts(question).find((item) => item.kind === 'blank' && item.index === index);
+    const answerExpected = part && part.kind === 'blank' ? part.expected : '';
+    if (!answerExpected) return '';
+    const value = this.completeValue(question, index).trim();
+    if (!value) return '';
+    return value.localeCompare(answerExpected, undefined, { sensitivity: 'accent' }) === 0
+      ? 'correct'
+      : 'incorrect';
+  }
+
+  setCompleteBlank(question: PlayableQuestion, index: number, value: string): void {
+    const parts = this.completeParts(question).filter((part) => part.kind === 'blank');
+    const values = parseCompleteAnswers(this.answers[question.id] || '');
+    while (values.length < parts.length) values.push('');
+    values[index] = value;
+    this.setAnswer(question.id, encodeCompleteAnswers(values.slice(0, parts.length)));
+  }
+
+  orderedOptions(question: PlayableQuestion): ChoiceOption[] {
+    let list = this.orderLists.get(question.id);
+    if (!list) {
+      list = this.shuffle(this.choiceOptions(question));
+      this.orderLists.set(question.id, list);
+      const value = list.map((option) => option.key).join(',');
+      if ((this.answers[question.id] || '') !== value) {
+        queueMicrotask(() => this.setAnswer(question.id, value));
+      }
+    }
+    return list;
   }
 
   isMultiChecked(questionId: string, key: string): boolean {
@@ -65,5 +125,65 @@ export class QuestionPlayPromptComponent {
 
   setAnswerImage(questionId: string, mediaAssetId: string | null, imageUrl: string | null): void {
     this.answerImageChange.emit({ questionId, mediaAssetId, imageUrl });
+  }
+
+  onOrderDragStart(event: DragEvent, questionId: string, index: number): void {
+    this.orderDragFrom = index;
+    this.orderDragQuestionId = questionId;
+    event.dataTransfer?.setData('text/plain', String(index));
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+  }
+
+  onOrderDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+  }
+
+  onOrderDrop(event: DragEvent, questionId: string, targetIndex: number): void {
+    event.preventDefault();
+    if (this.orderDragFrom == null || this.orderDragQuestionId !== questionId) return;
+    const list = this.orderLists.get(questionId);
+    if (!list) return;
+    const from = this.orderDragFrom;
+    if (from === targetIndex) {
+      this.orderDragFrom = null;
+      this.orderDragQuestionId = null;
+      return;
+    }
+    const [item] = list.splice(from, 1);
+    list.splice(targetIndex, 0, item);
+    this.orderLists.set(questionId, [...list]);
+    this.setAnswer(questionId, list.map((option) => option.key).join(','));
+    this.orderDragFrom = null;
+    this.orderDragQuestionId = null;
+  }
+
+  onOrderDragEnd(): void {
+    this.orderDragFrom = null;
+    this.orderDragQuestionId = null;
+  }
+
+  moveOrderItem(questionId: string, index: number, delta: number): void {
+    const list = this.orderLists.get(questionId);
+    if (!list) return;
+    const next = index + delta;
+    if (next < 0 || next >= list.length) return;
+    const [item] = list.splice(index, 1);
+    list.splice(next, 0, item);
+    this.orderLists.set(questionId, [...list]);
+    this.setAnswer(questionId, list.map((option) => option.key).join(','));
+  }
+
+  private shuffle(items: ChoiceOption[]): ChoiceOption[] {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    // Avoid leaving the already-correct order when possible.
+    if (copy.length > 1 && copy.every((item, index) => item.key === items[index]?.key)) {
+      [copy[0], copy[1]] = [copy[1], copy[0]];
+    }
+    return copy;
   }
 }

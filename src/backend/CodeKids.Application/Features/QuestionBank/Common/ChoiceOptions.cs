@@ -77,4 +77,27 @@ public static class ChoiceOptions
 
     public static HashSet<string> AllowedKeys(IReadOnlyList<ChoiceOptionDto> options) =>
         options.Select(x => x.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Turns stored keys such as "A" or "A,C" into "A) option text".</summary>
+    public static string FormatAnswer(IReadOnlyList<ChoiceOptionDto> options, string? keys, bool preserveOrder = false)
+    {
+        if (string.IsNullOrWhiteSpace(keys))
+        {
+            return string.Empty;
+        }
+
+        if (options.Count == 0)
+        {
+            return keys.Trim();
+        }
+
+        var parts = preserveOrder
+            ? ExamGrading.ParseOrderedKeys(keys)
+            : ExamGrading.NormalizeMultiAnswer(keys);
+        return string.Join(", ", parts.Select(part =>
+        {
+            var match = options.FirstOrDefault(o => string.Equals(o.Key, part, StringComparison.OrdinalIgnoreCase));
+            return match is null ? part : $"{match.Key}) {match.Text}";
+        }));
+    }
 }

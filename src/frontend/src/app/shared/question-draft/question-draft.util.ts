@@ -17,7 +17,8 @@ export function emptyQuestionDraft(type: AssessmentQuestionType = 'SingleChoice'
     correctAnswer: normalized === 'TrueFalse' ? 'True' : '',
     correctKeys: [],
     points: 1,
-    children: normalized === 'Paragraph' ? [emptyQuestionDraft('SingleChoice')] : []
+    children: normalized === 'Paragraph' ? [emptyQuestionDraft('SingleChoice')] : [],
+    mapMarkers: []
   };
 }
 
@@ -38,15 +39,147 @@ export function isTeacherGradedText(type: string): boolean {
 }
 
 export function needsOptions(type: string): boolean {
-  return type === 'Choose' || type === 'SingleChoice' || type === 'MultiChoice' || type === 'MultipleChoice';
+  return (
+    type === 'Choose' ||
+    type === 'SingleChoice' ||
+    type === 'MultiChoice' ||
+    type === 'MultipleChoice' ||
+    type === 'Order'
+  );
 }
 
 export function isMulti(type: string): boolean {
   return type === 'MultiChoice';
 }
 
+export function isOrder(type: string): boolean {
+  return type === 'Order';
+}
+
+export function isMap(type: string): boolean {
+  return type === 'Map';
+}
+
+export function isComplete(type: string): boolean {
+  return type === 'Complete';
+}
+
+export type CompletePart =
+  | { kind: 'text'; text: string }
+  | { kind: 'blank'; index: number; expected: string };
+
+export function parseCompleteParts(text: string | null | undefined): CompletePart[] {
+  const source = text || '';
+  const parts: CompletePart[] = [];
+  const re = /\{\{blank\}\}|##([\s\S]*?)##/g;
+  let last = 0;
+  let index = 0;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(source))) {
+    if (match.index > last) {
+      parts.push({ kind: 'text', text: source.slice(last, match.index) });
+    }
+    parts.push({ kind: 'blank', index, expected: (match[1] || '').trim() });
+    index += 1;
+    last = match.index + match[0].length;
+  }
+  if (last < source.length || parts.length === 0) {
+    if (last < source.length) parts.push({ kind: 'text', text: source.slice(last) });
+  }
+  return parts;
+}
+
+export function extractCompleteAnswers(text: string | null | undefined): string[] {
+  return parseCompleteParts(text)
+    .filter((part): part is Extract<CompletePart, { kind: 'blank' }> => part.kind === 'blank')
+    .map((part) => part.expected)
+    .filter((value) => value.length > 0);
+}
+
+export function encodeCompleteAnswers(values: string[]): string {
+  return JSON.stringify(values.map((value) => (value || '').trim()));
+}
+
+export function parseCompleteAnswers(value: string | null | undefined): string[] {
+  if (!value?.trim()) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (Array.isArray(parsed)) {
+      return parsed.map((item) => String(item ?? '').trim());
+    }
+  } catch {
+    return extractCompleteAnswers(value);
+  }
+  return extractCompleteAnswers(value);
+}
+
+export function encodeMapAnswers(markers: { id: string; correctAnswer?: string }[]): string {
+  const answers: Record<string, string> = {};
+  for (const marker of markers) {
+    answers[marker.id] = (marker.correctAnswer || '').trim();
+  }
+  return JSON.stringify(answers);
+}
+
+export function parseMapAnswers(value: string | null | undefined): Record<string, string> {
+  if (!value?.trim()) return {};
+  try {
+    const parsed = JSON.parse(value) as Record<string, unknown>;
+    const result: Record<string, string> = {};
+    for (const [key, answer] of Object.entries(parsed || {})) {
+      result[key] = String(answer ?? '').trim();
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
 export function optionLabel(index: number): string {
   return String.fromCharCode(65 + index);
+}
+
+export function formatMapAnswer(value: string | null | undefined): string {
+  const answers = parseMapAnswers(value);
+  const entries = Object.entries(answers);
+  if (!entries.length) return (value || '').trim();
+  return entries.map(([id, answer]) => `${id}: ${answer}`).join(', ');
+}
+
+/** Show stored keys (A / A,C) together with the option text for teacher review. */
+export function formatChoiceAnswer(
+  value: string | null | undefined,
+  options?: ChoiceOption[] | null
+): string {
+  const raw = (value || '').trim();
+  if (!raw) return '';
+  if (raw.startsWith('[')) {
+    const complete = parseCompleteAnswers(raw);
+    if (complete.length) return complete.join(', ');
+  }
+  if (raw.startsWith('{')) {
+    const mapFormatted = formatMapAnswer(raw);
+    if (mapFormatted) return mapFormatted;
+  }
+  if (!options?.length) return raw;
+  return raw
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((key) => {
+      const match = options.find((option) => option.key.toUpperCase() === key.toUpperCase());
+      return match ? `${match.key}) ${match.text}` : key;
+    })
+    .join(', ');
+}
+
+export function choiceKeySelected(value: string | null | undefined, key: string): boolean {
+  const raw = (value || '').trim();
+  if (!raw) return false;
+  return raw
+    .split(',')
+    .map((part) => part.trim().toUpperCase())
+    .includes(key.toUpperCase());
 }
 
 export function filledOptions(list: QuestionOptionDraft[]): { key: string; text: string }[] {
@@ -63,8 +196,11 @@ export function questionTypeLabelKey(type: string): string {
     TrueFalse: 'qtype.trueFalse',
     SingleChoice: 'qtype.singleChoice',
     MultiChoice: 'qtype.multiChoice',
+    Order: 'qtype.order',
+    Map: 'qtype.map',
     Paragraph: 'qtype.paragraph',
     Underline: 'qtype.underline',
+    Complete: 'qtype.complete',
     FreeText: 'qtype.freeText'
   };
   return map[type] ?? type;
@@ -118,6 +254,21 @@ export function applyTypeDefaults(draft: QuestionDraft): void {
     draft.correctKeys = [];
   } else if (needsOptions(draft.questionType)) {
     if (draft.options.length < 2) draft.options = [{ text: '' }, { text: '' }];
+    if (isOrder(draft.questionType)) {
+      draft.correctKeys = [];
+      draft.correctAnswer = filledOptions(draft.options)
+        .map((option) => option.key)
+        .join(',');
+    }
+  } else if (isMap(draft.questionType)) {
+    draft.options = [];
+    draft.correctKeys = [];
+    if (!draft.mapMarkers) draft.mapMarkers = [];
+    draft.correctAnswer = encodeMapAnswers(draft.mapMarkers);
+  } else if (isComplete(draft.questionType)) {
+    draft.options = [];
+    draft.correctKeys = [];
+    draft.correctAnswer = encodeCompleteAnswers(extractCompleteAnswers(draft.passageText));
   } else {
     draft.correctKeys = [];
   }
@@ -147,13 +298,30 @@ export function validateQuestionDraft(draft: QuestionDraft, index = 1): string |
     }
     return null;
   }
+  if (isComplete(draft.questionType)) {
+    if (!(draft.passageText || '').trim() || extractCompleteAnswers(draft.passageText).length === 0) {
+      return 'teacher.qbank.completeBlanksRequired';
+    }
+    return null;
+  }
   if (isTeacherGradedText(draft.questionType)) {
     return prompt ? null : 'teacher.qbank.required';
+  }
+  if (isMap(draft.questionType)) {
+    if (!draft.promptImageMediaAssetId) return 'teacher.qbank.mapImageRequired';
+    if (!draft.mapMarkers?.length) return 'teacher.qbank.mapMarkersRequired';
+    if (draft.mapMarkers.some((marker) => !(marker.correctAnswer || '').trim())) {
+      return 'teacher.qbank.mapAnswersRequired';
+    }
+    return null;
   }
   if (needsOptions(draft.questionType)) {
     const filled = filledOptions(draft.options);
     if (filled.length < 2) {
       return 'teacher.qbank.minOptions';
+    }
+    if (isOrder(draft.questionType)) {
+      return null;
     }
     if (isMulti(draft.questionType)) {
       if (!draft.correctKeys.length) return 'teacher.qbank.selectMulti';
@@ -178,6 +346,7 @@ export interface QuestionPayload {
   points: number;
   sortOrder: number;
   promptImageMediaAssetId?: string | null;
+  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
   children?: QuestionPayload[];
 }
 
@@ -186,6 +355,9 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
   const filled = filledOptions(draft.options);
   let correct = draft.correctAnswer;
   if (isMulti(type)) correct = draft.correctKeys.join(',');
+  if (isOrder(type)) correct = filled.map((option) => option.key).join(',');
+  if (isMap(type)) correct = encodeMapAnswers(draft.mapMarkers || []);
+  if (isComplete(type)) correct = encodeCompleteAnswers(extractCompleteAnswers(draft.passageText));
   if (isParagraph(type)) correct = '';
   return {
     id: draft.id || undefined,
@@ -198,6 +370,15 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
     points: draft.points > 0 ? draft.points : 1,
     sortOrder,
     promptImageMediaAssetId: draft.promptImageMediaAssetId || null,
+    mapMarkers: isMap(type)
+      ? (draft.mapMarkers || []).map((marker) => ({
+          id: marker.id,
+          x: marker.x,
+          y: marker.y,
+          label: marker.label,
+          kind: marker.kind
+        }))
+      : undefined,
     children: isParagraph(type)
       ? draft.children.map((child, index) => toQuestionPayload(child, index + 1))
       : undefined
@@ -218,6 +399,7 @@ export function draftFromAssignmentQuestion(question: AssignmentQuestion): Quest
     points: question.points,
     promptImageMediaAssetId: question.promptImageMediaAssetId,
     promptImageUrl: question.promptImageUrl,
+    mapMarkers: question.mapMarkers,
     children: question.children
   });
 }
@@ -233,6 +415,7 @@ export function draftFromQuizQuestion(question: TeacherQuizQuestionDetail): Ques
     points: question.points,
     promptImageMediaAssetId: question.promptImageMediaAssetId,
     promptImageUrl: question.promptImageUrl,
+    mapMarkers: question.mapMarkers,
     children: question.children
   });
 }
@@ -250,6 +433,7 @@ function draftFromApi(question: {
   points?: number | null;
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[] | null;
   children?: AssignmentQuestion[] | TeacherQuizQuestionDetail[] | null;
 }): QuestionDraft {
   const type = normalizeType(question.questionType);
@@ -257,6 +441,7 @@ function draftFromApi(question: {
     ? question.options.map((option) => option.text)
     : [question.optionA, question.optionB, question.optionC].filter((text): text is string => !!text);
   const correct = question.correctAnswer || '';
+  const mapAnswers = isMap(type) ? parseMapAnswers(correct) : {};
   const childSource = (question.children ?? []) as Array<AssignmentQuestion | TeacherQuizQuestionDetail>;
   return {
     id: question.id,
@@ -278,7 +463,18 @@ function draftFromApi(question: {
       'correctOption' in child ? draftFromQuizQuestion(child) : draftFromAssignmentQuestion(child)
     ),
     promptImageMediaAssetId: question.promptImageMediaAssetId || null,
-    promptImageUrl: question.promptImageUrl || null
+    promptImageUrl: question.promptImageUrl || null,
+    mapMarkers: (question.mapMarkers || []).map((marker) => ({
+      id: marker.id,
+      x: marker.x,
+      y: marker.y,
+      label: marker.label || marker.id,
+      kind: marker.kind === 'arrow' ? 'arrow' : 'number',
+      correctAnswer:
+        mapAnswers[marker.id] ||
+        Object.entries(mapAnswers).find(([key]) => key.toLowerCase() === marker.id.toLowerCase())?.[1] ||
+        ''
+    }))
   };
 }
 
@@ -311,7 +507,8 @@ export function draftFromGenerated(question: {
             .filter(Boolean)
         : [],
     points: 1,
-    children: []
+    children: [],
+    mapMarkers: []
   };
 }
 

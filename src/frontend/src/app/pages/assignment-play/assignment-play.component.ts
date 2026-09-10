@@ -6,6 +6,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { Assignment, AssignmentSubmission } from '../../models';
 import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-player/protected-video-player.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
@@ -16,7 +17,7 @@ import { answerableQuestions, flattenQuestions } from '../../shared/question-dra
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })

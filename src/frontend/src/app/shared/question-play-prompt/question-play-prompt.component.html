@@ -1,7 +1,9 @@
 <div class="question-play">
   <div class="prompt-html" [innerHTML]="question.prompt | safeHtml"></div>
-  <app-question-image-display [url]="question.promptImageUrl" />
-  @if (question.passageText) {
+  @if (question.questionType !== 'Map') {
+    <app-question-image-display [url]="question.promptImageUrl" />
+  }
+  @if (question.passageText && question.questionType !== 'Complete') {
     <p class="passage" [class.underline-text]="question.questionType === 'Underline'">{{ question.passageText }}</p>
   }
 
@@ -37,6 +39,25 @@
         [placeholder]="'play.underlinePlaceholder' | t"
       />
     </label>
+  } @else if (question.questionType === 'Complete') {
+    <p class="passage complete-line">
+      @for (part of completeParts(question); track $index) {
+        @if (part.kind === 'text') {
+          <span>{{ part.text }}</span>
+        } @else {
+          <input
+            type="text"
+            class="complete-blank"
+            [class.correct]="blankState(question, part.index) === 'correct'"
+            [class.incorrect]="blankState(question, part.index) === 'incorrect'"
+            [value]="completeValue(question, part.index)"
+            [attr.aria-label]="'play.completeBlank' | t"
+            [style.width.ch]="blankWidth(part.expected)"
+            (input)="setCompleteBlank(question, part.index, $any($event.target).value)"
+          />
+        }
+      }
+    </p>
   } @else if (question.questionType === 'TrueFalse') {
     <label><input type="radio" [name]="question.id" [checked]="answers[question.id] === 'True'" (change)="setAnswer(question.id, 'True')" /> {{ 'common.true' | t }}</label>
     <label><input type="radio" [name]="question.id" [checked]="answers[question.id] === 'False'" (change)="setAnswer(question.id, 'False')" /> {{ 'common.false' | t }}</label>
@@ -44,14 +65,50 @@
     @for (opt of choiceOptions(question); track opt.key) {
       <label>
         <input type="checkbox" [checked]="isMultiChecked(question.id, opt.key)" (change)="toggleMulti(question.id, opt.key)" />
-        {{ opt.key }}. {{ opt.text }}
+        {{ opt.key }}. <span class="prompt-html" [innerHTML]="opt.text | safeHtml"></span>
       </label>
     }
+  } @else if (question.questionType === 'Order') {
+    <p class="order-hint">{{ 'play.orderHint' | t }}</p>
+    <div class="order-list">
+      @for (opt of orderedOptions(question); track opt.key; let i = $index) {
+        <div
+          class="order-item"
+          draggable="true"
+          (dragstart)="onOrderDragStart($event, question.id, i)"
+          (dragover)="onOrderDragOver($event)"
+          (drop)="onOrderDrop($event, question.id, i)"
+          (dragend)="onOrderDragEnd()">
+          <span class="order-handle" aria-hidden="true">⠿</span>
+          <span class="order-index">{{ i + 1 }}</span>
+          <span class="order-text prompt-html" [innerHTML]="opt.text | safeHtml"></span>
+          <div class="order-move">
+            <button type="button" class="ghost-btn" [disabled]="i === 0" (click)="moveOrderItem(question.id, i, -1)">↑</button>
+            <button
+              type="button"
+              class="ghost-btn"
+              [disabled]="i === orderedOptions(question).length - 1"
+              (click)="moveOrderItem(question.id, i, 1)">
+              ↓
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (question.questionType === 'Map') {
+    <app-map-question-board
+      mode="play"
+      [imageUrl]="question.promptImageUrl"
+      [markers]="mapMarkers(question)"
+      [answerJson]="answers[question.id] || ''"
+      [namePrefix]="question.id"
+      (answerJsonChange)="setAnswer(question.id, $event)"
+    />
   } @else {
     @for (opt of choiceOptions(question); track opt.key) {
       <label>
         <input type="radio" [name]="question.id" [checked]="answers[question.id] === opt.key" (change)="setAnswer(question.id, opt.key)" />
-        {{ opt.key }}. {{ opt.text }}
+        {{ opt.key }}. <span class="prompt-html" [innerHTML]="opt.text | safeHtml"></span>
       </label>
     }
   }

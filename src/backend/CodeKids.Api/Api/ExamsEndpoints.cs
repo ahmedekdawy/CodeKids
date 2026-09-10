@@ -131,7 +131,7 @@ public static class ExamsEndpoints
             {
                 return ApiResults.ProblemFromException(ex);
             }
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher" });
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
 
         app.MapPost("/api/exams/{examId:guid}/start", async (
 

@@ -26,11 +26,24 @@
 
       @for (answer of submission.answers; track answer.questionId) {
         <div class="question">
-          <p>{{ answer.prompt }}</p>
+          <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
           <app-question-image-display [url]="answer.promptImageUrl" />
-          <p>{{ 'common.answer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
+          <p>{{ 'common.answer' | t }}: {{ formatChoice(answer.answerText, answer.options) || ('common.emDash' | t) }}</p>
           <app-question-image-display [url]="answer.answerImageUrl" />
-          <p class="meta">{{ 'common.key' | t }}: {{ answer.correctAnswer || ('common.emDash' | t) }}</p>
+          @if (answer.options?.length) {
+            <ul class="choice-options">
+              @for (option of answer.options; track option.key) {
+                <li
+                  [class.is-student]="isChoiceSelected(answer.answerText, option.key)"
+                  [class.is-key]="isChoiceSelected(answer.correctAnswer, option.key)"
+                >
+                  <strong>{{ option.key }}</strong>
+                  <span class="prompt-html" [innerHTML]="option.text | safeHtml"></span>
+                </li>
+              }
+            </ul>
+          }
+          <p class="meta">{{ 'common.key' | t }}: {{ formatChoice(answer.correctAnswer, answer.options) || ('common.emDash' | t) }}</p>
           <label class="points-field">
             {{ 'teacher.review.points' | t }}
             <input

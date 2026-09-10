@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
+using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
@@ -17,7 +18,9 @@ public sealed class PublishQuizCommandHandler(IAppDbContext dbContext, Notificat
             .FirstOrDefaultAsync(x => x.Id == command.QuizId, cancellationToken)
             ?? throw new InvalidOperationException("Quiz not found.");
 
-        QuizAuthorization.EnsureCanManage(quiz, command.TeacherUserId);
+        var actor = await dbContext.Users.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == command.TeacherUserId, cancellationToken);
+        QuizAuthorization.EnsureCanManage(quiz, command.TeacherUserId, actor?.Role);
 
         var wasPublished = quiz.IsPublished;
         quiz.IsPublished = true;

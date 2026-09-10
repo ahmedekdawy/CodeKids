@@ -9,7 +9,8 @@ public sealed record QuizAnswerReviewDto(
     string CorrectOption,
     string CorrectText,
     bool IsCorrect,
-    string? PromptImageUrl);
+    string? PromptImageUrl,
+    string? AnswerImageUrl);
 
 public sealed record QuizAttemptReviewDto(
     Guid Id,

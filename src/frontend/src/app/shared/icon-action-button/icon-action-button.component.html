@@ -6,6 +6,9 @@
   [class.login-as]="kind === 'loginAs'"
   [class.deactivate]="kind === 'deactivate'"
   [class.activate]="kind === 'activate'"
+  [class.share]="kind === 'share'"
+  [class.copy-link]="kind === 'copyLink'"
+  [class.review]="kind === 'review'"
   [class.apply]="kind === 'apply'"
   [class.ghost]="variant === 'ghost'"
   [attr.aria-label]="ariaLabel()"
@@ -48,6 +51,12 @@
     <i class="fa-solid fa-user-slash" aria-hidden="true"></i>
   } @else if (kind === 'activate') {
     <i class="fa-solid fa-user-check" aria-hidden="true"></i>
+  } @else if (kind === 'share') {
+    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+  } @else if (kind === 'copyLink') {
+    <i class="fa-solid fa-link" aria-hidden="true"></i>
+  } @else if (kind === 'review') {
+    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
   } @else {
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path

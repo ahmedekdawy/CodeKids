@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Badges;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,14 @@ public sealed class SaveWeeklyReportsCommandHandler(IAppDbContext dbContext)
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        var students = await dbContext.Users
+            .Where(x => studentIds.Contains(x.Id))
+            .ToListAsync(cancellationToken);
+        foreach (var student in students)
+        {
+            await BadgeAwarder.AwardEligibleAsync(dbContext, student, cancellationToken);
+        }
 
         return await new GetWeeklyReportGridQueryHandler(dbContext).Handle(
             new GetWeeklyReportGridQuery(command.TeacherId, command.WeekStartDate, Grade: null),

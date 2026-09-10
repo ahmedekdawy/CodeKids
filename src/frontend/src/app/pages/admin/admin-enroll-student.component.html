@@ -5,13 +5,15 @@
   <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
-    <form class="meeting-form" (ngSubmit)="enrollStudent()">
+    <h3>{{ (editing() ? 'admin.enroll.editTitle' : 'admin.enroll.createTitle') | t }}</h3>
+    <form class="meeting-form" (ngSubmit)="saveEnrollment()">
       <label>
         {{ 'common.student' | t }}
         <app-searchable-select
           [ngModel]="enrollStudentId()"
           name="enrollStudentId"
           (ngModelChange)="onStudentChange($event)"
+          [disabled]="editing()"
           [emptyLabel]="'common.select' | t"
           [options]="students().map(s => ({ value: s.id, label: studentLabel(s) }))"
         />
@@ -22,10 +24,11 @@
           [ngModel]="enrollClassroomId()"
           name="enrollClassroomId"
           (ngModelChange)="onClassroomChange($event)"
+          [disabled]="editing()"
           [emptyLabel]="'common.select' | t"
           [options]="enrollableClassrooms().map(r => ({ value: r.id, label: r.name }))"
         />
-        @if (enrollStudentId()) {
+        @if (enrollStudentId() && !editing()) {
           <span class="meta">{{ 'admin.enroll.gradeFilterHint' | t }}</span>
         }
       </label>
@@ -46,7 +49,12 @@
           }
         </label>
       }
-      <button type="submit">{{ 'admin.enroll.enroll' | t }}</button>
+      <div class="form-actions chip-row">
+        <button type="submit">{{ (editing() ? 'common.save' : 'admin.enroll.enroll') | t }}</button>
+        @if (editing()) {
+          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        }
+      </div>
     </form>
   </section>
 
@@ -116,6 +124,7 @@
               <td>{{ row.coursesLabel }}</td>
               <td>
                 <div class="row-actions">
+                  <app-icon-action-button kind="edit" [label]="'admin.enroll.editLabel' | t" (action)="startEdit(row)" />
                   <app-icon-action-button kind="delete" variant="danger" [label]="'admin.enroll.removeLabel' | t" (action)="removeEnrollment(row)" />
                 </div>
               </td>

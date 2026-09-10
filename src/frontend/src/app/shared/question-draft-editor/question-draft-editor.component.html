@@ -45,11 +45,11 @@
       </div>
       @for (child of draft.children; track $index; let i = $index) {
         <div class="qb-child">
+          <div class="qb-field">
+            <span>{{ 'teacher.qbank.childPrompt' | t }}</span>
+            <app-math-prompt-editor [(ngModel)]="child.prompt" [name]="namePrefix + '-cPrompt-' + i" />
+          </div>
           <div class="qb-row two">
-            <label class="qb-field">
-              <span>{{ 'teacher.qbank.childPrompt' | t }}</span>
-              <input [(ngModel)]="child.prompt" [name]="namePrefix + '-cPrompt-' + i" />
-            </label>
             <label class="qb-field">
               <span>{{ 'common.type' | t }}</span>
               <app-searchable-select
@@ -58,6 +58,10 @@
                 (ngModelChange)="applyTypeDefaults(child)"
                 [options]="childTypes().map(t => ({ value: t, label: typeLabel(t) }))"
               />
+            </label>
+            <label class="qb-field">
+              <span>{{ 'common.points' | t }}</span>
+              <input type="number" [(ngModel)]="child.points" [name]="namePrefix + '-cPts-' + i" min="1" />
             </label>
           </div>
           <app-question-image-upload
@@ -96,12 +100,28 @@
           } @else {
             <div class="options-editor">
               <div class="qb-children-head">
-                <h4>{{ 'common.options' | t }}</h4>
+                <h4>{{ (isOrder(child.questionType) ? 'teacher.qbank.orderItems' : 'common.options') | t }}</h4>
                 <button type="button" class="ghost-btn" (click)="addChildOption(child)">{{ 'common.addOption' | t }}</button>
               </div>
+              @if (isOrder(child.questionType)) {
+                <p class="meta">{{ 'teacher.qbank.orderHint' | t }}</p>
+              }
               @for (opt of child.options; track $index; let oi = $index) {
-                <div class="option-row">
-                  <span class="option-key">{{ optionLabel(oi) }}</span>
+                <div
+                  class="option-row"
+                  [class.order-row]="isOrder(child.questionType)"
+                  [class.dragging]="dragIndex === oi && dragScope === 'c' + i"
+                  [attr.draggable]="isOrder(child.questionType)"
+                  (dragstart)="onDragStart($event, oi, 'c' + i)"
+                  (dragover)="onDragOver($event)"
+                  (drop)="onChildDrop($event, child, oi)"
+                  (dragend)="onDragEnd()">
+                  @if (isOrder(child.questionType)) {
+                    <span class="order-handle" aria-hidden="true">⠿</span>
+                    <span class="option-key">{{ oi + 1 }}</span>
+                  } @else {
+                    <span class="option-key">{{ optionLabel(oi) }}</span>
+                  }
                   <input [(ngModel)]="opt.text" [name]="namePrefix + '-cOpt-' + i + '-' + oi" [placeholder]="'common.optionText' | t" />
                   <app-icon-action-button
                     kind="delete"
@@ -124,7 +144,7 @@
                   </label>
                 }
               </div>
-            } @else {
+            } @else if (!isOrder(child.questionType)) {
               <label class="qb-field">
                 <span>{{ 'common.correctAnswer' | t }}</span>
                 <app-searchable-select
@@ -137,10 +157,6 @@
             }
           }
 
-          <label class="qb-field">
-            <span>{{ 'common.points' | t }}</span>
-            <input type="number" [(ngModel)]="child.points" [name]="namePrefix + '-cPts-' + i" min="1" />
-          </label>
           <app-icon-action-button kind="delete" variant="ghost" [label]="'teacher.qbank.removeChild' | t" (action)="removeChild(i)" />
         </div>
       }
@@ -158,6 +174,17 @@
     <label class="qb-field">
       <span>{{ 'teacher.qbank.underlinePhrase' | t }}</span>
       <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" [placeholder]="'teacher.qbank.underlinePlaceholder' | t" />
+    </label>
+  } @else if (isComplete()) {
+    <p class="meta">{{ 'teacher.qbank.completeHint' | t }}</p>
+    <label class="qb-field">
+      <span>{{ 'teacher.qbank.completeText' | t }}</span>
+      <textarea
+        [(ngModel)]="draft.passageText"
+        [name]="namePrefix + '-passage'"
+        rows="4"
+        [placeholder]="'teacher.qbank.completePlaceholder' | t"
+      ></textarea>
     </label>
   } @else if (draft.questionType === 'TrueFalse') {
     <label class="qb-field">
@@ -183,15 +210,40 @@
       <span>{{ 'common.correctAnswer' | t }}</span>
       <input [(ngModel)]="draft.correctAnswer" [name]="namePrefix + '-correct'" />
     </label>
+  } @else if (isMap()) {
+    <p class="meta">{{ 'teacher.qbank.mapHint' | t }}</p>
+    <app-map-question-board
+      mode="edit"
+      [imageUrl]="draft.promptImageUrl"
+      [markers]="draft.mapMarkers"
+      [namePrefix]="namePrefix"
+      (markersChange)="onMapMarkersChange($event)"
+    />
   } @else {
     <div class="options-editor">
       <div class="qb-children-head">
-        <h4>{{ 'teacher.qbank.answerOptions' | t }}</h4>
+        <h4>{{ (isOrder() ? 'teacher.qbank.orderItems' : 'teacher.qbank.answerOptions') | t }}</h4>
         <button type="button" class="ghost-btn" (click)="addOption()">{{ 'common.addOption' | t }}</button>
       </div>
+      @if (isOrder()) {
+        <p class="meta">{{ 'teacher.qbank.orderHint' | t }}</p>
+      }
       @for (opt of draft.options; track $index; let oi = $index) {
-        <div class="option-row">
-          <span class="option-key">{{ optionLabel(oi) }}</span>
+        <div
+          class="option-row"
+          [class.order-row]="isOrder()"
+          [class.dragging]="dragIndex === oi && dragScope === 'root'"
+          [attr.draggable]="isOrder()"
+          (dragstart)="onDragStart($event, oi, 'root')"
+          (dragover)="onDragOver($event)"
+          (drop)="onRootDrop($event, oi)"
+          (dragend)="onDragEnd()">
+          @if (isOrder()) {
+            <span class="order-handle" aria-hidden="true">⠿</span>
+            <span class="option-key">{{ oi + 1 }}</span>
+          } @else {
+            <span class="option-key">{{ optionLabel(oi) }}</span>
+          }
           <input
             [(ngModel)]="opt.text"
             [name]="namePrefix + '-opt-' + oi"
@@ -219,7 +271,7 @@
           </label>
         }
       </div>
-    } @else {
+    } @else if (!isOrder()) {
       <label class="qb-field">
         <span>{{ 'common.correctAnswer' | t }}</span>
         <app-searchable-select

@@ -28,11 +28,21 @@ label {
   color: var(--prompt-fg);
 }
 
-.prompt-html,
-.prompt-html * {
+.prompt-html {
   font-weight: 700;
   margin-bottom: 0.35rem;
   color: var(--prompt-fg) !important;
+}
+
+.prompt-html *:not(.math-frac):not(.math-frac *) {
+  font-weight: 700;
+  color: var(--prompt-fg) !important;
+}
+
+.prompt-html .math-frac,
+.prompt-html .math-frac * {
+  color: var(--prompt-fg) !important;
+  font-weight: 700;
 }
 
 .question input[type='text'] {

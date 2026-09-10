@@ -109,7 +109,7 @@
               <p>{{ 'parent.childSummary' | t:{ xp: child.totalXp, steps: child.completedSteps, quizzes: child.quizAttempts } }}</p>
               <div class="chip-row">
                 @for (badge of child.badges; track badge) {
-                  <span class="chip">{{ badge }}</span>
+                  <span class="chip">{{ badgeLabel(badge) }}</span>
                 }
                 @if (!child.badges.length) {
                   <span class="meta">{{ 'parent.noBadges' | t }}</span>

@@ -67,7 +67,8 @@
             <ul>
               @for (child of question.children; track child.id) {
                 <li>
-                  {{ child.prompt }} ({{ typeLabel(child.questionType) }})
+                  <span class="prompt-html" [innerHTML]="child.prompt | safeHtml"></span>
+                  ({{ typeLabel(child.questionType) }})
                   <app-question-image-display [url]="child.promptImageUrl" [compact]="true" />
                 </li>
               }

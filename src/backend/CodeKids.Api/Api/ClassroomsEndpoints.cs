@@ -316,6 +316,42 @@ public static class ClassroomsEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+        app.MapPut("/api/classrooms/{classroomId:guid}/students/{studentId:guid}", async (
+
+            Guid classroomId,
+
+            Guid studentId,
+
+            UpdateClassroomStudentRequest request,
+
+            ICommandHandler<UpdateStudentClassroomEnrollmentCommand, ClassroomDto> handler,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            try
+
+            {
+
+                return Results.Ok(await handler.Handle(
+
+                    new UpdateStudentClassroomEnrollmentCommand(classroomId, studentId, request.CourseIds),
+
+                    cancellationToken));
+
+            }
+
+            catch (Exception ex)
+
+            {
+
+                return ApiResults.ProblemFromException(ex);
+
+            }
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPut("/api/classrooms/{classroomId:guid}/whatsapp", async (
 
             Guid classroomId,

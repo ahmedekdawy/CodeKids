@@ -1,3 +1,5 @@
+using CodeKids.Application.Features.QuestionBank;
+
 namespace CodeKids.Application.Features.Assignments;
 
 public sealed record AssignmentQuestionInput(
@@ -13,4 +15,5 @@ public sealed record AssignmentQuestionInput(
     Guid? Id = null,
     string? PassageText = null,
     IReadOnlyList<string>? Options = null,
-    IReadOnlyList<AssignmentQuestionInput>? Children = null);
+    IReadOnlyList<AssignmentQuestionInput>? Children = null,
+    IReadOnlyList<MapMarkerInput>? MapMarkers = null);

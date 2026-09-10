@@ -172,3 +172,33 @@
   background: var(--badge-warn-bg);
   border-color: var(--badge-warn-border);
 }
+
+.choice-options {
+  list-style: none;
+  margin: 0.4rem 0 0.6rem;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.choice-options li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  background: var(--elevated-bg);
+}
+
+.choice-options li.is-student {
+  border-color: var(--accent, #5b8def);
+}
+
+.choice-options li.is-key {
+  background: var(--badge-ok-bg, rgba(80, 180, 120, 0.16));
+}
+
+.choice-options strong {
+  min-width: 1.4rem;
+}

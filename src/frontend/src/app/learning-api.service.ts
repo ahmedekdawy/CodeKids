@@ -48,6 +48,8 @@ import {
   TeacherPayrollReport,
   TeacherPayrollAdjustment,
   AccountReport,
+  TeacherAssessmentReportItem,
+  PagedTeacherAssessments,
   AdminLoginDashboard,
   TuitionPayment,
   OtherExpense,
@@ -274,6 +276,7 @@ export class LearningApiService {
       points?: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
+      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
       children?: unknown[];
     }[];
   }): Observable<Quiz> {
@@ -325,6 +328,7 @@ export class LearningApiService {
         points?: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
+        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
         children?: unknown[];
       }[];
     }
@@ -346,7 +350,7 @@ export class LearningApiService {
 
   submitQuiz(payload: {
     quizId: string;
-    answers: { questionId: string; selectedOption: string }[];
+    answers: { questionId: string; selectedOption: string; answerImageMediaAssetId?: string | null }[];
   }): Observable<SubmitQuizResponse> {
     return this.http.post<SubmitQuizResponse>(`${this.baseUrl}/quizzes/submit`, payload);
   }
@@ -828,6 +832,31 @@ export class LearningApiService {
     );
   }
 
+  getTeacherAssessmentsReport(filters: {
+    teacherId?: string;
+    classroomId?: string;
+    fromDate?: string;
+    toDate?: string;
+    status?: string;
+    kind?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<PagedTeacherAssessments> {
+    const params = new URLSearchParams();
+    if (filters.teacherId) params.set('teacherId', filters.teacherId);
+    if (filters.classroomId) params.set('classroomId', filters.classroomId);
+    if (filters.fromDate) params.set('fromDate', filters.fromDate);
+    if (filters.toDate) params.set('toDate', filters.toDate);
+    if (filters.status) params.set('status', filters.status);
+    if (filters.kind) params.set('kind', filters.kind);
+    if (filters.page) params.set('page', String(filters.page));
+    if (filters.pageSize) params.set('pageSize', String(filters.pageSize));
+    const query = params.toString();
+    return this.http.get<PagedTeacherAssessments>(
+      `${this.baseUrl}/admin/teacher-assessments${query ? `?${query}` : ''}`
+    );
+  }
+
   getAdminLoginDashboard(filters: {
     fromDate: string;
     toDate: string;
@@ -1239,6 +1268,16 @@ export class LearningApiService {
     });
   }
 
+  updateStudentClassroomEnrollment(
+    classroomId: string,
+    studentId: string,
+    courseIds?: string[]
+  ): Observable<Classroom> {
+    return this.http.put<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/students/${studentId}`, {
+      courseIds: courseIds?.length ? courseIds : null
+    });
+  }
+
   removeStudentFromClassroom(classroomId: string, studentId: string): Observable<Classroom> {
     return this.http.delete<Classroom>(`${this.baseUrl}/classrooms/${classroomId}/students/${studentId}`);
   }
@@ -1311,6 +1350,7 @@ export class LearningApiService {
       points: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
+      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
       id?: string | null;
       children?: unknown[];
     }[];
@@ -1339,6 +1379,7 @@ export class LearningApiService {
         points: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
+        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
         id?: string | null;
         children?: unknown[];
       }[];
@@ -1395,6 +1436,7 @@ export class LearningApiService {
     points: number;
     sortOrder: number;
     promptImageMediaAssetId?: string | null;
+    mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
     children?: {
       prompt: string;
       questionType: string;

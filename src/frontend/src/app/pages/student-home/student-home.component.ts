@@ -158,8 +158,22 @@ export class StudentHomeComponent {
     return course.videos ?? [];
   }
 
+  badgeTitle(badge: Badge): string {
+    return this.translateBadgeField(badge.code, badge.name);
+  }
+
+  badgeDescription(badge: Badge): string {
+    return this.translateBadgeField(`${badge.code}.desc`, badge.description);
+  }
+
   publishedQuizzes(course: Course): CourseQuiz[] {
     return (course.quizzes ?? []).filter((quiz) => quiz.isPublished === true);
+  }
+
+  private translateBadgeField(suffix: string, fallback: string): string {
+    const key = `badge.${suffix}`;
+    const translated = this.locale.t(key);
+    return translated === key ? fallback : translated;
   }
 
   private assignmentBelongsToCourse(assignment: Assignment, course: Course): boolean {

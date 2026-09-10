@@ -100,6 +100,27 @@
   align-items: center;
 }
 
+.option-row.order-row {
+  grid-template-columns: 1.4rem 2rem 1fr auto;
+  padding: 0.35rem 0.45rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: grab;
+  background: var(--surface);
+}
+
+.option-row.order-row.dragging {
+  opacity: 0.55;
+  border-color: var(--border-strong);
+}
+
+.order-handle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  user-select: none;
+}
+
 .option-key {
   font-weight: 800;
   color: var(--accent-fg);

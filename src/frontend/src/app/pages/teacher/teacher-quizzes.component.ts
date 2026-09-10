@@ -3,10 +3,12 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { SafeHtmlPipe } from '../../shared/safe-html.pipe';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, TeacherQuizListItem } from '../../models';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
+import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
@@ -31,6 +33,7 @@ import { paginate, totalPages } from '../../list-query.util';
     ReactiveFormsModule,
     IconActionButtonComponent,
     TranslatePipe,
+    SafeHtmlPipe,
     QuestionDraftEditorComponent,
     QuestionImageDisplayComponent
   ],
@@ -198,6 +201,13 @@ export class TeacherQuizzesComponent {
 
   reviewQuizTitle(): string {
     return this.quizzes().find((q) => q.id === this.reviewQuizId)?.title ?? '';
+  }
+
+  closeReview(): void {
+    this.reviewQuizId = '';
+    this.expandedAttemptId = '';
+    this.attempts.set([]);
+    this.attemptsPage.set(1);
   }
 
   onCourseChange(): void {
@@ -369,6 +379,22 @@ export class TeacherQuizzesComponent {
       },
       () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
     );
+  }
+
+  whatsAppShareUrl(quiz: TeacherQuizListItem): string {
+    return assessmentWhatsAppShareUrl({
+      kindLabel: this.locale.t('nav.teacher.quizzes'),
+      name: quiz.title,
+      gradeLabel: quiz.courseGrade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), quiz.courseGrade),
+      courseLabel: quiz.courseTitle,
+      studentPath: `/quizzes/${quiz.id}`,
+      gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
+      courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
+    });
+  }
+
+  shareOnWhatsApp(quiz: TeacherQuizListItem): void {
+    window.open(this.whatsAppShareUrl(quiz), '_blank', 'noopener');
   }
 
   isPublishing(id: string): boolean {

@@ -30,7 +30,7 @@ public static class BankQuestionValidator
         if (!Enum.TryParse<BankQuestionType>(value, true, out var type) || !Enum.IsDefined(type))
         {
             throw new InvalidOperationException(
-                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, or ShortAnswer.");
+                "Question type must be Choose, TrueFalse, SingleChoice, MultiChoice, Paragraph, Underline, FreeText, ShortAnswer, Order, Map, or Complete.");
         }
 
         return type;
@@ -45,7 +45,8 @@ public static class BankQuestionValidator
         string? optionD,
         string correctAnswer,
         string? passageText = null,
-        IReadOnlyList<string>? options = null)
+        IReadOnlyList<string>? options = null,
+        IReadOnlyList<MapMarkerInput>? mapMarkers = null)
     {
         if (string.IsNullOrWhiteSpace(StripHtml(prompt)))
         {
@@ -77,6 +78,47 @@ public static class BankQuestionValidator
             return;
         }
 
+        if (type == BankQuestionType.Complete)
+        {
+            if (string.IsNullOrWhiteSpace(passageText))
+            {
+                throw new InvalidOperationException("Complete questions require the sentence with answers between ##.");
+            }
+
+            var blanks = CompleteBlanks.Extract(passageText);
+            if (blanks.Count == 0)
+            {
+                throw new InvalidOperationException("Complete questions require at least one answer wrapped in ##.");
+            }
+
+            return;
+        }
+
+        if (type == BankQuestionType.Map)
+        {
+            var markers = MapMarkers.Normalize(mapMarkers);
+            if (markers.Count == 0)
+            {
+                throw new InvalidOperationException("Map questions need at least one marker on the image.");
+            }
+
+            var answers = MapMarkers.ParseAnswers(correctAnswer);
+            if (answers.Count == 0)
+            {
+                throw new InvalidOperationException("Map questions require a correct answer for each marker.");
+            }
+
+            foreach (var marker in markers)
+            {
+                if (!answers.TryGetValue(marker.Id, out var value) || string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidOperationException("Map questions require a correct answer for each marker.");
+                }
+            }
+
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(correctAnswer))
         {
             throw new InvalidOperationException("Correct answer is required.");
@@ -92,7 +134,10 @@ public static class BankQuestionValidator
             return;
         }
 
-        if (type is BankQuestionType.Choose or BankQuestionType.SingleChoice or BankQuestionType.MultiChoice)
+        if (type is BankQuestionType.Choose
+            or BankQuestionType.SingleChoice
+            or BankQuestionType.MultiChoice
+            or BankQuestionType.Order)
         {
             var choiceOptions = options is { Count: > 0 }
                 ? ChoiceOptions.FromTexts(options)
@@ -104,6 +149,20 @@ public static class BankQuestionValidator
             }
 
             var allowed = ChoiceOptions.AllowedKeys(choiceOptions);
+            if (type == BankQuestionType.Order)
+            {
+                var ordered = ExamGrading.ParseOrderedKeys(correctAnswer);
+                if (ordered.Count != choiceOptions.Count
+                    || ordered.Distinct(StringComparer.OrdinalIgnoreCase).Count() != ordered.Count
+                    || ordered.Any(k => !allowed.Contains(k)))
+                {
+                    throw new InvalidOperationException(
+                        "Order questions require each option exactly once in the correct sequence.");
+                }
+
+                return;
+            }
+
             var keys = ExamGrading.NormalizeMultiAnswer(correctAnswer);
             if (keys.Count == 0)
             {

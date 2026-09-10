@@ -54,16 +54,30 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
                 var correct = string.IsNullOrWhiteSpace(a.Question?.CorrectAnswer)
                     ? (a.Question?.CorrectOption ?? string.Empty)
                     : a.Question!.CorrectAnswer;
+                var isMap = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Map;
+                var isComplete = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Complete;
+                var preserveOrder = a.Question?.QuestionType == Domain.Enums.BankQuestionType.Order;
+                var selectedText = isMap
+                    ? FormatMapAnswers(selected)
+                    : isComplete
+                        ? CompleteBlanks.Format(selected)
+                    : ChoiceOptions.FormatAnswer(options, selected, preserveOrder);
+                var correctText = isMap
+                    ? FormatMapAnswers(correct)
+                    : isComplete
+                        ? CompleteBlanks.Format(correct)
+                    : ChoiceOptions.FormatAnswer(options, correct, preserveOrder);
                 return new QuizAnswerReviewDto(
                     a.QuestionId,
                     a.Question?.Prompt ?? string.Empty,
                     a.Question?.SortOrder ?? 0,
                     selected,
-                    AnswerDisplay(options, selected),
+                    selectedText,
                     correct,
-                    AnswerDisplay(options, correct),
+                    correctText,
                     a.IsCorrect,
-                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId));
+                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                    QuestionImageUrls.Build(a.AnswerImageMediaAssetId));
             })
             .ToList();
 
@@ -79,35 +93,14 @@ public sealed class GetQuizAttemptsQueryHandler(IAppDbContext dbContext)
             answers);
     }
 
-    private static string AnswerDisplay(IReadOnlyList<ChoiceOptionDto> options, string key)
+    private static string FormatMapAnswers(string? json)
     {
-        if (string.IsNullOrWhiteSpace(key))
+        var answers = MapMarkers.ParseAnswers(json);
+        if (answers.Count == 0)
         {
-            return string.Empty;
+            return (json ?? string.Empty).Trim();
         }
 
-        if (options.Count == 0)
-        {
-            return key;
-        }
-
-        var parts = ExamGrading.NormalizeMultiAnswer(key);
-        if (parts.Count > 1)
-        {
-            return string.Join(", ", parts.Select(part => OptionText(options, part)));
-        }
-
-        return OptionText(options, key);
-    }
-
-    private static string OptionText(IReadOnlyList<ChoiceOptionDto> options, string key)
-    {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return string.Empty;
-        }
-
-        var match = options.FirstOrDefault(o => string.Equals(o.Key, key, StringComparison.OrdinalIgnoreCase));
-        return match is null ? key : $"{match.Key}) {match.Text}";
+        return string.Join(", ", answers.Select(pair => $"{pair.Key}: {pair.Value}"));
     }
 }

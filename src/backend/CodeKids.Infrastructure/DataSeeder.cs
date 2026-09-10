@@ -62,6 +62,8 @@ public static class DataSeeder
                 new Badge { Id = Guid.NewGuid(), Code = "QUIZ_HERO", Name = "Quiz Hero", Description = "Reach 80 XP with quizzes and lessons.", Icon = "🏆", RequiredXp = 80, RequiredSteps = 3 });
         }
 
+        await EnsureAchievementBadgesAsync(dbContext, cancellationToken);
+
         if (!await dbContext.Courses.AnyAsync(cancellationToken))
         {
             var starterCourseId = Guid.Parse("22222222-2222-2222-2222-222222222201");
@@ -267,6 +269,66 @@ public static class DataSeeder
                     JoinedAtUtc = DateTimeOffset.UtcNow
                 });
                 await dbContext.SaveChangesAsync(cancellationToken);
+            }
+        }
+    }
+
+    private static async Task EnsureAchievementBadgesAsync(AppDbContext dbContext, CancellationToken cancellationToken)
+    {
+        var existing = await dbContext.Badges
+            .Select(x => x.Code)
+            .ToListAsync(cancellationToken);
+        var existingSet = existing.ToHashSet(StringComparer.Ordinal);
+
+        Badge[] extras =
+        [
+            new Badge
+            {
+                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0001"),
+                Code = "WEEKLY_STAR",
+                Name = "Weekly Star",
+                Description = "Score above 90% on a weekly evaluation.",
+                Icon = "🌟",
+                RequiredXp = 0,
+                RequiredSteps = 0
+            },
+            new Badge
+            {
+                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0002"),
+                Code = "ASSIGNMENT_ACE",
+                Name = "Assignment Ace",
+                Description = "Score 98% or higher on an assignment.",
+                Icon = "📝",
+                RequiredXp = 0,
+                RequiredSteps = 0
+            },
+            new Badge
+            {
+                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0003"),
+                Code = "EXAM_STAR",
+                Name = "Exam Star",
+                Description = "Score above 95% on an exam.",
+                Icon = "🎓",
+                RequiredXp = 0,
+                RequiredSteps = 0
+            },
+            new Badge
+            {
+                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaa0004"),
+                Code = "QUIZ_ACE",
+                Name = "Quiz Ace",
+                Description = "Score 98% or higher on a quiz.",
+                Icon = "🧠",
+                RequiredXp = 0,
+                RequiredSteps = 0
+            }
+        ];
+
+        foreach (var badge in extras)
+        {
+            if (!existingSet.Contains(badge.Code))
+            {
+                dbContext.Badges.Add(badge);
             }
         }
     }

@@ -1,19 +1,103 @@
 <div class="math-editor" [class.disabled]="disabled">
   <div class="toolbar" role="toolbar" [attr.aria-label]="'editor.formattingToolbar' | t">
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('bold')" title="Bold"><b>B</b></button>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('italic')" title="Italic"><i>I</i></button>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('underline')" title="Underline"><u>U</u></button>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('subscript')" title="Subscript">X<sub>2</sub></button>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="exec('superscript')" title="Superscript">X<sup>2</sup></button>
-    <span class="sep"></span>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="insertFraction()" title="Fraction">a/b</button>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="insertSqrt()" title="Square root">√</button>
-    <button type="button" (mousedown)="$event.preventDefault()" (click)="insertPower()" title="Power">xⁿ</button>
-    <span class="sep"></span>
-    @for (symbol of symbols; track symbol) {
-      <button type="button" class="sym" (mousedown)="$event.preventDefault()" (click)="insertSymbol(symbol)">{{ symbol }}</button>
+    <div class="toolbar-row">
+      @for (tool of formatTools; track tool.cmd) {
+        <button
+          type="button"
+          class="fmt"
+          [class.strike]="tool.cmd === 'strikeThrough'"
+          (mousedown)="$event.preventDefault()"
+          (click)="exec(tool.cmd)"
+          [attr.title]="tool.titleKey | t"
+          [attr.aria-label]="tool.titleKey | t">
+          @if (tool.cmd === 'subscript') {
+            X<sub>2</sub>
+          } @else if (tool.cmd === 'superscript') {
+            X<sup>2</sup>
+          } @else {
+            {{ tool.label }}
+          }
+        </button>
+      }
+      <span class="sep" aria-hidden="true"></span>
+      @for (tool of equationTools; track tool.id) {
+        <button
+          type="button"
+          class="eq"
+          [class.active]="tool.id === 'fraction' && showFractionBuilder"
+          (mousedown)="$event.preventDefault()"
+          (click)="runEquationTool(tool.id)"
+          [attr.title]="tool.titleKey | t"
+          [attr.aria-label]="tool.titleKey | t">
+          {{ tool.label }}
+        </button>
+      }
+    </div>
+
+    @if (showFractionBuilder) {
+      <div class="fraction-builder" role="group" [attr.aria-label]="'editor.fractionBuilder' | t">
+        <div class="fraction-fields">
+          <label class="frac-field">
+            <span>{{ 'editor.numerator' | t }}</span>
+            <input
+              #fracNumInput
+              type="text"
+              [(ngModel)]="fractionNum"
+              [placeholder]="'editor.numeratorPlaceholder' | t"
+              (keydown.enter)="$event.preventDefault(); insertFraction()" />
+          </label>
+          <div class="frac-preview" aria-hidden="true">
+            <span class="math-frac">
+              <span class="math-num">{{ fractionNum.trim() || '?' }}</span>
+              <span class="math-den">{{ fractionDen.trim() || '?' }}</span>
+            </span>
+          </div>
+          <label class="frac-field">
+            <span>{{ 'editor.denominator' | t }}</span>
+            <input
+              type="text"
+              [(ngModel)]="fractionDen"
+              [placeholder]="'editor.denominatorPlaceholder' | t"
+              (keydown.enter)="$event.preventDefault(); insertFraction()" />
+          </label>
+        </div>
+        <div class="fraction-actions">
+          <button type="button" class="primary" (click)="insertFraction()">{{ 'editor.insertFraction' | t }}</button>
+          <button type="button" class="ghost" (click)="cancelFractionBuilder()">{{ 'common.cancel' | t }}</button>
+        </div>
+      </div>
     }
+
+    <div class="symbol-tabs" role="tablist" [attr.aria-label]="'editor.symbolGroups' | t">
+      @for (group of symbolGroups; track group.id) {
+        <button
+          type="button"
+          role="tab"
+          class="tab"
+          [class.active]="activeGroupId === group.id"
+          [attr.aria-selected]="activeGroupId === group.id"
+          (mousedown)="$event.preventDefault()"
+          (click)="selectGroup(group.id)">
+          {{ group.labelKey | t }}
+        </button>
+      }
+    </div>
+
+    <div class="symbol-pad" role="tabpanel">
+      @for (symbol of activeGroup.symbols; track symbol) {
+        <button
+          type="button"
+          class="sym"
+          (mousedown)="$event.preventDefault()"
+          (click)="insertSymbol(symbol)"
+          [attr.title]="symbol"
+          [attr.aria-label]="symbol">
+          {{ symbol }}
+        </button>
+      }
+    </div>
   </div>
+
   <div
     #editor
     class="surface"

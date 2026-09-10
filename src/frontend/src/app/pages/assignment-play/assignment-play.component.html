@@ -31,7 +31,7 @@
 
     @for (answer of submission.answers; track answer.questionId) {
       <section class="block question">
-        <strong>{{ answer.prompt }}</strong>
+        <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
         <app-question-image-display [url]="answer.promptImageUrl" />
         <p class="meta">{{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
         <app-question-image-display [url]="answer.answerImageUrl" />

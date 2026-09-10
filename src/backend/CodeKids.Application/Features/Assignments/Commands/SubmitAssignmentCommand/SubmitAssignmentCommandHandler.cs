@@ -169,14 +169,24 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             submission.SubmittedAtUtc,
             submission.GradedAtUtc,
             submission.Assignment?.SolutionVideoMediaAssetId,
-            submission.Answers.Select(a => new AssignmentAnswerReviewDto(
-                a.QuestionId,
-                a.Question?.Prompt ?? "",
-                a.AnswerText,
-                a.Question?.CorrectAnswer,
-                a.IsCorrect,
-                a.PointsAwarded,
-                a.Question?.Points ?? 0,
-                QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
-                QuestionImageUrls.Build(a.AnswerImageMediaAssetId))).ToList());
+            submission.Answers.Select(a =>
+            {
+                var options = ChoiceOptions.Parse(
+                    a.Question?.OptionsJson,
+                    a.Question?.OptionA,
+                    a.Question?.OptionB,
+                    a.Question?.OptionC);
+                return new AssignmentAnswerReviewDto(
+                    a.QuestionId,
+                    a.Question?.Prompt ?? "",
+                    a.AnswerText,
+                    a.Question?.CorrectAnswer,
+                    a.IsCorrect,
+                    a.PointsAwarded,
+                    a.Question?.Points ?? 0,
+                    QuestionImageUrls.Build(a.Question?.PromptImageMediaAssetId),
+                    QuestionImageUrls.Build(a.AnswerImageMediaAssetId),
+                    a.Question?.QuestionType.ToString() ?? "",
+                    options);
+            }).ToList());
 }

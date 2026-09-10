@@ -118,6 +118,7 @@ export class TeacherQuestionBankComponent {
         points: payload.points,
         sortOrder: 1,
         promptImageMediaAssetId: payload.promptImageMediaAssetId,
+        mapMarkers: payload.mapMarkers,
         children: payload.children?.map((child) => ({
           prompt: child.prompt,
           questionType: child.questionType,

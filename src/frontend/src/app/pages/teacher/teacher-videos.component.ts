@@ -147,6 +147,16 @@ export class TeacherVideosComponent {
       .sort((a, b) => a.name.localeCompare(b.name));
   });
 
+  readonly watchSummary = computed(() => {
+    const list = this.watchSessions();
+    const watched = list.reduce((total, session) => total + (session.actualWatchSeconds || 0), 0);
+    return {
+      count: list.length,
+      avgSeconds: list.length ? Math.round(watched / list.length) : 0,
+      flagged: list.filter((session) => session.usedSpeedUp || session.skippedAhead).length
+    };
+  });
+
   readonly filteredWatchSessions = computed(() => {
     const q = this.analyticsSearch.trim().toLowerCase();
     const list = this.watchSessions();

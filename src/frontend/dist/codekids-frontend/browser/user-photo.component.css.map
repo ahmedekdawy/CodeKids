@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/user-photo/user-photo.component.css"],
+  "sourcesContent": [".user-photo {\r\n  display: inline-grid;\r\n  place-items: center;\r\n  flex-shrink: 0;\r\n  overflow: hidden;\r\n  border-radius: 50%;\r\n  background: var(--elevated-bg);\r\n  border: 2px solid var(--border-strong);\r\n  color: var(--heading);\r\n  font-weight: 700;\r\n  line-height: 1;\r\n  text-transform: uppercase;\r\n}\r\n\r\n.user-photo img {\r\n  width: 100%;\r\n  height: 100%;\r\n  object-fit: cover;\r\n  display: block;\r\n}\r\n\r\n.user-photo.sm {\r\n  width: 2rem;\r\n  height: 2rem;\r\n  font-size: 0.7rem;\r\n}\r\n\r\n.user-photo.md {\r\n  width: 2.75rem;\r\n  height: 2.75rem;\r\n  font-size: 0.9rem;\r\n}\r\n\r\n.user-photo.lg {\r\n  width: 4.75rem;\r\n  height: 4.75rem;\r\n  font-size: 1.5rem;\r\n  box-shadow: 0 0 0 6px rgba(255, 214, 10, 0.06);\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,eAAa;AACb,eAAa;AACb,YAAU;AACV,iBAAe;AACf,cAAY,IAAI;AAChB,UAAQ,IAAI,MAAM,IAAI;AACtB,SAAO,IAAI;AACX,eAAa;AACb,eAAa;AACb,kBAAgB;AAClB;AAEA,CAdC,WAcW;AACV,SAAO;AACP,UAAQ;AACR,cAAY;AACZ,WAAS;AACX;AAEA,CArBC,UAqBU,CAAC;AACV,SAAO;AACP,UAAQ;AACR,aAAW;AACb;AAEA,CA3BC,UA2BU,CAAC;AACV,SAAO;AACP,UAAQ;AACR,aAAW;AACb;AAEA,CAjCC,UAiCU,CAAC;AACV,SAAO;AACP,UAAQ;AACR,aAAW;AACX,cAAY,EAAE,EAAE,EAAE,IAAI,KAAK,GAAG,EAAE,GAAG,EAAE,EAAE,EAAE;AAC3C;",
+  "names": []
+}

@@ -1,3 +1,5 @@
+using CodeKids.Application.Features.QuestionBank;
+
 namespace CodeKids.Application.Features.Quizzes;
 
 public sealed record CreateQuizRequest(
@@ -34,4 +36,5 @@ public sealed record CreateQuizQuestionInput(
     string? PassageText = null,
     string? CorrectAnswer = null,
     int Points = 1,
-    IReadOnlyList<CreateQuizQuestionInput>? Children = null);
+    IReadOnlyList<CreateQuizQuestionInput>? Children = null,
+    IReadOnlyList<MapMarkerInput>? MapMarkers = null);

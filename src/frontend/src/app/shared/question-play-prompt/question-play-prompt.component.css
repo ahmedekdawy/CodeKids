@@ -17,6 +17,30 @@ label {
   border-left-color: var(--accent-hot);
 }
 
+.complete-line {
+  display: block;
+  line-height: 2.1;
+}
+
+.question-play input.complete-blank {
+  display: inline-block;
+  width: auto;
+  min-width: 6rem;
+  max-width: 100%;
+  margin: 0 0.2rem;
+  padding: 0.25rem 0.45rem;
+  vertical-align: baseline;
+}
+
+.question-play input.complete-blank.correct {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 12%, var(--input-bg));
+}
+
+.question-play input.complete-blank.incorrect {
+  border-color: var(--accent-hot);
+}
+
 .child-question {
   margin: 0.75rem 0 0.75rem 1rem;
   padding-left: 0.75rem;
@@ -24,11 +48,21 @@ label {
   color: var(--prompt-fg);
 }
 
-.prompt-html,
-.prompt-html * {
+.prompt-html {
   font-weight: 700;
   margin-bottom: 0.35rem;
   color: var(--prompt-fg) !important;
+}
+
+.prompt-html *:not(.math-frac):not(.math-frac *) {
+  font-weight: 700;
+  color: var(--prompt-fg) !important;
+}
+
+.prompt-html .math-frac,
+.prompt-html .math-frac * {
+  color: var(--prompt-fg) !important;
+  font-weight: 700;
 }
 
 .question-play input[type='text'],
@@ -47,4 +81,59 @@ label {
 .question-play textarea {
   min-height: 5rem;
   resize: vertical;
+}
+
+.order-hint {
+  margin: 0.5rem 0 0.65rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.order-list {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 36rem;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1.25rem 2rem 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--elevated-bg);
+  color: var(--text);
+  cursor: grab;
+}
+
+.order-item:active {
+  cursor: grabbing;
+}
+
+.order-handle {
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.order-index {
+  font-weight: 800;
+  color: var(--accent-fg);
+  text-align: center;
+}
+
+.order-text {
+  margin: 0 !important;
+  font-weight: 600 !important;
+}
+
+.order-move {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.order-move .ghost-btn {
+  min-width: 2rem;
+  padding: 0.25rem 0.4rem;
 }

@@ -6,8 +6,10 @@ public class QuizAttemptAnswer : TenantEntity
     public Guid AttemptId { get; set; }
     public Guid QuestionId { get; set; }
     public string SelectedOption { get; set; } = string.Empty;
+    public Guid? AnswerImageMediaAssetId { get; set; }
     public bool IsCorrect { get; set; }
 
     public QuizAttempt? Attempt { get; set; }
     public QuizQuestion? Question { get; set; }
+    public MediaAsset? AnswerImage { get; set; }
 }

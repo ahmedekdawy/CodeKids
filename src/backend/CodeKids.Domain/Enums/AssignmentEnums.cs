@@ -10,7 +10,10 @@ public enum AssignmentQuestionType
     MultiChoice = 5,
     Paragraph = 6,
     Underline = 7,
-    FreeText = 8
+    FreeText = 8,
+    Order = 9,
+    Map = 10,
+    Complete = 11
 }
 
 public enum AssignmentSubmissionStatus

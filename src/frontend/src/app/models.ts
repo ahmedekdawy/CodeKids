@@ -283,6 +283,7 @@ export interface QuizQuestion {
   options?: ChoiceOption[];
   sortOrder: number;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: QuizQuestion[];
 }
 
@@ -326,6 +327,7 @@ export interface TeacherQuizQuestionDetail {
   sortOrder: number;
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: TeacherQuizQuestionDetail[];
 }
 
@@ -351,6 +353,7 @@ export interface QuizAnswerReview {
   correctText: string;
   isCorrect: boolean;
   promptImageUrl?: string | null;
+  answerImageUrl?: string | null;
 }
 
 export interface QuizAttemptReview {
@@ -833,6 +836,26 @@ export interface AccountReport {
   netAmount: number;
 }
 
+export interface TeacherAssessmentReportItem {
+  kind: 'Assignment' | 'Quiz' | 'Exam' | string;
+  id: string;
+  title: string;
+  teacherId?: string | null;
+  teacherName: string;
+  classroomId?: string | null;
+  classroomName: string;
+  courseTitle?: string | null;
+  createdAtUtc: string;
+  isPublished: boolean;
+}
+
+export interface PagedTeacherAssessments {
+  items: TeacherAssessmentReportItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface StudentAskedQuestion {
   id: string;
   studentId: string;
@@ -1078,6 +1101,7 @@ export interface AssignmentQuestion {
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
   promptImageMediaAssetId?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children?: AssignmentQuestion[];
 }
 
@@ -1106,6 +1130,8 @@ export interface AssignmentAnswerReview {
   points: number;
   promptImageUrl?: string | null;
   answerImageUrl?: string | null;
+  questionType?: string;
+  options?: ChoiceOption[];
 }
 
 export interface AssignmentSubmission {
@@ -1134,7 +1160,18 @@ export type BankQuestionType =
   | 'Paragraph'
   | 'Underline'
   | 'FreeText'
-  | 'ShortAnswer';
+  | 'ShortAnswer'
+  | 'Order'
+  | 'Map'
+  | 'Complete';
+
+export interface MapMarker {
+  id: string;
+  x: number;
+  y: number;
+  label: string;
+  kind: 'number' | 'arrow';
+}
 
 export interface BankQuestion {
   id: string;
@@ -1156,6 +1193,8 @@ export interface BankQuestion {
   points: number;
   sortOrder: number;
   promptImageUrl?: string | null;
+  promptImageMediaAssetId?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children: BankQuestion[];
 }
 
@@ -1175,6 +1214,7 @@ export interface ExamQuestion {
   sortOrder: number;
   correctAnswer?: string | null;
   promptImageUrl?: string | null;
+  mapMarkers?: MapMarker[] | null;
   children: ExamQuestion[];
 }
 
@@ -1206,6 +1246,7 @@ export interface ExamAnswerReview {
   points: number;
   promptImageUrl?: string | null;
   answerImageUrl?: string | null;
+  options?: ChoiceOption[];
 }
 
 export type ChatKind = 'Direct' | 'Group' | 'Class' | 0 | 1 | 2;
