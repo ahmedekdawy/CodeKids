@@ -3,7 +3,7 @@
     <span class="ms-summary" [class.ms-summary--placeholder]="!selected().length">{{ summary() }}</span>
     @if (selected().length) {
       <span class="ms-count">{{ selected().length }}</span>
-      <span class="ms-clear" role="button" tabindex="0" (click)="clearAll($event)" [attr.aria-label]="'common.clearFilters' | t">×</span>
+      <span class="ms-clear" role="button" tabindex="0" (click)="clearAll($event)" [attr.aria-label]="'common.clear' | t">×</span>
     }
     <span class="ms-caret" aria-hidden="true"></span>
   </button>

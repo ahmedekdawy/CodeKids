@@ -84,7 +84,8 @@ export class TeacherTimetableComponent {
             entry.courseName,
             entry.courseGrade,
             entry.courseStageId,
-            entry.combinedGrades
+            entry.combinedGrades,
+            this.filterGrade() !== ''
           )
         });
       }

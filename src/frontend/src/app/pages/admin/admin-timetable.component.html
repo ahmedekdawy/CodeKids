@@ -128,7 +128,9 @@
                         subjectIcon(cell.entry.courseName)
                       }}</span>
                       <div class="timetable-course">{{ cell.courseLine }}</div>
-                      <div class="timetable-teacher">{{ cell.teacherName }}</div>
+                      @if (cell.teacherName) {
+                        <div class="timetable-teacher">{{ cell.teacherName }}</div>
+                      }
                       <div class="row-actions" (mousedown)="$event.stopPropagation()">
                         <app-icon-action-button kind="edit" (action)="startEdit(cell.entry)" />
                         <app-icon-action-button

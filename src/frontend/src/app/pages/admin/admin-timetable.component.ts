@@ -169,6 +169,7 @@ export class AdminTimetableComponent {
 
   readonly timetableDays = computed<TimetableDayRow[]>(() => {
     this.locale.lang();
+    const hideTeacher = !!this.filterTeacherId();
     const slots = this.sessionSlots();
     return this.weekDays.map((dayOfWeek) => {
       const cells: Record<string, TimetableCell[]> = {};
@@ -184,7 +185,7 @@ export class AdminTimetableComponent {
         cells[key].push({
           entry,
           courseLine: this.entryCourseLine(entry),
-          teacherName: entry.teacherName || ''
+          teacherName: hideTeacher ? '' : entry.teacherName || ''
         });
       }
 
@@ -299,7 +300,8 @@ export class AdminTimetableComponent {
       entry.courseName,
       entry.courseGrade,
       entry.courseStageId,
-      entry.combinedGrades
+      entry.combinedGrades,
+      this.filterGrade() !== ''
     );
   }
 

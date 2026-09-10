@@ -29,7 +29,7 @@ function inlineTimetableExportStyles(root: HTMLElement): void {
   if (table) {
     table.style.fontFamily = "'Cairo', 'Baloo 2', 'Segoe UI', Tahoma, sans-serif";
     table.style.color = '#1f2a44';
-    table.style.borderSpacing = '0.45rem';
+    table.style.borderSpacing = '0.28rem';
   }
 
   wrap.querySelectorAll<HTMLElement>('.timetable thead th').forEach((el) => {

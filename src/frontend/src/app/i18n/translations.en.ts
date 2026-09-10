@@ -14,6 +14,7 @@ export const EN: Record<string, string> = {
   'common.play': 'Play',
   'common.remove': 'Remove',
   'common.search': 'Search',
+  'common.clear': 'Clear',
   'common.clearFilters': 'Clear filters',
   'common.applyFilters': 'Apply filters',
   'common.signOut': 'Sign out',

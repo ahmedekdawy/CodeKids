@@ -57,6 +57,8 @@ export class SearchableSelectComponent implements ControlValueAccessor {
   readonly emptyValue = input<string | number | null>('');
   readonly compact = input(false);
   readonly disabled = input(false);
+  /** Show × to reset to emptyValue when a real option is selected. */
+  readonly clearable = input(true);
 
   readonly open = signal(false);
   readonly query = signal('');
@@ -93,6 +95,10 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     const current = this.selected();
     return this.sameValue(current, this.emptyValue()) || current === '' || current === null;
   });
+
+  readonly canClear = computed(
+    () => this.clearable() && !this.isDisabled() && !this.isPlaceholder()
+  );
 
   private onChange: (value: string | number | null) => void = () => undefined;
   private onTouched: () => void = () => undefined;
@@ -169,6 +175,17 @@ export class SearchableSelectComponent implements ControlValueAccessor {
     if (this.isDisabled() || option.disabled) return;
     this.selected.set(option.value);
     this.onChange(option.value);
+    this.onTouched();
+    this.close();
+  }
+
+  clearSelection(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.canClear()) return;
+    const empty = this.emptyValue();
+    this.selected.set(empty);
+    this.onChange(empty);
     this.onTouched();
     this.close();
   }

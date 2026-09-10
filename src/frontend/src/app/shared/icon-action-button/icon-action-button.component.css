@@ -108,3 +108,30 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+/* Readable on pastel timetable session cards (board uses light tones). */
+:host-context(.timetable-entry) .icon-action-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(29, 58, 117, 0.3);
+  color: #1d3a75;
+  box-shadow: 0 1px 2px rgba(29, 58, 117, 0.12);
+}
+
+:host-context(.timetable-entry) .icon-action-btn.danger {
+  color: #b42318;
+  border-color: rgba(180, 35, 24, 0.35);
+}
+
+:host-context(.timetable-entry) .icon-action-btn:hover:not(:disabled) {
+  background: #fff;
+  border-color: rgba(29, 58, 117, 0.55);
+  color: #1d3a75;
+}
+
+:host-context(.timetable-entry) .icon-action-btn.danger:hover:not(:disabled) {
+  background: #fef3f2;
+  border-color: rgba(180, 35, 24, 0.55);
+  color: #b42318;
+}

@@ -14,6 +14,7 @@ export const AR: Record<string, string> = {
   'common.play': 'تشغيل',
   'common.remove': 'إزالة',
   'common.search': 'بحث',
+  'common.clear': 'مسح',
   'common.clearFilters': 'مسح الفلاتر',
   'common.applyFilters': 'تطبيق الفلاتر',
   'common.signOut': 'تسجيل الخروج',

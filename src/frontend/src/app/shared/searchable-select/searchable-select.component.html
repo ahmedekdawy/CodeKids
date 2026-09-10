@@ -1,6 +1,17 @@
 <div class="ss">
   <button type="button" class="ss-trigger" (click)="toggleOpen()" [disabled]="isDisabled()" [attr.aria-expanded]="open()">
     <span class="ss-summary" [class.ss-summary--placeholder]="isPlaceholder()">{{ selectedLabel() }}</span>
+    @if (canClear()) {
+      <span
+        class="ss-clear"
+        role="button"
+        tabindex="0"
+        (click)="clearSelection($event)"
+        (keydown.enter)="clearSelection($event)"
+        (keydown.space)="clearSelection($event); $event.preventDefault()"
+        [attr.aria-label]="'common.clear' | t"
+      >×</span>
+    }
     <span class="ss-caret" aria-hidden="true"></span>
   </button>
 
