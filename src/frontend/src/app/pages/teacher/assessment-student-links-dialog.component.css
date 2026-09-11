@@ -61,6 +61,18 @@
   font-size: 0.92rem;
 }
 
+.general-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
+  background: color-mix(in srgb, var(--accent, #3d8bfd) 12%, var(--elevated-bg));
+}
+
 .hint.success {
   color: var(--success, #3d9a6a);
 }
@@ -108,6 +120,7 @@
 }
 
 @media (max-width: 560px) {
+  .general-link-row,
   .student-link-row {
     flex-direction: column;
     align-items: stretch;

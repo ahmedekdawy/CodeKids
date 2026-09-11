@@ -23,6 +23,25 @@
 
     <p class="hint">{{ 'teacher.assessments.studentLinksHint' | t }}</p>
 
+    <div class="general-link-row">
+      <div class="student-link-meta">
+        <strong>{{ 'teacher.assessments.generalLinkTitle' | t }}</strong>
+        <span class="meta">{{ 'teacher.assessments.generalLinkHint' | t }}</span>
+      </div>
+      <div class="student-link-actions">
+        <app-icon-action-button
+          kind="copyLink"
+          [label]="'teacher.assessments.copyGeneralLink' | t"
+          (action)="copyGeneralLink()"
+        />
+        <app-icon-action-button
+          kind="share"
+          [label]="'teacher.assessments.shareGeneralWhatsApp' | t"
+          (action)="shareGeneralWhatsApp()"
+        />
+      </div>
+    </div>
+
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }

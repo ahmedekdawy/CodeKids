@@ -1524,7 +1524,14 @@ export const EN: Record<string, string> = {
   'teacher.assessments.studentLinks': 'Student links',
   'teacher.assessments.studentLinksTitle': 'Per-student access links',
   'teacher.assessments.studentLinksHint':
-    'Each link signs the student in automatically and opens this assessment. Share privately — anyone with a link can act as that student.',
+    'Each personal link signs the student in automatically and opens this assessment. Share privately — anyone with a link can act as that student. The general link works for any logged-in student.',
+  'teacher.assessments.generalLinkTitle': 'General link (all students)',
+  'teacher.assessments.generalLinkHint':
+    'Share with the whole class. Students must already be signed in.',
+  'teacher.assessments.copyGeneralLink': 'Copy general link',
+  'teacher.assessments.shareGeneralWhatsApp': 'Share WhatsApp (all students)',
+  'teacher.assessments.generalLinkCopied': 'General link copied.',
+  'teacher.assessments.copyGeneralLinkFailed': 'Could not copy the general link.',
   'teacher.assessments.noStudentLinks': 'No enrolled students found for this classroom.',
   'teacher.assessments.loadStudentLinksFailed': 'Could not load student links.',
   'teacher.assessments.shareWhatsApp': 'Share WhatsApp',

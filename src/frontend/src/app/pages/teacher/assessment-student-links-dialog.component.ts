@@ -41,6 +41,28 @@ export class AssessmentStudentLinksDialogComponent implements OnChanges {
     this.closed.emit();
   }
 
+  /** Public play path for logged-in students (same for the whole class). */
+  generalPath(): string {
+    const segment =
+      this.kind === 'exam' ? 'exams' : this.kind === 'quiz' ? 'quizzes' : 'assignments';
+    return `/${segment}/${this.resourceId}`;
+  }
+
+  copyGeneralLink(): void {
+    const url = `${window.location.origin}${this.generalPath()}`;
+    void navigator.clipboard?.writeText(url).then(
+      () => {
+        this.error.set('');
+        this.info.set(this.locale.t('teacher.assessments.generalLinkCopied'));
+      },
+      () => this.error.set(this.locale.t('teacher.assessments.copyGeneralLinkFailed'))
+    );
+  }
+
+  shareGeneralWhatsApp(): void {
+    window.open(this.whatsAppUrlForPath(this.generalPath()), '_blank', 'noopener');
+  }
+
   copyLink(link: AssessmentStudentLink): void {
     const url = `${window.location.origin}${link.path}`;
     void navigator.clipboard?.writeText(url).then(
@@ -54,20 +76,20 @@ export class AssessmentStudentLinksDialogComponent implements OnChanges {
     );
   }
 
-  whatsAppUrl(link: AssessmentStudentLink): string {
+  shareWhatsApp(link: AssessmentStudentLink): void {
+    window.open(this.whatsAppUrlForPath(link.path), '_blank', 'noopener');
+  }
+
+  private whatsAppUrlForPath(path: string): string {
     return assessmentWhatsAppShareUrl({
       kindLabel: this.kindLabel || this.resourceTitle,
       name: this.resourceTitle,
       gradeLabel: this.gradeLabel,
       courseLabel: this.courseLabel,
-      studentPath: link.path,
+      studentPath: path,
       gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
       courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
     });
-  }
-
-  shareWhatsApp(link: AssessmentStudentLink): void {
-    window.open(this.whatsAppUrl(link), '_blank', 'noopener');
   }
 
   private load(): void {

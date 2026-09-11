@@ -1524,7 +1524,14 @@ export const AR: Record<string, string> = {
   'teacher.assessments.studentLinks': 'روابط الطلاب',
   'teacher.assessments.studentLinksTitle': 'روابط دخول لكل طالب',
   'teacher.assessments.studentLinksHint':
-    'كل رابط يسجّل دخول الطالب تلقائياً ويفتح هذا التقييم. شاركه بخصوصية — من يملك الرابط يمكنه التصرف كالطالب.',
+    'كل رابط شخصي يسجّل دخول الطالب تلقائياً ويفتح هذا التقييم. شاركه بخصوصية — من يملك الرابط يمكنه التصرف كالطالب. الرابط العام يعمل لأي طالب مسجّل الدخول.',
+  'teacher.assessments.generalLinkTitle': 'رابط عام (لجميع الطلاب)',
+  'teacher.assessments.generalLinkHint':
+    'شاركه مع الفصل بالكامل. يجب أن يكون الطلاب مسجّلين الدخول مسبقاً.',
+  'teacher.assessments.copyGeneralLink': 'نسخ الرابط العام',
+  'teacher.assessments.shareGeneralWhatsApp': 'مشاركة واتساب (لجميع الطلاب)',
+  'teacher.assessments.generalLinkCopied': 'تم نسخ الرابط العام.',
+  'teacher.assessments.copyGeneralLinkFailed': 'تعذّر نسخ الرابط العام.',
   'teacher.assessments.noStudentLinks': 'لا يوجد طلاب مسجّلون في هذا الفصل.',
   'teacher.assessments.loadStudentLinksFailed': 'تعذّر تحميل روابط الطلاب.',
   'teacher.assessments.shareWhatsApp': 'مشاركة واتساب',
