@@ -1,0 +1,62 @@
+<div
+  class="student-links-backdrop"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'teacher.assessments.studentLinksTitle' | t"
+  (click)="close()"
+>
+  <div class="student-links-modal" (click)="$event.stopPropagation()">
+    <header class="student-links-head">
+      <div>
+        <h3>{{ 'teacher.assessments.studentLinksTitle' | t }}</h3>
+        <p class="meta">{{ resourceTitle }}</p>
+      </div>
+      <button
+        type="button"
+        class="modal-close"
+        (click)="close()"
+        [attr.aria-label]="'common.close' | t"
+      >
+        ×
+      </button>
+    </header>
+
+    <p class="hint">{{ 'teacher.assessments.studentLinksHint' | t }}</p>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    @if (info()) {
+      <p class="hint success">{{ info() }}</p>
+    }
+
+    @if (loading()) {
+      <p class="meta">{{ 'common.loading' | t }}</p>
+    } @else {
+      <ul class="student-links-list">
+        @for (link of links(); track link.studentId) {
+          <li class="student-link-row">
+            <div class="student-link-meta">
+              <strong>{{ link.displayName }}</strong>
+              <span class="meta">{{ link.email }}</span>
+            </div>
+            <div class="student-link-actions">
+              <app-icon-action-button
+                kind="copyLink"
+                [label]="'teacher.assessments.copyStudentLink' | t"
+                (action)="copyLink(link)"
+              />
+              <app-icon-action-button
+                kind="share"
+                [label]="'teacher.assessments.shareWhatsApp' | t"
+                (action)="shareWhatsApp(link)"
+              />
+            </div>
+          </li>
+        } @empty {
+          <li class="meta">{{ 'teacher.assessments.noStudentLinks' | t }}</li>
+        }
+      </ul>
+    }
+  </div>
+</div>

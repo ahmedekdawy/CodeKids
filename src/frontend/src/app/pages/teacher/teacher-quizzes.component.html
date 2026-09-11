@@ -294,13 +294,8 @@
                     } @else {
                       <app-icon-action-button
                         kind="copyLink"
-                        [label]="'teacher.assessments.copyStudentLink' | t"
-                        (action)="copyStudentLink(quiz.id)"
-                      />
-                      <app-icon-action-button
-                        kind="share"
-                        [label]="'teacher.assessments.shareWhatsApp' | t"
-                        (action)="shareOnWhatsApp(quiz)"
+                        [label]="'teacher.assessments.studentLinks' | t"
+                        (action)="openStudentLinks(quiz)"
                       />
                     }
                     <app-icon-action-button
@@ -333,4 +328,16 @@
       </div>
     }
   </section>
+
+  @if (linksQuiz(); as quiz) {
+    <app-assessment-student-links-dialog
+      kind="quiz"
+      [resourceId]="quiz.id"
+      [resourceTitle]="quiz.title"
+      [gradeLabel]="linksGradeLabel(quiz)"
+      [courseLabel]="quiz.courseTitle"
+      [kindLabel]="'nav.teacher.quizzes' | t"
+      (closed)="closeStudentLinks()"
+    />
+  }
 </div>

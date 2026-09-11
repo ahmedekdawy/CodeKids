@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, filter, map } from 'rxjs';
 import {
   Appointment,
+  AssessmentStudentLinksResult,
   Assignment,
   AssignmentSubmission,
   Avatar,
@@ -1483,6 +1484,15 @@ export class LearningApiService {
 
   publishExam(examId: string): Observable<Exam> {
     return this.http.post<Exam>(`${this.baseUrl}/exams/${examId}/publish`, {});
+  }
+
+  getAssessmentStudentLinks(
+    kind: 'exam' | 'quiz' | 'assignment',
+    resourceId: string
+  ): Observable<AssessmentStudentLinksResult> {
+    return this.http.get<AssessmentStudentLinksResult>(`${this.baseUrl}/assessment-links`, {
+      params: { kind, resourceId }
+    });
   }
 
   submitExam(payload: {

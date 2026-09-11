@@ -31,6 +31,30 @@ export interface AuthResponse {
   user: AuthUser;
 }
 
+export interface AssessmentStudentLink {
+  studentId: string;
+  displayName: string;
+  email: string;
+  mobilePhone?: string | null;
+  key: string;
+  path: string;
+}
+
+export interface AssessmentStudentLinksResult {
+  kind: 'Exam' | 'Quiz' | 'Assignment' | string;
+  resourceId: string;
+  title: string;
+  links: AssessmentStudentLink[];
+}
+
+export interface AssessmentLinkRedeemResponse {
+  token: string;
+  user: AuthUser;
+  redirectPath: string;
+  kind: string;
+  resourceId: string;
+}
+
 export interface CourseLesson {
   id: string;
   unitId?: string | null;

@@ -192,13 +192,8 @@
             } @else {
               <app-icon-action-button
                 kind="copyLink"
-                [label]="'teacher.assessments.copyStudentLink' | t"
-                (action)="copyStudentLink(exam.id)"
-              />
-              <app-icon-action-button
-                kind="share"
-                [label]="'teacher.assessments.shareWhatsApp' | t"
-                (action)="shareOnWhatsApp(exam)"
+                [label]="'teacher.assessments.studentLinks' | t"
+                (action)="openStudentLinks(exam)"
               />
             }
           </div>
@@ -208,6 +203,18 @@
       }
     </div>
   </section>
+
+  @if (linksExam(); as exam) {
+    <app-assessment-student-links-dialog
+      kind="exam"
+      [resourceId]="exam.id"
+      [resourceTitle]="exam.title"
+      [gradeLabel]="linksGradeLabel(exam)"
+      [courseLabel]="linksCourseLabel(exam)"
+      [kindLabel]="'nav.teacher.exams' | t"
+      (closed)="closeStudentLinks()"
+    />
+  }
 
   @if (reviewExamId) {
     <section class="block">
