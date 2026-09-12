@@ -363,120 +363,75 @@ html[dir='rtl'] .auth-panel-top {
   width: 100%;
 }
 
-/* Timetable: print / PNG export palette (high contrast, light background) */
+/* Timetable: print / PNG export palette (keep playful board colors) */
 .timetable-wrap.exporting {
-  background: #ffffff !important;
-  border-color: #334155 !important;
-  --tt-header-bg: #f1f5f9;
-  --tt-header-fg: #0f172a;
-  --tt-day-bg: #e2e8f0;
-  --tt-day-fg: #0f172a;
-  --tt-cell-bg: #ffffff;
-  --tt-cell-pm-bg: #f8fafc;
-  --tt-shift-am-bg: #fef9c3;
-  --tt-shift-am-fg: #0f172a;
-  --tt-shift-pm-bg: #ecfdf5;
-  --tt-shift-pm-fg: #0f172a;
-  --tt-session-id-fg: #0f172a;
-  --tt-session-time-fg: #1e293b;
-  --tt-entry-bg: #ffffff;
-  --tt-entry-fg: #0f172a;
-  --tt-entry-border: #64748b;
-  --tt-teacher-fg: #475569;
-  --tt-border: #334155;
-  color: #0f172a;
-}
-
-.timetable-wrap.exporting .timetable th,
-.timetable-wrap.exporting .timetable td {
-  border-color: #334155 !important;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(255, 214, 120, 0.35), transparent 22%),
+    radial-gradient(circle at 92% 10%, rgba(168, 216, 255, 0.28), transparent 24%),
+    linear-gradient(180deg, #fff8e8 0%, #fffdf7 48%, #f7fbff 100%) !important;
+  border-color: #e8c46a !important;
+  color: #1f2a44;
 }
 
 .timetable-wrap.exporting .timetable {
-  font-family: 'Cairo', 'Space Grotesk', 'Segoe UI', Tahoma, sans-serif !important;
-  color: #0f172a !important;
+  font-family: 'Cairo', 'Baloo 2', 'Segoe UI', Tahoma, sans-serif !important;
+  color: #1f2a44 !important;
 }
 
 .timetable-wrap.exporting .timetable thead th {
-  background: #f1f5f9 !important;
-  color: #0f172a !important;
+  background: linear-gradient(180deg, #ffe9a8, #f0c75a) !important;
+  color: #1d3a75 !important;
 }
 
 .timetable-wrap.exporting .timetable-day-col,
 .timetable-wrap.exporting .timetable-day {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
+  background: linear-gradient(180deg, #ffe082, #ffd54f) !important;
+  color: #1d3a75 !important;
 }
 
 .timetable-wrap.exporting .timetable-shift:not(.pm) {
-  background: #fef9c3 !important;
-  color: #0f172a !important;
+  background: linear-gradient(180deg, #fff3c4, #f5d36a) !important;
+  color: #1d3a75 !important;
 }
 
 .timetable-wrap.exporting .timetable-shift.pm {
-  background: #ecfdf5 !important;
-  color: #0f172a !important;
+  background: linear-gradient(180deg, #d8f5e8, #9ed9bf) !important;
+  color: #14553a !important;
 }
 
 .timetable-wrap.exporting .timetable-session-id {
-  color: #0f172a !important;
+  color: #1d3a75 !important;
 }
 
 .timetable-wrap.exporting .timetable-session-time {
-  color: #1e293b !important;
+  color: #4a3b12 !important;
 }
 
-.timetable-wrap.exporting .timetable-cell:not(.pm) {
-  background: #ffffff !important;
+.timetable-wrap.exporting .timetable-cell {
+  background: rgba(255, 255, 255, 0.55) !important;
 }
 
 .timetable-wrap.exporting .timetable-cell.pm {
-  background: #f8fafc !important;
-}
-
-.timetable-wrap.exporting .timetable-entry {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #64748b !important;
+  background: rgba(232, 255, 246, 0.55) !important;
 }
 
 .timetable-wrap.exporting .timetable-course {
-  color: #0f172a !important;
+  color: #1f2a44 !important;
 }
 
 .timetable-wrap.exporting .timetable-teacher {
-  color: #475569 !important;
+  color: #4b5568 !important;
 }
 
 @media print {
   .timetable-wrap {
-    background: #ffffff !important;
-    border-color: #334155 !important;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255, 214, 120, 0.35), transparent 22%),
+      linear-gradient(180deg, #fff8e8 0%, #fffdf7 100%) !important;
+    border-color: #e8c46a !important;
     max-height: none !important;
     overflow: visible !important;
-    --tt-header-bg: #f1f5f9;
-    --tt-header-fg: #0f172a;
-    --tt-day-bg: #e2e8f0;
-    --tt-day-fg: #0f172a;
-    --tt-cell-bg: #ffffff;
-    --tt-cell-pm-bg: #f8fafc;
-    --tt-shift-am-bg: #fef9c3;
-    --tt-shift-am-fg: #0f172a;
-    --tt-shift-pm-bg: #ecfdf5;
-    --tt-shift-pm-fg: #0f172a;
-    --tt-session-id-fg: #0f172a;
-    --tt-session-time-fg: #1e293b;
-    --tt-entry-bg: #ffffff;
-    --tt-entry-fg: #0f172a;
-    --tt-entry-border: #64748b;
-    --tt-teacher-fg: #475569;
-    --tt-border: #334155;
-    color: #0f172a;
-  }
-
-  .timetable-wrap .timetable th,
-  .timetable-wrap .timetable td {
-    border-color: #334155 !important;
+    color: #1f2a44;
   }
 
   .timetable-wrap .row-actions,

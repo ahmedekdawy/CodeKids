@@ -8,14 +8,16 @@ public sealed record MapMarkerDto(
     double X,
     double Y,
     string Label,
-    string Kind);
+    string Kind,
+    string Prompt = "");
 
 public sealed record MapMarkerInput(
     string Id,
     double X,
     double Y,
     string? Label,
-    string? Kind);
+    string? Kind,
+    string? Prompt = null);
 
 public static class MapMarkers
 {
@@ -43,7 +45,8 @@ public static class MapMarkers
                 : (string.IsNullOrWhiteSpace(marker.Label) ? id : marker.Label.Trim());
             var x = Clamp(marker.X);
             var y = Clamp(marker.Y);
-            list.Add(new MapMarkerDto(id, x, y, label, kind));
+            var prompt = string.IsNullOrWhiteSpace(marker.Prompt) ? string.Empty : marker.Prompt.Trim();
+            list.Add(new MapMarkerDto(id, x, y, label, kind, prompt));
             index++;
         }
 
@@ -68,7 +71,7 @@ public static class MapMarkers
                 return [];
             }
 
-            return Normalize(parsed.Select(m => new MapMarkerInput(m.Id, m.X, m.Y, m.Label, m.Kind)));
+            return Normalize(parsed.Select(m => new MapMarkerInput(m.Id, m.X, m.Y, m.Label, m.Kind, m.Prompt)));
         }
         catch (JsonException)
         {

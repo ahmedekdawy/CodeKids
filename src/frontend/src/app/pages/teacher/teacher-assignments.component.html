@@ -219,13 +219,8 @@
             } @else {
               <app-icon-action-button
                 kind="copyLink"
-                [label]="'teacher.assessments.copyStudentLink' | t"
-                (action)="copyStudentLink(assignment.id)"
-              />
-              <app-icon-action-button
-                kind="share"
-                [label]="'teacher.assessments.shareWhatsApp' | t"
-                (action)="shareOnWhatsApp(assignment)"
+                [label]="'teacher.assessments.studentLinks' | t"
+                (action)="openStudentLinks(assignment)"
               />
             }
             <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
@@ -244,4 +239,16 @@
       }
     </div>
   </section>
+
+  @if (linksAssignment(); as assignment) {
+    <app-assessment-student-links-dialog
+      kind="assignment"
+      [resourceId]="assignment.id"
+      [resourceTitle]="assignment.title"
+      [gradeLabel]="linksGradeLabel(assignment)"
+      [courseLabel]="linksCourseLabel(assignment)"
+      [kindLabel]="'nav.teacher.assignments' | t"
+      (closed)="closeStudentLinks()"
+    />
+  }
 </div>

@@ -1,0 +1,36 @@
+<section class="auth-shell">
+  <div class="auth-panel">
+    <app-api-busy-indicator />
+    <div class="auth-panel-top">
+      <app-site-brand />
+      <div class="toolbar-prefs">
+        <app-theme-switcher />
+        <app-language-switcher />
+      </div>
+    </div>
+    <h1>{{ 'auth.assessmentLink.title' | t }}</h1>
+    <p class="supporting">{{ 'auth.assessmentLink.subtitle' | t }}</p>
+
+    @if (loading()) {
+      <p class="hint">{{ 'auth.assessmentLink.opening' | t }}</p>
+    }
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+      <div class="auth-links">
+        <a routerLink="/login">{{ 'auth.forgot.backToLogin' | t }}</a>
+      </div>
+    }
+  </div>
+
+  <div class="auth-visual" [class.has-banner]="!!brand.bannerUrl()" aria-hidden="true">
+    @if (brand.bannerUrl(); as banner) {
+      <img class="auth-banner-img" [src]="banner" [alt]="brand.siteName()" />
+    } @else {
+      <div class="glow"></div>
+      <div class="code-card">
+        <span>STUDENT LINK</span>
+        <span>AUTO SIGN-IN</span>
+      </div>
+    }
+  </div>
+</section>

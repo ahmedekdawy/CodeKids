@@ -59,6 +59,7 @@ import { TeacherChatComponent } from './pages/teacher/teacher-chat.component';
 import { ExamPlayComponent } from './pages/exam-play/exam-play.component';
 import { StudentAskedQuestionsComponent } from './pages/student-asked-questions/student-asked-questions.component';
 import { StudentChatComponent } from './pages/student-chat/student-chat.component';
+import { AssessmentLinkEntryComponent } from './pages/assessment-link-entry/assessment-link-entry.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: LandingComponent },
@@ -68,6 +69,7 @@ export const routes: Routes = [
   { path: 'verify-tenant', component: VerifyTenantComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'go/:key', component: AssessmentLinkEntryComponent },
   {
     path: 'student',
     canActivate: [authGuard, roleGuard(['Student'])],

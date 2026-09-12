@@ -50,7 +50,7 @@ public sealed class StudyPlanAiClient(
         return await CompleteOpenAiAsync(
             "https://text.pollinations.ai/",
             apiKey: null,
-            model: string.IsNullOrWhiteSpace(settings.Model) || provider is "groq" or "openai" or "grok"
+            model: string.IsNullOrWhiteSpace(settings.Model) || provider is "groq" or "openai" or "chatgpt" or "grok"
                 ? "openai"
                 : settings.Model.Trim(),
             systemPrompt,
@@ -352,7 +352,7 @@ public sealed class StudyPlanAiClient(
         {
             "gemini" => "gemini-flash-latest",
             "grok" => "grok-4.6",
-            "openai" => "gpt-4o-mini",
+            "openai" or "chatgpt" => "gpt-5",
             _ => "llama-3.1-8b-instant"
         };
 
@@ -394,11 +394,12 @@ public sealed class StudyPlanAiClient(
     private static string NormalizeBaseUrl(string? baseUrl, string provider)
     {
         var value = (baseUrl ?? string.Empty).Trim();
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value)
+            || value.EndsWith("/responses", StringComparison.OrdinalIgnoreCase))
         {
             value = provider switch
             {
-                "openai" => "https://api.openai.com/v1/",
+                "openai" or "chatgpt" => "https://api.openai.com/v1/",
                 "grok" => "https://api.x.ai/v1/",
                 _ => "https://api.groq.com/openai/v1/"
             };

@@ -5,7 +5,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { BankQuestion, ChoiceOption, Classroom, Course, CourseLesson, CourseUnit, Exam, ExamAttempt } from '../../models';
 import { choiceKeySelected, formatChoiceAnswer } from '../../shared/question-draft/question-draft.util';
 import { classroomEffectiveGrade, formatCourseLabel, formatGradeLabel } from '../../grade.util';
-import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
+import { AssessmentStudentLinksDialogComponent } from './assessment-student-links-dialog.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
@@ -32,7 +32,8 @@ interface AttemptDraft {
     TranslatePipe,
     QuestionImageDisplayComponent,
     QuestionImageUploadComponent,
-    SafeHtmlPipe
+    SafeHtmlPipe,
+    AssessmentStudentLinksDialogComponent
   ],
   templateUrl: './teacher-exams.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-exams.component.css']
@@ -50,6 +51,7 @@ export class TeacherExamsComponent {
   readonly info = signal('');
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
+  readonly linksExam = signal<Exam | null>(null);
 
   title = '';
   description = '';
@@ -282,38 +284,28 @@ export class TeacherExamsComponent {
     });
   }
 
-  copyStudentLink(examId: string): void {
-    const url = `${window.location.origin}/exams/${examId}`;
-    void navigator.clipboard?.writeText(url).then(
-      () => {
-        this.error.set('');
-        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
-      },
-      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
-    );
+  openStudentLinks(exam: Exam): void {
+    this.linksExam.set(exam);
   }
 
-  whatsAppShareUrl(exam: Exam): string {
+  closeStudentLinks(): void {
+    this.linksExam.set(null);
+  }
+
+  linksGradeLabel(exam: Exam): string | null {
     const room = this.classrooms().find((item) => item.id === exam.classroomId);
     const grade = classroomEffectiveGrade(room ?? {});
-    const course =
+    return grade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  }
+
+  linksCourseLabel(exam: Exam): string {
+    const room = this.classrooms().find((item) => item.id === exam.classroomId);
+    return (
       exam.courseTitle?.trim() ||
       room?.courseTitle?.trim() ||
       (room?.courses ?? []).map((c) => c.courseTitle).find((title) => !!title?.trim()) ||
-      '';
-    return assessmentWhatsAppShareUrl({
-      kindLabel: this.locale.t('nav.teacher.exams'),
-      name: exam.title,
-      gradeLabel: grade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), grade),
-      courseLabel: course,
-      studentPath: `/exams/${exam.id}`,
-      gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
-      courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
-    });
-  }
-
-  shareOnWhatsApp(exam: Exam): void {
-    window.open(this.whatsAppShareUrl(exam), '_blank', 'noopener');
+      ''
+    );
   }
 
   isPublishing(id: string): boolean {

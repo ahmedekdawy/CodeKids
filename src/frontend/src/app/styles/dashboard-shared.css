@@ -399,16 +399,12 @@ label > span {
 }
 
 .prompt-html {
-  color: var(--prompt-fg) !important;
+  color: var(--prompt-fg);
 }
 
-.prompt-html *:not(.math-frac):not(.math-frac *) {
-  color: var(--prompt-fg) !important;
-}
-
-.prompt-html .math-frac,
-.prompt-html .math-frac * {
-  color: var(--prompt-fg) !important;
+.prompt-html b,
+.prompt-html strong {
+  font-weight: 800;
 }
 
 .table {

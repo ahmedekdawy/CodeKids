@@ -28,6 +28,12 @@ import {
   sessionNumbers,
   visibleSessionSlots
 } from '../../fixed-timetable.util';
+import {
+  timetableDayIcon,
+  timetableSessionOrdinalKey,
+  timetableSubjectIcon,
+  timetableSubjectTone
+} from '../../timetable-theme.util';
 
 type TimetableCell = {
   entry: FixedTimetableEntry;
@@ -163,6 +169,7 @@ export class AdminTimetableComponent {
 
   readonly timetableDays = computed<TimetableDayRow[]>(() => {
     this.locale.lang();
+    const hideTeacher = !!this.filterTeacherId();
     const slots = this.sessionSlots();
     return this.weekDays.map((dayOfWeek) => {
       const cells: Record<string, TimetableCell[]> = {};
@@ -178,7 +185,7 @@ export class AdminTimetableComponent {
         cells[key].push({
           entry,
           courseLine: this.entryCourseLine(entry),
-          teacherName: entry.teacherName || ''
+          teacherName: hideTeacher ? '' : entry.teacherName || ''
         });
       }
 
@@ -293,7 +300,8 @@ export class AdminTimetableComponent {
       entry.courseName,
       entry.courseGrade,
       entry.courseStageId,
-      entry.combinedGrades
+      entry.combinedGrades,
+      this.filterGrade() !== ''
     );
   }
 
@@ -313,6 +321,26 @@ export class AdminTimetableComponent {
 
   shiftLabel(shift: 'am' | 'pm'): string {
     return this.locale.t(shift === 'am' ? 'admin.timetable.am' : 'admin.timetable.pm');
+  }
+
+  sessionOrdinal(sessionNumber: number): string {
+    const key = timetableSessionOrdinalKey(sessionNumber);
+    const label = this.locale.t(key);
+    return label === key
+      ? `${this.locale.t('admin.timetable.session')} ${sessionNumber}`
+      : label;
+  }
+
+  dayIcon(dayOfWeek: number): string {
+    return timetableDayIcon(dayOfWeek);
+  }
+
+  subjectIcon(courseName: string | null | undefined): string {
+    return timetableSubjectIcon(courseName);
+  }
+
+  subjectTone(courseName: string | null | undefined): number {
+    return timetableSubjectTone(courseName);
   }
 
   cellKey(dayOfWeek: number, period: 'am' | 'pm', sessionNumber: number): string {

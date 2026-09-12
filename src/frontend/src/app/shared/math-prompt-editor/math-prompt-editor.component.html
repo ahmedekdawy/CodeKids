@@ -1,10 +1,12 @@
-<div class="math-editor" [class.disabled]="disabled">
+<div class="math-editor" [class.disabled]="disabled" [class.compact]="compact">
   <div class="toolbar" role="toolbar" [attr.aria-label]="'editor.formattingToolbar' | t">
     <div class="toolbar-row">
       @for (tool of formatTools; track tool.cmd) {
         <button
           type="button"
           class="fmt"
+          [class.italic]="tool.cmd === 'italic'"
+          [class.underline]="tool.cmd === 'underline'"
           [class.strike]="tool.cmd === 'strikeThrough'"
           (mousedown)="$event.preventDefault()"
           (click)="exec(tool.cmd)"
@@ -19,22 +21,162 @@
           }
         </button>
       }
+
       <span class="sep" aria-hidden="true"></span>
-      @for (tool of equationTools; track tool.id) {
+
+      @for (tool of alignTools; track tool.cmd) {
         <button
           type="button"
-          class="eq"
-          [class.active]="tool.id === 'fraction' && showFractionBuilder"
+          class="fmt align"
           (mousedown)="$event.preventDefault()"
-          (click)="runEquationTool(tool.id)"
+          (click)="exec(tool.cmd)"
           [attr.title]="tool.titleKey | t"
           [attr.aria-label]="tool.titleKey | t">
           {{ tool.label }}
         </button>
       }
+
+      <span class="sep" aria-hidden="true"></span>
+
+      <label class="font-select" [attr.title]="'editor.fontFamily' | t">
+        <span class="visually-hidden">{{ 'editor.fontFamily' | t }}</span>
+        <select
+          [value]="selectedFontFamily"
+          (mousedown)="saveSelection()"
+          (change)="onFontFamilyChange($event)"
+          [attr.aria-label]="'editor.fontFamily' | t">
+          @for (font of fontFamilies; track font.value || 'default') {
+            <option [value]="font.value" [style.font-family]="font.preview">
+              {{ font.labelKey | t }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label class="font-select size" [attr.title]="'editor.fontSize' | t">
+        <span class="visually-hidden">{{ 'editor.fontSize' | t }}</span>
+        <select
+          [value]="selectedFontSize"
+          (mousedown)="saveSelection()"
+          (change)="onFontSizeChange($event)"
+          [attr.aria-label]="'editor.fontSize' | t">
+          @for (size of fontSizes; track size.value || 'default') {
+            <option [value]="size.value">
+              {{ size.value ? size.label : ('editor.fontSizeDefault' | t) }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <span class="sep" aria-hidden="true"></span>
+
+      <div class="color-picker">
+        <button
+          type="button"
+          class="fmt color-toggle text"
+          [class.active]="colorPanel === 'text'"
+          (mousedown)="$event.preventDefault(); saveSelection()"
+          (click)="toggleColorPanel('text')"
+          [attr.title]="'editor.textColor' | t"
+          [attr.aria-label]="'editor.textColor' | t"
+          [attr.aria-expanded]="colorPanel === 'text'">
+          <span class="color-letter">A</span>
+          <span class="color-bar text-bar" aria-hidden="true"></span>
+        </button>
+        @if (colorPanel === 'text') {
+          <div class="color-panel" role="listbox" [attr.aria-label]="'editor.textColor' | t">
+            <button
+              type="button"
+              class="swatch default"
+              (mousedown)="$event.preventDefault()"
+              (click)="applyDefaultTextColor()">
+              {{ 'editor.defaultColor' | t }}
+            </button>
+            @for (color of textColors; track color) {
+              <button
+                type="button"
+                class="swatch"
+                [class.light]="color === '#ffffff'"
+                [style.background]="color"
+                (mousedown)="$event.preventDefault()"
+                (click)="applyForeColor(color)"
+                [attr.title]="color"
+                [attr.aria-label]="color"></button>
+            }
+            <label class="custom-color" [attr.title]="'editor.customColor' | t">
+              <input type="color" (mousedown)="saveSelection()" (input)="applyForeColor($any($event.target).value)" />
+            </label>
+          </div>
+        }
+      </div>
+
+      <div class="color-picker">
+        <button
+          type="button"
+          class="fmt color-toggle highlight"
+          [class.active]="colorPanel === 'highlight'"
+          (mousedown)="$event.preventDefault(); saveSelection()"
+          (click)="toggleColorPanel('highlight')"
+          [attr.title]="'editor.highlightColor' | t"
+          [attr.aria-label]="'editor.highlightColor' | t"
+          [attr.aria-expanded]="colorPanel === 'highlight'">
+          <span class="color-letter">H</span>
+          <span class="color-bar highlight-bar" aria-hidden="true"></span>
+        </button>
+        @if (colorPanel === 'highlight') {
+          <div class="color-panel" role="listbox" [attr.aria-label]="'editor.highlightColor' | t">
+            <button
+              type="button"
+              class="swatch default"
+              (mousedown)="$event.preventDefault()"
+              (click)="clearHighlight()">
+              {{ 'editor.noHighlight' | t }}
+            </button>
+            @for (color of highlightColors; track color) {
+              <button
+                type="button"
+                class="swatch"
+                [style.background]="color"
+                (mousedown)="$event.preventDefault()"
+                (click)="applyHighlight(color)"
+                [attr.title]="color"
+                [attr.aria-label]="color"></button>
+            }
+            <label class="custom-color" [attr.title]="'editor.customColor' | t">
+              <input type="color" (mousedown)="saveSelection()" (input)="applyHighlight($any($event.target).value)" />
+            </label>
+          </div>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="fmt"
+        (mousedown)="$event.preventDefault()"
+        (click)="exec('removeFormat')"
+        [attr.title]="'editor.clearFormat' | t"
+        [attr.aria-label]="'editor.clearFormat' | t">
+        Tx
+      </button>
+
+      @if (!compact) {
+        <span class="sep" aria-hidden="true"></span>
+        @for (tool of equationTools; track tool.id) {
+          <button
+            type="button"
+            class="eq"
+            [class.active]="tool.id === 'fraction' && showFractionBuilder"
+            (mousedown)="$event.preventDefault()"
+            (click)="runEquationTool(tool.id)"
+            [attr.title]="tool.titleKey | t"
+            [attr.aria-label]="tool.titleKey | t">
+            {{ tool.label }}
+          </button>
+        }
+      }
     </div>
 
-    @if (showFractionBuilder) {
+    @if (!compact && showFractionBuilder) {
       <div class="fraction-builder" role="group" [attr.aria-label]="'editor.fractionBuilder' | t">
         <div class="fraction-fields">
           <label class="frac-field">
@@ -68,34 +210,36 @@
       </div>
     }
 
-    <div class="symbol-tabs" role="tablist" [attr.aria-label]="'editor.symbolGroups' | t">
-      @for (group of symbolGroups; track group.id) {
-        <button
-          type="button"
-          role="tab"
-          class="tab"
-          [class.active]="activeGroupId === group.id"
-          [attr.aria-selected]="activeGroupId === group.id"
-          (mousedown)="$event.preventDefault()"
-          (click)="selectGroup(group.id)">
-          {{ group.labelKey | t }}
-        </button>
-      }
-    </div>
+    @if (!compact) {
+      <div class="symbol-tabs" role="tablist" [attr.aria-label]="'editor.symbolGroups' | t">
+        @for (group of symbolGroups; track group.id) {
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            [class.active]="activeGroupId === group.id"
+            [attr.aria-selected]="activeGroupId === group.id"
+            (mousedown)="$event.preventDefault()"
+            (click)="selectGroup(group.id)">
+            {{ group.labelKey | t }}
+          </button>
+        }
+      </div>
 
-    <div class="symbol-pad" role="tabpanel">
-      @for (symbol of activeGroup.symbols; track symbol) {
-        <button
-          type="button"
-          class="sym"
-          (mousedown)="$event.preventDefault()"
-          (click)="insertSymbol(symbol)"
-          [attr.title]="symbol"
-          [attr.aria-label]="symbol">
-          {{ symbol }}
-        </button>
-      }
-    </div>
+      <div class="symbol-pad" role="tabpanel">
+        @for (symbol of activeGroup.symbols; track symbol) {
+          <button
+            type="button"
+            class="sym"
+            (mousedown)="$event.preventDefault()"
+            (click)="insertSymbol(symbol)"
+            [attr.title]="symbol"
+            [attr.aria-label]="symbol">
+            {{ symbol }}
+          </button>
+        }
+      </div>
+    }
   </div>
 
   <div
@@ -106,5 +250,5 @@
     aria-multiline="true"
     (input)="onInput()"
     (blur)="onBlur()"
-    [attr.data-placeholder]="'editor.promptPlaceholder' | t"></div>
+    [attr.data-placeholder]="placeholderKey | t"></div>
 </div>

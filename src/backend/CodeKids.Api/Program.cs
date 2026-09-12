@@ -8,6 +8,8 @@ using CodeKids.Application.Features.Analytics;
 
 using CodeKids.Application.Features.Appointments;
 
+using CodeKids.Application.Features.AssessmentLinks;
+
 using CodeKids.Application.Features.Assessments;
 
 using CodeKids.Application.Features.Assignments;
@@ -204,9 +206,15 @@ builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
+builder.Services.AddSingleton<IAssessmentAccessTokenService, AssessmentAccessTokenService>();
+
 builder.Services.AddScoped<ICommandHandler<RegisterCommand, AuthResponse>, RegisterCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<LoginCommand, AuthResponse>, LoginCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<RedeemAssessmentLinkCommand, RedeemAssessmentLinkResult>, RedeemAssessmentLinkCommandHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetAssessmentStudentLinksQuery, AssessmentStudentLinksResult>, GetAssessmentStudentLinksQueryHandler>();
 
 builder.Services.AddScoped<ICommandHandler<ImpersonateUserCommand, AuthResponse>, ImpersonateUserCommandHandler>();
 
@@ -681,6 +689,8 @@ app.MapAssignmentsEndpoints();
 app.MapAttendanceEndpoints();
 
 app.MapAuthEndpoints();
+
+app.MapAssessmentLinksEndpoints();
 
 app.MapTenantEndpoints();
 

@@ -71,7 +71,8 @@ export type CompletePart =
 export function parseCompleteParts(text: string | null | undefined): CompletePart[] {
   const source = text || '';
   const parts: CompletePart[] = [];
-  const re = /\{\{blank\}\}|##([\s\S]*?)##/g;
+  // Prefer single #answer#; still accept legacy ##answer##.
+  const re = /\{\{blank\}\}|#+([^#]+)#+/g;
   let last = 0;
   let index = 0;
   let match: RegExpExecArray | null;
@@ -185,7 +186,7 @@ export function choiceKeySelected(value: string | null | undefined, key: string)
 export function filledOptions(list: QuestionOptionDraft[]): { key: string; text: string }[] {
   return list
     .map((option, index) => ({ key: optionLabel(index), text: (option.text || '').trim() }))
-    .filter((option) => option.text.length > 0);
+    .filter((option) => plainPrompt(option.text).length > 0);
 }
 
 export function questionTypeLabelKey(type: string): string {
@@ -204,6 +205,18 @@ export function questionTypeLabelKey(type: string): string {
     FreeText: 'qtype.freeText'
   };
   return map[type] ?? type;
+}
+
+/** Sample pattern shown above the editor when the type uses a special format. */
+export function questionTypePatternSampleKey(type: string): string | null {
+  const map: Record<string, string> = {
+    Complete: 'teacher.qbank.patternSample.complete',
+    Underline: 'teacher.qbank.patternSample.underline',
+    Order: 'teacher.qbank.patternSample.order',
+    Map: 'teacher.qbank.patternSample.map',
+    Paragraph: 'teacher.qbank.patternSample.paragraph'
+  };
+  return map[type] ?? null;
 }
 
 export function editorTypes(
@@ -346,7 +359,7 @@ export interface QuestionPayload {
   points: number;
   sortOrder: number;
   promptImageMediaAssetId?: string | null;
-  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
   children?: QuestionPayload[];
 }
 
@@ -376,7 +389,8 @@ export function toQuestionPayload(draft: QuestionDraft, sortOrder: number): Ques
           x: marker.x,
           y: marker.y,
           label: marker.label,
-          kind: marker.kind
+          kind: marker.kind,
+          prompt: (marker.prompt || '').trim()
         }))
       : undefined,
     children: isParagraph(type)
@@ -433,7 +447,7 @@ function draftFromApi(question: {
   points?: number | null;
   promptImageMediaAssetId?: string | null;
   promptImageUrl?: string | null;
-  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[] | null;
+  mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[] | null;
   children?: AssignmentQuestion[] | TeacherQuizQuestionDetail[] | null;
 }): QuestionDraft {
   const type = normalizeType(question.questionType);
@@ -470,6 +484,7 @@ function draftFromApi(question: {
       y: marker.y,
       label: marker.label || marker.id,
       kind: marker.kind === 'arrow' ? 'arrow' : 'number',
+      prompt: marker.prompt || '',
       correctAnswer:
         mapAnswers[marker.id] ||
         Object.entries(mapAnswers).find(([key]) => key.toLowerCase() === marker.id.toLowerCase())?.[1] ||

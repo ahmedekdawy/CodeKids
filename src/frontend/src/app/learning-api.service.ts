@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, filter, map } from 'rxjs';
 import {
   Appointment,
+  AssessmentStudentLinksResult,
   Assignment,
   AssignmentSubmission,
   Avatar,
@@ -276,7 +277,7 @@ export class LearningApiService {
       points?: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
-      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
       children?: unknown[];
     }[];
   }): Observable<Quiz> {
@@ -328,7 +329,7 @@ export class LearningApiService {
         points?: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
-        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
         children?: unknown[];
       }[];
     }
@@ -1350,7 +1351,7 @@ export class LearningApiService {
       points: number;
       sortOrder: number;
       promptImageMediaAssetId?: string | null;
-      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+      mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
       id?: string | null;
       children?: unknown[];
     }[];
@@ -1379,7 +1380,7 @@ export class LearningApiService {
         points: number;
         sortOrder: number;
         promptImageMediaAssetId?: string | null;
-        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+        mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
         id?: string | null;
         children?: unknown[];
       }[];
@@ -1436,7 +1437,7 @@ export class LearningApiService {
     points: number;
     sortOrder: number;
     promptImageMediaAssetId?: string | null;
-    mapMarkers?: { id: string; x: number; y: number; label: string; kind: string }[];
+    mapMarkers?: { id: string; x: number; y: number; label: string; kind: string; prompt?: string }[];
     children?: {
       prompt: string;
       questionType: string;
@@ -1483,6 +1484,15 @@ export class LearningApiService {
 
   publishExam(examId: string): Observable<Exam> {
     return this.http.post<Exam>(`${this.baseUrl}/exams/${examId}/publish`, {});
+  }
+
+  getAssessmentStudentLinks(
+    kind: 'exam' | 'quiz' | 'assignment',
+    resourceId: string
+  ): Observable<AssessmentStudentLinksResult> {
+    return this.http.get<AssessmentStudentLinksResult>(`${this.baseUrl}/assessment-links`, {
+      params: { kind, resourceId }
+    });
   }
 
   submitExam(payload: {

@@ -10,7 +10,7 @@ import {
   formatCourseLabel,
   formatGradeLabel
 } from '../../grade.util';
-import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
+import { AssessmentStudentLinksDialogComponent } from './assessment-student-links-dialog.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
@@ -35,7 +35,8 @@ import {
     FormsModule,
     TranslatePipe,
     QuestionDraftEditorComponent,
-    IconActionButtonComponent
+    IconActionButtonComponent,
+    AssessmentStudentLinksDialogComponent
   ],
   templateUrl: './teacher-assignments.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-assignments.component.css']
@@ -51,6 +52,7 @@ export class TeacherAssignmentsComponent {
   readonly info = signal('');
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
+  readonly linksAssignment = signal<Assignment | null>(null);
 
   assignmentTitle = '';
   assignmentDescription = '';
@@ -388,29 +390,23 @@ export class TeacherAssignmentsComponent {
     });
   }
 
-  copyStudentLink(assignmentId: string): void {
-    const url = `${window.location.origin}/assignments/${assignmentId}`;
-    void navigator.clipboard?.writeText(url).then(
-      () => {
-        this.error.set('');
-        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
-      },
-      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
-    );
+  openStudentLinks(assignment: Assignment): void {
+    this.linksAssignment.set(assignment);
   }
 
-  whatsAppShareUrl(assignment: Assignment): string {
+  closeStudentLinks(): void {
+    this.linksAssignment.set(null);
+  }
+
+  linksGradeLabel(assignment: Assignment): string | null {
     const room = this.classrooms().find((item) => item.id === assignment.classroomId);
     const grade = classroomEffectiveGrade(room ?? {});
-    return assessmentWhatsAppShareUrl({
-      kindLabel: this.locale.t('nav.teacher.assignments'),
-      name: assignment.title,
-      gradeLabel: grade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), grade),
-      courseLabel: this.classroomCourseLabel(room),
-      studentPath: `/assignments/${assignment.id}`,
-      gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
-      courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
-    });
+    return grade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  }
+
+  linksCourseLabel(assignment: Assignment): string {
+    const room = this.classrooms().find((item) => item.id === assignment.classroomId);
+    return this.classroomCourseLabel(room);
   }
 
   private classroomCourseLabel(room: Classroom | undefined): string {
@@ -422,10 +418,6 @@ export class TeacherAssignmentsComponent {
       .map((title) => title?.trim())
       .filter((title): title is string => !!title);
     return [...new Set(titles)].join(', ');
-  }
-
-  shareOnWhatsApp(assignment: Assignment): void {
-    window.open(this.whatsAppShareUrl(assignment), '_blank', 'noopener');
   }
 
   isPublishing(id: string): boolean {

@@ -19,11 +19,25 @@ export function tenantFromQueryString(): string | null {
   }
 }
 
+function tenantFromStorage(): string | null {
+  try {
+    const value = localStorage.getItem(TENANT_KEY)?.trim();
+    return value ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 export function currentTenantId(): string {
   const fromQuery = tenantFromQueryString();
   if (fromQuery) {
     setCurrentTenantId(fromQuery);
     return fromQuery;
+  }
+
+  const fromStorage = tenantFromStorage();
+  if (fromStorage) {
+    return fromStorage;
   }
 
   const host = (globalThis.location?.hostname ?? '').toLowerCase();

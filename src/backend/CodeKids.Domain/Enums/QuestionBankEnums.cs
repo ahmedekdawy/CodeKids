@@ -15,7 +15,7 @@ public enum BankQuestionType
     Order = 8,
     /// <summary>Map image with numbered/arrow markers; student fills an answer per marker.</summary>
     Map = 9,
-    /// <summary>Sentence with answers wrapped in ##answer##; students type into each blank.</summary>
+    /// <summary>Sentence with answers wrapped in #answer#; students type into each blank.</summary>
     Complete = 10
 }
 

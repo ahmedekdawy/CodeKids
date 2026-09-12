@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { resolveApiBaseUrl } from './api-base-url';
-import { AuthResponse, AuthUser, UserRole } from './models';
+import { AuthResponse, AuthUser, AssessmentLinkRedeemResponse, UserRole } from './models';
 import { setCurrentTenantId } from './tenant';
 
 const TOKEN_KEY = 'codekids_token';
@@ -24,6 +24,19 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, { email: login, password }).pipe(
       tap((response) => this.persist(response))
     );
+  }
+
+  redeemAssessmentLink(key: string): Observable<AssessmentLinkRedeemResponse> {
+    return this.http
+      .post<AssessmentLinkRedeemResponse>(`${this.baseUrl}/assessment-link/redeem`, { key })
+      .pipe(
+        tap((response) =>
+          this.persist({
+            token: response.token,
+            user: response.user
+          })
+        )
+      );
   }
 
   register(payload: {

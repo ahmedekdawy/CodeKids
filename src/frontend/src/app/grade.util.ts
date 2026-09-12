@@ -129,14 +129,16 @@ export function formatTimetableCourseLine(
   title: string | null | undefined,
   grade?: number | null,
   stageId?: number | null,
-  combinedGrades?: number[] | null
+  combinedGrades?: number[] | null,
+  omitGrade = false
 ): string {
+  const name = (title || '').trim();
+  if (omitGrade) return name;
   const grades = [...(combinedGrades ?? [])]
     .map((g) => Number(g))
     .filter((g) => Number.isFinite(g))
     .sort((a, b) => a - b);
   if (grades.length > 0) {
-    const name = (title || '').trim();
     const names = grades.map((g) => formatGradeLabel(t, g)).join('، ');
     return name ? `${names} - ${name}` : names;
   }

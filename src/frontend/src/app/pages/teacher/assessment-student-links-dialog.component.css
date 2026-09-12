@@ -1,0 +1,132 @@
+.student-links-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(4, 10, 22, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+.student-links-modal {
+  width: min(640px, 100%);
+  max-height: min(88vh, 720px);
+  overflow: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-strong);
+  background: var(--modal-bg);
+  box-shadow: var(--modal-shadow);
+  padding: 1rem 1rem 1.25rem;
+}
+
+.student-links-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.student-links-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.student-links-head .meta {
+  margin: 0.25rem 0 0;
+}
+
+.modal-close {
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--elevated-bg-hover);
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  filter: brightness(1.08);
+}
+
+.hint {
+  margin: 0.35rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.general-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
+  background: color-mix(in srgb, var(--accent, #3d8bfd) 12%, var(--elevated-bg));
+}
+
+.hint.success {
+  color: var(--success, #3d9a6a);
+}
+
+.error {
+  color: var(--danger, #d64545);
+  margin: 0.35rem 0;
+}
+
+.student-links-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.student-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  background: var(--elevated-bg);
+}
+
+.student-link-meta {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.student-link-meta strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.student-link-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 560px) {
+  .general-link-row,
+  .student-link-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .student-link-actions {
+    justify-content: flex-end;
+  }
+}

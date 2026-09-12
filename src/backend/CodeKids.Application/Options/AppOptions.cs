@@ -35,7 +35,7 @@ public sealed class AiOptions
 {
     public const string SectionName = "Ai";
 
-    /// <summary>gemini, grok, groq, openai, or pollinations. Gemini uses generateContent; grok/groq/openai use chat completions.</summary>
+    /// <summary>gemini, grok, groq, openai, chatgpt, or pollinations. Gemini uses generateContent; grok/groq/openai/chatgpt use chat completions.</summary>
     public string Provider { get; set; } = "grok";
     public string ApiKey { get; set; } = string.Empty;
     public string Model { get; set; } = "grok-4.6";

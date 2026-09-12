@@ -33,6 +33,37 @@
   color: var(--text-muted);
 }
 
+.pattern-sample {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.65rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-strong);
+  background: var(--elevated-bg);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.pattern-sample-label {
+  font-weight: 800;
+  color: var(--accent-fg, var(--text));
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.pattern-sample code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+  color: var(--text);
+  font-weight: 600;
+  word-break: break-word;
+}
+
 .qb-field input,
 .qb-field select,
 .qb-field textarea {
@@ -97,7 +128,16 @@
   display: grid;
   grid-template-columns: 2.2rem 1fr auto;
   gap: 0.55rem;
-  align-items: center;
+  align-items: start;
+}
+
+.option-row app-math-prompt-editor {
+  min-width: 0;
+}
+
+.option-row > .option-key,
+.option-row > .order-handle {
+  padding-top: 0.65rem;
 }
 
 .option-row.order-row {
@@ -105,7 +145,7 @@
   padding: 0.35rem 0.45rem;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  cursor: grab;
+  cursor: default;
   background: var(--surface);
 }
 
@@ -119,6 +159,7 @@
   font-size: 1.1rem;
   line-height: 1;
   user-select: none;
+  cursor: grab;
 }
 
 .option-key {

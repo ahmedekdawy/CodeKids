@@ -114,6 +114,7 @@ export class MapQuestionBoardComponent implements OnChanges {
       y: clampPercent((y ?? 50) + offset),
       label: kind === 'number' ? this.nextNumberLabel() : '',
       kind,
+      prompt: '',
       correctAnswer: ''
     };
     this.commitMarkers([...this.localMarkers(), marker]);
@@ -177,6 +178,12 @@ export class MapQuestionBoardComponent implements OnChanges {
         : marker
     );
     this.commitMarkers(this.relabel(updated));
+  }
+
+  onPromptChange(id: string, value: string): void {
+    this.commitMarkers(
+      this.localMarkers().map((marker) => (marker.id === id ? { ...marker, prompt: value } : marker))
+    );
   }
 
   onCorrectAnswerChange(id: string, value: string): void {
@@ -259,6 +266,7 @@ function cloneMarkers(markers: MapMarkerDraft[]): MapMarkerDraft[] {
     y: marker.y,
     label: marker.label,
     kind: marker.kind === 'arrow' ? 'arrow' : 'number',
+    prompt: marker.prompt || '',
     correctAnswer: marker.correctAnswer || ''
   }));
 }

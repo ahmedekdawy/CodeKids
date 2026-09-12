@@ -8,7 +8,7 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, TeacherQuizListItem } from '../../models';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
-import { assessmentWhatsAppShareUrl } from './assessment-whatsapp-share';
+import { AssessmentStudentLinksDialogComponent } from './assessment-student-links-dialog.component';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
@@ -35,7 +35,8 @@ import { paginate, totalPages } from '../../list-query.util';
     TranslatePipe,
     SafeHtmlPipe,
     QuestionDraftEditorComponent,
-    QuestionImageDisplayComponent
+    QuestionImageDisplayComponent,
+    AssessmentStudentLinksDialogComponent
   ],
   templateUrl: './teacher-quizzes.component.html',
   styleUrls: ['./teacher-panel.css', '../admin/admin-panel.css', './teacher-quizzes.component.css']
@@ -69,6 +70,7 @@ export class TeacherQuizzesComponent {
 
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
+  readonly linksQuiz = signal<TeacherQuizListItem | null>(null);
   editingQuizId: string | null = null;
 
   filterFromDate = startOfMonthLocal();
@@ -370,31 +372,18 @@ export class TeacherQuizzesComponent {
     });
   }
 
-  copyStudentLink(quizId: string): void {
-    const url = `${window.location.origin}/quizzes/${quizId}`;
-    void navigator.clipboard?.writeText(url).then(
-      () => {
-        this.error.set('');
-        this.info.set(this.locale.t('teacher.assessments.studentLinkCopied'));
-      },
-      () => this.error.set(this.locale.t('teacher.assessments.copyStudentLinkFailed'))
-    );
+  openStudentLinks(quiz: TeacherQuizListItem): void {
+    this.linksQuiz.set(quiz);
   }
 
-  whatsAppShareUrl(quiz: TeacherQuizListItem): string {
-    return assessmentWhatsAppShareUrl({
-      kindLabel: this.locale.t('nav.teacher.quizzes'),
-      name: quiz.title,
-      gradeLabel: quiz.courseGrade == null ? null : formatGradeLabel((k, p) => this.locale.t(k, p), quiz.courseGrade),
-      courseLabel: quiz.courseTitle,
-      studentPath: `/quizzes/${quiz.id}`,
-      gradeCaption: this.locale.t('teacher.assessments.whatsAppGrade'),
-      courseCaption: this.locale.t('teacher.assessments.whatsAppCourse')
-    });
+  closeStudentLinks(): void {
+    this.linksQuiz.set(null);
   }
 
-  shareOnWhatsApp(quiz: TeacherQuizListItem): void {
-    window.open(this.whatsAppShareUrl(quiz), '_blank', 'noopener');
+  linksGradeLabel(quiz: TeacherQuizListItem): string | null {
+    return quiz.courseGrade == null
+      ? null
+      : formatGradeLabel((k, p) => this.locale.t(k, p), quiz.courseGrade);
   }
 
   isPublishing(id: string): boolean {
