@@ -95,29 +95,31 @@ public sealed class TenantCatalog
             return Default;
         }
 
-        if (!string.IsNullOrWhiteSpace(tenantHeader))
+        var header = tenantHeader?.Trim();
+        if (!string.IsNullOrWhiteSpace(header))
         {
-            var byId = FindById(tenantHeader);
+            var byId = FindById(header);
             if (byId is not null)
             {
                 return byId;
             }
         }
 
+        // Physical connection: origin host → request host → default catalog entry.
         var originHost = HostFromOrigin(origin);
-        var byOrigin = FindByHost(originHost);
-        if (byOrigin is not null)
+        var connection = FindByHost(originHost)
+            ?? FindByHost(NormalizeHost(requestHost))
+            ?? Default;
+
+        // Same-DB logical tenants (signup slugs) are not catalog connection ids.
+        // Keep the resolved connection string but honor the header as TenantId.
+        if (!string.IsNullOrWhiteSpace(header)
+            && !string.Equals(connection.Id, header, StringComparison.OrdinalIgnoreCase))
         {
-            return byOrigin;
+            return connection with { Id = header };
         }
 
-        var byRequestHost = FindByHost(NormalizeHost(requestHost));
-        if (byRequestHost is not null)
-        {
-            return byRequestHost;
-        }
-
-        return Default;
+        return connection;
     }
 
     public TenantInfo? FindById(string? id)

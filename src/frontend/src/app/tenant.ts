@@ -1,6 +1,7 @@
 import { environment } from '../environments/environment';
 
 const TENANT_KEY = 'codekids_tenant';
+const USER_KEY = 'codekids_user';
 
 export function setCurrentTenantId(tenantId: string | null | undefined): void {
   const value = (tenantId ?? '').trim();
@@ -28,11 +29,29 @@ function tenantFromStorage(): string | null {
   }
 }
 
+function tenantFromSavedUser(): string | null {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    if (!raw) return null;
+    const user = JSON.parse(raw) as { tenantId?: string | null };
+    const value = user?.tenantId?.trim();
+    return value ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 export function currentTenantId(): string {
   const fromQuery = tenantFromQueryString();
   if (fromQuery) {
     setCurrentTenantId(fromQuery);
     return fromQuery;
+  }
+
+  const fromUser = tenantFromSavedUser();
+  if (fromUser) {
+    setCurrentTenantId(fromUser);
+    return fromUser;
   }
 
   const fromStorage = tenantFromStorage();
