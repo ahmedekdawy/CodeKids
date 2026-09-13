@@ -228,6 +228,8 @@ builder.Services.AddScoped<ICommandHandler<RegisterTenantCommand, RegisterTenant
 
 builder.Services.AddScoped<ICommandHandler<VerifyTenantCommand, VerifyTenantResult>, VerifyTenantCommandHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListTenantsQuery, IReadOnlyList<AdminTenantDto>>, ListTenantsQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<GetCoursesQuery, IReadOnlyList<CourseDto>>, GetCoursesQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<GetCourseByIdQuery, CourseDto?>, GetCourseByIdQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<ListAdminCoursesQuery, PagedCoursesResultDto>, ListAdminCoursesQueryHandler>();

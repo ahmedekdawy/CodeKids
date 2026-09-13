@@ -54,6 +54,7 @@ import {
   AdminLoginDashboard,
   TuitionPayment,
   OtherExpense,
+  AdminTenant,
   Lesson,
   LiveSession,
   ManagedUser,
@@ -920,6 +921,10 @@ export class LearningApiService {
     return this.http.get<OtherExpense[]>(
       `${this.baseUrl}/admin/other-expenses${query ? `?${query}` : ''}`
     );
+  }
+
+  getAdminTenants(): Observable<AdminTenant[]> {
+    return this.http.get<AdminTenant[]>(`${this.baseUrl}/admin/tenants`);
   }
 
   createOtherExpense(payload: {

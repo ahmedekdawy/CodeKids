@@ -1,5 +1,6 @@
 using CodeKids.Application.Features.Tenants;
 using CodeKids.Domain.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CodeKids.Api;
 
@@ -7,6 +8,20 @@ public static class TenantEndpoints
 {
     public static IEndpointRouteBuilder MapTenantEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapGet("/api/admin/tenants", async (
+            IQueryHandler<ListTenantsQuery, IReadOnlyList<AdminTenantDto>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            try
+            {
+                return Results.Ok(await handler.Handle(new ListTenantsQuery(), cancellationToken));
+            }
+            catch (Exception ex)
+            {
+                return ApiResults.ProblemFromException(ex);
+            }
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPost("/api/tenants/register", async (
             RegisterTenantRequest request,
             ICommandHandler<RegisterTenantCommand, RegisterTenantResult> handler,

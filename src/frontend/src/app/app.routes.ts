@@ -35,6 +35,7 @@ import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
 import { AdminAccountReportComponent } from './pages/admin/admin-account-report.component';
 import { AdminPaymentsComponent } from './pages/admin/admin-payments.component';
 import { AdminOtherExpensesComponent } from './pages/admin/admin-other-expenses.component';
+import { AdminTenantsComponent } from './pages/admin/admin-tenants.component';
 import { CoursePlayComponent } from './pages/course-play/course-play.component';
 import { AdminVideosComponent } from './pages/admin/admin-videos.component';
 import { TeacherShellComponent } from './pages/teacher/teacher-shell.component';
@@ -186,6 +187,7 @@ export const routes: Routes = [
       { path: 'account-report', component: AdminAccountReportComponent },
       { path: 'payments', component: AdminPaymentsComponent },
       { path: 'other-expenses', component: AdminOtherExpensesComponent },
+      { path: 'tenants', component: AdminTenantsComponent },
       { path: 'whatsapp', component: AdminWhatsAppComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' }

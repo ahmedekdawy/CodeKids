@@ -950,6 +950,21 @@ export interface OtherExpense {
   createdAtUtc: string;
 }
 
+export interface AdminTenant {
+  id: string;
+  name: string;
+  slug: string;
+  email: string;
+  mobilePhone: string;
+  displayName: string;
+  status: string;
+  createdAtUtc?: string | null;
+  verifiedAtUtc?: string | null;
+  expiresAtUtc?: string | null;
+  userCount: number;
+  lastLoginUtc?: string | null;
+}
+
 export interface CreateMeetingPayload {
   title: string;
   description?: string;
