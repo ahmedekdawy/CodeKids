@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
@@ -30,6 +30,11 @@ export class LessonPlayComponent {
   readonly form = this.fb.nonNullable.group({
     answer: ['', Validators.required]
   });
+  readonly backLink = computed(() => {
+    const courseId = this.lesson()?.courseId;
+    return courseId ? ['/student/lessons', courseId] : ['/student'];
+  });
+  readonly backLabelKey = computed(() => (this.lesson()?.courseId ? 'student.backToLessons' : 'common.backMissions'));
 
   constructor() {
     const lessonId = this.route.snapshot.paramMap.get('lessonId')!;

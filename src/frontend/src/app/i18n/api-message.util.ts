@@ -17,6 +17,7 @@ const LEGACY_MESSAGE_CODES: Record<string, string> = {
   'Password must be at least 6 characters.': 'api.errors.auth.passwordTooShort',
   'Exam already submitted.': 'api.errors.exam.alreadySubmitted',
   'Assignment already submitted.': 'api.errors.assignment.alreadySubmitted',
+  'Quiz already submitted.': 'api.errors.quiz.alreadySubmitted',
   'Could not generate assessment questions.': 'api.errors.assessment.generateFailed'
 };
 

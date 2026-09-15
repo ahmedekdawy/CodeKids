@@ -1334,6 +1334,7 @@ export class LearningApiService {
 
   createAssignment(payload: {
     classroomId: string;
+    courseId?: string | null;
     title: string;
     description?: string;
     dueAtUtc?: string | null;
@@ -1363,6 +1364,7 @@ export class LearningApiService {
     assignmentId: string,
     payload: {
       classroomId: string;
+      courseId?: string | null;
       title: string;
       description?: string;
       dueAtUtc?: string | null;

@@ -154,6 +154,11 @@ export class StudentHomeComponent {
     return formatGradeLabel((k, p) => this.locale.t(k, p), grade, 'student.allGrades');
   }
 
+  courseLessonCount(course: Course): number {
+    if (course.lessons?.length) return course.lessons.length;
+    return (course.units ?? []).reduce((count, unit) => count + (unit.lessons?.length ?? 0), 0);
+  }
+
   courseVideos(course: Course): CourseVideoSummary[] {
     return course.videos ?? [];
   }
@@ -177,6 +182,7 @@ export class StudentHomeComponent {
   }
 
   private assignmentBelongsToCourse(assignment: Assignment, course: Course): boolean {
+    if (assignment.courseId) return assignment.courseId === course.id;
     return this.classroomLinksOnlyCourse(assignment.classroomId, course.id);
   }
 

@@ -85,7 +85,7 @@ export class AssignmentPlayComponent {
 
   submit(): void {
     const assignment = this.assignment();
-    if (!assignment) return;
+    if (!assignment || assignment.alreadySubmitted) return;
     this.api
       .submitAssignment({
         assignmentId: assignment.id,

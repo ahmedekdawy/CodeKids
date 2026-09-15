@@ -1,6 +1,6 @@
 <div class="page">
   <app-api-busy-indicator />
-  <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
+  <a [routerLink]="backLink()" class="back">{{ backLabelKey() | t }}</a>
   @if (lesson(); as current) {
     <section class="hero-strip">
       <div>

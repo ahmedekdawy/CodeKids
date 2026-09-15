@@ -299,13 +299,13 @@ export class TeacherExamsComponent {
   }
 
   linksCourseLabel(exam: Exam): string {
-    const room = this.classrooms().find((item) => item.id === exam.classroomId);
-    return (
-      exam.courseTitle?.trim() ||
-      room?.courseTitle?.trim() ||
-      (room?.courses ?? []).map((c) => c.courseTitle).find((title) => !!title?.trim()) ||
-      ''
-    );
+    const fromExam = exam.courseTitle?.trim();
+    if (fromExam) return fromExam;
+    if (exam.courseId) {
+      const course = this.courses().find((item) => item.id === exam.courseId);
+      if (course?.title?.trim()) return course.title.trim();
+    }
+    return '';
   }
 
   isPublishing(id: string): boolean {

@@ -321,6 +321,7 @@ export interface Quiz {
   durationMinutes?: number | null;
   isPublished: boolean;
   questions: QuizQuestion[];
+  alreadySubmitted?: boolean;
 }
 
 export interface TeacherQuizListItem {
@@ -1133,6 +1134,8 @@ export interface Assignment {
   id: string;
   classroomId: string;
   classroomName: string;
+  courseId?: string | null;
+  courseTitle?: string | null;
   title: string;
   description: string;
   dueAtUtc?: string | null;
@@ -1142,6 +1145,7 @@ export interface Assignment {
   createdByName: string;
   solutionVideoMediaAssetId?: string | null;
   questions: AssignmentQuestion[];
+  alreadySubmitted?: boolean;
 }
 
 export interface AssignmentAnswerReview {
@@ -1258,6 +1262,7 @@ export interface Exam {
   createdByUserId: string;
   createdByName: string;
   questions: ExamQuestion[];
+  alreadySubmitted?: boolean;
 }
 
 export interface ExamAnswerReview {

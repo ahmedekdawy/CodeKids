@@ -71,7 +71,7 @@ export class ExamPlayComponent {
 
   begin(): void {
     const exam = this.exam();
-    if (!exam || this.started() || this.starting()) return;
+    if (!exam || this.started() || this.starting() || exam.alreadySubmitted) return;
 
     this.starting.set(true);
     this.error.set('');
@@ -124,7 +124,7 @@ export class ExamPlayComponent {
 
   submit(): void {
     const exam = this.exam();
-    if (!exam) return;
+    if (!exam || exam.alreadySubmitted) return;
     this.attempt.stop();
     const answerable = answerableQuestions(exam.questions);
     this.api

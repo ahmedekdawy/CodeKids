@@ -5,14 +5,19 @@
       <app-site-brand />
       <h1>{{ exam()?.title || ('play.examFallback' | t) }}</h1>
     </div>
-    @if (!started() || result()) {
+    @if (!started() || result() || exam()?.alreadySubmitted) {
       <a class="back" routerLink="/student">{{ 'common.backBtn' | t }}</a>
     }
   </header>
 
   <app-page-feedback [error]="error()" />
 
-  @if (result(); as attempt) {
+  @if (exam()?.alreadySubmitted && !result()) {
+    <section class="block">
+      <h3>{{ 'play.submitted' | t }}</h3>
+      <p>{{ 'play.alreadySubmitted' | t }}</p>
+    </section>
+  } @else if (result(); as attempt) {
     <section class="block">
       <h3>{{ 'play.autoGraded' | t }}</h3>
       @if (timedOut()) {

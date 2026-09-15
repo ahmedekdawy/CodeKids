@@ -150,15 +150,15 @@
               </p>
 
               @if (
-                course.lessons.length ||
+                courseLessonCount(course) ||
                 courseAssignments(course).length ||
                 courseExams(course).length ||
                 publishedQuizzes(course).length ||
                 courseVideos(course).length
               ) {
                 <div class="course-counts">
-                  @if (course.lessons.length) {
-                    <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
+                  @if (courseLessonCount(course)) {
+                    <span>{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</span>
                   }
                   @if (courseAssignments(course).length) {
                     <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>
@@ -187,15 +187,14 @@
                 </div>
               }
 
-              @if (course.lessons.length) {
-                <div class="link-group">
-                  <p class="group-label">{{ 'student.lessons' | t }}</p>
-                  <div class="chip-row">
-                    @for (lesson of course.lessons; track lesson.id) {
-                      <a class="chip" [routerLink]="['/lessons', lesson.id]">{{ lesson.title }}</a>
-                    }
+              @if (courseLessonCount(course)) {
+                <a class="item-row link-row lessons-index" [routerLink]="['/student/lessons', course.id]">
+                  <div class="item-body">
+                    <strong>{{ 'student.lessons' | t }}</strong>
+                    <p class="meta">{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</p>
                   </div>
-                </div>
+                  <span class="action-ghost">{{ 'student.openLessons' | t }}</span>
+                </a>
               }
 
               @if (publishedQuizzes(course).length) {

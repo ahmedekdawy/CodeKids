@@ -10,7 +10,12 @@
 
   <app-page-feedback [error]="error()" />
 
-  @if (result(); as submission) {
+  @if (assignment()?.alreadySubmitted && !result()) {
+    <section class="block">
+      <h3>{{ 'play.submitted' | t }}</h3>
+      <p>{{ 'play.alreadySubmitted' | t }}</p>
+    </section>
+  } @else if (result(); as submission) {
     <section class="block">
       <h3>{{ 'play.submitted' | t }}</h3>
       <p>{{ submittedScore(submission) }}</p>

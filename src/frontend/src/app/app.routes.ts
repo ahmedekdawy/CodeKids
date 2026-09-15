@@ -8,6 +8,7 @@ import { VerifyTenantComponent } from './pages/verify-tenant/verify-tenant.compo
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { StudentHomeComponent } from './pages/student-home/student-home.component';
+import { StudentLessonsComponent } from './pages/student-lessons/student-lessons.component';
 import { LessonPlayComponent } from './pages/lesson-play/lesson-play.component';
 import { QuizPlayComponent } from './pages/quiz-play/quiz-play.component';
 import { AssignmentPlayComponent } from './pages/assignment-play/assignment-play.component';
@@ -89,6 +90,11 @@ export const routes: Routes = [
     path: 'student/chat',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: StudentChatComponent
+  },
+  {
+    path: 'student/lessons/:courseId',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudentLessonsComponent
   },
   {
     path: 'lessons/:lessonId',
