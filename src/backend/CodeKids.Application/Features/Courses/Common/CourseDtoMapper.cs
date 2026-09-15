@@ -5,6 +5,8 @@ namespace CodeKids.Application.Features.Courses;
 
 internal static class CourseDtoMapper
 {
+    private static bool hasContent;
+
     public static CourseDto Map(
         Course course,
         bool includeContent = true,
