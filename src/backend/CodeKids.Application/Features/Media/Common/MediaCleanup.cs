@@ -15,7 +15,8 @@ internal static class MediaCleanup
     {
         var stillUsed =
             await dbContext.LessonVideos.AnyAsync(x => x.MediaAssetId == mediaId, cancellationToken)
-            || await dbContext.Assignments.AnyAsync(x => x.SolutionVideoMediaAssetId == mediaId, cancellationToken);
+            || await dbContext.Assignments.AnyAsync(x => x.SolutionVideoMediaAssetId == mediaId, cancellationToken)
+            || await dbContext.LearningMaterials.AnyAsync(x => x.MediaAssetId == mediaId, cancellationToken);
 
         if (stillUsed)
         {

@@ -19,4 +19,7 @@ public sealed record AssignmentDto(
     Guid CreatedByUserId,
     string CreatedByName,
     Guid? SolutionVideoMediaAssetId,
-    IReadOnlyList<AssignmentQuestionDto> Questions);
+    Guid? CourseId,
+    string? CourseTitle,
+    IReadOnlyList<AssignmentQuestionDto> Questions,
+    bool AlreadySubmitted = false);

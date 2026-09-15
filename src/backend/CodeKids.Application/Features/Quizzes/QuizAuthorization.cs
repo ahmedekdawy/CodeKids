@@ -13,8 +13,7 @@ internal static class QuizAuthorization
         }
 
         var isCreator = quiz.CreatedByUserId == teacherUserId;
-        var isClassroomTeacher = quiz.Classroom?.Courses.Any(t => t.TeacherId == teacherUserId) == true;
-        if (!isCreator && !isClassroomTeacher)
+        if (!isCreator)
         {
             throw new InvalidOperationException("Only the quiz teacher can manage this quiz.");
         }

@@ -9,6 +9,7 @@ namespace CodeKids.Application.Features.Assignments;
 
 public sealed record CreateAssignmentRequest(
     Guid ClassroomId,
+    Guid? CourseId,
     string Title,
     string? Description,
     DateTimeOffset? DueAtUtc,
@@ -19,6 +20,7 @@ public sealed record CreateAssignmentRequest(
 public sealed record CreateAssignmentCommand(
     Guid TeacherUserId,
     Guid ClassroomId,
+    Guid? CourseId,
     string Title,
     string? Description,
     DateTimeOffset? DueAtUtc,

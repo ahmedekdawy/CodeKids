@@ -21,6 +21,7 @@ public sealed class GetAssignmentByIdQueryHandler(IAppDbContext dbContext)
                 .ThenInclude(c => c!.Courses)
             .Include(x => x.Classroom)
                 .ThenInclude(c => c!.Students)
+            .Include(x => x.Course)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == query.AssignmentId, cancellationToken);
@@ -44,7 +45,18 @@ public sealed class GetAssignmentByIdQueryHandler(IAppDbContext dbContext)
                 return null;
             }
         }
+        else if (!TeacherAssessmentAccess.CanViewAsStaff(query.ViewerRole, assignment.CreatedByUserId, query.ViewerUserId))
+        {
+            return null;
+        }
 
-        return CreateAssignmentCommandHandler.Map(assignment, includeKey, includeSolutionVideo: includeKey);
+        var dto = CreateAssignmentCommandHandler.Map(assignment, includeKey, includeSolutionVideo: includeKey);
+        if (isStudent && await StudentCompletedAssessments.HasAssignmentAsync(
+                dbContext, query.ViewerUserId, assignment.Id, cancellationToken))
+        {
+            return dto with { AlreadySubmitted = true };
+        }
+
+        return dto;
     }
 }

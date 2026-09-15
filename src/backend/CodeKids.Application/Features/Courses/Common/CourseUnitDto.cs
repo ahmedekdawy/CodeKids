@@ -9,4 +9,5 @@ public sealed record CourseUnitDto(
     IReadOnlyList<CourseLessonDto> Lessons,
     int? Term = null,
     string VerificationStatus = "",
-    bool StudentAskEnabled = false);
+    bool StudentAskEnabled = false,
+    bool HasContent = false);

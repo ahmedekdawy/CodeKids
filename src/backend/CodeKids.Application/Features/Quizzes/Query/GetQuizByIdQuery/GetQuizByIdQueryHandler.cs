@@ -29,6 +29,20 @@ public sealed class GetQuizByIdQueryHandler(IAppDbContext dbContext)
             return null;
         }
 
-        return GetQuizzesQueryHandler.Map(quiz);
+        if (!TeacherAssessmentAccess.CanViewAsStaff(query.ViewerRole, quiz.CreatedByUserId, query.ViewerUserId)
+            && !StudentCompletedAssessments.IsStudent(query.ViewerRole))
+        {
+            return null;
+        }
+
+        var dto = GetQuizzesQueryHandler.Map(quiz);
+        if (StudentCompletedAssessments.IsStudent(query.ViewerRole)
+            && await StudentCompletedAssessments.HasQuizAsync(
+                dbContext, query.ViewerUserId, quiz.Id, cancellationToken))
+        {
+            return dto with { AlreadySubmitted = true };
+        }
+
+        return dto;
     }
 }

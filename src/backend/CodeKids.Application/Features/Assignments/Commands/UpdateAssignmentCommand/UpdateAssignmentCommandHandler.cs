@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Application.Features.Notifications;
 using CodeKids.Domain.Abstractions;
@@ -35,6 +36,19 @@ public sealed class UpdateAssignmentCommandHandler(IAppDbContext dbContext, Noti
                 dbContext, command.TeacherUserId, command.ClassroomId, "edit", cancellationToken);
             assignment.ClassroomId = command.ClassroomId;
         }
+
+        var courseId = await AssessmentRelatedCourse.ResolveIdAsync(
+            dbContext,
+            command.CourseId,
+            assignment.ClassroomId,
+            command.TeacherUserId,
+            cancellationToken);
+        if (command.CourseId is Guid requested && requested != Guid.Empty && courseId is null)
+        {
+            throw new InvalidOperationException("Course not found.");
+        }
+
+        assignment.CourseId = courseId;
 
         var title = command.Title.Trim();
         if (string.IsNullOrWhiteSpace(title))

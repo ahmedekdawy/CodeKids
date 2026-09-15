@@ -10,7 +10,8 @@ internal static class CourseDtoMapper
         bool includeContent = true,
         CourseContentOutline? outline = null,
         IReadOnlyList<CourseVideoSummaryDto>? videos = null,
-        bool includeUnpublishedQuizzes = true)
+        bool includeUnpublishedQuizzes = true,
+        IReadOnlySet<Guid>? hideQuizIds = null)
     {
         if (!includeContent)
         {
@@ -25,6 +26,7 @@ internal static class CourseDtoMapper
         var content = outline ?? new CourseContentOutline([], []);
         var quizzes = course.Quizzes
             .Where(quiz => includeUnpublishedQuizzes || quiz.IsPublished)
+            .Where(quiz => hideQuizIds is null || !hideQuizIds.Contains(quiz.Id))
             .Select(quiz => new CourseQuizDto(
                 quiz.Id,
                 quiz.Title,
@@ -69,5 +71,6 @@ internal static class CourseDtoMapper
             course.Notes,
             course.Variants,
             course.StudentAskEnabled,
-            course.IsPublished);
+            course.IsPublished,
+            hasContent);
 }

@@ -68,6 +68,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<ExamAnswer> ExamAnswers => Set<ExamAnswer>();
     public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
     public DbSet<LessonVideo> LessonVideos => Set<LessonVideo>();
+    public DbSet<LearningMaterial> LearningMaterials => Set<LearningMaterial>();
     public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
     public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
     public DbSet<StudentAskedQuestion> StudentAskedQuestions => Set<StudentAskedQuestion>();
@@ -640,6 +641,10 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.ClassroomId)
                 .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.SetNull);
             entity.HasOne(x => x.CreatedBy)
                 .WithMany()
                 .HasForeignKey(x => x.CreatedByUserId)
@@ -861,6 +866,28 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasOne(x => x.MediaAsset)
                 .WithMany()
                 .HasForeignKey(x => x.MediaAssetId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<LearningMaterial>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Kind).HasConversion<string>().HasMaxLength(20);
+            entity.HasIndex(x => x.CourseId);
+            entity.HasIndex(x => x.UnitId);
+            entity.HasIndex(x => x.LessonId);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.MediaAsset)
+                .WithMany()
+                .HasForeignKey(x => x.MediaAssetId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.UploadedBy)
+                .WithMany()
+                .HasForeignKey(x => x.UploadedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

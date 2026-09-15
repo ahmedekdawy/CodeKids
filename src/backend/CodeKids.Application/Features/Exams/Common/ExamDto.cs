@@ -22,4 +22,5 @@ public sealed record ExamDto(
     bool IsPublished,
     Guid CreatedByUserId,
     string CreatedByName,
-    IReadOnlyList<ExamQuestionDto> Questions);
+    IReadOnlyList<ExamQuestionDto> Questions,
+    bool AlreadySubmitted = false);

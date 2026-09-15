@@ -43,6 +43,18 @@ public sealed class GetExamByIdQueryHandler(IAppDbContext dbContext)
             return null;
         }
 
-        return CreateExamCommandHandler.Map(exam, includeKey);
+        if (!isStudent && !TeacherAssessmentAccess.CanViewAsStaff(query.ViewerRole, exam.CreatedByUserId, query.ViewerUserId))
+        {
+            return null;
+        }
+
+        var dto = CreateExamCommandHandler.Map(exam, includeKey);
+        if (isStudent && await StudentCompletedAssessments.HasExamAsync(
+                dbContext, query.ViewerUserId, exam.Id, cancellationToken))
+        {
+            return dto with { AlreadySubmitted = true };
+        }
+
+        return dto;
     }
 }

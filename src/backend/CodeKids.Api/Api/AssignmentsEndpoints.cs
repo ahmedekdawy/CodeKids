@@ -88,6 +88,8 @@ public static class AssignmentsEndpoints
 
                         request.ClassroomId,
 
+                        request.CourseId,
+
                         request.Title,
 
                         request.Description,
@@ -129,6 +131,7 @@ public static class AssignmentsEndpoints
                         userId,
                         assignmentId,
                         request.ClassroomId,
+                        request.CourseId,
                         request.Title,
                         request.Description,
                         request.DueAtUtc,

@@ -26,4 +26,5 @@ public sealed record CourseDto(
     string Notes = "",
     string Variants = "",
     bool StudentAskEnabled = false,
-    bool IsPublished = false);
+    bool IsPublished = false,
+    bool HasContent = false);

@@ -16,4 +16,5 @@ public sealed record QuizDto(
     int XpReward,
     int? DurationMinutes,
     bool IsPublished,
-    IReadOnlyList<QuizQuestionDto> Questions);
+    IReadOnlyList<QuizQuestionDto> Questions,
+    bool AlreadySubmitted = false);

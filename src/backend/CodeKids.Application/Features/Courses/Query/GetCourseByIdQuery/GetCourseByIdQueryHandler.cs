@@ -28,11 +28,18 @@ public sealed class GetCourseByIdQueryHandler(IAppDbContext dbContext)
         var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
         var videosByCourse = await CourseVideoLoader.LoadByCourseIdsAsync(dbContext, [course.Id], cancellationToken);
         var includeUnpublishedQuizzes = PublishedAssessmentAccess.CanViewUnpublished(query.Role);
+        IReadOnlySet<Guid>? hideQuizIds = null;
+        if (StudentCompletedAssessments.IsStudent(query.Role) && query.UserId is Guid studentId)
+        {
+            hideQuizIds = await StudentCompletedAssessments.QuizIdsAsync(dbContext, studentId, cancellationToken);
+        }
+
         return CourseDtoMapper.Map(
             course,
             includeContent: true,
             outline,
             videosByCourse.GetValueOrDefault(course.Id, []),
-            includeUnpublishedQuizzes);
+            includeUnpublishedQuizzes,
+            hideQuizIds);
     }
 }

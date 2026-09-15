@@ -19,6 +19,7 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
                 .ThenInclude(c => c.Courses)
             .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
+            .Include(x => x.Course)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
             .OrderByDescending(x => x.CreatedAtUtc)
@@ -40,12 +41,15 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
 
         if (isTeacher)
         {
-            assignments = assignments.Where(x => x.Classroom?.Courses.Any(t => t.TeacherId == query.ViewerUserId) == true).ToList();
+            assignments = assignments.Where(x => x.CreatedByUserId == query.ViewerUserId).ToList();
         }
         else if (isStudent)
         {
+            var submittedIds = await StudentCompletedAssessments.AssignmentIdsAsync(
+                dbContext, query.ViewerUserId, cancellationToken);
             assignments = assignments
                 .Where(x => x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true)
+                .Where(x => !submittedIds.Contains(x.Id))
                 .ToList();
         }
         else if (!isAdmin)

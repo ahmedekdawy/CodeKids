@@ -1,4 +1,5 @@
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Application.Features.Notifications;
@@ -24,6 +25,22 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             throw new InvalidOperationException("Only an assigned classroom teacher can create assignments.");
         }
 
+        var courseId = await AssessmentRelatedCourse.ResolveIdAsync(
+            dbContext,
+            command.CourseId,
+            classroom.Id,
+            command.TeacherUserId,
+            cancellationToken);
+        if (command.CourseId is Guid requested && requested != Guid.Empty && courseId is null)
+        {
+            throw new InvalidOperationException("Course not found.");
+        }
+
+        if (courseId is Guid cid && !classroom.Courses.Any(t => t.TeacherId == command.TeacherUserId && t.CourseId == cid))
+        {
+            throw new InvalidOperationException("Only an assigned classroom teacher can create assignments.");
+        }
+
         var title = command.Title.Trim();
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -39,6 +56,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
         {
             Id = Guid.NewGuid(),
             ClassroomId = classroom.Id,
+            CourseId = courseId,
             CreatedByUserId = command.TeacherUserId,
             Title = title,
             Description = (command.Description ?? string.Empty).Trim(),
@@ -69,6 +87,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             .AsNoTracking()
             .Include(x => x.Classroom)
                 .ThenInclude(c => c!.Courses)
+            .Include(x => x.Course)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -89,5 +108,7 @@ public sealed class CreateAssignmentCommandHandler(IAppDbContext dbContext, Noti
             assignment.CreatedByUserId,
             assignment.CreatedBy?.DisplayName ?? "Teacher",
             includeSolutionVideo ? assignment.SolutionVideoMediaAssetId : null,
+            assignment.CourseId,
+            assignment.Course?.Title,
             AssignmentQuestionSync.MapTree(assignment.Questions, includeAnswerKey));
 }
