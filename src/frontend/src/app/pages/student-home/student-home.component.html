@@ -140,6 +140,12 @@
                 <div>
                   <h3 class="course-title">{{ course.title }}</h3>
                   <p class="course-desc">{{ course.description }}</p>
+                  @if (courseLessonCount(course)>0){
+                    <a class="link" [routerLink]="['/student/lessons', course.id]">
+
+                    <span>{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</span>
+                    </a>
+                  }
                 </div>
                 <span class="theme-tag">{{ course.theme }}</span>
               </header>
@@ -158,7 +164,7 @@
               ) {
                 <div class="course-counts">
                   @if (courseLessonCount(course)) {
-                    <span>{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</span>
+                   
                   }
                   @if (courseAssignments(course).length) {
                     <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>
@@ -187,15 +193,6 @@
                 </div>
               }
 
-              @if (courseLessonCount(course)) {
-                <a class="item-row link-row lessons-index" [routerLink]="['/student/lessons', course.id]">
-                  <div class="item-body">
-                    <strong>{{ 'student.lessons' | t }}</strong>
-                    <p class="meta">{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</p>
-                  </div>
-                  <span class="action-ghost">{{ 'student.openLessons' | t }}</span>
-                </a>
-              }
 
               @if (publishedQuizzes(course).length) {
                 <div class="link-group quizzes">
