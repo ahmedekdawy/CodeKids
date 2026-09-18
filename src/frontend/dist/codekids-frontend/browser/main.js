@@ -46994,6 +46994,9 @@ var environment = {
   apiBaseUrl: "http://localhost:5078/api",
   appBaseUrl: "http://localhost:4200",
   teraboxBaseUrl: "https://www.1024terabox.com",
+  openRouterBaseUrl: "https://openrouter.ai/api/v1",
+  openRouterModel: "openai/gpt-4o-mini",
+  openRouterApiKey: "",
   zoomCallbackUrl: "http://localhost:5078/api/zoom/callback",
   zoomFrontendRedirectUrl: "http://localhost:4200/teacher/zoom",
   defaultTenant: "abakera",
@@ -65474,10 +65477,10 @@ var PROFILE_PHOTO_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"]
 var _c04 = (a0) => ({ name: a0 });
 var _c13 = (a0, a1) => ({ steps: a0, xp: a1 });
 var _c22 = (a0, a1) => ({ min: a0, max: a1 });
-var _c3 = (a0) => ({ count: a0 });
-var _c4 = (a0) => ["/courses", a0];
-var _c5 = (a0) => ({ video: a0 });
-var _c6 = (a0) => ["/student/lessons", a0];
+var _c3 = (a0) => ["/student/lessons", a0];
+var _c4 = (a0) => ({ count: a0 });
+var _c5 = (a0) => ["/courses", a0];
+var _c6 = (a0) => ({ video: a0 });
 var _c7 = (a0) => ["/quizzes", a0];
 var _c8 = (a0) => ["/assignments", a0];
 var _c9 = (a0) => ({ xp: a0 });
@@ -65659,7 +65662,24 @@ function StudentHomeComponent_Conditional_65_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 2, "student.exams"));
   }
 }
-function StudentHomeComponent_For_79_Conditional_12_Conditional_1_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "a", 56)(1, "span");
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const course_r6 = \u0275\u0275nextContext().$implicit;
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(5, _c3, course_r6.id));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 2, "student.lessonCount", \u0275\u0275pureFunction1(7, _c4, ctx_r1.courseLessonCount(course_r6))));
+  }
+}
+function StudentHomeComponent_For_79_Conditional_13_Conditional_1_Template(rf, ctx) {
+}
+function StudentHomeComponent_For_79_Conditional_13_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
     \u0275\u0275text(1);
@@ -65670,10 +65690,10 @@ function StudentHomeComponent_For_79_Conditional_12_Conditional_1_Template(rf, c
     const course_r6 = \u0275\u0275nextContext(2).$implicit;
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.lessonCount", \u0275\u0275pureFunction1(4, _c3, ctx_r1.courseLessonCount(course_r6))));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.assignmentCount", \u0275\u0275pureFunction1(4, _c4, ctx_r1.courseAssignments(course_r6).length)));
   }
 }
-function StudentHomeComponent_For_79_Conditional_12_Conditional_2_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_13_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
     \u0275\u0275text(1);
@@ -65684,10 +65704,10 @@ function StudentHomeComponent_For_79_Conditional_12_Conditional_2_Template(rf, c
     const course_r6 = \u0275\u0275nextContext(2).$implicit;
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.assignmentCount", \u0275\u0275pureFunction1(4, _c3, ctx_r1.courseAssignments(course_r6).length)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.examCount", \u0275\u0275pureFunction1(4, _c4, ctx_r1.courseExams(course_r6).length)));
   }
 }
-function StudentHomeComponent_For_79_Conditional_12_Conditional_3_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_13_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
     \u0275\u0275text(1);
@@ -65698,10 +65718,10 @@ function StudentHomeComponent_For_79_Conditional_12_Conditional_3_Template(rf, c
     const course_r6 = \u0275\u0275nextContext(2).$implicit;
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.examCount", \u0275\u0275pureFunction1(4, _c3, ctx_r1.courseExams(course_r6).length)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.quizCount", \u0275\u0275pureFunction1(4, _c4, ctx_r1.publishedQuizzes(course_r6).length)));
   }
 }
-function StudentHomeComponent_For_79_Conditional_12_Conditional_4_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_13_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
     \u0275\u0275text(1);
@@ -65712,31 +65732,17 @@ function StudentHomeComponent_For_79_Conditional_12_Conditional_4_Template(rf, c
     const course_r6 = \u0275\u0275nextContext(2).$implicit;
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.quizCount", \u0275\u0275pureFunction1(4, _c3, ctx_r1.publishedQuizzes(course_r6).length)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.videoCount", \u0275\u0275pureFunction1(4, _c4, ctx_r1.courseVideos(course_r6).length)));
   }
 }
-function StudentHomeComponent_For_79_Conditional_12_Conditional_5_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_13_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1);
-    \u0275\u0275pipe(2, "t");
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const course_r6 = \u0275\u0275nextContext(2).$implicit;
-    const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "student.videoCount", \u0275\u0275pureFunction1(4, _c3, ctx_r1.courseVideos(course_r6).length)));
-  }
-}
-function StudentHomeComponent_For_79_Conditional_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 58);
-    \u0275\u0275conditionalCreate(1, StudentHomeComponent_For_79_Conditional_12_Conditional_1_Template, 3, 6, "span");
-    \u0275\u0275conditionalCreate(2, StudentHomeComponent_For_79_Conditional_12_Conditional_2_Template, 3, 6, "span");
-    \u0275\u0275conditionalCreate(3, StudentHomeComponent_For_79_Conditional_12_Conditional_3_Template, 3, 6, "span");
-    \u0275\u0275conditionalCreate(4, StudentHomeComponent_For_79_Conditional_12_Conditional_4_Template, 3, 6, "span");
-    \u0275\u0275conditionalCreate(5, StudentHomeComponent_For_79_Conditional_12_Conditional_5_Template, 3, 6, "span");
+    \u0275\u0275elementStart(0, "div", 59);
+    \u0275\u0275conditionalCreate(1, StudentHomeComponent_For_79_Conditional_13_Conditional_1_Template, 0, 0);
+    \u0275\u0275conditionalCreate(2, StudentHomeComponent_For_79_Conditional_13_Conditional_2_Template, 3, 6, "span");
+    \u0275\u0275conditionalCreate(3, StudentHomeComponent_For_79_Conditional_13_Conditional_3_Template, 3, 6, "span");
+    \u0275\u0275conditionalCreate(4, StudentHomeComponent_For_79_Conditional_13_Conditional_4_Template, 3, 6, "span");
+    \u0275\u0275conditionalCreate(5, StudentHomeComponent_For_79_Conditional_13_Conditional_5_Template, 3, 6, "span");
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -65754,7 +65760,7 @@ function StudentHomeComponent_For_79_Conditional_12_Template(rf, ctx) {
     \u0275\u0275conditional(ctx_r1.courseVideos(course_r6).length ? 5 : -1);
   }
 }
-function StudentHomeComponent_For_79_Conditional_13_For_9_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_14_For_9_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 67);
     \u0275\u0275text(1);
@@ -65763,14 +65769,14 @@ function StudentHomeComponent_For_79_Conditional_13_For_9_Template(rf, ctx) {
   if (rf & 2) {
     const video_r7 = ctx.$implicit;
     const course_r6 = \u0275\u0275nextContext(2).$implicit;
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(3, _c4, course_r6.id))("queryParams", \u0275\u0275pureFunction1(5, _c5, video_r7.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(3, _c5, course_r6.id))("queryParams", \u0275\u0275pureFunction1(5, _c6, video_r7.id));
     \u0275\u0275advance();
     \u0275\u0275textInterpolate(video_r7.title);
   }
 }
-function StudentHomeComponent_For_79_Conditional_13_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_14_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 59)(1, "p", 64);
+    \u0275\u0275elementStart(0, "div", 60)(1, "p", 64);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
@@ -65778,7 +65784,7 @@ function StudentHomeComponent_For_79_Conditional_13_Template(rf, ctx) {
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(8, StudentHomeComponent_For_79_Conditional_13_For_9_Template, 2, 7, "a", 67, _forTrack05);
+    \u0275\u0275repeaterCreate(8, StudentHomeComponent_For_79_Conditional_14_For_9_Template, 2, 7, "a", 67, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65787,43 +65793,16 @@ function StudentHomeComponent_For_79_Conditional_13_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 3, "student.videos"));
     \u0275\u0275advance(3);
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(7, _c4, course_r6.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(7, _c5, course_r6.id));
     \u0275\u0275advance();
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 5, "student.watchVideos"));
     \u0275\u0275advance(2);
     \u0275\u0275repeater(ctx_r1.courseVideos(course_r6));
   }
 }
-function StudentHomeComponent_For_79_Conditional_14_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 60)(1, "div", 68)(2, "strong");
-    \u0275\u0275text(3);
-    \u0275\u0275pipe(4, "t");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "p", 18);
-    \u0275\u0275text(6);
-    \u0275\u0275pipe(7, "t");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "span", 69);
-    \u0275\u0275text(9);
-    \u0275\u0275pipe(10, "t");
-    \u0275\u0275elementEnd()();
-  }
-  if (rf & 2) {
-    const course_r6 = \u0275\u0275nextContext().$implicit;
-    const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(11, _c6, course_r6.id));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 4, "student.lessons"));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 6, "student.lessonCount", \u0275\u0275pureFunction1(13, _c3, ctx_r1.courseLessonCount(course_r6))));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 9, "student.openLessons"));
-  }
-}
 function StudentHomeComponent_For_79_Conditional_15_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 71);
+    \u0275\u0275elementStart(0, "a", 69);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -65836,12 +65815,12 @@ function StudentHomeComponent_For_79_Conditional_15_For_6_Template(rf, ctx) {
 }
 function StudentHomeComponent_For_79_Conditional_15_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 61)(1, "p", 70);
+    \u0275\u0275elementStart(0, "div", 61)(1, "p", 68);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "div", 65);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_15_For_6_Template, 2, 4, "a", 71, _forTrack05);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_15_For_6_Template, 2, 4, "a", 69, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65855,14 +65834,14 @@ function StudentHomeComponent_For_79_Conditional_15_Template(rf, ctx) {
 }
 function StudentHomeComponent_For_79_Conditional_16_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 74)(1, "div", 68)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 72)(1, "div", 73)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 69);
+    \u0275\u0275elementStart(7, "span", 74);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
@@ -65880,12 +65859,12 @@ function StudentHomeComponent_For_79_Conditional_16_For_6_Template(rf, ctx) {
 }
 function StudentHomeComponent_For_79_Conditional_16_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 62)(1, "p", 72);
+    \u0275\u0275elementStart(0, "div", 62)(1, "p", 70);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 73);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_16_For_6_Template, 10, 14, "a", 74, _forTrack05);
+    \u0275\u0275elementStart(4, "div", 71);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_16_For_6_Template, 10, 14, "a", 72, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65899,14 +65878,14 @@ function StudentHomeComponent_For_79_Conditional_16_Template(rf, ctx) {
 }
 function StudentHomeComponent_For_79_Conditional_17_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 76)(1, "div", 68)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 76)(1, "div", 73)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 69);
+    \u0275\u0275elementStart(7, "span", 74);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
@@ -65928,7 +65907,7 @@ function StudentHomeComponent_For_79_Conditional_17_Template(rf, ctx) {
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 73);
+    \u0275\u0275elementStart(4, "div", 71);
     \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_17_For_6_Template, 10, 14, "a", 76, _forTrack05);
     \u0275\u0275elementEnd()();
   }
@@ -65948,17 +65927,18 @@ function StudentHomeComponent_For_79_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(5, "p", 55);
     \u0275\u0275text(6);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 56);
-    \u0275\u0275text(8);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "p", 57);
-    \u0275\u0275text(10);
-    \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(12, StudentHomeComponent_For_79_Conditional_12_Template, 6, 5, "div", 58);
-    \u0275\u0275conditionalCreate(13, StudentHomeComponent_For_79_Conditional_13_Template, 10, 9, "div", 59);
-    \u0275\u0275conditionalCreate(14, StudentHomeComponent_For_79_Conditional_14_Template, 11, 15, "a", 60);
+    \u0275\u0275conditionalCreate(7, StudentHomeComponent_For_79_Conditional_7_Template, 4, 9, "a", 56);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "span", 57);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(10, "p", 58);
+    \u0275\u0275text(11);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275conditionalCreate(13, StudentHomeComponent_For_79_Conditional_13_Template, 6, 5, "div", 59);
+    \u0275\u0275conditionalCreate(14, StudentHomeComponent_For_79_Conditional_14_Template, 10, 9, "div", 60);
     \u0275\u0275conditionalCreate(15, StudentHomeComponent_For_79_Conditional_15_Template, 7, 3, "div", 61);
     \u0275\u0275conditionalCreate(16, StudentHomeComponent_For_79_Conditional_16_Template, 7, 3, "div", 62);
     \u0275\u0275conditionalCreate(17, StudentHomeComponent_For_79_Conditional_17_Template, 7, 3, "div", 63);
@@ -65971,16 +65951,16 @@ function StudentHomeComponent_For_79_Template(rf, ctx) {
     \u0275\u0275textInterpolate(course_r6.title);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(course_r6.description);
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx_r1.courseLessonCount(course_r6) > 0 ? 7 : -1);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(course_r6.theme);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate3(" ", ctx_r1.gradeLabel(course_r6.grade), " \xB7 ", ctx_r1.termLabel(course_r6.term), " \xB7 ", \u0275\u0275pipeBind2(11, 12, "student.ages", \u0275\u0275pureFunction2(15, _c22, course_r6.ageMin, course_r6.ageMax)), " ");
+    \u0275\u0275textInterpolate3(" ", ctx_r1.gradeLabel(course_r6.grade), " \xB7 ", ctx_r1.termLabel(course_r6.term), " \xB7 ", \u0275\u0275pipeBind2(12, 12, "student.ages", \u0275\u0275pureFunction2(15, _c22, course_r6.ageMin, course_r6.ageMax)), " ");
     \u0275\u0275advance(2);
-    \u0275\u0275conditional(ctx_r1.courseLessonCount(course_r6) || ctx_r1.courseAssignments(course_r6).length || ctx_r1.courseExams(course_r6).length || ctx_r1.publishedQuizzes(course_r6).length || ctx_r1.courseVideos(course_r6).length ? 12 : -1);
+    \u0275\u0275conditional(ctx_r1.courseLessonCount(course_r6) || ctx_r1.courseAssignments(course_r6).length || ctx_r1.courseExams(course_r6).length || ctx_r1.publishedQuizzes(course_r6).length || ctx_r1.courseVideos(course_r6).length ? 13 : -1);
     \u0275\u0275advance();
-    \u0275\u0275conditional(ctx_r1.courseVideos(course_r6).length ? 13 : -1);
-    \u0275\u0275advance();
-    \u0275\u0275conditional(ctx_r1.courseLessonCount(course_r6) ? 14 : -1);
+    \u0275\u0275conditional(ctx_r1.courseVideos(course_r6).length ? 14 : -1);
     \u0275\u0275advance();
     \u0275\u0275conditional(ctx_r1.publishedQuizzes(course_r6).length ? 15 : -1);
     \u0275\u0275advance();
@@ -66003,14 +65983,14 @@ function StudentHomeComponent_ForEmpty_80_Template(rf, ctx) {
 }
 function StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 74)(1, "div", 68)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 72)(1, "div", 73)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 69);
+    \u0275\u0275elementStart(7, "span", 74);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
@@ -66028,12 +66008,12 @@ function StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template(rf, ct
 }
 function StudentHomeComponent_Conditional_81_Conditional_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 62)(1, "p", 72);
+    \u0275\u0275elementStart(0, "div", 62)(1, "p", 70);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 73);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template, 10, 14, "a", 74, _forTrack05);
+    \u0275\u0275elementStart(4, "div", 71);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template, 10, 14, "a", 72, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -66046,14 +66026,14 @@ function StudentHomeComponent_Conditional_81_Conditional_9_Template(rf, ctx) {
 }
 function StudentHomeComponent_Conditional_81_Conditional_10_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 76)(1, "div", 68)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 76)(1, "div", 73)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 69);
+    \u0275\u0275elementStart(7, "span", 74);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
@@ -66075,7 +66055,7 @@ function StudentHomeComponent_Conditional_81_Conditional_10_Template(rf, ctx) {
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 73);
+    \u0275\u0275elementStart(4, "div", 71);
     \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_10_For_6_Template, 10, 14, "a", 76, _forTrack05);
     \u0275\u0275elementEnd()();
   }
@@ -66373,7 +66353,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentHomeComponent, selectors: [["app-student-home"]], decls: 90, vars: 60, consts: [[1, "page", "student-home"], [1, "topbar", "student-topbar"], [1, "brand-block"], [1, "greeting"], [1, "topbar-actions"], ["routerLink", "/student/study-plans", 1, "chip"], ["type", "button", 1, "ghost", 3, "click"], [1, "welcome-panel"], [1, "welcome-main"], [1, "profile-identity"], [1, "profile-photo"], ["size", "lg", 3, "photoUrl", "name"], [1, "photo-actions"], [1, "photo-btn"], ["type", "file", "accept", "image/png,image/jpeg,image/webp", "hidden", "", 3, "change", "disabled"], ["type", "button", 1, "photo-btn", "ghost", 3, "disabled"], [1, "photo-error"], [1, "photo-hint"], [1, "meta"], [1, "welcome-copy"], [1, "eyebrow"], [1, "welcome-sub"], [1, "welcome-side"], ["aria-label", "XP", 1, "xp-badge"], [1, "xp-value"], [1, "xp-unit"], [1, "badge-panel"], ["aria-label", "Progress", 1, "stat-row", "student-stats"], [1, "stat-card"], [1, "student-layout"], [1, "student-main"], [1, "section-card"], [1, "section-head"], [1, "section-hint"], [1, "course-grid"], [1, "course-card"], [1, "meta", "empty-state"], [1, "student-side-tools"], ["routerLink", "/student/chat", 1, "side-tab", "chat-tab"], ["aria-hidden", "true", 1, "side-tab-icon"], [1, "side-tab-label"], ["titleKey", "studentAsk.courseTitle", 3, "courseChoices"], ["type", "button", 1, "photo-btn", "ghost", 3, "click", "disabled"], [1, "avatar-display"], [1, "avatar-picker"], [1, "avatar-name"], [1, "avatar-select-label"], [1, "sr-only"], [1, "avatar-select", 3, "ngModelChange", "ngModel", "options"], [1, "badge-panel-head"], [1, "count-pill"], [1, "badge-row"], [1, "badge-chip", 3, "title"], [1, "course-head"], [1, "course-title"], [1, "course-desc"], [1, "theme-tag"], [1, "meta", "course-meta"], [1, "course-counts"], [1, "link-group"], [1, "item-row", "link-row", "lessons-index", 3, "routerLink"], [1, "link-group", "quizzes"], [1, "task-group", "assignments"], [1, "task-group", "exams"], [1, "group-label"], [1, "chip-row"], [1, "chip", "video", 3, "routerLink"], [1, "chip", "video", 3, "routerLink", "queryParams"], [1, "item-body"], [1, "action-ghost"], [1, "group-label", "quiz"], [1, "chip", "quiz", 3, "routerLink"], [1, "group-label", "assignment"], [1, "item-list"], [1, "item-row", "link-row", "assignment", 3, "routerLink"], [1, "group-label", "exam"], [1, "item-row", "link-row", "exam", 3, "routerLink"]], template: function StudentHomeComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentHomeComponent, selectors: [["app-student-home"]], decls: 90, vars: 60, consts: [[1, "page", "student-home"], [1, "topbar", "student-topbar"], [1, "brand-block"], [1, "greeting"], [1, "topbar-actions"], ["routerLink", "/student/study-plans", 1, "chip"], ["type", "button", 1, "ghost", 3, "click"], [1, "welcome-panel"], [1, "welcome-main"], [1, "profile-identity"], [1, "profile-photo"], ["size", "lg", 3, "photoUrl", "name"], [1, "photo-actions"], [1, "photo-btn"], ["type", "file", "accept", "image/png,image/jpeg,image/webp", "hidden", "", 3, "change", "disabled"], ["type", "button", 1, "photo-btn", "ghost", 3, "disabled"], [1, "photo-error"], [1, "photo-hint"], [1, "meta"], [1, "welcome-copy"], [1, "eyebrow"], [1, "welcome-sub"], [1, "welcome-side"], ["aria-label", "XP", 1, "xp-badge"], [1, "xp-value"], [1, "xp-unit"], [1, "badge-panel"], ["aria-label", "Progress", 1, "stat-row", "student-stats"], [1, "stat-card"], [1, "student-layout"], [1, "student-main"], [1, "section-card"], [1, "section-head"], [1, "section-hint"], [1, "course-grid"], [1, "course-card"], [1, "meta", "empty-state"], [1, "student-side-tools"], ["routerLink", "/student/chat", 1, "side-tab", "chat-tab"], ["aria-hidden", "true", 1, "side-tab-icon"], [1, "side-tab-label"], ["titleKey", "studentAsk.courseTitle", 3, "courseChoices"], ["type", "button", 1, "photo-btn", "ghost", 3, "click", "disabled"], [1, "avatar-display"], [1, "avatar-picker"], [1, "avatar-name"], [1, "avatar-select-label"], [1, "sr-only"], [1, "avatar-select", 3, "ngModelChange", "ngModel", "options"], [1, "badge-panel-head"], [1, "count-pill"], [1, "badge-row"], [1, "badge-chip", 3, "title"], [1, "course-head"], [1, "course-title"], [1, "course-desc"], [1, "link", 3, "routerLink"], [1, "theme-tag"], [1, "meta", "course-meta"], [1, "course-counts"], [1, "link-group"], [1, "link-group", "quizzes"], [1, "task-group", "assignments"], [1, "task-group", "exams"], [1, "group-label"], [1, "chip-row"], [1, "chip", "video", 3, "routerLink"], [1, "chip", "video", 3, "routerLink", "queryParams"], [1, "group-label", "quiz"], [1, "chip", "quiz", 3, "routerLink"], [1, "group-label", "assignment"], [1, "item-list"], [1, "item-row", "link-row", "assignment", 3, "routerLink"], [1, "item-body"], [1, "action-ghost"], [1, "group-label", "exam"], [1, "item-row", "link-row", "exam", 3, "routerLink"]], template: function StudentHomeComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275element(1, "app-api-busy-indicator");
@@ -66704,6 +66684,12 @@ var StudentHomeComponent = class _StudentHomeComponent {
                 <div>\r
                   <h3 class="course-title">{{ course.title }}</h3>\r
                   <p class="course-desc">{{ course.description }}</p>\r
+                  @if (courseLessonCount(course)>0){\r
+                    <a class="link" [routerLink]="['/student/lessons', course.id]">\r
+\r
+                    <span>{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</span>\r
+                    </a>\r
+                  }\r
                 </div>\r
                 <span class="theme-tag">{{ course.theme }}</span>\r
               </header>\r
@@ -66722,7 +66708,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
               ) {\r
                 <div class="course-counts">\r
                   @if (courseLessonCount(course)) {\r
-                    <span>{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</span>\r
+                   \r
                   }\r
                   @if (courseAssignments(course).length) {\r
                     <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>\r
@@ -66751,15 +66737,6 @@ var StudentHomeComponent = class _StudentHomeComponent {
                 </div>\r
               }\r
 \r
-              @if (courseLessonCount(course)) {\r
-                <a class="item-row link-row lessons-index" [routerLink]="['/student/lessons', course.id]">\r
-                  <div class="item-body">\r
-                    <strong>{{ 'student.lessons' | t }}</strong>\r
-                    <p class="meta">{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</p>\r
-                  </div>\r
-                  <span class="action-ghost">{{ 'student.openLessons' | t }}</span>\r
-                </a>\r
-              }\r
 \r
               @if (publishedQuizzes(course).length) {\r
                 <div class="link-group quizzes">\r
@@ -68388,6 +68365,7 @@ var StudentAnswerUploadComponent = class _StudentAnswerUploadComponent {
     );
     this.mediaAssetIdChange = output();
     this.imageUrlChange = output();
+    this.imageChange = output();
     this.uploading = signal(
       false,
       ...ngDevMode ? [{ debugName: "uploading" }] : (
@@ -68415,6 +68393,7 @@ var StudentAnswerUploadComponent = class _StudentAnswerUploadComponent {
         this.uploading.set(false);
         this.mediaAssetIdChange.emit(result.id);
         this.imageUrlChange.emit(result.url);
+        this.imageChange.emit({ mediaAssetId: result.id, imageUrl: result.url });
       },
       error: (err) => {
         this.uploading.set(false);
@@ -68425,6 +68404,7 @@ var StudentAnswerUploadComponent = class _StudentAnswerUploadComponent {
   clear() {
     this.mediaAssetIdChange.emit(null);
     this.imageUrlChange.emit(null);
+    this.imageChange.emit({ mediaAssetId: null, imageUrl: null });
   }
   static {
     this.\u0275fac = function StudentAnswerUploadComponent_Factory(__ngFactoryType__) {
@@ -68432,7 +68412,7 @@ var StudentAnswerUploadComponent = class _StudentAnswerUploadComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentAnswerUploadComponent, selectors: [["app-student-answer-upload"]], inputs: { mediaAssetId: [1, "mediaAssetId"], imageUrl: [1, "imageUrl"], disabled: [1, "disabled"] }, outputs: { mediaAssetIdChange: "mediaAssetIdChange", imageUrlChange: "imageUrlChange" }, decls: 8, vars: 7, consts: [[1, "student-answer-upload"], [1, "preview-wrap"], [1, "upload-label"], ["type", "file", "accept", "image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf", 3, "change", "disabled"], [1, "meta"], [1, "error"], [3, "url"], ["type", "button", 1, "ghost-btn", 3, "click", "disabled"]], template: function StudentAnswerUploadComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentAnswerUploadComponent, selectors: [["app-student-answer-upload"]], inputs: { mediaAssetId: [1, "mediaAssetId"], imageUrl: [1, "imageUrl"], disabled: [1, "disabled"] }, outputs: { mediaAssetIdChange: "mediaAssetIdChange", imageUrlChange: "imageUrlChange", imageChange: "imageChange" }, decls: 8, vars: 7, consts: [[1, "student-answer-upload"], [1, "preview-wrap"], [1, "upload-label"], ["type", "file", "accept", "image/png,image/jpeg,image/webp,image/gif,application/pdf,.pdf", 3, "change", "disabled"], [1, "meta"], [1, "error"], [3, "url"], ["type", "button", 1, "ghost-btn", 3, "click", "disabled"]], template: function StudentAnswerUploadComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275conditionalCreate(1, StudentAnswerUploadComponent_Conditional_1_Template, 5, 5, "div", 1);
@@ -68490,7 +68470,7 @@ var StudentAnswerUploadComponent = class _StudentAnswerUploadComponent {
   }\r
 </div>\r
 `, styles: ["/* src/app/shared/student-answer-upload/student-answer-upload.component.css */\n.student-answer-upload {\n  margin: 0.5rem 0 0.75rem;\n}\n.preview-wrap {\n  display: grid;\n  gap: 0.35rem;\n  margin-bottom: 0.35rem;\n}\n.upload-label {\n  display: grid;\n  gap: 0.25rem;\n  font-size: 0.9rem;\n}\n.ghost-btn {\n  justify-self: start;\n}\n/*# sourceMappingURL=student-answer-upload.component.css.map */\n"] }]
-  }], null, { mediaAssetId: [{ type: Input, args: [{ isSignal: true, alias: "mediaAssetId", required: false }] }], imageUrl: [{ type: Input, args: [{ isSignal: true, alias: "imageUrl", required: false }] }], disabled: [{ type: Input, args: [{ isSignal: true, alias: "disabled", required: false }] }], mediaAssetIdChange: [{ type: Output, args: ["mediaAssetIdChange"] }], imageUrlChange: [{ type: Output, args: ["imageUrlChange"] }] });
+  }], null, { mediaAssetId: [{ type: Input, args: [{ isSignal: true, alias: "mediaAssetId", required: false }] }], imageUrl: [{ type: Input, args: [{ isSignal: true, alias: "imageUrl", required: false }] }], disabled: [{ type: Input, args: [{ isSignal: true, alias: "disabled", required: false }] }], mediaAssetIdChange: [{ type: Output, args: ["mediaAssetIdChange"] }], imageUrlChange: [{ type: Output, args: ["imageUrlChange"] }], imageChange: [{ type: Output, args: ["imageChange"] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(StudentAnswerUploadComponent, { className: "StudentAnswerUploadComponent", filePath: "src/app/shared/student-answer-upload/student-answer-upload.component.ts", lineNumber: 13 });
@@ -70256,14 +70236,10 @@ function QuestionPlayPromptComponent_Conditional_14_Template(rf, ctx) {
   if (rf & 1) {
     const _r17 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "app-student-answer-upload", 27);
-    \u0275\u0275listener("mediaAssetIdChange", function QuestionPlayPromptComponent_Conditional_14_Template_app_student_answer_upload_mediaAssetIdChange_0_listener($event) {
+    \u0275\u0275listener("imageChange", function QuestionPlayPromptComponent_Conditional_14_Template_app_student_answer_upload_imageChange_0_listener($event) {
       \u0275\u0275restoreView(_r17);
       const ctx_r0 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r0.setAnswerImage(ctx_r0.question.id, $event, ctx_r0.answerImages[ctx_r0.question.id]?.imageUrl ?? null));
-    })("imageUrlChange", function QuestionPlayPromptComponent_Conditional_14_Template_app_student_answer_upload_imageUrlChange_0_listener($event) {
-      \u0275\u0275restoreView(_r17);
-      const ctx_r0 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r0.setAnswerImage(ctx_r0.question.id, ctx_r0.answerImages[ctx_r0.question.id]?.mediaAssetId ?? null, $event));
+      return \u0275\u0275resetView(ctx_r0.setAnswerImage(ctx_r0.question.id, $event.mediaAssetId, $event.imageUrl));
     });
     \u0275\u0275elementEnd();
   }
@@ -70427,7 +70403,7 @@ var QuestionPlayPromptComponent = class _QuestionPlayPromptComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _QuestionPlayPromptComponent, selectors: [["app-question-play-prompt"]], inputs: { question: "question", answers: "answers", multiAnswers: "multiAnswers", answerImages: "answerImages", answerUpload: "answerUpload" }, outputs: { answerChange: "answerChange", multiToggle: "multiToggle", answerImageChange: "answerImageChange" }, decls: 15, vars: 7, consts: [[1, "question-play"], [1, "prompt-html", 3, "innerHTML"], [3, "url"], [1, "passage", 3, "underline-text"], ["rows", "3", 3, "value", "placeholder"], [1, "passage", "complete-line"], ["mode", "play", 3, "imageUrl", "markers", "answerJson", "namePrefix"], [3, "mediaAssetId", "imageUrl"], [1, "passage"], [1, "child-question"], [3, "answerChange", "multiToggle", "answerImageChange", "question", "answers", "multiAnswers", "answerImages", "answerUpload"], ["rows", "3", 3, "input", "value", "placeholder"], ["type", "text", 3, "input", "value", "placeholder"], ["type", "text", 1, "complete-blank", 3, "correct", "incorrect", "value", "width"], ["type", "text", 1, "complete-blank", 3, "input", "value"], ["type", "radio", 3, "change", "name", "checked"], ["type", "checkbox", 3, "change", "checked"], [1, "order-hint"], [1, "order-list"], ["draggable", "true", 1, "order-item"], ["draggable", "true", 1, "order-item", 3, "dragstart", "dragover", "drop", "dragend"], ["aria-hidden", "true", 1, "order-handle"], [1, "order-index"], [1, "order-text", "prompt-html", 3, "innerHTML"], [1, "order-move"], ["type", "button", 1, "ghost-btn", 3, "click", "disabled"], ["mode", "play", 3, "answerJsonChange", "imageUrl", "markers", "answerJson", "namePrefix"], [3, "mediaAssetIdChange", "imageUrlChange", "mediaAssetId", "imageUrl"]], template: function QuestionPlayPromptComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _QuestionPlayPromptComponent, selectors: [["app-question-play-prompt"]], inputs: { question: "question", answers: "answers", multiAnswers: "multiAnswers", answerImages: "answerImages", answerUpload: "answerUpload" }, outputs: { answerChange: "answerChange", multiToggle: "multiToggle", answerImageChange: "answerImageChange" }, decls: 15, vars: 7, consts: [[1, "question-play"], [1, "prompt-html", 3, "innerHTML"], [3, "url"], [1, "passage", 3, "underline-text"], ["rows", "3", 3, "value", "placeholder"], [1, "passage", "complete-line"], ["mode", "play", 3, "imageUrl", "markers", "answerJson", "namePrefix"], [3, "mediaAssetId", "imageUrl"], [1, "passage"], [1, "child-question"], [3, "answerChange", "multiToggle", "answerImageChange", "question", "answers", "multiAnswers", "answerImages", "answerUpload"], ["rows", "3", 3, "input", "value", "placeholder"], ["type", "text", 3, "input", "value", "placeholder"], ["type", "text", 1, "complete-blank", 3, "correct", "incorrect", "value", "width"], ["type", "text", 1, "complete-blank", 3, "input", "value"], ["type", "radio", 3, "change", "name", "checked"], ["type", "checkbox", 3, "change", "checked"], [1, "order-hint"], [1, "order-list"], ["draggable", "true", 1, "order-item"], ["draggable", "true", 1, "order-item", 3, "dragstart", "dragover", "drop", "dragend"], ["aria-hidden", "true", 1, "order-handle"], [1, "order-index"], [1, "order-text", "prompt-html", 3, "innerHTML"], [1, "order-move"], ["type", "button", 1, "ghost-btn", 3, "click", "disabled"], ["mode", "play", 3, "answerJsonChange", "imageUrl", "markers", "answerJson", "namePrefix"], [3, "imageChange", "mediaAssetId", "imageUrl"]], template: function QuestionPlayPromptComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275element(1, "div", 1);
@@ -70590,8 +70566,7 @@ var QuestionPlayPromptComponent = class _QuestionPlayPromptComponent {
     <app-student-answer-upload\r
       [mediaAssetId]="answerImages[question.id]?.mediaAssetId ?? null"\r
       [imageUrl]="answerImages[question.id]?.imageUrl ?? null"\r
-      (mediaAssetIdChange)="setAnswerImage(question.id, $event, answerImages[question.id]?.imageUrl ?? null)"\r
-      (imageUrlChange)="setAnswerImage(question.id, answerImages[question.id]?.mediaAssetId ?? null, $event)"\r
+      (imageChange)="setAnswerImage(question.id, $event.mediaAssetId, $event.imageUrl)"\r
     />\r
   }\r
 </div>\r
@@ -71881,11 +71856,13 @@ var AssignmentPlayComponent = class _AssignmentPlayComponent {
     this.setAnswer(questionId, [...set].sort().join(","));
   }
   setAnswerImage(questionId, mediaAssetId, imageUrl) {
+    debugger;
     this.answerImages.update((current) => __spreadProps(__spreadValues({}, current), {
       [questionId]: { mediaAssetId, imageUrl }
     }));
   }
   submit() {
+    debugger;
     const assignment = this.assignment();
     if (!assignment || assignment.alreadySubmitted)
       return;

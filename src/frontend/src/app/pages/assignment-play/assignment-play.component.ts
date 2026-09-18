@@ -77,6 +77,7 @@ export class AssignmentPlayComponent {
   }
 
   setAnswerImage(questionId: string, mediaAssetId: string | null, imageUrl: string | null): void {
+    debugger;
     this.answerImages.update((current) => ({
       ...current,
       [questionId]: { mediaAssetId, imageUrl }
@@ -84,6 +85,7 @@ export class AssignmentPlayComponent {
   }
 
   submit(): void {
+    debugger;
     const assignment = this.assignment();
     if (!assignment || assignment.alreadySubmitted) return;
     this.api
