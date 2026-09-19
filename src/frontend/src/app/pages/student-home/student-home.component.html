@@ -160,7 +160,8 @@
                 courseAssignments(course).length ||
                 courseExams(course).length ||
                 publishedQuizzes(course).length ||
-                courseVideos(course).length
+                courseVideos(course).length ||
+                course.materialCount
               ) {
                 <div class="course-counts">
                   @if (courseLessonCount(course)) {
@@ -189,6 +190,17 @@
                     @for (video of courseVideos(course); track video.id) {
                       <a class="chip video" [routerLink]="['/courses', course.id]" [queryParams]="{ video: video.id }">{{ video.title }}</a>
                     }
+                  </div>
+                </div>
+              }
+
+              @if (course.materialCount) {
+                <div class="link-group">
+                  <p class="group-label">{{ 'materials.homeLabel' | t }}</p>
+                  <div class="chip-row">
+                    <a class="chip material" [routerLink]="['/student/materials', course.id]">
+                      {{ 'materials.openPage' | t }} ({{ course.materialCount }})
+                    </a>
                   </div>
                 </div>
               }

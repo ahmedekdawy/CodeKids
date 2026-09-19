@@ -13,7 +13,8 @@ internal static class CourseDtoMapper
         CourseContentOutline? outline = null,
         IReadOnlyList<CourseVideoSummaryDto>? videos = null,
         bool includeUnpublishedQuizzes = true,
-        IReadOnlySet<Guid>? hideQuizIds = null)
+        IReadOnlySet<Guid>? hideQuizIds = null,
+        int materialCount = 0)
     {
         if (!includeContent)
         {
@@ -22,7 +23,8 @@ internal static class CourseDtoMapper
                 Array.Empty<CourseUnitDto>(),
                 Array.Empty<CourseLessonDto>(),
                 Array.Empty<CourseQuizDto>(),
-                Array.Empty<CourseVideoSummaryDto>());
+                Array.Empty<CourseVideoSummaryDto>(),
+                materialCount);
         }
 
         var content = outline ?? new CourseContentOutline([], []);
@@ -38,7 +40,7 @@ internal static class CourseDtoMapper
                 quiz.IsPublished))
             .ToList();
 
-        return Create(course, content.Units, content.Lessons, quizzes, videos ?? []);
+        return Create(course, content.Units, content.Lessons, quizzes, videos ?? [], materialCount);
     }
 
     private static CourseDto Create(
@@ -46,7 +48,8 @@ internal static class CourseDtoMapper
         IReadOnlyList<CourseUnitDto> units,
         IReadOnlyList<CourseLessonDto> lessons,
         IReadOnlyList<CourseQuizDto> quizzes,
-        IReadOnlyList<CourseVideoSummaryDto> videos) =>
+        IReadOnlyList<CourseVideoSummaryDto> videos,
+        int materialCount = 0) =>
         new(
             course.Id,
             course.Title,
@@ -74,5 +77,6 @@ internal static class CourseDtoMapper
             course.Variants,
             course.StudentAskEnabled,
             course.IsPublished,
-            hasContent);
+            hasContent,
+            materialCount);
 }

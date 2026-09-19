@@ -48193,6 +48193,36 @@ var LearningApiService = class _LearningApiService {
   deleteAssignmentSolutionVideo(assignmentId) {
     return this.http.delete(`${this.baseUrl}/assignments/${assignmentId}/solution-video`);
   }
+  uploadLearningMaterialFile(file) {
+    const form = new FormData();
+    form.append("file", file, file.name);
+    return this.http.post(`${this.baseUrl}/media/learning-materials/upload`, form);
+  }
+  attachLearningMaterial(payload) {
+    return this.http.post(`${this.baseUrl}/learning-materials`, payload);
+  }
+  getLearningMaterials() {
+    return this.http.get(`${this.baseUrl}/learning-materials`);
+  }
+  getLearningMaterialPage(filters) {
+    const query = new URLSearchParams();
+    if (filters.courseId)
+      query.set("courseId", filters.courseId);
+    if (filters.unitId)
+      query.set("unitId", filters.unitId);
+    if (filters.lessonId)
+      query.set("lessonId", filters.lessonId);
+    if (filters.all)
+      query.set("all", "true");
+    const qs = query.toString();
+    return this.http.get(`${this.baseUrl}/learning-materials/page${qs ? `?${qs}` : ""}`);
+  }
+  deleteLearningMaterial(materialId) {
+    return this.http.delete(`${this.baseUrl}/learning-materials/${materialId}`);
+  }
+  learningMaterialFileUrl(mediaAssetId) {
+    return `${this.baseUrl}/learning-materials/${mediaAssetId}/file`;
+  }
   getPlayback(mediaAssetId) {
     const params = { apiBase: this.baseUrl };
     return this.http.get(`${this.baseUrl}/media/${mediaAssetId}/playback`, { params }).pipe(map((info) => __spreadProps(__spreadValues({}, info), {
@@ -48517,6 +48547,14 @@ var AR = {
   "shell.admin.title": "\u0645\u062F\u064A\u0631 \u0627\u0644\u0646\u0638\u0627\u0645",
   "shell.admin.subtitle": "\u0625\u062F\u0627\u0631\u0629 \u0627\u0644\u0645\u0646\u0635\u0629",
   "nav.teacher.overview": "\u0646\u0638\u0631\u0629 \u0639\u0627\u0645\u0629",
+  "nav.cat.content": "\u0627\u0644\u0645\u062D\u062A\u0648\u0649",
+  "nav.cat.assessments": "\u0627\u0644\u062A\u0642\u064A\u064A\u0645\u0627\u062A",
+  "nav.cat.schedule": "\u0627\u0644\u062C\u062F\u0648\u0644",
+  "nav.cat.communication": "\u0627\u0644\u0637\u0644\u0627\u0628 \u0648\u0627\u0644\u0645\u062D\u0627\u062F\u062B\u0629",
+  "nav.cat.people": "\u0627\u0644\u0645\u0633\u062A\u062E\u062F\u0645\u0648\u0646",
+  "nav.cat.classrooms": "\u0627\u0644\u0641\u0635\u0648\u0644",
+  "nav.cat.finance": "\u0627\u0644\u0645\u0627\u0644\u064A\u0629",
+  "nav.cat.system": "\u0627\u0644\u0646\u0638\u0627\u0645",
   "nav.teacher.videos": "\u0627\u0644\u0641\u064A\u062F\u064A\u0648\u0647\u0627\u062A",
   "nav.teacher.courseTree": "\u0641\u0647\u0631\u0633 \u0627\u0644\u0645\u0627\u062F\u0629",
   "nav.teacher.askedQuestions": "\u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0627\u0644\u0645\u0637\u0631\u0648\u062D\u0629",
@@ -50391,7 +50429,41 @@ var AR = {
   "api.feedback.stepCorrect": "\u0623\u062D\u0633\u0646\u062A! \u0644\u0642\u062F \u062D\u0644\u0644\u062A \u062E\u0637\u0648\u0629 \u0627\u0644\u0628\u0631\u0645\u062C\u0629.",
   "api.feedback.stepAlreadyDone": "\u0644\u0642\u062F \u0623\u062A\u0642\u0646\u062A \u0647\u0630\u0647 \u0627\u0644\u062E\u0637\u0648\u0629 \u0645\u0633\u0628\u0642\u0627\u064B. \u0645\u0631\u0627\u062C\u0639\u0629 \u0631\u0627\u0626\u0639\u0629!",
   "api.feedback.quizPassed": "\u0627\u062C\u062A\u0632\u062A \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631! \u0639\u0642\u0644\u0643 \u0627\u0644\u0628\u0631\u0645\u062C\u064A \u064A\u062A\u0623\u0644\u0642.",
-  "api.feedback.quizRetry": "\u0648\u0627\u0635\u0644 \u0627\u0644\u062A\u062F\u0631\u064A\u0628 \u2014 \u0623\u0646\u062A \u062A\u0642\u062A\u0631\u0628 \u0623\u0643\u062B\u0631!"
+  "api.feedback.quizRetry": "\u0648\u0627\u0635\u0644 \u0627\u0644\u062A\u062F\u0631\u064A\u0628 \u2014 \u0623\u0646\u062A \u062A\u0642\u062A\u0631\u0628 \u0623\u0643\u062B\u0631!",
+  "nav.teacher.materials": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
+  "materials.title": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
+  "materials.subtitle": "\u0627\u0631\u0641\u0639 \u0645\u0644\u0641\u0627\u062A PDF \u0648\u0635\u0648\u0631\u0627\u064B \u0648\u062A\u0633\u062C\u064A\u0644\u0627\u062A \u0635\u0648\u062A\u064A\u0629 \u0625\u0644\u0649 \u0627\u0644\u0645\u0642\u0631\u0631 \u0623\u0648 \u0627\u0644\u0648\u062D\u062F\u0629 \u0623\u0648 \u0627\u0644\u062F\u0631\u0633. \u064A\u0631\u0627\u0647\u0627 \u0627\u0644\u0637\u0644\u0627\u0628 \u0641\u064A \u0635\u0641\u062D\u0629 \u0645\u0648\u0627\u062F \u0627\u0644\u0645\u0642\u0631\u0631.",
+  "materials.upload": "\u0625\u0636\u0627\u0641\u0629 \u0645\u0627\u062F\u0629",
+  "materials.uploadHint": "\u0627\u062E\u062A\u0631 \u0627\u0644\u0645\u0642\u0631\u0631 \u062B\u0645 \u0627\u062E\u062A\u064A\u0627\u0631\u064A\u0627\u064B \u0648\u062D\u062F\u0629 \u0623\u0648 \u062F\u0631\u0633 \u0644\u0625\u0631\u0641\u0627\u0642 \u0627\u0644\u0645\u0644\u0641 \u0628\u0647.",
+  "materials.file": "\u0627\u0644\u0645\u0644\u0641",
+  "materials.chooseFile": "\u0627\u062E\u062A\u0631 \u0645\u0644\u0641\u0627\u064B",
+  "materials.allowedTypes": "\u0627\u0644\u0645\u0633\u0645\u0648\u062D: PDF \u0648 PNG \u0648 JPEG \u0648 WebP \u0648 GIF \u0648\u0627\u0644\u0645\u0644\u0641\u0627\u062A \u0627\u0644\u0635\u0648\u062A\u064A\u0629.",
+  "materials.optionalLesson": "\u0628\u062F\u0648\u0646 \u062F\u0631\u0633 (\u0645\u0633\u062A\u0648\u0649 \u0627\u0644\u0648\u062D\u062F\u0629 \u0623\u0648 \u0627\u0644\u0645\u0642\u0631\u0631)",
+  "materials.optionalTitle": "\u0627\u0641\u062A\u0631\u0627\u0636\u064A\u0627\u064B \u0627\u0633\u0645 \u0627\u0644\u0645\u0644\u0641",
+  "materials.list": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u0645\u0631\u0641\u0648\u0639\u0629",
+  "materials.search": "\u0628\u062D\u062B",
+  "materials.searchPlaceholder": "\u0627\u0628\u062D\u062B \u0628\u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0623\u0648 \u0627\u0644\u0645\u0644\u0641 \u0623\u0648 \u0627\u0644\u0645\u0642\u0631\u0631\u2026",
+  "materials.empty": "\u0644\u0645 \u064A\u062A\u0645 \u0631\u0641\u0639 \u0623\u064A \u0645\u0648\u0627\u062F \u0628\u0639\u062F.",
+  "materials.preview": "\u0645\u0639\u0627\u064A\u0646\u0629",
+  "materials.open": "\u0641\u062A\u062D",
+  "materials.previewFailed": "\u062A\u0639\u0630\u0631 \u062A\u062D\u0645\u064A\u0644 \u0647\u0630\u0627 \u0627\u0644\u0645\u0644\u0641.",
+  "materials.fileRequired": "\u0627\u062E\u062A\u0631 \u0645\u0644\u0641\u0627\u064B \u0623\u0648\u0644\u0627\u064B.",
+  "materials.courseRequired": "\u0627\u062E\u062A\u0631 \u0645\u0642\u0631\u0631\u0627\u064B \u0623\u0648\u0644\u0627\u064B.",
+  "materials.uploaded": "\u062A\u0645 \u0631\u0641\u0639 \u0627\u0644\u0645\u0627\u062F\u0629 \u0648\u0625\u0631\u0641\u0627\u0642\u0647\u0627.",
+  "materials.uploadFailed": "\u0641\u0634\u0644 \u0627\u0644\u0631\u0641\u0639. \u062D\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.",
+  "materials.attachFailed": "\u062A\u0645 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641 \u0644\u0643\u0646 \u062A\u0639\u0630\u0631 \u0625\u0631\u0641\u0627\u0642\u0647.",
+  "materials.deleted": "\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u0645\u0627\u062F\u0629.",
+  "materials.deleteFailed": "\u062A\u0639\u0630\u0631 \u062D\u0630\u0641 \u0627\u0644\u0645\u0627\u062F\u0629.",
+  "materials.confirmDelete": '\u062D\u0630\u0641 "{title}"\u061F',
+  "materials.loadFailed": "\u062A\u0639\u0630\u0631 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629.",
+  "materials.loadCoursesFailed": "\u062A\u0639\u0630\u0631 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0645\u0642\u0631\u0631\u0627\u062A.",
+  "materials.scopeCourse": "\u0645\u0633\u062A\u0648\u0649 \u0627\u0644\u0645\u0642\u0631\u0631",
+  "materials.scopeUnit": "\u0627\u0644\u0648\u062D\u062F\u0629",
+  "materials.scopeLesson": "\u0627\u0644\u062F\u0631\u0633",
+  "materials.homeLabel": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
+  "materials.openPage": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0645\u0648\u0627\u062F",
+  "materials.studentHint": "\u0645\u0644\u0641\u0627\u062A \u0648\u0635\u0648\u0631 \u0648\u062A\u0633\u062C\u064A\u0644\u0627\u062A \u0634\u0627\u0631\u0643\u0647\u0627 \u0645\u0639\u0644\u0645\u0643 \u0641\u064A \u0647\u0630\u0627 \u0627\u0644\u0645\u0642\u0631\u0631.",
+  "materials.studentEmpty": "\u0644\u0645 \u064A\u0634\u0627\u0631\u0643 \u0645\u0639\u0644\u0645\u0643 \u0623\u064A \u0645\u0648\u0627\u062F \u0641\u064A \u0647\u0630\u0627 \u0627\u0644\u0645\u0642\u0631\u0631 \u0628\u0639\u062F."
 };
 
 // src/app/i18n/translations.en.ts
@@ -50564,6 +50636,14 @@ var EN = {
   "shell.admin.title": "Super Admin",
   "shell.admin.subtitle": "Platform control",
   "nav.teacher.overview": "Overview",
+  "nav.cat.content": "Content",
+  "nav.cat.assessments": "Assessments",
+  "nav.cat.schedule": "Schedule",
+  "nav.cat.communication": "Students & chat",
+  "nav.cat.people": "People",
+  "nav.cat.classrooms": "Classrooms",
+  "nav.cat.finance": "Finance",
+  "nav.cat.system": "System",
   "nav.teacher.videos": "Videos",
   "nav.teacher.courseTree": "Course index",
   "nav.teacher.askedQuestions": "Asked questions",
@@ -52438,7 +52518,41 @@ var EN = {
   "api.feedback.stepCorrect": "Great job! You solved the coding step.",
   "api.feedback.stepAlreadyDone": "You already mastered this step. Nice review!",
   "api.feedback.quizPassed": "Quiz cleared! Your coding brain is glowing.",
-  "api.feedback.quizRetry": "Keep practicing \u2014 you're getting closer!"
+  "api.feedback.quizRetry": "Keep practicing \u2014 you're getting closer!",
+  "nav.teacher.materials": "Materials",
+  "materials.title": "Learning materials",
+  "materials.subtitle": "Upload PDFs, images, and audio to a course, unit, or lesson. Students see them on the course materials page.",
+  "materials.upload": "Add material",
+  "materials.uploadHint": "Choose the course, then optionally a unit or lesson to attach the file to.",
+  "materials.file": "File",
+  "materials.chooseFile": "Choose file",
+  "materials.allowedTypes": "Allowed: PDF, PNG, JPEG, WebP, GIF, and audio files.",
+  "materials.optionalLesson": "No lesson (unit or course level)",
+  "materials.optionalTitle": "Defaults to the file name",
+  "materials.list": "Uploaded materials",
+  "materials.search": "Search",
+  "materials.searchPlaceholder": "Search by title, file, course\u2026",
+  "materials.empty": "No materials uploaded yet.",
+  "materials.preview": "Preview",
+  "materials.open": "Open",
+  "materials.previewFailed": "This file could not be loaded.",
+  "materials.fileRequired": "Choose a file first.",
+  "materials.courseRequired": "Choose a course first.",
+  "materials.uploaded": "Material uploaded and attached.",
+  "materials.uploadFailed": "The upload failed. Please try again.",
+  "materials.attachFailed": "The file uploaded but could not be attached.",
+  "materials.deleted": "Material deleted.",
+  "materials.deleteFailed": "The material could not be deleted.",
+  "materials.confirmDelete": 'Delete "{title}"?',
+  "materials.loadFailed": "Materials could not be loaded.",
+  "materials.loadCoursesFailed": "Courses could not be loaded.",
+  "materials.scopeCourse": "Course level",
+  "materials.scopeUnit": "Unit",
+  "materials.scopeLesson": "Lesson",
+  "materials.homeLabel": "Materials",
+  "materials.openPage": "Open materials page",
+  "materials.studentHint": "Files, images, and recordings your teacher shared for this course.",
+  "materials.studentEmpty": "Your teacher has not shared any materials for this course yet."
 };
 
 // src/app/i18n/api-message.util.ts
@@ -65481,10 +65595,11 @@ var _c3 = (a0) => ["/student/lessons", a0];
 var _c4 = (a0) => ({ count: a0 });
 var _c5 = (a0) => ["/courses", a0];
 var _c6 = (a0) => ({ video: a0 });
-var _c7 = (a0) => ["/quizzes", a0];
-var _c8 = (a0) => ["/assignments", a0];
-var _c9 = (a0) => ({ xp: a0 });
-var _c10 = (a0) => ["/exams", a0];
+var _c7 = (a0) => ["/student/materials", a0];
+var _c8 = (a0) => ["/quizzes", a0];
+var _c9 = (a0) => ["/assignments", a0];
+var _c10 = (a0) => ({ xp: a0 });
+var _c11 = (a0) => ["/exams", a0];
 var _forTrack05 = ($index, $item) => $item.id;
 var arrowFn02 = (ctx, view) => (o) => {
   \u0275\u0275restoreView(view);
@@ -65800,27 +65915,48 @@ function StudentHomeComponent_For_79_Conditional_14_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r1.courseVideos(course_r6));
   }
 }
-function StudentHomeComponent_For_79_Conditional_15_For_6_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_15_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 69);
+    \u0275\u0275elementStart(0, "div", 60)(1, "p", 64);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 65)(5, "a", 68);
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const course_r6 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 4, "materials.homeLabel"));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(8, _c7, course_r6.id));
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(7, 6, "materials.openPage"), " (", course_r6.materialCount, ") ");
+  }
+}
+function StudentHomeComponent_For_79_Conditional_16_For_6_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "a", 70);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
     const quiz_r8 = ctx.$implicit;
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(2, _c7, quiz_r8.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(2, _c8, quiz_r8.id));
     \u0275\u0275advance();
     \u0275\u0275textInterpolate(quiz_r8.title);
   }
 }
-function StudentHomeComponent_For_79_Conditional_15_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_16_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 61)(1, "p", 68);
+    \u0275\u0275elementStart(0, "div", 61)(1, "p", 69);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "div", 65);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_15_For_6_Template, 2, 4, "a", 69, _forTrack05);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_16_For_6_Template, 2, 4, "a", 70, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65832,39 +65968,39 @@ function StudentHomeComponent_For_79_Conditional_15_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r1.publishedQuizzes(course_r6));
   }
 }
-function StudentHomeComponent_For_79_Conditional_16_For_6_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_17_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 72)(1, "div", 73)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 73)(1, "div", 74)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 74);
+    \u0275\u0275elementStart(7, "span", 75);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const assignment_r9 = ctx.$implicit;
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c8, assignment_r9.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c9, assignment_r9.id));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(assignment_r9.title);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", assignment_r9.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c9, assignment_r9.xpReward)));
+    \u0275\u0275textInterpolate2("", assignment_r9.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c10, assignment_r9.xpReward)));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 8, "student.openTask"));
   }
 }
-function StudentHomeComponent_For_79_Conditional_16_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_17_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 62)(1, "p", 70);
+    \u0275\u0275elementStart(0, "div", 62)(1, "p", 71);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 71);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_16_For_6_Template, 10, 14, "a", 72, _forTrack05);
+    \u0275\u0275elementStart(4, "div", 72);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_17_For_6_Template, 10, 14, "a", 73, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65876,39 +66012,39 @@ function StudentHomeComponent_For_79_Conditional_16_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r1.courseAssignments(course_r6));
   }
 }
-function StudentHomeComponent_For_79_Conditional_17_For_6_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_18_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 76)(1, "div", 73)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 77)(1, "div", 74)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 74);
+    \u0275\u0275elementStart(7, "span", 75);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const exam_r10 = ctx.$implicit;
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c10, exam_r10.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c11, exam_r10.id));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(exam_r10.title);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", exam_r10.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c9, exam_r10.xpReward)));
+    \u0275\u0275textInterpolate2("", exam_r10.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c10, exam_r10.xpReward)));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 8, "student.openTask"));
   }
 }
-function StudentHomeComponent_For_79_Conditional_17_Template(rf, ctx) {
+function StudentHomeComponent_For_79_Conditional_18_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 63)(1, "p", 75);
+    \u0275\u0275elementStart(0, "div", 63)(1, "p", 76);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 71);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_17_For_6_Template, 10, 14, "a", 76, _forTrack05);
+    \u0275\u0275elementStart(4, "div", 72);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_For_79_Conditional_18_For_6_Template, 10, 14, "a", 77, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -65939,9 +66075,10 @@ function StudentHomeComponent_For_79_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(13, StudentHomeComponent_For_79_Conditional_13_Template, 6, 5, "div", 59);
     \u0275\u0275conditionalCreate(14, StudentHomeComponent_For_79_Conditional_14_Template, 10, 9, "div", 60);
-    \u0275\u0275conditionalCreate(15, StudentHomeComponent_For_79_Conditional_15_Template, 7, 3, "div", 61);
-    \u0275\u0275conditionalCreate(16, StudentHomeComponent_For_79_Conditional_16_Template, 7, 3, "div", 62);
-    \u0275\u0275conditionalCreate(17, StudentHomeComponent_For_79_Conditional_17_Template, 7, 3, "div", 63);
+    \u0275\u0275conditionalCreate(15, StudentHomeComponent_For_79_Conditional_15_Template, 8, 10, "div", 60);
+    \u0275\u0275conditionalCreate(16, StudentHomeComponent_For_79_Conditional_16_Template, 7, 3, "div", 61);
+    \u0275\u0275conditionalCreate(17, StudentHomeComponent_For_79_Conditional_17_Template, 7, 3, "div", 62);
+    \u0275\u0275conditionalCreate(18, StudentHomeComponent_For_79_Conditional_18_Template, 7, 3, "div", 63);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -65956,17 +66093,19 @@ function StudentHomeComponent_For_79_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(course_r6.theme);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate3(" ", ctx_r1.gradeLabel(course_r6.grade), " \xB7 ", ctx_r1.termLabel(course_r6.term), " \xB7 ", \u0275\u0275pipeBind2(12, 12, "student.ages", \u0275\u0275pureFunction2(15, _c22, course_r6.ageMin, course_r6.ageMax)), " ");
+    \u0275\u0275textInterpolate3(" ", ctx_r1.gradeLabel(course_r6.grade), " \xB7 ", ctx_r1.termLabel(course_r6.term), " \xB7 ", \u0275\u0275pipeBind2(12, 13, "student.ages", \u0275\u0275pureFunction2(16, _c22, course_r6.ageMin, course_r6.ageMax)), " ");
     \u0275\u0275advance(2);
-    \u0275\u0275conditional(ctx_r1.courseLessonCount(course_r6) || ctx_r1.courseAssignments(course_r6).length || ctx_r1.courseExams(course_r6).length || ctx_r1.publishedQuizzes(course_r6).length || ctx_r1.courseVideos(course_r6).length ? 13 : -1);
+    \u0275\u0275conditional(ctx_r1.courseLessonCount(course_r6) || ctx_r1.courseAssignments(course_r6).length || ctx_r1.courseExams(course_r6).length || ctx_r1.publishedQuizzes(course_r6).length || ctx_r1.courseVideos(course_r6).length || course_r6.materialCount ? 13 : -1);
     \u0275\u0275advance();
     \u0275\u0275conditional(ctx_r1.courseVideos(course_r6).length ? 14 : -1);
     \u0275\u0275advance();
-    \u0275\u0275conditional(ctx_r1.publishedQuizzes(course_r6).length ? 15 : -1);
+    \u0275\u0275conditional(course_r6.materialCount ? 15 : -1);
     \u0275\u0275advance();
-    \u0275\u0275conditional(ctx_r1.courseAssignments(course_r6).length ? 16 : -1);
+    \u0275\u0275conditional(ctx_r1.publishedQuizzes(course_r6).length ? 16 : -1);
     \u0275\u0275advance();
-    \u0275\u0275conditional(ctx_r1.courseExams(course_r6).length ? 17 : -1);
+    \u0275\u0275conditional(ctx_r1.courseAssignments(course_r6).length ? 17 : -1);
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx_r1.courseExams(course_r6).length ? 18 : -1);
   }
 }
 function StudentHomeComponent_ForEmpty_80_Template(rf, ctx) {
@@ -65983,37 +66122,37 @@ function StudentHomeComponent_ForEmpty_80_Template(rf, ctx) {
 }
 function StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 72)(1, "div", 73)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 73)(1, "div", 74)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 74);
+    \u0275\u0275elementStart(7, "span", 75);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const assignment_r11 = ctx.$implicit;
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c8, assignment_r11.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c9, assignment_r11.id));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(assignment_r11.title);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", assignment_r11.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c9, assignment_r11.xpReward)));
+    \u0275\u0275textInterpolate2("", assignment_r11.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c10, assignment_r11.xpReward)));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 8, "student.openTask"));
   }
 }
 function StudentHomeComponent_Conditional_81_Conditional_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 62)(1, "p", 70);
+    \u0275\u0275elementStart(0, "div", 62)(1, "p", 71);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 71);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template, 10, 14, "a", 72, _forTrack05);
+    \u0275\u0275elementStart(4, "div", 72);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_9_For_6_Template, 10, 14, "a", 73, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -66026,37 +66165,37 @@ function StudentHomeComponent_Conditional_81_Conditional_9_Template(rf, ctx) {
 }
 function StudentHomeComponent_Conditional_81_Conditional_10_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 76)(1, "div", 73)(2, "strong");
+    \u0275\u0275elementStart(0, "a", 77)(1, "div", 74)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "p", 18);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "span", 74);
+    \u0275\u0275elementStart(7, "span", 75);
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const exam_r12 = ctx.$implicit;
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c10, exam_r12.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(10, _c11, exam_r12.id));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(exam_r12.title);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", exam_r12.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c9, exam_r12.xpReward)));
+    \u0275\u0275textInterpolate2("", exam_r12.classroomName, " \xB7 ", \u0275\u0275pipeBind2(6, 5, "student.xpLabel", \u0275\u0275pureFunction1(12, _c10, exam_r12.xpReward)));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 8, "student.openTask"));
   }
 }
 function StudentHomeComponent_Conditional_81_Conditional_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 63)(1, "p", 75);
+    \u0275\u0275elementStart(0, "div", 63)(1, "p", 76);
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 71);
-    \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_10_For_6_Template, 10, 14, "a", 76, _forTrack05);
+    \u0275\u0275elementStart(4, "div", 72);
+    \u0275\u0275repeaterCreate(5, StudentHomeComponent_Conditional_81_Conditional_10_For_6_Template, 10, 14, "a", 77, _forTrack05);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -66353,7 +66492,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentHomeComponent, selectors: [["app-student-home"]], decls: 90, vars: 60, consts: [[1, "page", "student-home"], [1, "topbar", "student-topbar"], [1, "brand-block"], [1, "greeting"], [1, "topbar-actions"], ["routerLink", "/student/study-plans", 1, "chip"], ["type", "button", 1, "ghost", 3, "click"], [1, "welcome-panel"], [1, "welcome-main"], [1, "profile-identity"], [1, "profile-photo"], ["size", "lg", 3, "photoUrl", "name"], [1, "photo-actions"], [1, "photo-btn"], ["type", "file", "accept", "image/png,image/jpeg,image/webp", "hidden", "", 3, "change", "disabled"], ["type", "button", 1, "photo-btn", "ghost", 3, "disabled"], [1, "photo-error"], [1, "photo-hint"], [1, "meta"], [1, "welcome-copy"], [1, "eyebrow"], [1, "welcome-sub"], [1, "welcome-side"], ["aria-label", "XP", 1, "xp-badge"], [1, "xp-value"], [1, "xp-unit"], [1, "badge-panel"], ["aria-label", "Progress", 1, "stat-row", "student-stats"], [1, "stat-card"], [1, "student-layout"], [1, "student-main"], [1, "section-card"], [1, "section-head"], [1, "section-hint"], [1, "course-grid"], [1, "course-card"], [1, "meta", "empty-state"], [1, "student-side-tools"], ["routerLink", "/student/chat", 1, "side-tab", "chat-tab"], ["aria-hidden", "true", 1, "side-tab-icon"], [1, "side-tab-label"], ["titleKey", "studentAsk.courseTitle", 3, "courseChoices"], ["type", "button", 1, "photo-btn", "ghost", 3, "click", "disabled"], [1, "avatar-display"], [1, "avatar-picker"], [1, "avatar-name"], [1, "avatar-select-label"], [1, "sr-only"], [1, "avatar-select", 3, "ngModelChange", "ngModel", "options"], [1, "badge-panel-head"], [1, "count-pill"], [1, "badge-row"], [1, "badge-chip", 3, "title"], [1, "course-head"], [1, "course-title"], [1, "course-desc"], [1, "link", 3, "routerLink"], [1, "theme-tag"], [1, "meta", "course-meta"], [1, "course-counts"], [1, "link-group"], [1, "link-group", "quizzes"], [1, "task-group", "assignments"], [1, "task-group", "exams"], [1, "group-label"], [1, "chip-row"], [1, "chip", "video", 3, "routerLink"], [1, "chip", "video", 3, "routerLink", "queryParams"], [1, "group-label", "quiz"], [1, "chip", "quiz", 3, "routerLink"], [1, "group-label", "assignment"], [1, "item-list"], [1, "item-row", "link-row", "assignment", 3, "routerLink"], [1, "item-body"], [1, "action-ghost"], [1, "group-label", "exam"], [1, "item-row", "link-row", "exam", 3, "routerLink"]], template: function StudentHomeComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentHomeComponent, selectors: [["app-student-home"]], decls: 90, vars: 60, consts: [[1, "page", "student-home"], [1, "topbar", "student-topbar"], [1, "brand-block"], [1, "greeting"], [1, "topbar-actions"], ["routerLink", "/student/study-plans", 1, "chip"], ["type", "button", 1, "ghost", 3, "click"], [1, "welcome-panel"], [1, "welcome-main"], [1, "profile-identity"], [1, "profile-photo"], ["size", "lg", 3, "photoUrl", "name"], [1, "photo-actions"], [1, "photo-btn"], ["type", "file", "accept", "image/png,image/jpeg,image/webp", "hidden", "", 3, "change", "disabled"], ["type", "button", 1, "photo-btn", "ghost", 3, "disabled"], [1, "photo-error"], [1, "photo-hint"], [1, "meta"], [1, "welcome-copy"], [1, "eyebrow"], [1, "welcome-sub"], [1, "welcome-side"], ["aria-label", "XP", 1, "xp-badge"], [1, "xp-value"], [1, "xp-unit"], [1, "badge-panel"], ["aria-label", "Progress", 1, "stat-row", "student-stats"], [1, "stat-card"], [1, "student-layout"], [1, "student-main"], [1, "section-card"], [1, "section-head"], [1, "section-hint"], [1, "course-grid"], [1, "course-card"], [1, "meta", "empty-state"], [1, "student-side-tools"], ["routerLink", "/student/chat", 1, "side-tab", "chat-tab"], ["aria-hidden", "true", 1, "side-tab-icon"], [1, "side-tab-label"], ["titleKey", "studentAsk.courseTitle", 3, "courseChoices"], ["type", "button", 1, "photo-btn", "ghost", 3, "click", "disabled"], [1, "avatar-display"], [1, "avatar-picker"], [1, "avatar-name"], [1, "avatar-select-label"], [1, "sr-only"], [1, "avatar-select", 3, "ngModelChange", "ngModel", "options"], [1, "badge-panel-head"], [1, "count-pill"], [1, "badge-row"], [1, "badge-chip", 3, "title"], [1, "course-head"], [1, "course-title"], [1, "course-desc"], [1, "link", 3, "routerLink"], [1, "theme-tag"], [1, "meta", "course-meta"], [1, "course-counts"], [1, "link-group"], [1, "link-group", "quizzes"], [1, "task-group", "assignments"], [1, "task-group", "exams"], [1, "group-label"], [1, "chip-row"], [1, "chip", "video", 3, "routerLink"], [1, "chip", "video", 3, "routerLink", "queryParams"], [1, "chip", "material", 3, "routerLink"], [1, "group-label", "quiz"], [1, "chip", "quiz", 3, "routerLink"], [1, "group-label", "assignment"], [1, "item-list"], [1, "item-row", "link-row", "assignment", 3, "routerLink"], [1, "item-body"], [1, "action-ghost"], [1, "group-label", "exam"], [1, "item-row", "link-row", "exam", 3, "routerLink"]], template: function StudentHomeComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275element(1, "app-api-busy-indicator");
@@ -66438,7 +66577,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
         \u0275\u0275pipe(76, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(77, "div", 34);
-        \u0275\u0275repeaterCreate(78, StudentHomeComponent_For_79_Template, 18, 18, "article", 35, _forTrack05, false, StudentHomeComponent_ForEmpty_80_Template, 3, 3, "p", 36);
+        \u0275\u0275repeaterCreate(78, StudentHomeComponent_For_79_Template, 19, 19, "article", 35, _forTrack05, false, StudentHomeComponent_ForEmpty_80_Template, 3, 3, "p", 36);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(81, StudentHomeComponent_Conditional_81_Template, 11, 8, "section", 31);
         \u0275\u0275elementEnd()();
@@ -66524,7 +66663,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
       ApiBusyIndicatorComponent,
       UserPhotoComponent,
       TranslatePipe
-    ], styles: ['\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.student-home[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_pageIn 0.4s ease;\n}\n.student-topbar[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 50;\n  margin-bottom: var(--space-4);\n}\n.student-topbar[_ngcontent-%COMP%]   .topbar-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.brand-block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.15rem;\n}\n.greeting[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--text-muted);\n  font-size: 0.95rem;\n  font-weight: 500;\n}\n.welcome-panel[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 0.9fr);\n  gap: var(--space-4);\n  align-items: stretch;\n  padding: 1.5rem 1.6rem;\n  margin-bottom: var(--space-4);\n  border-radius: var(--radius-xl);\n  border: 1px solid var(--welcome-border);\n  background: var(--welcome-bg);\n  box-shadow: var(--shadow-md);\n  animation: _ngcontent-%COMP%_riseIn 0.5s ease 0.05s both;\n}\n.welcome-main[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1.35rem;\n  align-items: center;\n}\n.profile-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1.25rem;\n  flex-wrap: wrap;\n}\n.profile-photo[_ngcontent-%COMP%] {\n  display: grid;\n  justify-items: center;\n  gap: 0.5rem;\n}\n.photo-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.4rem;\n}\n.photo-btn[_ngcontent-%COMP%] {\n  padding: 0.3rem 0.7rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.78rem;\n  cursor: pointer;\n  transition: border-color 0.2s ease, color 0.2s ease;\n}\n.photo-btn[_ngcontent-%COMP%]:hover:not(.disabled):not(:disabled) {\n  border-color: var(--accent);\n  color: var(--heading);\n}\n.photo-btn.disabled[_ngcontent-%COMP%], \n.photo-btn[_ngcontent-%COMP%]:disabled {\n  opacity: 0.6;\n  cursor: default;\n}\n.photo-hint[_ngcontent-%COMP%], \n.photo-error[_ngcontent-%COMP%] {\n  margin: 0;\n  max-width: 12rem;\n  text-align: center;\n  font-size: 0.72rem;\n  line-height: 1.35;\n}\n.photo-hint[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.photo-error[_ngcontent-%COMP%] {\n  color: var(--danger, #e5484d);\n}\n.avatar-display[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  width: 4.75rem;\n  height: 4.75rem;\n  font-size: 2.4rem;\n  border-radius: 50%;\n  background: rgba(255, 214, 10, 0.12);\n  border: 2px solid rgba(255, 214, 10, 0.4);\n  box-shadow: 0 0 0 6px rgba(255, 214, 10, 0.06);\n  flex-shrink: 0;\n  transition: transform 0.25s ease, box-shadow 0.25s ease;\n}\n.avatar-display[_ngcontent-%COMP%]:hover {\n  transform: scale(1.04);\n  box-shadow: 0 0 0 8px rgba(255, 214, 10, 0.1);\n}\n.avatar-picker[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n}\n.avatar-name[_ngcontent-%COMP%] {\n  color: var(--heading);\n  font-size: 1.05rem;\n}\n.avatar-select[_ngcontent-%COMP%] {\n  min-width: 11.5rem;\n  max-width: 16rem;\n  padding: 0.5rem 0.7rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.88rem;\n}\n.welcome-copy[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: min(100%, 14rem);\n}\n.welcome-copy[_ngcontent-%COMP%]   .eyebrow[_ngcontent-%COMP%] {\n  color: var(--teal);\n}\n.welcome-copy[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  font-size: clamp(1.45rem, 2.6vw, 2rem);\n  max-width: 22ch;\n  margin: 0.2rem 0 0.5rem;\n}\n.welcome-sub[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--welcome-sub);\n  font-size: 0.95rem;\n}\n.welcome-side[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1rem;\n  align-content: start;\n}\n.xp-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: baseline;\n  gap: 0.35rem;\n  justify-self: start;\n  padding: 0.65rem 1.1rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  animation: _ngcontent-%COMP%_pulseSoft 2.8s ease-in-out infinite;\n}\n.xp-value[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  font-weight: 800;\n  line-height: 1;\n}\n.xp-unit[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-size: 0.85rem;\n  letter-spacing: 0.04em;\n}\n.badge-panel-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  margin-bottom: 0.55rem;\n}\n.badge-panel-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.95rem;\n  color: var(--heading);\n}\n.count-pill[_ngcontent-%COMP%] {\n  display: inline-grid;\n  place-items: center;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0 0.35rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.badge-row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.badge-chip[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  font-size: 0.82rem;\n}\n.badge-chip[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: inherit;\n  font-weight: 700;\n}\n.empty-hint[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.85rem;\n}\n.student-stats[_ngcontent-%COMP%] {\n  margin-bottom: var(--space-5);\n  animation: _ngcontent-%COMP%_riseIn 0.45s ease 0.12s both;\n}\n.student-stats[_ngcontent-%COMP%]   .stat-card[_ngcontent-%COMP%] {\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\n.student-stats[_ngcontent-%COMP%]   .stat-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  background: var(--elevated-bg-hover);\n}\n.student-layout[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);\n  gap: var(--space-4);\n  align-items: start;\n  animation: _ngcontent-%COMP%_riseIn 0.5s ease 0.18s both;\n}\n.section-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1rem;\n  padding: 1.25rem 1.3rem 1.35rem;\n  margin-bottom: var(--space-3);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.section-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  padding-bottom: 0.75rem;\n  border-bottom: 1px solid var(--border);\n}\n.section-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint[_ngcontent-%COMP%] {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.course-grid[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1rem;\n}\n.course-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: var(--shadow-md);\n}\n.course-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%], \n.course-title[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.35rem, 2.2vw, 1.7rem);\n  font-weight: 800;\n  letter-spacing: -0.02em;\n  color: #93c5fd;\n  line-height: 1.25;\n}\n.course-desc[_ngcontent-%COMP%] {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.course-counts[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.link-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.group-label[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.05rem;\n  font-weight: 800;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: var(--heading);\n}\n.group-label.assignment[_ngcontent-%COMP%] {\n  color: #fbbf24;\n  font-size: 1.28rem;\n}\n.group-label.exam[_ngcontent-%COMP%] {\n  color: #5fd3bc;\n  font-size: 1.28rem;\n}\n.group-label.quiz[_ngcontent-%COMP%] {\n  color: #c4b5fd;\n  font-size: 1.2rem;\n}\n.task-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group[_ngcontent-%COMP%]    + .task-group[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.item-list[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid transparent;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row[_ngcontent-%COMP%] {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row[_ngcontent-%COMP%]:hover, \n.item-row.link-row[_ngcontent-%COMP%]:hover {\n  background: var(--elevated-bg-hover);\n  border-color: var(--border);\n}\n.item-row.assignment[_ngcontent-%COMP%] {\n  border-color: rgba(251, 191, 36, 0.28);\n  background: rgba(251, 191, 36, 0.1);\n}\n.item-row.exam[_ngcontent-%COMP%] {\n  border-color: rgba(95, 211, 188, 0.28);\n  background: rgba(95, 211, 188, 0.1);\n}\n.item-row.exam[_ngcontent-%COMP%]:hover {\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.item-row.assignment[_ngcontent-%COMP%]:hover {\n  border-color: rgba(251, 191, 36, 0.5);\n}\n.item-row.lessons-index[_ngcontent-%COMP%] {\n  border-color: rgba(147, 197, 253, 0.32);\n  background: rgba(59, 130, 246, 0.1);\n}\n.item-row.lessons-index[_ngcontent-%COMP%]:hover {\n  border-color: rgba(147, 197, 253, 0.55);\n}\n.item-row.lessons-index[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #93c5fd;\n  font-family: var(--font-display);\n  font-size: clamp(1.15rem, 2vw, 1.4rem);\n}\n.item-body[_ngcontent-%COMP%] {\n  min-width: 0;\n}\n.item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-row.assignment[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #fcd34d;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.item-row.exam[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #99f6e4;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(167, 139, 250, 0.18);\n  border-color: rgba(196, 181, 253, 0.4);\n  color: #ddd6fe;\n  font-weight: 800;\n  font-size: 1.05rem;\n}\n[data-theme="light"][_nghost-%COMP%]   .course-title[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .course-title[_ngcontent-%COMP%], \n[data-theme="light"][_nghost-%COMP%]   .course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: #0b3d91;\n}\n[data-theme="light"][_nghost-%COMP%]   .group-label.assignment[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .group-label.assignment[_ngcontent-%COMP%] {\n  color: #b45309;\n}\n[data-theme="light"][_nghost-%COMP%]   .group-label.exam[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .group-label.exam[_ngcontent-%COMP%] {\n  color: #0f766e;\n}\n[data-theme="light"][_nghost-%COMP%]   .group-label.quiz[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .group-label.quiz[_ngcontent-%COMP%] {\n  color: #6d28d9;\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%] {\n  border-color: rgba(180, 83, 9, 0.22);\n  background: rgba(245, 158, 11, 0.1);\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%] {\n  border-color: rgba(15, 118, 110, 0.22);\n  background: rgba(15, 118, 110, 0.08);\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%] {\n  border-color: rgba(11, 61, 145, 0.22);\n  background: rgba(37, 99, 235, 0.08);\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #0b3d91;\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #9a3412;\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #115e59;\n}\n[data-theme="light"][_nghost-%COMP%]   .chip.quiz[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(109, 40, 217, 0.12);\n  border-color: rgba(109, 40, 217, 0.28);\n  color: #5b21b6;\n}\n.item-body[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-btn[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  text-decoration: none;\n  font-weight: 800;\n  font-size: 0.82rem;\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n  box-shadow: 0 6px 16px rgba(255, 159, 28, 0.2);\n}\n.action-btn[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 10px 20px rgba(255, 159, 28, 0.28);\n}\n.action-ghost[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.sr-only[_ngcontent-%COMP%] {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n@keyframes _ngcontent-%COMP%_riseIn {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@keyframes _ngcontent-%COMP%_pulseSoft {\n  0%, 100% {\n    box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  }\n  50% {\n    box-shadow: 0 12px 32px rgba(255, 159, 28, 0.4);\n  }\n}\n@media (max-width: 980px) {\n  .welcome-panel[_ngcontent-%COMP%], \n   .student-layout[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 700px) {\n  .welcome-panel[_ngcontent-%COMP%] {\n    padding: 1.2rem 1.1rem;\n  }\n  .welcome-main[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .item-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-btn[_ngcontent-%COMP%], \n   .action-ghost[_ngcontent-%COMP%] {\n    align-self: stretch;\n    text-align: center;\n    justify-content: center;\n  }\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .welcome-panel[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .student-layout[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .course-head[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .item-row[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .badge-panel-head[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .section-head[_ngcontent-%COMP%] {\n  direction: rtl;\n}\n/*# sourceMappingURL=student-home.component.css.map */'] });
+    ], styles: ['\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.student-home[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_pageIn 0.4s ease;\n}\n.student-topbar[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 50;\n  margin-bottom: var(--space-4);\n}\n.student-topbar[_ngcontent-%COMP%]   .topbar-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.brand-block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.15rem;\n}\n.greeting[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--text-muted);\n  font-size: 0.95rem;\n  font-weight: 500;\n}\n.welcome-panel[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 0.9fr);\n  gap: var(--space-4);\n  align-items: stretch;\n  padding: 1.5rem 1.6rem;\n  margin-bottom: var(--space-4);\n  border-radius: var(--radius-xl);\n  border: 1px solid var(--welcome-border);\n  background: var(--welcome-bg);\n  box-shadow: var(--shadow-md);\n  animation: _ngcontent-%COMP%_riseIn 0.5s ease 0.05s both;\n}\n.welcome-main[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1.35rem;\n  align-items: center;\n}\n.profile-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1.25rem;\n  flex-wrap: wrap;\n}\n.profile-photo[_ngcontent-%COMP%] {\n  display: grid;\n  justify-items: center;\n  gap: 0.5rem;\n}\n.photo-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.4rem;\n}\n.photo-btn[_ngcontent-%COMP%] {\n  padding: 0.3rem 0.7rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.78rem;\n  cursor: pointer;\n  transition: border-color 0.2s ease, color 0.2s ease;\n}\n.photo-btn[_ngcontent-%COMP%]:hover:not(.disabled):not(:disabled) {\n  border-color: var(--accent);\n  color: var(--heading);\n}\n.photo-btn.disabled[_ngcontent-%COMP%], \n.photo-btn[_ngcontent-%COMP%]:disabled {\n  opacity: 0.6;\n  cursor: default;\n}\n.photo-hint[_ngcontent-%COMP%], \n.photo-error[_ngcontent-%COMP%] {\n  margin: 0;\n  max-width: 12rem;\n  text-align: center;\n  font-size: 0.72rem;\n  line-height: 1.35;\n}\n.photo-hint[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.photo-error[_ngcontent-%COMP%] {\n  color: var(--danger, #e5484d);\n}\n.avatar-display[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  width: 4.75rem;\n  height: 4.75rem;\n  font-size: 2.4rem;\n  border-radius: 50%;\n  background: rgba(255, 214, 10, 0.12);\n  border: 2px solid rgba(255, 214, 10, 0.4);\n  box-shadow: 0 0 0 6px rgba(255, 214, 10, 0.06);\n  flex-shrink: 0;\n  transition: transform 0.25s ease, box-shadow 0.25s ease;\n}\n.avatar-display[_ngcontent-%COMP%]:hover {\n  transform: scale(1.04);\n  box-shadow: 0 0 0 8px rgba(255, 214, 10, 0.1);\n}\n.avatar-picker[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n}\n.avatar-name[_ngcontent-%COMP%] {\n  color: var(--heading);\n  font-size: 1.05rem;\n}\n.avatar-select[_ngcontent-%COMP%] {\n  min-width: 11.5rem;\n  max-width: 16rem;\n  padding: 0.5rem 0.7rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.88rem;\n}\n.welcome-copy[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: min(100%, 14rem);\n}\n.welcome-copy[_ngcontent-%COMP%]   .eyebrow[_ngcontent-%COMP%] {\n  color: var(--teal);\n}\n.welcome-copy[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  font-size: clamp(1.45rem, 2.6vw, 2rem);\n  max-width: 22ch;\n  margin: 0.2rem 0 0.5rem;\n}\n.welcome-sub[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--welcome-sub);\n  font-size: 0.95rem;\n}\n.welcome-side[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1rem;\n  align-content: start;\n}\n.xp-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: baseline;\n  gap: 0.35rem;\n  justify-self: start;\n  padding: 0.65rem 1.1rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  animation: _ngcontent-%COMP%_pulseSoft 2.8s ease-in-out infinite;\n}\n.xp-value[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  font-weight: 800;\n  line-height: 1;\n}\n.xp-unit[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-size: 0.85rem;\n  letter-spacing: 0.04em;\n}\n.badge-panel-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  margin-bottom: 0.55rem;\n}\n.badge-panel-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.95rem;\n  color: var(--heading);\n}\n.count-pill[_ngcontent-%COMP%] {\n  display: inline-grid;\n  place-items: center;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0 0.35rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.badge-row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.badge-chip[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  font-size: 0.82rem;\n}\n.badge-chip[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: inherit;\n  font-weight: 700;\n}\n.empty-hint[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.85rem;\n}\n.student-stats[_ngcontent-%COMP%] {\n  margin-bottom: var(--space-5);\n  animation: _ngcontent-%COMP%_riseIn 0.45s ease 0.12s both;\n}\n.student-stats[_ngcontent-%COMP%]   .stat-card[_ngcontent-%COMP%] {\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\n.student-stats[_ngcontent-%COMP%]   .stat-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  background: var(--elevated-bg-hover);\n}\n.student-layout[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);\n  gap: var(--space-4);\n  align-items: start;\n  animation: _ngcontent-%COMP%_riseIn 0.5s ease 0.18s both;\n}\n.section-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1rem;\n  padding: 1.25rem 1.3rem 1.35rem;\n  margin-bottom: var(--space-3);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.section-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  padding-bottom: 0.75rem;\n  border-bottom: 1px solid var(--border);\n}\n.section-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint[_ngcontent-%COMP%] {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.course-grid[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 1rem;\n}\n.course-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: var(--shadow-md);\n}\n.course-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%], \n.course-title[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.35rem, 2.2vw, 1.7rem);\n  font-weight: 800;\n  letter-spacing: -0.02em;\n  color: #93c5fd;\n  line-height: 1.25;\n}\n.course-desc[_ngcontent-%COMP%] {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.course-counts[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.link-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.group-label[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.05rem;\n  font-weight: 800;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: var(--heading);\n}\n.group-label.assignment[_ngcontent-%COMP%] {\n  color: #fbbf24;\n  font-size: 1.28rem;\n}\n.group-label.exam[_ngcontent-%COMP%] {\n  color: #5fd3bc;\n  font-size: 1.28rem;\n}\n.group-label.quiz[_ngcontent-%COMP%] {\n  color: #c4b5fd;\n  font-size: 1.2rem;\n}\n.task-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group[_ngcontent-%COMP%]    + .task-group[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.item-list[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid transparent;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row[_ngcontent-%COMP%] {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row[_ngcontent-%COMP%]:hover, \n.item-row.link-row[_ngcontent-%COMP%]:hover {\n  background: var(--elevated-bg-hover);\n  border-color: var(--border);\n}\n.item-row.assignment[_ngcontent-%COMP%] {\n  border-color: rgba(251, 191, 36, 0.28);\n  background: rgba(251, 191, 36, 0.1);\n}\n.item-row.exam[_ngcontent-%COMP%] {\n  border-color: rgba(95, 211, 188, 0.28);\n  background: rgba(95, 211, 188, 0.1);\n}\n.item-row.exam[_ngcontent-%COMP%]:hover {\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.item-row.assignment[_ngcontent-%COMP%]:hover {\n  border-color: rgba(251, 191, 36, 0.5);\n}\n.item-row.lessons-index[_ngcontent-%COMP%] {\n  border-color: rgba(147, 197, 253, 0.32);\n  background: rgba(59, 130, 246, 0.1);\n}\n.item-row.lessons-index[_ngcontent-%COMP%]:hover {\n  border-color: rgba(147, 197, 253, 0.55);\n}\n.item-row.lessons-index[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #93c5fd;\n  font-family: var(--font-display);\n  font-size: clamp(1.15rem, 2vw, 1.4rem);\n}\n.item-body[_ngcontent-%COMP%] {\n  min-width: 0;\n}\n.item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-row.assignment[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #fcd34d;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.item-row.exam[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #99f6e4;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(167, 139, 250, 0.18);\n  border-color: rgba(196, 181, 253, 0.4);\n  color: #ddd6fe;\n  font-weight: 800;\n  font-size: 1.05rem;\n}\n.chip.material[_ngcontent-%COMP%] {\n  background: rgba(45, 212, 191, 0.16);\n  border-color: rgba(94, 234, 212, 0.4);\n  color: #99f6e4;\n  font-weight: 800;\n  font-size: 1.05rem;\n}\n[data-theme="light"][_nghost-%COMP%]   .chip.material[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .chip.material[_ngcontent-%COMP%] {\n  background: rgba(13, 148, 136, 0.12);\n  border-color: rgba(13, 148, 136, 0.35);\n  color: #0f766e;\n}\n[data-theme="light"][_nghost-%COMP%]   .course-title[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .course-title[_ngcontent-%COMP%], \n[data-theme="light"][_nghost-%COMP%]   .course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .course-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: #0b3d91;\n}\n[data-theme="light"][_nghost-%COMP%]   .group-label.assignment[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .group-label.assignment[_ngcontent-%COMP%] {\n  color: #b45309;\n}\n[data-theme="light"][_nghost-%COMP%]   .group-label.exam[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .group-label.exam[_ngcontent-%COMP%] {\n  color: #0f766e;\n}\n[data-theme="light"][_nghost-%COMP%]   .group-label.quiz[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .group-label.quiz[_ngcontent-%COMP%] {\n  color: #6d28d9;\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%] {\n  border-color: rgba(180, 83, 9, 0.22);\n  background: rgba(245, 158, 11, 0.1);\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%] {\n  border-color: rgba(15, 118, 110, 0.22);\n  background: rgba(15, 118, 110, 0.08);\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%] {\n  border-color: rgba(11, 61, 145, 0.22);\n  background: rgba(37, 99, 235, 0.08);\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.lessons-index[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #0b3d91;\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.assignment[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #9a3412;\n}\n[data-theme="light"][_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .item-row.exam[_ngcontent-%COMP%]   .item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  color: #115e59;\n}\n[data-theme="light"][_nghost-%COMP%]   .chip.quiz[_ngcontent-%COMP%], [data-theme="light"]   [_nghost-%COMP%]   .chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(109, 40, 217, 0.12);\n  border-color: rgba(109, 40, 217, 0.28);\n  color: #5b21b6;\n}\n.item-body[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-btn[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  text-decoration: none;\n  font-weight: 800;\n  font-size: 0.82rem;\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n  box-shadow: 0 6px 16px rgba(255, 159, 28, 0.2);\n}\n.action-btn[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 10px 20px rgba(255, 159, 28, 0.28);\n}\n.action-ghost[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.sr-only[_ngcontent-%COMP%] {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n@keyframes _ngcontent-%COMP%_riseIn {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@keyframes _ngcontent-%COMP%_pulseSoft {\n  0%, 100% {\n    box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  }\n  50% {\n    box-shadow: 0 12px 32px rgba(255, 159, 28, 0.4);\n  }\n}\n@media (max-width: 980px) {\n  .welcome-panel[_ngcontent-%COMP%], \n   .student-layout[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 700px) {\n  .welcome-panel[_ngcontent-%COMP%] {\n    padding: 1.2rem 1.1rem;\n  }\n  .welcome-main[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .item-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-btn[_ngcontent-%COMP%], \n   .action-ghost[_ngcontent-%COMP%] {\n    align-self: stretch;\n    text-align: center;\n    justify-content: center;\n  }\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .welcome-panel[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .student-layout[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .course-head[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .item-row[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .badge-panel-head[_ngcontent-%COMP%], \nhtml[dir=rtl][_ngcontent-%COMP%]   .section-head[_ngcontent-%COMP%] {\n  direction: rtl;\n}\n/*# sourceMappingURL=student-home.component.css.map */'] });
   }
 };
 (() => {
@@ -66704,7 +66843,8 @@ var StudentHomeComponent = class _StudentHomeComponent {
                 courseAssignments(course).length ||\r
                 courseExams(course).length ||\r
                 publishedQuizzes(course).length ||\r
-                courseVideos(course).length\r
+                courseVideos(course).length ||\r
+                course.materialCount\r
               ) {\r
                 <div class="course-counts">\r
                   @if (courseLessonCount(course)) {\r
@@ -66733,6 +66873,17 @@ var StudentHomeComponent = class _StudentHomeComponent {
                     @for (video of courseVideos(course); track video.id) {\r
                       <a class="chip video" [routerLink]="['/courses', course.id]" [queryParams]="{ video: video.id }">{{ video.title }}</a>\r
                     }\r
+                  </div>\r
+                </div>\r
+              }\r
+\r
+              @if (course.materialCount) {\r
+                <div class="link-group">\r
+                  <p class="group-label">{{ 'materials.homeLabel' | t }}</p>\r
+                  <div class="chip-row">\r
+                    <a class="chip material" [routerLink]="['/student/materials', course.id]">\r
+                      {{ 'materials.openPage' | t }} ({{ course.materialCount }})\r
+                    </a>\r
                   </div>\r
                 </div>\r
               }\r
@@ -66846,7 +66997,7 @@ var StudentHomeComponent = class _StudentHomeComponent {
     }\r
   </div>\r
 </div>\r
-`, styles: ['/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/student-home/student-home.component.css */\n.student-home {\n  animation: pageIn 0.4s ease;\n}\n.student-topbar {\n  position: relative;\n  z-index: 50;\n  margin-bottom: var(--space-4);\n}\n.student-topbar .topbar-actions {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.brand-block {\n  display: grid;\n  gap: 0.15rem;\n}\n.greeting {\n  margin: 0;\n  color: var(--text-muted);\n  font-size: 0.95rem;\n  font-weight: 500;\n}\n.welcome-panel {\n  display: grid;\n  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 0.9fr);\n  gap: var(--space-4);\n  align-items: stretch;\n  padding: 1.5rem 1.6rem;\n  margin-bottom: var(--space-4);\n  border-radius: var(--radius-xl);\n  border: 1px solid var(--welcome-border);\n  background: var(--welcome-bg);\n  box-shadow: var(--shadow-md);\n  animation: riseIn 0.5s ease 0.05s both;\n}\n.welcome-main {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1.35rem;\n  align-items: center;\n}\n.profile-identity {\n  display: flex;\n  align-items: center;\n  gap: 1.25rem;\n  flex-wrap: wrap;\n}\n.profile-photo {\n  display: grid;\n  justify-items: center;\n  gap: 0.5rem;\n}\n.photo-actions {\n  display: flex;\n  gap: 0.4rem;\n}\n.photo-btn {\n  padding: 0.3rem 0.7rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.78rem;\n  cursor: pointer;\n  transition: border-color 0.2s ease, color 0.2s ease;\n}\n.photo-btn:hover:not(.disabled):not(:disabled) {\n  border-color: var(--accent);\n  color: var(--heading);\n}\n.photo-btn.disabled,\n.photo-btn:disabled {\n  opacity: 0.6;\n  cursor: default;\n}\n.photo-hint,\n.photo-error {\n  margin: 0;\n  max-width: 12rem;\n  text-align: center;\n  font-size: 0.72rem;\n  line-height: 1.35;\n}\n.photo-hint {\n  color: var(--text-muted);\n}\n.photo-error {\n  color: var(--danger, #e5484d);\n}\n.avatar-display {\n  display: grid;\n  place-items: center;\n  width: 4.75rem;\n  height: 4.75rem;\n  font-size: 2.4rem;\n  border-radius: 50%;\n  background: rgba(255, 214, 10, 0.12);\n  border: 2px solid rgba(255, 214, 10, 0.4);\n  box-shadow: 0 0 0 6px rgba(255, 214, 10, 0.06);\n  flex-shrink: 0;\n  transition: transform 0.25s ease, box-shadow 0.25s ease;\n}\n.avatar-display:hover {\n  transform: scale(1.04);\n  box-shadow: 0 0 0 8px rgba(255, 214, 10, 0.1);\n}\n.avatar-picker {\n  display: grid;\n  gap: 0.4rem;\n}\n.avatar-name {\n  color: var(--heading);\n  font-size: 1.05rem;\n}\n.avatar-select {\n  min-width: 11.5rem;\n  max-width: 16rem;\n  padding: 0.5rem 0.7rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.88rem;\n}\n.welcome-copy {\n  flex: 1;\n  min-width: min(100%, 14rem);\n}\n.welcome-copy .eyebrow {\n  color: var(--teal);\n}\n.welcome-copy h1 {\n  font-size: clamp(1.45rem, 2.6vw, 2rem);\n  max-width: 22ch;\n  margin: 0.2rem 0 0.5rem;\n}\n.welcome-sub {\n  margin: 0;\n  color: var(--welcome-sub);\n  font-size: 0.95rem;\n}\n.welcome-side {\n  display: grid;\n  gap: 1rem;\n  align-content: start;\n}\n.xp-badge {\n  display: inline-flex;\n  align-items: baseline;\n  gap: 0.35rem;\n  justify-self: start;\n  padding: 0.65rem 1.1rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  animation: pulseSoft 2.8s ease-in-out infinite;\n}\n.xp-value {\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  font-weight: 800;\n  line-height: 1;\n}\n.xp-unit {\n  font-weight: 800;\n  font-size: 0.85rem;\n  letter-spacing: 0.04em;\n}\n.badge-panel-head {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  margin-bottom: 0.55rem;\n}\n.badge-panel-head h3 {\n  margin: 0;\n  font-size: 0.95rem;\n  color: var(--heading);\n}\n.count-pill {\n  display: inline-grid;\n  place-items: center;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0 0.35rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.badge-row {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.badge-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  font-size: 0.82rem;\n}\n.badge-chip strong {\n  color: inherit;\n  font-weight: 700;\n}\n.empty-hint {\n  margin: 0;\n  font-size: 0.85rem;\n}\n.student-stats {\n  margin-bottom: var(--space-5);\n  animation: riseIn 0.45s ease 0.12s both;\n}\n.student-stats .stat-card {\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\n.student-stats .stat-card:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  background: var(--elevated-bg-hover);\n}\n.student-layout {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);\n  gap: var(--space-4);\n  align-items: start;\n  animation: riseIn 0.5s ease 0.18s both;\n}\n.section-card {\n  display: grid;\n  gap: 1rem;\n  padding: 1.25rem 1.3rem 1.35rem;\n  margin-bottom: var(--space-3);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.section-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  padding-bottom: 0.75rem;\n  border-bottom: 1px solid var(--border);\n}\n.section-head h2 {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.course-grid {\n  display: grid;\n  gap: 1rem;\n}\n.course-card {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: var(--shadow-md);\n}\n.course-head {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head h3,\n.course-title {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.35rem, 2.2vw, 1.7rem);\n  font-weight: 800;\n  letter-spacing: -0.02em;\n  color: #93c5fd;\n  line-height: 1.25;\n}\n.course-desc {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-meta {\n  margin: 0;\n}\n.course-counts {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts span {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.link-group {\n  display: grid;\n  gap: 0.45rem;\n}\n.group-label {\n  margin: 0;\n  font-size: 1.05rem;\n  font-weight: 800;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: var(--heading);\n}\n.group-label.assignment {\n  color: #fbbf24;\n  font-size: 1.28rem;\n}\n.group-label.exam {\n  color: #5fd3bc;\n  font-size: 1.28rem;\n}\n.group-label.quiz {\n  color: #c4b5fd;\n  font-size: 1.2rem;\n}\n.task-group {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group + .task-group {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.item-list {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid transparent;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row:hover,\n.item-row.link-row:hover {\n  background: var(--elevated-bg-hover);\n  border-color: var(--border);\n}\n.item-row.assignment {\n  border-color: rgba(251, 191, 36, 0.28);\n  background: rgba(251, 191, 36, 0.1);\n}\n.item-row.exam {\n  border-color: rgba(95, 211, 188, 0.28);\n  background: rgba(95, 211, 188, 0.1);\n}\n.item-row.exam:hover {\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.item-row.assignment:hover {\n  border-color: rgba(251, 191, 36, 0.5);\n}\n.item-row.lessons-index {\n  border-color: rgba(147, 197, 253, 0.32);\n  background: rgba(59, 130, 246, 0.1);\n}\n.item-row.lessons-index:hover {\n  border-color: rgba(147, 197, 253, 0.55);\n}\n.item-row.lessons-index .item-body strong {\n  color: #93c5fd;\n  font-family: var(--font-display);\n  font-size: clamp(1.15rem, 2vw, 1.4rem);\n}\n.item-body {\n  min-width: 0;\n}\n.item-body strong {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-row.assignment .item-body strong {\n  color: #fcd34d;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.item-row.exam .item-body strong {\n  color: #99f6e4;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.chip.quiz {\n  background: rgba(167, 139, 250, 0.18);\n  border-color: rgba(196, 181, 253, 0.4);\n  color: #ddd6fe;\n  font-weight: 800;\n  font-size: 1.05rem;\n}\n:host-context([data-theme="light"]) .course-title,\n:host-context([data-theme="light"]) .course-head h3 {\n  color: #0b3d91;\n}\n:host-context([data-theme="light"]) .group-label.assignment {\n  color: #b45309;\n}\n:host-context([data-theme="light"]) .group-label.exam {\n  color: #0f766e;\n}\n:host-context([data-theme="light"]) .group-label.quiz {\n  color: #6d28d9;\n}\n:host-context([data-theme="light"]) .item-row.assignment {\n  border-color: rgba(180, 83, 9, 0.22);\n  background: rgba(245, 158, 11, 0.1);\n}\n:host-context([data-theme="light"]) .item-row.exam {\n  border-color: rgba(15, 118, 110, 0.22);\n  background: rgba(15, 118, 110, 0.08);\n}\n:host-context([data-theme="light"]) .item-row.lessons-index {\n  border-color: rgba(11, 61, 145, 0.22);\n  background: rgba(37, 99, 235, 0.08);\n}\n:host-context([data-theme="light"]) .item-row.lessons-index .item-body strong {\n  color: #0b3d91;\n}\n:host-context([data-theme="light"]) .item-row.assignment .item-body strong {\n  color: #9a3412;\n}\n:host-context([data-theme="light"]) .item-row.exam .item-body strong {\n  color: #115e59;\n}\n:host-context([data-theme="light"]) .chip.quiz {\n  background: rgba(109, 40, 217, 0.12);\n  border-color: rgba(109, 40, 217, 0.28);\n  color: #5b21b6;\n}\n.item-body .meta {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-btn {\n  flex-shrink: 0;\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  text-decoration: none;\n  font-weight: 800;\n  font-size: 0.82rem;\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n  box-shadow: 0 6px 16px rgba(255, 159, 28, 0.2);\n}\n.action-btn:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 10px 20px rgba(255, 159, 28, 0.28);\n}\n.action-ghost {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n@keyframes riseIn {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@keyframes pulseSoft {\n  0%, 100% {\n    box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  }\n  50% {\n    box-shadow: 0 12px 32px rgba(255, 159, 28, 0.4);\n  }\n}\n@media (max-width: 980px) {\n  .welcome-panel,\n  .student-layout {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 700px) {\n  .welcome-panel {\n    padding: 1.2rem 1.1rem;\n  }\n  .welcome-main {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .item-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-btn,\n  .action-ghost {\n    align-self: stretch;\n    text-align: center;\n    justify-content: center;\n  }\n}\nhtml[dir=rtl] .welcome-panel,\nhtml[dir=rtl] .student-layout,\nhtml[dir=rtl] .course-head,\nhtml[dir=rtl] .item-row,\nhtml[dir=rtl] .badge-panel-head,\nhtml[dir=rtl] .section-head {\n  direction: rtl;\n}\n/*# sourceMappingURL=student-home.component.css.map */\n'] }]
+`, styles: ['/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/student-home/student-home.component.css */\n.student-home {\n  animation: pageIn 0.4s ease;\n}\n.student-topbar {\n  position: relative;\n  z-index: 50;\n  margin-bottom: var(--space-4);\n}\n.student-topbar .topbar-actions {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.brand-block {\n  display: grid;\n  gap: 0.15rem;\n}\n.greeting {\n  margin: 0;\n  color: var(--text-muted);\n  font-size: 0.95rem;\n  font-weight: 500;\n}\n.welcome-panel {\n  display: grid;\n  grid-template-columns: minmax(0, 1.6fr) minmax(16rem, 0.9fr);\n  gap: var(--space-4);\n  align-items: stretch;\n  padding: 1.5rem 1.6rem;\n  margin-bottom: var(--space-4);\n  border-radius: var(--radius-xl);\n  border: 1px solid var(--welcome-border);\n  background: var(--welcome-bg);\n  box-shadow: var(--shadow-md);\n  animation: riseIn 0.5s ease 0.05s both;\n}\n.welcome-main {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1.35rem;\n  align-items: center;\n}\n.profile-identity {\n  display: flex;\n  align-items: center;\n  gap: 1.25rem;\n  flex-wrap: wrap;\n}\n.profile-photo {\n  display: grid;\n  justify-items: center;\n  gap: 0.5rem;\n}\n.photo-actions {\n  display: flex;\n  gap: 0.4rem;\n}\n.photo-btn {\n  padding: 0.3rem 0.7rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.78rem;\n  cursor: pointer;\n  transition: border-color 0.2s ease, color 0.2s ease;\n}\n.photo-btn:hover:not(.disabled):not(:disabled) {\n  border-color: var(--accent);\n  color: var(--heading);\n}\n.photo-btn.disabled,\n.photo-btn:disabled {\n  opacity: 0.6;\n  cursor: default;\n}\n.photo-hint,\n.photo-error {\n  margin: 0;\n  max-width: 12rem;\n  text-align: center;\n  font-size: 0.72rem;\n  line-height: 1.35;\n}\n.photo-hint {\n  color: var(--text-muted);\n}\n.photo-error {\n  color: var(--danger, #e5484d);\n}\n.avatar-display {\n  display: grid;\n  place-items: center;\n  width: 4.75rem;\n  height: 4.75rem;\n  font-size: 2.4rem;\n  border-radius: 50%;\n  background: rgba(255, 214, 10, 0.12);\n  border: 2px solid rgba(255, 214, 10, 0.4);\n  box-shadow: 0 0 0 6px rgba(255, 214, 10, 0.06);\n  flex-shrink: 0;\n  transition: transform 0.25s ease, box-shadow 0.25s ease;\n}\n.avatar-display:hover {\n  transform: scale(1.04);\n  box-shadow: 0 0 0 8px rgba(255, 214, 10, 0.1);\n}\n.avatar-picker {\n  display: grid;\n  gap: 0.4rem;\n}\n.avatar-name {\n  color: var(--heading);\n  font-size: 1.05rem;\n}\n.avatar-select {\n  min-width: 11.5rem;\n  max-width: 16rem;\n  padding: 0.5rem 0.7rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  font-size: 0.88rem;\n}\n.welcome-copy {\n  flex: 1;\n  min-width: min(100%, 14rem);\n}\n.welcome-copy .eyebrow {\n  color: var(--teal);\n}\n.welcome-copy h1 {\n  font-size: clamp(1.45rem, 2.6vw, 2rem);\n  max-width: 22ch;\n  margin: 0.2rem 0 0.5rem;\n}\n.welcome-sub {\n  margin: 0;\n  color: var(--welcome-sub);\n  font-size: 0.95rem;\n}\n.welcome-side {\n  display: grid;\n  gap: 1rem;\n  align-content: start;\n}\n.xp-badge {\n  display: inline-flex;\n  align-items: baseline;\n  gap: 0.35rem;\n  justify-self: start;\n  padding: 0.65rem 1.1rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  animation: pulseSoft 2.8s ease-in-out infinite;\n}\n.xp-value {\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  font-weight: 800;\n  line-height: 1;\n}\n.xp-unit {\n  font-weight: 800;\n  font-size: 0.85rem;\n  letter-spacing: 0.04em;\n}\n.badge-panel-head {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  margin-bottom: 0.55rem;\n}\n.badge-panel-head h3 {\n  margin: 0;\n  font-size: 0.95rem;\n  color: var(--heading);\n}\n.count-pill {\n  display: inline-grid;\n  place-items: center;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0 0.35rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.badge-row {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.badge-chip {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  padding: 0.4rem 0.7rem;\n  border-radius: var(--radius-pill);\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  font-size: 0.82rem;\n}\n.badge-chip strong {\n  color: inherit;\n  font-weight: 700;\n}\n.empty-hint {\n  margin: 0;\n  font-size: 0.85rem;\n}\n.student-stats {\n  margin-bottom: var(--space-5);\n  animation: riseIn 0.45s ease 0.12s both;\n}\n.student-stats .stat-card {\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\n.student-stats .stat-card:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  background: var(--elevated-bg-hover);\n}\n.student-layout {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);\n  gap: var(--space-4);\n  align-items: start;\n  animation: riseIn 0.5s ease 0.18s both;\n}\n.section-card {\n  display: grid;\n  gap: 1rem;\n  padding: 1.25rem 1.3rem 1.35rem;\n  margin-bottom: var(--space-3);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.section-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 1rem;\n  padding-bottom: 0.75rem;\n  border-bottom: 1px solid var(--border);\n}\n.section-head h2 {\n  margin: 0;\n  font-size: 1.25rem;\n}\n.section-hint {\n  margin: 0.3rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.88rem;\n}\n.course-grid {\n  display: grid;\n  gap: 1rem;\n}\n.course-card {\n  display: grid;\n  gap: 0.75rem;\n  padding: 1.15rem 1.2rem;\n  border-radius: var(--radius-lg);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    box-shadow 0.2s ease;\n}\n.course-card:hover {\n  transform: translateY(-2px);\n  border-color: rgba(95, 211, 188, 0.35);\n  box-shadow: var(--shadow-md);\n}\n.course-head {\n  display: flex;\n  justify-content: space-between;\n  gap: 0.85rem;\n  align-items: flex-start;\n}\n.course-head h3,\n.course-title {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.35rem, 2.2vw, 1.7rem);\n  font-weight: 800;\n  letter-spacing: -0.02em;\n  color: #93c5fd;\n  line-height: 1.25;\n}\n.course-desc {\n  margin: 0.35rem 0 0;\n  color: var(--text-muted);\n  font-size: 0.92rem;\n}\n.theme-tag {\n  flex-shrink: 0;\n  padding: 0.3rem 0.65rem;\n  border-radius: var(--radius-pill);\n  background: rgba(95, 211, 188, 0.14);\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  color: var(--teal);\n  font-size: 0.75rem;\n  font-weight: 700;\n  letter-spacing: 0.03em;\n  text-transform: uppercase;\n}\n.course-meta {\n  margin: 0;\n}\n.course-counts {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.55rem;\n}\n.course-counts span {\n  padding: 0.25rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n  color: var(--text-soft);\n  font-size: 0.78rem;\n  font-weight: 600;\n}\n.link-group {\n  display: grid;\n  gap: 0.45rem;\n}\n.group-label {\n  margin: 0;\n  font-size: 1.05rem;\n  font-weight: 800;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: var(--heading);\n}\n.group-label.assignment {\n  color: #fbbf24;\n  font-size: 1.28rem;\n}\n.group-label.exam {\n  color: #5fd3bc;\n  font-size: 1.28rem;\n}\n.group-label.quiz {\n  color: #c4b5fd;\n  font-size: 1.2rem;\n}\n.task-group {\n  display: grid;\n  gap: 0.5rem;\n}\n.task-group + .task-group {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px solid var(--border);\n}\n.item-list {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid transparent;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row:hover,\n.item-row.link-row:hover {\n  background: var(--elevated-bg-hover);\n  border-color: var(--border);\n}\n.item-row.assignment {\n  border-color: rgba(251, 191, 36, 0.28);\n  background: rgba(251, 191, 36, 0.1);\n}\n.item-row.exam {\n  border-color: rgba(95, 211, 188, 0.28);\n  background: rgba(95, 211, 188, 0.1);\n}\n.item-row.exam:hover {\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.item-row.assignment:hover {\n  border-color: rgba(251, 191, 36, 0.5);\n}\n.item-row.lessons-index {\n  border-color: rgba(147, 197, 253, 0.32);\n  background: rgba(59, 130, 246, 0.1);\n}\n.item-row.lessons-index:hover {\n  border-color: rgba(147, 197, 253, 0.55);\n}\n.item-row.lessons-index .item-body strong {\n  color: #93c5fd;\n  font-family: var(--font-display);\n  font-size: clamp(1.15rem, 2vw, 1.4rem);\n}\n.item-body {\n  min-width: 0;\n}\n.item-body strong {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-row.assignment .item-body strong {\n  color: #fcd34d;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.item-row.exam .item-body strong {\n  color: #99f6e4;\n  font-family: var(--font-display);\n  font-size: clamp(1.2rem, 2vw, 1.45rem);\n  font-weight: 800;\n  line-height: 1.3;\n}\n.chip.quiz {\n  background: rgba(167, 139, 250, 0.18);\n  border-color: rgba(196, 181, 253, 0.4);\n  color: #ddd6fe;\n  font-weight: 800;\n  font-size: 1.05rem;\n}\n.chip.material {\n  background: rgba(45, 212, 191, 0.16);\n  border-color: rgba(94, 234, 212, 0.4);\n  color: #99f6e4;\n  font-weight: 800;\n  font-size: 1.05rem;\n}\n:host-context([data-theme="light"]) .chip.material {\n  background: rgba(13, 148, 136, 0.12);\n  border-color: rgba(13, 148, 136, 0.35);\n  color: #0f766e;\n}\n:host-context([data-theme="light"]) .course-title,\n:host-context([data-theme="light"]) .course-head h3 {\n  color: #0b3d91;\n}\n:host-context([data-theme="light"]) .group-label.assignment {\n  color: #b45309;\n}\n:host-context([data-theme="light"]) .group-label.exam {\n  color: #0f766e;\n}\n:host-context([data-theme="light"]) .group-label.quiz {\n  color: #6d28d9;\n}\n:host-context([data-theme="light"]) .item-row.assignment {\n  border-color: rgba(180, 83, 9, 0.22);\n  background: rgba(245, 158, 11, 0.1);\n}\n:host-context([data-theme="light"]) .item-row.exam {\n  border-color: rgba(15, 118, 110, 0.22);\n  background: rgba(15, 118, 110, 0.08);\n}\n:host-context([data-theme="light"]) .item-row.lessons-index {\n  border-color: rgba(11, 61, 145, 0.22);\n  background: rgba(37, 99, 235, 0.08);\n}\n:host-context([data-theme="light"]) .item-row.lessons-index .item-body strong {\n  color: #0b3d91;\n}\n:host-context([data-theme="light"]) .item-row.assignment .item-body strong {\n  color: #9a3412;\n}\n:host-context([data-theme="light"]) .item-row.exam .item-body strong {\n  color: #115e59;\n}\n:host-context([data-theme="light"]) .chip.quiz {\n  background: rgba(109, 40, 217, 0.12);\n  border-color: rgba(109, 40, 217, 0.28);\n  color: #5b21b6;\n}\n.item-body .meta {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-btn {\n  flex-shrink: 0;\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-pill);\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  text-decoration: none;\n  font-weight: 800;\n  font-size: 0.82rem;\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n  box-shadow: 0 6px 16px rgba(255, 159, 28, 0.2);\n}\n.action-btn:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 10px 20px rgba(255, 159, 28, 0.28);\n}\n.action-ghost {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n  font-size: 0.9rem;\n}\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n@keyframes riseIn {\n  from {\n    opacity: 0;\n    transform: translateY(10px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@keyframes pulseSoft {\n  0%, 100% {\n    box-shadow: 0 10px 28px rgba(255, 159, 28, 0.28);\n  }\n  50% {\n    box-shadow: 0 12px 32px rgba(255, 159, 28, 0.4);\n  }\n}\n@media (max-width: 980px) {\n  .welcome-panel,\n  .student-layout {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 700px) {\n  .welcome-panel {\n    padding: 1.2rem 1.1rem;\n  }\n  .welcome-main {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .item-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-btn,\n  .action-ghost {\n    align-self: stretch;\n    text-align: center;\n    justify-content: center;\n  }\n}\nhtml[dir=rtl] .welcome-panel,\nhtml[dir=rtl] .student-layout,\nhtml[dir=rtl] .course-head,\nhtml[dir=rtl] .item-row,\nhtml[dir=rtl] .badge-panel-head,\nhtml[dir=rtl] .section-head {\n  direction: rtl;\n}\n/*# sourceMappingURL=student-home.component.css.map */\n'] }]
   }], () => [], null);
 })();
 (() => {
@@ -67163,6 +67314,673 @@ var StudentLessonsComponent = class _StudentLessonsComponent {
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(StudentLessonsComponent, { className: "StudentLessonsComponent", filePath: "src/app/pages/student-lessons/student-lessons.component.ts", lineNumber: 32 });
+})();
+
+// src/app/shared/material-viewer/material-viewer.component.ts
+function MaterialViewerComponent_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "p", 1);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275domElementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "common.loading"));
+  }
+}
+function MaterialViewerComponent_Conditional_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "p", 2);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275domElementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "materials.previewFailed"));
+  }
+}
+function MaterialViewerComponent_Conditional_3_Conditional_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "img", 3);
+  }
+  if (rf & 2) {
+    const url_r1 = \u0275\u0275nextContext();
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275domProperty("src", url_r1, \u0275\u0275sanitizeUrl)("alt", ctx_r1.title());
+  }
+}
+function MaterialViewerComponent_Conditional_3_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "audio", 4);
+  }
+  if (rf & 2) {
+    const url_r1 = \u0275\u0275nextContext();
+    \u0275\u0275domProperty("src", url_r1);
+  }
+}
+function MaterialViewerComponent_Conditional_3_Conditional_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElement(0, "iframe", 5);
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275domProperty("src", ctx_r1.safePdfUrl(), \u0275\u0275sanitizeResourceUrl)("title", ctx_r1.title());
+  }
+}
+function MaterialViewerComponent_Conditional_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275conditionalCreate(0, MaterialViewerComponent_Conditional_3_Conditional_0_Template, 1, 2, "img", 3)(1, MaterialViewerComponent_Conditional_3_Conditional_1_Template, 1, 1, "audio", 4)(2, MaterialViewerComponent_Conditional_3_Conditional_2_Template, 1, 2, "iframe", 5);
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275conditional(ctx_r1.kind() === "Image" ? 0 : ctx_r1.kind() === "Audio" ? 1 : 2);
+  }
+}
+var MaterialViewerComponent = class _MaterialViewerComponent {
+  constructor() {
+    this.http = inject2(HttpClient);
+    this.api = inject2(LearningApiService);
+    this.sanitizer = inject2(DomSanitizer);
+    this.destroyRef = inject2(DestroyRef);
+    this.materialId = input(
+      null,
+      ...ngDevMode ? [{ debugName: "materialId" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.mediaAssetId = input(
+      null,
+      ...ngDevMode ? [{ debugName: "mediaAssetId" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.kind = input(
+      "Image",
+      ...ngDevMode ? [{ debugName: "kind" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.title = input(
+      "",
+      ...ngDevMode ? [{ debugName: "title" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.compact = input(
+      false,
+      ...ngDevMode ? [{ debugName: "compact" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.blobUrl = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "blobUrl" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.loading = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "loading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.failed = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "failed" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.safePdfUrl = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "safePdfUrl" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.activeObjectUrl = null;
+    this.isPdfKind = computed(
+      () => String(this.kind()).toLowerCase() === "pdf",
+      ...ngDevMode ? [{ debugName: "isPdfKind" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    effect(() => {
+      const materialId = this.materialId();
+      this.clearObjectUrl();
+      this.failed.set(false);
+      this.safePdfUrl.set(null);
+      if (!materialId) {
+        this.blobUrl.set(null);
+        return;
+      }
+      this.loading.set(true);
+      this.http.get(this.api.learningMaterialFileUrl(materialId), { responseType: "blob" }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (blob) => {
+          this.loading.set(false);
+          this.clearObjectUrl();
+          this.activeObjectUrl = URL.createObjectURL(blob);
+          this.blobUrl.set(this.activeObjectUrl);
+          const pdf = blob.type === "application/pdf" || this.isPdfKind();
+          if (pdf) {
+            this.safePdfUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(this.activeObjectUrl));
+          }
+        },
+        error: () => {
+          this.loading.set(false);
+          this.clearObjectUrl();
+          this.failed.set(true);
+        }
+      });
+    });
+    this.destroyRef.onDestroy(() => this.clearObjectUrl());
+  }
+  clearObjectUrl() {
+    if (this.activeObjectUrl) {
+      URL.revokeObjectURL(this.activeObjectUrl);
+      this.activeObjectUrl = null;
+    }
+  }
+  static {
+    this.\u0275fac = function MaterialViewerComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _MaterialViewerComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _MaterialViewerComponent, selectors: [["app-material-viewer"]], inputs: { materialId: [1, "materialId"], mediaAssetId: [1, "mediaAssetId"], kind: [1, "kind"], title: [1, "title"], compact: [1, "compact"] }, decls: 4, vars: 3, consts: [[1, "material-viewer"], [1, "meta"], [1, "meta", "empty-state"], [1, "material-image", 3, "src", "alt"], ["controls", "", 1, "material-audio", 3, "src"], [1, "material-pdf", 3, "src", "title"]], template: function MaterialViewerComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275domElementStart(0, "div", 0);
+        \u0275\u0275conditionalCreate(1, MaterialViewerComponent_Conditional_1_Template, 3, 3, "p", 1)(2, MaterialViewerComponent_Conditional_2_Template, 3, 3, "p", 2)(3, MaterialViewerComponent_Conditional_3_Template, 3, 1);
+        \u0275\u0275domElementEnd();
+      }
+      if (rf & 2) {
+        let tmp_1_0;
+        \u0275\u0275classProp("compact", ctx.compact());
+        \u0275\u0275advance();
+        \u0275\u0275conditional(ctx.loading() ? 1 : ctx.failed() ? 2 : (tmp_1_0 = ctx.blobUrl()) ? 3 : -1, tmp_1_0);
+      }
+    }, dependencies: [TranslatePipe], styles: ["\n.material-viewer[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.material-image[_ngcontent-%COMP%] {\n  max-width: 100%;\n  max-height: 420px;\n  border-radius: 12px;\n  object-fit: contain;\n}\n.material-audio[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.material-pdf[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 480px;\n  border: 1px solid var(--border, #ddd);\n  border-radius: 12px;\n  background: #fff;\n}\n.compact[_ngcontent-%COMP%]   .material-image[_ngcontent-%COMP%] {\n  max-height: 240px;\n}\n.compact[_ngcontent-%COMP%]   .material-pdf[_ngcontent-%COMP%] {\n  height: 320px;\n}\n/*# sourceMappingURL=material-viewer.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MaterialViewerComponent, [{
+    type: Component,
+    args: [{ selector: "app-material-viewer", imports: [TranslatePipe], template: `
+    <div class="material-viewer" [class.compact]="compact()">
+      @if (loading()) {
+        <p class="meta">{{ 'common.loading' | t }}</p>
+      } @else if (failed()) {
+        <p class="meta empty-state">{{ 'materials.previewFailed' | t }}</p>
+      } @else if (blobUrl(); as url) {
+        @if (kind() === 'Image') {
+          <img [src]="url" [alt]="title()" class="material-image" />
+        } @else if (kind() === 'Audio') {
+          <audio controls [src]="url" class="material-audio"></audio>
+        } @else {
+          <iframe
+            class="material-pdf"
+            [src]="safePdfUrl()!"
+            [title]="title()"
+          ></iframe>
+        }
+      }
+    </div>
+  `, styles: ["/* angular:styles/component:css;d81fba84d325c0e81f4e123d4334b489fab8799e3329a621267e2f1dbab688cb;D:/Projects/CodeKids/src/frontend/src/app/shared/material-viewer/material-viewer.component.ts */\n.material-viewer {\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.material-image {\n  max-width: 100%;\n  max-height: 420px;\n  border-radius: 12px;\n  object-fit: contain;\n}\n.material-audio {\n  width: 100%;\n}\n.material-pdf {\n  width: 100%;\n  height: 480px;\n  border: 1px solid var(--border, #ddd);\n  border-radius: 12px;\n  background: #fff;\n}\n.compact .material-image {\n  max-height: 240px;\n}\n.compact .material-pdf {\n  height: 320px;\n}\n/*# sourceMappingURL=material-viewer.component.css.map */\n"] }]
+  }], () => [], { materialId: [{ type: Input, args: [{ isSignal: true, alias: "materialId", required: false }] }], mediaAssetId: [{ type: Input, args: [{ isSignal: true, alias: "mediaAssetId", required: false }] }], kind: [{ type: Input, args: [{ isSignal: true, alias: "kind", required: false }] }], title: [{ type: Input, args: [{ isSignal: true, alias: "title", required: false }] }], compact: [{ type: Input, args: [{ isSignal: true, alias: "compact", required: false }] }] });
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(MaterialViewerComponent, { className: "MaterialViewerComponent", filePath: "src/app/shared/material-viewer/material-viewer.component.ts", lineNumber: 82 });
+})();
+
+// src/app/pages/student-materials/student-materials.component.ts
+var _forTrack07 = ($index, $item) => $item.id;
+function StudentMaterialsComponent_Conditional_20_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 6)(1, "p", 8);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r0.error());
+  }
+}
+function StudentMaterialsComponent_Conditional_21_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 6)(1, "p", 2);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 1, "common.loading"));
+  }
+}
+function StudentMaterialsComponent_Conditional_22_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 6)(1, "p", 9);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 1, "materials.studentEmpty"));
+  }
+}
+function StudentMaterialsComponent_Conditional_23_For_1_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "h2");
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const group_r2 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(group_r2.title);
+  }
+}
+function StudentMaterialsComponent_Conditional_23_For_1_For_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 12);
+    \u0275\u0275listener("click", function StudentMaterialsComponent_Conditional_23_For_1_For_4_Template_button_click_0_listener() {
+      const material_r4 = \u0275\u0275restoreView(_r3).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r0.open(material_r4));
+    });
+    \u0275\u0275elementStart(1, "div", 13)(2, "strong");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "p", 2);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(6, "span", 14);
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const material_r4 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2("", ctx_r0.kindIcon(material_r4.kind), " ", material_r4.title);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(material_r4.fileName);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(8, 4, "materials.open"));
+  }
+}
+function StudentMaterialsComponent_Conditional_23_For_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 6);
+    \u0275\u0275conditionalCreate(1, StudentMaterialsComponent_Conditional_23_For_1_Conditional_1_Template, 2, 1, "h2");
+    \u0275\u0275elementStart(2, "div", 10);
+    \u0275\u0275repeaterCreate(3, StudentMaterialsComponent_Conditional_23_For_1_For_4_Template, 9, 6, "button", 11, _forTrack07);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const group_r2 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275conditional(group_r2.title ? 1 : -1);
+    \u0275\u0275advance(2);
+    \u0275\u0275repeater(group_r2.items);
+  }
+}
+function StudentMaterialsComponent_Conditional_23_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275repeaterCreate(0, StudentMaterialsComponent_Conditional_23_For_1_Template, 5, 1, "section", 6, _forTrack07);
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275repeater(ctx_r0.groups());
+  }
+}
+function StudentMaterialsComponent_Conditional_24_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 15);
+    \u0275\u0275listener("click", function StudentMaterialsComponent_Conditional_24_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.close());
+    });
+    \u0275\u0275elementStart(1, "div", 16);
+    \u0275\u0275listener("click", function StudentMaterialsComponent_Conditional_24_Template_div_click_1_listener($event) {
+      return $event.stopPropagation();
+    });
+    \u0275\u0275elementStart(2, "header", 17)(3, "h3");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "button", 4);
+    \u0275\u0275listener("click", function StudentMaterialsComponent_Conditional_24_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.close());
+    });
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275element(8, "app-material-viewer", 18);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const item_r6 = ctx;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(item_r6.title);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 5, "common.close"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("materialId", item_r6.id)("kind", item_r6.kind)("title", item_r6.title);
+  }
+}
+var StudentMaterialsComponent = class _StudentMaterialsComponent {
+  constructor() {
+    this.auth = inject2(AuthService);
+    this.api = inject2(LearningApiService);
+    this.locale = inject2(LocaleService);
+    this.route = inject2(ActivatedRoute);
+    this.courseTitle = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "courseTitle" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.loading = signal(
+      true,
+      ...ngDevMode ? [{ debugName: "loading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.error = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "error" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.materials = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "materials" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.unitTitles = signal(
+      /* @__PURE__ */ new Map(),
+      ...ngDevMode ? [{ debugName: "unitTitles" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.lessonTitles = signal(
+      /* @__PURE__ */ new Map(),
+      ...ngDevMode ? [{ debugName: "lessonTitles" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.openMaterial = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "openMaterial" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.previewKey = signal(
+      0,
+      ...ngDevMode ? [{ debugName: "previewKey" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.groups = computed(
+      () => {
+        const items = this.materials();
+        const unitTitles = this.unitTitles();
+        const lessonTitles = this.lessonTitles();
+        const courseLevel = items.filter((m) => !m.unitId && !m.lessonId);
+        const byUnit = /* @__PURE__ */ new Map();
+        const byLesson = /* @__PURE__ */ new Map();
+        for (const item of items) {
+          if (item.lessonId) {
+            const list = byLesson.get(item.lessonId) ?? [];
+            list.push(item);
+            byLesson.set(item.lessonId, list);
+          } else if (item.unitId) {
+            const list = byUnit.get(item.unitId) ?? [];
+            list.push(item);
+            byUnit.set(item.unitId, list);
+          }
+        }
+        const groups = [];
+        if (courseLevel.length) {
+          groups.push({ id: "course", title: "", items: courseLevel });
+        }
+        for (const [unitId, unitItems] of byUnit) {
+          groups.push({
+            id: `unit-${unitId}`,
+            title: unitTitles.get(unitId) ? `${this.locale.t("materials.scopeUnit")}: ${unitTitles.get(unitId)}` : "",
+            items: unitItems
+          });
+        }
+        for (const [lessonId, lessonItems] of byLesson) {
+          groups.push({
+            id: `lesson-${lessonId}`,
+            title: lessonTitles.get(lessonId) ? `${this.locale.t("materials.scopeLesson")}: ${lessonTitles.get(lessonId)}` : "",
+            items: lessonItems
+          });
+        }
+        return groups;
+      },
+      ...ngDevMode ? [{ debugName: "groups" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    const courseId = this.route.snapshot.paramMap.get("courseId");
+    this.api.getLearningMaterialPage({ courseId, all: true }).subscribe({
+      next: (page) => {
+        this.courseTitle.set(page.courseTitle);
+        this.materials.set(page.items);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, "materials.loadFailed"));
+        this.loading.set(false);
+      }
+    });
+    this.api.getCourse(courseId).subscribe({
+      next: (course) => {
+        const units = /* @__PURE__ */ new Map();
+        for (const unit of course.units ?? []) {
+          units.set(unit.id, unit.title);
+        }
+        const lessons = /* @__PURE__ */ new Map();
+        const unitLessons = (course.units ?? []).flatMap((u2) => u2.lessons ?? []);
+        for (const lesson of [...course.lessons ?? [], ...unitLessons]) {
+          lessons.set(lesson.id, lesson.title);
+        }
+        this.unitTitles.set(units);
+        this.lessonTitles.set(lessons);
+      },
+      error: () => {
+      }
+    });
+  }
+  open(material) {
+    this.openMaterial.set(material);
+    this.previewKey.update((k) => k + 1);
+  }
+  close() {
+    this.openMaterial.set(null);
+  }
+  kindIcon(kind) {
+    if (kind === "Pdf")
+      return "\u{1F4C4}";
+    if (kind === "Audio")
+      return "\u{1F3A7}";
+    return "\u{1F5BC}\uFE0F";
+  }
+  static {
+    this.\u0275fac = function StudentMaterialsComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _StudentMaterialsComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _StudentMaterialsComponent, selectors: [["app-student-materials"]], decls: 25, vars: 14, consts: [[1, "page", "student-materials-page"], [1, "topbar"], [1, "meta"], [1, "topbar-actions"], ["type", "button", 1, "ghost", 3, "click"], ["routerLink", "/student", 1, "back"], [1, "section-card"], [1, "preview-overlay"], [1, "feedback"], [1, "meta", "empty-state"], [1, "item-list"], ["type", "button", 1, "item-row", "link-row"], ["type", "button", 1, "item-row", "link-row", 3, "click"], [1, "item-body"], [1, "action-ghost"], [1, "preview-overlay", 3, "click"], [1, "preview-card", 3, "click"], [1, "preview-head"], [3, "materialId", "kind", "title"]], template: function StudentMaterialsComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0);
+        \u0275\u0275element(1, "app-api-busy-indicator");
+        \u0275\u0275elementStart(2, "header", 1)(3, "div");
+        \u0275\u0275element(4, "app-site-brand");
+        \u0275\u0275elementStart(5, "h1");
+        \u0275\u0275text(6);
+        \u0275\u0275pipe(7, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "p", 2);
+        \u0275\u0275text(9);
+        \u0275\u0275pipe(10, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(11, "div", 3);
+        \u0275\u0275element(12, "app-theme-switcher")(13, "app-language-switcher");
+        \u0275\u0275elementStart(14, "button", 4);
+        \u0275\u0275listener("click", function StudentMaterialsComponent_Template_button_click_14_listener() {
+          return ctx.auth.logout();
+        });
+        \u0275\u0275text(15);
+        \u0275\u0275pipe(16, "t");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(17, "a", 5);
+        \u0275\u0275text(18);
+        \u0275\u0275pipe(19, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(20, StudentMaterialsComponent_Conditional_20_Template, 3, 1, "section", 6)(21, StudentMaterialsComponent_Conditional_21_Template, 4, 3, "section", 6)(22, StudentMaterialsComponent_Conditional_22_Template, 4, 3, "section", 6)(23, StudentMaterialsComponent_Conditional_23_Template, 2, 0);
+        \u0275\u0275conditionalCreate(24, StudentMaterialsComponent_Conditional_24_Template, 9, 7, "div", 7);
+        \u0275\u0275elementEnd();
+      }
+      if (rf & 2) {
+        let tmp_5_0;
+        \u0275\u0275advance(6);
+        \u0275\u0275textInterpolate(ctx.courseTitle() || \u0275\u0275pipeBind1(7, 6, "materials.title"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 8, "materials.studentHint"));
+        \u0275\u0275advance(6);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(16, 10, "common.signOut"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(19, 12, "common.backMissions"));
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional(ctx.error() ? 20 : ctx.loading() ? 21 : !ctx.groups().length ? 22 : 23);
+        \u0275\u0275advance(4);
+        \u0275\u0275conditional((tmp_5_0 = ctx.openMaterial()) ? 24 : -1, tmp_5_0);
+      }
+    }, dependencies: [
+      RouterLink,
+      LanguageSwitcherComponent,
+      ThemeSwitcherComponent,
+      SiteBrandComponent,
+      ApiBusyIndicatorComponent,
+      MaterialViewerComponent,
+      TranslatePipe
+    ], styles: ["\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.student-lessons-page[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_pageIn 0.4s ease;\n}\n.topbar-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-hint[_ngcontent-%COMP%] {\n  margin: 0 0 1rem;\n  color: var(--text-muted);\n}\n.lesson-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n}\n.lesson-group[_ngcontent-%COMP%]    + .lesson-group[_ngcontent-%COMP%] {\n  margin-top: 1.25rem;\n  padding-top: 1.1rem;\n  border-top: 1px solid var(--border);\n}\n.lesson-group[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.1rem;\n  color: var(--heading);\n}\n.item-list[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row[_ngcontent-%COMP%] {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row[_ngcontent-%COMP%]:hover {\n  background: var(--elevated-bg-hover);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.item-body[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-body[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-ghost[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n}\n@media (max-width: 700px) {\n  .item-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-ghost[_ngcontent-%COMP%] {\n    align-self: stretch;\n    text-align: center;\n  }\n}\n/*# sourceMappingURL=student-lessons.component.css.map */", "\n.preview-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  background: rgba(15, 23, 42, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 60;\n  padding: 1rem;\n}\n.preview-card[_ngcontent-%COMP%] {\n  background: var(--panel-bg, #fff);\n  border-radius: var(--radius-lg, 16px);\n  padding: 1.25rem;\n  max-width: min(860px, 95vw);\n  max-height: 90vh;\n  overflow: auto;\n  width: 100%;\n}\n.preview-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n/*# sourceMappingURL=student-materials.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(StudentMaterialsComponent, [{
+    type: Component,
+    args: [{ selector: "app-student-materials", imports: [
+      RouterLink,
+      TranslatePipe,
+      LanguageSwitcherComponent,
+      ThemeSwitcherComponent,
+      SiteBrandComponent,
+      ApiBusyIndicatorComponent,
+      MaterialViewerComponent
+    ], template: `<div class="page student-materials-page">
+  <app-api-busy-indicator />
+  <header class="topbar">
+    <div>
+      <app-site-brand />
+      <h1>{{ courseTitle() || ('materials.title' | t) }}</h1>
+      <p class="meta">{{ 'materials.studentHint' | t }}</p>
+    </div>
+    <div class="topbar-actions">
+      <app-theme-switcher />
+      <app-language-switcher />
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    </div>
+  </header>
+
+  <a class="back" routerLink="/student">{{ 'common.backMissions' | t }}</a>
+
+  @if (error()) {
+    <section class="section-card">
+      <p class="feedback">{{ error() }}</p>
+    </section>
+  } @else if (loading()) {
+    <section class="section-card">
+      <p class="meta">{{ 'common.loading' | t }}</p>
+    </section>
+  } @else if (!groups().length) {
+    <section class="section-card">
+      <p class="meta empty-state">{{ 'materials.studentEmpty' | t }}</p>
+    </section>
+  } @else {
+    @for (group of groups(); track group.id) {
+      <section class="section-card">
+        @if (group.title) {
+          <h2>{{ group.title }}</h2>
+        }
+        <div class="item-list">
+          @for (material of group.items; track material.id) {
+            <button type="button" class="item-row link-row" (click)="open(material)">
+              <div class="item-body">
+                <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>
+                <p class="meta">{{ material.fileName }}</p>
+              </div>
+              <span class="action-ghost">{{ 'materials.open' | t }}</span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  @if (openMaterial(); as item) {
+    <div class="preview-overlay" (click)="close()">
+      <div class="preview-card" (click)="$event.stopPropagation()">
+        <header class="preview-head">
+          <h3>{{ item.title }}</h3>
+          <button type="button" class="ghost" (click)="close()">{{ 'common.close' | t }}</button>
+        </header>
+        <app-material-viewer
+          [materialId]="item.id"
+          [kind]="item.kind"
+          [title]="item.title"
+        />
+      </div>
+    </div>
+  }
+</div>
+`, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/student-lessons/student-lessons.component.css */\n.student-lessons-page {\n  animation: pageIn 0.4s ease;\n}\n.topbar-actions {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-hint {\n  margin: 0 0 1rem;\n  color: var(--text-muted);\n}\n.lesson-group {\n  display: grid;\n  gap: 0.65rem;\n}\n.lesson-group + .lesson-group {\n  margin-top: 1.25rem;\n  padding-top: 1.1rem;\n  border-top: 1px solid var(--border);\n}\n.lesson-group h2 {\n  margin: 0;\n  font-size: 1.1rem;\n  color: var(--heading);\n}\n.item-list {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row:hover {\n  background: var(--elevated-bg-hover);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.item-body strong {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-body .meta {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-ghost {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n}\n@media (max-width: 700px) {\n  .item-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-ghost {\n    align-self: stretch;\n    text-align: center;\n  }\n}\n/*# sourceMappingURL=student-lessons.component.css.map */\n", "/* src/app/pages/student-materials/student-materials.component.css */\n.preview-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(15, 23, 42, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 60;\n  padding: 1rem;\n}\n.preview-card {\n  background: var(--panel-bg, #fff);\n  border-radius: var(--radius-lg, 16px);\n  padding: 1.25rem;\n  max-width: min(860px, 95vw);\n  max-height: 90vh;\n  overflow: auto;\n  width: 100%;\n}\n.preview-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n/*# sourceMappingURL=student-materials.component.css.map */\n"] }]
+  }], () => [], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(StudentMaterialsComponent, { className: "StudentMaterialsComponent", filePath: "src/app/pages/student-materials/student-materials.component.ts", lineNumber: 34 });
 })();
 
 // src/app/shared/protected-video-player/protected-video-player.component.ts
@@ -67678,7 +68496,7 @@ var SafeHtmlPipe = class _SafeHtmlPipe {
 var _c07 = (a0) => ({ theme: a0 });
 var _c16 = (a0, a1) => ({ n: a0, title: a1 });
 var _c24 = (a0, a1) => ({ earned: a0, total: a1 });
-var _forTrack07 = ($index, $item) => $item.id;
+var _forTrack08 = ($index, $item) => $item.id;
 function LessonPlayComponent_Conditional_5_Conditional_12_For_3_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -67712,7 +68530,7 @@ function LessonPlayComponent_Conditional_5_Conditional_12_Conditional_4_Template
 function LessonPlayComponent_Conditional_5_Conditional_12_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 5)(1, "nav", 10);
-    \u0275\u0275repeaterCreate(2, LessonPlayComponent_Conditional_5_Conditional_12_For_3_Template, 2, 3, "button", 8, _forTrack07);
+    \u0275\u0275repeaterCreate(2, LessonPlayComponent_Conditional_5_Conditional_12_For_3_Template, 2, 3, "button", 8, _forTrack08);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(4, LessonPlayComponent_Conditional_5_Conditional_12_Conditional_4_Template, 1, 4, "app-protected-video-player", 11);
     \u0275\u0275elementEnd();
@@ -67880,7 +68698,7 @@ function LessonPlayComponent_Conditional_5_Template(rf, ctx) {
     \u0275\u0275text(16);
     \u0275\u0275pipe(17, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(18, LessonPlayComponent_Conditional_5_For_19_Template, 3, 9, "button", 8, _forTrack07);
+    \u0275\u0275repeaterCreate(18, LessonPlayComponent_Conditional_5_For_19_Template, 3, 9, "button", 8, _forTrack08);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(20, LessonPlayComponent_Conditional_5_Conditional_20_Template, 12, 13, "article", 7);
     \u0275\u0275elementEnd();
@@ -69149,7 +69967,7 @@ var IconActionButtonComponent = class _IconActionButtonComponent {
 })();
 
 // src/app/shared/map-question-board/map-question-board.component.ts
-var _forTrack08 = ($index, $item) => $item.id;
+var _forTrack09 = ($index, $item) => $item.id;
 function MapQuestionBoardComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 0);
@@ -69452,13 +70270,13 @@ function MapQuestionBoardComponent_Conditional_1_Template(rf, ctx) {
       return \u0275\u0275resetView(ctx_r2.onBoardPointerUp());
     });
     \u0275\u0275element(3, "img", 3);
-    \u0275\u0275repeaterCreate(4, MapQuestionBoardComponent_Conditional_1_For_5_Template, 3, 10, "button", 4, _forTrack08);
+    \u0275\u0275repeaterCreate(4, MapQuestionBoardComponent_Conditional_1_For_5_Template, 3, 10, "button", 4, _forTrack09);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(6, "div", 5)(7, "h4");
     \u0275\u0275text(8);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(10, MapQuestionBoardComponent_Conditional_1_For_11_Template, 5, 2, "div", 6, _forTrack08, false, MapQuestionBoardComponent_Conditional_1_ForEmpty_12_Template, 3, 3, "p", 0);
+    \u0275\u0275repeaterCreate(10, MapQuestionBoardComponent_Conditional_1_For_11_Template, 5, 2, "div", 6, _forTrack09, false, MapQuestionBoardComponent_Conditional_1_ForEmpty_12_Template, 3, 3, "p", 0);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -69878,7 +70696,7 @@ function clampPercent(value) {
 
 // src/app/shared/question-play-prompt/question-play-prompt.component.ts
 var _c08 = () => [];
-var _forTrack09 = ($index, $item) => $item.id;
+var _forTrack010 = ($index, $item) => $item.id;
 var _forTrack12 = ($index, $item) => $item.key;
 function QuestionPlayPromptComponent_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
@@ -69930,7 +70748,7 @@ function QuestionPlayPromptComponent_Conditional_5_For_1_Template(rf, ctx) {
 }
 function QuestionPlayPromptComponent_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275repeaterCreate(0, QuestionPlayPromptComponent_Conditional_5_For_1_Template, 2, 5, "div", 9, _forTrack09);
+    \u0275\u0275repeaterCreate(0, QuestionPlayPromptComponent_Conditional_5_For_1_Template, 2, 5, "div", 9, _forTrack010);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
@@ -70962,7 +71780,7 @@ var AttemptGuardComponent = class _AttemptGuardComponent {
 var _c010 = (a0) => ({ count: a0 });
 var _c18 = (a0) => ({ minutes: a0 });
 var _c25 = (a0, a1) => ({ earned: a0, total: a1 });
-var _forTrack010 = ($index, $item) => $item.id;
+var _forTrack011 = ($index, $item) => $item.id;
 function QuizPlayComponent_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 1);
@@ -71108,7 +71926,7 @@ function QuizPlayComponent_Conditional_3_Conditional_16_For_1_Template(rf, ctx) 
 function QuizPlayComponent_Conditional_3_Conditional_16_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275repeaterCreate(0, QuizPlayComponent_Conditional_3_Conditional_16_For_1_Template, 4, 5, "div", 12, _forTrack010);
+    \u0275\u0275repeaterCreate(0, QuizPlayComponent_Conditional_3_Conditional_16_For_1_Template, 4, 5, "div", 12, _forTrack011);
     \u0275\u0275elementStart(2, "button", 13);
     \u0275\u0275listener("click", function QuizPlayComponent_Conditional_3_Conditional_16_Template_button_click_2_listener() {
       \u0275\u0275restoreView(_r4);
@@ -71604,7 +72422,7 @@ var PageFeedbackComponent = class _PageFeedbackComponent {
 })();
 
 // src/app/pages/assignment-play/assignment-play.component.ts
-var _forTrack011 = ($index, $item) => $item.questionId;
+var _forTrack012 = ($index, $item) => $item.questionId;
 var _forTrack13 = ($index, $item) => $item.id;
 function AssignmentPlayComponent_Conditional_12_Template(rf, ctx) {
   if (rf & 1) {
@@ -71688,7 +72506,7 @@ function AssignmentPlayComponent_Conditional_13_Template(rf, ctx) {
     \u0275\u0275element(7, "app-question-image-display", 5);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(8, AssignmentPlayComponent_Conditional_13_Conditional_8_Template, 3, 5, "section", 4);
-    \u0275\u0275repeaterCreate(9, AssignmentPlayComponent_Conditional_13_For_10_Template, 9, 11, "section", 6, _forTrack011);
+    \u0275\u0275repeaterCreate(9, AssignmentPlayComponent_Conditional_13_For_10_Template, 9, 11, "section", 6, _forTrack012);
   }
   if (rf & 2) {
     const submission_r1 = ctx;
@@ -72015,7 +72833,7 @@ var _c42 = (a0) => ({ course: a0 });
 var _c52 = (a0) => ({ courseId: a0 });
 var _c62 = (a0) => ({ date: a0 });
 var _c72 = (a0) => ({ xp: a0 });
-var _forTrack012 = ($index, $item) => $item.id;
+var _forTrack013 = ($index, $item) => $item.id;
 var _forTrack14 = ($index, $item) => $item.studentId;
 var _forTrack2 = ($index, $item) => $item.url + $item.name;
 var _forTrack3 = ($index, $item) => $item.weekStartDate + ($item.teacherName || "");
@@ -72084,7 +72902,7 @@ function ParentDashboardComponent_Conditional_28_Conditional_34_Template(rf, ctx
     \u0275\u0275text(1);
     \u0275\u0275pipe(2, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(3, ParentDashboardComponent_Conditional_28_Conditional_34_For_4_Template, 2, 0, null, null, _forTrack012);
+    \u0275\u0275repeaterCreate(3, ParentDashboardComponent_Conditional_28_Conditional_34_For_4_Template, 2, 0, null, null, _forTrack013);
   }
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext(2);
@@ -72349,7 +73167,7 @@ function ParentDashboardComponent_Conditional_28_Template(rf, ctx) {
     \u0275\u0275pipe(33, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(34, ParentDashboardComponent_Conditional_28_Conditional_34_Template, 5, 3);
-    \u0275\u0275repeaterCreate(35, ParentDashboardComponent_Conditional_28_For_36_Template, 10, 11, "div", 17, _forTrack012, false, ParentDashboardComponent_Conditional_28_ForEmpty_37_Template, 3, 3, "p", 18);
+    \u0275\u0275repeaterCreate(35, ParentDashboardComponent_Conditional_28_For_36_Template, 10, 11, "div", 17, _forTrack013, false, ParentDashboardComponent_Conditional_28_ForEmpty_37_Template, 3, 3, "p", 18);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(38, "section")(39, "header", 9)(40, "h2");
     \u0275\u0275text(41);
@@ -72877,21 +73695,21 @@ function ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_Te
     \u0275\u0275pipe(14, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(15, "div", 45);
-    \u0275\u0275repeaterCreate(16, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Template, 10, 7, "article", 46, _forTrack012, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_18_Template, 3, 3, "p", 47);
+    \u0275\u0275repeaterCreate(16, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_17_Template, 10, 7, "article", 46, _forTrack013, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_18_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(19, "div", 44)(20, "p", 21);
     \u0275\u0275text(21);
     \u0275\u0275pipe(22, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(23, "div", 45);
-    \u0275\u0275repeaterCreate(24, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Template, 10, 7, "article", 46, _forTrack012, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_26_Template, 3, 3, "p", 47);
+    \u0275\u0275repeaterCreate(24, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_25_Template, 10, 7, "article", 46, _forTrack013, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_26_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(27, "div", 44)(28, "p", 21);
     \u0275\u0275text(29);
     \u0275\u0275pipe(30, "t");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(31, "div", 45);
-    \u0275\u0275repeaterCreate(32, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Template, 11, 11, "article", 46, _forTrack012, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_34_Template, 3, 3, "p", 47);
+    \u0275\u0275repeaterCreate(32, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_For_33_Template, 11, 11, "article", 46, _forTrack013, false, ParentDashboardComponent_Conditional_29_Conditional_35_Conditional_1_ForEmpty_34_Template, 3, 3, "p", 47);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -74173,7 +74991,7 @@ function parseLocalDate(value) {
 // src/app/shared/study-plan-sheet/study-plan-sheet.component.ts
 var _c012 = ["planWrap"];
 var _c110 = (a0) => ({ name: a0 });
-var _forTrack013 = ($index, $item) => $item.id || $item.weekNumber;
+var _forTrack014 = ($index, $item) => $item.id || $item.weekNumber;
 var _forTrack15 = ($index, $item) => $item.id || $index;
 function StudyPlanSheetComponent_Conditional_1_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
@@ -74309,7 +75127,7 @@ function StudyPlanSheetComponent_Conditional_18_For_2_Template(rf, ctx) {
 function StudyPlanSheetComponent_Conditional_18_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "div", 9);
-    \u0275\u0275repeaterCreate(1, StudyPlanSheetComponent_Conditional_18_For_2_Template, 8, 2, "article", 14, _forTrack013);
+    \u0275\u0275repeaterCreate(1, StudyPlanSheetComponent_Conditional_18_For_2_Template, 8, 2, "article", 14, _forTrack014);
     \u0275\u0275domElementEnd();
   }
   if (rf & 2) {
@@ -74636,7 +75454,7 @@ var StudyPlanSheetComponent = class _StudyPlanSheetComponent {
 })();
 
 // src/app/shared/study-plan-sheet/study-plan-viewer.component.ts
-var _forTrack014 = ($index, $item) => $item.id;
+var _forTrack015 = ($index, $item) => $item.id;
 function StudyPlanViewerComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 0);
@@ -74685,7 +75503,7 @@ function StudyPlanViewerComponent_Conditional_1_Conditional_3_Template(rf, ctx) 
 function StudyPlanViewerComponent_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 1);
-    \u0275\u0275repeaterCreate(1, StudyPlanViewerComponent_Conditional_1_For_2_Template, 2, 3, "button", 2, _forTrack014);
+    \u0275\u0275repeaterCreate(1, StudyPlanViewerComponent_Conditional_1_For_2_Template, 2, 3, "button", 2, _forTrack015);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(3, StudyPlanViewerComponent_Conditional_1_Conditional_3_Template, 2, 2, "div", 3);
   }
@@ -75044,7 +75862,8 @@ var StudyPlanViewComponent = class _StudyPlanViewComponent {
 
 // src/app/layouts/panel-shell/panel-shell.component.ts
 var _c013 = ["*"];
-var _forTrack015 = ($index, $item) => $item.path;
+var _forTrack016 = ($index, $item) => $item.path;
+var _forTrack16 = ($index, $item) => $item.labelKey;
 function PanelShellComponent_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275element(0, "img", 4);
@@ -75077,10 +75896,10 @@ function PanelShellComponent_For_24_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 14);
     \u0275\u0275pipe(1, "t");
-    \u0275\u0275elementStart(2, "span", 19);
+    \u0275\u0275elementStart(2, "span", 20);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "span", 20);
+    \u0275\u0275elementStart(4, "span", 21);
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
@@ -75095,10 +75914,67 @@ function PanelShellComponent_For_24_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 6, item_r2.labelKey));
   }
 }
+function PanelShellComponent_For_26_For_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "a", 14);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "span", 20);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span", 21);
+    \u0275\u0275text(5);
+    \u0275\u0275pipe(6, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const item_r5 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("routerLink", item_r5.path)("title", \u0275\u0275pipeBind1(1, 4, item_r5.labelKey));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(ctx_r0.iconFor(item_r5));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 6, item_r5.labelKey));
+  }
+}
+function PanelShellComponent_For_26_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 22)(1, "button", 23);
+    \u0275\u0275listener("click", function PanelShellComponent_For_26_Template_button_click_1_listener() {
+      const category_r4 = \u0275\u0275restoreView(_r3).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.toggleCategory(category_r4.labelKey));
+    });
+    \u0275\u0275elementStart(2, "span", 24);
+    \u0275\u0275text(3);
+    \u0275\u0275pipe(4, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(5, "svg", 25);
+    \u0275\u0275element(6, "path", 26);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275repeaterCreate(7, PanelShellComponent_For_26_For_8_Template, 7, 8, "a", 14, _forTrack016);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const category_r4 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275classProp("nav-category--collapsed", ctx_r0.isCategoryCollapsed(category_r4.labelKey));
+    \u0275\u0275advance();
+    \u0275\u0275attribute("aria-expanded", !ctx_r0.isCategoryCollapsed(category_r4.labelKey));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 4, category_r4.labelKey));
+    \u0275\u0275advance(4);
+    \u0275\u0275repeater(category_r4.items);
+  }
+}
 var COLLAPSED_KEY = "codekids_sidebar_collapsed";
+var NAV_COLLAPSED_KEY = "codekids_nav_categories_collapsed";
 var PanelShellComponent = class _PanelShellComponent {
   constructor() {
     this.host = inject2(ElementRef);
+    this.router = inject2(Router);
+    this.destroyRef = inject2(DestroyRef);
     this.auth = inject2(AuthService);
     this.locale = inject2(LocaleService);
     this.brand = inject2(SiteBrandService);
@@ -75119,8 +75995,108 @@ var PanelShellComponent = class _PanelShellComponent {
     this.titleKey = "";
     this.subtitleKey = "";
     this.navItems = [];
+    this.uncategorizedItems = [];
+    this.categories = [];
+    this.collapsedCategories = signal(
+      /* @__PURE__ */ new Set(),
+      ...ngDevMode ? [{ debugName: "collapsedCategories" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.expandCategoryForUrl(event.urlAfterRedirects);
+      }
+    });
+  }
+  iconFor(item) {
+    return item.icon || item.labelKey.slice(-1).toUpperCase();
+  }
+  isCategoryCollapsed(categoryKey) {
+    return this.collapsedCategories().has(this.categoryStateKey(categoryKey));
+  }
+  toggleCategory(categoryKey) {
+    const key = this.categoryStateKey(categoryKey);
+    this.updateCollapsedCategories((current) => {
+      const next = new Set(current);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }
+  categoryStateKey(categoryKey) {
+    return `${this.titleKey}|${categoryKey}`;
+  }
+  updateCollapsedCategories(mutate) {
+    const next = mutate(this.collapsedCategories());
+    this.collapsedCategories.set(next);
+    this.persistCollapsedCategories(next);
+  }
+  persistCollapsedCategories(value) {
+    try {
+      const map2 = {};
+      for (const key of value) {
+        map2[key] = true;
+      }
+      localStorage.setItem(NAV_COLLAPSED_KEY, JSON.stringify(map2));
+    } catch (e) {
+    }
+  }
+  loadCollapsedCategories() {
+    try {
+      const raw = localStorage.getItem(NAV_COLLAPSED_KEY);
+      if (!raw)
+        return;
+      const parsed = JSON.parse(raw);
+      const restored = new Set(Object.entries(parsed).filter(([, value]) => value === true).map(([key]) => key));
+      this.collapsedCategories.set(restored);
+    } catch (e) {
+    }
+  }
+  expandCategoryForUrl(url) {
+    const path = url.split("?")[0].split("#")[0];
+    const keysToExpand = this.categories.filter((category) => category.items.some((item) => path.startsWith(item.path))).map((category) => this.categoryStateKey(category.labelKey));
+    const current = this.collapsedCategories();
+    if (!keysToExpand.some((key) => current.has(key))) {
+      return;
+    }
+    this.updateCollapsedCategories((set) => {
+      const next = new Set(set);
+      for (const key of keysToExpand) {
+        next.delete(key);
+      }
+      return next;
+    });
+  }
+  groupNavItems() {
+    const categories = [];
+    const byKey = /* @__PURE__ */ new Map();
+    const uncategorized = [];
+    for (const item of this.navItems) {
+      const key = item.categoryKey ?? "";
+      if (!key) {
+        uncategorized.push(item);
+        continue;
+      }
+      let category = byKey.get(key);
+      if (!category) {
+        category = { labelKey: key, items: [] };
+        byKey.set(key, category);
+        categories.push(category);
+      }
+      category.items.push(item);
+    }
+    this.uncategorizedItems = uncategorized;
+    this.categories = categories;
   }
   ngOnInit() {
+    this.groupNavItems();
+    this.loadCollapsedCategories();
+    this.expandCategoryForUrl(this.router.url);
     this.collapsed.set(localStorage.getItem(COLLAPSED_KEY) === "1");
   }
   toggle() {
@@ -75152,9 +76128,6 @@ var PanelShellComponent = class _PanelShellComponent {
       this.closeMenu();
     }
   }
-  iconFor(item) {
-    return item.icon || item.labelKey.slice(-1).toUpperCase();
-  }
   collapseTitle() {
     return this.locale.t(this.collapsed() ? "common.expandMenu" : "common.collapseMenu");
   }
@@ -75172,7 +76145,7 @@ var PanelShellComponent = class _PanelShellComponent {
           return ctx.onWindowResize();
         }, \u0275\u0275resolveWindow);
       }
-    }, inputs: { titleKey: "titleKey", subtitleKey: "subtitleKey", navItems: "navItems" }, ngContentSelectors: _c013, decls: 35, vars: 24, consts: [[1, "shell"], [1, "sidebar"], [1, "sidebar-top"], [1, "sidebar-brand"], [1, "brand-logo", 3, "src", "alt"], [1, "brand"], [1, "sidebar-tools"], ["type", "button", 1, "collapse-btn", 3, "click", "title"], ["viewBox", "0 0 24 24", "aria-hidden", "true", 1, "collapse-icon"], ["d", "M15.5 5.5 9 12l6.5 6.5", "fill", "none", "stroke", "currentColor", "stroke-width", "2.2", "stroke-linecap", "round", "stroke-linejoin", "round"], [1, "nav-wrap"], ["type", "button", 1, "menu-toggle", 3, "click"], ["aria-hidden", "true", 1, "menu-toggle-icon"], [1, "side-nav", 3, "click"], ["routerLinkActive", "active", 3, "routerLink", "title"], ["type", "button", 1, "logout", 3, "click", "title"], ["aria-hidden", "true", 1, "logout-icon"], [1, "logout-label"], [1, "shell-main"], [1, "nav-icon"], [1, "nav-label"]], template: function PanelShellComponent_Template(rf, ctx) {
+    }, inputs: { titleKey: "titleKey", subtitleKey: "subtitleKey", navItems: "navItems" }, ngContentSelectors: _c013, decls: 37, vars: 24, consts: [[1, "shell"], [1, "sidebar"], [1, "sidebar-top"], [1, "sidebar-brand"], [1, "brand-logo", 3, "src", "alt"], [1, "brand"], [1, "sidebar-tools"], ["type", "button", 1, "collapse-btn", 3, "click", "title"], ["viewBox", "0 0 24 24", "aria-hidden", "true", 1, "collapse-icon"], ["d", "M15.5 5.5 9 12l6.5 6.5", "fill", "none", "stroke", "currentColor", "stroke-width", "2.2", "stroke-linecap", "round", "stroke-linejoin", "round"], [1, "nav-wrap"], ["type", "button", 1, "menu-toggle", 3, "click"], ["aria-hidden", "true", 1, "menu-toggle-icon"], [1, "side-nav", 3, "click"], ["routerLinkActive", "active", 3, "routerLink", "title"], [1, "nav-category", 3, "nav-category--collapsed"], ["type", "button", 1, "logout", 3, "click", "title"], ["aria-hidden", "true", 1, "logout-icon"], [1, "logout-label"], [1, "shell-main"], [1, "nav-icon"], [1, "nav-label"], [1, "nav-category"], ["type", "button", 1, "nav-category-toggle", 3, "click"], [1, "nav-category-label"], ["viewBox", "0 0 24 24", "aria-hidden", "true", 1, "nav-category-chevron"], ["d", "m9 6 6 6-6 6", "fill", "none", "stroke", "currentColor", "stroke-width", "2.2", "stroke-linecap", "round", "stroke-linejoin", "round"]], template: function PanelShellComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275projectionDef();
         \u0275\u0275elementStart(0, "div", 0)(1, "aside", 1)(2, "div", 2)(3, "div", 3);
@@ -75209,23 +76182,24 @@ var PanelShellComponent = class _PanelShellComponent {
         \u0275\u0275listener("click", function PanelShellComponent_Template_nav_click_22_listener($event) {
           return ctx.onNavClick($event);
         });
-        \u0275\u0275repeaterCreate(23, PanelShellComponent_For_24_Template, 7, 8, "a", 14, _forTrack015);
+        \u0275\u0275repeaterCreate(23, PanelShellComponent_For_24_Template, 7, 8, "a", 14, _forTrack016);
+        \u0275\u0275repeaterCreate(25, PanelShellComponent_For_26_Template, 9, 6, "div", 15, _forTrack16);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(25, "button", 15);
-        \u0275\u0275pipe(26, "t");
-        \u0275\u0275listener("click", function PanelShellComponent_Template_button_click_25_listener() {
+        \u0275\u0275elementStart(27, "button", 16);
+        \u0275\u0275pipe(28, "t");
+        \u0275\u0275listener("click", function PanelShellComponent_Template_button_click_27_listener() {
           return ctx.auth.logout();
         });
-        \u0275\u0275elementStart(27, "span", 16);
-        \u0275\u0275text(28, "\u238B");
-        \u0275\u0275elementEnd();
         \u0275\u0275elementStart(29, "span", 17);
-        \u0275\u0275text(30);
-        \u0275\u0275pipe(31, "t");
+        \u0275\u0275text(30, "\u238B");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(31, "span", 18);
+        \u0275\u0275text(32);
+        \u0275\u0275pipe(33, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(32, "main", 18);
-        \u0275\u0275projection(33);
-        \u0275\u0275element(34, "app-api-busy-indicator");
+        \u0275\u0275elementStart(34, "main", 19);
+        \u0275\u0275projection(35);
+        \u0275\u0275element(36, "app-api-busy-indicator");
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -75247,13 +76221,15 @@ var PanelShellComponent = class _PanelShellComponent {
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(21, 18, "common.menu"));
         \u0275\u0275advance(3);
-        \u0275\u0275repeater(ctx.navItems);
+        \u0275\u0275repeater(ctx.uncategorizedItems);
         \u0275\u0275advance(2);
-        \u0275\u0275property("title", \u0275\u0275pipeBind1(26, 20, "common.signOut"));
+        \u0275\u0275repeater(ctx.categories);
+        \u0275\u0275advance(2);
+        \u0275\u0275property("title", \u0275\u0275pipeBind1(28, 20, "common.signOut"));
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(31, 22, "common.signOut"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(33, 22, "common.signOut"));
       }
-    }, dependencies: [RouterLink, RouterLinkActive, LanguageSwitcherComponent, ThemeSwitcherComponent, ApiBusyIndicatorComponent, TranslatePipe], styles: ['\n.shell[_ngcontent-%COMP%] {\n  --sidebar-width: 268px;\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: var(--sidebar-width) 1fr;\n  color: var(--text);\n  background: var(--shell-glow), var(--bg);\n  transition: grid-template-columns 0.22s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%] {\n  --sidebar-width: 88px;\n}\n.sidebar[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  height: 100vh;\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 1rem 0.8rem;\n  border-right: 1px solid var(--border);\n  background: var(--sidebar-bg);\n  -webkit-backdrop-filter: blur(14px);\n  backdrop-filter: blur(14px);\n  box-shadow: var(--sidebar-inset);\n  overflow: visible;\n  z-index: 8;\n}\n.sidebar-top[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 0.4rem;\n  padding: 0.25rem;\n  flex-shrink: 0;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .sidebar-top[_ngcontent-%COMP%] {\n  flex-direction: column;\n  align-items: stretch;\n}\n.sidebar-tools[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 0.45rem;\n  flex-shrink: 0;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .sidebar-tools[_ngcontent-%COMP%] {\n  width: 100%;\n  align-items: stretch;\n}\n.sidebar-brand[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.2rem;\n  padding: 0.25rem;\n  min-width: 0;\n}\n.brand-logo[_ngcontent-%COMP%] {\n  width: 42px;\n  height: 42px;\n  object-fit: contain;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  padding: 0.2rem;\n  margin-bottom: 0.15rem;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%] {\n  width: 36px;\n  height: 36px;\n  margin: 0 auto 0.2rem;\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: 1.35rem;\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--heading);\n}\n.shell.collapsed[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 1.1rem;\n}\n.sidebar-brand[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  font-size: 0.98rem;\n  color: var(--heading);\n}\n.sidebar-brand[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.78rem;\n}\n.collapse-btn[_ngcontent-%COMP%] {\n  width: 2rem;\n  height: 2rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text);\n  cursor: pointer;\n  flex-shrink: 0;\n  padding: 0;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 2.15rem;\n}\n.collapse-icon[_ngcontent-%COMP%] {\n  width: 1.15rem;\n  height: 1.15rem;\n  display: block;\n}\nhtml[dir="ltr"][_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%], html[dir="ltr"]   [_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%], \nhtml[dir="rtl"][_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%], html[dir="rtl"]   [_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%] {\n  transform: scaleX(1);\n}\nhtml[dir="ltr"][_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%], html[dir="ltr"]   [_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%], \nhtml[dir="rtl"][_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%], html[dir="rtl"]   [_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%] {\n  transform: scaleX(-1);\n}\n.collapse-btn[_ngcontent-%COMP%]:hover {\n  background: var(--surface-strong);\n  border-color: var(--border-strong);\n}\n.nav-wrap[_ngcontent-%COMP%] {\n  flex: 1 1 auto;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n}\n.menu-toggle[_ngcontent-%COMP%] {\n  display: none;\n}\n.side-nav[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.25rem;\n  flex: 1 1 auto;\n  min-height: 0;\n  align-content: start;\n  padding: 0.2rem;\n  overflow-x: hidden;\n  overflow-y: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--scrollbar-thumb) transparent;\n}\n.side-nav[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n}\n.side-nav[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--scrollbar-thumb);\n  border-radius: 999px;\n}\n.side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  min-height: 2.45rem;\n  padding: 0.45rem 0.7rem;\n  border-radius: var(--radius-md);\n  color: var(--text-muted);\n  text-decoration: none;\n  font-weight: 650;\n  border: 1px solid transparent;\n  transition:\n    background 0.15s ease,\n    color 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  position: relative;\n  justify-content: center;\n  padding: 0.65rem;\n}\n.nav-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  position: absolute;\n  inset-inline-start: calc(100% + 0.55rem);\n  top: 50%;\n  transform: translateY(-50%);\n  z-index: 30;\n  padding: 0.35rem 0.7rem;\n  border-radius: var(--radius-sm);\n  background: var(--nav-tooltip-bg);\n  border: 1px solid var(--border-strong);\n  color: var(--heading);\n  font-size: 0.82rem;\n  box-shadow: var(--shadow-md);\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity 0.12s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover   .nav-label[_ngcontent-%COMP%], \n.shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:focus-visible   .nav-label[_ngcontent-%COMP%] {\n  opacity: 1;\n}\n.nav-icon[_ngcontent-%COMP%] {\n  width: 1.75rem;\n  height: 1.75rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: 10px;\n  background: rgba(255, 214, 10, 0.12);\n  font-size: 0.78rem;\n  font-weight: 800;\n  flex-shrink: 0;\n  color: var(--nav-icon-fg);\n}\n.side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  background: var(--surface-strong);\n  color: var(--nav-hover-fg);\n  transform: translateX(2px);\n}\n.side-nav[_ngcontent-%COMP%]   a.active[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  border-color: transparent;\n  box-shadow: var(--btn-shadow);\n}\n.side-nav[_ngcontent-%COMP%]   a.active[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  background: rgba(8, 32, 60, 0.14);\n  color: var(--accent-ink);\n}\n.logout[_ngcontent-%COMP%] {\n  width: 100%;\n  flex-shrink: 0;\n  margin-top: auto;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.45rem;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 1rem;\n  background: rgba(255, 107, 107, 0.08);\n  color: var(--logout-fg);\n  font: inherit;\n  font-weight: 750;\n  cursor: pointer;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.logout-icon[_ngcontent-%COMP%] {\n  display: none;\n}\n.logout[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 107, 107, 0.12);\n  border-color: rgba(255, 143, 143, 0.35);\n}\n.shell.collapsed[_ngcontent-%COMP%]   .logout[_ngcontent-%COMP%] {\n  padding: 0.8rem 0.4rem;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .logout-icon[_ngcontent-%COMP%] {\n  display: inline;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .logout-label[_ngcontent-%COMP%] {\n  display: none;\n}\n.shell-main[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 1.6rem 2rem 3rem;\n  min-width: 0;\n}\n@media (max-width: 900px) {\n  .shell[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%] {\n    --sidebar-width: 100%;\n    grid-template-columns: 1fr;\n  }\n  .sidebar[_ngcontent-%COMP%] {\n    position: sticky;\n    top: 0;\n    z-index: 40;\n    height: auto;\n    flex-direction: row;\n    flex-wrap: wrap;\n    align-items: center;\n    gap: 0.5rem 0.65rem;\n    padding: 0.7rem 0.85rem;\n    overflow: visible;\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n  }\n  .sidebar-top[_ngcontent-%COMP%] {\n    flex: 1 1 auto;\n    align-items: center;\n    min-width: 0;\n  }\n  .shell.collapsed[_ngcontent-%COMP%]   .sidebar-top[_ngcontent-%COMP%] {\n    flex-direction: row;\n    align-items: center;\n  }\n  .sidebar-brand[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n   .sidebar-brand[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .shell.collapsed[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%], \n   .brand[_ngcontent-%COMP%] {\n    text-align: start;\n    font-size: 1.05rem;\n  }\n  .shell.collapsed[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%], \n   .brand-logo[_ngcontent-%COMP%] {\n    width: 32px;\n    height: 32px;\n    margin: 0 0 0.1rem;\n  }\n  .collapse-btn[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .sidebar-tools[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .sidebar-tools[_ngcontent-%COMP%] {\n    width: auto;\n    flex-direction: row;\n    align-items: center;\n  }\n  .nav-wrap[_ngcontent-%COMP%] {\n    position: relative;\n    flex: 0 0 auto;\n    min-height: 0;\n    margin-inline-start: auto;\n  }\n  .menu-toggle[_ngcontent-%COMP%] {\n    display: inline-flex;\n    align-items: center;\n    gap: 0.4rem;\n    height: 2.3rem;\n    padding: 0 0.85rem;\n    border-radius: var(--radius-md);\n    border: 1px solid var(--border);\n    background: var(--surface);\n    color: var(--text);\n    font: inherit;\n    font-weight: 750;\n    cursor: pointer;\n  }\n  .menu-toggle[_ngcontent-%COMP%]:hover, \n   .nav-wrap.open[_ngcontent-%COMP%]   .menu-toggle[_ngcontent-%COMP%], \n   .nav-wrap[_ngcontent-%COMP%]:hover   .menu-toggle[_ngcontent-%COMP%], \n   .nav-wrap[_ngcontent-%COMP%]:focus-within   .menu-toggle[_ngcontent-%COMP%] {\n    background: var(--surface-strong);\n    border-color: var(--border-strong);\n  }\n  .side-nav[_ngcontent-%COMP%] {\n    display: none;\n    position: absolute;\n    top: 100%;\n    inset-inline-end: 0;\n    width: min(22rem, calc(100vw - 1.5rem));\n    max-height: min(70vh, 28rem);\n    padding: 0.45rem;\n    overflow-x: hidden;\n    overflow-y: auto;\n    grid-template-columns: 1fr;\n    background: var(--sidebar-bg);\n    border: 1px solid var(--border-strong);\n    border-radius: var(--radius-md);\n    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);\n    z-index: 50;\n  }\n  .nav-wrap[_ngcontent-%COMP%]:focus-within   .side-nav[_ngcontent-%COMP%], \n   .nav-wrap.open[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%] {\n    display: grid;\n  }\n  .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n    justify-content: flex-start;\n    padding: 0.55rem 0.7rem;\n    transform: none;\n  }\n  .nav-label[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n    position: static;\n    display: inline;\n    opacity: 1;\n    transform: none;\n    background: none;\n    border: 0;\n    box-shadow: none;\n    padding: 0;\n    color: inherit;\n    pointer-events: auto;\n  }\n  .logout[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .logout[_ngcontent-%COMP%] {\n    width: auto;\n    margin-top: 0;\n    padding: 0.55rem 0.7rem;\n  }\n  .logout-icon[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .logout-icon[_ngcontent-%COMP%] {\n    display: inline;\n  }\n  .logout-label[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .logout-label[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .shell-main[_ngcontent-%COMP%] {\n    padding: 1.2rem 1rem 2.5rem;\n  }\n}\n@media (max-width: 900px) and (hover: hover) and (pointer: fine) {\n  .nav-wrap[_ngcontent-%COMP%]:hover   .side-nav[_ngcontent-%COMP%] {\n    display: grid;\n  }\n}\n/*# sourceMappingURL=panel-shell.component.css.map */'] });
+    }, dependencies: [RouterLink, RouterLinkActive, LanguageSwitcherComponent, ThemeSwitcherComponent, ApiBusyIndicatorComponent, TranslatePipe], styles: ['\n.shell[_ngcontent-%COMP%] {\n  --sidebar-width: 268px;\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: var(--sidebar-width) 1fr;\n  color: var(--text);\n  background: var(--shell-glow), var(--bg);\n  transition: grid-template-columns 0.22s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%] {\n  --sidebar-width: 88px;\n}\n.sidebar[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  height: 100vh;\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 1rem 0.8rem;\n  border-right: 1px solid var(--border);\n  background: var(--sidebar-bg);\n  -webkit-backdrop-filter: blur(14px);\n  backdrop-filter: blur(14px);\n  box-shadow: var(--sidebar-inset);\n  overflow: visible;\n  z-index: 8;\n}\n.sidebar-top[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 0.4rem;\n  padding: 0.25rem;\n  flex-shrink: 0;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .sidebar-top[_ngcontent-%COMP%] {\n  flex-direction: column;\n  align-items: stretch;\n}\n.sidebar-tools[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 0.45rem;\n  flex-shrink: 0;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .sidebar-tools[_ngcontent-%COMP%] {\n  width: 100%;\n  align-items: stretch;\n}\n.sidebar-brand[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.2rem;\n  padding: 0.25rem;\n  min-width: 0;\n}\n.brand-logo[_ngcontent-%COMP%] {\n  width: 42px;\n  height: 42px;\n  object-fit: contain;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  padding: 0.2rem;\n  margin-bottom: 0.15rem;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%] {\n  width: 36px;\n  height: 36px;\n  margin: 0 auto 0.2rem;\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: 1.35rem;\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--heading);\n}\n.shell.collapsed[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 1.1rem;\n}\n.sidebar-brand[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  font-size: 0.98rem;\n  color: var(--heading);\n}\n.sidebar-brand[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.78rem;\n}\n.collapse-btn[_ngcontent-%COMP%] {\n  width: 2rem;\n  height: 2rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text);\n  cursor: pointer;\n  flex-shrink: 0;\n  padding: 0;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 2.15rem;\n}\n.collapse-icon[_ngcontent-%COMP%] {\n  width: 1.15rem;\n  height: 1.15rem;\n  display: block;\n}\nhtml[dir="ltr"][_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%], html[dir="ltr"]   [_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%], \nhtml[dir="rtl"][_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%], html[dir="rtl"]   [_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%] {\n  transform: scaleX(1);\n}\nhtml[dir="ltr"][_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%], html[dir="ltr"]   [_nghost-%COMP%]   .shell.collapsed[_ngcontent-%COMP%]   .collapse-icon[_ngcontent-%COMP%], \nhtml[dir="rtl"][_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%], html[dir="rtl"]   [_nghost-%COMP%]   .shell[_ngcontent-%COMP%]:not(.collapsed)   .collapse-icon[_ngcontent-%COMP%] {\n  transform: scaleX(-1);\n}\n.collapse-btn[_ngcontent-%COMP%]:hover {\n  background: var(--surface-strong);\n  border-color: var(--border-strong);\n}\n.nav-wrap[_ngcontent-%COMP%] {\n  flex: 1 1 auto;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n}\n.menu-toggle[_ngcontent-%COMP%] {\n  display: none;\n}\n.side-nav[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.25rem;\n  flex: 1 1 auto;\n  min-height: 0;\n  align-content: start;\n  padding: 0.2rem;\n  overflow-x: hidden;\n  overflow-y: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--scrollbar-thumb) transparent;\n}\n.side-nav[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n}\n.side-nav[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--scrollbar-thumb);\n  border-radius: 999px;\n}\n.side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  min-height: 2.45rem;\n  padding: 0.45rem 0.7rem;\n  border-radius: var(--radius-md);\n  color: var(--text-muted);\n  text-decoration: none;\n  font-weight: 650;\n  border: 1px solid transparent;\n  transition:\n    background 0.15s ease,\n    color 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n  position: relative;\n  justify-content: center;\n  padding: 0.65rem;\n}\n.nav-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  position: absolute;\n  inset-inline-start: calc(100% + 0.55rem);\n  top: 50%;\n  transform: translateY(-50%);\n  z-index: 30;\n  padding: 0.35rem 0.7rem;\n  border-radius: var(--radius-sm);\n  background: var(--nav-tooltip-bg);\n  border: 1px solid var(--border-strong);\n  color: var(--heading);\n  font-size: 0.82rem;\n  box-shadow: var(--shadow-md);\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity 0.12s ease;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover   .nav-label[_ngcontent-%COMP%], \n.shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:focus-visible   .nav-label[_ngcontent-%COMP%] {\n  opacity: 1;\n}\n.nav-icon[_ngcontent-%COMP%] {\n  width: 1.75rem;\n  height: 1.75rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: 10px;\n  background: rgba(255, 214, 10, 0.12);\n  font-size: 0.78rem;\n  font-weight: 800;\n  flex-shrink: 0;\n  color: var(--nav-icon-fg);\n}\n.side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%]:hover {\n  background: var(--surface-strong);\n  color: var(--nav-hover-fg);\n  transform: translateX(2px);\n}\n.side-nav[_ngcontent-%COMP%]   a.active[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  border-color: transparent;\n  box-shadow: var(--btn-shadow);\n}\n.side-nav[_ngcontent-%COMP%]   a.active[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  background: rgba(8, 32, 60, 0.14);\n  color: var(--accent-ink);\n}\n.nav-category[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.25rem;\n  padding-top: 0.35rem;\n  margin-top: 0.35rem;\n  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.nav-category[_ngcontent-%COMP%]:first-of-type {\n  border-top: 0;\n  margin-top: 0;\n  padding-top: 0;\n}\n.nav-category-toggle[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n  width: 100%;\n  margin: 0.15rem 0 0.1rem;\n  padding: 0.2rem 0.7rem;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-sm);\n  cursor: pointer;\n  color: inherit;\n  font: inherit;\n}\n.nav-category-toggle[_ngcontent-%COMP%]:hover   .nav-category-label[_ngcontent-%COMP%] {\n  color: var(--heading);\n  opacity: 1;\n}\n.nav-category-label[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 0.68rem;\n  font-weight: 800;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  opacity: 0.75;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  text-align: start;\n  min-width: 0;\n}\n.nav-category-chevron[_ngcontent-%COMP%] {\n  width: 0.85rem;\n  height: 0.85rem;\n  flex-shrink: 0;\n  color: var(--text-muted);\n  opacity: 0.75;\n  transition: transform 0.15s ease;\n}\n.nav-category--collapsed[_ngcontent-%COMP%]   .nav-category-chevron[_ngcontent-%COMP%] {\n  transform: rotate(90deg);\n}\n.nav-category--collapsed[_ngcontent-%COMP%]    > a[_ngcontent-%COMP%] {\n  display: none;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .nav-category-toggle[_ngcontent-%COMP%]   .nav-category-label[_ngcontent-%COMP%] {\n  visibility: hidden;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .nav-category-chevron[_ngcontent-%COMP%] {\n  display: none;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .nav-category--collapsed[_ngcontent-%COMP%]    > a[_ngcontent-%COMP%] {\n  display: flex;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .nav-category[_ngcontent-%COMP%] {\n  margin-top: 0.6rem;\n}\n.logout[_ngcontent-%COMP%] {\n  width: 100%;\n  flex-shrink: 0;\n  margin-top: auto;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.45rem;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 1rem;\n  background: rgba(255, 107, 107, 0.08);\n  color: var(--logout-fg);\n  font: inherit;\n  font-weight: 750;\n  cursor: pointer;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.logout-icon[_ngcontent-%COMP%] {\n  display: none;\n}\n.logout[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 107, 107, 0.12);\n  border-color: rgba(255, 143, 143, 0.35);\n}\n.shell.collapsed[_ngcontent-%COMP%]   .logout[_ngcontent-%COMP%] {\n  padding: 0.8rem 0.4rem;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .logout-icon[_ngcontent-%COMP%] {\n  display: inline;\n}\n.shell.collapsed[_ngcontent-%COMP%]   .logout-label[_ngcontent-%COMP%] {\n  display: none;\n}\n.shell-main[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 1.6rem 2rem 3rem;\n  min-width: 0;\n}\n@media (max-width: 900px) {\n  .shell[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%] {\n    --sidebar-width: 100%;\n    grid-template-columns: 1fr;\n  }\n  .sidebar[_ngcontent-%COMP%] {\n    position: sticky;\n    top: 0;\n    z-index: 40;\n    height: auto;\n    flex-direction: row;\n    flex-wrap: wrap;\n    align-items: center;\n    gap: 0.5rem 0.65rem;\n    padding: 0.7rem 0.85rem;\n    overflow: visible;\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n  }\n  .sidebar-top[_ngcontent-%COMP%] {\n    flex: 1 1 auto;\n    align-items: center;\n    min-width: 0;\n  }\n  .shell.collapsed[_ngcontent-%COMP%]   .sidebar-top[_ngcontent-%COMP%] {\n    flex-direction: row;\n    align-items: center;\n  }\n  .sidebar-brand[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n   .sidebar-brand[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .shell.collapsed[_ngcontent-%COMP%]   .brand[_ngcontent-%COMP%], \n   .brand[_ngcontent-%COMP%] {\n    text-align: start;\n    font-size: 1.05rem;\n  }\n  .shell.collapsed[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%], \n   .brand-logo[_ngcontent-%COMP%] {\n    width: 32px;\n    height: 32px;\n    margin: 0 0 0.1rem;\n  }\n  .collapse-btn[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .sidebar-tools[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .sidebar-tools[_ngcontent-%COMP%] {\n    width: auto;\n    flex-direction: row;\n    align-items: center;\n  }\n  .nav-wrap[_ngcontent-%COMP%] {\n    position: relative;\n    flex: 0 0 auto;\n    min-height: 0;\n    margin-inline-start: auto;\n  }\n  .menu-toggle[_ngcontent-%COMP%] {\n    display: inline-flex;\n    align-items: center;\n    gap: 0.4rem;\n    height: 2.3rem;\n    padding: 0 0.85rem;\n    border-radius: var(--radius-md);\n    border: 1px solid var(--border);\n    background: var(--surface);\n    color: var(--text);\n    font: inherit;\n    font-weight: 750;\n    cursor: pointer;\n  }\n  .menu-toggle[_ngcontent-%COMP%]:hover, \n   .nav-wrap.open[_ngcontent-%COMP%]   .menu-toggle[_ngcontent-%COMP%], \n   .nav-wrap[_ngcontent-%COMP%]:hover   .menu-toggle[_ngcontent-%COMP%], \n   .nav-wrap[_ngcontent-%COMP%]:focus-within   .menu-toggle[_ngcontent-%COMP%] {\n    background: var(--surface-strong);\n    border-color: var(--border-strong);\n  }\n  .side-nav[_ngcontent-%COMP%] {\n    display: none;\n    position: absolute;\n    top: 100%;\n    inset-inline-end: 0;\n    width: min(22rem, calc(100vw - 1.5rem));\n    max-height: min(70vh, 28rem);\n    padding: 0.45rem;\n    overflow-x: hidden;\n    overflow-y: auto;\n    grid-template-columns: 1fr;\n    background: var(--sidebar-bg);\n    border: 1px solid var(--border-strong);\n    border-radius: var(--radius-md);\n    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);\n    z-index: 50;\n  }\n  .nav-wrap[_ngcontent-%COMP%]:focus-within   .side-nav[_ngcontent-%COMP%], \n   .nav-wrap.open[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%] {\n    display: grid;\n  }\n  .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .side-nav[_ngcontent-%COMP%]   a[_ngcontent-%COMP%] {\n    justify-content: flex-start;\n    padding: 0.55rem 0.7rem;\n    transform: none;\n  }\n  .nav-label[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n    position: static;\n    display: inline;\n    opacity: 1;\n    transform: none;\n    background: none;\n    border: 0;\n    box-shadow: none;\n    padding: 0;\n    color: inherit;\n    pointer-events: auto;\n  }\n  .logout[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .logout[_ngcontent-%COMP%] {\n    width: auto;\n    margin-top: 0;\n    padding: 0.55rem 0.7rem;\n  }\n  .logout-icon[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .logout-icon[_ngcontent-%COMP%] {\n    display: inline;\n  }\n  .logout-label[_ngcontent-%COMP%], \n   .shell.collapsed[_ngcontent-%COMP%]   .logout-label[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .shell-main[_ngcontent-%COMP%] {\n    padding: 1.2rem 1rem 2.5rem;\n  }\n}\n@media (max-width: 900px) and (hover: hover) and (pointer: fine) {\n  .nav-wrap[_ngcontent-%COMP%]:hover   .side-nav[_ngcontent-%COMP%] {\n    display: grid;\n  }\n}\n/*# sourceMappingURL=panel-shell.component.css.map */'] });
   }
 };
 (() => {
@@ -75294,7 +76270,7 @@ var PanelShellComponent = class _PanelShellComponent {
         <span>{{ 'common.menu' | t }}</span>\r
       </button>\r
       <nav class="side-nav" (click)="onNavClick($event)">\r
-        @for (item of navItems; track item.path) {\r
+        @for (item of uncategorizedItems; track item.path) {\r
           <a\r
             [routerLink]="item.path"\r
             routerLinkActive="active"\r
@@ -75302,6 +76278,29 @@ var PanelShellComponent = class _PanelShellComponent {
             <span class="nav-icon">{{ iconFor(item) }}</span>\r
             <span class="nav-label">{{ item.labelKey | t }}</span>\r
           </a>\r
+        }\r
+        @for (category of categories; track category.labelKey) {\r
+          <div class="nav-category" [class.nav-category--collapsed]="isCategoryCollapsed(category.labelKey)">\r
+            <button\r
+              type="button"\r
+              class="nav-category-toggle"\r
+              (click)="toggleCategory(category.labelKey)"\r
+              [attr.aria-expanded]="!isCategoryCollapsed(category.labelKey)">\r
+              <span class="nav-category-label">{{ category.labelKey | t }}</span>\r
+              <svg class="nav-category-chevron" viewBox="0 0 24 24" aria-hidden="true">\r
+                <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>\r
+              </svg>\r
+            </button>\r
+            @for (item of category.items; track item.path) {\r
+              <a\r
+                [routerLink]="item.path"\r
+                routerLinkActive="active"\r
+                [title]="item.labelKey | t">\r
+                <span class="nav-icon">{{ iconFor(item) }}</span>\r
+                <span class="nav-label">{{ item.labelKey | t }}</span>\r
+              </a>\r
+            }\r
+          </div>\r
         }\r
       </nav>\r
     </div>\r
@@ -75317,8 +76316,8 @@ var PanelShellComponent = class _PanelShellComponent {
     <app-api-busy-indicator />\r
   </main>\r
 </div>\r
-`, styles: ['/* src/app/layouts/panel-shell/panel-shell.component.css */\n.shell {\n  --sidebar-width: 268px;\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: var(--sidebar-width) 1fr;\n  color: var(--text);\n  background: var(--shell-glow), var(--bg);\n  transition: grid-template-columns 0.22s ease;\n}\n.shell.collapsed {\n  --sidebar-width: 88px;\n}\n.sidebar {\n  position: sticky;\n  top: 0;\n  height: 100vh;\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 1rem 0.8rem;\n  border-right: 1px solid var(--border);\n  background: var(--sidebar-bg);\n  -webkit-backdrop-filter: blur(14px);\n  backdrop-filter: blur(14px);\n  box-shadow: var(--sidebar-inset);\n  overflow: visible;\n  z-index: 8;\n}\n.sidebar-top {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 0.4rem;\n  padding: 0.25rem;\n  flex-shrink: 0;\n}\n.shell.collapsed .sidebar-top {\n  flex-direction: column;\n  align-items: stretch;\n}\n.sidebar-tools {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 0.45rem;\n  flex-shrink: 0;\n}\n.shell.collapsed .sidebar-tools {\n  width: 100%;\n  align-items: stretch;\n}\n.sidebar-brand {\n  display: grid;\n  gap: 0.2rem;\n  padding: 0.25rem;\n  min-width: 0;\n}\n.brand-logo {\n  width: 42px;\n  height: 42px;\n  object-fit: contain;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  padding: 0.2rem;\n  margin-bottom: 0.15rem;\n}\n.shell.collapsed .brand-logo {\n  width: 36px;\n  height: 36px;\n  margin: 0 auto 0.2rem;\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: 1.35rem;\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--heading);\n}\n.shell.collapsed .brand {\n  text-align: center;\n  font-size: 1.1rem;\n}\n.sidebar-brand strong {\n  font-family: var(--font-display);\n  font-size: 0.98rem;\n  color: var(--heading);\n}\n.sidebar-brand small {\n  color: var(--text-soft);\n  font-size: 0.78rem;\n}\n.collapse-btn {\n  width: 2rem;\n  height: 2rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text);\n  cursor: pointer;\n  flex-shrink: 0;\n  padding: 0;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.shell.collapsed .collapse-btn {\n  width: 100%;\n  height: 2.15rem;\n}\n.collapse-icon {\n  width: 1.15rem;\n  height: 1.15rem;\n  display: block;\n}\n:host-context(html[dir="ltr"]) .shell:not(.collapsed) .collapse-icon,\n:host-context(html[dir="rtl"]) .shell.collapsed .collapse-icon {\n  transform: scaleX(1);\n}\n:host-context(html[dir="ltr"]) .shell.collapsed .collapse-icon,\n:host-context(html[dir="rtl"]) .shell:not(.collapsed) .collapse-icon {\n  transform: scaleX(-1);\n}\n.collapse-btn:hover {\n  background: var(--surface-strong);\n  border-color: var(--border-strong);\n}\n.nav-wrap {\n  flex: 1 1 auto;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n}\n.menu-toggle {\n  display: none;\n}\n.side-nav {\n  display: grid;\n  gap: 0.25rem;\n  flex: 1 1 auto;\n  min-height: 0;\n  align-content: start;\n  padding: 0.2rem;\n  overflow-x: hidden;\n  overflow-y: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--scrollbar-thumb) transparent;\n}\n.side-nav::-webkit-scrollbar {\n  width: 6px;\n}\n.side-nav::-webkit-scrollbar-thumb {\n  background: var(--scrollbar-thumb);\n  border-radius: 999px;\n}\n.side-nav a {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  min-height: 2.45rem;\n  padding: 0.45rem 0.7rem;\n  border-radius: var(--radius-md);\n  color: var(--text-muted);\n  text-decoration: none;\n  font-weight: 650;\n  border: 1px solid transparent;\n  transition:\n    background 0.15s ease,\n    color 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.shell.collapsed .side-nav a {\n  position: relative;\n  justify-content: center;\n  padding: 0.65rem;\n}\n.nav-label {\n  white-space: nowrap;\n}\n.shell.collapsed .nav-label {\n  position: absolute;\n  inset-inline-start: calc(100% + 0.55rem);\n  top: 50%;\n  transform: translateY(-50%);\n  z-index: 30;\n  padding: 0.35rem 0.7rem;\n  border-radius: var(--radius-sm);\n  background: var(--nav-tooltip-bg);\n  border: 1px solid var(--border-strong);\n  color: var(--heading);\n  font-size: 0.82rem;\n  box-shadow: var(--shadow-md);\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity 0.12s ease;\n}\n.shell.collapsed .side-nav a:hover .nav-label,\n.shell.collapsed .side-nav a:focus-visible .nav-label {\n  opacity: 1;\n}\n.nav-icon {\n  width: 1.75rem;\n  height: 1.75rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: 10px;\n  background: rgba(255, 214, 10, 0.12);\n  font-size: 0.78rem;\n  font-weight: 800;\n  flex-shrink: 0;\n  color: var(--nav-icon-fg);\n}\n.side-nav a:hover {\n  background: var(--surface-strong);\n  color: var(--nav-hover-fg);\n  transform: translateX(2px);\n}\n.side-nav a.active {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  border-color: transparent;\n  box-shadow: var(--btn-shadow);\n}\n.side-nav a.active .nav-icon {\n  background: rgba(8, 32, 60, 0.14);\n  color: var(--accent-ink);\n}\n.logout {\n  width: 100%;\n  flex-shrink: 0;\n  margin-top: auto;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.45rem;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 1rem;\n  background: rgba(255, 107, 107, 0.08);\n  color: var(--logout-fg);\n  font: inherit;\n  font-weight: 750;\n  cursor: pointer;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.logout-icon {\n  display: none;\n}\n.logout:hover {\n  background: rgba(255, 107, 107, 0.12);\n  border-color: rgba(255, 143, 143, 0.35);\n}\n.shell.collapsed .logout {\n  padding: 0.8rem 0.4rem;\n}\n.shell.collapsed .logout-icon {\n  display: inline;\n}\n.shell.collapsed .logout-label {\n  display: none;\n}\n.shell-main {\n  position: relative;\n  padding: 1.6rem 2rem 3rem;\n  min-width: 0;\n}\n@media (max-width: 900px) {\n  .shell,\n  .shell.collapsed {\n    --sidebar-width: 100%;\n    grid-template-columns: 1fr;\n  }\n  .sidebar {\n    position: sticky;\n    top: 0;\n    z-index: 40;\n    height: auto;\n    flex-direction: row;\n    flex-wrap: wrap;\n    align-items: center;\n    gap: 0.5rem 0.65rem;\n    padding: 0.7rem 0.85rem;\n    overflow: visible;\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n  }\n  .sidebar-top {\n    flex: 1 1 auto;\n    align-items: center;\n    min-width: 0;\n  }\n  .shell.collapsed .sidebar-top {\n    flex-direction: row;\n    align-items: center;\n  }\n  .sidebar-brand strong,\n  .sidebar-brand small {\n    display: none;\n  }\n  .shell.collapsed .brand,\n  .brand {\n    text-align: start;\n    font-size: 1.05rem;\n  }\n  .shell.collapsed .brand-logo,\n  .brand-logo {\n    width: 32px;\n    height: 32px;\n    margin: 0 0 0.1rem;\n  }\n  .collapse-btn,\n  .shell.collapsed .collapse-btn {\n    display: none;\n  }\n  .sidebar-tools,\n  .shell.collapsed .sidebar-tools {\n    width: auto;\n    flex-direction: row;\n    align-items: center;\n  }\n  .nav-wrap {\n    position: relative;\n    flex: 0 0 auto;\n    min-height: 0;\n    margin-inline-start: auto;\n  }\n  .menu-toggle {\n    display: inline-flex;\n    align-items: center;\n    gap: 0.4rem;\n    height: 2.3rem;\n    padding: 0 0.85rem;\n    border-radius: var(--radius-md);\n    border: 1px solid var(--border);\n    background: var(--surface);\n    color: var(--text);\n    font: inherit;\n    font-weight: 750;\n    cursor: pointer;\n  }\n  .menu-toggle:hover,\n  .nav-wrap.open .menu-toggle,\n  .nav-wrap:hover .menu-toggle,\n  .nav-wrap:focus-within .menu-toggle {\n    background: var(--surface-strong);\n    border-color: var(--border-strong);\n  }\n  .side-nav {\n    display: none;\n    position: absolute;\n    top: 100%;\n    inset-inline-end: 0;\n    width: min(22rem, calc(100vw - 1.5rem));\n    max-height: min(70vh, 28rem);\n    padding: 0.45rem;\n    overflow-x: hidden;\n    overflow-y: auto;\n    grid-template-columns: 1fr;\n    background: var(--sidebar-bg);\n    border: 1px solid var(--border-strong);\n    border-radius: var(--radius-md);\n    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);\n    z-index: 50;\n  }\n  .nav-wrap:focus-within .side-nav,\n  .nav-wrap.open .side-nav {\n    display: grid;\n  }\n  .side-nav a,\n  .shell.collapsed .side-nav a {\n    justify-content: flex-start;\n    padding: 0.55rem 0.7rem;\n    transform: none;\n  }\n  .nav-label,\n  .shell.collapsed .nav-label {\n    position: static;\n    display: inline;\n    opacity: 1;\n    transform: none;\n    background: none;\n    border: 0;\n    box-shadow: none;\n    padding: 0;\n    color: inherit;\n    pointer-events: auto;\n  }\n  .logout,\n  .shell.collapsed .logout {\n    width: auto;\n    margin-top: 0;\n    padding: 0.55rem 0.7rem;\n  }\n  .logout-icon,\n  .shell.collapsed .logout-icon {\n    display: inline;\n  }\n  .logout-label,\n  .shell.collapsed .logout-label {\n    display: none;\n  }\n  .shell-main {\n    padding: 1.2rem 1rem 2.5rem;\n  }\n}\n@media (max-width: 900px) and (hover: hover) and (pointer: fine) {\n  .nav-wrap:hover .side-nav {\n    display: grid;\n  }\n}\n/*# sourceMappingURL=panel-shell.component.css.map */\n'] }]
-  }], null, { titleKey: [{
+`, styles: ['/* src/app/layouts/panel-shell/panel-shell.component.css */\n.shell {\n  --sidebar-width: 268px;\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: var(--sidebar-width) 1fr;\n  color: var(--text);\n  background: var(--shell-glow), var(--bg);\n  transition: grid-template-columns 0.22s ease;\n}\n.shell.collapsed {\n  --sidebar-width: 88px;\n}\n.sidebar {\n  position: sticky;\n  top: 0;\n  height: 100vh;\n  display: flex;\n  flex-direction: column;\n  gap: 0.75rem;\n  padding: 1rem 0.8rem;\n  border-right: 1px solid var(--border);\n  background: var(--sidebar-bg);\n  -webkit-backdrop-filter: blur(14px);\n  backdrop-filter: blur(14px);\n  box-shadow: var(--sidebar-inset);\n  overflow: visible;\n  z-index: 8;\n}\n.sidebar-top {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 0.4rem;\n  padding: 0.25rem;\n  flex-shrink: 0;\n}\n.shell.collapsed .sidebar-top {\n  flex-direction: column;\n  align-items: stretch;\n}\n.sidebar-tools {\n  display: flex;\n  flex-direction: column;\n  align-items: flex-end;\n  gap: 0.45rem;\n  flex-shrink: 0;\n}\n.shell.collapsed .sidebar-tools {\n  width: 100%;\n  align-items: stretch;\n}\n.sidebar-brand {\n  display: grid;\n  gap: 0.2rem;\n  padding: 0.25rem;\n  min-width: 0;\n}\n.brand-logo {\n  width: 42px;\n  height: 42px;\n  object-fit: contain;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  padding: 0.2rem;\n  margin-bottom: 0.15rem;\n}\n.shell.collapsed .brand-logo {\n  width: 36px;\n  height: 36px;\n  margin: 0 auto 0.2rem;\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: 1.35rem;\n  font-weight: 800;\n  text-transform: uppercase;\n  letter-spacing: 0.05em;\n  color: var(--heading);\n}\n.shell.collapsed .brand {\n  text-align: center;\n  font-size: 1.1rem;\n}\n.sidebar-brand strong {\n  font-family: var(--font-display);\n  font-size: 0.98rem;\n  color: var(--heading);\n}\n.sidebar-brand small {\n  color: var(--text-soft);\n  font-size: 0.78rem;\n}\n.collapse-btn {\n  width: 2rem;\n  height: 2rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text);\n  cursor: pointer;\n  flex-shrink: 0;\n  padding: 0;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.shell.collapsed .collapse-btn {\n  width: 100%;\n  height: 2.15rem;\n}\n.collapse-icon {\n  width: 1.15rem;\n  height: 1.15rem;\n  display: block;\n}\n:host-context(html[dir="ltr"]) .shell:not(.collapsed) .collapse-icon,\n:host-context(html[dir="rtl"]) .shell.collapsed .collapse-icon {\n  transform: scaleX(1);\n}\n:host-context(html[dir="ltr"]) .shell.collapsed .collapse-icon,\n:host-context(html[dir="rtl"]) .shell:not(.collapsed) .collapse-icon {\n  transform: scaleX(-1);\n}\n.collapse-btn:hover {\n  background: var(--surface-strong);\n  border-color: var(--border-strong);\n}\n.nav-wrap {\n  flex: 1 1 auto;\n  min-height: 0;\n  display: flex;\n  flex-direction: column;\n}\n.menu-toggle {\n  display: none;\n}\n.side-nav {\n  display: grid;\n  gap: 0.25rem;\n  flex: 1 1 auto;\n  min-height: 0;\n  align-content: start;\n  padding: 0.2rem;\n  overflow-x: hidden;\n  overflow-y: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--scrollbar-thumb) transparent;\n}\n.side-nav::-webkit-scrollbar {\n  width: 6px;\n}\n.side-nav::-webkit-scrollbar-thumb {\n  background: var(--scrollbar-thumb);\n  border-radius: 999px;\n}\n.side-nav a {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  min-height: 2.45rem;\n  padding: 0.45rem 0.7rem;\n  border-radius: var(--radius-md);\n  color: var(--text-muted);\n  text-decoration: none;\n  font-weight: 650;\n  border: 1px solid transparent;\n  transition:\n    background 0.15s ease,\n    color 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.shell.collapsed .side-nav a {\n  position: relative;\n  justify-content: center;\n  padding: 0.65rem;\n}\n.nav-label {\n  white-space: nowrap;\n}\n.shell.collapsed .nav-label {\n  position: absolute;\n  inset-inline-start: calc(100% + 0.55rem);\n  top: 50%;\n  transform: translateY(-50%);\n  z-index: 30;\n  padding: 0.35rem 0.7rem;\n  border-radius: var(--radius-sm);\n  background: var(--nav-tooltip-bg);\n  border: 1px solid var(--border-strong);\n  color: var(--heading);\n  font-size: 0.82rem;\n  box-shadow: var(--shadow-md);\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity 0.12s ease;\n}\n.shell.collapsed .side-nav a:hover .nav-label,\n.shell.collapsed .side-nav a:focus-visible .nav-label {\n  opacity: 1;\n}\n.nav-icon {\n  width: 1.75rem;\n  height: 1.75rem;\n  display: inline-grid;\n  place-items: center;\n  border-radius: 10px;\n  background: rgba(255, 214, 10, 0.12);\n  font-size: 0.78rem;\n  font-weight: 800;\n  flex-shrink: 0;\n  color: var(--nav-icon-fg);\n}\n.side-nav a:hover {\n  background: var(--surface-strong);\n  color: var(--nav-hover-fg);\n  transform: translateX(2px);\n}\n.side-nav a.active {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  border-color: transparent;\n  box-shadow: var(--btn-shadow);\n}\n.side-nav a.active .nav-icon {\n  background: rgba(8, 32, 60, 0.14);\n  color: var(--accent-ink);\n}\n.nav-category {\n  display: grid;\n  gap: 0.25rem;\n  padding-top: 0.35rem;\n  margin-top: 0.35rem;\n  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.nav-category:first-of-type {\n  border-top: 0;\n  margin-top: 0;\n  padding-top: 0;\n}\n.nav-category-toggle {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n  width: 100%;\n  margin: 0.15rem 0 0.1rem;\n  padding: 0.2rem 0.7rem;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-sm);\n  cursor: pointer;\n  color: inherit;\n  font: inherit;\n}\n.nav-category-toggle:hover .nav-category-label {\n  color: var(--heading);\n  opacity: 1;\n}\n.nav-category-label {\n  margin: 0;\n  font-size: 0.68rem;\n  font-weight: 800;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--text-muted);\n  opacity: 0.75;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  text-align: start;\n  min-width: 0;\n}\n.nav-category-chevron {\n  width: 0.85rem;\n  height: 0.85rem;\n  flex-shrink: 0;\n  color: var(--text-muted);\n  opacity: 0.75;\n  transition: transform 0.15s ease;\n}\n.nav-category--collapsed .nav-category-chevron {\n  transform: rotate(90deg);\n}\n.nav-category--collapsed > a {\n  display: none;\n}\n.shell.collapsed .nav-category-toggle .nav-category-label {\n  visibility: hidden;\n}\n.shell.collapsed .nav-category-chevron {\n  display: none;\n}\n.shell.collapsed .nav-category--collapsed > a {\n  display: flex;\n}\n.shell.collapsed .nav-category {\n  margin-top: 0.6rem;\n}\n.logout {\n  width: 100%;\n  flex-shrink: 0;\n  margin-top: auto;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.45rem;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  padding: 0.75rem 1rem;\n  background: rgba(255, 107, 107, 0.08);\n  color: var(--logout-fg);\n  font: inherit;\n  font-weight: 750;\n  cursor: pointer;\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.logout-icon {\n  display: none;\n}\n.logout:hover {\n  background: rgba(255, 107, 107, 0.12);\n  border-color: rgba(255, 143, 143, 0.35);\n}\n.shell.collapsed .logout {\n  padding: 0.8rem 0.4rem;\n}\n.shell.collapsed .logout-icon {\n  display: inline;\n}\n.shell.collapsed .logout-label {\n  display: none;\n}\n.shell-main {\n  position: relative;\n  padding: 1.6rem 2rem 3rem;\n  min-width: 0;\n}\n@media (max-width: 900px) {\n  .shell,\n  .shell.collapsed {\n    --sidebar-width: 100%;\n    grid-template-columns: 1fr;\n  }\n  .sidebar {\n    position: sticky;\n    top: 0;\n    z-index: 40;\n    height: auto;\n    flex-direction: row;\n    flex-wrap: wrap;\n    align-items: center;\n    gap: 0.5rem 0.65rem;\n    padding: 0.7rem 0.85rem;\n    overflow: visible;\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n  }\n  .sidebar-top {\n    flex: 1 1 auto;\n    align-items: center;\n    min-width: 0;\n  }\n  .shell.collapsed .sidebar-top {\n    flex-direction: row;\n    align-items: center;\n  }\n  .sidebar-brand strong,\n  .sidebar-brand small {\n    display: none;\n  }\n  .shell.collapsed .brand,\n  .brand {\n    text-align: start;\n    font-size: 1.05rem;\n  }\n  .shell.collapsed .brand-logo,\n  .brand-logo {\n    width: 32px;\n    height: 32px;\n    margin: 0 0 0.1rem;\n  }\n  .collapse-btn,\n  .shell.collapsed .collapse-btn {\n    display: none;\n  }\n  .sidebar-tools,\n  .shell.collapsed .sidebar-tools {\n    width: auto;\n    flex-direction: row;\n    align-items: center;\n  }\n  .nav-wrap {\n    position: relative;\n    flex: 0 0 auto;\n    min-height: 0;\n    margin-inline-start: auto;\n  }\n  .menu-toggle {\n    display: inline-flex;\n    align-items: center;\n    gap: 0.4rem;\n    height: 2.3rem;\n    padding: 0 0.85rem;\n    border-radius: var(--radius-md);\n    border: 1px solid var(--border);\n    background: var(--surface);\n    color: var(--text);\n    font: inherit;\n    font-weight: 750;\n    cursor: pointer;\n  }\n  .menu-toggle:hover,\n  .nav-wrap.open .menu-toggle,\n  .nav-wrap:hover .menu-toggle,\n  .nav-wrap:focus-within .menu-toggle {\n    background: var(--surface-strong);\n    border-color: var(--border-strong);\n  }\n  .side-nav {\n    display: none;\n    position: absolute;\n    top: 100%;\n    inset-inline-end: 0;\n    width: min(22rem, calc(100vw - 1.5rem));\n    max-height: min(70vh, 28rem);\n    padding: 0.45rem;\n    overflow-x: hidden;\n    overflow-y: auto;\n    grid-template-columns: 1fr;\n    background: var(--sidebar-bg);\n    border: 1px solid var(--border-strong);\n    border-radius: var(--radius-md);\n    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);\n    z-index: 50;\n  }\n  .nav-wrap:focus-within .side-nav,\n  .nav-wrap.open .side-nav {\n    display: grid;\n  }\n  .side-nav a,\n  .shell.collapsed .side-nav a {\n    justify-content: flex-start;\n    padding: 0.55rem 0.7rem;\n    transform: none;\n  }\n  .nav-label,\n  .shell.collapsed .nav-label {\n    position: static;\n    display: inline;\n    opacity: 1;\n    transform: none;\n    background: none;\n    border: 0;\n    box-shadow: none;\n    padding: 0;\n    color: inherit;\n    pointer-events: auto;\n  }\n  .logout,\n  .shell.collapsed .logout {\n    width: auto;\n    margin-top: 0;\n    padding: 0.55rem 0.7rem;\n  }\n  .logout-icon,\n  .shell.collapsed .logout-icon {\n    display: inline;\n  }\n  .logout-label,\n  .shell.collapsed .logout-label {\n    display: none;\n  }\n  .shell-main {\n    padding: 1.2rem 1rem 2.5rem;\n  }\n}\n@media (max-width: 900px) and (hover: hover) and (pointer: fine) {\n  .nav-wrap:hover .side-nav {\n    display: grid;\n  }\n}\n/*# sourceMappingURL=panel-shell.component.css.map */\n'] }]
+  }], () => [], { titleKey: [{
     type: Input,
     args: [{ required: true }]
   }], subtitleKey: [{
@@ -75336,7 +76335,7 @@ var PanelShellComponent = class _PanelShellComponent {
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(PanelShellComponent, { className: "PanelShellComponent", filePath: "src/app/layouts/panel-shell/panel-shell.component.ts", lineNumber: 25 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(PanelShellComponent, { className: "PanelShellComponent", filePath: "src/app/layouts/panel-shell/panel-shell.component.ts", lineNumber: 35 });
 })();
 
 // src/app/pages/admin/admin-shell.component.ts
@@ -75344,29 +76343,29 @@ var AdminShellComponent = class _AdminShellComponent {
   constructor() {
     this.navItems = [
       { labelKey: "nav.admin.dashboard", path: "/admin/dashboard", icon: "D" },
-      { labelKey: "nav.admin.admins", path: "/admin/admins", icon: "A" },
-      { labelKey: "nav.admin.teachers", path: "/admin/teachers", icon: "T" },
-      { labelKey: "nav.admin.parents", path: "/admin/parents", icon: "P" },
-      { labelKey: "nav.admin.students", path: "/admin/students", icon: "S" },
-      { labelKey: "nav.admin.courses", path: "/admin/courses", icon: "C" },
-      { labelKey: "nav.admin.courseTree", path: "/admin/course-tree", icon: "U" },
-      { labelKey: "nav.admin.videos", path: "/admin/videos", icon: "V" },
-      { labelKey: "nav.admin.classrooms", path: "/admin/create-classroom", icon: "R" },
-      { labelKey: "nav.admin.assign", path: "/admin/assign-classroom", icon: "G" },
-      { labelKey: "nav.admin.enroll", path: "/admin/enroll-student", icon: "E" },
-      { labelKey: "nav.admin.appointments", path: "/admin/appointments", icon: "K" },
-      { labelKey: "nav.admin.timetable", path: "/admin/timetable", icon: "H" },
-      { labelKey: "nav.admin.studyPlans", path: "/admin/study-plans", icon: "L" },
-      { labelKey: "nav.admin.weeklyReports", path: "/admin/weekly-reports", icon: "W" },
-      { labelKey: "nav.admin.teacherAssessments", path: "/admin/teacher-assessments", icon: "Q" },
-      { labelKey: "nav.admin.attendance", path: "/admin/attendance", icon: "N" },
-      { labelKey: "nav.admin.studentAttendance", path: "/admin/student-attendance", icon: "A" },
-      { labelKey: "nav.admin.payroll", path: "/admin/payroll", icon: "$" },
-      { labelKey: "nav.admin.accountReport", path: "/admin/account-report", icon: "%" },
-      { labelKey: "nav.admin.payments", path: "/admin/payments", icon: "F" },
-      { labelKey: "nav.admin.expenses", path: "/admin/other-expenses", icon: "X" },
-      { labelKey: "nav.admin.whatsapp", path: "/admin/whatsapp", icon: "W" },
-      { labelKey: "nav.admin.settings", path: "/admin/site-settings", icon: "B" }
+      { labelKey: "nav.admin.admins", path: "/admin/admins", icon: "A", categoryKey: "nav.cat.people" },
+      { labelKey: "nav.admin.teachers", path: "/admin/teachers", icon: "T", categoryKey: "nav.cat.people" },
+      { labelKey: "nav.admin.parents", path: "/admin/parents", icon: "P", categoryKey: "nav.cat.people" },
+      { labelKey: "nav.admin.students", path: "/admin/students", icon: "S", categoryKey: "nav.cat.people" },
+      { labelKey: "nav.admin.courses", path: "/admin/courses", icon: "C", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.admin.courseTree", path: "/admin/course-tree", icon: "U", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.admin.videos", path: "/admin/videos", icon: "V", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.admin.studyPlans", path: "/admin/study-plans", icon: "L", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.admin.classrooms", path: "/admin/create-classroom", icon: "R", categoryKey: "nav.cat.classrooms" },
+      { labelKey: "nav.admin.assign", path: "/admin/assign-classroom", icon: "G", categoryKey: "nav.cat.classrooms" },
+      { labelKey: "nav.admin.enroll", path: "/admin/enroll-student", icon: "E", categoryKey: "nav.cat.classrooms" },
+      { labelKey: "nav.admin.teacherAssessments", path: "/admin/teacher-assessments", icon: "Q", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.admin.weeklyReports", path: "/admin/weekly-reports", icon: "W", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.admin.timetable", path: "/admin/timetable", icon: "H", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.admin.appointments", path: "/admin/appointments", icon: "K", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.admin.attendance", path: "/admin/attendance", icon: "N", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.admin.studentAttendance", path: "/admin/student-attendance", icon: "A", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.admin.payroll", path: "/admin/payroll", icon: "$", categoryKey: "nav.cat.finance" },
+      { labelKey: "nav.admin.payments", path: "/admin/payments", icon: "F", categoryKey: "nav.cat.finance" },
+      { labelKey: "nav.admin.expenses", path: "/admin/other-expenses", icon: "X", categoryKey: "nav.cat.finance" },
+      { labelKey: "nav.admin.accountReport", path: "/admin/account-report", icon: "%", categoryKey: "nav.cat.finance" },
+      { labelKey: "nav.admin.whatsapp", path: "/admin/whatsapp", icon: "W", categoryKey: "nav.cat.system" },
+      { labelKey: "nav.admin.settings", path: "/admin/site-settings", icon: "B", categoryKey: "nav.cat.system" }
     ];
   }
   static {
@@ -75409,8 +76408,8 @@ var AdminShellComponent = class _AdminShellComponent {
 })();
 
 // src/app/pages/admin/admin-dashboard.component.ts
-var _forTrack016 = ($index, $item) => $item.id;
-var _forTrack16 = ($index, $item) => $item.date;
+var _forTrack017 = ($index, $item) => $item.id;
+var _forTrack17 = ($index, $item) => $item.date;
 function AdminDashboardComponent_Conditional_47_For_18_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr")(1, "td");
@@ -75460,7 +76459,7 @@ function AdminDashboardComponent_Conditional_47_Template(rf, ctx) {
     \u0275\u0275pipe(15, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(16, "tbody");
-    \u0275\u0275repeaterCreate(17, AdminDashboardComponent_Conditional_47_For_18_Template, 11, 8, "tr", null, _forTrack016);
+    \u0275\u0275repeaterCreate(17, AdminDashboardComponent_Conditional_47_For_18_Template, 11, 8, "tr", null, _forTrack017);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -75553,7 +76552,7 @@ function AdminDashboardComponent_Conditional_70_Conditional_0_Template(rf, ctx) 
     \u0275\u0275elementStart(0, "div", 19);
     \u0275\u0275pipe(1, "t");
     \u0275\u0275elementStart(2, "div", 20);
-    \u0275\u0275repeaterCreate(3, AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Template, 7, 11, "div", 21, _forTrack16);
+    \u0275\u0275repeaterCreate(3, AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Template, 7, 11, "div", 21, _forTrack17);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -76097,7 +77096,7 @@ function totalPages(count, pageSize) {
 
 // src/app/shared/searchable-multi-select/searchable-multi-select.component.ts
 var _c014 = ["panel"];
-var _forTrack017 = ($index, $item) => $item.value;
+var _forTrack018 = ($index, $item) => $item.value;
 function SearchableMultiSelectComponent_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -76169,7 +77168,7 @@ function SearchableMultiSelectComponent_Conditional_6_Template(rf, ctx) {
     });
     \u0275\u0275domElementEnd();
     \u0275\u0275domElementStart(4, "div", 9);
-    \u0275\u0275repeaterCreate(5, SearchableMultiSelectComponent_Conditional_6_For_6_Template, 4, 4, "button", 10, _forTrack017, false, SearchableMultiSelectComponent_Conditional_6_ForEmpty_7_Template, 3, 3, "p", 11);
+    \u0275\u0275repeaterCreate(5, SearchableMultiSelectComponent_Conditional_6_For_6_Template, 4, 4, "button", 10, _forTrack018, false, SearchableMultiSelectComponent_Conditional_6_ForEmpty_7_Template, 3, 3, "p", 11);
     \u0275\u0275domElementEnd()();
   }
   if (rf & 2) {
@@ -76538,7 +77537,7 @@ var _c111 = (a0) => ({ value: "inactive", label: a0 });
 var _c27 = (a0, a1) => [a0, a1];
 var _c33 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c43 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack018 = ($index, $item) => $item.id;
+var _forTrack019 = ($index, $item) => $item.id;
 var arrowFn03 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 var arrowFn1 = (ctx, view) => (s) => {
   \u0275\u0275restoreView(view);
@@ -77777,7 +78776,7 @@ var AdminUsersComponent = class _AdminUsersComponent {
         \u0275\u0275pipe(99, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(100, "tbody");
-        \u0275\u0275repeaterCreate(101, AdminUsersComponent_For_102_Template, 22, 23, "tr", 22, _forTrack018, false, AdminUsersComponent_ForEmpty_103_Template, 4, 4, "tr");
+        \u0275\u0275repeaterCreate(101, AdminUsersComponent_For_102_Template, 22, 23, "tr", 22, _forTrack019, false, AdminUsersComponent_ForEmpty_103_Template, 4, 4, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(104, "div", 23)(105, "button", 24);
         \u0275\u0275listener("click", function AdminUsersComponent_Template_button_click_105_listener() {
@@ -78284,7 +79283,7 @@ var _c112 = (a0) => ({ value: "inactive", label: a0 });
 var _c28 = (a0, a1) => [a0, a1];
 var _c34 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c44 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack019 = ($index, $item) => $item.id;
+var _forTrack020 = ($index, $item) => $item.id;
 var arrowFn04 = (ctx, view) => (p) => ({ value: p.id, label: p.displayName + " (" + (p.email || p.mobilePhone) + ")" });
 var arrowFn12 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminStudentsComponent_Conditional_51_Template(rf, ctx) {
@@ -79147,7 +80146,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
         \u0275\u0275pipe(139, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(140, "tbody");
-        \u0275\u0275repeaterCreate(141, AdminStudentsComponent_For_142_Template, 32, 33, "tr", 27, _forTrack019, false, AdminStudentsComponent_ForEmpty_143_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(141, AdminStudentsComponent_For_142_Template, 32, 33, "tr", 27, _forTrack020, false, AdminStudentsComponent_ForEmpty_143_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(144, "div", 28)(145, "button", 29);
         \u0275\u0275listener("click", function AdminStudentsComponent_Template_button_click_145_listener() {
@@ -79553,7 +80552,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
 // src/app/pages/admin/admin-courses.component.ts
 var _c017 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c113 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack020 = ($index, $item) => $item.id;
+var _forTrack021 = ($index, $item) => $item.id;
 var arrowFn05 = (ctx, view) => (term) => ({ value: term, label: ctx.termLabel(term) });
 var arrowFn13 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 var arrowFn22 = (ctx, view) => (term) => {
@@ -80646,7 +81645,7 @@ var AdminCoursesComponent = class _AdminCoursesComponent {
         \u0275\u0275pipe(141, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(142, "tbody");
-        \u0275\u0275repeaterCreate(143, AdminCoursesComponent_For_144_Template, 3, 1, "tr", null, _forTrack020);
+        \u0275\u0275repeaterCreate(143, AdminCoursesComponent_For_144_Template, 3, 1, "tr", null, _forTrack021);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(145, "div", 29)(146, "button", 30);
         \u0275\u0275listener("click", function AdminCoursesComponent_Template_button_click_146_listener() {
@@ -81060,8 +82059,8 @@ var _c018 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c114 = (a0) => ({ count: a0 });
 var _c29 = (a0) => ["/courses", a0];
 var _c35 = (a0) => ({ video: a0 });
-var _forTrack021 = ($index, $item) => $item.id || "orphan";
-var _forTrack17 = ($index, $item) => $item.sortOrder + $item.title;
+var _forTrack022 = ($index, $item) => $item.id || "orphan";
+var _forTrack18 = ($index, $item) => $item.sortOrder + $item.title;
 var _forTrack22 = ($index, $item) => $item.id;
 var arrowFn06 = (ctx, view) => (u2) => !!u2.id;
 var arrowFn14 = (ctx, view) => (u2) => ({ value: u2.id || "", label: u2.title });
@@ -81163,7 +82162,7 @@ function AdminCourseTreeComponent_Conditional_31_Conditional_33_For_11_Template(
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(8, "div", 32);
-    \u0275\u0275repeaterCreate(9, AdminCourseTreeComponent_Conditional_31_Conditional_33_For_11_For_10_Template, 4, 2, "div", 33, _forTrack17);
+    \u0275\u0275repeaterCreate(9, AdminCourseTreeComponent_Conditional_31_Conditional_33_For_11_For_10_Template, 4, 2, "div", 33, _forTrack18);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -81188,7 +82187,7 @@ function AdminCourseTreeComponent_Conditional_31_Conditional_33_Template(rf, ctx
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(8, AdminCourseTreeComponent_Conditional_31_Conditional_33_Conditional_8_Template, 2, 1, "p", 1);
     \u0275\u0275elementStart(9, "div", 27);
-    \u0275\u0275repeaterCreate(10, AdminCourseTreeComponent_Conditional_31_Conditional_33_For_11_Template, 11, 6, "div", 28, _forTrack17);
+    \u0275\u0275repeaterCreate(10, AdminCourseTreeComponent_Conditional_31_Conditional_33_For_11_Template, 11, 6, "div", 28, _forTrack18);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -81937,7 +82936,7 @@ function AdminCourseTreeComponent_Conditional_31_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(66, AdminCourseTreeComponent_Conditional_31_Conditional_66_Template, 6, 3);
     \u0275\u0275conditionalCreate(67, AdminCourseTreeComponent_Conditional_31_Conditional_67_Template, 3, 3, "p", 1);
     \u0275\u0275elementStart(68, "div", 27);
-    \u0275\u0275repeaterCreate(69, AdminCourseTreeComponent_Conditional_31_For_70_Template, 7, 3, "div", 28, _forTrack021);
+    \u0275\u0275repeaterCreate(69, AdminCourseTreeComponent_Conditional_31_For_70_Template, 7, 3, "div", 28, _forTrack022);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -83150,9 +84149,9 @@ var ClassroomZoomLinksEditorComponent = class _ClassroomZoomLinksEditorComponent
 
 // src/app/pages/admin/admin-create-classroom.component.ts
 var _c019 = (a0) => ({ name: a0 });
-var _forTrack022 = ($index, $item) => $item.id;
+var _forTrack023 = ($index, $item) => $item.id;
 var arrowFn07 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
-var _forTrack18 = ($index, $item) => $item.url + $item.name;
+var _forTrack19 = ($index, $item) => $item.url + $item.name;
 function AdminCreateClassroomComponent_Conditional_45_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -83209,7 +84208,7 @@ function AdminCreateClassroomComponent_For_75_Template(rf, ctx) {
     \u0275\u0275text(7);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(8, "td")(9, "div", 22);
-    \u0275\u0275repeaterCreate(10, AdminCreateClassroomComponent_For_75_For_11_Template, 2, 2, "a", 23, _forTrack18, false, AdminCreateClassroomComponent_For_75_ForEmpty_12_Template, 3, 3, "span", 1);
+    \u0275\u0275repeaterCreate(10, AdminCreateClassroomComponent_For_75_For_11_Template, 2, 2, "a", 23, _forTrack19, false, AdminCreateClassroomComponent_For_75_ForEmpty_12_Template, 3, 3, "span", 1);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(13, "td");
     \u0275\u0275text(14);
@@ -83539,7 +84538,7 @@ var AdminCreateClassroomComponent = class _AdminCreateClassroomComponent {
         \u0275\u0275pipe(72, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(73, "tbody");
-        \u0275\u0275repeaterCreate(74, AdminCreateClassroomComponent_For_75_Template, 19, 5, "tr", null, _forTrack022);
+        \u0275\u0275repeaterCreate(74, AdminCreateClassroomComponent_For_75_Template, 19, 5, "tr", null, _forTrack023);
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -84232,7 +85231,7 @@ function normalizeClassroom(room) {
 // src/app/pages/admin/admin-enroll-student.component.ts
 var _c020 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c115 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack023 = ($index, $item) => $item.classroomId + $item.studentId;
+var _forTrack024 = ($index, $item) => $item.classroomId + $item.studentId;
 var arrowFn09 = (ctx, view) => (s) => ({ value: s.id, label: ctx.studentLabel(s) });
 var arrowFn16 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn24 = (ctx, view) => (s) => ({ value: s, label: "" + s });
@@ -84986,7 +85985,7 @@ var AdminEnrollStudentComponent = class _AdminEnrollStudentComponent {
         \u0275\u0275pipe(84, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(85, "tbody");
-        \u0275\u0275repeaterCreate(86, AdminEnrollStudentComponent_For_87_Template, 15, 10, "tr", null, _forTrack023, false, AdminEnrollStudentComponent_ForEmpty_88_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(86, AdminEnrollStudentComponent_For_87_Template, 15, 10, "tr", null, _forTrack024, false, AdminEnrollStudentComponent_ForEmpty_88_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(89, "div", 19)(90, "button", 20);
         \u0275\u0275listener("click", function AdminEnrollStudentComponent_Template_button_click_90_listener() {
@@ -86022,7 +87021,7 @@ function toDateInputValue(date) {
 }
 
 // src/app/pages/admin/admin-whatsapp.component.ts
-var _forTrack024 = ($index, $item) => $item.phone;
+var _forTrack025 = ($index, $item) => $item.phone;
 function AdminWhatsAppComponent_Conditional_23_Conditional_11_For_12_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
@@ -86230,7 +87229,7 @@ function AdminWhatsAppComponent_Conditional_33_Template(rf, ctx) {
     \u0275\u0275pipe(16, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(17, "tbody");
-    \u0275\u0275repeaterCreate(18, AdminWhatsAppComponent_Conditional_33_For_19_Template, 8, 5, "tr", null, _forTrack024);
+    \u0275\u0275repeaterCreate(18, AdminWhatsAppComponent_Conditional_33_For_19_Template, 8, 5, "tr", null, _forTrack025);
     \u0275\u0275elementEnd()()();
     \u0275\u0275conditionalCreate(20, AdminWhatsAppComponent_Conditional_33_Conditional_20_Template, 6, 7, "p", 1);
     \u0275\u0275elementEnd();
@@ -86626,8 +87625,8 @@ var AdminWhatsAppComponent = class _AdminWhatsAppComponent {
 
 // src/app/pages/admin/admin-appointments.component.ts
 var _c022 = (a0) => ({ minutes: a0 });
-var _forTrack025 = ($index, $item) => $item.key;
-var _forTrack19 = ($index, $item) => $item.appointment.id;
+var _forTrack026 = ($index, $item) => $item.key;
+var _forTrack110 = ($index, $item) => $item.appointment.id;
 var arrowFn010 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var arrowFn17 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 function AdminAppointmentsComponent_Conditional_23_Template(rf, ctx) {
@@ -87361,14 +88360,14 @@ var AdminAppointmentsComponent = class _AdminAppointmentsComponent {
         \u0275\u0275text(62);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(63, "div", 16);
-        \u0275\u0275repeaterCreate(64, AdminAppointmentsComponent_For_65_Template, 3, 4, "button", 17, _forTrack025);
+        \u0275\u0275repeaterCreate(64, AdminAppointmentsComponent_For_65_Template, 3, 4, "button", 17, _forTrack026);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(66, "div", 18)(67, "div", 19);
         \u0275\u0275repeaterCreate(68, AdminAppointmentsComponent_For_69_Template, 2, 3, "div", 20, \u0275\u0275repeaterTrackByIdentity);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(70, "div", 21);
         \u0275\u0275repeaterCreate(71, AdminAppointmentsComponent_For_72_Template, 1, 2, "div", 22, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275repeaterCreate(73, AdminAppointmentsComponent_For_74_Template, 8, 11, "div", 23, _forTrack19);
+        \u0275\u0275repeaterCreate(73, AdminAppointmentsComponent_For_74_Template, 8, 11, "div", 23, _forTrack110);
         \u0275\u0275conditionalCreate(75, AdminAppointmentsComponent_Conditional_75_Template, 3, 3, "p", 24);
         \u0275\u0275elementEnd()()()();
       }
@@ -87799,8 +88798,8 @@ var _c023 = ["timetableWrap"];
 var _c116 = (a0) => ({ value: "am", label: a0 });
 var _c210 = (a0) => ({ value: "pm", label: a0 });
 var _c36 = (a0, a1) => [a0, a1];
-var _forTrack026 = ($index, $item) => $item.key;
-var _forTrack110 = ($index, $item) => $item.dayOfWeek;
+var _forTrack027 = ($index, $item) => $item.key;
+var _forTrack111 = ($index, $item) => $item.dayOfWeek;
 var arrowFn011 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var arrowFn18 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var _forTrack23 = ($index, $item) => $item.entry.id;
@@ -87982,7 +88981,7 @@ function AdminTimetableComponent_For_68_Template(rf, ctx) {
     \u0275\u0275elementStart(4, "span");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(6, AdminTimetableComponent_For_68_For_7_Template, 4, 7, "td", 34, _forTrack026);
+    \u0275\u0275repeaterCreate(6, AdminTimetableComponent_For_68_For_7_Template, 4, 7, "td", 34, _forTrack027);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -88884,10 +89883,10 @@ var AdminTimetableComponent = class _AdminTimetableComponent {
         \u0275\u0275conditionalCreate(62, AdminTimetableComponent_Conditional_62_Template, 2, 2, "th", 24);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(63, "tr");
-        \u0275\u0275repeaterCreate(64, AdminTimetableComponent_For_65_Template, 7, 2, "th", 25, _forTrack026);
+        \u0275\u0275repeaterCreate(64, AdminTimetableComponent_For_65_Template, 7, 2, "th", 25, _forTrack027);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(66, "tbody");
-        \u0275\u0275repeaterCreate(67, AdminTimetableComponent_For_68_Template, 8, 2, "tr", null, _forTrack110);
+        \u0275\u0275repeaterCreate(67, AdminTimetableComponent_For_68_Template, 8, 2, "tr", null, _forTrack111);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(69, "footer", 26)(70, "span", 27);
         \u0275\u0275text(71, "\u{1F496}");
@@ -89275,7 +90274,7 @@ function payloadCombinedGrades(value) {
 // src/app/pages/admin/admin-study-plans.component.ts
 var _c024 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c117 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack027 = ($index, $item) => $item.id;
+var _forTrack028 = ($index, $item) => $item.id;
 var arrowFn012 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminStudyPlansComponent_For_72_Template(rf, ctx) {
   if (rf & 1) {
@@ -89725,7 +90724,7 @@ var AdminStudyPlansComponent = class _AdminStudyPlansComponent {
         \u0275\u0275text(69);
         \u0275\u0275elementEnd()()()();
         \u0275\u0275elementStart(70, "tbody");
-        \u0275\u0275repeaterCreate(71, AdminStudyPlansComponent_For_72_Template, 12, 9, "tr", 15, _forTrack027, false, AdminStudyPlansComponent_ForEmpty_73_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(71, AdminStudyPlansComponent_For_72_Template, 12, 9, "tr", 15, _forTrack028, false, AdminStudyPlansComponent_ForEmpty_73_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(74, "div", 16)(75, "button", 17);
         \u0275\u0275listener("click", function AdminStudyPlansComponent_Template_button_click_75_listener() {
@@ -89975,7 +90974,7 @@ var AdminStudyPlansComponent = class _AdminStudyPlansComponent {
 })();
 
 // src/app/pages/admin/admin-weekly-reports.component.ts
-var _forTrack028 = ($index, $item) => $item.id;
+var _forTrack029 = ($index, $item) => $item.id;
 function AdminWeeklyReportsComponent_For_70_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr")(1, "td");
@@ -90294,7 +91293,7 @@ var AdminWeeklyReportsComponent = class _AdminWeeklyReportsComponent {
         \u0275\u0275pipe(67, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(68, "tbody");
-        \u0275\u0275repeaterCreate(69, AdminWeeklyReportsComponent_For_70_Template, 23, 17, "tr", null, _forTrack028, false, AdminWeeklyReportsComponent_ForEmpty_71_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(69, AdminWeeklyReportsComponent_For_70_Template, 23, 17, "tr", null, _forTrack029, false, AdminWeeklyReportsComponent_ForEmpty_71_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -90474,7 +91473,7 @@ function toLocalDateString2(d) {
 // src/app/pages/admin/admin-teacher-assessments.component.ts
 var _c025 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c118 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack029 = ($index, $item) => $item.kind + $item.id;
+var _forTrack030 = ($index, $item) => $item.kind + $item.id;
 var arrowFn013 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminTeacherAssessmentsComponent_Conditional_42_Template(rf, ctx) {
   if (rf & 1) {
@@ -91004,7 +92003,7 @@ var AdminTeacherAssessmentsComponent = class _AdminTeacherAssessmentsComponent {
         \u0275\u0275pipe(77, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(78, "tbody");
-        \u0275\u0275repeaterCreate(79, AdminTeacherAssessmentsComponent_For_80_Template, 23, 16, "tr", null, _forTrack029, false, AdminTeacherAssessmentsComponent_ForEmpty_81_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(79, AdminTeacherAssessmentsComponent_For_80_Template, 23, 16, "tr", null, _forTrack030, false, AdminTeacherAssessmentsComponent_ForEmpty_81_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(82, "div", 17)(83, "button", 18);
         \u0275\u0275listener("click", function AdminTeacherAssessmentsComponent_Template_button_click_83_listener() {
@@ -91283,7 +92282,7 @@ function toLocalDateString3(d) {
 }
 
 // src/app/pages/admin/admin-attendance.component.ts
-var _forTrack030 = ($index, $item) => $item.id;
+var _forTrack031 = ($index, $item) => $item.id;
 var arrowFn014 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var arrowFn19 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var arrowFn26 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
@@ -91698,7 +92697,7 @@ var AdminAttendanceComponent = class _AdminAttendanceComponent {
         \u0275\u0275pipe(80, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(81, "tbody");
-        \u0275\u0275repeaterCreate(82, AdminAttendanceComponent_For_83_Template, 11, 4, "tr", null, _forTrack030, false, AdminAttendanceComponent_ForEmpty_84_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(82, AdminAttendanceComponent_For_83_Template, 11, 4, "tr", null, _forTrack031, false, AdminAttendanceComponent_ForEmpty_84_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -91936,7 +92935,7 @@ function toLocalDateString4(d) {
 // src/app/pages/admin/admin-student-attendance.component.ts
 var _c026 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c119 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack031 = ($index, $item) => $item.id;
+var _forTrack032 = ($index, $item) => $item.id;
 var arrowFn015 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminStudentAttendanceComponent_For_110_Template(rf, ctx) {
   if (rf & 1) {
@@ -92534,7 +93533,7 @@ var AdminStudentAttendanceComponent = class _AdminStudentAttendanceComponent {
         \u0275\u0275pipe(107, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(108, "tbody");
-        \u0275\u0275repeaterCreate(109, AdminStudentAttendanceComponent_For_110_Template, 16, 8, "tr", null, _forTrack031, false, AdminStudentAttendanceComponent_ForEmpty_111_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(109, AdminStudentAttendanceComponent_For_110_Template, 16, 8, "tr", null, _forTrack032, false, AdminStudentAttendanceComponent_ForEmpty_111_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(112, "div", 22)(113, "button", 23);
         \u0275\u0275listener("click", function AdminStudentAttendanceComponent_Template_button_click_113_listener() {
@@ -92847,13 +93846,13 @@ function toLocalDateString5(d) {
 
 // src/app/pages/admin/admin-payroll.component.ts
 var _c027 = ["reportTable"];
-var _forTrack032 = ($index, $item) => $item.id;
+var _forTrack033 = ($index, $item) => $item.id;
 var arrowFn016 = (ctx, view) => (y) => ({ value: y, label: "" + y });
 var arrowFn110 = (ctx, view) => (m) => ({ value: m, label: ctx.monthLabel(m) });
 var arrowFn27 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var arrowFn34 = (ctx, view) => (s) => ({ value: s, label: ctx.stageLabel(s) });
 var arrowFn42 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
-var _forTrack111 = ($index, $item) => $item.teacherId;
+var _forTrack112 = ($index, $item) => $item.teacherId;
 function AdminPayrollComponent_Conditional_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 2);
@@ -92929,7 +93928,7 @@ function AdminPayrollComponent_Conditional_81_ForEmpty_2_Template(rf, ctx) {
 }
 function AdminPayrollComponent_Conditional_81_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275repeaterCreate(0, AdminPayrollComponent_Conditional_81_For_1_Template, 17, 8, "tr", null, _forTrack111, false, AdminPayrollComponent_Conditional_81_ForEmpty_2_Template, 4, 3, "tr");
+    \u0275\u0275repeaterCreate(0, AdminPayrollComponent_Conditional_81_For_1_Template, 17, 8, "tr", null, _forTrack112, false, AdminPayrollComponent_Conditional_81_ForEmpty_2_Template, 4, 3, "tr");
     \u0275\u0275elementStart(3, "tr", 27)(4, "td", 28)(5, "strong");
     \u0275\u0275text(6);
     \u0275\u0275pipe(7, "t");
@@ -93581,7 +94580,7 @@ var AdminPayrollComponent = class _AdminPayrollComponent {
         \u0275\u0275pipe(153, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(154, "tbody");
-        \u0275\u0275repeaterCreate(155, AdminPayrollComponent_For_156_Template, 14, 7, "tr", null, _forTrack032, false, AdminPayrollComponent_ForEmpty_157_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(155, AdminPayrollComponent_For_156_Template, 14, 7, "tr", null, _forTrack033, false, AdminPayrollComponent_ForEmpty_157_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -94386,7 +95385,7 @@ function toLocalDateString7(d) {
 var _c028 = (a0) => ({ value: "parent", label: a0 });
 var _c120 = (a0) => ({ value: "student", label: a0 });
 var _c211 = (a0, a1) => [a0, a1];
-var _forTrack033 = ($index, $item) => $item.id;
+var _forTrack034 = ($index, $item) => $item.id;
 var arrowFn017 = (ctx, view) => (y) => ({ value: y, label: "" + y });
 var arrowFn111 = (ctx, view) => (m) => ({ value: m, label: ctx.monthLabel(m) });
 var arrowFn28 = (ctx, view) => (p) => ({ value: p.id, label: p.displayName });
@@ -94939,7 +95938,7 @@ var AdminPaymentsComponent = class _AdminPaymentsComponent {
         \u0275\u0275pipe(97, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(98, "tbody");
-        \u0275\u0275repeaterCreate(99, AdminPaymentsComponent_For_100_Template, 20, 13, "tr", null, _forTrack033, false, AdminPaymentsComponent_ForEmpty_101_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(99, AdminPaymentsComponent_For_100_Template, 20, 13, "tr", null, _forTrack034, false, AdminPaymentsComponent_ForEmpty_101_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -95250,7 +96249,7 @@ function yearOptions2() {
 }
 
 // src/app/pages/admin/admin-other-expenses.component.ts
-var _forTrack034 = ($index, $item) => $item.id;
+var _forTrack035 = ($index, $item) => $item.id;
 function AdminOtherExpensesComponent_For_78_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -95557,7 +96556,7 @@ var AdminOtherExpensesComponent = class _AdminOtherExpensesComponent {
         \u0275\u0275pipe(75, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(76, "tbody");
-        \u0275\u0275repeaterCreate(77, AdminOtherExpensesComponent_For_78_Template, 12, 6, "tr", null, _forTrack034, false, AdminOtherExpensesComponent_ForEmpty_79_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(77, AdminOtherExpensesComponent_For_78_Template, 12, 6, "tr", null, _forTrack035, false, AdminOtherExpensesComponent_ForEmpty_79_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -95755,7 +96754,7 @@ function toLocalDateString9(d) {
 }
 
 // src/app/pages/course-play/course-play.component.ts
-var _forTrack035 = ($index, $item) => $item.id;
+var _forTrack036 = ($index, $item) => $item.id;
 function CoursePlayComponent_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 2);
@@ -95800,7 +96799,7 @@ function CoursePlayComponent_Conditional_6_Conditional_9_Conditional_4_Template(
 function CoursePlayComponent_Conditional_6_Conditional_9_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 5)(1, "nav", 6);
-    \u0275\u0275repeaterCreate(2, CoursePlayComponent_Conditional_6_Conditional_9_For_3_Template, 2, 3, "button", 7, _forTrack035);
+    \u0275\u0275repeaterCreate(2, CoursePlayComponent_Conditional_6_Conditional_9_For_3_Template, 2, 3, "button", 7, _forTrack036);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(4, CoursePlayComponent_Conditional_6_Conditional_9_Conditional_4_Template, 1, 3, "app-protected-video-player", 8);
     \u0275\u0275elementEnd();
@@ -96002,7 +97001,7 @@ var CoursePlayComponent = class _CoursePlayComponent {
 
 // src/app/pages/admin/admin-videos.component.ts
 var _c029 = (a0) => [a0];
-var _forTrack036 = ($index, $item) => $item.id;
+var _forTrack037 = ($index, $item) => $item.id;
 var arrowFn018 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 function AdminVideosComponent_Conditional_56_Template(rf, ctx) {
   if (rf & 1) {
@@ -96489,7 +97488,7 @@ var AdminVideosComponent = class _AdminVideosComponent {
         \u0275\u0275pipe(75, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(76, "tbody");
-        \u0275\u0275repeaterCreate(77, AdminVideosComponent_For_78_Template, 16, 11, "tr", 19, _forTrack036, false, AdminVideosComponent_ForEmpty_79_Template, 5, 5, "tr");
+        \u0275\u0275repeaterCreate(77, AdminVideosComponent_For_78_Template, 16, 11, "tr", 19, _forTrack037, false, AdminVideosComponent_ForEmpty_79_Template, 5, 5, "tr");
         \u0275\u0275elementEnd()()()()();
         \u0275\u0275conditionalCreate(80, AdminVideosComponent_Conditional_80_Template, 10, 6, "div", 20);
       }
@@ -96735,23 +97734,23 @@ var TeacherShellComponent = class _TeacherShellComponent {
   constructor() {
     this.navItems = [
       { labelKey: "nav.teacher.overview", path: "/teacher/overview", icon: "O" },
-      { labelKey: "nav.teacher.videos", path: "/teacher/videos", icon: "V" },
-      { labelKey: "nav.teacher.courseTree", path: "/teacher/course-tree", icon: "U" },
-      { labelKey: "nav.teacher.askedQuestions", path: "/teacher/asked-questions", icon: "?" },
-      { labelKey: "nav.teacher.chat", path: "/teacher/chat", icon: "C" },
-      { labelKey: "nav.teacher.zoom", path: "/teacher/zoom", icon: "Z" },
-      { labelKey: "nav.teacher.appointments", path: "/teacher/appointments", icon: "K" },
-      { labelKey: "nav.teacher.timetable", path: "/teacher/timetable", icon: "H" },
-      { labelKey: "nav.teacher.attendance", path: "/teacher/attendance", icon: "N" },
-      { labelKey: "nav.teacher.studentAttendance", path: "/teacher/student-attendance", icon: "A" },
-      { labelKey: "nav.teacher.weeklyReports", path: "/teacher/weekly-reports", icon: "W" },
-      { labelKey: "nav.teacher.studyPlans", path: "/teacher/study-plans", icon: "P" },
-      { labelKey: "nav.teacher.questionBank", path: "/teacher/question-bank", icon: "B" },
-      { labelKey: "nav.teacher.exams", path: "/teacher/exams", icon: "E" },
-      { labelKey: "nav.teacher.quizzes", path: "/teacher/quizzes", icon: "Q" },
-      { labelKey: "nav.teacher.assignments", path: "/teacher/assignments", icon: "A" },
-      { labelKey: "nav.teacher.review", path: "/teacher/review", icon: "R" },
-      { labelKey: "nav.teacher.students", path: "/teacher/students", icon: "S" }
+      { labelKey: "nav.cat.content", path: "/teacher/videos", icon: "V", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.teacher.materials", path: "/teacher/materials", icon: "M", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.teacher.courseTree", path: "/teacher/course-tree", icon: "U", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.teacher.studyPlans", path: "/teacher/study-plans", icon: "P", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.teacher.exams", path: "/teacher/exams", icon: "E", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.teacher.quizzes", path: "/teacher/quizzes", icon: "Q", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.teacher.assignments", path: "/teacher/assignments", icon: "A", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.teacher.questionBank", path: "/teacher/question-bank", icon: "B", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.teacher.review", path: "/teacher/review", icon: "R", categoryKey: "nav.cat.assessments" },
+      { labelKey: "nav.teacher.timetable", path: "/teacher/timetable", icon: "H", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.teacher.appointments", path: "/teacher/appointments", icon: "K", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.teacher.attendance", path: "/teacher/attendance", icon: "N", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.teacher.studentAttendance", path: "/teacher/student-attendance", icon: "A", categoryKey: "nav.cat.schedule" },
+      { labelKey: "nav.teacher.students", path: "/teacher/students", icon: "S", categoryKey: "nav.cat.communication" },
+      { labelKey: "nav.teacher.askedQuestions", path: "/teacher/asked-questions", icon: "?", categoryKey: "nav.cat.communication" },
+      { labelKey: "nav.teacher.chat", path: "/teacher/chat", icon: "C", categoryKey: "nav.cat.communication" },
+      { labelKey: "nav.teacher.weeklyReports", path: "/teacher/weekly-reports", icon: "W", categoryKey: "nav.cat.communication" }
     ];
   }
   static {
@@ -96800,8 +97799,8 @@ var _c212 = (a0) => ({ count: a0 });
 var _c37 = (a0) => ({ list: a0 });
 var _c45 = () => [];
 var _c53 = (a0, a1) => ({ lesson: a0, percent: a1 });
-var _forTrack037 = ($index, $item) => $item.gradeLabel;
-var _forTrack112 = ($index, $item) => $item.url + $item.name;
+var _forTrack038 = ($index, $item) => $item.gradeLabel;
+var _forTrack113 = ($index, $item) => $item.url + $item.name;
 var _forTrack24 = ($index, $item) => $item.studentId;
 var _forTrack32 = ($index, $item) => $item.lessonId;
 function TeacherOverviewComponent_For_74_Conditional_7_Template(rf, ctx) {
@@ -96875,7 +97874,7 @@ function TeacherOverviewComponent_For_74_Template(rf, ctx) {
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275conditionalCreate(7, TeacherOverviewComponent_For_74_Conditional_7_Template, 3, 6, "p", 5);
-    \u0275\u0275repeaterCreate(8, TeacherOverviewComponent_For_74_For_9_Template, 8, 4, "div", 16, _forTrack112);
+    \u0275\u0275repeaterCreate(8, TeacherOverviewComponent_For_74_For_9_Template, 8, 4, "div", 16, _forTrack113);
     \u0275\u0275elementStart(10, "ul", 17);
     \u0275\u0275repeaterCreate(11, TeacherOverviewComponent_For_74_For_12_Template, 2, 1, "li", null, _forTrack24, false, TeacherOverviewComponent_For_74_ForEmpty_13_Template, 3, 3, "li", 5);
     \u0275\u0275elementEnd()();
@@ -97273,7 +98272,7 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
         \u0275\u0275text(71);
         \u0275\u0275pipe(72, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(73, TeacherOverviewComponent_For_74_Template, 14, 9, "div", 14, _forTrack037, false, TeacherOverviewComponent_ForEmpty_75_Template, 3, 3, "p", 5);
+        \u0275\u0275repeaterCreate(73, TeacherOverviewComponent_For_74_Template, 14, 9, "div", 14, _forTrack038, false, TeacherOverviewComponent_ForEmpty_75_Template, 3, 3, "p", 5);
         \u0275\u0275elementEnd();
         \u0275\u0275conditionalCreate(76, TeacherOverviewComponent_Conditional_76_Template, 6, 4, "section", 4);
         \u0275\u0275conditionalCreate(77, TeacherOverviewComponent_Conditional_77_Template, 15, 23, "section", 4);
@@ -97478,9 +98477,9 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
 
 // src/app/pages/teacher/teacher-zoom.component.ts
 var _c031 = (a0) => ({ email: a0 });
-var _forTrack038 = ($index, $item) => $item.id;
+var _forTrack039 = ($index, $item) => $item.id;
 var arrowFn019 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
-var _forTrack113 = ($index, $item) => $item.gradeLabel;
+var _forTrack114 = ($index, $item) => $item.gradeLabel;
 var _forTrack25 = ($index, $item) => $item.url + $item.name;
 function TeacherZoomComponent_Conditional_8_For_8_For_5_Conditional_4_For_2_Template(rf, ctx) {
   if (rf & 1) {
@@ -97553,7 +98552,7 @@ function TeacherZoomComponent_Conditional_8_For_8_Template(rf, ctx) {
     \u0275\u0275elementStart(0, "div", 18)(1, "div", 19)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(4, TeacherZoomComponent_Conditional_8_For_8_For_5_Template, 10, 7, "div", 17, _forTrack038);
+    \u0275\u0275repeaterCreate(4, TeacherZoomComponent_Conditional_8_For_8_For_5_Template, 10, 7, "div", 17, _forTrack039);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -97574,7 +98573,7 @@ function TeacherZoomComponent_Conditional_8_Template(rf, ctx) {
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(7, TeacherZoomComponent_Conditional_8_For_8_Template, 6, 1, "div", 18, _forTrack113);
+    \u0275\u0275repeaterCreate(7, TeacherZoomComponent_Conditional_8_For_8_Template, 6, 1, "div", 18, _forTrack114);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -98566,7 +99565,7 @@ var TeacherZoomComponent = class _TeacherZoomComponent {
         \u0275\u0275text(72);
         \u0275\u0275pipe(73, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(74, TeacherZoomComponent_For_75_Template, 14, 15, "div", 17, _forTrack038, false, TeacherZoomComponent_ForEmpty_76_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(74, TeacherZoomComponent_For_75_Template, 14, 15, "div", 17, _forTrack039, false, TeacherZoomComponent_ForEmpty_76_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -98904,7 +99903,7 @@ function assessmentWhatsAppShareUrl(options) {
 }
 
 // src/app/pages/teacher/assessment-student-links-dialog.component.ts
-var _forTrack039 = ($index, $item) => $item.studentId;
+var _forTrack040 = ($index, $item) => $item.studentId;
 function AssessmentStudentLinksDialogComponent_Conditional_29_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 11);
@@ -98994,7 +99993,7 @@ function AssessmentStudentLinksDialogComponent_Conditional_32_ForEmpty_3_Templat
 function AssessmentStudentLinksDialogComponent_Conditional_32_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "ul", 13);
-    \u0275\u0275repeaterCreate(1, AssessmentStudentLinksDialogComponent_Conditional_32_For_2_Template, 11, 8, "li", 14, _forTrack039, false, AssessmentStudentLinksDialogComponent_Conditional_32_ForEmpty_3_Template, 3, 3, "li", 3);
+    \u0275\u0275repeaterCreate(1, AssessmentStudentLinksDialogComponent_Conditional_32_For_2_Template, 11, 8, "li", 14, _forTrack040, false, AssessmentStudentLinksDialogComponent_Conditional_32_ForEmpty_3_Template, 3, 3, "li", 3);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -99302,8 +100301,8 @@ var AssessmentStudentLinksDialogComponent = class _AssessmentStudentLinksDialogC
 // src/app/shared/math-prompt-editor/math-prompt-editor.component.ts
 var _c032 = ["editor"];
 var _c122 = ["fracNumInput"];
-var _forTrack040 = ($index, $item) => $item.cmd;
-var _forTrack114 = ($index, $item) => $item.value || "default";
+var _forTrack041 = ($index, $item) => $item.cmd;
+var _forTrack115 = ($index, $item) => $item.value || "default";
 var _forTrack26 = ($index, $item) => $item.id;
 function MathPromptEditorComponent_For_5_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
@@ -100243,9 +101242,9 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         \u0275\u0275elementStart(0, "div", 2)(1, "div", 3);
         \u0275\u0275pipe(2, "t");
         \u0275\u0275elementStart(3, "div", 4);
-        \u0275\u0275repeaterCreate(4, MathPromptEditorComponent_For_5_Template, 6, 13, "button", 5, _forTrack040);
+        \u0275\u0275repeaterCreate(4, MathPromptEditorComponent_For_5_Template, 6, 13, "button", 5, _forTrack041);
         \u0275\u0275element(6, "span", 6);
-        \u0275\u0275repeaterCreate(7, MathPromptEditorComponent_For_8_Template, 4, 7, "button", 7, _forTrack040);
+        \u0275\u0275repeaterCreate(7, MathPromptEditorComponent_For_8_Template, 4, 7, "button", 7, _forTrack041);
         \u0275\u0275element(9, "span", 6);
         \u0275\u0275elementStart(10, "label", 8);
         \u0275\u0275pipe(11, "t");
@@ -100260,7 +101259,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         })("change", function MathPromptEditorComponent_Template_select_change_15_listener($event) {
           return ctx.onFontFamilyChange($event);
         });
-        \u0275\u0275repeaterCreate(17, MathPromptEditorComponent_For_18_Template, 3, 6, "option", 11, _forTrack114);
+        \u0275\u0275repeaterCreate(17, MathPromptEditorComponent_For_18_Template, 3, 6, "option", 11, _forTrack115);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(19, "label", 12);
         \u0275\u0275pipe(20, "t");
@@ -100275,7 +101274,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         })("change", function MathPromptEditorComponent_Template_select_change_24_listener($event) {
           return ctx.onFontSizeChange($event);
         });
-        \u0275\u0275repeaterCreate(26, MathPromptEditorComponent_For_27_Template, 3, 4, "option", 13, _forTrack114);
+        \u0275\u0275repeaterCreate(26, MathPromptEditorComponent_For_27_Template, 3, 4, "option", 13, _forTrack115);
         \u0275\u0275elementEnd()();
         \u0275\u0275element(28, "span", 6);
         \u0275\u0275elementStart(29, "div", 14)(30, "button", 15);
@@ -100674,7 +101673,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
 var _c033 = ["workCanvas"];
 var _c123 = (a0) => ({ percent: a0 });
 var _c213 = (a0, a1) => ({ width: a0, height: a1 });
-var _forTrack041 = ($index, $item) => $item.key;
+var _forTrack042 = ($index, $item) => $item.key;
 function ImageCropEditorComponent_For_22_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -101270,7 +102269,7 @@ var ImageCropEditorComponent = class _ImageCropEditorComponent {
         \u0275\u0275domElementEnd()();
         \u0275\u0275domElementStart(19, "div", 4);
         \u0275\u0275pipe(20, "t");
-        \u0275\u0275repeaterCreate(21, ImageCropEditorComponent_For_22_Template, 3, 6, "button", 6, _forTrack041);
+        \u0275\u0275repeaterCreate(21, ImageCropEditorComponent_For_22_Template, 3, 6, "button", 6, _forTrack042);
         \u0275\u0275domElementEnd();
         \u0275\u0275domElementStart(23, "div", 4);
         \u0275\u0275pipe(24, "t");
@@ -102022,7 +103021,7 @@ var arrowFn112 = (ctx, view) => (t) => {
   const ctx_r1 = \u0275\u0275nextContext(2);
   return \u0275\u0275resetView({ value: t, label: ctx_r1.typeLabel(t) });
 };
-var _forTrack042 = ($index, $item) => $item.key;
+var _forTrack043 = ($index, $item) => $item.key;
 var arrowFn29 = (ctx, view) => (o) => {
   \u0275\u0275restoreView(view);
   const ctx_r1 = \u0275\u0275nextContext(4);
@@ -102318,7 +103317,7 @@ function QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_21_Condi
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_21_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack042);
+    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_21_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack043);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -102878,7 +103877,7 @@ function QuestionDraftEditorComponent_Conditional_26_Conditional_11_Template(rf,
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_26_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack042);
+    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_26_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack043);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -103593,8 +104592,8 @@ var arrowFn113 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn210 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn37 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
 var arrowFn43 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
-var _forTrack043 = ($index, $item) => $item.id;
-var _forTrack115 = ($index, $item) => $item.questionId;
+var _forTrack044 = ($index, $item) => $item.id;
+var _forTrack116 = ($index, $item) => $item.questionId;
 function TeacherQuizzesComponent_Conditional_15_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 7);
@@ -103735,7 +104734,7 @@ function TeacherQuizzesComponent_Conditional_96_For_13_Conditional_16_ForEmpty_3
 function TeacherQuizzesComponent_Conditional_96_For_13_Conditional_16_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 60);
-    \u0275\u0275repeaterCreate(1, TeacherQuizzesComponent_Conditional_96_For_13_Conditional_16_For_2_Template, 23, 22, "div", 61, _forTrack115, false, TeacherQuizzesComponent_Conditional_96_For_13_Conditional_16_ForEmpty_3_Template, 3, 3, "p", 2);
+    \u0275\u0275repeaterCreate(1, TeacherQuizzesComponent_Conditional_96_For_13_Conditional_16_For_2_Template, 23, 22, "div", 61, _forTrack116, false, TeacherQuizzesComponent_Conditional_96_For_13_Conditional_16_ForEmpty_3_Template, 3, 3, "p", 2);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -103862,7 +104861,7 @@ function TeacherQuizzesComponent_Conditional_96_Template(rf, ctx) {
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(11, "div", 52);
-    \u0275\u0275repeaterCreate(12, TeacherQuizzesComponent_Conditional_96_For_13_Template, 17, 14, "article", 53, _forTrack043, false, TeacherQuizzesComponent_Conditional_96_ForEmpty_14_Template, 3, 3, "p", 44);
+    \u0275\u0275repeaterCreate(12, TeacherQuizzesComponent_Conditional_96_For_13_Template, 17, 14, "article", 53, _forTrack044, false, TeacherQuizzesComponent_Conditional_96_ForEmpty_14_Template, 3, 3, "p", 44);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(15, TeacherQuizzesComponent_Conditional_96_Conditional_15_Template, 10, 15, "div", 45);
     \u0275\u0275elementEnd();
@@ -104064,7 +105063,7 @@ function TeacherQuizzesComponent_Conditional_127_Template(rf, ctx) {
     \u0275\u0275pipe(30, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(31, "tbody");
-    \u0275\u0275repeaterCreate(32, TeacherQuizzesComponent_Conditional_127_For_33_Template, 32, 31, "tr", 70, _forTrack043);
+    \u0275\u0275repeaterCreate(32, TeacherQuizzesComponent_Conditional_127_For_33_Template, 32, 31, "tr", 70, _forTrack044);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -105369,7 +106368,7 @@ function toLocalDateString10(d) {
 var _c037 = (a0) => ({ value: "ShortAnswer", label: a0 });
 var _c127 = (a0) => ({ value: "MultipleChoice", label: a0 });
 var _c216 = (a0, a1) => [a0, a1];
-var _forTrack044 = ($index, $item) => $item.id;
+var _forTrack045 = ($index, $item) => $item.id;
 var arrowFn022 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn114 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn211 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
@@ -106318,7 +107317,7 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
         \u0275\u0275conditionalCreate(117, TeacherAssignmentsComponent_Conditional_117_Template, 3, 3, "button", 34);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(118, "div", 40);
-        \u0275\u0275repeaterCreate(119, TeacherAssignmentsComponent_For_120_Template, 25, 28, "article", 41, _forTrack044, false, TeacherAssignmentsComponent_ForEmpty_121_Template, 3, 3, "p", 42);
+        \u0275\u0275repeaterCreate(119, TeacherAssignmentsComponent_For_120_Template, 25, 28, "article", 41, _forTrack045, false, TeacherAssignmentsComponent_ForEmpty_121_Template, 3, 3, "p", 42);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(122, TeacherAssignmentsComponent_Conditional_122_Template, 2, 7, "app-assessment-student-links-dialog", 43);
         \u0275\u0275elementEnd();
@@ -106739,9 +107738,9 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
 
 // src/app/pages/teacher/teacher-review.component.ts
 var _c038 = (a0, a1) => ({ score: a0, max: a1 });
-var _forTrack045 = ($index, $item) => $item.id;
+var _forTrack046 = ($index, $item) => $item.id;
 var arrowFn023 = (ctx, view) => (a) => ({ value: a.id, label: a.title });
-var _forTrack116 = ($index, $item) => $item.questionId;
+var _forTrack117 = ($index, $item) => $item.questionId;
 var _forTrack27 = ($index, $item) => $item.key;
 function TeacherReviewComponent_For_19_For_9_Conditional_9_For_2_Template(rf, ctx) {
   if (rf & 1) {
@@ -106867,7 +107866,7 @@ function TeacherReviewComponent_For_19_Template(rf, ctx) {
     \u0275\u0275pipe(6, "t");
     \u0275\u0275pipe(7, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(8, TeacherReviewComponent_For_19_For_9_Template, 26, 30, "div", 7, _forTrack116);
+    \u0275\u0275repeaterCreate(8, TeacherReviewComponent_For_19_For_9_Template, 26, 30, "div", 7, _forTrack117);
     \u0275\u0275elementStart(10, "label");
     \u0275\u0275text(11);
     \u0275\u0275pipe(12, "t");
@@ -107085,7 +108084,7 @@ var TeacherReviewComponent = class _TeacherReviewComponent {
         \u0275\u0275text(16);
         \u0275\u0275pipe(17, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275repeaterCreate(18, TeacherReviewComponent_For_19_Template, 18, 22, "section", 3, _forTrack045);
+        \u0275\u0275repeaterCreate(18, TeacherReviewComponent_For_19_Template, 18, 22, "section", 3, _forTrack046);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
@@ -107206,8 +108205,8 @@ var _c039 = () => [];
 var _c128 = (a0, a1, a2, a3) => ({ n: a0, name: a1, xp: a2, pct: a3 });
 var _c217 = (a0, a1, a2, a3) => ({ lesson: a0, pct: a1, wrong: a2, total: a3 });
 var _c39 = (a0, a1, a2, a3, a4) => ({ lesson: a0, pct: a1, done: a2, total: a3, sec: a4 });
-var _forTrack046 = ($index, $item) => $item.studentId;
-var _forTrack117 = ($index, $item) => $item.lessonId;
+var _forTrack047 = ($index, $item) => $item.studentId;
+var _forTrack118 = ($index, $item) => $item.lessonId;
 var _forTrack28 = ($index, $item) => $item.mediaAssetId + $item.lastEventAtUtc;
 function TeacherStudentsComponent_For_32_Template(rf, ctx) {
   if (rf & 1) {
@@ -107432,12 +108431,12 @@ function TeacherStudentsComponent_Conditional_34_Template(rf, ctx) {
     \u0275\u0275text(22);
     \u0275\u0275pipe(23, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(24, TeacherStudentsComponent_Conditional_34_For_25_Template, 3, 9, "p", 1, _forTrack117, false, TeacherStudentsComponent_Conditional_34_ForEmpty_26_Template, 3, 3, "p", 1);
+    \u0275\u0275repeaterCreate(24, TeacherStudentsComponent_Conditional_34_For_25_Template, 3, 9, "p", 1, _forTrack118, false, TeacherStudentsComponent_Conditional_34_ForEmpty_26_Template, 3, 3, "p", 1);
     \u0275\u0275elementStart(27, "h3");
     \u0275\u0275text(28);
     \u0275\u0275pipe(29, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(30, TeacherStudentsComponent_Conditional_34_For_31_Template, 3, 10, "p", 1, _forTrack117, false, TeacherStudentsComponent_Conditional_34_ForEmpty_32_Template, 3, 3, "p", 1);
+    \u0275\u0275repeaterCreate(30, TeacherStudentsComponent_Conditional_34_For_31_Template, 3, 10, "p", 1, _forTrack118, false, TeacherStudentsComponent_Conditional_34_ForEmpty_32_Template, 3, 3, "p", 1);
     \u0275\u0275elementStart(33, "h3");
     \u0275\u0275text(34);
     \u0275\u0275pipe(35, "t");
@@ -107595,7 +108594,7 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
         \u0275\u0275text(29);
         \u0275\u0275pipe(30, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275repeaterCreate(31, TeacherStudentsComponent_For_32_Template, 18, 15, "div", 6, _forTrack046, false, TeacherStudentsComponent_ForEmpty_33_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(31, TeacherStudentsComponent_For_32_Template, 18, 15, "div", 6, _forTrack047, false, TeacherStudentsComponent_ForEmpty_33_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(34, TeacherStudentsComponent_Conditional_34_Template, 39, 38, "section", 3);
         \u0275\u0275elementEnd();
@@ -107736,7 +108735,7 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
 })();
 
 // src/app/pages/teacher/teacher-question-bank.component.ts
-var _forTrack047 = ($index, $item) => $item.id;
+var _forTrack048 = ($index, $item) => $item.id;
 var arrowFn024 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn115 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn212 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
@@ -107786,7 +108785,7 @@ function TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template(rf, c
 function TeacherQuestionBankComponent_For_42_Conditional_10_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "ul");
-    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template, 5, 6, "li", null, _forTrack047);
+    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template, 5, 6, "li", null, _forTrack048);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -108067,7 +109066,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
         \u0275\u0275text(39);
         \u0275\u0275pipe(40, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(41, TeacherQuestionBankComponent_For_42_Template, 13, 16, "div", 14, _forTrack047, false, TeacherQuestionBankComponent_ForEmpty_43_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(41, TeacherQuestionBankComponent_For_42_Template, 13, 16, "div", 14, _forTrack048, false, TeacherQuestionBankComponent_ForEmpty_43_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -108205,12 +109204,12 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
 
 // src/app/pages/teacher/teacher-exams.component.ts
 var _c040 = (a0) => ({ count: a0 });
-var _forTrack048 = ($index, $item) => $item.id;
+var _forTrack049 = ($index, $item) => $item.id;
 var arrowFn025 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn116 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn213 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn39 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
-var _forTrack118 = ($index, $item) => $item.questionId;
+var _forTrack119 = ($index, $item) => $item.questionId;
 var _forTrack29 = ($index, $item) => $item.key;
 function TeacherExamsComponent_Conditional_84_Template(rf, ctx) {
   if (rf & 1) {
@@ -108609,7 +109608,7 @@ function TeacherExamsComponent_Conditional_105_For_12_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(10, TeacherExamsComponent_Conditional_105_For_12_Conditional_10_Template, 2, 1, "span", 45);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(11, "div", 61);
-    \u0275\u0275repeaterCreate(12, TeacherExamsComponent_Conditional_105_For_12_For_13_Template, 28, 29, "div", 62, _forTrack118);
+    \u0275\u0275repeaterCreate(12, TeacherExamsComponent_Conditional_105_For_12_For_13_Template, 28, 29, "div", 62, _forTrack119);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(14, "div", 63)(15, "label");
     \u0275\u0275text(16);
@@ -108696,7 +109695,7 @@ function TeacherExamsComponent_Conditional_105_Template(rf, ctx) {
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(11, TeacherExamsComponent_Conditional_105_For_12_Template, 24, 17, "article", 59, _forTrack048, false, TeacherExamsComponent_Conditional_105_ForEmpty_13_Template, 3, 3, "p", 35);
+    \u0275\u0275repeaterCreate(11, TeacherExamsComponent_Conditional_105_For_12_Template, 24, 17, "article", 59, _forTrack049, false, TeacherExamsComponent_Conditional_105_ForEmpty_13_Template, 3, 3, "p", 35);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -109334,7 +110333,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275conditionalCreate(84, TeacherExamsComponent_Conditional_84_Template, 3, 3, "button", 27);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(85, "div", 28);
-        \u0275\u0275repeaterCreate(86, TeacherExamsComponent_For_87_Template, 12, 13, "label", 29, _forTrack048, false, TeacherExamsComponent_ForEmpty_88_Template, 3, 3, "p", 30);
+        \u0275\u0275repeaterCreate(86, TeacherExamsComponent_For_87_Template, 12, 13, "label", 29, _forTrack049, false, TeacherExamsComponent_ForEmpty_88_Template, 3, 3, "p", 30);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(89, "div", 31)(90, "button", 32);
         \u0275\u0275text(91);
@@ -109348,7 +110347,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275text(99);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(100, "div", 33);
-        \u0275\u0275repeaterCreate(101, TeacherExamsComponent_For_102_Template, 24, 26, "article", 34, _forTrack048, false, TeacherExamsComponent_ForEmpty_103_Template, 3, 3, "p", 35);
+        \u0275\u0275repeaterCreate(101, TeacherExamsComponent_For_102_Template, 24, 26, "article", 34, _forTrack049, false, TeacherExamsComponent_ForEmpty_103_Template, 3, 3, "p", 35);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(104, TeacherExamsComponent_Conditional_104_Template, 2, 7, "app-assessment-student-links-dialog", 36);
         \u0275\u0275conditionalCreate(105, TeacherExamsComponent_Conditional_105_Template, 14, 8, "section", 4);
@@ -109835,7 +110834,7 @@ var _c041 = (a0) => ({ percent: a0 });
 var _c129 = (a0) => ["/courses", a0];
 var _c218 = (a0) => ({ video: a0 });
 var _c310 = (a0) => [a0];
-var _forTrack049 = ($index, $item) => $item.id;
+var _forTrack050 = ($index, $item) => $item.id;
 var arrowFn026 = (ctx, view) => (c) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
@@ -109843,7 +110842,7 @@ var arrowFn026 = (ctx, view) => (c) => {
 };
 var arrowFn117 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn214 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
-var _forTrack119 = ($index, $item) => $item.assignmentId;
+var _forTrack120 = ($index, $item) => $item.assignmentId;
 var arrowFn310 = (ctx, view) => (a) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
@@ -110196,7 +111195,7 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275pipe(86, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(87, "div", 51);
-    \u0275\u0275repeaterCreate(88, TeacherVideosComponent_Conditional_53_For_89_Template, 19, 14, "article", 52, _forTrack049, false, TeacherVideosComponent_Conditional_53_ForEmpty_90_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(88, TeacherVideosComponent_Conditional_53_For_89_Template, 19, 14, "article", 52, _forTrack050, false, TeacherVideosComponent_Conditional_53_ForEmpty_90_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -110420,7 +111419,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(21, TeacherVideosComponent_Conditional_54_Conditional_21_Template, 3, 3, "button", 69);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(22, "div", 51);
-    \u0275\u0275repeaterCreate(23, TeacherVideosComponent_Conditional_54_For_24_Template, 19, 19, "article", 52, _forTrack049, false, TeacherVideosComponent_Conditional_54_ForEmpty_25_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(23, TeacherVideosComponent_Conditional_54_For_24_Template, 19, 19, "article", 52, _forTrack050, false, TeacherVideosComponent_Conditional_54_ForEmpty_25_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -110665,7 +111664,7 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275pipe(61, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(62, "div", 51);
-    \u0275\u0275repeaterCreate(63, TeacherVideosComponent_Conditional_55_For_64_Template, 15, 10, "article", 52, _forTrack119, false, TeacherVideosComponent_Conditional_55_ForEmpty_65_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(63, TeacherVideosComponent_Conditional_55_For_64_Template, 15, 10, "article", 52, _forTrack120, false, TeacherVideosComponent_Conditional_55_ForEmpty_65_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -110879,7 +111878,7 @@ function TeacherVideosComponent_Conditional_56_Conditional_17_Template(rf, ctx) 
     \u0275\u0275pipe(46, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(47, "tbody");
-    \u0275\u0275repeaterCreate(48, TeacherVideosComponent_Conditional_56_Conditional_17_For_49_Template, 16, 8, "tr", null, _forTrack049, false, TeacherVideosComponent_Conditional_56_Conditional_17_ForEmpty_50_Template, 4, 3, "tr");
+    \u0275\u0275repeaterCreate(48, TeacherVideosComponent_Conditional_56_Conditional_17_For_49_Template, 16, 8, "tr", null, _forTrack050, false, TeacherVideosComponent_Conditional_56_Conditional_17_ForEmpty_50_Template, 4, 3, "tr");
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -112362,9 +113361,778 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherVideosComponent, { className: "TeacherVideosComponent", filePath: "src/app/pages/teacher/teacher-videos.component.ts", lineNumber: 38 });
 })();
 
+// src/app/pages/teacher/teacher-materials.component.ts
+var _forTrack051 = ($index, $item) => $item.id;
+var arrowFn027 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
+var arrowFn118 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
+var arrowFn215 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
+function TeacherMaterialsComponent_Conditional_48_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 18);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx.name);
+  }
+}
+function TeacherMaterialsComponent_For_71_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 23);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const course_r1 = ctx.$implicit;
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275property("value", course_r1.id);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r1.courseLabel(course_r1));
+  }
+}
+function TeacherMaterialsComponent_Conditional_77_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 2);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "materials.empty"));
+  }
+}
+function TeacherMaterialsComponent_Conditional_78_For_2_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 27)(1, "button", 28);
+    \u0275\u0275listener("click", function TeacherMaterialsComponent_Conditional_78_For_2_Template_button_click_1_listener() {
+      const material_r4 = \u0275\u0275restoreView(_r3).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.openPreview(material_r4));
+    });
+    \u0275\u0275elementStart(2, "strong");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "p", 2);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(6, "div", 29)(7, "button", 30);
+    \u0275\u0275listener("click", function TeacherMaterialsComponent_Conditional_78_For_2_Template_button_click_7_listener() {
+      const material_r4 = \u0275\u0275restoreView(_r3).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.openPreview(material_r4));
+    });
+    \u0275\u0275text(8);
+    \u0275\u0275pipe(9, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "button", 31);
+    \u0275\u0275listener("click", function TeacherMaterialsComponent_Conditional_78_For_2_Template_button_click_10_listener() {
+      const material_r4 = \u0275\u0275restoreView(_r3).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.deleteMaterial(material_r4));
+    });
+    \u0275\u0275text(11);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const material_r4 = ctx.$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2("", ctx_r1.kindIcon(material_r4.kind), " ", material_r4.title);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate4(" ", material_r4.courseTitle, " \xB7 ", ctx_r1.scopeLabel(material_r4), " \xB7 ", material_r4.fileName, " (", ctx_r1.formatBytes(material_r4.sizeBytes), ") ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(9, 8, "materials.preview"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(12, 10, "common.delete"), " ");
+  }
+}
+function TeacherMaterialsComponent_Conditional_78_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 25);
+    \u0275\u0275repeaterCreate(1, TeacherMaterialsComponent_Conditional_78_For_2_Template, 13, 12, "div", 27, _forTrack051);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275repeater(ctx_r1.filteredMaterials());
+  }
+}
+function TeacherMaterialsComponent_Conditional_79_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 32);
+    \u0275\u0275listener("click", function TeacherMaterialsComponent_Conditional_79_Template_div_click_0_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.closePreview());
+    });
+    \u0275\u0275elementStart(1, "div", 33);
+    \u0275\u0275listener("click", function TeacherMaterialsComponent_Conditional_79_Template_div_click_1_listener($event) {
+      return $event.stopPropagation();
+    });
+    \u0275\u0275elementStart(2, "header", 34)(3, "h3");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "button", 30);
+    \u0275\u0275listener("click", function TeacherMaterialsComponent_Conditional_79_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.closePreview());
+    });
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275element(8, "app-material-viewer", 35);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const item_r6 = ctx;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(item_r6.title);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 5, "common.close"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("materialId", item_r6.id)("kind", item_r6.kind)("title", item_r6.title);
+  }
+}
+var TeacherMaterialsComponent = class _TeacherMaterialsComponent {
+  constructor() {
+    this.api = inject2(LearningApiService);
+    this.locale = inject2(LocaleService);
+    this.courses = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "courses" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.materials = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "materials" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.info = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "info" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.error = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "error" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.uploading = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "uploading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.uploadProgress = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "uploadProgress" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.file = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "file" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.selectedCourseId = "";
+    this.selectedUnitId = "";
+    this.selectedLessonId = "";
+    this.materialTitle = "";
+    this.filterCourseId = "";
+    this.filterSearch = "";
+    this.preview = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "preview" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.previewKey = signal(
+      0,
+      ...ngDevMode ? [{ debugName: "previewKey" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.filteredMaterials = computed(
+      () => {
+        let list = this.materials();
+        if (this.filterCourseId) {
+          list = list.filter((m) => m.courseId === this.filterCourseId);
+        }
+        const q = this.filterSearch.trim().toLowerCase();
+        if (q) {
+          list = list.filter((m) => m.title.toLowerCase().includes(q) || m.fileName.toLowerCase().includes(q) || m.courseTitle.toLowerCase().includes(q) || (m.unitTitle ?? "").toLowerCase().includes(q) || (m.lessonTitle ?? "").toLowerCase().includes(q));
+        }
+        return list;
+      },
+      ...ngDevMode ? [{ debugName: "filteredMaterials" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.reload();
+  }
+  reload() {
+    this.api.getCourses().subscribe({
+      next: (courses) => {
+        this.courses.set(courses);
+        if (!this.selectedCourseId && courses[0]) {
+          this.selectedCourseId = courses[0].id;
+          this.selectFirstUnit();
+        }
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, "materials.loadCoursesFailed"))
+    });
+    this.api.getLearningMaterials().subscribe({
+      next: (materials) => this.materials.set(materials),
+      error: (err) => this.error.set(this.locale.fromApiError(err, "materials.loadFailed"))
+    });
+  }
+  unitsForCourse(courseId = this.selectedCourseId) {
+    const units = [...this.courses().find((c) => c.id === courseId)?.units ?? []];
+    return units.sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+  lessonsForUnit(courseId = this.selectedCourseId, unitId = this.selectedUnitId) {
+    const course = this.courses().find((c) => c.id === courseId);
+    if (!course)
+      return [];
+    const units = this.unitsForCourse(courseId);
+    if (!units.length) {
+      return [...course.lessons ?? []].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+    }
+    if (!unitId)
+      return [];
+    const fromUnit = course.units?.find((u2) => u2.id === unitId)?.lessons;
+    const lessons = fromUnit?.length ? fromUnit : (course.lessons ?? []).filter((l) => l.unitId === unitId);
+    return [...lessons].sort((a, b) => a.sortOrder - b.sortOrder || a.title.localeCompare(b.title));
+  }
+  courseLabel(course) {
+    return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade, "common.allGrades", course.stageId);
+  }
+  onCourseChange() {
+    this.selectFirstUnit();
+  }
+  onUnitChange() {
+    this.selectedLessonId = "";
+  }
+  selectFirstUnit() {
+    this.selectedUnitId = this.unitsForCourse()[0]?.id || "";
+    this.selectedLessonId = "";
+  }
+  scopeLabel(material) {
+    if (material.scope === "lesson") {
+      return `${this.locale.t("materials.scopeUnit")}: ${material.unitTitle ?? ""} \xB7 ${this.locale.t("materials.scopeLesson")}: ${material.lessonTitle ?? ""}`;
+    }
+    if (material.scope === "unit") {
+      return `${this.locale.t("materials.scopeUnit")}: ${material.unitTitle ?? ""}`;
+    }
+    return this.locale.t("materials.scopeCourse");
+  }
+  onFileSelected(event) {
+    const input2 = event.target;
+    this.file.set(input2.files?.[0] ?? null);
+  }
+  attachMaterial() {
+    const file = this.file();
+    if (!file) {
+      this.error.set(this.locale.t("materials.fileRequired"));
+      return;
+    }
+    if (!this.selectedCourseId) {
+      this.error.set(this.locale.t("materials.courseRequired"));
+      return;
+    }
+    this.error.set("");
+    this.info.set("");
+    this.uploading.set(true);
+    this.uploadProgress.set(0);
+    this.api.uploadLearningMaterialFile(file).subscribe({
+      next: (asset) => {
+        this.uploadProgress.set(null);
+        this.api.attachLearningMaterial({
+          courseId: this.selectedCourseId || null,
+          unitId: this.selectedUnitId || null,
+          lessonId: this.selectedLessonId || null,
+          mediaAssetId: asset.id,
+          title: this.materialTitle.trim() || null,
+          sortOrder: 1
+        }).subscribe({
+          next: () => {
+            this.uploading.set(false);
+            this.info.set(this.locale.t("materials.uploaded"));
+            this.materialTitle = "";
+            this.file.set(null);
+            this.api.getLearningMaterials().subscribe((materials) => this.materials.set(materials));
+          },
+          error: (err) => {
+            this.uploading.set(false);
+            this.error.set(this.locale.fromApiError(err, "materials.attachFailed"));
+          }
+        });
+      },
+      error: (err) => {
+        this.uploading.set(false);
+        this.uploadProgress.set(null);
+        this.error.set(this.locale.fromApiError(err, "materials.uploadFailed"));
+      }
+    });
+  }
+  deleteMaterial(material) {
+    if (!confirm(this.locale.t("materials.confirmDelete", { title: material.title })))
+      return;
+    this.error.set("");
+    this.api.deleteLearningMaterial(material.id).subscribe({
+      next: () => {
+        this.info.set(this.locale.t("materials.deleted"));
+        if (this.preview()?.id === material.id)
+          this.preview.set(null);
+        this.materials.update((list) => list.filter((m) => m.id !== material.id));
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, "materials.deleteFailed"))
+    });
+  }
+  openPreview(material) {
+    this.preview.set(material);
+    this.previewKey.update((k) => k + 1);
+  }
+  closePreview() {
+    this.preview.set(null);
+  }
+  formatBytes(bytes) {
+    if (bytes < 1024)
+      return `${bytes} B`;
+    if (bytes < 1024 * 1024)
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  kindIcon(kind) {
+    if (kind === "Pdf")
+      return "\u{1F4C4}";
+    if (kind === "Audio")
+      return "\u{1F3A7}";
+    return "\u{1F5BC}\uFE0F";
+  }
+  static {
+    this.\u0275fac = function TeacherMaterialsComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _TeacherMaterialsComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherMaterialsComponent, selectors: [["app-teacher-materials"]], decls: 80, vars: 82, consts: [[1, "panel-page"], [1, "videos-head"], [1, "meta"], [3, "ok", "error"], [1, "block"], [1, "card-head"], [1, "upload-form", 3, "ngSubmit"], [1, "field-grid"], ["name", "materialCourseId", 3, "ngModelChange", "ngModel", "options"], ["name", "materialUnitId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "materialLessonId", 3, "ngModelChange", "ngModel", "emptyLabel", "options"], ["name", "materialTitle", 3, "ngModelChange", "ngModel", "placeholder"], [1, "source-row"], [1, "source-file"], [1, "source-file-label"], [1, "source-file-row"], [1, "file-btn"], ["type", "file", "accept", "application/pdf,image/png,image/jpeg,image/webp,image/gif,audio/*", "hidden", "", 3, "change", "disabled"], [1, "file-name"], ["type", "submit", 3, "disabled"], [1, "count-pill"], ["name", "materialFilterCourse", 3, "ngModelChange", "ngModel"], ["value", ""], [3, "value"], ["name", "materialSearch", 3, "ngModelChange", "ngModel", "placeholder"], [1, "material-list"], [1, "preview-overlay"], [1, "material-row"], ["type", "button", 1, "material-main", 3, "click"], [1, "material-actions"], ["type", "button", 1, "ghost-btn", "small-btn", 3, "click"], ["type", "button", 1, "ghost-btn", "small-btn", "danger", 3, "click"], [1, "preview-overlay", 3, "click"], [1, "preview-card", 3, "click"], [1, "preview-head"], [3, "materialId", "kind", "title"]], template: function TeacherMaterialsComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "header", 1)(2, "h2");
+        \u0275\u0275text(3);
+        \u0275\u0275pipe(4, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(5, "p", 2);
+        \u0275\u0275text(6);
+        \u0275\u0275pipe(7, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275element(8, "app-page-feedback", 3);
+        \u0275\u0275elementStart(9, "section", 4)(10, "div", 5)(11, "h3");
+        \u0275\u0275text(12);
+        \u0275\u0275pipe(13, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(14, "p", 2);
+        \u0275\u0275text(15);
+        \u0275\u0275pipe(16, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(17, "form", 6);
+        \u0275\u0275listener("ngSubmit", function TeacherMaterialsComponent_Template_form_ngSubmit_17_listener() {
+          return ctx.attachMaterial();
+        });
+        \u0275\u0275elementStart(18, "div", 7)(19, "label");
+        \u0275\u0275text(20);
+        \u0275\u0275pipe(21, "t");
+        \u0275\u0275elementStart(22, "app-searchable-select", 8);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherMaterialsComponent_Template_app_searchable_select_ngModelChange_22_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.selectedCourseId, $event) || (ctx.selectedCourseId = $event);
+          return $event;
+        });
+        \u0275\u0275listener("ngModelChange", function TeacherMaterialsComponent_Template_app_searchable_select_ngModelChange_22_listener() {
+          return ctx.onCourseChange();
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(23, "label");
+        \u0275\u0275text(24);
+        \u0275\u0275pipe(25, "t");
+        \u0275\u0275elementStart(26, "app-searchable-select", 9);
+        \u0275\u0275pipe(27, "t");
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherMaterialsComponent_Template_app_searchable_select_ngModelChange_26_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.selectedUnitId, $event) || (ctx.selectedUnitId = $event);
+          return $event;
+        });
+        \u0275\u0275listener("ngModelChange", function TeacherMaterialsComponent_Template_app_searchable_select_ngModelChange_26_listener() {
+          return ctx.onUnitChange();
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(28, "label");
+        \u0275\u0275text(29);
+        \u0275\u0275pipe(30, "t");
+        \u0275\u0275elementStart(31, "app-searchable-select", 10);
+        \u0275\u0275pipe(32, "t");
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherMaterialsComponent_Template_app_searchable_select_ngModelChange_31_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.selectedLessonId, $event) || (ctx.selectedLessonId = $event);
+          return $event;
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(33, "label");
+        \u0275\u0275text(34);
+        \u0275\u0275pipe(35, "t");
+        \u0275\u0275elementStart(36, "input", 11);
+        \u0275\u0275pipe(37, "t");
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherMaterialsComponent_Template_input_ngModelChange_36_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.materialTitle, $event) || (ctx.materialTitle = $event);
+          return $event;
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(38, "div", 12)(39, "div", 13)(40, "span", 14);
+        \u0275\u0275text(41);
+        \u0275\u0275pipe(42, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(43, "div", 15)(44, "label", 16);
+        \u0275\u0275text(45);
+        \u0275\u0275pipe(46, "t");
+        \u0275\u0275elementStart(47, "input", 17);
+        \u0275\u0275listener("change", function TeacherMaterialsComponent_Template_input_change_47_listener($event) {
+          return ctx.onFileSelected($event);
+        });
+        \u0275\u0275elementEnd()();
+        \u0275\u0275conditionalCreate(48, TeacherMaterialsComponent_Conditional_48_Template, 2, 1, "span", 18);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(49, "p", 2);
+        \u0275\u0275text(50);
+        \u0275\u0275pipe(51, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(52, "button", 19);
+        \u0275\u0275text(53);
+        \u0275\u0275pipe(54, "t");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(55, "section", 4)(56, "div", 5)(57, "h3");
+        \u0275\u0275text(58);
+        \u0275\u0275pipe(59, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(60, "span", 20);
+        \u0275\u0275text(61);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(62, "div", 7)(63, "label");
+        \u0275\u0275text(64);
+        \u0275\u0275pipe(65, "t");
+        \u0275\u0275elementStart(66, "select", 21);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherMaterialsComponent_Template_select_ngModelChange_66_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.filterCourseId, $event) || (ctx.filterCourseId = $event);
+          return $event;
+        });
+        \u0275\u0275elementStart(67, "option", 22);
+        \u0275\u0275text(68);
+        \u0275\u0275pipe(69, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275repeaterCreate(70, TeacherMaterialsComponent_For_71_Template, 2, 2, "option", 23, _forTrack051);
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(72, "label");
+        \u0275\u0275text(73);
+        \u0275\u0275pipe(74, "t");
+        \u0275\u0275elementStart(75, "input", 24);
+        \u0275\u0275pipe(76, "t");
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherMaterialsComponent_Template_input_ngModelChange_75_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.filterSearch, $event) || (ctx.filterSearch = $event);
+          return $event;
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd()();
+        \u0275\u0275conditionalCreate(77, TeacherMaterialsComponent_Conditional_77_Template, 3, 3, "p", 2)(78, TeacherMaterialsComponent_Conditional_78_Template, 3, 0, "div", 25);
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(79, TeacherMaterialsComponent_Conditional_79_Template, 9, 7, "div", 26);
+        \u0275\u0275elementEnd();
+      }
+      if (rf & 2) {
+        let tmp_28_0;
+        let tmp_44_0;
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 39, "materials.title"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 41, "materials.subtitle"));
+        \u0275\u0275advance(2);
+        \u0275\u0275property("ok", ctx.info())("error", ctx.error());
+        \u0275\u0275advance(4);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(13, 43, "materials.upload"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(16, 45, "materials.uploadHint"));
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(21, 47, "common.course"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.selectedCourseId);
+        \u0275\u0275property("options", ctx.courses().map(\u0275\u0275arrowFunction(49, arrowFn027, ctx)));
+        \u0275\u0275control();
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(25, 50, "common.unit"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.selectedUnitId);
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(27, 52, "common.selectUnit"))("options", ctx.unitsForCourse().map(\u0275\u0275arrowFunction(54, arrowFn118, ctx)));
+        \u0275\u0275control();
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(30, 55, "common.lesson"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.selectedLessonId);
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(32, 57, "materials.optionalLesson"))("options", ctx.lessonsForUnit().map(\u0275\u0275arrowFunction(59, arrowFn215, ctx)));
+        \u0275\u0275control();
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(35, 60, "common.title"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.materialTitle);
+        \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(37, 62, "materials.optionalTitle"));
+        \u0275\u0275control();
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(42, 64, "materials.file"));
+        \u0275\u0275advance(3);
+        \u0275\u0275classProp("disabled", ctx.uploading());
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(46, 66, "materials.chooseFile"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275property("disabled", ctx.uploading());
+        \u0275\u0275advance();
+        \u0275\u0275conditional((tmp_28_0 = ctx.file()) ? 48 : -1, tmp_28_0);
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(51, 68, "materials.allowedTypes"));
+        \u0275\u0275advance(2);
+        \u0275\u0275property("disabled", ctx.uploading());
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(54, 70, ctx.uploading() ? "common.loading" : "materials.upload"), " ");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(59, 72, "materials.list"));
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(ctx.filteredMaterials().length);
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(65, 74, "common.course"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.filterCourseId);
+        \u0275\u0275control();
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 76, "common.all"));
+        \u0275\u0275advance(2);
+        \u0275\u0275repeater(ctx.courses());
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(74, 78, "materials.search"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275twoWayProperty("ngModel", ctx.filterSearch);
+        \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(76, 80, "materials.searchPlaceholder"));
+        \u0275\u0275control();
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional(!ctx.filteredMaterials().length ? 77 : 78);
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional((tmp_44_0 = ctx.preview()) ? 79 : -1, tmp_44_0);
+      }
+    }, dependencies: [
+      FormsModule,
+      \u0275NgNoValidate,
+      NgSelectOption,
+      \u0275NgSelectMultipleOption,
+      DefaultValueAccessor,
+      SelectControlValueAccessor,
+      NgControlStatus,
+      NgControlStatusGroup,
+      NgModel,
+      NgForm,
+      PageFeedbackComponent,
+      SearchableSelectComponent,
+      MaterialViewerComponent,
+      TranslatePipe
+    ], styles: ["\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.question-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  padding: 1rem;\n  margin: 0.85rem 0;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.question-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.question-prompt[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n}\n.question-prompt[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  min-height: 4.2em;\n  resize: vertical;\n  width: 100%;\n}\n.options-editor[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  margin-top: 0.25rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.link-row[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row[_ngcontent-%COMP%]:hover, \n.meeting-row.link-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.detail-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.meeting-form[_ngcontent-%COMP%], \n.qb-form[_ngcontent-%COMP%], \n.form-card[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  gap: 1rem;\n}\n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%]   .questions-group[_ngcontent-%COMP%], \n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.questions-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n}\n.grade-roster[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.grade-roster-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  flex: 0 0 auto;\n}\n.students-table-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.4fr repeat(4, 1fr) 0.8fr auto;\n  cursor: pointer;\n}\n.students-table-row.head[_ngcontent-%COMP%] {\n  cursor: default;\n}\n.student-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n@media (max-width: 900px) {\n  .students-table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.list-title-row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.status-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published[_ngcontent-%COMP%] {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.choice-options[_ngcontent-%COMP%] {\n  list-style: none;\n  margin: 0.4rem 0 0.6rem;\n  padding: 0;\n  display: grid;\n  gap: 0.35rem;\n}\n.choice-options[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n  align-items: baseline;\n  padding: 0.4rem 0.6rem;\n  border-radius: 8px;\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n  background: var(--elevated-bg);\n}\n.choice-options[_ngcontent-%COMP%]   li.is-student[_ngcontent-%COMP%] {\n  border-color: var(--accent, #5b8def);\n}\n.choice-options[_ngcontent-%COMP%]   li.is-key[_ngcontent-%COMP%] {\n  background: var(--badge-ok-bg, rgba(80, 180, 120, 0.16));\n}\n.choice-options[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  min-width: 1.4rem;\n}\n/*# sourceMappingURL=teacher-panel.css.map */", "\n.videos-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.videos-head[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0.3rem 0 0;\n  max-width: 46rem;\n}\n.card-head[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.3rem;\n  padding-bottom: 0.55rem;\n  margin-bottom: 0.35rem;\n  border-bottom: 1px solid var(--border);\n}\n.card-head.row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.card-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.card-head[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.video-tabs[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  padding: 0.35rem;\n  border-radius: var(--radius-pill, 999px);\n  background: var(--surface);\n  border: 1px solid var(--border);\n}\n.video-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.5rem 0.9rem;\n  border: 1px solid transparent;\n  border-radius: var(--radius-pill, 999px);\n  background: transparent;\n  color: var(--text-muted);\n  font: inherit;\n  font-weight: 700;\n  box-shadow: none;\n  cursor: pointer;\n  transition:\n    background 0.18s ease,\n    color 0.18s ease,\n    border-color 0.18s ease;\n}\n.video-tab[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: none;\n  box-shadow: none;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n}\n.video-tab.active[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.32);\n  color: var(--text);\n}\n.tab-icon[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  color: var(--teal, #5fd3bc);\n}\n.tab-icon[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.1rem;\n  height: 1.1rem;\n}\n.tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n}\n.tab-count[_ngcontent-%COMP%] {\n  min-width: 1.5rem;\n  padding: 0.1rem 0.45rem;\n  border-radius: var(--radius-pill, 999px);\n  background: var(--elevated-bg-hover);\n  border: 1px solid var(--border);\n  font-size: 0.76rem;\n  text-align: center;\n}\n.video-tab.active[_ngcontent-%COMP%]   .tab-count[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.18);\n  border-color: rgba(255, 214, 10, 0.35);\n  color: var(--accent-fg);\n}\n.video-tab-panel[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_tab-panel-in 0.22s ease;\n}\n@keyframes _ngcontent-%COMP%_tab-panel-in {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n.upload-form[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n}\n.field-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));\n  gap: var(--space-3);\n  align-items: start;\n}\n.source-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);\n  gap: var(--space-3);\n  align-items: start;\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  border: 1px dashed var(--border-strong);\n  background: var(--elevated-bg);\n}\n.source-file[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  min-width: 0;\n}\n.source-file-label[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\n.source-file-row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.6rem;\n  min-width: 0;\n}\n.file-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn.disabled[_ngcontent-%COMP%] {\n  opacity: 0.55;\n  cursor: not-allowed;\n}\n.file-name[_ngcontent-%COMP%] {\n  flex: 1 1 8rem;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n.upload-progress[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.upload-progress-bar[_ngcontent-%COMP%] {\n  overflow: hidden;\n  height: 0.55rem;\n  border-radius: 999px;\n  background: var(--elevated-bg-hover);\n  border: 1px solid var(--border);\n}\n.upload-progress-fill[_ngcontent-%COMP%] {\n  display: block;\n  height: 100%;\n  border-radius: inherit;\n  background:\n    linear-gradient(\n      90deg,\n      var(--teal, #5fd3bc),\n      var(--accent, #ffd60a));\n  transition: width 0.15s ease;\n}\n.upload-progress-label[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  color: var(--text-muted);\n}\n.video-filters[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));\n  gap: 0.75rem;\n  align-items: end;\n  margin-bottom: 0.35rem;\n}\n.video-filters[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.video-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-sm, 8px);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.55rem 0.65rem;\n  font: inherit;\n}\n.video-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));\n  gap: var(--space-3);\n}\n.video-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  transition: border-color 0.18s ease, transform 0.18s ease;\n}\n.video-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.video-thumb[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  padding: 0;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-sm, 10px);\n  background:\n    radial-gradient(\n      circle at 70% 25%,\n      rgba(255, 214, 10, 0.2),\n      transparent 45%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n  box-shadow: none;\n  cursor: pointer;\n}\n.video-thumb[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: none;\n  box-shadow: none;\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.thumb-play[_ngcontent-%COMP%] {\n  display: block;\n  width: 0;\n  height: 0;\n  border-style: solid;\n  border-width: 0.85rem 0 0.85rem 1.35rem;\n  border-color: transparent transparent transparent rgba(255, 255, 255, 0.92);\n  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));\n}\n.video-card-body[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  min-width: 0;\n}\n.video-card-title[_ngcontent-%COMP%] {\n  color: var(--heading);\n  line-height: 1.3;\n  overflow-wrap: anywhere;\n}\n.video-card-meta[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n}\n.video-chip[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text-muted);\n  font-size: 0.76rem;\n  font-weight: 650;\n}\n.video-chip.subtle[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--text-soft);\n}\n.video-chip.warn[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.video-card-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.4rem;\n  padding-top: 0.15rem;\n}\n.small-btn[_ngcontent-%COMP%] {\n  padding: 0.4rem 0.7rem;\n  font-size: 0.82rem;\n}\n.video-empty[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  margin: 0;\n  padding: 1.5rem 1rem;\n  text-align: center;\n  border-radius: var(--radius-md);\n  border: 1px dashed var(--border-strong);\n  background: var(--elevated-bg);\n}\n.analytics-lookup[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem;\n}\n.analytics-lookup[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  flex: 1 1 18rem;\n  display: grid;\n  gap: 0.35rem;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.flag-cell[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.92rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: 0.75rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.78rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: var(--table-row-hover);\n}\n.video-modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.82);\n  -webkit-backdrop-filter: blur(4px);\n  backdrop-filter: blur(4px);\n}\n.video-modal[_ngcontent-%COMP%] {\n  width: min(960px, 100%);\n  max-height: min(92vh, 900px);\n  overflow: auto;\n  border-radius: 16px;\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n  padding: 1rem 1rem 1.25rem;\n}\n.video-modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n.video-modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.05rem;\n  color: var(--text);\n}\n.modal-close[_ngcontent-%COMP%] {\n  width: 2.2rem;\n  height: 2.2rem;\n  border: 0;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  font-size: 1.35rem;\n  line-height: 1;\n  box-shadow: none;\n  cursor: pointer;\n}\n.modal-close[_ngcontent-%COMP%]:hover {\n  background: var(--surface-strong);\n  transform: none;\n  box-shadow: none;\n}\n@media (max-width: 760px) {\n  .source-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .video-filters[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .video-tabs[_ngcontent-%COMP%] {\n    border-radius: var(--radius-lg);\n  }\n  .video-tab[_ngcontent-%COMP%] {\n    flex: 1 1 auto;\n    justify-content: center;\n  }\n}\n/*# sourceMappingURL=teacher-videos.component.css.map */", "\n.material-list[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.6rem;\n  margin-top: 0.85rem;\n}\n.material-row[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.75rem 0.9rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.material-main[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  background: transparent;\n  border: 0;\n  cursor: pointer;\n  color: inherit;\n  display: grid;\n  gap: 0.25rem;\n}\n.material-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.4rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.ghost-btn.danger[_ngcontent-%COMP%] {\n  color: var(--danger, #f87171);\n}\n.count-pill[_ngcontent-%COMP%] {\n  border-radius: 999px;\n  padding: 0.1rem 0.6rem;\n  font-size: 0.85rem;\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.preview-overlay[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  background: rgba(15, 23, 42, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 60;\n  padding: 1rem;\n}\n.preview-card[_ngcontent-%COMP%] {\n  background: var(--panel-bg, #fff);\n  border-radius: var(--radius-lg, 16px);\n  padding: 1.25rem;\n  max-width: min(860px, 95vw);\n  max-height: 90vh;\n  overflow: auto;\n  width: 100%;\n}\n.preview-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n/*# sourceMappingURL=teacher-materials.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TeacherMaterialsComponent, [{
+    type: Component,
+    args: [{ selector: "app-teacher-materials", imports: [
+      FormsModule,
+      PageFeedbackComponent,
+      SearchableSelectComponent,
+      TranslatePipe,
+      MaterialViewerComponent
+    ], template: `<div class="panel-page">
+  <header class="videos-head">
+    <h2>{{ 'materials.title' | t }}</h2>
+    <p class="meta">{{ 'materials.subtitle' | t }}</p>
+  </header>
+
+  <app-page-feedback [ok]="info()" [error]="error()" />
+
+  <section class="block">
+    <div class="card-head">
+      <h3>{{ 'materials.upload' | t }}</h3>
+      <p class="meta">{{ 'materials.uploadHint' | t }}</p>
+    </div>
+
+    <form class="upload-form" (ngSubmit)="attachMaterial()">
+      <div class="field-grid">
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedCourseId"
+            name="materialCourseId"
+            (ngModelChange)="onCourseChange()"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.unit' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedUnitId"
+            name="materialUnitId"
+            (ngModelChange)="onUnitChange()"
+            [emptyLabel]="'common.selectUnit' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.lesson' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedLessonId"
+            name="materialLessonId"
+            [emptyLabel]="'materials.optionalLesson' | t"
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.title' | t }}
+          <input [(ngModel)]="materialTitle" name="materialTitle" [placeholder]="'materials.optionalTitle' | t" />
+        </label>
+      </div>
+
+      <div class="source-row">
+        <div class="source-file">
+          <span class="source-file-label">{{ 'materials.file' | t }}</span>
+          <div class="source-file-row">
+            <label class="file-btn" [class.disabled]="uploading()">
+              {{ 'materials.chooseFile' | t }}
+              <input
+                type="file"
+                accept="application/pdf,image/png,image/jpeg,image/webp,image/gif,audio/*"
+                hidden
+                (change)="onFileSelected($event)"
+                [disabled]="uploading()"
+              />
+            </label>
+            @if (file(); as selected) {
+              <span class="file-name">{{ selected.name }}</span>
+            }
+          </div>
+          <p class="meta">{{ 'materials.allowedTypes' | t }}</p>
+        </div>
+
+        <button type="submit" [disabled]="uploading()">
+          {{ (uploading() ? 'common.loading' : 'materials.upload') | t }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="block">
+    <div class="card-head">
+      <h3>{{ 'materials.list' | t }}</h3>
+      <span class="count-pill">{{ filteredMaterials().length }}</span>
+    </div>
+
+    <div class="field-grid">
+      <label>
+        {{ 'common.course' | t }}
+        <select [(ngModel)]="filterCourseId" name="materialFilterCourse">
+          <option value="">{{ 'common.all' | t }}</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ courseLabel(course) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'materials.search' | t }}
+        <input [(ngModel)]="filterSearch" name="materialSearch" [placeholder]="'materials.searchPlaceholder' | t" />
+      </label>
+    </div>
+
+    @if (!filteredMaterials().length) {
+      <p class="meta">{{ 'materials.empty' | t }}</p>
+    } @else {
+      <div class="material-list">
+        @for (material of filteredMaterials(); track material.id) {
+          <div class="material-row">
+            <button type="button" class="material-main" (click)="openPreview(material)">
+              <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>
+              <p class="meta">
+                {{ material.courseTitle }} \xB7 {{ scopeLabel(material) }}
+                \xB7 {{ material.fileName }} ({{ formatBytes(material.sizeBytes) }})
+              </p>
+            </button>
+            <div class="material-actions">
+              <button type="button" class="ghost-btn small-btn" (click)="openPreview(material)">
+                {{ 'materials.preview' | t }}
+              </button>
+              <button type="button" class="ghost-btn small-btn danger" (click)="deleteMaterial(material)">
+                {{ 'common.delete' | t }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  @if (preview(); as item) {
+    <div class="preview-overlay" (click)="closePreview()">
+      <div class="preview-card" (click)="$event.stopPropagation()">
+        <header class="preview-head">
+          <h3>{{ item.title }}</h3>
+          <button type="button" class="ghost-btn small-btn" (click)="closePreview()">{{ 'common.close' | t }}</button>
+        </header>
+        <app-material-viewer
+          [materialId]="item.id"
+          [kind]="item.kind"
+          [title]="item.title"
+        />
+      </div>
+    </div>
+  }
+</div>
+`, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/teacher/teacher-panel.css */\n.question-card {\n  display: grid;\n  gap: 0.85rem;\n  padding: 1rem;\n  margin: 0.85rem 0;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.question-card-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.question-prompt {\n  display: grid;\n  gap: 0.4rem;\n}\n.question-prompt textarea {\n  min-height: 4.2em;\n  resize: vertical;\n  width: 100%;\n}\n.options-editor {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  margin-top: 0.25rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.link-row {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row:hover,\n.meeting-row.link-row:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.name-cell {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.detail-identity {\n  display: flex;\n  align-items: center;\n}\n.meeting-form,\n.qb-form,\n.form-card form {\n  gap: 1rem;\n}\n.panel-page .meeting-form .questions-group,\n.panel-page .meeting-form .form-actions {\n  grid-column: 1 / -1;\n}\n.questions-group {\n  display: grid;\n  gap: 0.85rem;\n}\n.grade-roster {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.grade-roster-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list li {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n.row-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  flex: 0 0 auto;\n}\n.students-table-row {\n  grid-template-columns: 1.4fr repeat(4, 1fr) 0.8fr auto;\n  cursor: pointer;\n}\n.students-table-row.head {\n  cursor: default;\n}\n.student-row:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n@media (max-width: 900px) {\n  .students-table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.list-title-row {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.status-badge {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.choice-options {\n  list-style: none;\n  margin: 0.4rem 0 0.6rem;\n  padding: 0;\n  display: grid;\n  gap: 0.35rem;\n}\n.choice-options li {\n  display: flex;\n  gap: 0.5rem;\n  align-items: baseline;\n  padding: 0.4rem 0.6rem;\n  border-radius: 8px;\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n  background: var(--elevated-bg);\n}\n.choice-options li.is-student {\n  border-color: var(--accent, #5b8def);\n}\n.choice-options li.is-key {\n  background: var(--badge-ok-bg, rgba(80, 180, 120, 0.16));\n}\n.choice-options strong {\n  min-width: 1.4rem;\n}\n/*# sourceMappingURL=teacher-panel.css.map */\n", "/* src/app/pages/teacher/teacher-videos.component.css */\n.videos-head h2 {\n  margin: 0;\n}\n.videos-head .meta {\n  margin: 0.3rem 0 0;\n  max-width: 46rem;\n}\n.card-head {\n  display: grid;\n  gap: 0.3rem;\n  padding-bottom: 0.55rem;\n  margin-bottom: 0.35rem;\n  border-bottom: 1px solid var(--border);\n}\n.card-head.row {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.card-head h3 {\n  margin: 0;\n}\n.card-head .meta {\n  margin: 0;\n}\n.video-tabs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  padding: 0.35rem;\n  border-radius: var(--radius-pill, 999px);\n  background: var(--surface);\n  border: 1px solid var(--border);\n}\n.video-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.5rem 0.9rem;\n  border: 1px solid transparent;\n  border-radius: var(--radius-pill, 999px);\n  background: transparent;\n  color: var(--text-muted);\n  font: inherit;\n  font-weight: 700;\n  box-shadow: none;\n  cursor: pointer;\n  transition:\n    background 0.18s ease,\n    color 0.18s ease,\n    border-color 0.18s ease;\n}\n.video-tab:hover:not(:disabled) {\n  transform: none;\n  box-shadow: none;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n}\n.video-tab.active {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.32);\n  color: var(--text);\n}\n.tab-icon {\n  display: inline-flex;\n  align-items: center;\n  color: var(--teal, #5fd3bc);\n}\n.tab-icon svg {\n  width: 1.1rem;\n  height: 1.1rem;\n}\n.tab-label {\n  white-space: nowrap;\n}\n.tab-count {\n  min-width: 1.5rem;\n  padding: 0.1rem 0.45rem;\n  border-radius: var(--radius-pill, 999px);\n  background: var(--elevated-bg-hover);\n  border: 1px solid var(--border);\n  font-size: 0.76rem;\n  text-align: center;\n}\n.video-tab.active .tab-count {\n  background: rgba(255, 214, 10, 0.18);\n  border-color: rgba(255, 214, 10, 0.35);\n  color: var(--accent-fg);\n}\n.video-tab-panel {\n  animation: tab-panel-in 0.22s ease;\n}\n@keyframes tab-panel-in {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n.upload-form {\n  display: grid;\n  gap: var(--space-3);\n}\n.field-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));\n  gap: var(--space-3);\n  align-items: start;\n}\n.source-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);\n  gap: var(--space-3);\n  align-items: start;\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  border: 1px dashed var(--border-strong);\n  background: var(--elevated-bg);\n}\n.source-file {\n  display: grid;\n  gap: 0.4rem;\n  min-width: 0;\n}\n.source-file-label {\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\n.source-file-row {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.6rem;\n  min-width: 0;\n}\n.file-btn {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn.disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n}\n.file-name {\n  flex: 1 1 8rem;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n.upload-progress {\n  display: grid;\n  gap: 0.35rem;\n}\n.upload-progress-bar {\n  overflow: hidden;\n  height: 0.55rem;\n  border-radius: 999px;\n  background: var(--elevated-bg-hover);\n  border: 1px solid var(--border);\n}\n.upload-progress-fill {\n  display: block;\n  height: 100%;\n  border-radius: inherit;\n  background:\n    linear-gradient(\n      90deg,\n      var(--teal, #5fd3bc),\n      var(--accent, #ffd60a));\n  transition: width 0.15s ease;\n}\n.upload-progress-label {\n  font-size: 0.85rem;\n  color: var(--text-muted);\n}\n.video-filters {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));\n  gap: 0.75rem;\n  align-items: end;\n  margin-bottom: 0.35rem;\n}\n.video-filters label {\n  display: grid;\n  gap: 0.35rem;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.video-filters input {\n  width: 100%;\n  border-radius: var(--radius-sm, 8px);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.55rem 0.65rem;\n  font: inherit;\n}\n.video-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));\n  gap: var(--space-3);\n}\n.video-card {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  transition: border-color 0.18s ease, transform 0.18s ease;\n}\n.video-card:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.video-thumb {\n  display: grid;\n  place-items: center;\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  padding: 0;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-sm, 10px);\n  background:\n    radial-gradient(\n      circle at 70% 25%,\n      rgba(255, 214, 10, 0.2),\n      transparent 45%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n  box-shadow: none;\n  cursor: pointer;\n}\n.video-thumb:hover:not(:disabled) {\n  transform: none;\n  box-shadow: none;\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.thumb-play {\n  display: block;\n  width: 0;\n  height: 0;\n  border-style: solid;\n  border-width: 0.85rem 0 0.85rem 1.35rem;\n  border-color: transparent transparent transparent rgba(255, 255, 255, 0.92);\n  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));\n}\n.video-card-body {\n  display: grid;\n  gap: 0.4rem;\n  min-width: 0;\n}\n.video-card-title {\n  color: var(--heading);\n  line-height: 1.3;\n  overflow-wrap: anywhere;\n}\n.video-card-meta {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n}\n.video-chip {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text-muted);\n  font-size: 0.76rem;\n  font-weight: 650;\n}\n.video-chip.subtle {\n  background: transparent;\n  color: var(--text-soft);\n}\n.video-chip.warn {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.video-card-actions {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.4rem;\n  padding-top: 0.15rem;\n}\n.small-btn {\n  padding: 0.4rem 0.7rem;\n  font-size: 0.82rem;\n}\n.video-empty {\n  grid-column: 1 / -1;\n  margin: 0;\n  padding: 1.5rem 1rem;\n  text-align: center;\n  border-radius: var(--radius-md);\n  border: 1px dashed var(--border-strong);\n  background: var(--elevated-bg);\n}\n.analytics-lookup {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem;\n}\n.analytics-lookup label {\n  flex: 1 1 18rem;\n  display: grid;\n  gap: 0.35rem;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.flag-cell {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n}\n.table-wrap {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.92rem;\n}\n.data-table th,\n.data-table td {\n  padding: 0.75rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table th {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.78rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table tr:hover td {\n  background: var(--table-row-hover);\n}\n.video-modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.82);\n  -webkit-backdrop-filter: blur(4px);\n  backdrop-filter: blur(4px);\n}\n.video-modal {\n  width: min(960px, 100%);\n  max-height: min(92vh, 900px);\n  overflow: auto;\n  border-radius: 16px;\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n  padding: 1rem 1rem 1.25rem;\n}\n.video-modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n.video-modal-head h3 {\n  margin: 0;\n  font-size: 1.05rem;\n  color: var(--text);\n}\n.modal-close {\n  width: 2.2rem;\n  height: 2.2rem;\n  border: 0;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  font-size: 1.35rem;\n  line-height: 1;\n  box-shadow: none;\n  cursor: pointer;\n}\n.modal-close:hover {\n  background: var(--surface-strong);\n  transform: none;\n  box-shadow: none;\n}\n@media (max-width: 760px) {\n  .source-row {\n    grid-template-columns: 1fr;\n  }\n  .video-filters {\n    grid-template-columns: 1fr;\n  }\n  .video-tabs {\n    border-radius: var(--radius-lg);\n  }\n  .video-tab {\n    flex: 1 1 auto;\n    justify-content: center;\n  }\n}\n/*# sourceMappingURL=teacher-videos.component.css.map */\n", "/* src/app/pages/teacher/teacher-materials.component.css */\n.material-list {\n  display: grid;\n  gap: 0.6rem;\n  margin-top: 0.85rem;\n}\n.material-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.75rem 0.9rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.material-main {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  background: transparent;\n  border: 0;\n  cursor: pointer;\n  color: inherit;\n  display: grid;\n  gap: 0.25rem;\n}\n.material-actions {\n  display: flex;\n  gap: 0.4rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.ghost-btn.danger {\n  color: var(--danger, #f87171);\n}\n.count-pill {\n  border-radius: 999px;\n  padding: 0.1rem 0.6rem;\n  font-size: 0.85rem;\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.preview-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(15, 23, 42, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 60;\n  padding: 1rem;\n}\n.preview-card {\n  background: var(--panel-bg, #fff);\n  border-radius: var(--radius-lg, 16px);\n  padding: 1.25rem;\n  max-width: min(860px, 95vw);\n  max-height: 90vh;\n  overflow: auto;\n  width: 100%;\n}\n.preview-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n/*# sourceMappingURL=teacher-materials.component.css.map */\n"] }]
+  }], () => [], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherMaterialsComponent, { className: "TeacherMaterialsComponent", filePath: "src/app/pages/teacher/teacher-materials.component.ts", lineNumber: 24 });
+})();
+
 // src/app/pages/teacher/teacher-whatsapp.component.ts
-var arrowFn027 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
-var _forTrack050 = ($index, $item) => $item.studentId;
+var arrowFn028 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
+var _forTrack052 = ($index, $item) => $item.studentId;
 function TeacherWhatsAppComponent_Conditional_15_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 13);
@@ -112522,7 +114290,7 @@ function TeacherWhatsAppComponent_Conditional_29_Template(rf, ctx) {
     \u0275\u0275text(10);
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275repeaterCreate(12, TeacherWhatsAppComponent_Conditional_29_For_13_Template, 8, 6, "label", 18, _forTrack050, false, TeacherWhatsAppComponent_Conditional_29_ForEmpty_14_Template, 3, 3, "p", 1);
+    \u0275\u0275repeaterCreate(12, TeacherWhatsAppComponent_Conditional_29_For_13_Template, 8, 6, "label", 18, _forTrack052, false, TeacherWhatsAppComponent_Conditional_29_ForEmpty_14_Template, 3, 3, "p", 1);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(15, "label", 8)(16, "input", 19);
     \u0275\u0275twoWayListener("ngModelChange", function TeacherWhatsAppComponent_Conditional_29_Template_input_ngModelChange_16_listener($event) {
@@ -112872,7 +114640,7 @@ var TeacherWhatsAppComponent = class _TeacherWhatsAppComponent {
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(12, 25, "common.classroom"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.classroomId);
-        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(14, 27, "common.selectClassroom"))("options", ctx.classrooms().map(\u0275\u0275arrowFunction(29, arrowFn027, ctx)));
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(14, 27, "common.selectClassroom"))("options", ctx.classrooms().map(\u0275\u0275arrowFunction(29, arrowFn028, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(2);
         \u0275\u0275conditional((tmp_9_0 = ctx.selectedClassroom()) ? 15 : -1, tmp_9_0);
@@ -113041,8 +114809,8 @@ var TeacherWhatsAppComponent = class _TeacherWhatsAppComponent {
 })();
 
 // src/app/pages/teacher/teacher-appointments.component.ts
-var _forTrack051 = ($index, $item) => $item.key;
-var _forTrack120 = ($index, $item) => $item.appointment.id;
+var _forTrack053 = ($index, $item) => $item.key;
+var _forTrack121 = ($index, $item) => $item.appointment.id;
 function TeacherAppointmentsComponent_For_27_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 17);
@@ -113355,14 +115123,14 @@ var TeacherAppointmentsComponent = class _TeacherAppointmentsComponent {
         \u0275\u0275text(24);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(25, "div", 7);
-        \u0275\u0275repeaterCreate(26, TeacherAppointmentsComponent_For_27_Template, 3, 4, "button", 8, _forTrack051);
+        \u0275\u0275repeaterCreate(26, TeacherAppointmentsComponent_For_27_Template, 3, 4, "button", 8, _forTrack053);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(28, "div", 9)(29, "div", 10);
         \u0275\u0275repeaterCreate(30, TeacherAppointmentsComponent_For_31_Template, 2, 3, "div", 11, \u0275\u0275repeaterTrackByIdentity);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(32, "div", 12);
         \u0275\u0275repeaterCreate(33, TeacherAppointmentsComponent_For_34_Template, 1, 2, "div", 13, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275repeaterCreate(35, TeacherAppointmentsComponent_For_36_Template, 5, 11, "div", 14, _forTrack120);
+        \u0275\u0275repeaterCreate(35, TeacherAppointmentsComponent_For_36_Template, 5, 11, "div", 14, _forTrack121);
         \u0275\u0275conditionalCreate(37, TeacherAppointmentsComponent_Conditional_37_Template, 3, 3, "p", 15);
         \u0275\u0275elementEnd()()()();
       }
@@ -113590,9 +115358,9 @@ var _c042 = ["timetableWrap"];
 var _c130 = (a0) => ({ value: "am", label: a0 });
 var _c219 = (a0) => ({ value: "pm", label: a0 });
 var _c311 = (a0, a1) => [a0, a1];
-var _forTrack052 = ($index, $item) => $item.key;
-var _forTrack121 = ($index, $item) => $item.dayOfWeek;
-var arrowFn028 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
+var _forTrack054 = ($index, $item) => $item.key;
+var _forTrack122 = ($index, $item) => $item.dayOfWeek;
+var arrowFn029 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var _forTrack210 = ($index, $item) => $item.entry.id;
 function TeacherTimetableComponent_Conditional_50_Template(rf, ctx) {
   if (rf & 1) {
@@ -113692,7 +115460,7 @@ function TeacherTimetableComponent_For_57_Template(rf, ctx) {
     \u0275\u0275elementStart(4, "span");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(6, TeacherTimetableComponent_For_57_For_7_Template, 4, 5, "td", 31, _forTrack052);
+    \u0275\u0275repeaterCreate(6, TeacherTimetableComponent_For_57_For_7_Template, 4, 5, "td", 31, _forTrack054);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -113974,10 +115742,10 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
         \u0275\u0275conditionalCreate(51, TeacherTimetableComponent_Conditional_51_Template, 2, 2, "th", 22);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(52, "tr");
-        \u0275\u0275repeaterCreate(53, TeacherTimetableComponent_For_54_Template, 7, 2, "th", 23, _forTrack052);
+        \u0275\u0275repeaterCreate(53, TeacherTimetableComponent_For_54_Template, 7, 2, "th", 23, _forTrack054);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(55, "tbody");
-        \u0275\u0275repeaterCreate(56, TeacherTimetableComponent_For_57_Template, 8, 2, "tr", null, _forTrack121);
+        \u0275\u0275repeaterCreate(56, TeacherTimetableComponent_For_57_Template, 8, 2, "tr", null, _forTrack122);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(58, "footer", 24)(59, "span", 25);
         \u0275\u0275text(60, "\u{1F496}");
@@ -114004,7 +115772,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(12, 24, "common.grade"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterGrade())("emptyLabel", \u0275\u0275pipeBind1(14, 26, "common.allGrades"))("options", ctx.grades.map(\u0275\u0275arrowFunction(28, arrowFn028, ctx)));
+        \u0275\u0275property("ngModel", ctx.filterGrade())("emptyLabel", \u0275\u0275pipeBind1(14, 26, "common.allGrades"))("options", ctx.grades.map(\u0275\u0275arrowFunction(28, arrowFn029, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(17, 29, "admin.timetable.period"), " ");
@@ -114202,9 +115970,9 @@ function readGradeList2(value) {
 }
 
 // src/app/pages/teacher/teacher-attendance.component.ts
-var _forTrack053 = ($index, $item) => $item.id;
-var arrowFn029 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
-var arrowFn118 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
+var _forTrack055 = ($index, $item) => $item.id;
+var arrowFn030 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
+var arrowFn119 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 function TeacherAttendanceComponent_Conditional_30_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
@@ -114547,7 +116315,7 @@ var TeacherAttendanceComponent = class _TeacherAttendanceComponent {
         \u0275\u0275pipe(67, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(68, "tbody");
-        \u0275\u0275repeaterCreate(69, TeacherAttendanceComponent_For_70_Template, 9, 3, "tr", null, _forTrack053, false, TeacherAttendanceComponent_ForEmpty_71_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(69, TeacherAttendanceComponent_For_70_Template, 9, 3, "tr", null, _forTrack055, false, TeacherAttendanceComponent_ForEmpty_71_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -114562,13 +116330,13 @@ var TeacherAttendanceComponent = class _TeacherAttendanceComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(15, 38, "common.grade"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.formGrade())("emptyLabel", \u0275\u0275pipeBind1(17, 40, "common.all"))("options", ctx.grades.map(\u0275\u0275arrowFunction(42, arrowFn029, ctx)));
+        \u0275\u0275property("ngModel", ctx.formGrade())("emptyLabel", \u0275\u0275pipeBind1(17, 40, "common.all"))("options", ctx.grades.map(\u0275\u0275arrowFunction(42, arrowFn030, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(20, 43, "common.course"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.courseId);
-        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(22, 45, "common.select"))("options", ctx.availableCourses().map(\u0275\u0275arrowFunction(47, arrowFn118, ctx)));
+        \u0275\u0275property("emptyLabel", \u0275\u0275pipeBind1(22, 45, "common.select"))("options", ctx.availableCourses().map(\u0275\u0275arrowFunction(47, arrowFn119, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(25, 48, "common.date"), " ");
@@ -114584,7 +116352,7 @@ var TeacherAttendanceComponent = class _TeacherAttendanceComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(38, 54, "common.grade"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterGrade())("emptyLabel", \u0275\u0275pipeBind1(40, 56, "common.all"))("options", ctx.grades.map(\u0275\u0275arrowFunction(58, arrowFn029, ctx)));
+        \u0275\u0275property("ngModel", ctx.filterGrade())("emptyLabel", \u0275\u0275pipeBind1(40, 56, "common.all"))("options", ctx.grades.map(\u0275\u0275arrowFunction(58, arrowFn030, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(43, 59, "teacher.attendance.dateFrom"), " ");
@@ -114749,8 +116517,8 @@ function toLocalDateString11(d) {
 // src/app/pages/teacher/teacher-student-attendance.component.ts
 var _c043 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c131 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack054 = ($index, $item) => $item.id;
-var arrowFn030 = (ctx, view) => (s) => ({ value: s, label: "" + s });
+var _forTrack056 = ($index, $item) => $item.id;
+var arrowFn031 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function TeacherStudentAttendanceComponent_For_107_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -115337,7 +117105,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275pipe(104, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(105, "tbody");
-        \u0275\u0275repeaterCreate(106, TeacherStudentAttendanceComponent_For_107_Template, 13, 5, "tr", null, _forTrack054, false, TeacherStudentAttendanceComponent_ForEmpty_108_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(106, TeacherStudentAttendanceComponent_For_107_Template, 13, 5, "tr", null, _forTrack056, false, TeacherStudentAttendanceComponent_ForEmpty_108_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(109, "div", 22)(110, "button", 23);
         \u0275\u0275listener("click", function TeacherStudentAttendanceComponent_Template_button_click_110_listener() {
@@ -115421,7 +117189,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(65, 98, "common.rowsPerPage"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.pageSize())("options", ctx.pageSizeOptions.map(\u0275\u0275arrowFunction(100, arrowFn030, ctx)));
+        \u0275\u0275property("ngModel", ctx.pageSize())("options", ctx.pageSizeOptions.map(\u0275\u0275arrowFunction(100, arrowFn031, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 101, "common.clearFilters"));
@@ -115645,9 +117413,9 @@ function toLocalDateString12(d) {
 }
 
 // src/app/pages/teacher/teacher-weekly-reports.component.ts
-var _forTrack055 = ($index, $item) => $item.studentId;
-var _forTrack122 = ($index, $item) => $item.id;
-var arrowFn031 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
+var _forTrack057 = ($index, $item) => $item.studentId;
+var _forTrack123 = ($index, $item) => $item.id;
+var arrowFn032 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 function TeacherWeeklyReportsComponent_For_52_For_17_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "option", 15);
@@ -116152,7 +117920,7 @@ var TeacherWeeklyReportsComponent = class _TeacherWeeklyReportsComponent {
         \u0275\u0275pipe(49, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(50, "tbody");
-        \u0275\u0275repeaterCreate(51, TeacherWeeklyReportsComponent_For_52_Template, 29, 24, "tr", null, _forTrack055, false, TeacherWeeklyReportsComponent_ForEmpty_53_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(51, TeacherWeeklyReportsComponent_For_52_Template, 29, 24, "tr", null, _forTrack057, false, TeacherWeeklyReportsComponent_ForEmpty_53_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(54, TeacherWeeklyReportsComponent_Conditional_54_Template, 7, 8);
         \u0275\u0275elementEnd();
@@ -116229,7 +117997,7 @@ var TeacherWeeklyReportsComponent = class _TeacherWeeklyReportsComponent {
         \u0275\u0275pipe(101, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(102, "tbody");
-        \u0275\u0275repeaterCreate(103, TeacherWeeklyReportsComponent_For_104_Template, 20, 14, "tr", null, _forTrack122, false, TeacherWeeklyReportsComponent_ForEmpty_105_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(103, TeacherWeeklyReportsComponent_For_104_Template, 20, 14, "tr", null, _forTrack123, false, TeacherWeeklyReportsComponent_ForEmpty_105_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -116249,7 +118017,7 @@ var TeacherWeeklyReportsComponent = class _TeacherWeeklyReportsComponent {
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(19, 45, "common.grade"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterGrade())("emptyLabel", \u0275\u0275pipeBind1(21, 47, "common.all"))("options", ctx.grades.map(\u0275\u0275arrowFunction(49, arrowFn031, ctx)));
+        \u0275\u0275property("ngModel", ctx.filterGrade())("emptyLabel", \u0275\u0275pipeBind1(21, 47, "common.all"))("options", ctx.grades.map(\u0275\u0275arrowFunction(49, arrowFn032, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(24, 50, "teacher.weeklyReports.reload"), " ");
@@ -116536,8 +118304,8 @@ function toLocalDateString13(d) {
 
 // src/app/pages/teacher/teacher-study-plans.component.ts
 var _c044 = ["planWrap"];
-var _forTrack056 = ($index, $item) => $item.id;
-var _forTrack123 = ($index, $item) => $item.weekNumber;
+var _forTrack058 = ($index, $item) => $item.id;
+var _forTrack124 = ($index, $item) => $item.weekNumber;
 function TeacherStudyPlansComponent_Conditional_46_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 2);
@@ -116637,7 +118405,7 @@ function TeacherStudyPlansComponent_Conditional_73_For_2_Template(rf, ctx) {
 function TeacherStudyPlansComponent_Conditional_73_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 21);
-    \u0275\u0275repeaterCreate(1, TeacherStudyPlansComponent_Conditional_73_For_2_Template, 7, 3, "article", 29, _forTrack123);
+    \u0275\u0275repeaterCreate(1, TeacherStudyPlansComponent_Conditional_73_For_2_Template, 7, 3, "article", 29, _forTrack124);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -117393,7 +119161,7 @@ var TeacherStudyPlansComponent = class _TeacherStudyPlansComponent {
         \u0275\u0275pipe(117, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(118, "tbody");
-        \u0275\u0275repeaterCreate(119, TeacherStudyPlansComponent_For_120_Template, 13, 4, "tr", null, _forTrack056, false, TeacherStudyPlansComponent_ForEmpty_121_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(119, TeacherStudyPlansComponent_For_120_Template, 13, 4, "tr", null, _forTrack058, false, TeacherStudyPlansComponent_ForEmpty_121_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -117844,7 +119612,7 @@ function toLocalDateString14(d) {
 // src/app/shared/asked-questions-board/asked-questions-board.component.ts
 var _c045 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c132 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack057 = ($index, $item) => $item.id;
+var _forTrack059 = ($index, $item) => $item.id;
 function AskedQuestionsBoardComponent_Conditional_35_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 11);
@@ -118487,7 +120255,7 @@ var AskedQuestionsBoardComponent = class _AskedQuestionsBoardComponent {
         });
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(35, AskedQuestionsBoardComponent_Conditional_35_Template, 3, 3, "p", 11)(36, AskedQuestionsBoardComponent_Conditional_36_Template, 3, 7, "p", 11);
-        \u0275\u0275repeaterCreate(37, AskedQuestionsBoardComponent_For_38_Template, 14, 10, "article", 12, _forTrack057);
+        \u0275\u0275repeaterCreate(37, AskedQuestionsBoardComponent_For_38_Template, 14, 10, "article", 12, _forTrack059);
         \u0275\u0275conditionalCreate(39, AskedQuestionsBoardComponent_Conditional_39_Template, 10, 15, "div", 13);
       }
       if (rf & 2) {
@@ -118837,8 +120605,8 @@ var _c046 = (a0) => ({ value: "Direct", label: a0 });
 var _c133 = (a0) => ({ value: "Group", label: a0 });
 var _c220 = (a0) => ({ value: "Class", label: a0 });
 var _c312 = (a0, a1, a2) => [a0, a1, a2];
-var _forTrack058 = ($index, $item) => $item.id;
-var _forTrack124 = ($index, $item) => $item.userId;
+var _forTrack060 = ($index, $item) => $item.id;
+var _forTrack125 = ($index, $item) => $item.userId;
 function ChatBoardComponent_Conditional_1_Conditional_26_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
@@ -119075,7 +120843,7 @@ function ChatBoardComponent_Conditional_11_Conditional_6_For_2_Template(rf, ctx)
 function ChatBoardComponent_Conditional_11_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 21);
-    \u0275\u0275repeaterCreate(1, ChatBoardComponent_Conditional_11_Conditional_6_For_2_Template, 1, 1, null, null, _forTrack124);
+    \u0275\u0275repeaterCreate(1, ChatBoardComponent_Conditional_11_Conditional_6_For_2_Template, 1, 1, null, null, _forTrack125);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -119151,7 +120919,7 @@ function ChatBoardComponent_Conditional_11_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(6, ChatBoardComponent_Conditional_11_Conditional_6_Template, 3, 0, "div", 21);
     \u0275\u0275conditionalCreate(7, ChatBoardComponent_Conditional_11_Conditional_7_Template, 3, 3, "p", 22);
     \u0275\u0275elementStart(8, "div", 23);
-    \u0275\u0275repeaterCreate(9, ChatBoardComponent_Conditional_11_For_10_Template, 11, 13, "article", 24, _forTrack058);
+    \u0275\u0275repeaterCreate(9, ChatBoardComponent_Conditional_11_For_10_Template, 11, 13, "article", 24, _forTrack060);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(11, "form", 25);
     \u0275\u0275listener("ngSubmit", function ChatBoardComponent_Conditional_11_Template_form_ngSubmit_11_listener() {
@@ -119557,7 +121325,7 @@ var ChatBoardComponent = class _ChatBoardComponent {
         \u0275\u0275pipe(6, "t");
         \u0275\u0275elementEnd();
         \u0275\u0275conditionalCreate(7, ChatBoardComponent_Conditional_7_Template, 3, 3, "p", 4);
-        \u0275\u0275repeaterCreate(8, ChatBoardComponent_For_9_Template, 7, 5, "button", 5, _forTrack058);
+        \u0275\u0275repeaterCreate(8, ChatBoardComponent_For_9_Template, 7, 5, "button", 5, _forTrack060);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(10, "section", 6);
         \u0275\u0275conditionalCreate(11, ChatBoardComponent_Conditional_11_Template, 17, 14)(12, ChatBoardComponent_Conditional_12_Template, 3, 3, "p", 4);
@@ -119807,8 +121575,8 @@ var TeacherChatComponent = class _TeacherChatComponent {
 var _c047 = (a0) => ({ seconds: a0 });
 var _c134 = (a0) => ({ count: a0 });
 var _c221 = (a0) => ({ minutes: a0 });
-var _forTrack059 = ($index, $item) => $item.questionId;
-var _forTrack125 = ($index, $item) => $item.id;
+var _forTrack061 = ($index, $item) => $item.questionId;
+var _forTrack126 = ($index, $item) => $item.id;
 function ExamPlayComponent_Conditional_8_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 2);
@@ -119937,7 +121705,7 @@ function ExamPlayComponent_Conditional_11_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(12, ExamPlayComponent_Conditional_11_Conditional_12_Template, 2, 1, "p");
     \u0275\u0275element(13, "app-question-image-display", 6);
-    \u0275\u0275repeaterCreate(14, ExamPlayComponent_Conditional_11_For_15_Template, 11, 12, "div", 7, _forTrack059);
+    \u0275\u0275repeaterCreate(14, ExamPlayComponent_Conditional_11_For_15_Template, 11, 12, "div", 7, _forTrack061);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -120065,7 +121833,7 @@ function ExamPlayComponent_Conditional_12_Conditional_8_For_1_Template(rf, ctx) 
 function ExamPlayComponent_Conditional_12_Conditional_8_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
-    \u0275\u0275repeaterCreate(0, ExamPlayComponent_Conditional_12_Conditional_8_For_1_Template, 1, 4, "app-question-play-prompt", 15, _forTrack125);
+    \u0275\u0275repeaterCreate(0, ExamPlayComponent_Conditional_12_Conditional_8_For_1_Template, 1, 4, "app-question-play-prompt", 15, _forTrack126);
     \u0275\u0275elementStart(2, "button", 16);
     \u0275\u0275listener("click", function ExamPlayComponent_Conditional_12_Conditional_8_Template_button_click_2_listener() {
       \u0275\u0275restoreView(_r6);
@@ -120844,6 +122612,11 @@ var routes = [
     component: StudentLessonsComponent
   },
   {
+    path: "student/materials/:courseId",
+    canActivate: [authGuard, roleGuard(["Student"])],
+    component: StudentMaterialsComponent
+  },
+  {
     path: "lessons/:lessonId",
     canActivate: [authGuard, roleGuard(["Student"])],
     component: LessonPlayComponent
@@ -120891,6 +122664,7 @@ var routes = [
       { path: "", pathMatch: "full", redirectTo: "overview" },
       { path: "overview", component: TeacherOverviewComponent },
       { path: "videos", component: TeacherVideosComponent },
+      { path: "materials", component: TeacherMaterialsComponent },
       { path: "course-tree", component: AdminCourseTreeComponent },
       { path: "asked-questions", component: TeacherAskedQuestionsComponent },
       { path: "chat", component: TeacherChatComponent },
@@ -121084,7 +122858,7 @@ var ChatNotifyService = class _ChatNotifyService {
 })();
 
 // src/app/shared/toast/toast-host.component.ts
-var _forTrack060 = ($index, $item) => $item.id;
+var _forTrack062 = ($index, $item) => $item.id;
 function ToastHostComponent_For_2_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "strong", 3);
@@ -121182,7 +122956,7 @@ var ToastHostComponent = class _ToastHostComponent {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ToastHostComponent, selectors: [["app-toast-host"]], decls: 3, vars: 0, consts: [["aria-live", "polite", "aria-relevant", "additions", 1, "toast-stack"], ["type", "button", 1, "toast", 3, "ok", "chat", "notification"], ["type", "button", 1, "toast", 3, "click"], [1, "toast-title"], [1, "toast-body"], [1, "toast-hint"]], template: function ToastHostComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275domElementStart(0, "div", 0);
-        \u0275\u0275repeaterCreate(1, ToastHostComponent_For_2_Template, 4, 7, "button", 1, _forTrack060);
+        \u0275\u0275repeaterCreate(1, ToastHostComponent_For_2_Template, 4, 7, "button", 1, _forTrack062);
         \u0275\u0275domElementEnd();
       }
       if (rf & 2) {

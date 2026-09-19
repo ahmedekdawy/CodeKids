@@ -118,6 +118,7 @@ export interface Course {
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
   videos?: CourseVideoSummary[];
+  materialCount?: number;
 }
 
 export interface Stage {
@@ -244,6 +245,39 @@ export interface TeacherVideoLibrary {
   lessonVideos: TeacherLessonVideo[];
   solutionVideos: TeacherSolutionVideo[];
   courseVideos?: CourseVideoLibraryItem[];
+}
+
+export interface LearningMaterial {
+  id: string;
+  courseId: string;
+  unitId?: string | null;
+  lessonId?: string | null;
+  mediaAssetId: string;
+  title: string;
+  kind: 'Pdf' | 'Audio' | 'Image' | string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  sortOrder: number;
+  createdAtUtc: string;
+}
+
+export interface LearningMaterialPage {
+  scope: string;
+  courseId: string;
+  courseTitle: string;
+  unitId?: string | null;
+  unitTitle?: string | null;
+  lessonId?: string | null;
+  lessonTitle?: string | null;
+  items: LearningMaterial[];
+}
+
+export interface TeacherLearningMaterial extends LearningMaterial {
+  scope: string;
+  courseTitle: string;
+  unitTitle?: string | null;
+  lessonTitle?: string | null;
 }
 
 export interface PlaybackInfo {

@@ -33,7 +33,7 @@
         <span>{{ 'common.menu' | t }}</span>
       </button>
       <nav class="side-nav" (click)="onNavClick($event)">
-        @for (item of navItems; track item.path) {
+        @for (item of uncategorizedItems; track item.path) {
           <a
             [routerLink]="item.path"
             routerLinkActive="active"
@@ -41,6 +41,29 @@
             <span class="nav-icon">{{ iconFor(item) }}</span>
             <span class="nav-label">{{ item.labelKey | t }}</span>
           </a>
+        }
+        @for (category of categories; track category.labelKey) {
+          <div class="nav-category" [class.nav-category--collapsed]="isCategoryCollapsed(category.labelKey)">
+            <button
+              type="button"
+              class="nav-category-toggle"
+              (click)="toggleCategory(category.labelKey)"
+              [attr.aria-expanded]="!isCategoryCollapsed(category.labelKey)">
+              <span class="nav-category-label">{{ category.labelKey | t }}</span>
+              <svg class="nav-category-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            @for (item of category.items; track item.path) {
+              <a
+                [routerLink]="item.path"
+                routerLinkActive="active"
+                [title]="item.labelKey | t">
+                <span class="nav-icon">{{ iconFor(item) }}</span>
+                <span class="nav-label">{{ item.labelKey | t }}</span>
+              </a>
+            }
+          </div>
         }
       </nav>
     </div>

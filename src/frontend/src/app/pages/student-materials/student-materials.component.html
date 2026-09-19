@@ -1,0 +1,66 @@
+<div class="page student-materials-page">
+  <app-api-busy-indicator />
+  <header class="topbar">
+    <div>
+      <app-site-brand />
+      <h1>{{ courseTitle() || ('materials.title' | t) }}</h1>
+      <p class="meta">{{ 'materials.studentHint' | t }}</p>
+    </div>
+    <div class="topbar-actions">
+      <app-theme-switcher />
+      <app-language-switcher />
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    </div>
+  </header>
+
+  <a class="back" routerLink="/student">{{ 'common.backMissions' | t }}</a>
+
+  @if (error()) {
+    <section class="section-card">
+      <p class="feedback">{{ error() }}</p>
+    </section>
+  } @else if (loading()) {
+    <section class="section-card">
+      <p class="meta">{{ 'common.loading' | t }}</p>
+    </section>
+  } @else if (!groups().length) {
+    <section class="section-card">
+      <p class="meta empty-state">{{ 'materials.studentEmpty' | t }}</p>
+    </section>
+  } @else {
+    @for (group of groups(); track group.id) {
+      <section class="section-card">
+        @if (group.title) {
+          <h2>{{ group.title }}</h2>
+        }
+        <div class="item-list">
+          @for (material of group.items; track material.id) {
+            <button type="button" class="item-row link-row" (click)="open(material)">
+              <div class="item-body">
+                <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>
+                <p class="meta">{{ material.fileName }}</p>
+              </div>
+              <span class="action-ghost">{{ 'materials.open' | t }}</span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+  }
+
+  @if (openMaterial(); as item) {
+    <div class="preview-overlay" (click)="close()">
+      <div class="preview-card" (click)="$event.stopPropagation()">
+        <header class="preview-head">
+          <h3>{{ item.title }}</h3>
+          <button type="button" class="ghost" (click)="close()">{{ 'common.close' | t }}</button>
+        </header>
+        <app-material-viewer
+          [materialId]="item.id"
+          [kind]="item.kind"
+          [title]="item.title"
+        />
+      </div>
+    </div>
+  }
+</div>

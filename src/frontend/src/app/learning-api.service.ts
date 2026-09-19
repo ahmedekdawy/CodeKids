@@ -54,6 +54,8 @@ import {
   AdminLoginDashboard,
   TuitionPayment,
   OtherExpense,
+  LearningMaterial,
+  LearningMaterialPage,
   Lesson,
   LiveSession,
   ManagedUser,
@@ -71,6 +73,7 @@ import {
   StudentSummary,
   SubmitQuizResponse,
   TeacherDashboard,
+  TeacherLearningMaterial,
   TeacherStudentDetail,
   TeacherVideoLibrary,
   WatchSession,
@@ -1618,6 +1621,52 @@ export class LearningApiService {
 
   deleteAssignmentSolutionVideo(assignmentId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}/solution-video`);
+  }
+
+  uploadLearningMaterialFile(file: File): Observable<MediaAsset> {
+    const form = new FormData();
+    form.append('file', file, file.name);
+    return this.http.post<MediaAsset>(`${this.baseUrl}/media/learning-materials/upload`, form);
+  }
+
+  attachLearningMaterial(payload: {
+    courseId?: string | null;
+    unitId?: string | null;
+    lessonId?: string | null;
+    mediaAssetId: string;
+    title?: string | null;
+    sortOrder?: number | null;
+  }): Observable<LearningMaterial> {
+    return this.http.post<LearningMaterial>(`${this.baseUrl}/learning-materials`, payload);
+  }
+
+  getLearningMaterials(): Observable<TeacherLearningMaterial[]> {
+    return this.http.get<TeacherLearningMaterial[]>(`${this.baseUrl}/learning-materials`);
+  }
+
+  getLearningMaterialPage(filters: {
+    courseId?: string;
+    unitId?: string;
+    lessonId?: string;
+    all?: boolean;
+  }): Observable<LearningMaterialPage> {
+    const query = new URLSearchParams();
+    if (filters.courseId) query.set('courseId', filters.courseId);
+    if (filters.unitId) query.set('unitId', filters.unitId);
+    if (filters.lessonId) query.set('lessonId', filters.lessonId);
+    if (filters.all) query.set('all', 'true');
+    const qs = query.toString();
+    return this.http.get<LearningMaterialPage>(
+      `${this.baseUrl}/learning-materials/page${qs ? `?${qs}` : ''}`
+    );
+  }
+
+  deleteLearningMaterial(materialId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/learning-materials/${materialId}`);
+  }
+
+  learningMaterialFileUrl(mediaAssetId: string): string {
+    return `${this.baseUrl}/learning-materials/${mediaAssetId}/file`;
   }
 
   getPlayback(mediaAssetId: string): Observable<PlaybackInfo> {

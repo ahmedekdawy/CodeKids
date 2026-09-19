@@ -63,7 +63,15 @@ public sealed class GetLearningMaterialPageQueryHandler(IAppDbContext dbContext)
             .Include(x => x.MediaAsset)
             .Where(x => x.CourseId == courseId);
 
-        if (lessonId is Guid filterLessonId)
+        if (query.All)
+        {
+            // All-scope mode: return every material of the course; grouping happens on the client.
+            unitId = null;
+            lessonId = null;
+            unitTitle = null;
+            lessonTitle = null;
+        }
+        else if (lessonId is Guid filterLessonId)
         {
             materialsQuery = materialsQuery.Where(x => x.LessonId == filterLessonId);
         }
@@ -77,12 +85,14 @@ public sealed class GetLearningMaterialPageQueryHandler(IAppDbContext dbContext)
         }
 
         var items = await materialsQuery
-            .OrderBy(x => x.SortOrder)
+            .OrderBy(x => x.UnitId)
+            .ThenBy(x => x.LessonId)
+            .ThenBy(x => x.SortOrder)
             .ThenBy(x => x.CreatedAtUtc)
             .ToListAsync(cancellationToken);
 
         return new LearningMaterialPageDto(
-            LearningMaterialMapper.ScopeOf(unitId, lessonId),
+            query.All ? "all" : LearningMaterialMapper.ScopeOf(unitId, lessonId),
             courseId,
             courseTitle,
             unitId,

@@ -9,6 +9,7 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { StudentHomeComponent } from './pages/student-home/student-home.component';
 import { StudentLessonsComponent } from './pages/student-lessons/student-lessons.component';
+import { StudentMaterialsComponent } from './pages/student-materials/student-materials.component';
 import { LessonPlayComponent } from './pages/lesson-play/lesson-play.component';
 import { QuizPlayComponent } from './pages/quiz-play/quiz-play.component';
 import { AssignmentPlayComponent } from './pages/assignment-play/assignment-play.component';
@@ -48,6 +49,7 @@ import { TeacherStudentsComponent } from './pages/teacher/teacher-students.compo
 import { TeacherQuestionBankComponent } from './pages/teacher/teacher-question-bank.component';
 import { TeacherExamsComponent } from './pages/teacher/teacher-exams.component';
 import { TeacherVideosComponent } from './pages/teacher/teacher-videos.component';
+import { TeacherMaterialsComponent } from './pages/teacher/teacher-materials.component';
 import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.component';
 import { TeacherAppointmentsComponent } from './pages/teacher/teacher-appointments.component';
 import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.component';
@@ -97,6 +99,11 @@ export const routes: Routes = [
     component: StudentLessonsComponent
   },
   {
+    path: 'student/materials/:courseId',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudentMaterialsComponent
+  },
+  {
     path: 'lessons/:lessonId',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: LessonPlayComponent
@@ -144,6 +151,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
+      { path: 'materials', component: TeacherMaterialsComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'asked-questions', component: TeacherAskedQuestionsComponent },
       { path: 'chat', component: TeacherChatComponent },

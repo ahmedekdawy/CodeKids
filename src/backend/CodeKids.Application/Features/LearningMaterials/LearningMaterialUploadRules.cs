@@ -2,7 +2,7 @@ using CodeKids.Domain.Enums;
 
 namespace CodeKids.Application.Features.LearningMaterials;
 
-internal static class LearningMaterialUploadRules
+public static class LearningMaterialUploadRules
 {
     public static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {

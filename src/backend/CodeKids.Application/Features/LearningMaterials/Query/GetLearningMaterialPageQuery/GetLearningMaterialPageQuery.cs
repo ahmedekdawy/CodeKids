@@ -7,4 +7,5 @@ public sealed record GetLearningMaterialPageQuery(
     string? Role,
     Guid? CourseId,
     Guid? UnitId,
-    Guid? LessonId) : IQuery<LearningMaterialPageDto>;
+    Guid? LessonId,
+    bool All = false) : IQuery<LearningMaterialPageDto>;

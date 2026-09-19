@@ -527,6 +527,20 @@
   font-size: 1.05rem;
 }
 
+.chip.material {
+  background: rgba(45, 212, 191, 0.16);
+  border-color: rgba(94, 234, 212, 0.4);
+  color: #99f6e4;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+:host-context([data-theme='light']) .chip.material {
+  background: rgba(13, 148, 136, 0.12);
+  border-color: rgba(13, 148, 136, 0.35);
+  color: #0f766e;
+}
+
 :host-context([data-theme='light']) .course-title,
 :host-context([data-theme='light']) .course-head h3 {
   color: #0b3d91;

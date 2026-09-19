@@ -27,4 +27,5 @@ public sealed record CourseDto(
     string Variants = "",
     bool StudentAskEnabled = false,
     bool IsPublished = false,
-    bool HasContent = false);
+    bool HasContent = false,
+    int MaterialCount = 0);
