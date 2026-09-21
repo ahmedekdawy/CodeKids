@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -45,10 +46,14 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
         }
         else if (isStudent)
         {
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
+                dbContext, query.ViewerUserId, cancellationToken);
             var submittedIds = await StudentCompletedAssessments.AssignmentIdsAsync(
                 dbContext, query.ViewerUserId, cancellationToken);
             assignments = assignments
-                .Where(x => x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true)
+                .Where(x => (x.CourseId is Guid cid && courseIds.Contains(cid))
+                            //|| x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true
+                            )
                 .Where(x => !submittedIds.Contains(x.Id))
                 .ToList();
         }

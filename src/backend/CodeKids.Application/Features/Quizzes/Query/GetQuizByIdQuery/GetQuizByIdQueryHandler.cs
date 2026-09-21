@@ -3,6 +3,7 @@ using CodeKids.Domain.Entities;
 using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,16 @@ public sealed class GetQuizByIdQueryHandler(IAppDbContext dbContext)
             && !StudentCompletedAssessments.IsStudent(query.ViewerRole))
         {
             return null;
+        }
+
+        if (StudentCompletedAssessments.IsStudent(query.ViewerRole) && query.ViewerUserId is Guid studentId)
+        {
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
+                dbContext, studentId, cancellationToken);
+            if (!courseIds.Contains(quiz.CourseId))
+            {
+                return null;
+            }
         }
 
         var dto = GetQuizzesQueryHandler.Map(quiz);

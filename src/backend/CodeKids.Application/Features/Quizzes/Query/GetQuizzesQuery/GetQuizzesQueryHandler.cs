@@ -6,6 +6,7 @@ using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Application.Features.QuestionImages;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Classrooms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Quizzes;
@@ -45,9 +46,14 @@ public sealed class GetQuizzesQueryHandler(IAppDbContext dbContext)
         var quizzes = await quizzesQuery.ToListAsync(cancellationToken);
         if (StudentCompletedAssessments.IsStudent(query.ViewerRole) && query.ViewerUserId is Guid studentId)
         {
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
+                dbContext, studentId, cancellationToken);
             var submittedIds = await StudentCompletedAssessments.QuizIdsAsync(
                 dbContext, studentId, cancellationToken);
-            quizzes = quizzes.Where(x => !submittedIds.Contains(x.Id)).ToList();
+            quizzes = quizzes
+                .Where(x => courseIds.Contains(x.CourseId))
+                .Where(x => !submittedIds.Contains(x.Id))
+                .ToList();
         }
 
         return quizzes.Select(Map).ToList();

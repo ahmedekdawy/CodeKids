@@ -140,6 +140,27 @@ public static class StudentCourseVisibility
         || studentSchoolType == SchoolType.All
         || courseSchoolType == studentSchoolType;
 
+    /// <summary>
+    /// Course IDs the student should see assessments for: every visible course plus any
+    /// course-specific enrollment rows, even when the enrollment's course was filtered out
+    /// by grade/school-type matching (e.g. courses without grade metadata).
+    /// </summary>
+    public static async Task<HashSet<Guid>> GetAssessmentCourseIdsAsync(
+        IAppDbContext dbContext,
+        Guid studentId,
+        CancellationToken cancellationToken)
+    {
+        var visible = await GetVisibleCourseIdsAsync(dbContext, studentId, cancellationToken);
+        var enrolled = await dbContext.StudentCourseEnrollments
+            .AsNoTracking()
+            .Where(x => x.StudentId == studentId)
+            .Select(x => x.CourseId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+        visible.UnionWith(enrolled);
+        return visible;
+    }
+
     public static HashSet<Guid> EnrolledCourseIdsForClassroom(
         IEnumerable<StudentCourseEnrollment> enrollments,
         Guid studentId,

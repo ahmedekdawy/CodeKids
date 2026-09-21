@@ -47,14 +47,14 @@ public sealed class GetExamsQueryHandler(IAppDbContext dbContext)
         }
         else if (isStudent)
         {
-            var visibleCourseIds = await StudentCourseVisibility.GetVisibleCourseIdsAsync(
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
                 dbContext, query.ViewerUserId, cancellationToken);
             var submittedIds = await StudentCompletedAssessments.ExamIdsAsync(
                 dbContext, query.ViewerUserId, cancellationToken);
 
             exams = exams
-                .Where(x => x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true)
-                .Where(x => x.CourseId is null || visibleCourseIds.Contains(x.CourseId.Value))
+                .Where(x => (x.CourseId is Guid cid && courseIds.Contains(cid))
+                            || x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true)
                 .Where(x => !submittedIds.Contains(x.Id))
                 .ToList();
         }
