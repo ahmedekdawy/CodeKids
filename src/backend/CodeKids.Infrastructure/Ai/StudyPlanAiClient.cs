@@ -11,7 +11,8 @@ namespace CodeKids.Infrastructure.Ai;
 
 public sealed class StudyPlanAiClient(
     IHttpClientFactory httpClientFactory,
-    IOptions<AiOptions> options) : IStudyPlanAiClient
+    IOptions<AiOptions> options,
+    IOptions<List<AiContentProviderOptions>>? contentProviders) : IStudyPlanAiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -27,37 +28,116 @@ public sealed class StudyPlanAiClient(
         CancellationToken cancellationToken,
         object? jsonSchema = null)
     {
-        var settings = options.Value;
-        var provider = (settings.Provider ?? "gemini").Trim().ToLowerInvariant();
-        var apiKey = (settings.ApiKey ?? string.Empty).Trim();
-
-        if (provider is "gemini" && apiKey.Length > 0)
+        var attempts = BuildAttempts();
+        if (attempts.Count == 0)
         {
-            return await CompleteGeminiAsync(settings, systemPrompt, userPrompt, jsonSchema, cancellationToken);
+            throw new HttpRequestException("No AI providers are configured (AiContent / Ai sections).");
         }
 
-        if (apiKey.Length > 0 && provider is not "pollinations")
+        List<Exception>? failures = null;
+        for (var i = 0; i < attempts.Count; i++)
+        {
+            var attempt = attempts[i];
+            try
+            {
+                var result= await CompleteWithAsync(attempt, systemPrompt, userPrompt, jsonSchema, cancellationToken);
+                return result;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex) when (i < attempts.Count - 1)
+            {
+                // Try the next provider in the chain; remember why this one failed.
+                (failures ??= []).Add(new HttpRequestException(
+                    $"Provider '{attempt.Provider}' (model '{attempt.Model}') failed: {ex.Message}", ex));
+            }
+        }
+
+        throw new AggregateException(
+            "All AI providers in the fallback chain failed.", failures ?? []);
+    }
+
+    private List<AiAttempt> BuildAttempts()
+    {
+        var attempts = new List<AiAttempt>();
+
+        // Primary chain: the ordered "AiContent" list (fallback strategy).
+        var chain = contentProviders?.Value;
+        if (chain is not null)
+        {
+            foreach (var entry in chain)
+            {
+                var provider = (entry.Provider ?? string.Empty).Trim().ToLowerInvariant();
+                var apiKey = (entry.ApiKey ?? string.Empty).Trim();
+                if (provider.Length == 0 || apiKey.Length == 0)
+                {
+                    continue;
+                }
+
+                attempts.Add(new AiAttempt(
+                    provider,
+                    apiKey,
+                    entry.Model?.Trim(),
+                    entry.BaseUrl?.Trim()));
+            }
+        }
+
+        // Legacy single-provider fallback: the "Ai" section, when the chain is empty.
+        if (attempts.Count == 0)
+        {
+            var settings = options.Value;
+            var provider = (settings.Provider ?? "gemini").Trim().ToLowerInvariant();
+            var apiKey = (settings.ApiKey ?? string.Empty).Trim();
+            if (apiKey.Length > 0)
+            {
+                attempts.Add(new AiAttempt(
+                    provider,
+                    apiKey,
+                    string.IsNullOrWhiteSpace(settings.Model) ? null : settings.Model.Trim(),
+                    settings.BaseUrl));
+            }
+        }
+
+        return attempts;
+    }
+
+    private async Task<string> CompleteWithAsync(
+        AiAttempt attempt,
+        string systemPrompt,
+        string userPrompt,
+        object? jsonSchema,
+        CancellationToken cancellationToken)
+    {
+        if (attempt.Provider == "gemini")
+        {
+            return await CompleteGeminiAsync(attempt, systemPrompt, userPrompt, jsonSchema, cancellationToken);
+        }
+
+        if (attempt.Provider == "pollinations")
         {
             return await CompleteOpenAiAsync(
-                NormalizeBaseUrl(settings.BaseUrl, provider),
-                apiKey,
-                string.IsNullOrWhiteSpace(settings.Model) ? DefaultModel(provider) : settings.Model.Trim(),
+                "https://text.pollinations.ai/",
+                apiKey: null,
+                model: "openai",
                 systemPrompt,
                 userPrompt,
-                cancellationToken);
+                cancellationToken,
+                path: "openai");
         }
 
         return await CompleteOpenAiAsync(
-            "https://text.pollinations.ai/",
-            apiKey: null,
-            model: string.IsNullOrWhiteSpace(settings.Model) || provider is "groq" or "openai" or "chatgpt" or "grok"
-                ? "openai"
-                : settings.Model.Trim(),
+            NormalizeBaseUrl(attempt.BaseUrl, attempt.Provider),
+            attempt.ApiKey,
+            ResolveModel(attempt),
             systemPrompt,
             userPrompt,
-            cancellationToken,
-            path: "openai");
+            cancellationToken);
     }
+
+    private static string ResolveModel(AiAttempt attempt) =>
+        string.IsNullOrWhiteSpace(attempt.Model) ? DefaultModel(attempt.Provider) : attempt.Model.Trim();
 
     private async Task<string> CompleteOpenAiAsync(
         string baseUrl,
@@ -121,17 +201,17 @@ public sealed class StudyPlanAiClient(
     }
 
     private async Task<string> CompleteGeminiAsync(
-        AiOptions settings,
+        AiAttempt attempt,
         string systemPrompt,
         string userPrompt,
         object? jsonSchema,
         CancellationToken cancellationToken)
     {
-        var model = NormalizeGeminiModel(settings.Model);
-        var url = BuildGeminiGenerateContentUrl(settings.BaseUrl, model);
+        var model = NormalizeGeminiModel(attempt.Model);
+        var url = BuildGeminiGenerateContentUrl(attempt.BaseUrl, model);
         var client = httpClientFactory.CreateClient(nameof(StudyPlanAiClient));
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        request.Headers.TryAddWithoutValidation("X-goog-api-key", settings.ApiKey.Trim());
+        request.Headers.TryAddWithoutValidation("X-goog-api-key", attempt.ApiKey);
         var generationConfig = jsonSchema is null
             ? new Dictionary<string, object?>
             {
@@ -164,7 +244,7 @@ public sealed class StudyPlanAiClient(
         var raw = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode && jsonSchema is not null && (int)response.StatusCode is 400)
         {
-            return await CompleteGeminiAsync(settings, systemPrompt, userPrompt, jsonSchema: null, cancellationToken);
+            return await CompleteGeminiAsync(attempt, systemPrompt, userPrompt, jsonSchema: null, cancellationToken);
         }
 
         if (!response.IsSuccessStatusCode)
@@ -174,43 +254,6 @@ public sealed class StudyPlanAiClient(
 
         return ExtractGeminiText(raw);
     }
-
-    private static readonly object StudyPlanResponseSchema = new
-    {
-        type = "object",
-        properties = new
-        {
-            notes = new { type = "string" },
-            weeks = new
-            {
-                type = "array",
-                items = new
-                {
-                    type = "object",
-                    properties = new
-                    {
-                        weekNumber = new { type = "integer" },
-                        topics = new
-                        {
-                            type = "array",
-                            items = new
-                            {
-                                type = "object",
-                                properties = new
-                                {
-                                    title = new { type = "string" },
-                                    highlight = new { type = "boolean" }
-                                },
-                                required = new[] { "title", "highlight" }
-                            }
-                        }
-                    },
-                    required = new[] { "weekNumber", "topics" }
-                }
-            }
-        },
-        required = new[] { "notes", "weeks" }
-    };
 
     private static string ExtractGeminiText(string raw)
     {
@@ -407,4 +450,6 @@ public sealed class StudyPlanAiClient(
 
         return value.EndsWith('/') ? value : value + "/";
     }
+
+    private sealed record AiAttempt(string Provider, string ApiKey, string? Model, string? BaseUrl);
 }

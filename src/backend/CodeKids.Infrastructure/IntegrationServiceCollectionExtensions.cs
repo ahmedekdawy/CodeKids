@@ -114,6 +114,7 @@ public static class IntegrationServiceCollectionExtensions
     public static IServiceCollection AddStudyPlanAi(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
+        services.Configure<List<AiContentProviderOptions>>(configuration.GetSection("AiContent"));
         services.AddHttpClient(nameof(StudyPlanAiClient), client =>
         {
             client.Timeout = TimeSpan.FromSeconds(120);
@@ -121,6 +122,7 @@ public static class IntegrationServiceCollectionExtensions
             client.DefaultRequestHeaders.UserAgent.ParseAdd("CodeKids/1.0");
         });
         services.AddSingleton<IStudyPlanAiClient, StudyPlanAiClient>();
+        services.AddScoped<ICourseBookTextProvider, CourseBookTextProvider>();
         return services;
     }
 }
