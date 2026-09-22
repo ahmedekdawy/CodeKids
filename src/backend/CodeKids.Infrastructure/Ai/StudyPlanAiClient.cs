@@ -20,6 +20,8 @@ public sealed class StudyPlanAiClient(
         Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
     };
 
+    private const int MaxOutputTokens = 16384;
+
     private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
     public async Task<string> CompleteJsonAsync(
@@ -169,6 +171,7 @@ public sealed class StudyPlanAiClient(
             {
                 model,
                 temperature = 0.4,
+                max_tokens = MaxOutputTokens,
                 response_format = new { type = "json_object" },
                 messages = new object[]
                 {
@@ -190,7 +193,17 @@ public sealed class StudyPlanAiClient(
             && choices.ValueKind == JsonValueKind.Array
             && choices.GetArrayLength() > 0)
         {
-            var message = choices[0].GetProperty("message");
+            var choice = choices[0];
+            if (choice.TryGetProperty("finish_reason", out var finishReason)
+                && string.Equals(finishReason.GetString(), "length", StringComparison.OrdinalIgnoreCase))
+            {
+                // The response was cut off mid-JSON; treat it as a failure so the
+                // fallback chain can try another provider instead of parsing
+                // truncated content.
+                throw new HttpRequestException("AI provider response was truncated (max tokens reached).");
+            }
+
+            var message = choice.GetProperty("message");
             if (message.TryGetProperty("content", out var content))
             {
                 return content.GetString() ?? string.Empty;
@@ -220,8 +233,14 @@ public sealed class StudyPlanAiClient(
             : new Dictionary<string, object?>
             {
                 ["responseMimeType"] = "application/json",
-                ["responseJsonSchema"] = jsonSchema
+                ["responseJsonSchema"] = jsonSchema,
+                ["maxOutputTokens"] = MaxOutputTokens
             };
+
+        if (jsonSchema is null)
+        {
+            generationConfig["maxOutputTokens"] = MaxOutputTokens;
+        }
         var body = new
         {
             systemInstruction = new

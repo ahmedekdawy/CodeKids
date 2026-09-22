@@ -319,7 +319,15 @@ public sealed class GenerateCourseTreeCommandHandler(
             return null;
         }
 
-        return JsonSerializer.Deserialize<Draft>(text, JsonOptions);
+        try
+        {
+            return JsonSerializer.Deserialize<Draft>(text, JsonOptions);
+        }
+        catch (JsonException)
+        {
+            // Truncated or malformed JSON — treat as a failure rather than a partial index.
+            return null;
+        }
     }
 
     private static string ExtractJson(string raw)

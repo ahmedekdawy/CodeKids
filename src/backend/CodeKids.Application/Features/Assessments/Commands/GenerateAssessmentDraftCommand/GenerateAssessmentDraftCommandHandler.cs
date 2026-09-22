@@ -14,6 +14,7 @@ namespace CodeKids.Application.Features.Assessments;
 public sealed class GenerateAssessmentDraftCommandHandler(
     IAppDbContext dbContext,
     IStudyPlanAiClient aiClient,
+    ICourseBookTextProvider bookTextProvider,
     ICommandHandler<CreateBankQuestionCommand, BankQuestionDto> createBankQuestion)
     : ICommandHandler<GenerateAssessmentDraftCommand, GeneratedAssessmentDraftDto>
 {
@@ -56,13 +57,14 @@ public sealed class GenerateAssessmentDraftCommandHandler(
         var scope = ResolveCurriculumScope(outline, command.UnitIds, command.LessonIds);
         var count = ClampCount(kind, command.QuestionCount);
         var arabic = IsArabic(command.Language);
+        var bookText = await bookTextProvider.TryGetBookTextAsync(course, BookTextMaxCharacters, cancellationToken);
 
         Draft? draft;
         try
         {
             var json = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(kind, count, command.QuestionType, arabic),
-                BuildUserPrompt(kind, course, outline, scope, count, command.QuestionType, arabic),
+                BuildUserPrompt(kind, course, outline, scope, count, command.QuestionType, arabic, bookText),
                 cancellationToken,
                 AssessmentSchema);
             draft = ParseDraft(json);
@@ -227,6 +229,7 @@ public sealed class GenerateAssessmentDraftCommandHandler(
               - {typeRule}
               - options نصوص الخيارات بالترتيب، والمفتاح A هو الأول.
               - لا تشرح خارج JSON. لا تضع أسئلة خارج المنهج المعطى.
+              - إذا تم توفير محتوى كتاب المادة، اجعل الأسئلة من هذا المحتوى فقط.
               """
             : $"""
               You are a teacher following the Egyptian Ministry of Education curriculum.
@@ -238,6 +241,7 @@ public sealed class GenerateAssessmentDraftCommandHandler(
               - {typeRule}
               - options are the choice texts in order; A is the first option.
               - Do not write anything outside JSON. Do not invent topics outside the given curriculum.
+              - When the uploaded course book content is provided, base the questions on that content only.
               """;
     }
 
@@ -280,6 +284,8 @@ public sealed class GenerateAssessmentDraftCommandHandler(
         return new CurriculumScope(requestedUnits, requestedLessons);
     }
 
+    private const int BookTextMaxCharacters = 24000;
+
     private static string BuildUserPrompt(
         AssessmentKind kind,
         Course course,
@@ -287,7 +293,8 @@ public sealed class GenerateAssessmentDraftCommandHandler(
         CurriculumScope scope,
         int count,
         string? preferredType,
-        bool arabic)
+        bool arabic,
+        string bookText)
     {
         var kindName = kind switch
         {
@@ -309,6 +316,8 @@ public sealed class GenerateAssessmentDraftCommandHandler(
             {
                 sb.AppendLine($"نوع السؤال المطلوب: {preferredType}");
             }
+
+            AppendBookContent(sb, bookText, arabic);
         }
         else
         {
@@ -323,10 +332,33 @@ public sealed class GenerateAssessmentDraftCommandHandler(
             {
                 sb.AppendLine($"Requested question type: {preferredType}");
             }
+
+            AppendBookContent(sb, bookText, arabic);
         }
 
         AppendCurriculum(sb, outline, scope, arabic);
         return sb.ToString();
+    }
+
+    private static void AppendBookContent(StringBuilder sb, string bookText, bool arabic)
+    {
+        var text = (bookText ?? string.Empty).Trim();
+        if (text.Length == 0)
+        {
+            return;
+        }
+
+        sb.AppendLine();
+        if (arabic)
+        {
+            sb.AppendLine("محتوى الكتاب المرفوع للمادة (مقتطف) — اجعل كل الأسئلة من هذا المحتوى فقط:");
+            sb.AppendLine(text);
+        }
+        else
+        {
+            sb.AppendLine("Uploaded course book content (excerpt) — base every question on this content only:");
+            sb.AppendLine(text);
+        }
     }
 
     private static void AppendCurriculum(StringBuilder sb, CourseContentOutline outline, CurriculumScope scope, bool arabic)
