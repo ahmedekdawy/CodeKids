@@ -115,6 +115,7 @@ public static class IntegrationServiceCollectionExtensions
     {
         services.Configure<AiOptions>(configuration.GetSection(AiOptions.SectionName));
         services.Configure<List<AiContentProviderOptions>>(configuration.GetSection("AiContent"));
+        services.Configure<AiImageProviderChain>(configuration.GetSection("AiImage"));
         services.AddHttpClient(nameof(StudyPlanAiClient), client =>
         {
             client.Timeout = TimeSpan.FromSeconds(120);
@@ -123,6 +124,7 @@ public static class IntegrationServiceCollectionExtensions
         });
         services.AddSingleton<IStudyPlanAiClient, StudyPlanAiClient>();
         services.AddScoped<ICourseBookTextProvider, CourseBookTextProvider>();
+        services.AddScoped<IUploadedContentTextExtractor, UploadedContentTextExtractor>();
         return services;
     }
 }

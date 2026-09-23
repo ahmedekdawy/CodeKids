@@ -12,7 +12,8 @@ namespace CodeKids.Infrastructure.Ai;
 public sealed class StudyPlanAiClient(
     IHttpClientFactory httpClientFactory,
     IOptions<AiOptions> options,
-    IOptions<List<AiContentProviderOptions>>? contentProviders) : IStudyPlanAiClient
+    IOptions<List<AiContentProviderOptions>>? contentProviders,
+    IOptions<AiImageProviderChain>? imageProviders) : IStudyPlanAiClient
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -61,30 +62,140 @@ public sealed class StudyPlanAiClient(
             "All AI providers in the fallback chain failed.", failures ?? []);
     }
 
-    private List<AiAttempt> BuildAttempts()
+    public async Task<string> CompleteJsonWithFilesAsync(
+        string systemPrompt,
+        string userPrompt,
+        IReadOnlyList<IStudyPlanAiClient.AiAttachment> attachments,
+        CancellationToken cancellationToken,
+        object? jsonSchema = null)
+    {
+        if (attachments.Count == 0)
+        {
+            return await CompleteJsonAsync(systemPrompt, userPrompt, cancellationToken, jsonSchema);
+        }
+
+        return await CompleteFilesRetryLoopAsync(
+            systemPrompt, userPrompt, attachments, jsonSchema, cancellationToken);
+    }
+
+    private async Task<string> CompleteGeminiWithFilesAsync(
+        AiAttempt attempt,
+        string systemPrompt,
+        string userPrompt,
+        IReadOnlyList<IStudyPlanAiClient.AiAttachment> attachments,
+        object? jsonSchema,
+        CancellationToken cancellationToken)
+    {
+        var model = NormalizeGeminiModel(attempt.Model);
+        var url = BuildGeminiGenerateContentUrl(attempt.BaseUrl, model);
+        var client = httpClientFactory.CreateClient(nameof(StudyPlanAiClient));
+        using var request = new HttpRequestMessage(HttpMethod.Post, url);
+        request.Headers.TryAddWithoutValidation("X-goog-api-key", attempt.ApiKey);
+
+        var contentParts = new List<object> { new { text = userPrompt } };
+        foreach (var attachment in attachments.Take(5))
+        {
+            contentParts.Add(new
+            {
+                inline_data = new
+                {
+                    mime_type = attachment.MimeType,
+                    data = Convert.ToBase64String(attachment.Data)
+                }
+            });
+        }
+
+        var generationConfig = new Dictionary<string, object?>
+        {
+            ["responseMimeType"] = "application/json",
+            ["maxOutputTokens"] = MaxOutputTokens
+        };
+        if (jsonSchema is not null)
+        {
+            generationConfig["responseJsonSchema"] = jsonSchema;
+        }
+
+        var body = new
+        {
+            systemInstruction = new
+            {
+                parts = new object[] { new { text = systemPrompt } }
+            },
+            contents = new object[]
+            {
+                new { parts = contentParts.ToArray() }
+            },
+            generationConfig
+        };
+        request.Content = new StringContent(JsonSerializer.Serialize(body, JsonOptions), Utf8NoBom, "application/json");
+
+        using var response = await client.SendAsync(request, cancellationToken);
+        var raw = await response.Content.ReadAsStringAsync(cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"AI provider returned {(int)response.StatusCode}.");
+        }
+
+        return ExtractGeminiText(raw);
+    }
+
+    private async Task<string> CompleteFilesRetryLoopAsync(
+        string systemPrompt,
+        string userPrompt,
+        IReadOnlyList<IStudyPlanAiClient.AiAttachment> attachments,
+        object? jsonSchema,
+        CancellationToken cancellationToken)
+    {
+        var attempts = BuildAttempts(preferImageChain: true);
+        if (attempts.Count == 0)
+        {
+            throw new HttpRequestException("No AI providers are configured (AiImage / AiContent / Ai sections).");
+        }
+
+        List<Exception>? failures = null;
+        for (var i = 0; i < attempts.Count; i++)
+        {
+            var attempt = attempts[i];
+            try
+            {
+                // Only Gemini supports inline PDF/image parts; text-only providers fall
+                // back to the prompt-only path.
+                if (attempt.Provider != "gemini")
+                {
+                    return await CompleteJsonAsync(systemPrompt, userPrompt, cancellationToken, jsonSchema);
+                }
+
+                return await CompleteGeminiWithFilesAsync(
+                    attempt, systemPrompt, userPrompt, attachments, jsonSchema, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex) when (i < attempts.Count - 1)
+            {
+                (failures ??= []).Add(new HttpRequestException(
+                    $"Provider '{attempt.Provider}' (model '{attempt.Model}') failed: {ex.Message}", ex));
+            }
+        }
+
+        throw new AggregateException(
+            "All AI providers in the fallback chain failed.", failures ?? []);
+    }
+
+    private List<AiAttempt> BuildAttempts(bool preferImageChain = false)
     {
         var attempts = new List<AiAttempt>();
 
-        // Primary chain: the ordered "AiContent" list (fallback strategy).
-        var chain = contentProviders?.Value;
-        if (chain is not null)
+        // When files are attached, prefer the multimodal "AiImage" chain (e.g. Gemini)
+        // and fall back to the text chains afterwards.
+        if (preferImageChain)
         {
-            foreach (var entry in chain)
-            {
-                var provider = (entry.Provider ?? string.Empty).Trim().ToLowerInvariant();
-                var apiKey = (entry.ApiKey ?? string.Empty).Trim();
-                if (provider.Length == 0 || apiKey.Length == 0)
-                {
-                    continue;
-                }
-
-                attempts.Add(new AiAttempt(
-                    provider,
-                    apiKey,
-                    entry.Model?.Trim(),
-                    entry.BaseUrl?.Trim()));
-            }
+            AppendChain(attempts, imageProviders?.Value);
         }
+
+        // Primary chain: the ordered "AiContent" list (fallback strategy).
+        AppendChain(attempts, contentProviders?.Value);
 
         // Legacy single-provider fallback: the "Ai" section, when the chain is empty.
         if (attempts.Count == 0)
@@ -103,6 +214,30 @@ public sealed class StudyPlanAiClient(
         }
 
         return attempts;
+    }
+
+    private static void AppendChain(List<AiAttempt> attempts, List<AiContentProviderOptions>? chain)
+    {
+        if (chain is null)
+        {
+            return;
+        }
+
+        foreach (var entry in chain)
+        {
+            var provider = (entry.Provider ?? string.Empty).Trim().ToLowerInvariant();
+            var apiKey = (entry.ApiKey ?? string.Empty).Trim();
+            if (provider.Length == 0 || apiKey.Length == 0)
+            {
+                continue;
+            }
+
+            attempts.Add(new AiAttempt(
+                provider,
+                apiKey,
+                entry.Model?.Trim(),
+                entry.BaseUrl?.Trim()));
+        }
     }
 
     private async Task<string> CompleteWithAsync(

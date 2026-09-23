@@ -46,6 +46,7 @@ import { TeacherQuizzesComponent } from './pages/teacher/teacher-quizzes.compone
 import { TeacherAssignmentsComponent } from './pages/teacher/teacher-assignments.component';
 import { TeacherReviewComponent } from './pages/teacher/teacher-review.component';
 import { TeacherStudentsComponent } from './pages/teacher/teacher-students.component';
+import { SmartStudyAssistantComponent } from './pages/teacher/smart-study-assistant/smart-study-assistant.component';
 import { TeacherQuestionBankComponent } from './pages/teacher/teacher-question-bank.component';
 import { TeacherExamsComponent } from './pages/teacher/teacher-exams.component';
 import { TeacherVideosComponent } from './pages/teacher/teacher-videos.component';
@@ -152,6 +153,7 @@ export const routes: Routes = [
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
       { path: 'materials', component: TeacherMaterialsComponent },
+      { path: 'smart-study-assistant', component: SmartStudyAssistantComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'asked-questions', component: TeacherAskedQuestionsComponent },
       { path: 'chat', component: TeacherChatComponent },

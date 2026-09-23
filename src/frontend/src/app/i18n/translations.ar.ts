@@ -2142,6 +2142,7 @@ export const AR: Record<string, string> = {
   'api.feedback.quizRetry': 'واصل التدريب — أنت تقترب أكثر!',
 
   'nav.teacher.materials': 'المواد التعليمية',
+  'nav.teacher.smartAssistant': 'المساعد الذكي للدراسة',
 
   'materials.title': 'المواد التعليمية',
   'materials.subtitle': 'ارفع ملفات PDF وصوراً وتسجيلات صوتية إلى المقرر أو الوحدة أو الدرس. يراها الطلاب في صفحة مواد المقرر.',

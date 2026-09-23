@@ -9697,6 +9697,28 @@ var EmptyError = createErrorClass((_super) => function EmptyErrorImpl() {
   this.message = "no elements in sequence";
 });
 
+// node_modules/rxjs/dist/esm/internal/firstValueFrom.js
+function firstValueFrom(source, config2) {
+  const hasConfig = typeof config2 === "object";
+  return new Promise((resolve, reject) => {
+    const subscriber = new SafeSubscriber({
+      next: (value) => {
+        resolve(value);
+        subscriber.unsubscribe();
+      },
+      error: reject,
+      complete: () => {
+        if (hasConfig) {
+          resolve(config2.defaultValue);
+        } else {
+          reject(new EmptyError());
+        }
+      }
+    });
+    source.subscribe(subscriber);
+  });
+}
+
 // node_modules/rxjs/dist/esm/internal/operators/map.js
 function map(project, thisArg) {
   return operate((source, subscriber) => {
@@ -37578,7 +37600,7 @@ function createStyleElement(style, doc) {
   styleElement.textContent = style;
   return styleElement;
 }
-function addServerStyles(doc, appId, inline, external) {
+function addServerStyles(doc, appId, inline2, external) {
   const elements = doc.head?.querySelectorAll(`style[${APP_ID_ATTRIBUTE_NAME}="${appId}"],link[${APP_ID_ATTRIBUTE_NAME}="${appId}"]`);
   if (!elements || elements.length === 0) return false;
   for (const styleElement of elements) {
@@ -37589,7 +37611,7 @@ function addServerStyles(doc, appId, inline, external) {
         elements: [styleElement]
       });
     } else if (styleElement.textContent) {
-      inline.set(styleElement.textContent, {
+      inline2.set(styleElement.textContent, {
         usage: 0,
         elements: [styleElement]
       });
@@ -41279,7 +41301,7 @@ function defaultUrlMatcher(segments, segmentGroup, route) {
     posParams
   };
 }
-function firstValueFrom(source) {
+function firstValueFrom2(source) {
   return new Promise((resolve, reject) => {
     source.pipe(first()).subscribe({
       next: (value) => resolve(value),
@@ -41336,7 +41358,7 @@ function wrapIntoObservable(value) {
 }
 function wrapIntoPromise(value) {
   if (isObservable(value)) {
-    return firstValueFrom(value);
+    return firstValueFrom2(value);
   }
   return Promise.resolve(value);
 }
@@ -43733,7 +43755,7 @@ function getRedirectResult(redirectTo, currentSnapshot, injector) {
     return Promise.resolve(redirectTo);
   }
   const redirectToFn = redirectTo;
-  return firstValueFrom(wrapIntoObservable(runInInjectionContext(injector, () => redirectToFn(currentSnapshot))));
+  return firstValueFrom2(wrapIntoObservable(runInInjectionContext(injector, () => redirectToFn(currentSnapshot))));
 }
 function getOrCreateRouteInjectorIfNeeded(route, currentInjector) {
   if (route.providers && !route._injector) {
@@ -44146,7 +44168,7 @@ This is currently a dev mode only error but will become a call stack size exceed
         throw new Error(this.abortSignal.reason);
       }
       const createSnapshot = (result2) => this.createSnapshot(injector, route, result2.consumedSegments, result2.parameters, parentRoute);
-      const result = yield firstValueFrom(matchWithChecks(rawSegment, route, segments, injector, this.urlSerializer, createSnapshot, this.abortSignal));
+      const result = yield firstValueFrom2(matchWithChecks(rawSegment, route, segments, injector, this.urlSerializer, createSnapshot, this.abortSignal));
       if (route.path === "**") {
         rawSegment.children = {};
       }
@@ -44202,7 +44224,7 @@ This is currently a dev mode only error but will become a call stack size exceed
         if (this.abortSignal.aborted) {
           throw new Error(this.abortSignal.reason);
         }
-        const shouldLoadResult = yield firstValueFrom(runCanLoadGuards(injector, route, segments, this.urlSerializer, this.abortSignal));
+        const shouldLoadResult = yield firstValueFrom2(runCanLoadGuards(injector, route, segments, this.urlSerializer, this.abortSignal));
         if (shouldLoadResult) {
           const cfg = yield this.configLoader.loadChildren(injector, route);
           route._loadedRoutes = cfg.routes;
@@ -50431,6 +50453,7 @@ var AR = {
   "api.feedback.quizPassed": "\u0627\u062C\u062A\u0632\u062A \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631! \u0639\u0642\u0644\u0643 \u0627\u0644\u0628\u0631\u0645\u062C\u064A \u064A\u062A\u0623\u0644\u0642.",
   "api.feedback.quizRetry": "\u0648\u0627\u0635\u0644 \u0627\u0644\u062A\u062F\u0631\u064A\u0628 \u2014 \u0623\u0646\u062A \u062A\u0642\u062A\u0631\u0628 \u0623\u0643\u062B\u0631!",
   "nav.teacher.materials": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
+  "nav.teacher.smartAssistant": "\u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629",
   "materials.title": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
   "materials.subtitle": "\u0627\u0631\u0641\u0639 \u0645\u0644\u0641\u0627\u062A PDF \u0648\u0635\u0648\u0631\u0627\u064B \u0648\u062A\u0633\u062C\u064A\u0644\u0627\u062A \u0635\u0648\u062A\u064A\u0629 \u0625\u0644\u0649 \u0627\u0644\u0645\u0642\u0631\u0631 \u0623\u0648 \u0627\u0644\u0648\u062D\u062F\u0629 \u0623\u0648 \u0627\u0644\u062F\u0631\u0633. \u064A\u0631\u0627\u0647\u0627 \u0627\u0644\u0637\u0644\u0627\u0628 \u0641\u064A \u0635\u0641\u062D\u0629 \u0645\u0648\u0627\u062F \u0627\u0644\u0645\u0642\u0631\u0631.",
   "materials.upload": "\u0625\u0636\u0627\u0641\u0629 \u0645\u0627\u062F\u0629",
@@ -52520,6 +52543,7 @@ var EN = {
   "api.feedback.quizPassed": "Quiz cleared! Your coding brain is glowing.",
   "api.feedback.quizRetry": "Keep practicing \u2014 you're getting closer!",
   "nav.teacher.materials": "Materials",
+  "nav.teacher.smartAssistant": "Smart Study Assistant",
   "materials.title": "Learning materials",
   "materials.subtitle": "Upload PDFs, images, and audio to a course, unit, or lesson. Students see them on the course materials page.",
   "materials.upload": "Add material",
@@ -97736,6 +97760,7 @@ var TeacherShellComponent = class _TeacherShellComponent {
       { labelKey: "nav.teacher.overview", path: "/teacher/overview", icon: "O" },
       { labelKey: "nav.cat.content", path: "/teacher/videos", icon: "V", categoryKey: "nav.cat.content" },
       { labelKey: "nav.teacher.materials", path: "/teacher/materials", icon: "M", categoryKey: "nav.cat.content" },
+      { labelKey: "nav.teacher.smartAssistant", path: "/teacher/smart-study-assistant", icon: "\u{1F916}", categoryKey: "nav.cat.content" },
       { labelKey: "nav.teacher.courseTree", path: "/teacher/course-tree", icon: "U", categoryKey: "nav.cat.content" },
       { labelKey: "nav.teacher.studyPlans", path: "/teacher/study-plans", icon: "P", categoryKey: "nav.cat.content" },
       { labelKey: "nav.teacher.exams", path: "/teacher/exams", icon: "E", categoryKey: "nav.cat.assessments" },
@@ -108734,8 +108759,1144 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherStudentsComponent, { className: "TeacherStudentsComponent", filePath: "src/app/pages/teacher/teacher-students.component.ts", lineNumber: 18 });
 })();
 
-// src/app/pages/teacher/teacher-question-bank.component.ts
+// src/app/smart-study-assistant.service.ts
+var SmartStudyAssistantService = class _SmartStudyAssistantService {
+  constructor() {
+    this.http = inject2(HttpClient);
+    this.baseUrl = resolveApiBaseUrl();
+  }
+  generate(payload) {
+    const form = new FormData();
+    form.set("action", payload.action);
+    form.set("courseId", payload.courseId);
+    if (payload.unitId)
+      form.set("unitId", payload.unitId);
+    if (payload.lessonId)
+      form.set("lessonId", payload.lessonId);
+    form.set("language", payload.language ?? "ar");
+    for (const file of payload.files ?? []) {
+      form.append("files", file, file.name);
+    }
+    return this.http.post(`${this.baseUrl}/smart-study-assistant/generate`, form);
+  }
+  apply(payload) {
+    return this.http.post(`${this.baseUrl}/smart-study-assistant/apply`, payload);
+  }
+  static {
+    this.\u0275fac = function SmartStudyAssistantService_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SmartStudyAssistantService)();
+    };
+  }
+  static {
+    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _SmartStudyAssistantService, factory: _SmartStudyAssistantService.\u0275fac, providedIn: "root" });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SmartStudyAssistantService, [{
+    type: Injectable,
+    args: [{ providedIn: "root" }]
+  }], null, null);
+})();
+
+// src/app/shared/markdown-render.ts
+function renderMarkdown(source) {
+  let text = escapeHtml(source ?? "");
+  const lines = text.split(/\r?\n/);
+  const out = [];
+  let inList = null;
+  let inCode = false;
+  let tableRows = [];
+  const closeList = () => {
+    if (inList) {
+      out.push(`</${inList}>`);
+      inList = null;
+    }
+  };
+  const flushTable = () => {
+    if (!tableRows.length)
+      return;
+    const [head, ...body] = tableRows;
+    const cell = (c, tag) => `<${tag}>${inline(c)}</${tag}>`;
+    out.push("<table><thead><tr>" + head.map((c) => cell(c, "th")).join("") + "</tr></thead>");
+    if (body.length) {
+      out.push("<tbody>" + body.map((r) => "<tr>" + r.map((c) => cell(c, "td")).join("") + "</tr>").join("") + "</tbody>");
+    }
+    out.push("</table>");
+    tableRows = [];
+  };
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    if (/^```/.test(line.trim())) {
+      flushTable();
+      closeList();
+      out.push(inCode ? "</code></pre>" : "<pre><code>");
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode) {
+      out.push(line);
+      continue;
+    }
+    if (/^\|.*\|/.test(line)) {
+      const cells = line.split("|").slice(1, -1).map((c) => c.trim());
+      if (cells.every((c) => /^:?-{2,}:?$/.test(c)))
+        continue;
+      tableRows.push(cells);
+      continue;
+    }
+    flushTable();
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+    if (heading) {
+      closeList();
+      const level = heading[1].length;
+      out.push(`<h${level}>${inline(heading[2])}</h${level}>`);
+      continue;
+    }
+    if (/^(---+|\*\*\*+)\s*$/.test(line.trim())) {
+      closeList();
+      out.push("<hr>");
+      continue;
+    }
+    const quote = line.match(/^&gt;\s?(.*)$/);
+    if (quote) {
+      closeList();
+      out.push(`<blockquote>${inline(quote[1])}</blockquote>`);
+      continue;
+    }
+    const ul = line.match(/^[-*+]\s+(.*)$/);
+    if (ul) {
+      if (inList !== "ul") {
+        closeList();
+        out.push("<ul>");
+        inList = "ul";
+      }
+      out.push(`<li>${inline(ul[1])}</li>`);
+      continue;
+    }
+    const ol = line.match(/^\d+[.)]\s+(.*)$/);
+    if (ol) {
+      if (inList !== "ol") {
+        closeList();
+        out.push("<ol>");
+        inList = "ol";
+      }
+      out.push(`<li>${inline(ol[1])}</li>`);
+      continue;
+    }
+    closeList();
+    if (line.trim().length > 0) {
+      out.push(`<p>${inline(line)}</p>`);
+    }
+  }
+  flushTable();
+  closeList();
+  if (inCode)
+    out.push("</code></pre>");
+  return out.join("\n");
+}
+function inline(text) {
+  return text.replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\*([^*]+)\*/g, "<em>$1</em>").replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, "<span>$1</span>").replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => /^https?:\/\//i.test(href) ? `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>` : label).replace(/ {2}$/, "<br>");
+}
+function escapeHtml(value) {
+  return (value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+// src/app/pages/teacher/smart-study-assistant/smart-study-assistant.component.ts
+var _c040 = ["fileInput"];
 var _forTrack048 = ($index, $item) => $item.id;
+var _forTrack119 = ($index, $item) => $item.key;
+function SmartStudyAssistantComponent_For_18_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 8);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const course_r2 = ctx.$implicit;
+    \u0275\u0275property("value", course_r2.id);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(course_r2.title);
+  }
+}
+function SmartStudyAssistantComponent_For_26_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 8);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const unit_r3 = ctx.$implicit;
+    \u0275\u0275property("value", unit_r3.id);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(unit_r3.title);
+  }
+}
+function SmartStudyAssistantComponent_For_34_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 8);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const lesson_r4 = ctx.$implicit;
+    \u0275\u0275property("value", lesson_r4.id);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(lesson_r4.title);
+  }
+}
+function SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "img", 21);
+  }
+  if (rf & 2) {
+    const entry_r7 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275property("src", entry_r7.preview, \u0275\u0275sanitizeUrl);
+  }
+}
+function SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 22);
+    \u0275\u0275text(1, "\u{1F4C4}");
+    \u0275\u0275elementEnd();
+  }
+}
+function SmartStudyAssistantComponent_Conditional_41_For_2_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r6 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275conditionalCreate(1, SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_1_Template, 1, 1, "img", 21)(2, SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_2_Template, 2, 0, "span", 22);
+    \u0275\u0275elementStart(3, "div")(4, "strong");
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "small");
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(8, "button", 23);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_41_For_2_Template_button_click_8_listener($event) {
+      const $index_r8 = \u0275\u0275restoreView(_r6).$index;
+      const ctx_r8 = \u0275\u0275nextContext(2);
+      ctx_r8.removeFile($index_r8);
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275text(9, "\u2715");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const entry_r7 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275conditional(entry_r7.preview ? 1 : 2);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(entry_r7.file.name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1("", (entry_r7.file.size / 1024 / 1024).toFixed(2), " \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A");
+  }
+}
+function SmartStudyAssistantComponent_Conditional_41_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17);
+    \u0275\u0275repeaterCreate(1, SmartStudyAssistantComponent_Conditional_41_For_2_Template, 10, 3, "div", 18, \u0275\u0275repeaterTrackByIndex);
+    \u0275\u0275elementStart(3, "button", 19);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_41_Template_button_click_3_listener($event) {
+      \u0275\u0275restoreView(_r5);
+      const ctx_r8 = \u0275\u0275nextContext();
+      ctx_r8.clearFiles();
+      return \u0275\u0275resetView($event.stopPropagation());
+    });
+    \u0275\u0275text(4, "\u{1F5D1}\uFE0F \u0645\u0633\u062D \u0627\u0644\u0643\u0644");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(5, "small", 20);
+    \u0275\u0275text(6, "\u0627\u0646\u0642\u0631 \u0623\u0648 \u0623\u0641\u0644\u062A \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F \u0645\u0646 \u0627\u0644\u0645\u0644\u0641\u0627\u062A");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r8 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275repeater(ctx_r8.files());
+  }
+}
+function SmartStudyAssistantComponent_Conditional_42_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 12)(1, "span", 24);
+    \u0275\u0275text(2, "\u2B06\uFE0F");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "p")(4, "strong");
+    \u0275\u0275text(5, "\u0627\u0633\u062D\u0628 \u0648\u0623\u0641\u0644\u062A");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(6, " \u0635\u0648\u0631 \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u0647\u0646\u0627");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "small");
+    \u0275\u0275text(8, "\u0623\u0648 \u0627\u0646\u0642\u0631 \u0644\u0644\u0627\u062E\u062A\u064A\u0627\u0631 \u2014 JPG / PNG / PDF \u062D\u062A\u0649 25 \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A \u0644\u0643\u0644 \u0645\u0644\u0641");
+    \u0275\u0275elementEnd()();
+  }
+}
+function SmartStudyAssistantComponent_For_48_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "span", 27);
+  }
+}
+function SmartStudyAssistantComponent_For_48_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r10 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 25);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_For_48_Template_button_click_0_listener() {
+      const item_r11 = \u0275\u0275restoreView(_r10).$implicit;
+      const ctx_r8 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r8.runAction(item_r11.key));
+    });
+    \u0275\u0275elementStart(1, "span", 26);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "strong");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "small");
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275conditionalCreate(7, SmartStudyAssistantComponent_For_48_Conditional_7_Template, 1, 0, "span", 27);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const item_r11 = ctx.$implicit;
+    const ctx_r8 = \u0275\u0275nextContext();
+    \u0275\u0275property("disabled", ctx_r8.loading());
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(item_r11.icon);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(item_r11.label);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(item_r11.hint);
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx_r8.loading() && ctx_r8.activeAction() === item_r11.key ? 7 : -1);
+  }
+}
+function SmartStudyAssistantComponent_Conditional_49_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 15);
+    \u0275\u0275text(1, "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0644\u064A\u0644 \u0628\u0648\u0627\u0633\u0637\u0629 Gemini... \u0642\u062F \u064A\u0633\u062A\u063A\u0631\u0642 \u0630\u0644\u0643 \u0644\u062D\u0638\u0627\u062A\u060C \u0644\u0627 \u062A\u063A\u0644\u0642 \u0627\u0644\u0635\u0641\u062D\u0629.");
+    \u0275\u0275elementEnd();
+  }
+}
+function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r13 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 34);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r13);
+      const ctx_r8 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r8.applyTo("tree"));
+    });
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r8 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("disabled", ctx_r8.applying() !== null);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "tree" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0636\u0627\u0641\u0629..." : "\u{1F333} \u0641\u0647\u0631\u0633 \u0627\u0644\u0645\u0627\u062F\u0629 (\u0648\u062D\u062F\u0627\u062A \u0648\u062F\u0631\u0648\u0633)", " ");
+  }
+}
+function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r14 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 34);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r14);
+      const ctx_r8 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r8.applyTo("bank"));
+    });
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(2, "button", 34);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_2_listener() {
+      \u0275\u0275restoreView(_r14);
+      const ctx_r8 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r8.applyTo("quiz"));
+    });
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "button", 34);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_4_listener() {
+      \u0275\u0275restoreView(_r14);
+      const ctx_r8 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r8.applyTo("assignment"));
+    });
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "button", 34);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_6_listener() {
+      \u0275\u0275restoreView(_r14);
+      const ctx_r8 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r8.applyTo("exam"));
+    });
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r8 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("disabled", ctx_r8.applying() !== null);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "bank" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638..." : "\u{1F5C3}\uFE0F \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629", " ");
+    \u0275\u0275advance();
+    \u0275\u0275property("disabled", ctx_r8.applying() !== null);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "quiz" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621..." : "\u2753 \u0643\u0648\u064A\u0632 \u062C\u062F\u064A\u062F", " ");
+    \u0275\u0275advance();
+    \u0275\u0275property("disabled", ctx_r8.applying() !== null);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "assignment" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621..." : "\u{1F4DA} \u0648\u0627\u062C\u0628 \u062C\u062F\u064A\u062F", " ");
+    \u0275\u0275advance();
+    \u0275\u0275property("disabled", ctx_r8.applying() !== null);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "exam" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638..." : "\u{1F4DD} \u0623\u0633\u0626\u0644\u0629 \u0627\u062E\u062A\u0628\u0627\u0631", " ");
+  }
+}
+function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 31)(1, "span");
+    \u0275\u0275text(2, "\u0623\u0636\u0641 \u0627\u0644\u0646\u062A\u064A\u062C\u0629 \u0625\u0644\u0649:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275conditionalCreate(3, SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3_Template, 2, 2, "button", 33);
+    \u0275\u0275conditionalCreate(4, SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template, 8, 8);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r8 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(3);
+    \u0275\u0275conditional(ctx_r8.hasUnits() ? 3 : -1);
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx_r8.hasQuestions() ? 4 : -1);
+  }
+}
+function SmartStudyAssistantComponent_Conditional_50_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r12 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 16)(1, "div", 28)(2, "h2");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 29)(5, "button", 19);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r12);
+      const ctx_r8 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r8.copyResult());
+    });
+    \u0275\u0275text(6, "\u{1F4CB} \u0646\u0633\u062E \u0627\u0644\u0646\u0635");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "button", 30);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Template_button_click_7_listener() {
+      \u0275\u0275restoreView(_r12);
+      const ctx_r8 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r8.downloadPdf());
+    });
+    \u0275\u0275text(8, "\u2B07\uFE0F \u062A\u062D\u0645\u064A\u0644 \u0643\u0640 PDF");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275conditionalCreate(9, SmartStudyAssistantComponent_Conditional_50_Conditional_9_Template, 5, 2, "div", 31);
+    \u0275\u0275element(10, "article", 32);
+    \u0275\u0275pipe(11, "safeHtml");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r8 = \u0275\u0275nextContext();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(ctx_r8.resultTitle() || "\u0627\u0644\u0646\u062A\u064A\u062C\u0629");
+    \u0275\u0275advance(6);
+    \u0275\u0275conditional(ctx_r8.hasQuestions() || ctx_r8.hasUnits() ? 9 : -1);
+    \u0275\u0275advance();
+    \u0275\u0275property("innerHTML", \u0275\u0275pipeBind1(11, 3, ctx_r8.renderedHtml()), \u0275\u0275sanitizeHtml);
+  }
+}
+var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
+  constructor() {
+    this.api = inject2(LearningApiService);
+    this.ai = inject2(SmartStudyAssistantService);
+    this.fileInput = viewChild(
+      "fileInput",
+      ...ngDevMode ? [{ debugName: "fileInput" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.courses = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "courses" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.units = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "units" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.lessons = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "lessons" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.loading = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "loading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.applying = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "applying" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.error = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "error" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.message = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "message" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.courseId = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "courseId" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.unitId = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "unitId" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.lessonId = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "lessonId" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.selectedCourseId = "";
+    this.selectedUnitId = "";
+    this.selectedLessonId = "";
+    this.files = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "files" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.activeAction = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "activeAction" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.result = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "result" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.resultTitle = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "resultTitle" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.resultMarkdown = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "resultMarkdown" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.renderedHtml = computed(
+      () => renderMarkdown(this.resultMarkdown()),
+      ...ngDevMode ? [{ debugName: "renderedHtml" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.hasQuestions = computed(
+      () => (this.result()?.questions?.length ?? 0) > 0,
+      ...ngDevMode ? [{ debugName: "hasQuestions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.hasUnits = computed(
+      () => (this.result()?.units?.length ?? 0) > 0,
+      ...ngDevMode ? [{ debugName: "hasUnits" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.actions = [
+      { key: "Outline", label: "\u0625\u0646\u0634\u0627\u0621 \u0641\u0647\u0631\u0633 \u0644\u0644\u0645\u0627\u062F\u0629", icon: "\u{1F5C2}\uFE0F", hint: "\u0627\u0633\u062A\u062E\u0631\u0627\u062C \u0627\u0644\u0639\u0646\u0627\u0648\u064A\u0646 \u0627\u0644\u0631\u0626\u064A\u0633\u064A\u0629 \u0648\u0627\u0644\u0641\u0631\u0639\u064A\u0629 \u0641\u064A \u0642\u0627\u0626\u0645\u0629 \u0634\u062C\u0631\u064A\u0629" },
+      { key: "Summary", label: "\u062A\u0644\u062E\u064A\u0635 \u0627\u0644\u0645\u062D\u062A\u0648\u0649", icon: "\u{1F4DD}", hint: "\u0645\u0644\u062E\u0635 \u062F\u0631\u0627\u0633\u064A \u0645\u0646\u0638\u0645 \u0628\u0623\u0647\u0645 \u0627\u0644\u0646\u0642\u0627\u0637" },
+      { key: "Assignment", label: "\u062A\u0648\u0644\u064A\u062F \u0648\u0627\u062C\u0628 / \u0623\u0633\u0626\u0644\u0629 \u0645\u0642\u0627\u0644\u064A\u0629", icon: "\u{1F4DA}", hint: "\u0623\u0633\u0626\u0644\u0629 \u062A\u0637\u0628\u064A\u0642\u064A\u0629 \u062A\u0642\u064A\u0633 \u0641\u0647\u0645 \u0627\u0644\u062F\u0631\u0633 \u0645\u0639 \u0627\u0644\u0625\u062C\u0627\u0628\u0627\u062A" },
+      { key: "Quiz", label: "\u0625\u0646\u0634\u0627\u0621 \u0643\u0648\u064A\u0632 / \u0627\u062E\u062A\u064A\u0627\u0631 \u0645\u0646 \u0645\u062A\u0639\u062F\u062F", icon: "\u2753", hint: "5 \u0623\u0633\u0626\u0644\u0629 \u0627\u062E\u062A\u064A\u0627\u0631 \u0645\u0646 \u0645\u062A\u0639\u062F\u062F \u0645\u0639 \u0645\u0641\u062A\u0627\u062D \u0627\u0644\u0625\u062C\u0627\u0628\u0627\u062A" }
+    ];
+    void this.loadCourses();
+  }
+  loadCourses() {
+    return __async(this, null, function* () {
+      this.error.set("");
+      try {
+        const courses = yield firstValueFrom(this.api.getCourses(false));
+        this.courses.set(courses.map((c) => ({ id: c.id, title: c.title })));
+      } catch (e) {
+        this.error.set("\u062A\u0639\u0630\u0631 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0643\u0648\u0631\u0633\u0627\u062A. \u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0648\u0623\u0639\u062F \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629.");
+      }
+    });
+  }
+  onCourseChange(courseId) {
+    return __async(this, null, function* () {
+      this.courseId.set(courseId);
+      this.unitId.set("");
+      this.lessonId.set("");
+      this.units.set([]);
+      this.lessons.set([]);
+      if (!courseId)
+        return;
+      try {
+        const course = yield firstValueFrom(this.api.getCourse(courseId));
+        this.units.set((course.units ?? []).map((u2) => ({ id: u2.id, title: u2.title })));
+      } catch (e) {
+        this.error.set("\u062A\u0639\u0630\u0631 \u062A\u062D\u0645\u064A\u0644 \u0648\u062D\u062F\u0627\u062A \u0647\u0630\u0627 \u0627\u0644\u0643\u0648\u0631\u0633.");
+      }
+    });
+  }
+  onUnitChange(unitId) {
+    return __async(this, null, function* () {
+      this.unitId.set(unitId);
+      this.lessonId.set("");
+      this.lessons.set([]);
+      if (!unitId)
+        return;
+      try {
+        const course = yield firstValueFrom(this.api.getCourse(this.courseId()));
+        const unit = (course.units ?? []).find((u2) => u2.id === unitId);
+        this.lessons.set((unit?.lessons ?? []).map((l) => ({ id: l.id, title: l.title, unitId })));
+      } catch (e) {
+        this.error.set("\u062A\u0639\u0630\u0631 \u062A\u062D\u0645\u064A\u0644 \u062F\u0631\u0648\u0633 \u0647\u0630\u0647 \u0627\u0644\u0648\u062D\u062F\u0629.");
+      }
+    });
+  }
+  onFilesChosen(event) {
+    const input2 = event.target;
+    this.addFiles(Array.from(input2.files ?? []));
+  }
+  onDrop(event) {
+    event.preventDefault();
+    this.addFiles(Array.from(event.dataTransfer?.files ?? []));
+  }
+  onDragOver(event) {
+    event.preventDefault();
+  }
+  openFilePicker() {
+    this.fileInput()?.nativeElement.click();
+  }
+  addFiles(incoming) {
+    this.error.set("");
+    if (incoming.length === 0)
+      return;
+    const accepted = [...this.files()];
+    for (const file of incoming) {
+      const ok = /\.(pdf|jpe?g|png)$/i.test(file.name) || file.type === "application/pdf" || file.type.startsWith("image/");
+      if (!ok) {
+        this.error.set(`\u0627\u0644\u0645\u0644\u0641 "${file.name}" \u063A\u064A\u0631 \u0645\u062F\u0639\u0648\u0645. \u0627\u0631\u0641\u0639 \u0635\u0648\u0631 (JPG / PNG) \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u0641\u0642\u0637.`);
+        continue;
+      }
+      if (file.size > 25 * 1024 * 1024) {
+        this.error.set(`\u0627\u0644\u0645\u0644\u0641 "${file.name}" \u0643\u0628\u064A\u0631 \u062C\u062F\u0627\u064B. \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 25 \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A.`);
+        continue;
+      }
+      if (accepted.length >= 10) {
+        this.error.set("\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u0642\u0635\u0649 10 \u0645\u0644\u0641\u0627\u062A \u0641\u064A \u0627\u0644\u0645\u0631\u0629 \u0627\u0644\u0648\u0627\u062D\u062F\u0629.");
+        break;
+      }
+      const entry = { file, preview: "" };
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          entry.preview = String(reader.result ?? "");
+          this.files.set([...this.files()]);
+        };
+        reader.readAsDataURL(file);
+      }
+      accepted.push(entry);
+    }
+    this.files.set(accepted);
+  }
+  removeFile(index) {
+    this.files.set(this.files().filter((_, i) => i !== index));
+    const input2 = this.fileInput()?.nativeElement;
+    if (input2)
+      input2.value = "";
+  }
+  clearFiles() {
+    this.files.set([]);
+    const input2 = this.fileInput()?.nativeElement;
+    if (input2)
+      input2.value = "";
+  }
+  onCourseModelChange(value) {
+    this.selectedCourseId = value;
+    void this.onCourseChange(value);
+  }
+  onUnitModelChange(value) {
+    this.selectedUnitId = value;
+    void this.onUnitChange(value);
+  }
+  runAction(action) {
+    return __async(this, null, function* () {
+      if (!this.courseId()) {
+        this.error.set("\u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u0623\u0648\u0644\u0627\u064B.");
+        return;
+      }
+      if (this.loading())
+        return;
+      this.error.set("");
+      this.message.set("");
+      this.activeAction.set(action);
+      this.loading.set(true);
+      this.result.set(null);
+      this.resultTitle.set("");
+      this.resultMarkdown.set("");
+      try {
+        const result = yield firstValueFrom(this.ai.generate({
+          action,
+          courseId: this.courseId(),
+          unitId: this.unitId() || null,
+          lessonId: this.lessonId() || null,
+          language: "ar",
+          files: this.files().map((f) => f.file)
+        }));
+        this.result.set(result);
+        this.resultTitle.set(result.title);
+        this.resultMarkdown.set(result.markdown);
+        this.message.set("\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0628\u0646\u062C\u0627\u062D \u2728");
+      } catch (ex) {
+        this.error.set(this.describeError(ex));
+      } finally {
+        this.loading.set(false);
+        this.activeAction.set(null);
+      }
+    });
+  }
+  applyTo(target) {
+    return __async(this, null, function* () {
+      const result = this.result();
+      if (!result || !this.courseId() || this.applying())
+        return;
+      this.error.set("");
+      this.applying.set(target);
+      try {
+        const response = yield firstValueFrom(this.ai.apply({
+          courseId: this.courseId(),
+          target,
+          title: result.title || "\u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629",
+          description: null,
+          unitId: this.unitId() || null,
+          lessonId: this.lessonId() || null,
+          mode: "update",
+          questions: result.questions?.length ? result.questions : null,
+          units: result.units?.length ? result.units : null
+        }));
+        this.message.set(response.message);
+      } catch (ex) {
+        this.error.set(this.describeError(ex));
+      } finally {
+        this.applying.set(null);
+      }
+    });
+  }
+  copyResult() {
+    return __async(this, null, function* () {
+      const text = this.resultMarkdown();
+      if (!text)
+        return;
+      try {
+        yield navigator.clipboard.writeText(text);
+        this.message.set("\u062A\u0645 \u0646\u0633\u062E \u0627\u0644\u0646\u0635 \u{1F4CB}");
+      } catch (e) {
+        this.error.set("\u062A\u0639\u0630\u0631 \u0627\u0644\u0646\u0633\u062E \u0625\u0644\u0649 \u0627\u0644\u062D\u0627\u0641\u0638\u0629.");
+      }
+    });
+  }
+  downloadPdf() {
+    const title = this.resultTitle() || "\u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629";
+    const html = this.renderedHtml();
+    if (!html)
+      return;
+    const win = window.open("", "_blank");
+    if (!win) {
+      this.error.set("\u0645\u0646 \u0641\u0636\u0644\u0643 \u0627\u0633\u0645\u062D \u0628\u0627\u0644\u0646\u0648\u0627\u0641\u0630 \u0627\u0644\u0645\u0646\u0628\u062B\u0642\u0629 \u0644\u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0645\u0644\u0641.");
+      return;
+    }
+    win.document.write(`<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>${title.replace(/[<>&]/g, "")}</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 24px; color: #1c2434; line-height: 1.8; }
+    h1,h2,h3 { color: #14344b; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    th, td { border: 1px solid #c6d2dd; padding: 6px 10px; }
+    th { background: #eef4f9; }
+    pre { background: #f4f7fa; padding: 12px; border-radius: 8px; white-space: pre-wrap; }
+    code { font-family: Consolas, monospace; }
+    blockquote { border-inline-start: 4px solid #7aa7c7; margin: 8px 0; padding: 4px 14px; color: #44566b; }
+  </style>
+</head>
+<body>
+  <h1>${title.replace(/[<>&]/g, "")}</h1>
+  ${html}
+</body>
+</html>`);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 400);
+  }
+  describeError(ex) {
+    if (typeof ex === "object" && ex !== null && "error" in ex) {
+      const problem = ex.error;
+      const detail = problem?.detail || problem?.title;
+      if (detail)
+        return detail;
+    }
+    if (typeof ex === "object" && ex !== null && "status" in ex) {
+      const status = ex.status;
+      if (status === 0)
+        return "\u0627\u0646\u0642\u0637\u0639 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0628\u0627\u0644\u062E\u0627\u062F\u0645. \u062A\u062D\u0642\u0642 \u0645\u0646 \u0627\u0644\u0634\u0628\u0643\u0629 \u0648\u0623\u0639\u062F \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629.";
+      if (status === 401)
+        return "\u0627\u0646\u062A\u0647\u062A \u0635\u0644\u0627\u062D\u064A\u0629 \u0627\u0644\u062C\u0644\u0633\u0629. \u0645\u0646 \u0641\u0636\u0644\u0643 \u0633\u062C\u0651\u0644 \u0627\u0644\u062F\u062E\u0648\u0644 \u0645\u0631\u0629 \u0623\u062E\u0631\u0649.";
+      if (status === 403)
+        return "\u0644\u0627 \u062A\u0645\u0644\u0643 \u0635\u0644\u0627\u062D\u064A\u0629 \u062A\u0646\u0641\u064A\u0630 \u0647\u0630\u0627 \u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u0639\u0644\u0649 \u0647\u0630\u0627 \u0627\u0644\u0643\u0648\u0631\u0633.";
+      if (status === 404)
+        return "\u0627\u0644\u0639\u0646\u0635\u0631 \u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u063A\u064A\u0631 \u0645\u0648\u062C\u0648\u062F.";
+      return `\u062D\u062F\u062B \u062E\u0637\u0623 \u0623\u062B\u0646\u0627\u0621 \u0627\u0644\u0627\u062A\u0635\u0627\u0644 \u0628\u0627\u0644\u062E\u0627\u062F\u0645 (\u0631\u0645\u0632 ${status}).`;
+    }
+    return "\u062D\u062F\u062B \u062E\u0637\u0623 \u063A\u064A\u0631 \u0645\u062A\u0648\u0642\u0639. \u0623\u0639\u062F \u0627\u0644\u0645\u062D\u0627\u0648\u0644\u0629.";
+  }
+  static {
+    this.\u0275fac = function SmartStudyAssistantComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SmartStudyAssistantComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SmartStudyAssistantComponent, selectors: [["app-smart-study-assistant"]], viewQuery: function SmartStudyAssistantComponent_Query(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275viewQuerySignal(ctx.fileInput, _c040, 5);
+      }
+      if (rf & 2) {
+        \u0275\u0275queryAdvance();
+      }
+    }, decls: 51, vars: 10, consts: [["fileInput", ""], [1, "ssa-page"], [1, "ssa-header"], [3, "ok", "error"], [1, "ssa-card"], [1, "ssa-grid"], [3, "ngModelChange", "ngModel"], ["value", ""], [3, "value"], [3, "ngModelChange", "ngModel", "disabled"], [1, "ssa-dropzone", 3, "drop", "dragover", "click"], ["type", "file", "accept", ".pdf,.jpg,.jpeg,.png", "multiple", "", "hidden", "", 3, "change"], [1, "ssa-dropzone-hint"], [1, "ssa-actions"], ["type", "button", 1, "ssa-action", 3, "disabled"], [1, "ssa-loading"], [1, "ssa-card", "ssa-result"], [1, "ssa-files"], [1, "ssa-file"], ["type", "button", 1, "ssa-tool", 3, "click"], [1, "ssa-addmore"], ["alt", "\u0645\u0639\u0627\u064A\u0646\u0629", 3, "src"], [1, "ssa-file-icon"], ["type", "button", 1, "ssa-remove", 3, "click"], [1, "ssa-dropzone-icon"], ["type", "button", 1, "ssa-action", 3, "click", "disabled"], [1, "ssa-action-icon"], ["aria-hidden", "true", 1, "ssa-spinner"], [1, "ssa-result-head"], [1, "ssa-result-tools"], ["type", "button", 1, "ssa-tool", "primary", 3, "click"], [1, "ssa-apply"], [1, "ssa-markdown", 3, "innerHTML"], ["type", "button", 1, "ssa-tool", 3, "disabled"], ["type", "button", 1, "ssa-tool", 3, "click", "disabled"]], template: function SmartStudyAssistantComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        const _r1 = \u0275\u0275getCurrentView();
+        \u0275\u0275elementStart(0, "section", 1)(1, "header", 2)(2, "h1");
+        \u0275\u0275text(3, "\u{1F916} \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(4, "p");
+        \u0275\u0275text(5, "\u0627\u0631\u0641\u0639 \u0635\u0648\u0631\u0627\u064B \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF\u060C \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u0648\u0627\u0644\u0648\u062D\u062F\u0629 \u0648\u0627\u0644\u062F\u0631\u0633\u060C \u062B\u0645 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u2014 \u0648\u0633\u064A\u062D\u0644\u0644 Gemini \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0648\u064A\u0646\u0634\u0626 \u0627\u0644\u0646\u062A\u064A\u062C\u0629\u060C \u0648\u064A\u0645\u0643\u0646\u0643 \u0625\u0636\u0627\u0641\u062A\u0647\u0627 \u0645\u0628\u0627\u0634\u0631\u0629 \u0644\u0644\u0645\u0646\u0647\u062C \u0623\u0648 \u0627\u0644\u0643\u0648\u064A\u0632\u0627\u062A \u0623\u0648 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275element(6, "app-page-feedback", 3);
+        \u0275\u0275elementStart(7, "div", 4)(8, "h2");
+        \u0275\u0275text(9, "1\uFE0F\u20E3 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0633\u064A\u0627\u0642");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(10, "div", 5)(11, "label")(12, "span");
+        \u0275\u0275text(13, "\u0627\u0644\u0643\u0648\u0631\u0633");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(14, "select", 6);
+        \u0275\u0275twoWayListener("ngModelChange", function SmartStudyAssistantComponent_Template_select_ngModelChange_14_listener($event) {
+          \u0275\u0275restoreView(_r1);
+          \u0275\u0275twoWayBindingSet(ctx.selectedCourseId, $event) || (ctx.selectedCourseId = $event);
+          return \u0275\u0275resetView($event);
+        });
+        \u0275\u0275listener("ngModelChange", function SmartStudyAssistantComponent_Template_select_ngModelChange_14_listener($event) {
+          return ctx.onCourseModelChange($event);
+        });
+        \u0275\u0275elementStart(15, "option", 7);
+        \u0275\u0275text(16, "\u2014 \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u2014");
+        \u0275\u0275elementEnd();
+        \u0275\u0275repeaterCreate(17, SmartStudyAssistantComponent_For_18_Template, 2, 2, "option", 8, _forTrack048);
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(19, "label")(20, "span");
+        \u0275\u0275text(21, "\u0627\u0644\u0648\u062D\u062F\u0629");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(22, "select", 9);
+        \u0275\u0275twoWayListener("ngModelChange", function SmartStudyAssistantComponent_Template_select_ngModelChange_22_listener($event) {
+          \u0275\u0275restoreView(_r1);
+          \u0275\u0275twoWayBindingSet(ctx.selectedUnitId, $event) || (ctx.selectedUnitId = $event);
+          return \u0275\u0275resetView($event);
+        });
+        \u0275\u0275listener("ngModelChange", function SmartStudyAssistantComponent_Template_select_ngModelChange_22_listener($event) {
+          return ctx.onUnitModelChange($event);
+        });
+        \u0275\u0275elementStart(23, "option", 7);
+        \u0275\u0275text(24, "\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014");
+        \u0275\u0275elementEnd();
+        \u0275\u0275repeaterCreate(25, SmartStudyAssistantComponent_For_26_Template, 2, 2, "option", 8, _forTrack048);
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(27, "label")(28, "span");
+        \u0275\u0275text(29, "\u0627\u0644\u062F\u0631\u0633");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(30, "select", 9);
+        \u0275\u0275twoWayListener("ngModelChange", function SmartStudyAssistantComponent_Template_select_ngModelChange_30_listener($event) {
+          \u0275\u0275restoreView(_r1);
+          \u0275\u0275twoWayBindingSet(ctx.selectedLessonId, $event) || (ctx.selectedLessonId = $event);
+          return \u0275\u0275resetView($event);
+        });
+        \u0275\u0275elementStart(31, "option", 7);
+        \u0275\u0275text(32, "\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014");
+        \u0275\u0275elementEnd();
+        \u0275\u0275repeaterCreate(33, SmartStudyAssistantComponent_For_34_Template, 2, 2, "option", 8, _forTrack048);
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(35, "div", 4)(36, "h2");
+        \u0275\u0275text(37, "2\uFE0F\u20E3 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A (\u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014 \u062D\u062A\u0649 10 \u0645\u0644\u0641\u0627\u062A)");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(38, "div", 10);
+        \u0275\u0275listener("drop", function SmartStudyAssistantComponent_Template_div_drop_38_listener($event) {
+          return ctx.onDrop($event);
+        })("dragover", function SmartStudyAssistantComponent_Template_div_dragover_38_listener($event) {
+          return ctx.onDragOver($event);
+        })("click", function SmartStudyAssistantComponent_Template_div_click_38_listener() {
+          return ctx.openFilePicker();
+        });
+        \u0275\u0275elementStart(39, "input", 11, 0);
+        \u0275\u0275listener("change", function SmartStudyAssistantComponent_Template_input_change_39_listener($event) {
+          return ctx.onFilesChosen($event);
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(41, SmartStudyAssistantComponent_Conditional_41_Template, 7, 0)(42, SmartStudyAssistantComponent_Conditional_42_Template, 9, 0, "div", 12);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(43, "div", 4)(44, "h2");
+        \u0275\u0275text(45, "3\uFE0F\u20E3 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(46, "div", 13);
+        \u0275\u0275repeaterCreate(47, SmartStudyAssistantComponent_For_48_Template, 8, 5, "button", 14, _forTrack119);
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(49, SmartStudyAssistantComponent_Conditional_49_Template, 2, 0, "p", 15);
+        \u0275\u0275elementEnd();
+        \u0275\u0275conditionalCreate(50, SmartStudyAssistantComponent_Conditional_50_Template, 12, 5, "div", 16);
+        \u0275\u0275elementEnd();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(6);
+        \u0275\u0275property("ok", ctx.message())("error", ctx.error());
+        \u0275\u0275advance(8);
+        \u0275\u0275twoWayProperty("ngModel", ctx.selectedCourseId);
+        \u0275\u0275control();
+        \u0275\u0275advance(3);
+        \u0275\u0275repeater(ctx.courses());
+        \u0275\u0275advance(5);
+        \u0275\u0275twoWayProperty("ngModel", ctx.selectedUnitId);
+        \u0275\u0275property("disabled", !ctx.courseId());
+        \u0275\u0275control();
+        \u0275\u0275advance(3);
+        \u0275\u0275repeater(ctx.units());
+        \u0275\u0275advance(5);
+        \u0275\u0275twoWayProperty("ngModel", ctx.selectedLessonId);
+        \u0275\u0275property("disabled", !ctx.unitId());
+        \u0275\u0275control();
+        \u0275\u0275advance(3);
+        \u0275\u0275repeater(ctx.lessons());
+        \u0275\u0275advance(8);
+        \u0275\u0275conditional(ctx.files().length > 0 ? 41 : 42);
+        \u0275\u0275advance(6);
+        \u0275\u0275repeater(ctx.actions);
+        \u0275\u0275advance(2);
+        \u0275\u0275conditional(ctx.loading() ? 49 : -1);
+        \u0275\u0275advance();
+        \u0275\u0275conditional(ctx.resultMarkdown() ? 50 : -1);
+      }
+    }, dependencies: [FormsModule, NgSelectOption, \u0275NgSelectMultipleOption, SelectControlValueAccessor, NgControlStatus, NgModel, PageFeedbackComponent, SafeHtmlPipe], styles: ["\n.ssa-page[_ngcontent-%COMP%] {\n  max-width: 960px;\n  margin: 0 auto;\n  display: grid;\n  gap: 18px;\n  padding-bottom: 48px;\n}\n.ssa-header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  margin: 0 0 6px;\n  font-size: 1.5rem;\n}\n.ssa-header[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--text-muted, #5b6b7c);\n  font-size: 0.95rem;\n}\n.ssa-card[_ngcontent-%COMP%] {\n  background: var(--surface, #fff);\n  border: 1px solid var(--border, #dbe4ec);\n  border-radius: 14px;\n  padding: 18px 20px;\n  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);\n}\n.ssa-card[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0 0 14px;\n  font-size: 1.05rem;\n  color: var(--heading, #14344b);\n}\n.ssa-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 12px;\n}\n.ssa-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 6px;\n  font-size: 0.85rem;\n  color: var(--text-muted, #5b6b7c);\n}\n.ssa-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  padding: 9px 12px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 9px;\n  background: var(--input-bg, #fff);\n  font: inherit;\n  color: var(--text, #1c2434);\n}\n.ssa-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-dropzone[_ngcontent-%COMP%] {\n  border: 2px dashed var(--border, #b8c8d8);\n  border-radius: 12px;\n  padding: 26px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: border-color 0.15s ease, background 0.15s ease;\n}\n.ssa-dropzone[_ngcontent-%COMP%]:hover {\n  border-color: var(--accent, #3d84c6);\n  background: rgb(61 132 198 / 4%);\n}\n.ssa-dropzone-icon[_ngcontent-%COMP%] {\n  font-size: 1.8rem;\n}\n.ssa-dropzone-hint[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 6px 0 2px;\n}\n.ssa-dropzone-hint[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-files[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 10px;\n  width: 100%;\n  text-align: start;\n}\n.ssa-addmore[_ngcontent-%COMP%] {\n  display: block;\n  margin-top: 10px;\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-apply[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 8px;\n  margin-top: 12px;\n  padding: 10px 12px;\n  background: rgb(61 132 198 / 6%);\n  border-radius: 10px;\n  font-size: 0.9rem;\n}\n.ssa-apply[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n.ssa-file[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  text-align: start;\n}\n.ssa-file[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 72px;\n  height: 72px;\n  object-fit: cover;\n  border-radius: 10px;\n  border: 1px solid var(--border, #dbe4ec);\n}\n.ssa-file-icon[_ngcontent-%COMP%] {\n  font-size: 2.2rem;\n}\n.ssa-file[_ngcontent-%COMP%]   div[_ngcontent-%COMP%] {\n  flex: 1;\n  display: grid;\n}\n.ssa-file[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-remove[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #dbe4ec);\n  background: transparent;\n  color: #b3413c;\n  border-radius: 8px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font: inherit;\n}\n.ssa-remove[_ngcontent-%COMP%]:hover {\n  background: #fdecea;\n}\n.ssa-actions[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));\n  gap: 12px;\n}\n.ssa-action[_ngcontent-%COMP%] {\n  position: relative;\n  display: grid;\n  gap: 4px;\n  justify-items: start;\n  padding: 14px 16px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 12px;\n  background: var(--surface, #fff);\n  cursor: pointer;\n  text-align: start;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    transform 0.1s ease,\n    box-shadow 0.15s ease;\n}\n.ssa-action[_ngcontent-%COMP%]:hover:not(:disabled) {\n  border-color: var(--accent, #3d84c6);\n  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);\n  transform: translateY(-1px);\n}\n.ssa-action[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: wait;\n}\n.ssa-action-icon[_ngcontent-%COMP%] {\n  font-size: 1.4rem;\n}\n.ssa-action[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n  font-size: 0.78rem;\n  line-height: 1.5;\n}\n.ssa-spinner[_ngcontent-%COMP%] {\n  position: absolute;\n  inset-inline-end: 14px;\n  top: 14px;\n  width: 16px;\n  height: 16px;\n  border: 2px solid var(--border, #c6d2dd);\n  border-top-color: var(--accent, #3d84c6);\n  border-radius: 50%;\n  animation: _ngcontent-%COMP%_ssa-spin 0.8s linear infinite;\n}\n@keyframes _ngcontent-%COMP%_ssa-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.ssa-loading[_ngcontent-%COMP%] {\n  margin: 14px 0 0;\n  color: var(--accent, #2f6da8);\n  font-size: 0.9rem;\n}\n.ssa-result-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.ssa-result-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.ssa-result-tools[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 8px;\n}\n.ssa-tool[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #c6d2dd);\n  background: var(--surface, #fff);\n  border-radius: 9px;\n  padding: 7px 14px;\n  font: inherit;\n  cursor: pointer;\n}\n.ssa-tool[_ngcontent-%COMP%]:hover {\n  border-color: var(--accent, #3d84c6);\n}\n.ssa-tool.primary[_ngcontent-%COMP%] {\n  background: var(--accent, #2f6da8);\n  border-color: var(--accent, #2f6da8);\n  color: #fff;\n}\n.ssa-markdown[_ngcontent-%COMP%] {\n  margin-top: 12px;\n  line-height: 1.9;\n  overflow-x: auto;\n}\n.ssa-markdown[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: var(--heading, #14344b);\n  margin: 1.2em 0 0.4em;\n}\n.ssa-markdown[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%]:first-child, \n.ssa-markdown[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%]:first-child, \n.ssa-markdown[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%]:first-child {\n  margin-top: 0;\n}\n.ssa-markdown[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   ol[_ngcontent-%COMP%] {\n  padding-inline-start: 24px;\n}\n.ssa-markdown[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  border-collapse: collapse;\n  width: 100%;\n  margin: 12px 0;\n}\n.ssa-markdown[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #c6d2dd);\n  padding: 6px 10px;\n  text-align: start;\n}\n.ssa-markdown[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  background: rgb(61 132 198 / 8%);\n}\n.ssa-markdown[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  background: var(--surface-muted, #f4f7fa);\n  padding: 12px;\n  border-radius: 8px;\n  white-space: pre-wrap;\n}\n.ssa-markdown[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n  border-inline-start: 4px solid var(--accent, #7aa7c7);\n  margin: 8px 0;\n  padding: 4px 14px;\n  color: var(--text-muted, #44566b);\n}\n.ssa-markdown[_ngcontent-%COMP%]   code[_ngcontent-%COMP%] {\n  background: var(--surface-muted, #f0f4f8);\n  padding: 1px 5px;\n  border-radius: 4px;\n  font-size: 0.9em;\n}\n.ssa-markdown[_ngcontent-%COMP%]   hr[_ngcontent-%COMP%] {\n  border: none;\n  border-top: 1px solid var(--border, #dbe4ec);\n}\n/*# sourceMappingURL=smart-study-assistant.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SmartStudyAssistantComponent, [{
+    type: Component,
+    args: [{ selector: "app-smart-study-assistant", imports: [FormsModule, SafeHtmlPipe, PageFeedbackComponent], template: `<section class="ssa-page">
+  <header class="ssa-header">
+    <h1>\u{1F916} \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629</h1>
+    <p>\u0627\u0631\u0641\u0639 \u0635\u0648\u0631\u0627\u064B \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF\u060C \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u0648\u0627\u0644\u0648\u062D\u062F\u0629 \u0648\u0627\u0644\u062F\u0631\u0633\u060C \u062B\u0645 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u2014 \u0648\u0633\u064A\u062D\u0644\u0644 Gemini \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0648\u064A\u0646\u0634\u0626 \u0627\u0644\u0646\u062A\u064A\u062C\u0629\u060C \u0648\u064A\u0645\u0643\u0646\u0643 \u0625\u0636\u0627\u0641\u062A\u0647\u0627 \u0645\u0628\u0627\u0634\u0631\u0629 \u0644\u0644\u0645\u0646\u0647\u062C \u0623\u0648 \u0627\u0644\u0643\u0648\u064A\u0632\u0627\u062A \u0623\u0648 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A.</p>
+  </header>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <div class="ssa-card">
+    <h2>1\uFE0F\u20E3 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0633\u064A\u0627\u0642</h2>
+    <div class="ssa-grid">
+      <label>
+        <span>\u0627\u0644\u0643\u0648\u0631\u0633</span>
+        <select [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseModelChange($event)">
+          <option value="">\u2014 \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u2014</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ course.title }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>\u0627\u0644\u0648\u062D\u062F\u0629</span>
+        <select [(ngModel)]="selectedUnitId" (ngModelChange)="onUnitModelChange($event)" [disabled]="!courseId()">
+          <option value="">\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014</option>
+          @for (unit of units(); track unit.id) {
+            <option [value]="unit.id">{{ unit.title }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>\u0627\u0644\u062F\u0631\u0633</span>
+        <select [(ngModel)]="selectedLessonId" [disabled]="!unitId()">
+          <option value="">\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014</option>
+          @for (lesson of lessons(); track lesson.id) {
+            <option [value]="lesson.id">{{ lesson.title }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="ssa-card">
+    <h2>2\uFE0F\u20E3 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A (\u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014 \u062D\u062A\u0649 10 \u0645\u0644\u0641\u0627\u062A)</h2>
+    <div class="ssa-dropzone"
+         (drop)="onDrop($event)" (dragover)="onDragOver($event)"
+         (click)="openFilePicker()">
+      <input #fileInput type="file" accept=".pdf,.jpg,.jpeg,.png" multiple (change)="onFilesChosen($event)" hidden>
+      @if (files().length > 0) {
+        <div class="ssa-files">
+          @for (entry of files(); track $index) {
+            <div class="ssa-file">
+              @if (entry.preview) {
+                <img [src]="entry.preview" alt="\u0645\u0639\u0627\u064A\u0646\u0629">
+              } @else {
+                <span class="ssa-file-icon">\u{1F4C4}</span>
+              }
+              <div>
+                <strong>{{ entry.file.name }}</strong>
+                <small>{{ (entry.file.size / 1024 / 1024).toFixed(2) }} \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A</small>
+              </div>
+              <button type="button" class="ssa-remove" (click)="removeFile($index); $event.stopPropagation()">\u2715</button>
+            </div>
+          }
+          <button type="button" class="ssa-tool" (click)="clearFiles(); $event.stopPropagation()">\u{1F5D1}\uFE0F \u0645\u0633\u062D \u0627\u0644\u0643\u0644</button>
+        </div>
+        <small class="ssa-addmore">\u0627\u0646\u0642\u0631 \u0623\u0648 \u0623\u0641\u0644\u062A \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F \u0645\u0646 \u0627\u0644\u0645\u0644\u0641\u0627\u062A</small>
+      } @else {
+        <div class="ssa-dropzone-hint">
+          <span class="ssa-dropzone-icon">\u2B06\uFE0F</span>
+          <p><strong>\u0627\u0633\u062D\u0628 \u0648\u0623\u0641\u0644\u062A</strong> \u0635\u0648\u0631 \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u0647\u0646\u0627</p>
+          <small>\u0623\u0648 \u0627\u0646\u0642\u0631 \u0644\u0644\u0627\u062E\u062A\u064A\u0627\u0631 \u2014 JPG / PNG / PDF \u062D\u062A\u0649 25 \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A \u0644\u0643\u0644 \u0645\u0644\u0641</small>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="ssa-card">
+    <h2>3\uFE0F\u20E3 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621</h2>
+    <div class="ssa-actions">
+      @for (item of actions; track item.key) {
+        <button type="button"
+                class="ssa-action"
+                [disabled]="loading()"
+                (click)="runAction(item.key)">
+          <span class="ssa-action-icon">{{ item.icon }}</span>
+          <strong>{{ item.label }}</strong>
+          <small>{{ item.hint }}</small>
+          @if (loading() && activeAction() === item.key) {
+            <span class="ssa-spinner" aria-hidden="true"></span>
+          }
+        </button>
+      }
+    </div>
+    @if (loading()) {
+      <p class="ssa-loading">\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0644\u064A\u0644 \u0628\u0648\u0627\u0633\u0637\u0629 Gemini... \u0642\u062F \u064A\u0633\u062A\u063A\u0631\u0642 \u0630\u0644\u0643 \u0644\u062D\u0638\u0627\u062A\u060C \u0644\u0627 \u062A\u063A\u0644\u0642 \u0627\u0644\u0635\u0641\u062D\u0629.</p>
+    }
+  </div>
+
+  @if (resultMarkdown()) {
+    <div class="ssa-card ssa-result">
+      <div class="ssa-result-head">
+        <h2>{{ resultTitle() || '\u0627\u0644\u0646\u062A\u064A\u062C\u0629' }}</h2>
+        <div class="ssa-result-tools">
+          <button type="button" class="ssa-tool" (click)="copyResult()">\u{1F4CB} \u0646\u0633\u062E \u0627\u0644\u0646\u0635</button>
+          <button type="button" class="ssa-tool primary" (click)="downloadPdf()">\u2B07\uFE0F \u062A\u062D\u0645\u064A\u0644 \u0643\u0640 PDF</button>
+        </div>
+      </div>
+
+      @if (hasQuestions() || hasUnits()) {
+        <div class="ssa-apply">
+          <span>\u0623\u0636\u0641 \u0627\u0644\u0646\u062A\u064A\u062C\u0629 \u0625\u0644\u0649:</span>
+          @if (hasUnits()) {
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('tree')">
+              {{ applying() === 'tree' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0636\u0627\u0641\u0629...' : '\u{1F333} \u0641\u0647\u0631\u0633 \u0627\u0644\u0645\u0627\u062F\u0629 (\u0648\u062D\u062F\u0627\u062A \u0648\u062F\u0631\u0648\u0633)' }}
+            </button>
+          }
+          @if (hasQuestions()) {
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('bank')">
+              {{ applying() === 'bank' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638...' : '\u{1F5C3}\uFE0F \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629' }}
+            </button>
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('quiz')">
+              {{ applying() === 'quiz' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621...' : '\u2753 \u0643\u0648\u064A\u0632 \u062C\u062F\u064A\u062F' }}
+            </button>
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('assignment')">
+              {{ applying() === 'assignment' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621...' : '\u{1F4DA} \u0648\u0627\u062C\u0628 \u062C\u062F\u064A\u062F' }}
+            </button>
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('exam')">
+              {{ applying() === 'exam' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638...' : '\u{1F4DD} \u0623\u0633\u0626\u0644\u0629 \u0627\u062E\u062A\u0628\u0627\u0631' }}
+            </button>
+          }
+        </div>
+      }
+
+      <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>
+    </div>
+  }
+</section>
+`, styles: ["/* src/app/pages/teacher/smart-study-assistant/smart-study-assistant.component.css */\n.ssa-page {\n  max-width: 960px;\n  margin: 0 auto;\n  display: grid;\n  gap: 18px;\n  padding-bottom: 48px;\n}\n.ssa-header h1 {\n  margin: 0 0 6px;\n  font-size: 1.5rem;\n}\n.ssa-header p {\n  margin: 0;\n  color: var(--text-muted, #5b6b7c);\n  font-size: 0.95rem;\n}\n.ssa-card {\n  background: var(--surface, #fff);\n  border: 1px solid var(--border, #dbe4ec);\n  border-radius: 14px;\n  padding: 18px 20px;\n  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);\n}\n.ssa-card h2 {\n  margin: 0 0 14px;\n  font-size: 1.05rem;\n  color: var(--heading, #14344b);\n}\n.ssa-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 12px;\n}\n.ssa-grid label {\n  display: grid;\n  gap: 6px;\n  font-size: 0.85rem;\n  color: var(--text-muted, #5b6b7c);\n}\n.ssa-grid select {\n  padding: 9px 12px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 9px;\n  background: var(--input-bg, #fff);\n  font: inherit;\n  color: var(--text, #1c2434);\n}\n.ssa-grid select option {\n  background: var(--bg-elevated, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-dropzone {\n  border: 2px dashed var(--border, #b8c8d8);\n  border-radius: 12px;\n  padding: 26px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: border-color 0.15s ease, background 0.15s ease;\n}\n.ssa-dropzone:hover {\n  border-color: var(--accent, #3d84c6);\n  background: rgb(61 132 198 / 4%);\n}\n.ssa-dropzone-icon {\n  font-size: 1.8rem;\n}\n.ssa-dropzone-hint p {\n  margin: 6px 0 2px;\n}\n.ssa-dropzone-hint small {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-files {\n  display: grid;\n  gap: 10px;\n  width: 100%;\n  text-align: start;\n}\n.ssa-addmore {\n  display: block;\n  margin-top: 10px;\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-apply {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 8px;\n  margin-top: 12px;\n  padding: 10px 12px;\n  background: rgb(61 132 198 / 6%);\n  border-radius: 10px;\n  font-size: 0.9rem;\n}\n.ssa-apply span {\n  font-weight: 600;\n}\n.ssa-file {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  text-align: start;\n}\n.ssa-file img {\n  width: 72px;\n  height: 72px;\n  object-fit: cover;\n  border-radius: 10px;\n  border: 1px solid var(--border, #dbe4ec);\n}\n.ssa-file-icon {\n  font-size: 2.2rem;\n}\n.ssa-file div {\n  flex: 1;\n  display: grid;\n}\n.ssa-file small {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-remove {\n  border: 1px solid var(--border, #dbe4ec);\n  background: transparent;\n  color: #b3413c;\n  border-radius: 8px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font: inherit;\n}\n.ssa-remove:hover {\n  background: #fdecea;\n}\n.ssa-actions {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));\n  gap: 12px;\n}\n.ssa-action {\n  position: relative;\n  display: grid;\n  gap: 4px;\n  justify-items: start;\n  padding: 14px 16px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 12px;\n  background: var(--surface, #fff);\n  cursor: pointer;\n  text-align: start;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    transform 0.1s ease,\n    box-shadow 0.15s ease;\n}\n.ssa-action:hover:not(:disabled) {\n  border-color: var(--accent, #3d84c6);\n  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);\n  transform: translateY(-1px);\n}\n.ssa-action:disabled {\n  opacity: 0.55;\n  cursor: wait;\n}\n.ssa-action-icon {\n  font-size: 1.4rem;\n}\n.ssa-action small {\n  color: var(--text-muted, #7a8a9a);\n  font-size: 0.78rem;\n  line-height: 1.5;\n}\n.ssa-spinner {\n  position: absolute;\n  inset-inline-end: 14px;\n  top: 14px;\n  width: 16px;\n  height: 16px;\n  border: 2px solid var(--border, #c6d2dd);\n  border-top-color: var(--accent, #3d84c6);\n  border-radius: 50%;\n  animation: ssa-spin 0.8s linear infinite;\n}\n@keyframes ssa-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.ssa-loading {\n  margin: 14px 0 0;\n  color: var(--accent, #2f6da8);\n  font-size: 0.9rem;\n}\n.ssa-result-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.ssa-result-head h2 {\n  margin: 0;\n}\n.ssa-result-tools {\n  display: flex;\n  gap: 8px;\n}\n.ssa-tool {\n  border: 1px solid var(--border, #c6d2dd);\n  background: var(--surface, #fff);\n  border-radius: 9px;\n  padding: 7px 14px;\n  font: inherit;\n  cursor: pointer;\n}\n.ssa-tool:hover {\n  border-color: var(--accent, #3d84c6);\n}\n.ssa-tool.primary {\n  background: var(--accent, #2f6da8);\n  border-color: var(--accent, #2f6da8);\n  color: #fff;\n}\n.ssa-markdown {\n  margin-top: 12px;\n  line-height: 1.9;\n  overflow-x: auto;\n}\n.ssa-markdown h1,\n.ssa-markdown h2,\n.ssa-markdown h3 {\n  color: var(--heading, #14344b);\n  margin: 1.2em 0 0.4em;\n}\n.ssa-markdown h1:first-child,\n.ssa-markdown h2:first-child,\n.ssa-markdown h3:first-child {\n  margin-top: 0;\n}\n.ssa-markdown ul,\n.ssa-markdown ol {\n  padding-inline-start: 24px;\n}\n.ssa-markdown table {\n  border-collapse: collapse;\n  width: 100%;\n  margin: 12px 0;\n}\n.ssa-markdown th,\n.ssa-markdown td {\n  border: 1px solid var(--border, #c6d2dd);\n  padding: 6px 10px;\n  text-align: start;\n}\n.ssa-markdown th {\n  background: rgb(61 132 198 / 8%);\n}\n.ssa-markdown pre {\n  background: var(--surface-muted, #f4f7fa);\n  padding: 12px;\n  border-radius: 8px;\n  white-space: pre-wrap;\n}\n.ssa-markdown blockquote {\n  border-inline-start: 4px solid var(--accent, #7aa7c7);\n  margin: 8px 0;\n  padding: 4px 14px;\n  color: var(--text-muted, #44566b);\n}\n.ssa-markdown code {\n  background: var(--surface-muted, #f0f4f8);\n  padding: 1px 5px;\n  border-radius: 4px;\n  font-size: 0.9em;\n}\n.ssa-markdown hr {\n  border: none;\n  border-top: 1px solid var(--border, #dbe4ec);\n}\n/*# sourceMappingURL=smart-study-assistant.component.css.map */\n"] }]
+  }], () => [], { fileInput: [{ type: ViewChild, args: ["fileInput", { isSignal: true }] }] });
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SmartStudyAssistantComponent, { className: "SmartStudyAssistantComponent", filePath: "src/app/pages/teacher/smart-study-assistant/smart-study-assistant.component.ts", lineNumber: 29 });
+})();
+
+// src/app/pages/teacher/teacher-question-bank.component.ts
+var _forTrack049 = ($index, $item) => $item.id;
 var arrowFn024 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn115 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn212 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
@@ -108785,7 +109946,7 @@ function TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template(rf, c
 function TeacherQuestionBankComponent_For_42_Conditional_10_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "ul");
-    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template, 5, 6, "li", null, _forTrack048);
+    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template, 5, 6, "li", null, _forTrack049);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -109066,7 +110227,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
         \u0275\u0275text(39);
         \u0275\u0275pipe(40, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(41, TeacherQuestionBankComponent_For_42_Template, 13, 16, "div", 14, _forTrack048, false, TeacherQuestionBankComponent_ForEmpty_43_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(41, TeacherQuestionBankComponent_For_42_Template, 13, 16, "div", 14, _forTrack049, false, TeacherQuestionBankComponent_ForEmpty_43_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -109203,13 +110364,13 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
 })();
 
 // src/app/pages/teacher/teacher-exams.component.ts
-var _c040 = (a0) => ({ count: a0 });
-var _forTrack049 = ($index, $item) => $item.id;
+var _c041 = (a0) => ({ count: a0 });
+var _forTrack050 = ($index, $item) => $item.id;
 var arrowFn025 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn116 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn213 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn39 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
-var _forTrack119 = ($index, $item) => $item.questionId;
+var _forTrack120 = ($index, $item) => $item.questionId;
 var _forTrack29 = ($index, $item) => $item.key;
 function TeacherExamsComponent_Conditional_84_Template(rf, ctx) {
   if (rf & 1) {
@@ -109608,7 +110769,7 @@ function TeacherExamsComponent_Conditional_105_For_12_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(10, TeacherExamsComponent_Conditional_105_For_12_Conditional_10_Template, 2, 1, "span", 45);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(11, "div", 61);
-    \u0275\u0275repeaterCreate(12, TeacherExamsComponent_Conditional_105_For_12_For_13_Template, 28, 29, "div", 62, _forTrack119);
+    \u0275\u0275repeaterCreate(12, TeacherExamsComponent_Conditional_105_For_12_For_13_Template, 28, 29, "div", 62, _forTrack120);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(14, "div", 63)(15, "label");
     \u0275\u0275text(16);
@@ -109695,7 +110856,7 @@ function TeacherExamsComponent_Conditional_105_Template(rf, ctx) {
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(11, TeacherExamsComponent_Conditional_105_For_12_Template, 24, 17, "article", 59, _forTrack049, false, TeacherExamsComponent_Conditional_105_ForEmpty_13_Template, 3, 3, "p", 35);
+    \u0275\u0275repeaterCreate(11, TeacherExamsComponent_Conditional_105_For_12_Template, 24, 17, "article", 59, _forTrack050, false, TeacherExamsComponent_Conditional_105_ForEmpty_13_Template, 3, 3, "p", 35);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -110333,7 +111494,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275conditionalCreate(84, TeacherExamsComponent_Conditional_84_Template, 3, 3, "button", 27);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(85, "div", 28);
-        \u0275\u0275repeaterCreate(86, TeacherExamsComponent_For_87_Template, 12, 13, "label", 29, _forTrack049, false, TeacherExamsComponent_ForEmpty_88_Template, 3, 3, "p", 30);
+        \u0275\u0275repeaterCreate(86, TeacherExamsComponent_For_87_Template, 12, 13, "label", 29, _forTrack050, false, TeacherExamsComponent_ForEmpty_88_Template, 3, 3, "p", 30);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(89, "div", 31)(90, "button", 32);
         \u0275\u0275text(91);
@@ -110347,7 +111508,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275text(99);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(100, "div", 33);
-        \u0275\u0275repeaterCreate(101, TeacherExamsComponent_For_102_Template, 24, 26, "article", 34, _forTrack049, false, TeacherExamsComponent_ForEmpty_103_Template, 3, 3, "p", 35);
+        \u0275\u0275repeaterCreate(101, TeacherExamsComponent_For_102_Template, 24, 26, "article", 34, _forTrack050, false, TeacherExamsComponent_ForEmpty_103_Template, 3, 3, "p", 35);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(104, TeacherExamsComponent_Conditional_104_Template, 2, 7, "app-assessment-student-links-dialog", 36);
         \u0275\u0275conditionalCreate(105, TeacherExamsComponent_Conditional_105_Template, 14, 8, "section", 4);
@@ -110430,7 +111591,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275advance(2);
         \u0275\u0275classProp("empty", !ctx.selectedCount());
         \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(80, 100, "teacher.exams.selectedCount", \u0275\u0275pureFunction1(109, _c040, ctx.selectedCount())), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(80, 100, "teacher.exams.selectedCount", \u0275\u0275pureFunction1(109, _c041, ctx.selectedCount())), " ");
         \u0275\u0275advance(3);
         \u0275\u0275twoWayProperty("ngModel", ctx.bankSearch);
         \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(83, 103, "teacher.exams.searchBank"));
@@ -110830,11 +111991,11 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
 })();
 
 // src/app/pages/teacher/teacher-videos.component.ts
-var _c041 = (a0) => ({ percent: a0 });
+var _c042 = (a0) => ({ percent: a0 });
 var _c129 = (a0) => ["/courses", a0];
 var _c218 = (a0) => ({ video: a0 });
 var _c310 = (a0) => [a0];
-var _forTrack050 = ($index, $item) => $item.id;
+var _forTrack051 = ($index, $item) => $item.id;
 var arrowFn026 = (ctx, view) => (c) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
@@ -110842,7 +112003,7 @@ var arrowFn026 = (ctx, view) => (c) => {
 };
 var arrowFn117 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn214 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
-var _forTrack120 = ($index, $item) => $item.assignmentId;
+var _forTrack121 = ($index, $item) => $item.assignmentId;
 var arrowFn310 = (ctx, view) => (a) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
@@ -110895,7 +112056,7 @@ function TeacherVideosComponent_Conditional_53_Conditional_47_Template(rf, ctx) 
     \u0275\u0275advance(2);
     \u0275\u0275styleProp("width", ctx_r0.uploadProgress(), "%");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c041, ctx_r0.uploadProgress() ?? 0)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c042, ctx_r0.uploadProgress() ?? 0)));
   }
 }
 function TeacherVideosComponent_Conditional_53_For_89_Conditional_10_Template(rf, ctx) {
@@ -111195,7 +112356,7 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275pipe(86, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(87, "div", 51);
-    \u0275\u0275repeaterCreate(88, TeacherVideosComponent_Conditional_53_For_89_Template, 19, 14, "article", 52, _forTrack050, false, TeacherVideosComponent_Conditional_53_ForEmpty_90_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(88, TeacherVideosComponent_Conditional_53_For_89_Template, 19, 14, "article", 52, _forTrack051, false, TeacherVideosComponent_Conditional_53_ForEmpty_90_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -111254,7 +112415,7 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275property("disabled", ctx_r0.uploading() || !ctx_r0.lessonVideoFile());
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(54, 80, "videos.uploadProgress", \u0275\u0275pureFunction1(108, _c041, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(55, 83, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
+    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(54, 80, "videos.uploadProgress", \u0275\u0275pureFunction1(108, _c042, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(55, 83, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(60, 85, "videos.lessonList"));
     \u0275\u0275advance(3);
@@ -111419,7 +112580,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(21, TeacherVideosComponent_Conditional_54_Conditional_21_Template, 3, 3, "button", 69);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(22, "div", 51);
-    \u0275\u0275repeaterCreate(23, TeacherVideosComponent_Conditional_54_For_24_Template, 19, 19, "article", 52, _forTrack050, false, TeacherVideosComponent_Conditional_54_ForEmpty_25_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(23, TeacherVideosComponent_Conditional_54_For_24_Template, 19, 19, "article", 52, _forTrack051, false, TeacherVideosComponent_Conditional_54_ForEmpty_25_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -111480,7 +112641,7 @@ function TeacherVideosComponent_Conditional_55_Conditional_32_Template(rf, ctx) 
     \u0275\u0275advance(2);
     \u0275\u0275styleProp("width", ctx_r0.uploadProgress(), "%");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c041, ctx_r0.uploadProgress() ?? 0)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c042, ctx_r0.uploadProgress() ?? 0)));
   }
 }
 function TeacherVideosComponent_Conditional_55_For_64_Template(rf, ctx) {
@@ -111664,7 +112825,7 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275pipe(61, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(62, "div", 51);
-    \u0275\u0275repeaterCreate(63, TeacherVideosComponent_Conditional_55_For_64_Template, 15, 10, "article", 52, _forTrack120, false, TeacherVideosComponent_Conditional_55_ForEmpty_65_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(63, TeacherVideosComponent_Conditional_55_For_64_Template, 15, 10, "article", 52, _forTrack121, false, TeacherVideosComponent_Conditional_55_ForEmpty_65_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -111705,7 +112866,7 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275property("disabled", ctx_r0.uploading() || !ctx_r0.solutionVideoFile());
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(39, 47, "videos.uploadProgress", \u0275\u0275pureFunction1(65, _c041, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(40, 50, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
+    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(39, 47, "videos.uploadProgress", \u0275\u0275pureFunction1(65, _c042, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(40, 50, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(45, 52, "videos.solutionList"));
     \u0275\u0275advance(3);
@@ -111878,7 +113039,7 @@ function TeacherVideosComponent_Conditional_56_Conditional_17_Template(rf, ctx) 
     \u0275\u0275pipe(46, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(47, "tbody");
-    \u0275\u0275repeaterCreate(48, TeacherVideosComponent_Conditional_56_Conditional_17_For_49_Template, 16, 8, "tr", null, _forTrack050, false, TeacherVideosComponent_Conditional_56_Conditional_17_ForEmpty_50_Template, 4, 3, "tr");
+    \u0275\u0275repeaterCreate(48, TeacherVideosComponent_Conditional_56_Conditional_17_For_49_Template, 16, 8, "tr", null, _forTrack051, false, TeacherVideosComponent_Conditional_56_Conditional_17_ForEmpty_50_Template, 4, 3, "tr");
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -113362,7 +114523,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
 })();
 
 // src/app/pages/teacher/teacher-materials.component.ts
-var _forTrack051 = ($index, $item) => $item.id;
+var _forTrack052 = ($index, $item) => $item.id;
 var arrowFn027 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn118 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn215 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
@@ -113453,7 +114614,7 @@ function TeacherMaterialsComponent_Conditional_78_For_2_Template(rf, ctx) {
 function TeacherMaterialsComponent_Conditional_78_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 25);
-    \u0275\u0275repeaterCreate(1, TeacherMaterialsComponent_Conditional_78_For_2_Template, 13, 12, "div", 27, _forTrack051);
+    \u0275\u0275repeaterCreate(1, TeacherMaterialsComponent_Conditional_78_For_2_Template, 13, 12, "div", 27, _forTrack052);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -113855,7 +115016,7 @@ var TeacherMaterialsComponent = class _TeacherMaterialsComponent {
         \u0275\u0275text(68);
         \u0275\u0275pipe(69, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(70, TeacherMaterialsComponent_For_71_Template, 2, 2, "option", 23, _forTrack051);
+        \u0275\u0275repeaterCreate(70, TeacherMaterialsComponent_For_71_Template, 2, 2, "option", 23, _forTrack052);
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
@@ -114132,7 +115293,7 @@ var TeacherMaterialsComponent = class _TeacherMaterialsComponent {
 
 // src/app/pages/teacher/teacher-whatsapp.component.ts
 var arrowFn028 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
-var _forTrack052 = ($index, $item) => $item.studentId;
+var _forTrack053 = ($index, $item) => $item.studentId;
 function TeacherWhatsAppComponent_Conditional_15_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 13);
@@ -114290,7 +115451,7 @@ function TeacherWhatsAppComponent_Conditional_29_Template(rf, ctx) {
     \u0275\u0275text(10);
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275repeaterCreate(12, TeacherWhatsAppComponent_Conditional_29_For_13_Template, 8, 6, "label", 18, _forTrack052, false, TeacherWhatsAppComponent_Conditional_29_ForEmpty_14_Template, 3, 3, "p", 1);
+    \u0275\u0275repeaterCreate(12, TeacherWhatsAppComponent_Conditional_29_For_13_Template, 8, 6, "label", 18, _forTrack053, false, TeacherWhatsAppComponent_Conditional_29_ForEmpty_14_Template, 3, 3, "p", 1);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(15, "label", 8)(16, "input", 19);
     \u0275\u0275twoWayListener("ngModelChange", function TeacherWhatsAppComponent_Conditional_29_Template_input_ngModelChange_16_listener($event) {
@@ -114809,8 +115970,8 @@ var TeacherWhatsAppComponent = class _TeacherWhatsAppComponent {
 })();
 
 // src/app/pages/teacher/teacher-appointments.component.ts
-var _forTrack053 = ($index, $item) => $item.key;
-var _forTrack121 = ($index, $item) => $item.appointment.id;
+var _forTrack054 = ($index, $item) => $item.key;
+var _forTrack122 = ($index, $item) => $item.appointment.id;
 function TeacherAppointmentsComponent_For_27_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 17);
@@ -115123,14 +116284,14 @@ var TeacherAppointmentsComponent = class _TeacherAppointmentsComponent {
         \u0275\u0275text(24);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(25, "div", 7);
-        \u0275\u0275repeaterCreate(26, TeacherAppointmentsComponent_For_27_Template, 3, 4, "button", 8, _forTrack053);
+        \u0275\u0275repeaterCreate(26, TeacherAppointmentsComponent_For_27_Template, 3, 4, "button", 8, _forTrack054);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(28, "div", 9)(29, "div", 10);
         \u0275\u0275repeaterCreate(30, TeacherAppointmentsComponent_For_31_Template, 2, 3, "div", 11, \u0275\u0275repeaterTrackByIdentity);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(32, "div", 12);
         \u0275\u0275repeaterCreate(33, TeacherAppointmentsComponent_For_34_Template, 1, 2, "div", 13, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275repeaterCreate(35, TeacherAppointmentsComponent_For_36_Template, 5, 11, "div", 14, _forTrack121);
+        \u0275\u0275repeaterCreate(35, TeacherAppointmentsComponent_For_36_Template, 5, 11, "div", 14, _forTrack122);
         \u0275\u0275conditionalCreate(37, TeacherAppointmentsComponent_Conditional_37_Template, 3, 3, "p", 15);
         \u0275\u0275elementEnd()()()();
       }
@@ -115354,12 +116515,12 @@ function formatDayLabel2(date, lang) {
 }
 
 // src/app/pages/teacher/teacher-timetable.component.ts
-var _c042 = ["timetableWrap"];
+var _c043 = ["timetableWrap"];
 var _c130 = (a0) => ({ value: "am", label: a0 });
 var _c219 = (a0) => ({ value: "pm", label: a0 });
 var _c311 = (a0, a1) => [a0, a1];
-var _forTrack054 = ($index, $item) => $item.key;
-var _forTrack122 = ($index, $item) => $item.dayOfWeek;
+var _forTrack055 = ($index, $item) => $item.key;
+var _forTrack123 = ($index, $item) => $item.dayOfWeek;
 var arrowFn029 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var _forTrack210 = ($index, $item) => $item.entry.id;
 function TeacherTimetableComponent_Conditional_50_Template(rf, ctx) {
@@ -115460,7 +116621,7 @@ function TeacherTimetableComponent_For_57_Template(rf, ctx) {
     \u0275\u0275elementStart(4, "span");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(6, TeacherTimetableComponent_For_57_For_7_Template, 4, 5, "td", 31, _forTrack054);
+    \u0275\u0275repeaterCreate(6, TeacherTimetableComponent_For_57_For_7_Template, 4, 5, "td", 31, _forTrack055);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -115666,7 +116827,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherTimetableComponent, selectors: [["app-teacher-timetable"]], viewQuery: function TeacherTimetableComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c042, 5);
+        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c043, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -115742,10 +116903,10 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
         \u0275\u0275conditionalCreate(51, TeacherTimetableComponent_Conditional_51_Template, 2, 2, "th", 22);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(52, "tr");
-        \u0275\u0275repeaterCreate(53, TeacherTimetableComponent_For_54_Template, 7, 2, "th", 23, _forTrack054);
+        \u0275\u0275repeaterCreate(53, TeacherTimetableComponent_For_54_Template, 7, 2, "th", 23, _forTrack055);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(55, "tbody");
-        \u0275\u0275repeaterCreate(56, TeacherTimetableComponent_For_57_Template, 8, 2, "tr", null, _forTrack122);
+        \u0275\u0275repeaterCreate(56, TeacherTimetableComponent_For_57_Template, 8, 2, "tr", null, _forTrack123);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(58, "footer", 24)(59, "span", 25);
         \u0275\u0275text(60, "\u{1F496}");
@@ -115970,7 +117131,7 @@ function readGradeList2(value) {
 }
 
 // src/app/pages/teacher/teacher-attendance.component.ts
-var _forTrack055 = ($index, $item) => $item.id;
+var _forTrack056 = ($index, $item) => $item.id;
 var arrowFn030 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var arrowFn119 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 function TeacherAttendanceComponent_Conditional_30_Template(rf, ctx) {
@@ -116315,7 +117476,7 @@ var TeacherAttendanceComponent = class _TeacherAttendanceComponent {
         \u0275\u0275pipe(67, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(68, "tbody");
-        \u0275\u0275repeaterCreate(69, TeacherAttendanceComponent_For_70_Template, 9, 3, "tr", null, _forTrack055, false, TeacherAttendanceComponent_ForEmpty_71_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(69, TeacherAttendanceComponent_For_70_Template, 9, 3, "tr", null, _forTrack056, false, TeacherAttendanceComponent_ForEmpty_71_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -116515,9 +117676,9 @@ function toLocalDateString11(d) {
 }
 
 // src/app/pages/teacher/teacher-student-attendance.component.ts
-var _c043 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c044 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c131 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack056 = ($index, $item) => $item.id;
+var _forTrack057 = ($index, $item) => $item.id;
 var arrowFn031 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function TeacherStudentAttendanceComponent_For_107_Template(rf, ctx) {
   if (rf & 1) {
@@ -117105,7 +118266,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275pipe(104, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(105, "tbody");
-        \u0275\u0275repeaterCreate(106, TeacherStudentAttendanceComponent_For_107_Template, 13, 5, "tr", null, _forTrack056, false, TeacherStudentAttendanceComponent_ForEmpty_108_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(106, TeacherStudentAttendanceComponent_For_107_Template, 13, 5, "tr", null, _forTrack057, false, TeacherStudentAttendanceComponent_ForEmpty_108_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(109, "div", 22)(110, "button", 23);
         \u0275\u0275listener("click", function TeacherStudentAttendanceComponent_Template_button_click_110_listener() {
@@ -117194,7 +118355,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 101, "common.clearFilters"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(72, 103, "common.ofShown", \u0275\u0275pureFunction2(125, _c043, ctx.rows().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(72, 103, "common.ofShown", \u0275\u0275pureFunction2(125, _c044, ctx.rows().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(79, 106, "common.student"), " ");
         \u0275\u0275advance(3);
@@ -117413,8 +118574,8 @@ function toLocalDateString12(d) {
 }
 
 // src/app/pages/teacher/teacher-weekly-reports.component.ts
-var _forTrack057 = ($index, $item) => $item.studentId;
-var _forTrack123 = ($index, $item) => $item.id;
+var _forTrack058 = ($index, $item) => $item.studentId;
+var _forTrack124 = ($index, $item) => $item.id;
 var arrowFn032 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 function TeacherWeeklyReportsComponent_For_52_For_17_Template(rf, ctx) {
   if (rf & 1) {
@@ -117920,7 +119081,7 @@ var TeacherWeeklyReportsComponent = class _TeacherWeeklyReportsComponent {
         \u0275\u0275pipe(49, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(50, "tbody");
-        \u0275\u0275repeaterCreate(51, TeacherWeeklyReportsComponent_For_52_Template, 29, 24, "tr", null, _forTrack057, false, TeacherWeeklyReportsComponent_ForEmpty_53_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(51, TeacherWeeklyReportsComponent_For_52_Template, 29, 24, "tr", null, _forTrack058, false, TeacherWeeklyReportsComponent_ForEmpty_53_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(54, TeacherWeeklyReportsComponent_Conditional_54_Template, 7, 8);
         \u0275\u0275elementEnd();
@@ -117997,7 +119158,7 @@ var TeacherWeeklyReportsComponent = class _TeacherWeeklyReportsComponent {
         \u0275\u0275pipe(101, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(102, "tbody");
-        \u0275\u0275repeaterCreate(103, TeacherWeeklyReportsComponent_For_104_Template, 20, 14, "tr", null, _forTrack123, false, TeacherWeeklyReportsComponent_ForEmpty_105_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(103, TeacherWeeklyReportsComponent_For_104_Template, 20, 14, "tr", null, _forTrack124, false, TeacherWeeklyReportsComponent_ForEmpty_105_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -118303,9 +119464,9 @@ function toLocalDateString13(d) {
 }
 
 // src/app/pages/teacher/teacher-study-plans.component.ts
-var _c044 = ["planWrap"];
-var _forTrack058 = ($index, $item) => $item.id;
-var _forTrack124 = ($index, $item) => $item.weekNumber;
+var _c045 = ["planWrap"];
+var _forTrack059 = ($index, $item) => $item.id;
+var _forTrack125 = ($index, $item) => $item.weekNumber;
 function TeacherStudyPlansComponent_Conditional_46_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 2);
@@ -118405,7 +119566,7 @@ function TeacherStudyPlansComponent_Conditional_73_For_2_Template(rf, ctx) {
 function TeacherStudyPlansComponent_Conditional_73_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 21);
-    \u0275\u0275repeaterCreate(1, TeacherStudyPlansComponent_Conditional_73_For_2_Template, 7, 3, "article", 29, _forTrack124);
+    \u0275\u0275repeaterCreate(1, TeacherStudyPlansComponent_Conditional_73_For_2_Template, 7, 3, "article", 29, _forTrack125);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -118954,7 +120115,7 @@ var TeacherStudyPlansComponent = class _TeacherStudyPlansComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherStudyPlansComponent, selectors: [["app-teacher-study-plans"]], viewQuery: function TeacherStudyPlansComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.planWrap, _c044, 5);
+        \u0275\u0275viewQuerySignal(ctx.planWrap, _c045, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -119161,7 +120322,7 @@ var TeacherStudyPlansComponent = class _TeacherStudyPlansComponent {
         \u0275\u0275pipe(117, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(118, "tbody");
-        \u0275\u0275repeaterCreate(119, TeacherStudyPlansComponent_For_120_Template, 13, 4, "tr", null, _forTrack058, false, TeacherStudyPlansComponent_ForEmpty_121_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(119, TeacherStudyPlansComponent_For_120_Template, 13, 4, "tr", null, _forTrack059, false, TeacherStudyPlansComponent_ForEmpty_121_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -119610,9 +120771,9 @@ function toLocalDateString14(d) {
 }
 
 // src/app/shared/asked-questions-board/asked-questions-board.component.ts
-var _c045 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c046 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c132 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack059 = ($index, $item) => $item.id;
+var _forTrack060 = ($index, $item) => $item.id;
 function AskedQuestionsBoardComponent_Conditional_35_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 11);
@@ -119635,7 +120796,7 @@ function AskedQuestionsBoardComponent_Conditional_36_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "common.ofShown", \u0275\u0275pureFunction2(4, _c045, ctx_r0.pagedItems().length, ctx_r0.items().length)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "common.ofShown", \u0275\u0275pureFunction2(4, _c046, ctx_r0.pagedItems().length, ctx_r0.items().length)));
   }
 }
 function AskedQuestionsBoardComponent_For_38_Conditional_5_Template(rf, ctx) {
@@ -120255,7 +121416,7 @@ var AskedQuestionsBoardComponent = class _AskedQuestionsBoardComponent {
         });
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(35, AskedQuestionsBoardComponent_Conditional_35_Template, 3, 3, "p", 11)(36, AskedQuestionsBoardComponent_Conditional_36_Template, 3, 7, "p", 11);
-        \u0275\u0275repeaterCreate(37, AskedQuestionsBoardComponent_For_38_Template, 14, 10, "article", 12, _forTrack059);
+        \u0275\u0275repeaterCreate(37, AskedQuestionsBoardComponent_For_38_Template, 14, 10, "article", 12, _forTrack060);
         \u0275\u0275conditionalCreate(39, AskedQuestionsBoardComponent_Conditional_39_Template, 10, 15, "div", 13);
       }
       if (rf & 2) {
@@ -120601,12 +121762,12 @@ var ChatRealtimeService = class _ChatRealtimeService {
 })();
 
 // src/app/shared/chat-board/chat-board.component.ts
-var _c046 = (a0) => ({ value: "Direct", label: a0 });
+var _c047 = (a0) => ({ value: "Direct", label: a0 });
 var _c133 = (a0) => ({ value: "Group", label: a0 });
 var _c220 = (a0) => ({ value: "Class", label: a0 });
 var _c312 = (a0, a1, a2) => [a0, a1, a2];
-var _forTrack060 = ($index, $item) => $item.id;
-var _forTrack125 = ($index, $item) => $item.userId;
+var _forTrack061 = ($index, $item) => $item.id;
+var _forTrack126 = ($index, $item) => $item.userId;
 function ChatBoardComponent_Conditional_1_Conditional_26_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
@@ -120743,7 +121904,7 @@ function ChatBoardComponent_Conditional_1_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(21, 31, "chat.kind"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.kind);
-    \u0275\u0275property("options", \u0275\u0275pureFunction3(47, _c312, \u0275\u0275pureFunction1(41, _c046, \u0275\u0275pipeBind1(23, 33, "chat.kindDirect")), \u0275\u0275pureFunction1(43, _c133, \u0275\u0275pipeBind1(24, 35, "chat.kindGroup")), \u0275\u0275pureFunction1(45, _c220, \u0275\u0275pipeBind1(25, 37, "chat.kindClass"))));
+    \u0275\u0275property("options", \u0275\u0275pureFunction3(47, _c312, \u0275\u0275pureFunction1(41, _c047, \u0275\u0275pipeBind1(23, 33, "chat.kindDirect")), \u0275\u0275pureFunction1(43, _c133, \u0275\u0275pipeBind1(24, 35, "chat.kindGroup")), \u0275\u0275pureFunction1(45, _c220, \u0275\u0275pipeBind1(25, 37, "chat.kindClass"))));
     \u0275\u0275control();
     \u0275\u0275advance(4);
     \u0275\u0275conditional(ctx_r1.kind !== "Class" ? 26 : -1);
@@ -120843,7 +122004,7 @@ function ChatBoardComponent_Conditional_11_Conditional_6_For_2_Template(rf, ctx)
 function ChatBoardComponent_Conditional_11_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 21);
-    \u0275\u0275repeaterCreate(1, ChatBoardComponent_Conditional_11_Conditional_6_For_2_Template, 1, 1, null, null, _forTrack125);
+    \u0275\u0275repeaterCreate(1, ChatBoardComponent_Conditional_11_Conditional_6_For_2_Template, 1, 1, null, null, _forTrack126);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -120919,7 +122080,7 @@ function ChatBoardComponent_Conditional_11_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(6, ChatBoardComponent_Conditional_11_Conditional_6_Template, 3, 0, "div", 21);
     \u0275\u0275conditionalCreate(7, ChatBoardComponent_Conditional_11_Conditional_7_Template, 3, 3, "p", 22);
     \u0275\u0275elementStart(8, "div", 23);
-    \u0275\u0275repeaterCreate(9, ChatBoardComponent_Conditional_11_For_10_Template, 11, 13, "article", 24, _forTrack060);
+    \u0275\u0275repeaterCreate(9, ChatBoardComponent_Conditional_11_For_10_Template, 11, 13, "article", 24, _forTrack061);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(11, "form", 25);
     \u0275\u0275listener("ngSubmit", function ChatBoardComponent_Conditional_11_Template_form_ngSubmit_11_listener() {
@@ -121325,7 +122486,7 @@ var ChatBoardComponent = class _ChatBoardComponent {
         \u0275\u0275pipe(6, "t");
         \u0275\u0275elementEnd();
         \u0275\u0275conditionalCreate(7, ChatBoardComponent_Conditional_7_Template, 3, 3, "p", 4);
-        \u0275\u0275repeaterCreate(8, ChatBoardComponent_For_9_Template, 7, 5, "button", 5, _forTrack060);
+        \u0275\u0275repeaterCreate(8, ChatBoardComponent_For_9_Template, 7, 5, "button", 5, _forTrack061);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(10, "section", 6);
         \u0275\u0275conditionalCreate(11, ChatBoardComponent_Conditional_11_Template, 17, 14)(12, ChatBoardComponent_Conditional_12_Template, 3, 3, "p", 4);
@@ -121572,11 +122733,11 @@ var TeacherChatComponent = class _TeacherChatComponent {
 })();
 
 // src/app/pages/exam-play/exam-play.component.ts
-var _c047 = (a0) => ({ seconds: a0 });
+var _c048 = (a0) => ({ seconds: a0 });
 var _c134 = (a0) => ({ count: a0 });
 var _c221 = (a0) => ({ minutes: a0 });
-var _forTrack061 = ($index, $item) => $item.questionId;
-var _forTrack126 = ($index, $item) => $item.id;
+var _forTrack062 = ($index, $item) => $item.questionId;
+var _forTrack127 = ($index, $item) => $item.id;
 function ExamPlayComponent_Conditional_8_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 2);
@@ -121626,7 +122787,7 @@ function ExamPlayComponent_Conditional_11_Conditional_11_Template(rf, ctx) {
   }
   if (rf & 2) {
     const attempt_r1 = \u0275\u0275nextContext();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "play.timeSeconds", \u0275\u0275pureFunction1(4, _c047, attempt_r1.durationSeconds)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "play.timeSeconds", \u0275\u0275pureFunction1(4, _c048, attempt_r1.durationSeconds)), " ");
   }
 }
 function ExamPlayComponent_Conditional_11_Conditional_12_Template(rf, ctx) {
@@ -121705,7 +122866,7 @@ function ExamPlayComponent_Conditional_11_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(12, ExamPlayComponent_Conditional_11_Conditional_12_Template, 2, 1, "p");
     \u0275\u0275element(13, "app-question-image-display", 6);
-    \u0275\u0275repeaterCreate(14, ExamPlayComponent_Conditional_11_For_15_Template, 11, 12, "div", 7, _forTrack061);
+    \u0275\u0275repeaterCreate(14, ExamPlayComponent_Conditional_11_For_15_Template, 11, 12, "div", 7, _forTrack062);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -121833,7 +122994,7 @@ function ExamPlayComponent_Conditional_12_Conditional_8_For_1_Template(rf, ctx) 
 function ExamPlayComponent_Conditional_12_Conditional_8_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
-    \u0275\u0275repeaterCreate(0, ExamPlayComponent_Conditional_12_Conditional_8_For_1_Template, 1, 4, "app-question-play-prompt", 15, _forTrack126);
+    \u0275\u0275repeaterCreate(0, ExamPlayComponent_Conditional_12_Conditional_8_For_1_Template, 1, 4, "app-question-play-prompt", 15, _forTrack127);
     \u0275\u0275elementStart(2, "button", 16);
     \u0275\u0275listener("click", function ExamPlayComponent_Conditional_12_Conditional_8_Template_button_click_2_listener() {
       \u0275\u0275restoreView(_r6);
@@ -122665,6 +123826,7 @@ var routes = [
       { path: "overview", component: TeacherOverviewComponent },
       { path: "videos", component: TeacherVideosComponent },
       { path: "materials", component: TeacherMaterialsComponent },
+      { path: "smart-study-assistant", component: SmartStudyAssistantComponent },
       { path: "course-tree", component: AdminCourseTreeComponent },
       { path: "asked-questions", component: TeacherAskedQuestionsComponent },
       { path: "chat", component: TeacherChatComponent },
@@ -122858,7 +124020,7 @@ var ChatNotifyService = class _ChatNotifyService {
 })();
 
 // src/app/shared/toast/toast-host.component.ts
-var _forTrack062 = ($index, $item) => $item.id;
+var _forTrack063 = ($index, $item) => $item.id;
 function ToastHostComponent_For_2_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "strong", 3);
@@ -122956,7 +124118,7 @@ var ToastHostComponent = class _ToastHostComponent {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ToastHostComponent, selectors: [["app-toast-host"]], decls: 3, vars: 0, consts: [["aria-live", "polite", "aria-relevant", "additions", 1, "toast-stack"], ["type", "button", 1, "toast", 3, "ok", "chat", "notification"], ["type", "button", 1, "toast", 3, "click"], [1, "toast-title"], [1, "toast-body"], [1, "toast-hint"]], template: function ToastHostComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275domElementStart(0, "div", 0);
-        \u0275\u0275repeaterCreate(1, ToastHostComponent_For_2_Template, 4, 7, "button", 1, _forTrack062);
+        \u0275\u0275repeaterCreate(1, ToastHostComponent_For_2_Template, 4, 7, "button", 1, _forTrack063);
         \u0275\u0275domElementEnd();
       }
       if (rf & 2) {
@@ -123001,7 +124163,7 @@ var ToastHostComponent = class _ToastHostComponent {
 })();
 
 // src/app/app/app.component.ts
-var _c048 = (a0) => ({ name: a0 });
+var _c049 = (a0) => ({ name: a0 });
 function AppComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -123022,7 +124184,7 @@ function AppComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 2, "auth.impersonating", \u0275\u0275pureFunction1(7, _c048, ctx_r1.auth.user()?.displayName || "")));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 2, "auth.impersonating", \u0275\u0275pureFunction1(7, _c049, ctx_r1.auth.user()?.displayName || "")));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 5, "auth.stopImpersonating"));
   }

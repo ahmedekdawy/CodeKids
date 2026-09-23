@@ -2143,6 +2143,7 @@ export const EN: Record<string, string> = {
   'api.feedback.quizRetry': "Keep practicing — you're getting closer!",
 
   'nav.teacher.materials': 'Materials',
+  'nav.teacher.smartAssistant': 'Smart Study Assistant',
 
   'materials.title': 'Learning materials',
   'materials.subtitle': 'Upload PDFs, images, and audio to a course, unit, or lesson. Students see them on the course materials page.',

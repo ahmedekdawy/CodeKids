@@ -1,0 +1,149 @@
+<section class="ssa-page">
+  <header class="ssa-header">
+    <h1>🤖 المساعد الذكي للدراسة</h1>
+    <p>ارفع صوراً أو ملفات PDF، اختر الكورس والوحدة والدرس، ثم اختر الإجراء — وسيحلل Gemini المحتوى وينشئ النتيجة، ويمكنك إضافتها مباشرة للمنهج أو الكويزات أو الواجبات.</p>
+  </header>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <div class="ssa-card">
+    <h2>1️⃣ تحديد السياق</h2>
+    <div class="ssa-grid">
+      <label>
+        <span>الكورس</span>
+        <select [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseModelChange($event)">
+          <option value="">— اختر الكورس —</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ course.title }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>الوحدة</span>
+        <select [(ngModel)]="selectedUnitId" (ngModelChange)="onUnitModelChange($event)" [disabled]="!courseId()">
+          <option value="">— الكل / اختياري —</option>
+          @for (unit of units(); track unit.id) {
+            <option [value]="unit.id">{{ unit.title }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        <span>الدرس</span>
+        <select [(ngModel)]="selectedLessonId" [disabled]="!unitId()">
+          <option value="">— الكل / اختياري —</option>
+          @for (lesson of lessons(); track lesson.id) {
+            <option [value]="lesson.id">{{ lesson.title }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="ssa-card">
+    <h2>2️⃣ رفع الملفات (اختياري — حتى 10 ملفات)</h2>
+    <div class="ssa-dropzone"
+         (drop)="onDrop($event)" (dragover)="onDragOver($event)"
+         (click)="openFilePicker()">
+      <input #fileInput type="file" accept=".pdf,.jpg,.jpeg,.png" multiple (change)="onFilesChosen($event)" hidden>
+      @if (files().length > 0) {
+        <div class="ssa-files">
+          @for (entry of files(); track $index) {
+            <div class="ssa-file">
+              @if (entry.preview) {
+                <img [src]="entry.preview" alt="معاينة">
+              } @else {
+                <span class="ssa-file-icon">📄</span>
+              }
+              <div>
+                <strong>{{ entry.file.name }}</strong>
+                <small>{{ (entry.file.size / 1024 / 1024).toFixed(2) }} ميجابايت</small>
+              </div>
+              <button type="button" class="ssa-remove" (click)="removeFile($index); $event.stopPropagation()">✕</button>
+            </div>
+          }
+          <button type="button" class="ssa-tool" (click)="clearFiles(); $event.stopPropagation()">🗑️ مسح الكل</button>
+        </div>
+        <small class="ssa-addmore">انقر أو أفلت لإضافة المزيد من الملفات</small>
+      } @else {
+        <div class="ssa-dropzone-hint">
+          <span class="ssa-dropzone-icon">⬆️</span>
+          <p><strong>اسحب وأفلت</strong> صور أو ملفات PDF هنا</p>
+          <small>أو انقر للاختيار — JPG / PNG / PDF حتى 25 ميجابايت لكل ملف</small>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="ssa-card">
+    <h2>3️⃣ اختر الإجراء</h2>
+    <div class="ssa-actions">
+      @for (item of actions; track item.key) {
+        <button type="button"
+                class="ssa-action"
+                [disabled]="loading()"
+                (click)="runAction(item.key)">
+          <span class="ssa-action-icon">{{ item.icon }}</span>
+          <strong>{{ item.label }}</strong>
+          <small>{{ item.hint }}</small>
+          @if (loading() && activeAction() === item.key) {
+            <span class="ssa-spinner" aria-hidden="true"></span>
+          }
+        </button>
+      }
+    </div>
+    @if (loading()) {
+      <p class="ssa-loading">⏳ جارٍ التحليل بواسطة Gemini... قد يستغرق ذلك لحظات، لا تغلق الصفحة.</p>
+    }
+  </div>
+
+  @if (resultMarkdown()) {
+    <div class="ssa-card ssa-result">
+      <div class="ssa-result-head">
+        <h2>{{ resultTitle() || 'النتيجة' }}</h2>
+        <div class="ssa-result-tools">
+          <button type="button" class="ssa-tool" (click)="copyResult()">📋 نسخ النص</button>
+          <button type="button" class="ssa-tool primary" (click)="downloadPdf()">⬇️ تحميل كـ PDF</button>
+        </div>
+      </div>
+
+      @if (hasQuestions() || hasUnits()) {
+        <div class="ssa-apply">
+          <span>أضف النتيجة إلى:</span>
+          @if (hasUnits()) {
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('tree')">
+              {{ applying() === 'tree' ? '⏳ جارٍ الإضافة...' : '🌳 فهرس المادة (وحدات ودروس)' }}
+            </button>
+          }
+          @if (hasQuestions()) {
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('bank')">
+              {{ applying() === 'bank' ? '⏳ جارٍ الحفظ...' : '🗃️ بنك الأسئلة' }}
+            </button>
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('quiz')">
+              {{ applying() === 'quiz' ? '⏳ جارٍ الإنشاء...' : '❓ كويز جديد' }}
+            </button>
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('assignment')">
+              {{ applying() === 'assignment' ? '⏳ جارٍ الإنشاء...' : '📚 واجب جديد' }}
+            </button>
+            <button type="button" class="ssa-tool"
+                    [disabled]="applying() !== null"
+                    (click)="applyTo('exam')">
+              {{ applying() === 'exam' ? '⏳ جارٍ الحفظ...' : '📝 أسئلة اختبار' }}
+            </button>
+          }
+        </div>
+      }
+
+      <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>
+    </div>
+  }
+</section>

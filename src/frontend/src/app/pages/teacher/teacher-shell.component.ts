@@ -20,6 +20,7 @@ export class TeacherShellComponent {
 
     { labelKey: 'nav.cat.content', path: '/teacher/videos', icon: 'V', categoryKey: 'nav.cat.content' },
     { labelKey: 'nav.teacher.materials', path: '/teacher/materials', icon: 'M', categoryKey: 'nav.cat.content' },
+    { labelKey: 'nav.teacher.smartAssistant', path: '/teacher/smart-study-assistant', icon: '🤖', categoryKey: 'nav.cat.content' },
     { labelKey: 'nav.teacher.courseTree', path: '/teacher/course-tree', icon: 'U', categoryKey: 'nav.cat.content' },
     { labelKey: 'nav.teacher.studyPlans', path: '/teacher/study-plans', icon: 'P', categoryKey: 'nav.cat.content' },
 

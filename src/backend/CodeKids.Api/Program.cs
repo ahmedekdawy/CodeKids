@@ -63,6 +63,8 @@ using CodeKids.Application.Features.SiteSettings;
 
 using CodeKids.Application.Features.StudyPlans;
 
+using CodeKids.Application.Features.SmartStudyAssistant;
+
 using CodeKids.Application.Features.StudentAsk;
 
 using CodeKids.Application.Features.Chat;
@@ -522,6 +524,8 @@ builder.Services.AddScoped<ICommandHandler<GenerateWeeklyStudyPlanCommand, Gener
 
 builder.Services.AddScoped<ICommandHandler<GenerateAssessmentDraftCommand, GeneratedAssessmentDraftDto>, GenerateAssessmentDraftCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<GenerateSmartStudyAssistantCommand, SmartStudyAssistantResultDto>, GenerateSmartStudyAssistantCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<DeleteWeeklyStudyPlanCommand, bool>, DeleteWeeklyStudyPlanCommandHandler>();
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
@@ -693,6 +697,8 @@ app.MapAdminUsersEndpoints();
 app.MapAppointmentsEndpoints();
 
 app.MapAssessmentsEndpoints();
+
+app.MapSmartStudyAssistantEndpoints();
 
 app.MapAssignmentsEndpoints();
 
