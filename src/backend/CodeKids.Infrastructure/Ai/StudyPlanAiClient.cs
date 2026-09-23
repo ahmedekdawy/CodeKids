@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -8,6 +9,16 @@ using CodeKids.Application.Options;
 using Microsoft.Extensions.Options;
 
 namespace CodeKids.Infrastructure.Ai;
+
+/// <summary>
+/// Thrown when an AI provider key hits its quota/rate limit (HTTP 429).
+/// Carries the key so the caller can put it on cooldown and rotate to the next one.
+/// </summary>
+public sealed class AiQuotaExceededException(string apiKey, string message)
+    : HttpRequestException(message)
+{
+    public string ApiKey { get; } = apiKey;
+}
 
 public sealed class StudyPlanAiClient(
     IHttpClientFactory httpClientFactory,
@@ -23,7 +34,33 @@ public sealed class StudyPlanAiClient(
 
     private const int MaxOutputTokens = 16384;
 
+    /// <summary>Max inline base64 length per attachment before switching to the Files API.
+    /// Gemini's ~20 MB limit applies to the ENTIRE request body (prompt + all parts),
+    /// so keep each attachment far below it.</summary>
+    private const int MaxInlineBase64Chars = 5 * 1024 * 1024;
+
+    /// <summary>Combined base64 budget across ALL inline attachments in one request (~10 MB of JSON headroom below Gemini's ~20 MB body limit).</summary>
+    private const int TotalInlineBudgetChars = 10 * 1024 * 1024;
+
     private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+    // Keys that returned 429 are skipped until their quota window resets.
+    // Gemini's free tier resets daily, but a 1h cooldown lets keys recovered
+    // early (or short-window limits) come back quickly.
+    private static readonly TimeSpan QuotaCooldown = TimeSpan.FromHours(1);
+    private static readonly ConcurrentDictionary<string, DateTime> QuotaCooldownUntil = new(StringComparer.Ordinal);
+
+    private static void RegisterQuotaCooldown(string apiKey) =>
+        QuotaCooldownUntil[apiKey] = DateTime.UtcNow.Add(QuotaCooldown);
+
+    /// <summary>Filters out keys on quota cooldown; if every key is cooling down, keep them all so we still make an attempt.</summary>
+    private static List<AiAttempt> FilterQuotaCooldown(List<AiAttempt> attempts)
+    {
+        var now = DateTime.UtcNow;
+        var available = attempts.FindAll(a =>
+            !QuotaCooldownUntil.TryGetValue(a.ApiKey, out var until) || until <= now);
+        return available.Count > 0 ? available : attempts;
+    }
 
     public async Task<string> CompleteJsonAsync(
         string systemPrompt,
@@ -37,6 +74,8 @@ public sealed class StudyPlanAiClient(
             throw new HttpRequestException("No AI providers are configured (AiContent / Ai sections).");
         }
 
+        attempts = FilterQuotaCooldown(attempts);
+
         List<Exception>? failures = null;
         for (var i = 0; i < attempts.Count; i++)
         {
@@ -49,6 +88,12 @@ public sealed class StudyPlanAiClient(
             catch (OperationCanceledException)
             {
                 throw;
+            }
+            catch (AiQuotaExceededException ex)
+            {
+                RegisterQuotaCooldown(ex.ApiKey);
+                (failures ??= []).Add(new HttpRequestException(
+                    $"Provider '{attempt.Provider}' (model '{attempt.Model}') hit its quota; rotating to the next key.", ex));
             }
             catch (Exception ex) when (i < attempts.Count - 1)
             {
@@ -78,13 +123,77 @@ public sealed class StudyPlanAiClient(
             systemPrompt, userPrompt, attachments, jsonSchema, cancellationToken);
     }
 
+    /// <summary>
+    /// Uploads an attachment to the Gemini Files API (resumable protocol) and
+    /// returns the file URI to reference in file_data parts.
+    /// </summary>
+    private async Task<string> UploadToGeminiFilesAsync(
+        AiAttempt attempt,
+        IStudyPlanAiClient.AiAttachment attachment,
+        CancellationToken cancellationToken)
+    {
+        var client = httpClientFactory.CreateClient(nameof(StudyPlanAiClient));
+
+        // 1. Ask for a resumable upload session.
+        using var initRequest = new HttpRequestMessage(HttpMethod.Post,
+            "https://generativelanguage.googleapis.com/upload/v1beta/files");
+        initRequest.Headers.TryAddWithoutValidation("X-goog-api-key", attempt.ApiKey);
+        initRequest.Headers.TryAddWithoutValidation("X-Goog-Upload-Protocol", "resumable");
+        initRequest.Headers.TryAddWithoutValidation("X-Goog-Upload-Command", "start");
+        initRequest.Headers.TryAddWithoutValidation("X-Goog-Upload-Header-Content-Length", attachment.Data.Length.ToString());
+        initRequest.Headers.TryAddWithoutValidation("X-Goog-Upload-Header-Content-Type", attachment.MimeType);
+        initRequest.Content = new StringContent(
+            JsonSerializer.Serialize(new { file = new { display_name = "ssa-attachment" } }, JsonOptions),
+            Utf8NoBom, "application/json");
+
+        using var initResponse = await client.SendAsync(initRequest, cancellationToken);
+        var initBody = await initResponse.Content.ReadAsStringAsync(cancellationToken);
+        if (!initResponse.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Gemini Files API session init failed ({(int)initResponse.StatusCode}): {initBody}");
+        }
+
+        var uploadUrl = initResponse.Headers.TryGetValues("X-Goog-Upload-URL", out var urls)
+            ? urls.FirstOrDefault()
+            : null;
+        if (string.IsNullOrWhiteSpace(uploadUrl))
+        {
+            throw new HttpRequestException("Gemini Files API did not return an upload URL.");
+        }
+
+        // 2. Upload the raw bytes to the session URL.
+        using var uploadRequest = new HttpRequestMessage(HttpMethod.Post, uploadUrl);
+        uploadRequest.Headers.TryAddWithoutValidation("X-Goog-Upload-Command", "upload, finalize");
+        uploadRequest.Headers.TryAddWithoutValidation("X-Goog-Upload-Offset", "0");
+        uploadRequest.Content = new ByteArrayContent(attachment.Data);
+        uploadRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+        using var uploadResponse = await client.SendAsync(uploadRequest, cancellationToken);
+        var uploadBody = await uploadResponse.Content.ReadAsStringAsync(cancellationToken);
+        if (!uploadResponse.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Gemini Files API upload failed ({(int)uploadResponse.StatusCode}): {uploadBody}");
+        }
+
+        // 3. Pull the file URI out of the finalize response.
+        using var doc = JsonDocument.Parse(uploadBody);
+        if (doc.RootElement.TryGetProperty("file", out var fileEl)
+            && fileEl.TryGetProperty("uri", out var uriEl))
+        {
+            return uriEl.GetString() ?? string.Empty;
+        }
+
+        throw new HttpRequestException("Gemini Files API upload response did not contain a file URI.");
+    }
+
     private async Task<string> CompleteGeminiWithFilesAsync(
         AiAttempt attempt,
         string systemPrompt,
         string userPrompt,
         IReadOnlyList<IStudyPlanAiClient.AiAttachment> attachments,
         object? jsonSchema,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool retryWithUpload = false)
     {
         var model = NormalizeGeminiModel(attempt.Model);
         var url = BuildGeminiGenerateContentUrl(attempt.BaseUrl, model);
@@ -92,18 +201,8 @@ public sealed class StudyPlanAiClient(
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
         request.Headers.TryAddWithoutValidation("X-goog-api-key", attempt.ApiKey);
 
-        var contentParts = new List<object> { new { text = userPrompt } };
-        foreach (var attachment in attachments.Take(5))
-        {
-            contentParts.Add(new
-            {
-                inline_data = new
-                {
-                    mime_type = attachment.MimeType,
-                    data = Convert.ToBase64String(attachment.Data)
-                }
-            });
-        }
+        var contentParts = await BuildGeminiContentPartsAsync(
+            attempt, userPrompt, attachments, forceFileUpload: retryWithUpload, cancellationToken);
 
         var generationConfig = new Dictionary<string, object?>
         {
@@ -133,10 +232,55 @@ public sealed class StudyPlanAiClient(
         var raw = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException($"AI provider returned {(int)response.StatusCode}.");
+            // Payload too large: re-send once with every attachment uploaded to
+            // the Files API so the JSON body stays tiny.
+            if ((int)response.StatusCode == 413 && !retryWithUpload)
+            {
+                return await CompleteGeminiWithFilesAsync(
+                    attempt, systemPrompt, userPrompt, attachments, jsonSchema, cancellationToken, retryWithUpload: true);
+            }
+
+            throw DescribeFailure(attempt.ApiKey, (int)response.StatusCode, raw);
         }
 
         return ExtractGeminiText(raw);
+    }
+
+    private async Task<List<object>> BuildGeminiContentPartsAsync(
+        AiAttempt attempt,
+        string userPrompt,
+        IReadOnlyList<IStudyPlanAiClient.AiAttachment> attachments,
+        bool forceFileUpload,
+        CancellationToken cancellationToken)
+    {
+        // Gemini rejects JSON bodies over ~20 MB with HTTP 413. The limit applies
+        // to the WHOLE request body, so budget the combined size of all inline
+        // attachments (plus generous room for the prompt and JSON overhead).
+        var contentParts = new List<object> { new { text = userPrompt } };
+        var inlineBudget = TotalInlineBudgetChars - userPrompt.Length - 512 * 1024;
+        foreach (var attachment in attachments.Take(5))
+        {
+            var base64Length = Convert.ToBase64String(attachment.Data).Length;
+            if (forceFileUpload || base64Length > MaxInlineBase64Chars || base64Length > inlineBudget)
+            {
+                var fileUri = await UploadToGeminiFilesAsync(attempt, attachment, cancellationToken);
+                contentParts.Add(new { file_data = new { mime_type = attachment.MimeType, file_uri = fileUri } });
+            }
+            else
+            {
+                inlineBudget -= base64Length;
+                contentParts.Add(new
+                {
+                    inline_data = new
+                    {
+                        mime_type = attachment.MimeType,
+                        data = Convert.ToBase64String(attachment.Data)
+                    }
+                });
+            }
+        }
+
+        return contentParts;
     }
 
     private async Task<string> CompleteFilesRetryLoopAsync(
@@ -151,6 +295,8 @@ public sealed class StudyPlanAiClient(
         {
             throw new HttpRequestException("No AI providers are configured (AiImage / AiContent / Ai sections).");
         }
+
+        attempts = FilterQuotaCooldown(attempts);
 
         List<Exception>? failures = null;
         for (var i = 0; i < attempts.Count; i++)
@@ -171,6 +317,12 @@ public sealed class StudyPlanAiClient(
             catch (OperationCanceledException)
             {
                 throw;
+            }
+            catch (AiQuotaExceededException ex)
+            {
+                RegisterQuotaCooldown(ex.ApiKey);
+                (failures ??= []).Add(new HttpRequestException(
+                    $"Provider '{attempt.Provider}' (model '{attempt.Model}') hit its quota; rotating to the next key.", ex));
             }
             catch (Exception ex) when (i < attempts.Count - 1)
             {
@@ -320,7 +472,7 @@ public sealed class StudyPlanAiClient(
         var raw = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException($"AI provider returned {(int)response.StatusCode}.");
+            throw DescribeFailure(apiKey ?? string.Empty, (int)response.StatusCode, raw);
         }
 
         using var doc = JsonDocument.Parse(raw);
@@ -403,10 +555,22 @@ public sealed class StudyPlanAiClient(
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException($"AI provider returned {(int)response.StatusCode}.");
+            throw DescribeFailure(attempt.ApiKey, (int)response.StatusCode, raw);
         }
 
         return ExtractGeminiText(raw);
+    }
+
+    private static HttpRequestException DescribeFailure(string apiKey, int statusCode, string raw)
+    {
+        if (statusCode == 429
+            || raw.Contains("RESOURCE_EXHAUSTED", StringComparison.OrdinalIgnoreCase)
+            || raw.Contains("quota", StringComparison.OrdinalIgnoreCase))
+        {
+            return new AiQuotaExceededException(apiKey, $"AI provider key hit its quota (HTTP {statusCode}).");
+        }
+
+        return new HttpRequestException($"AI provider returned {statusCode}.");
     }
 
     private static string ExtractGeminiText(string raw)

@@ -468,10 +468,10 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             }
 
             var questionsJson = root.TryGetProperty("questions", out var qEl) && qEl.ValueKind == JsonValueKind.Array
-                ? qEl
+                ? qEl.Clone()
                 : JsonElementExtensions.EmptyArray;
             var unitsJson = root.TryGetProperty("units", out var uEl) && uEl.ValueKind == JsonValueKind.Array
-                ? uEl
+                ? uEl.Clone()
                 : JsonElementExtensions.EmptyArray;
 
             return new AssistantPayload(title, markdown, questionsJson, unitsJson);
