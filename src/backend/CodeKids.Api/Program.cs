@@ -525,6 +525,7 @@ builder.Services.AddScoped<ICommandHandler<GenerateWeeklyStudyPlanCommand, Gener
 builder.Services.AddScoped<ICommandHandler<GenerateAssessmentDraftCommand, GeneratedAssessmentDraftDto>, GenerateAssessmentDraftCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<GenerateSmartStudyAssistantCommand, SmartStudyAssistantResultDto>, GenerateSmartStudyAssistantCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ApplySmartStudyAssistantCommand, ApplySmartStudyAssistantResultDto>, ApplySmartStudyAssistantCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteWeeklyStudyPlanCommand, bool>, DeleteWeeklyStudyPlanCommandHandler>();
 
