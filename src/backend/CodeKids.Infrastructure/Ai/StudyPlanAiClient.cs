@@ -304,11 +304,14 @@ public sealed class StudyPlanAiClient(
             var attempt = attempts[i];
             try
             {
-                // Only Gemini supports inline PDF/image parts; text-only providers fall
-                // back to the prompt-only path.
+                // Only Gemini supports image/PDF parts; text-only providers
+                // cannot see the attachment, so skip them entirely instead of
+                // degrading to a prompt-only call that loses the image.
                 if (attempt.Provider != "gemini")
                 {
-                    return await CompleteJsonAsync(systemPrompt, userPrompt, cancellationToken, jsonSchema);
+                    (failures ??= []).Add(new HttpRequestException(
+                        $"Provider '{attempt.Provider}' cannot process image/PDF attachments; skipped."));
+                    continue;
                 }
 
                 return await CompleteGeminiWithFilesAsync(
@@ -472,6 +475,17 @@ public sealed class StudyPlanAiClient(
         var raw = await response.Content.ReadAsStringAsync(cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
+            // Providers like Groq enforce small tokens-per-minute limits and
+            // return 413 when a single request exceeds them. Retry once with a
+            // truncated prompt before falling through to the next provider.
+            if ((int)response.StatusCode == 413)
+            {
+                return await CompleteOpenAiAsync(
+                    baseUrl, apiKey, model, systemPrompt,
+                    Truncate(userPrompt, userPrompt.Length / 3),
+                    cancellationToken, path);
+            }
+
             throw DescribeFailure(apiKey ?? string.Empty, (int)response.StatusCode, raw);
         }
 
@@ -565,13 +579,19 @@ public sealed class StudyPlanAiClient(
     {
         if (statusCode == 429
             || raw.Contains("RESOURCE_EXHAUSTED", StringComparison.OrdinalIgnoreCase)
-            || raw.Contains("quota", StringComparison.OrdinalIgnoreCase))
+            || raw.Contains("quota", StringComparison.OrdinalIgnoreCase)
+            || raw.Contains("rate_limit_exceeded", StringComparison.OrdinalIgnoreCase))
         {
             return new AiQuotaExceededException(apiKey, $"AI provider key hit its quota (HTTP {statusCode}).");
         }
 
-        return new HttpRequestException($"AI provider returned {statusCode}.");
+        return new HttpRequestException($"AI provider returned {statusCode}: {Truncate(raw, 500)}");
     }
+
+    private static string Truncate(string value, int max) =>
+        string.IsNullOrWhiteSpace(value) ? string.Empty
+        : value.Length <= max ? value
+        : value[..max] + "…";
 
     private static string ExtractGeminiText(string raw)
     {
