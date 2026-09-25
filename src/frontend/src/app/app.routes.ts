@@ -8,6 +8,8 @@ import { VerifyTenantComponent } from './pages/verify-tenant/verify-tenant.compo
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { StudentHomeComponent } from './pages/student-home/student-home.component';
+import { StudentLessonsComponent } from './pages/student-lessons/student-lessons.component';
+import { StudentMaterialsComponent } from './pages/student-materials/student-materials.component';
 import { LessonPlayComponent } from './pages/lesson-play/lesson-play.component';
 import { QuizPlayComponent } from './pages/quiz-play/quiz-play.component';
 import { AssignmentPlayComponent } from './pages/assignment-play/assignment-play.component';
@@ -45,9 +47,11 @@ import { TeacherQuizzesComponent } from './pages/teacher/teacher-quizzes.compone
 import { TeacherAssignmentsComponent } from './pages/teacher/teacher-assignments.component';
 import { TeacherReviewComponent } from './pages/teacher/teacher-review.component';
 import { TeacherStudentsComponent } from './pages/teacher/teacher-students.component';
+import { SmartStudyAssistantComponent } from './pages/teacher/smart-study-assistant/smart-study-assistant.component';
 import { TeacherQuestionBankComponent } from './pages/teacher/teacher-question-bank.component';
 import { TeacherExamsComponent } from './pages/teacher/teacher-exams.component';
 import { TeacherVideosComponent } from './pages/teacher/teacher-videos.component';
+import { TeacherMaterialsComponent } from './pages/teacher/teacher-materials.component';
 import { TeacherWhatsAppComponent } from './pages/teacher/teacher-whatsapp.component';
 import { TeacherAppointmentsComponent } from './pages/teacher/teacher-appointments.component';
 import { TeacherTimetableComponent } from './pages/teacher/teacher-timetable.component';
@@ -90,6 +94,16 @@ export const routes: Routes = [
     path: 'student/chat',
     canActivate: [authGuard, roleGuard(['Student'])],
     component: StudentChatComponent
+  },
+  {
+    path: 'student/lessons/:courseId',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudentLessonsComponent
+  },
+  {
+    path: 'student/materials/:courseId',
+    canActivate: [authGuard, roleGuard(['Student'])],
+    component: StudentMaterialsComponent
   },
   {
     path: 'lessons/:lessonId',
@@ -139,6 +153,8 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
+      { path: 'materials', component: TeacherMaterialsComponent },
+      { path: 'smart-study-assistant', component: SmartStudyAssistantComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'asked-questions', component: TeacherAskedQuestionsComponent },
       { path: 'chat', component: TeacherChatComponent },

@@ -477,6 +477,21 @@
   border-color: rgba(251, 191, 36, 0.5);
 }
 
+.item-row.lessons-index {
+  border-color: rgba(147, 197, 253, 0.32);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.item-row.lessons-index:hover {
+  border-color: rgba(147, 197, 253, 0.55);
+}
+
+.item-row.lessons-index .item-body strong {
+  color: #93c5fd;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+}
+
 .item-body {
   min-width: 0;
 }
@@ -512,6 +527,20 @@
   font-size: 1.05rem;
 }
 
+.chip.material {
+  background: rgba(45, 212, 191, 0.16);
+  border-color: rgba(94, 234, 212, 0.4);
+  color: #99f6e4;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+:host-context([data-theme='light']) .chip.material {
+  background: rgba(13, 148, 136, 0.12);
+  border-color: rgba(13, 148, 136, 0.35);
+  color: #0f766e;
+}
+
 :host-context([data-theme='light']) .course-title,
 :host-context([data-theme='light']) .course-head h3 {
   color: #0b3d91;
@@ -537,6 +566,15 @@
 :host-context([data-theme='light']) .item-row.exam {
   border-color: rgba(15, 118, 110, 0.22);
   background: rgba(15, 118, 110, 0.08);
+}
+
+:host-context([data-theme='light']) .item-row.lessons-index {
+  border-color: rgba(11, 61, 145, 0.22);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+:host-context([data-theme='light']) .item-row.lessons-index .item-body strong {
+  color: #0b3d91;
 }
 
 :host-context([data-theme='light']) .item-row.assignment .item-body strong {

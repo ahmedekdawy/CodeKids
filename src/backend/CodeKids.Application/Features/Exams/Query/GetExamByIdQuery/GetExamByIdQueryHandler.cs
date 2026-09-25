@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Application.Features.QuestionBank;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
@@ -38,11 +39,30 @@ public sealed class GetExamByIdQueryHandler(IAppDbContext dbContext)
             return null;
         }
 
-        if (isStudent && exam.Classroom?.Students.All(s => s.StudentId != query.ViewerUserId) != false)
+        if (isStudent)
+        {
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
+                dbContext, query.ViewerUserId, cancellationToken);
+            var allowed = (exam.CourseId is Guid cid && courseIds.Contains(cid))
+                          || exam.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true;
+            if (!allowed)
+            {
+                return null;
+            }
+        }
+
+        if (!isStudent && !TeacherAssessmentAccess.CanViewAsStaff(query.ViewerRole, exam.CreatedByUserId, query.ViewerUserId))
         {
             return null;
         }
 
-        return CreateExamCommandHandler.Map(exam, includeKey);
+        var dto = CreateExamCommandHandler.Map(exam, includeKey);
+        if (isStudent && await StudentCompletedAssessments.HasExamAsync(
+                dbContext, query.ViewerUserId, exam.Id, cancellationToken))
+        {
+            return dto with { AlreadySubmitted = true };
+        }
+
+        return dto;
     }
 }

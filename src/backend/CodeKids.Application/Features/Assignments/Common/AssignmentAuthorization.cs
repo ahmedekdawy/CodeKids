@@ -36,4 +36,34 @@ internal static class AssignmentAuthorization
             _ => "Only an assigned classroom teacher can create assignments."
         });
     }
+
+    public static async Task EnsureOwnsAsync(
+        IAppDbContext dbContext,
+        Guid teacherUserId,
+        Guid createdByUserId,
+        string action,
+        CancellationToken cancellationToken)
+    {
+        if (createdByUserId == teacherUserId)
+        {
+            return;
+        }
+
+        var isAdmin = await dbContext.Users.AnyAsync(
+            x => x.Id == teacherUserId && x.Role == UserRole.SuperAdmin,
+            cancellationToken);
+        if (isAdmin)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(action switch
+        {
+            "edit" => "Only the assignment teacher can edit assignments.",
+            "delete" => "Only the assignment teacher can delete assignments.",
+            "review" => "Only the assignment teacher can review submissions.",
+            "grade" => "Only the assignment teacher can grade submissions.",
+            _ => "Only the assignment teacher can manage this assignment."
+        });
+    }
 }

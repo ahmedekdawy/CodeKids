@@ -6,6 +6,7 @@ public class Assignment : TenantEntity
 {
     public Guid Id { get; set; }
     public Guid ClassroomId { get; set; }
+    public Guid? CourseId { get; set; }
     public Guid CreatedByUserId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -16,6 +17,7 @@ public class Assignment : TenantEntity
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public Classroom? Classroom { get; set; }
+    public Course? Course { get; set; }
     public User? CreatedBy { get; set; }
     public MediaAsset? SolutionVideo { get; set; }
     public List<AssignmentQuestion> Questions { get; set; } = [];

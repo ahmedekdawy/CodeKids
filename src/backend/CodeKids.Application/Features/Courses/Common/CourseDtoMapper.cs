@@ -5,12 +5,16 @@ namespace CodeKids.Application.Features.Courses;
 
 internal static class CourseDtoMapper
 {
+    private static bool hasContent;
+
     public static CourseDto Map(
         Course course,
         bool includeContent = true,
         CourseContentOutline? outline = null,
         IReadOnlyList<CourseVideoSummaryDto>? videos = null,
-        bool includeUnpublishedQuizzes = true)
+        bool includeUnpublishedQuizzes = true,
+        IReadOnlySet<Guid>? hideQuizIds = null,
+        int materialCount = 0)
     {
         if (!includeContent)
         {
@@ -19,12 +23,14 @@ internal static class CourseDtoMapper
                 Array.Empty<CourseUnitDto>(),
                 Array.Empty<CourseLessonDto>(),
                 Array.Empty<CourseQuizDto>(),
-                Array.Empty<CourseVideoSummaryDto>());
+                Array.Empty<CourseVideoSummaryDto>(),
+                materialCount);
         }
 
         var content = outline ?? new CourseContentOutline([], []);
         var quizzes = course.Quizzes
             .Where(quiz => includeUnpublishedQuizzes || quiz.IsPublished)
+            .Where(quiz => hideQuizIds is null || !hideQuizIds.Contains(quiz.Id))
             .Select(quiz => new CourseQuizDto(
                 quiz.Id,
                 quiz.Title,
@@ -34,7 +40,7 @@ internal static class CourseDtoMapper
                 quiz.IsPublished))
             .ToList();
 
-        return Create(course, content.Units, content.Lessons, quizzes, videos ?? []);
+        return Create(course, content.Units, content.Lessons, quizzes, videos ?? [], materialCount);
     }
 
     private static CourseDto Create(
@@ -42,7 +48,8 @@ internal static class CourseDtoMapper
         IReadOnlyList<CourseUnitDto> units,
         IReadOnlyList<CourseLessonDto> lessons,
         IReadOnlyList<CourseQuizDto> quizzes,
-        IReadOnlyList<CourseVideoSummaryDto> videos) =>
+        IReadOnlyList<CourseVideoSummaryDto> videos,
+        int materialCount = 0) =>
         new(
             course.Id,
             course.Title,
@@ -69,5 +76,7 @@ internal static class CourseDtoMapper
             course.Notes,
             course.Variants,
             course.StudentAskEnabled,
-            course.IsPublished);
+            course.IsPublished,
+            hasContent,
+            materialCount);
 }

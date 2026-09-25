@@ -37,7 +37,18 @@ public sealed class CreateExamCommandHandler(IAppDbContext dbContext, Notificati
             throw new InvalidOperationException("Select at least one bank question.");
         }
 
-        var courseId = command.CourseId ?? classroom.CourseId;
+        var courseId = command.CourseId
+            ?? await AssessmentRelatedCourse.ResolveIdAsync(
+                dbContext,
+                null,
+                classroom.Id,
+                command.TeacherUserId,
+                cancellationToken);
+        if (command.CourseId is Guid requested && requested != Guid.Empty && courseId is null)
+        {
+            throw new InvalidOperationException("Course not found.");
+        }
+
         if (courseId is Guid cid)
         {
             _ = await dbContext.Courses.AsNoTracking()

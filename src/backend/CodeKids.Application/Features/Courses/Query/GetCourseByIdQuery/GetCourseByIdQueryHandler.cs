@@ -1,6 +1,7 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assessments;
+using CodeKids.Application.Features.LearningMaterials;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Courses;
@@ -27,12 +28,21 @@ public sealed class GetCourseByIdQueryHandler(IAppDbContext dbContext)
 
         var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
         var videosByCourse = await CourseVideoLoader.LoadByCourseIdsAsync(dbContext, [course.Id], cancellationToken);
+        var materialCounts = await LearningMaterialCounter.CountByCourseIdsAsync(dbContext, [course.Id], cancellationToken);
         var includeUnpublishedQuizzes = PublishedAssessmentAccess.CanViewUnpublished(query.Role);
+        IReadOnlySet<Guid>? hideQuizIds = null;
+        if (StudentCompletedAssessments.IsStudent(query.Role) && query.UserId is Guid studentId)
+        {
+            hideQuizIds = await StudentCompletedAssessments.QuizIdsAsync(dbContext, studentId, cancellationToken);
+        }
+
         return CourseDtoMapper.Map(
             course,
             includeContent: true,
             outline,
             videosByCourse.GetValueOrDefault(course.Id, []),
-            includeUnpublishedQuizzes);
+            includeUnpublishedQuizzes,
+            hideQuizIds,
+            materialCounts.GetValueOrDefault(course.Id));
     }
 }

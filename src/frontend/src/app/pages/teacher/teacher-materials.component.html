@@ -1,0 +1,143 @@
+<div class="panel-page">
+  <header class="videos-head">
+    <h2>{{ 'materials.title' | t }}</h2>
+    <p class="meta">{{ 'materials.subtitle' | t }}</p>
+  </header>
+
+  <app-page-feedback [ok]="info()" [error]="error()" />
+
+  <section class="block">
+    <div class="card-head">
+      <h3>{{ 'materials.upload' | t }}</h3>
+      <p class="meta">{{ 'materials.uploadHint' | t }}</p>
+    </div>
+
+    <form class="upload-form" (ngSubmit)="attachMaterial()">
+      <div class="field-grid">
+        <label>
+          {{ 'common.course' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedCourseId"
+            name="materialCourseId"
+            (ngModelChange)="onCourseChange()"
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+          />
+        </label>
+        <label>
+          {{ 'common.unit' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedUnitId"
+            name="materialUnitId"
+            (ngModelChange)="onUnitChange()"
+            [emptyLabel]="'common.selectUnit' | t"
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.lesson' | t }}
+          <app-searchable-select
+            [(ngModel)]="selectedLessonId"
+            name="materialLessonId"
+            [emptyLabel]="'materials.optionalLesson' | t"
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
+          />
+        </label>
+        <label>
+          {{ 'common.title' | t }}
+          <input [(ngModel)]="materialTitle" name="materialTitle" [placeholder]="'materials.optionalTitle' | t" />
+        </label>
+      </div>
+
+      <div class="source-row">
+        <div class="source-file">
+          <span class="source-file-label">{{ 'materials.file' | t }}</span>
+          <div class="source-file-row">
+            <label class="file-btn" [class.disabled]="uploading()">
+              {{ 'materials.chooseFile' | t }}
+              <input
+                type="file"
+                accept="application/pdf,image/png,image/jpeg,image/webp,image/gif,audio/*"
+                hidden
+                (change)="onFileSelected($event)"
+                [disabled]="uploading()"
+              />
+            </label>
+            @if (file(); as selected) {
+              <span class="file-name">{{ selected.name }}</span>
+            }
+          </div>
+          <p class="meta">{{ 'materials.allowedTypes' | t }}</p>
+        </div>
+
+        <button type="submit" [disabled]="uploading()">
+          {{ (uploading() ? 'common.loading' : 'materials.upload') | t }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="block">
+    <div class="card-head">
+      <h3>{{ 'materials.list' | t }}</h3>
+      <span class="count-pill">{{ filteredMaterials().length }}</span>
+    </div>
+
+    <div class="field-grid">
+      <label>
+        {{ 'common.course' | t }}
+        <select [(ngModel)]="filterCourseId" name="materialFilterCourse">
+          <option value="">{{ 'common.all' | t }}</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ courseLabel(course) }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        {{ 'materials.search' | t }}
+        <input [(ngModel)]="filterSearch" name="materialSearch" [placeholder]="'materials.searchPlaceholder' | t" />
+      </label>
+    </div>
+
+    @if (!filteredMaterials().length) {
+      <p class="meta">{{ 'materials.empty' | t }}</p>
+    } @else {
+      <div class="material-list">
+        @for (material of filteredMaterials(); track material.id) {
+          <div class="material-row">
+            <button type="button" class="material-main" (click)="openPreview(material)">
+              <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>
+              <p class="meta">
+                {{ material.courseTitle }} · {{ scopeLabel(material) }}
+                · {{ material.fileName }} ({{ formatBytes(material.sizeBytes) }})
+              </p>
+            </button>
+            <div class="material-actions">
+              <button type="button" class="ghost-btn small-btn" (click)="openPreview(material)">
+                {{ 'materials.preview' | t }}
+              </button>
+              <button type="button" class="ghost-btn small-btn danger" (click)="deleteMaterial(material)">
+                {{ 'common.delete' | t }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  @if (preview(); as item) {
+    <div class="preview-overlay" (click)="closePreview()">
+      <div class="preview-card" (click)="$event.stopPropagation()">
+        <header class="preview-head">
+          <h3>{{ item.title }}</h3>
+          <button type="button" class="ghost-btn small-btn" (click)="closePreview()">{{ 'common.close' | t }}</button>
+        </header>
+        <app-material-viewer
+          [materialId]="item.id"
+          [kind]="item.kind"
+          [title]="item.title"
+        />
+      </div>
+    </div>
+  }
+</div>

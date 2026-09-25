@@ -167,7 +167,7 @@ public sealed class NotificationPublisher(
                 $"/assignments/{assignment.Id}",
                 assignment.DueAtUtc,
                 assignment.ClassroomId,
-                CourseId: null,
+                assignment.CourseId,
                 assignment.CreatedByUserId),
             () => NotificationRecipients.StudentsForAssignmentAsync(dbContext, assignment.ClassroomId, cancellationToken),
             cancellationToken);

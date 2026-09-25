@@ -140,6 +140,12 @@
                 <div>
                   <h3 class="course-title">{{ course.title }}</h3>
                   <p class="course-desc">{{ course.description }}</p>
+                  @if (courseLessonCount(course)>0){
+                    <a class="link" [routerLink]="['/student/lessons', course.id]">
+
+                    <span>{{ 'student.lessonCount' | t: { count: courseLessonCount(course) } }}</span>
+                    </a>
+                  }
                 </div>
                 <span class="theme-tag">{{ course.theme }}</span>
               </header>
@@ -150,15 +156,16 @@
               </p>
 
               @if (
-                course.lessons.length ||
+                courseLessonCount(course) ||
                 courseAssignments(course).length ||
                 courseExams(course).length ||
                 publishedQuizzes(course).length ||
-                courseVideos(course).length
+                courseVideos(course).length ||
+                course.materialCount
               ) {
                 <div class="course-counts">
-                  @if (course.lessons.length) {
-                    <span>{{ 'student.lessonCount' | t: { count: course.lessons.length } }}</span>
+                  @if (courseLessonCount(course)) {
+                   
                   }
                   @if (courseAssignments(course).length) {
                     <span>{{ 'student.assignmentCount' | t: { count: courseAssignments(course).length } }}</span>
@@ -187,16 +194,17 @@
                 </div>
               }
 
-              @if (course.lessons.length) {
+              @if (course.materialCount) {
                 <div class="link-group">
-                  <p class="group-label">{{ 'student.lessons' | t }}</p>
+                  <p class="group-label">{{ 'materials.homeLabel' | t }}</p>
                   <div class="chip-row">
-                    @for (lesson of course.lessons; track lesson.id) {
-                      <a class="chip" [routerLink]="['/lessons', lesson.id]">{{ lesson.title }}</a>
-                    }
+                    <a class="chip material" [routerLink]="['/student/materials', course.id]">
+                      {{ 'materials.openPage' | t }} ({{ course.materialCount }})
+                    </a>
                   </div>
                 </div>
               }
+
 
               @if (publishedQuizzes(course).length) {
                 <div class="link-group quizzes">

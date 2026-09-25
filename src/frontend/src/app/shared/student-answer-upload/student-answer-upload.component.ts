@@ -20,6 +20,7 @@ export class StudentAnswerUploadComponent {
 
   readonly mediaAssetIdChange = output<string | null>();
   readonly imageUrlChange = output<string | null>();
+  readonly imageChange = output<{ mediaAssetId: string | null; imageUrl: string | null }>();
 
   readonly uploading = signal(false);
   readonly error = signal('');
@@ -36,6 +37,7 @@ export class StudentAnswerUploadComponent {
         this.uploading.set(false);
         this.mediaAssetIdChange.emit(result.id);
         this.imageUrlChange.emit(result.url);
+        this.imageChange.emit({ mediaAssetId: result.id, imageUrl: result.url });
       },
       error: (err) => {
         this.uploading.set(false);
@@ -47,5 +49,6 @@ export class StudentAnswerUploadComponent {
   clear(): void {
     this.mediaAssetIdChange.emit(null);
     this.imageUrlChange.emit(null);
+    this.imageChange.emit({ mediaAssetId: null, imageUrl: null });
   }
 }

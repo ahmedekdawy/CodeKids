@@ -3,6 +3,7 @@ using CodeKids.Domain.Entities;
 using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
 using CodeKids.Application.Features.QuestionBank;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Application.Abstractions;
 using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,30 @@ public sealed class GetQuizByIdQueryHandler(IAppDbContext dbContext)
             return null;
         }
 
-        return GetQuizzesQueryHandler.Map(quiz);
+        if (!TeacherAssessmentAccess.CanViewAsStaff(query.ViewerRole, quiz.CreatedByUserId, query.ViewerUserId)
+            && !StudentCompletedAssessments.IsStudent(query.ViewerRole))
+        {
+            return null;
+        }
+
+        if (StudentCompletedAssessments.IsStudent(query.ViewerRole) && query.ViewerUserId is Guid studentId)
+        {
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
+                dbContext, studentId, cancellationToken);
+            if (!courseIds.Contains(quiz.CourseId))
+            {
+                return null;
+            }
+        }
+
+        var dto = GetQuizzesQueryHandler.Map(quiz);
+        if (StudentCompletedAssessments.IsStudent(query.ViewerRole)
+            && await StudentCompletedAssessments.HasQuizAsync(
+                dbContext, query.ViewerUserId, quiz.Id, cancellationToken))
+        {
+            return dto with { AlreadySubmitted = true };
+        }
+
+        return dto;
     }
 }

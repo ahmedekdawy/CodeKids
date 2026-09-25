@@ -1,6 +1,6 @@
 <div class="page">
   <app-api-busy-indicator />
-  @if (!started() || result()) {
+  @if (!started() || result() || quiz()?.alreadySubmitted) {
     <a routerLink="/student" class="back">{{ 'common.backMissions' | t }}</a>
   }
   @if (quiz(); as current) {
@@ -13,10 +13,15 @@
       <div class="xp-pill">{{ current.xpReward }} {{ 'common.xp' | t }}</div>
     </section>
 
-    <app-attempt-guard />
+    @if (!current.alreadySubmitted) {
+      <app-attempt-guard />
+    }
 
     <section class="block">
-      @if (!started() && !result()) {
+      @if (current.alreadySubmitted && !result()) {
+        <h3>{{ 'play.submitted' | t }}</h3>
+        <p>{{ 'play.alreadySubmitted' | t }}</p>
+      } @else if (!started() && !result()) {
         <div class="attempt-intro">
           <h2>{{ 'play.timer.readyTitle' | t }}</h2>
           <ul class="attempt-facts">
@@ -34,7 +39,7 @@
         </div>
       }
 
-      @if (started() && !result()) {
+      @if (started() && !result() && !current.alreadySubmitted) {
         @for (question of current.questions; track question.id) {
           <div class="question">
             <strong>{{ question.sortOrder }}.</strong>

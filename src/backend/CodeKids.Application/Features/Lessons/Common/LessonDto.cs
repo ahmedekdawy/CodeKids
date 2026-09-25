@@ -15,4 +15,5 @@ public sealed record LessonDto(
     IReadOnlyList<LessonStepDto> Steps,
     IReadOnlyList<LessonVideoSummaryDto> Videos,
     Guid? UnitId = null,
-    bool StudentAskEnabled = false);
+    bool StudentAskEnabled = false,
+    bool HasContent = false);

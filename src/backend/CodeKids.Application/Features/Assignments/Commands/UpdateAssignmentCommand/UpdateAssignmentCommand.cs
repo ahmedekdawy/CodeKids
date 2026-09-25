@@ -5,6 +5,7 @@ namespace CodeKids.Application.Features.Assignments;
 
 public sealed record UpdateAssignmentRequest(
     Guid ClassroomId,
+    Guid? CourseId,
     string Title,
     string? Description,
     DateTimeOffset? DueAtUtc,
@@ -16,6 +17,7 @@ public sealed record UpdateAssignmentCommand(
     Guid TeacherUserId,
     Guid AssignmentId,
     Guid ClassroomId,
+    Guid? CourseId,
     string Title,
     string? Description,
     DateTimeOffset? DueAtUtc,

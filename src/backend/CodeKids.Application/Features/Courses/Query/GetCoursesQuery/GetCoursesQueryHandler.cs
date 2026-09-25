@@ -1,6 +1,7 @@
 using CodeKids.Domain.Abstractions;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assessments;
+using CodeKids.Application.Features.LearningMaterials;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Courses;
@@ -39,12 +40,24 @@ public sealed class GetCoursesQueryHandler(IAppDbContext dbContext)
             dbContext,
             courses.Select(c => c.Id).ToList(),
             cancellationToken);
+        var materialCounts = await LearningMaterialCounter.CountByCourseIdsAsync(
+            dbContext,
+            courses.Select(c => c.Id).ToList(),
+            cancellationToken);
         var includeUnpublishedQuizzes = PublishedAssessmentAccess.CanViewUnpublished(query.Role);
+        IReadOnlySet<Guid>? hideQuizIds = null;
+        if (StudentCompletedAssessments.IsStudent(query.Role) && query.UserId is Guid studentId)
+        {
+            hideQuizIds = await StudentCompletedAssessments.QuizIdsAsync(dbContext, studentId, cancellationToken);
+        }
+
         return courses.Select(course => CourseDtoMapper.Map(
             course,
             query.IncludeContent,
             outlines[course.Id],
             videosByCourse.GetValueOrDefault(course.Id, []),
-            includeUnpublishedQuizzes)).ToList();
+            includeUnpublishedQuizzes,
+            hideQuizIds,
+            materialCounts.GetValueOrDefault(course.Id))).ToList();
     }
 }

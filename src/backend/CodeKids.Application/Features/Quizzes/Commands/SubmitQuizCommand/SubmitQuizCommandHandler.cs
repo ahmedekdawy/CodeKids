@@ -27,6 +27,14 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("Quiz is not available.");
         }
 
+        var alreadyAttempted = await dbContext.QuizAttempts
+            .AsNoTracking()
+            .AnyAsync(x => x.UserId == user.Id && x.QuizId == quiz.Id, cancellationToken);
+        if (alreadyAttempted)
+        {
+            throw new InvalidOperationException("Quiz already submitted.");
+        }
+
         var answerable = quiz.Questions
             .Where(x => x.QuestionType != BankQuestionType.Paragraph)
             .ToList();

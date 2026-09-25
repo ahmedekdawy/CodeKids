@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Features.Badges;
+using CodeKids.Application.Features.Classrooms;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -19,6 +20,7 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
                 .ThenInclude(c => c.Courses)
             .Include(x => x.Classroom!)
                 .ThenInclude(c => c.Students)
+            .Include(x => x.Course)
             .Include(x => x.CreatedBy)
             .Include(x => x.Questions)
             .OrderByDescending(x => x.CreatedAtUtc)
@@ -40,12 +42,19 @@ public sealed class GetAssignmentsQueryHandler(IAppDbContext dbContext)
 
         if (isTeacher)
         {
-            assignments = assignments.Where(x => x.Classroom?.Courses.Any(t => t.TeacherId == query.ViewerUserId) == true).ToList();
+            assignments = assignments.Where(x => x.CreatedByUserId == query.ViewerUserId).ToList();
         }
         else if (isStudent)
         {
+            var courseIds = await StudentCourseVisibility.GetAssessmentCourseIdsAsync(
+                dbContext, query.ViewerUserId, cancellationToken);
+            var submittedIds = await StudentCompletedAssessments.AssignmentIdsAsync(
+                dbContext, query.ViewerUserId, cancellationToken);
             assignments = assignments
-                .Where(x => x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true)
+                .Where(x => (x.CourseId is Guid cid && courseIds.Contains(cid))
+                            //|| x.Classroom?.Students.Any(s => s.StudentId == query.ViewerUserId) == true
+                            )
+                .Where(x => !submittedIds.Contains(x.Id))
                 .ToList();
         }
         else if (!isAdmin)

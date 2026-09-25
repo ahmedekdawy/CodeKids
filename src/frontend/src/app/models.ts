@@ -118,6 +118,7 @@ export interface Course {
   lessons: CourseLesson[];
   quizzes: CourseQuiz[];
   videos?: CourseVideoSummary[];
+  materialCount?: number;
 }
 
 export interface Stage {
@@ -246,6 +247,39 @@ export interface TeacherVideoLibrary {
   courseVideos?: CourseVideoLibraryItem[];
 }
 
+export interface LearningMaterial {
+  id: string;
+  courseId: string;
+  unitId?: string | null;
+  lessonId?: string | null;
+  mediaAssetId: string;
+  title: string;
+  kind: 'Pdf' | 'Audio' | 'Image' | string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  sortOrder: number;
+  createdAtUtc: string;
+}
+
+export interface LearningMaterialPage {
+  scope: string;
+  courseId: string;
+  courseTitle: string;
+  unitId?: string | null;
+  unitTitle?: string | null;
+  lessonId?: string | null;
+  lessonTitle?: string | null;
+  items: LearningMaterial[];
+}
+
+export interface TeacherLearningMaterial extends LearningMaterial {
+  scope: string;
+  courseTitle: string;
+  unitTitle?: string | null;
+  lessonTitle?: string | null;
+}
+
 export interface PlaybackInfo {
   mediaAssetId: string;
   playbackUrl: string;
@@ -321,6 +355,7 @@ export interface Quiz {
   durationMinutes?: number | null;
   isPublished: boolean;
   questions: QuizQuestion[];
+  alreadySubmitted?: boolean;
 }
 
 export interface TeacherQuizListItem {
@@ -1148,6 +1183,8 @@ export interface Assignment {
   id: string;
   classroomId: string;
   classroomName: string;
+  courseId?: string | null;
+  courseTitle?: string | null;
   title: string;
   description: string;
   dueAtUtc?: string | null;
@@ -1157,6 +1194,7 @@ export interface Assignment {
   createdByName: string;
   solutionVideoMediaAssetId?: string | null;
   questions: AssignmentQuestion[];
+  alreadySubmitted?: boolean;
 }
 
 export interface AssignmentAnswerReview {
@@ -1273,6 +1311,7 @@ export interface Exam {
   createdByUserId: string;
   createdByName: string;
   questions: ExamQuestion[];
+  alreadySubmitted?: boolean;
 }
 
 export interface ExamAnswerReview {

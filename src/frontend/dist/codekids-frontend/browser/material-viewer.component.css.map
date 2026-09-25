@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;d81fba84d325c0e81f4e123d4334b489fab8799e3329a621267e2f1dbab688cb;D:/Projects/CodeKids/src/frontend/src/app/shared/material-viewer/material-viewer.component.ts"],
+  "sourcesContent": ["\n      .material-viewer {\n        display: flex;\n        flex-direction: column;\n        gap: 0.5rem;\n        min-width: 0;\n      }\n\n      .material-image {\n        max-width: 100%;\n        max-height: 420px;\n        border-radius: 12px;\n        object-fit: contain;\n      }\n\n      .material-audio {\n        width: 100%;\n      }\n\n      .material-pdf {\n        width: 100%;\n        height: 480px;\n        border: 1px solid var(--border, #ddd);\n        border-radius: 12px;\n        background: #fff;\n      }\n\n      .compact .material-image {\n        max-height: 240px;\n      }\n\n      .compact .material-pdf {\n        height: 320px;\n      }\n    "],
+  "mappings": ";AACM,CAAC;AACC,WAAS;AACT,kBAAgB;AAChB,OAAK;AACL,aAAW;AACb;AAEA,CAAC;AACC,aAAW;AACX,cAAY;AACZ,iBAAe;AACf,cAAY;AACd;AAEA,CAAC;AACC,SAAO;AACT;AAEA,CAAC;AACC,SAAO;AACP,UAAQ;AACR,UAAQ,IAAI,MAAM,IAAI,QAAQ,EAAE;AAChC,iBAAe;AACf,cAAY;AACd;AAEA,CAAC,QAAQ,CAnBR;AAoBC,cAAY;AACd;AAEA,CAJC,QAIQ,CAZR;AAaC,UAAQ;AACV;",
+  "names": []
+}

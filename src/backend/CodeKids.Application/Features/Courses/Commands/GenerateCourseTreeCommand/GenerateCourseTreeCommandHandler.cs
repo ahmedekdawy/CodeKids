@@ -11,7 +11,8 @@ namespace CodeKids.Application.Features.Courses;
 
 public sealed class GenerateCourseTreeCommandHandler(
     IAppDbContext dbContext,
-    IStudyPlanAiClient aiClient)
+    IStudyPlanAiClient aiClient,
+    ICourseBookTextProvider bookTextProvider)
     : ICommandHandler<GenerateCourseTreeCommand, GenerateCourseTreeResult>
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -78,12 +79,13 @@ public sealed class GenerateCourseTreeCommandHandler(
 
         var teacherPrompt = CourseOutlineResolver.Clamp(command.Prompt, CourseTreeAccess.PromptMax);
         var arabic = IsArabic(command.Language);
+        var bookText = await bookTextProvider.TryGetBookTextAsync(course, BookTextMaxCharacters, cancellationToken);
         Draft? draft = null;
         try
         {
             var json = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(mode, arabic),
-                BuildUserPrompt(course, grade, stage, outline, mode, arabic, teacherPrompt),
+                BuildUserPrompt(course, grade, stage, outline, mode, arabic, teacherPrompt, bookText),
                 cancellationToken,
                 ResponseSchema);
             draft = ParseDraft(json);
@@ -143,6 +145,7 @@ public sealed class GenerateCourseTreeCommandHandler(
                   - استخدم أسماء وحدات ودروس رسمية مناسبة للمادة والصف في مصر.
                   - 4 إلى 8 وحدات، و3 إلى 10 دروس لكل وحدة حسب طبيعة المادة.
                   - ممنوع أسماء عامة مثل "الوحدة 1" أو "الدرس 1" بدون عنوان حقيقي.
+                  - إذا تم توفير محتوى كتاب المادة، اعتمد عليه كمصدر أساسي لعناوين الوحدات والدروس وترتيبها.
                   - إذا قدّم المعلم تعليمات إضافية، اتبعها ما لم تتعارض مع القواعد أعلاه.
                   """
                 : """
@@ -155,6 +158,7 @@ public sealed class GenerateCourseTreeCommandHandler(
                   - Use official-style unit and lesson names for the subject and grade in Egypt.
                   - Provide 4 to 8 units and 3 to 10 lessons per unit depending on the subject.
                   - Never use generic names like "Unit 1" or "Lesson 1" without a real title.
+                  - When the uploaded course book content is provided, use it as the primary source for unit and lesson titles and their order.
                   - If the teacher provides extra instructions, follow them when they do not conflict with the rules above.
                   """
             : arabic
@@ -181,6 +185,8 @@ public sealed class GenerateCourseTreeCommandHandler(
                   - If the teacher provides extra instructions, follow them when they do not conflict with the rules above.
                   """;
 
+    private const int BookTextMaxCharacters = 24000;
+
     private static string BuildUserPrompt(
         Course course,
         Grade? grade,
@@ -188,7 +194,8 @@ public sealed class GenerateCourseTreeCommandHandler(
         CourseContentOutline outline,
         CourseTreeMode mode,
         bool arabic,
-        string? teacherPrompt)
+        string? teacherPrompt,
+        string bookText)
     {
         var sb = new StringBuilder();
         if (arabic)
@@ -203,6 +210,8 @@ public sealed class GenerateCourseTreeCommandHandler(
             {
                 sb.AppendLine($"وصف المادة: {course.Description.Trim()}");
             }
+
+            AppendBookContent(sb, bookText, arabic);
 
             sb.AppendLine("الفهرس الحالي:");
             AppendOutline(sb, outline, arabic);
@@ -224,6 +233,8 @@ public sealed class GenerateCourseTreeCommandHandler(
                 sb.AppendLine($"Subject description: {course.Description.Trim()}");
             }
 
+            AppendBookContent(sb, bookText, arabic);
+
             sb.AppendLine("Current index:");
             AppendOutline(sb, outline, arabic);
             if (outline.Units.Count == 0)
@@ -234,6 +245,27 @@ public sealed class GenerateCourseTreeCommandHandler(
 
         AppendTeacherPrompt(sb, teacherPrompt, arabic);
         return sb.ToString();
+    }
+
+    private static void AppendBookContent(StringBuilder sb, string bookText, bool arabic)
+    {
+        var text = (bookText ?? string.Empty).Trim();
+        if (text.Length == 0)
+        {
+            return;
+        }
+
+        sb.AppendLine();
+        if (arabic)
+        {
+            sb.AppendLine("محتوى الكتاب المرفوع للمادة (مقتطف) — اعتمد عليه كمصدر أساسي للوحدات والدروس:");
+            sb.AppendLine(text);
+        }
+        else
+        {
+            sb.AppendLine("Uploaded course book content (excerpt) — use it as the primary source for units and lessons:");
+            sb.AppendLine(text);
+        }
     }
 
     private static void AppendTeacherPrompt(StringBuilder sb, string? teacherPrompt, bool arabic)
@@ -287,7 +319,15 @@ public sealed class GenerateCourseTreeCommandHandler(
             return null;
         }
 
-        return JsonSerializer.Deserialize<Draft>(text, JsonOptions);
+        try
+        {
+            return JsonSerializer.Deserialize<Draft>(text, JsonOptions);
+        }
+        catch (JsonException)
+        {
+            // Truncated or malformed JSON — treat as a failure rather than a partial index.
+            return null;
+        }
     }
 
     private static string ExtractJson(string raw)

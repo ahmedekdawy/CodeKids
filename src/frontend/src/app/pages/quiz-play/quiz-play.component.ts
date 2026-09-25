@@ -62,7 +62,7 @@ export class QuizPlayComponent {
 
   begin(): void {
     const quiz = this.quiz();
-    if (!quiz || this.started()) return;
+    if (!quiz || this.started() || quiz.alreadySubmitted) return;
     this.started.set(true);
     this.attempt.start({
       durationMinutes: quiz.durationMinutes,
@@ -95,7 +95,7 @@ export class QuizPlayComponent {
 
   submit(): void {
     const quiz = this.quiz();
-    if (!quiz || this.loading()) return;
+    if (!quiz || this.loading() || quiz.alreadySubmitted) return;
 
     this.attempt.stop();
     this.loading.set(true);

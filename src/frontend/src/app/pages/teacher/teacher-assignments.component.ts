@@ -328,6 +328,7 @@ export class TeacherAssignmentsComponent {
     this.assignmentTitle = assignment.title;
     this.assignmentDescription = assignment.description;
     this.assignmentClassroomId = assignment.classroomId;
+    this.assignmentCourseId = assignment.courseId || '';
     this.assignmentXp = assignment.xpReward;
     this.assignmentIsPublished = assignment.isPublished;
     this.questions = assignment.questions.length
@@ -335,6 +336,7 @@ export class TeacherAssignmentsComponent {
       : [emptyQuestionDraft(this.assignmentType)];
     this.assignmentQuestionCount = this.questions.length;
     this.onClassroomChange();
+    if (assignment.courseId) this.assignmentCourseId = assignment.courseId;
     document.getElementById('assignment-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -405,19 +407,24 @@ export class TeacherAssignmentsComponent {
   }
 
   linksCourseLabel(assignment: Assignment): string {
-    const room = this.classrooms().find((item) => item.id === assignment.classroomId);
-    return this.classroomCourseLabel(room);
+    const fromAssignment = assignment.courseTitle?.trim();
+    if (fromAssignment) return fromAssignment;
+    if (assignment.courseId) {
+      const course = this.courses().find((item) => item.id === assignment.courseId);
+      if (course?.title?.trim()) return course.title.trim();
+    }
+    return this.teacherCourseTitleForClassroom(assignment.classroomId);
   }
 
-  private classroomCourseLabel(room: Classroom | undefined): string {
+  private teacherCourseTitleForClassroom(classroomId: string): string {
+    const room = this.classrooms().find((item) => item.id === classroomId);
     if (!room) return '';
-    const titles = [
-      room.courseTitle,
-      ...(room.courses ?? []).map((course) => course.courseTitle)
-    ]
-      .map((title) => title?.trim())
-      .filter((title): title is string => !!title);
-    return [...new Set(titles)].join(', ');
+    const teacherId = this.auth.user()?.id;
+    const taught = (room.courses ?? []).filter(
+      (link) => !!link.courseTitle?.trim() && (!teacherId || !link.teacherId || link.teacherId === teacherId)
+    );
+    const titles = [...new Set(taught.map((link) => link.courseTitle!.trim()))];
+    return titles.length === 1 ? titles[0] : '';
   }
 
   isPublishing(id: string): boolean {
@@ -439,6 +446,7 @@ export class TeacherAssignmentsComponent {
 
     const payload = {
       classroomId: this.assignmentClassroomId,
+      courseId: this.assignmentCourseId || null,
       title: this.assignmentTitle,
       description: this.assignmentDescription,
       dueAtUtc: this.editingDueAtUtc,

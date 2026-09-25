@@ -41,6 +41,8 @@ using CodeKids.Application.Features.Subjects;
 
 using CodeKids.Application.Features.Lessons;
 
+using CodeKids.Application.Features.LearningMaterials;
+
 using CodeKids.Application.Features.Media;
 
 using CodeKids.Application.Features.Meetings;
@@ -60,6 +62,8 @@ using CodeKids.Application.Features.Reports;
 using CodeKids.Application.Features.SiteSettings;
 
 using CodeKids.Application.Features.StudyPlans;
+
+using CodeKids.Application.Features.SmartStudyAssistant;
 
 using CodeKids.Application.Features.StudentAsk;
 
@@ -477,6 +481,14 @@ builder.Services.AddScoped<ICommandHandler<GradeExamAttemptCommand, ExamAttemptD
 
 builder.Services.AddScoped<ICommandHandler<AttachLessonVideoCommand, LessonVideoDto>, AttachLessonVideoCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<AttachLearningMaterialCommand, LearningMaterialDto>, AttachLearningMaterialCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteLearningMaterialCommand, bool>, DeleteLearningMaterialCommandHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetLearningMaterialPageQuery, LearningMaterialPageDto>, GetLearningMaterialPageQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetTeacherLearningMaterialsQuery, IReadOnlyList<TeacherLearningMaterialDto>>, GetTeacherLearningMaterialsQueryHandler>();
+
 builder.Services.AddScoped<ICommandHandler<RegisterMediaFromUrlCommand, MediaAssetDto>, RegisterMediaFromUrlCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<AttachAssignmentSolutionVideoCommand, MediaAssetDto>, AttachAssignmentSolutionVideoCommandHandler>();
@@ -513,6 +525,9 @@ builder.Services.AddScoped<ICommandHandler<SaveWeeklyStudyPlanCommand, WeeklyStu
 builder.Services.AddScoped<ICommandHandler<GenerateWeeklyStudyPlanCommand, GenerateWeeklyStudyPlanResult>, GenerateWeeklyStudyPlanCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<GenerateAssessmentDraftCommand, GeneratedAssessmentDraftDto>, GenerateAssessmentDraftCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<GenerateSmartStudyAssistantCommand, SmartStudyAssistantResultDto>, GenerateSmartStudyAssistantCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ApplySmartStudyAssistantCommand, ApplySmartStudyAssistantResultDto>, ApplySmartStudyAssistantCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<DeleteWeeklyStudyPlanCommand, bool>, DeleteWeeklyStudyPlanCommandHandler>();
 
@@ -686,6 +701,8 @@ app.MapAppointmentsEndpoints();
 
 app.MapAssessmentsEndpoints();
 
+app.MapSmartStudyAssistantEndpoints();
+
 app.MapAssignmentsEndpoints();
 
 app.MapAttendanceEndpoints();
@@ -726,6 +743,8 @@ app.MapHub<ChatHub>("/hubs/chat").RequireAuthorization();
 app.MapHub<NotificationHub>("/hubs/notifications").RequireAuthorization();
 
 app.MapMediaEndpoints();
+
+app.MapLearningMaterialEndpoints();
 
 app.MapQuestionImageEndpoints();
 

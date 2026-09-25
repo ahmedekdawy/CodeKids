@@ -1,0 +1,319 @@
+.ssa-page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+  padding-bottom: 48px;
+}
+
+.ssa-header h1 {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+}
+
+.ssa-header p {
+  margin: 0;
+  color: var(--text-muted, #5b6b7c);
+  font-size: 0.95rem;
+}
+
+.ssa-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #dbe4ec);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);
+}
+
+.ssa-card h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  color: var(--heading, #14344b);
+}
+
+.ssa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.ssa-grid label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #5b6b7c);
+}
+
+.ssa-grid select {
+  padding: 9px 12px;
+  border: 1px solid var(--border, #c6d2dd);
+  border-radius: 9px;
+  background: var(--input-bg, #fff);
+  font: inherit;
+  color: var(--text, #1c2434);
+}
+
+/* Native dropdown popups inherit color-scheme from the page; style option
+   rows explicitly so text stays readable in both dark and light themes. */
+.ssa-grid select option {
+  background: var(--bg-elevated, #fff);
+  color: var(--text, #1c2434);
+}
+
+.ssa-dropzone {
+  border: 2px dashed var(--border, #b8c8d8);
+  border-radius: 12px;
+  padding: 26px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.ssa-dropzone:hover {
+  border-color: var(--accent, #3d84c6);
+  background: rgb(61 132 198 / 4%);
+}
+
+.ssa-dropzone-icon {
+  font-size: 1.8rem;
+}
+
+.ssa-dropzone-hint p {
+  margin: 6px 0 2px;
+}
+
+.ssa-dropzone-hint small {
+  color: var(--text-muted, #7a8a9a);
+}
+
+.ssa-files {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  text-align: start;
+}
+
+.ssa-addmore {
+  display: block;
+  margin-top: 10px;
+  color: var(--text-muted, #7a8a9a);
+}
+
+.ssa-apply {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgb(61 132 198 / 6%);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.ssa-apply span {
+  font-weight: 600;
+}
+
+.ssa-file {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: start;
+}
+
+.ssa-file img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border, #dbe4ec);
+}
+
+.ssa-file-icon {
+  font-size: 2.2rem;
+}
+
+.ssa-file div {
+  flex: 1;
+  display: grid;
+}
+
+.ssa-file small {
+  color: var(--text-muted, #7a8a9a);
+}
+
+.ssa-remove {
+  border: 1px solid var(--border, #dbe4ec);
+  background: transparent;
+  color: #b3413c;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.ssa-remove:hover {
+  background: #fdecea;
+}
+
+.ssa-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.ssa-action {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  padding: 14px 16px;
+  border: 1px solid var(--border, #c6d2dd);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  cursor: pointer;
+  text-align: start;
+  font: inherit;
+  transition: border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.ssa-action:hover:not(:disabled) {
+  border-color: var(--accent, #3d84c6);
+  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);
+  transform: translateY(-1px);
+}
+
+.ssa-action:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.ssa-action-icon {
+  font-size: 1.4rem;
+}
+
+.ssa-action small {
+  color: var(--text-muted, #7a8a9a);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.ssa-spinner {
+  position: absolute;
+  inset-inline-end: 14px;
+  top: 14px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border, #c6d2dd);
+  border-top-color: var(--accent, #3d84c6);
+  border-radius: 50%;
+  animation: ssa-spin 0.8s linear infinite;
+}
+
+@keyframes ssa-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ssa-loading {
+  margin: 14px 0 0;
+  color: var(--accent, #2f6da8);
+  font-size: 0.9rem;
+}
+
+.ssa-result-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ssa-result-head h2 {
+  margin: 0;
+}
+
+.ssa-result-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.ssa-tool {
+  border: 1px solid var(--border, #c6d2dd);
+  background: var(--surface, #fff);
+  border-radius: 9px;
+  padding: 7px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ssa-tool:hover {
+  border-color: var(--accent, #3d84c6);
+}
+
+.ssa-tool.primary {
+  background: var(--accent, #2f6da8);
+  border-color: var(--accent, #2f6da8);
+  color: #fff;
+}
+
+.ssa-markdown {
+  margin-top: 12px;
+  line-height: 1.9;
+  overflow-x: auto;
+}
+
+.ssa-markdown h1, .ssa-markdown h2, .ssa-markdown h3 {
+  color: var(--heading, #14344b);
+  margin: 1.2em 0 0.4em;
+}
+
+.ssa-markdown h1:first-child, .ssa-markdown h2:first-child, .ssa-markdown h3:first-child {
+  margin-top: 0;
+}
+
+.ssa-markdown ul, .ssa-markdown ol {
+  padding-inline-start: 24px;
+}
+
+.ssa-markdown table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.ssa-markdown th, .ssa-markdown td {
+  border: 1px solid var(--border, #c6d2dd);
+  padding: 6px 10px;
+  text-align: start;
+}
+
+.ssa-markdown th {
+  background: rgb(61 132 198 / 8%);
+}
+
+.ssa-markdown pre {
+  background: var(--surface-muted, #f4f7fa);
+  padding: 12px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+}
+
+.ssa-markdown blockquote {
+  border-inline-start: 4px solid var(--accent, #7aa7c7);
+  margin: 8px 0;
+  padding: 4px 14px;
+  color: var(--text-muted, #44566b);
+}
+
+.ssa-markdown code {
+  background: var(--surface-muted, #f0f4f8);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.ssa-markdown hr {
+  border: none;
+  border-top: 1px solid var(--border, #dbe4ec);
+}

@@ -1,5 +1,6 @@
 using System.Text;
 using CodeKids.Application.Abstractions;
+using CodeKids.Application.Features.Assessments;
 using CodeKids.Application.Options;
 using CodeKids.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -189,44 +190,53 @@ public sealed class AssessmentPublishWhatsAppNotifier(
         return $"{baseUrl}{targetPath}";
     }
 
-    /// <summary>Builds the "grade - course" label teachers already see elsewhere in the app.</summary>
+    /// <summary>Builds the "grade - subject" label for the assessment's own course only.</summary>
     private async Task<string?> ResolveContextLabelAsync(
         AssessmentPublishInfo info,
         CancellationToken cancellationToken)
     {
-        var classroom = info.ClassroomId is Guid classroomId
+        var classroomGrade = info.ClassroomId is Guid classroomId
             ? await dbContext.Classrooms
                 .AsNoTracking()
                 .Where(x => x.Id == classroomId)
-                .Select(x => new { x.Name, x.Grade, x.CourseId })
+                .Select(x => x.Grade)
                 .FirstOrDefaultAsync(cancellationToken)
             : null;
 
-        // Assignments carry no course of their own, so fall back to the classroom's course.
-        var courseId = info.CourseId ?? classroom?.CourseId;
+        var courseId = await AssessmentRelatedCourse.ResolveIdAsync(
+            dbContext,
+            info.CourseId,
+            info.ClassroomId,
+            info.CreatedByUserId,
+            cancellationToken);
+
         var course = courseId is Guid id
             ? await dbContext.Courses
                 .AsNoTracking()
                 .Where(x => x.Id == id)
-                .Select(x => new { x.Title, x.Grade })
+                .Select(x => new
+                {
+                    x.Title,
+                    x.Grade,
+                    SubjectTitle = x.ExternalSubject != null ? x.ExternalSubject.Title : null
+                })
                 .FirstOrDefaultAsync(cancellationToken)
             : null;
 
         var parts = new List<string>();
 
-        var gradeLabel = await ResolveGradeLabelAsync(course?.Grade ?? classroom?.Grade, cancellationToken);
+        var gradeLabel = await ResolveGradeLabelAsync(course?.Grade ?? classroomGrade, cancellationToken);
         if (!string.IsNullOrWhiteSpace(gradeLabel))
         {
             parts.Add(gradeLabel);
         }
 
-        if (!string.IsNullOrWhiteSpace(course?.Title))
+        var subjectName = !string.IsNullOrWhiteSpace(course?.SubjectTitle)
+            ? course.SubjectTitle
+            : course?.Title;
+        if (!string.IsNullOrWhiteSpace(subjectName))
         {
-            parts.Add(course.Title);
-        }
-        else if (!string.IsNullOrWhiteSpace(classroom?.Name))
-        {
-            parts.Add(classroom.Name);
+            parts.Add(subjectName);
         }
 
         return parts.Count == 0 ? null : string.Join(" - ", parts);
