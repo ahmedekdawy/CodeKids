@@ -51,6 +51,6 @@ public interface ITeraboxDirectLinkResolver
 
 public interface IMediaAccessTokenService
 {
-    string CreateToken(Guid mediaAssetId, Guid userId, TimeSpan lifetime);
-    bool TryValidate(string token, out Guid mediaAssetId, out Guid userId, out DateTimeOffset expiresAt);
+    string CreateToken(Guid mediaAssetId, Guid userId, TimeSpan lifetime, string? tenantId = null);
+    bool TryValidate(string token, out Guid mediaAssetId, out Guid userId, out DateTimeOffset expiresAt, out string? tenantId);
 }

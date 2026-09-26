@@ -74,22 +74,28 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
 
 public sealed class MediaAccessTokenService(IOptions<MediaOptions> options) : IMediaAccessTokenService
 {
-    public string CreateToken(Guid mediaAssetId, Guid userId, TimeSpan lifetime)
+    public string CreateToken(Guid mediaAssetId, Guid userId, TimeSpan lifetime, string? tenantId = null)
     {
         var expires = DateTimeOffset.UtcNow.Add(lifetime).ToUnixTimeSeconds();
         var payload = $"{mediaAssetId:N}.{userId:N}.{expires}";
+        if (!string.IsNullOrWhiteSpace(tenantId))
+        {
+            payload += $".{Uri.EscapeDataString(tenantId)}";
+        }
+
         var sig = Sign(payload);
         return $"{payload}.{sig}";
     }
 
-    public bool TryValidate(string token, out Guid mediaAssetId, out Guid userId, out DateTimeOffset expiresAt)
+    public bool TryValidate(string token, out Guid mediaAssetId, out Guid userId, out DateTimeOffset expiresAt, out string? tenantId)
     {
         mediaAssetId = Guid.Empty;
         userId = Guid.Empty;
         expiresAt = default;
+        tenantId = null;
 
         var parts = (token ?? string.Empty).Split('.', StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length != 4)
+        if (parts.Length is not (4 or 5))
         {
             return false;
         }
@@ -101,11 +107,18 @@ public sealed class MediaAccessTokenService(IOptions<MediaOptions> options) : IM
             return false;
         }
 
-        var payload = $"{parts[0]}.{parts[1]}.{parts[2]}";
+        if (parts.Length == 5)
+        {
+            tenantId = Uri.UnescapeDataString(parts[3]);
+        }
+
+        var payload = string.Join('.', parts.Take(parts.Length - 1));
         var expected = Sign(payload);
+        var signature = parts[^1];
+
         if (!CryptographicOperations.FixedTimeEquals(
                 Encoding.UTF8.GetBytes(expected),
-                Encoding.UTF8.GetBytes(parts[3])))
+                Encoding.UTF8.GetBytes(signature)))
         {
             return false;
         }

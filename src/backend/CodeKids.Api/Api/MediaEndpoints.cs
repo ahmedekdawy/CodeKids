@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Media;
 using CodeKids.Domain.Abstractions;
+using CodeKids.Domain.Entities;
 using CodeKids.Infrastructure;
 using CodeKids.Infrastructure.Tenancy;
 using Microsoft.AspNetCore.Authorization;
@@ -228,7 +229,7 @@ public static class MediaEndpoints
                     mediaOptions.Value.PublicBaseUrl,
                     httpContext);
                 return Results.Ok(await handler.Handle(
-                    new GetPlaybackQuery(mediaAssetId, userId, baseApiUrl),
+                    new GetPlaybackQuery(mediaAssetId, userId, baseApiUrl, tenant.Id),
                     cancellationToken));
             }
             catch (Exception ex)
@@ -239,17 +240,31 @@ public static class MediaEndpoints
 
         app.MapGet("/api/media/stream", async (
             string token,
+            HttpContext httpContext,
             IMediaAccessTokenService tokenService,
             IAppDbContext dbContext,
             IFileStorage fileStorage,
+            TenantCatalog tenantCatalog,
+            Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext> dbOptions,
             CancellationToken cancellationToken) =>
         {
-            if (!tokenService.TryValidate(token, out var mediaAssetId, out _, out _))
+            if (!tokenService.TryValidate(token, out var mediaAssetId, out _, out _, out var tokenTenantId))
             {
                 return Results.Unauthorized();
             }
-            var media = await dbContext.MediaAssets.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == mediaAssetId, cancellationToken);
+
+            // Anonymous <video> requests carry no X-Tenant-Id header, so the scoped
+            // DbContext would resolve to the default tenant. The signed token embeds
+            // the tenant that issued the playback URL - use it to scope the lookup.
+            var media = await LoadMediaForTokenTenantAsync(
+                dbContext,
+                dbOptions,
+                tenantCatalog,
+                tokenTenantId,
+                httpContext,
+                mediaAssetId,
+                cancellationToken);
+            if (media is null)
             if (media is null || string.IsNullOrWhiteSpace(media.StorageKey))
             {
                 return Results.NotFound();
@@ -297,5 +312,25 @@ public static class MediaEndpoints
             return Results.Ok(await handler.Handle(new GetWatchSessionsQuery(userId, mediaAssetId), cancellationToken));
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
         return app;
+    }
+
+    private static async Task<MediaAsset?> LoadMediaForTokenTenantAsync(
+        IAppDbContext dbContext,
+        Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext> dbOptions,
+        TenantCatalog tenantCatalog,
+        string? tokenTenantId,
+        HttpContext httpContext,
+        Guid mediaAssetId,
+        CancellationToken cancellationToken)
+    {
+        // All tenants use the same connection string — always use the provided request-scoped dbContext.
+        // Ensure we bypass any global query filters (tenant scoping) and explicitly filter by the token tenant id.
+        return await dbContext.MediaAssets
+            .AsNoTracking()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x =>
+                x.Id == mediaAssetId &&
+                (tokenTenantId == null || x.TenantId == tokenTenantId),
+                cancellationToken);
     }
 }

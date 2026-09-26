@@ -42,7 +42,7 @@ public sealed class GetPlaybackQueryHandler(
 
         var isTerabox = TeraboxStorageKey.IsTeraboxKey(media.StorageKey);
         var lifetime = TimeSpan.FromMinutes(Math.Clamp(mediaOptions.Value.SignedUrlMinutes, 1, 120));
-        var token = tokenService.CreateToken(media.Id, user.Id, lifetime);
+        var token = tokenService.CreateToken(media.Id, user.Id, lifetime, query.TenantId ?? dbContext.CurrentTenantId);
         var expires = DateTimeOffset.UtcNow.Add(lifetime);
         var baseUrl = query.BaseApiUrl.TrimEnd('/');
         var signedPlaybackUrl = $"{baseUrl}/media/stream?token={Uri.EscapeDataString(token)}";
