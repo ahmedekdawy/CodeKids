@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assignments;
 using CodeKids.Application.Features.Courses;
@@ -324,6 +325,29 @@ public sealed class ApplySmartStudyAssistantCommandHandler(
                 .Where(o => o.Length > 0)
                 .Take(4)
                 .ToList();
+
+            // If the AI returned a single string containing multiple options (e.g. newline
+            // separated or comma-separated), try to split it into separate options so quizzes
+            // can be created. Also strip common leading labels like "A)" or "1.".
+            if (options.Count == 1)
+            {
+                var single = options[0];
+                var parts = Regex.Split(single, @"\r\n|\n|\r|;|\|")
+                    .SelectMany(s => s.Split(','))
+                    .Select(s => s.Trim())
+                    .Where(s => s.Length > 0)
+                    .ToList();
+
+                for (var i = 0; i < parts.Count; i++)
+                {
+                    parts[i] = Regex.Replace(parts[i], @"^\s*([A-Za-z]|\d+)[\)\.\-:]\s*", string.Empty);
+                }
+
+                if (parts.Count >= 2)
+                {
+                    options = parts.Take(4).ToList();
+                }
+            }
 
             var type = (question.QuestionType ?? string.Empty).Trim();
             if (!Enum.TryParse<BankQuestionType>(type, true, out _))
