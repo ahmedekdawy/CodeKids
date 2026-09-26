@@ -129,7 +129,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         }
 
         var questions = wantsQuestions && payload is not null
-            ? ParseQuestions(payload.QuestionsJson)
+            ? ParseQuestions(OnlyFirstJsonElement(payload.QuestionsJson))
             : [];
         var units = wantsUnits && payload is not null
             ? ParseUnits(payload.UnitsJson)
@@ -690,4 +690,38 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
     }
 
     private sealed record AssistantPayload(string? Title, string? Markdown, JsonElement QuestionsJson, JsonElement UnitsJson);
+
+    // Helper: when the AI returns multiple questions, keep only the first question's JSON.
+    // This returns either the original JSON (if it's a single object) or the serialized first
+    // element of an array. Any parse errors fall back to the original string.
+    private static string? OnlyFirstJsonElement(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+            return json;
+
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                using var enumerator = root.EnumerateArray();
+                if (enumerator.MoveNext())
+                {
+                    return JsonSerializer.Serialize(enumerator.Current);
+                }
+
+                // Empty array -> return empty array
+                return "[]";
+            }
+
+            // Not an array -> return as-is
+            return json;
+        }
+        catch
+        {
+            // If parsing fails, just return the original json so existing parsing logic can handle it.
+            return json;
+        }
+    }
 }
