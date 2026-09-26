@@ -58,12 +58,55 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             .Where(x => IsImageMime(x.MimeType))
             .Select(x => new IStudyPlanAiClient.AiAttachment(x.MimeType, x.Data))
             .ToList();
+
+        // If there are any attachments, instruct the AI to use ONLY the attached files.
+        var useAttachmentsOnly = attachments.Count > 0;
+        string userPrompt;
+        if (useAttachmentsOnly)
+        {
+            if (!string.IsNullOrWhiteSpace(uploadedText))
+            {
+                userPrompt =
+                    "Use ONLY the attached file content below to generate the requested output. " +
+                    "Do NOT use the selected course, course outline, or any stored course materials.\n\n" +
+                    $"Requested action: {action}\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    "Attached file content (use this exclusively):\n\n" +
+                    uploadedText.Trim() +
+                    "\n\nProduce the output following the system instructions and the JSON schema provided.";
+            }
+            else if (images.Count > 0)
+            {
+                userPrompt =
+                    "Use ONLY the attached images to generate the requested output. " +
+                    "Do NOT use the selected course, course outline, or any stored course materials. " +
+                    "Perform OCR on images if needed and rely exclusively on their content.\n\n" +
+                    $"Requested action: {action}\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    "Attached images are provided separately; use them as the only source of content.\n\n" +
+                    "Produce the output following the system instructions and the JSON schema provided.";
+            }
+            else
+            {
+                userPrompt =
+                    "Use ONLY the attached files to generate the requested output. " +
+                    "Do NOT use the selected course, course outline, or any stored course materials.\n\n" +
+                    $"Requested action: {action}\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    "Produce the output following the system instructions and the JSON schema provided.";
+            }
+        }
+        else
+        {
+            userPrompt = BuildUserPrompt(action, course, outline, scope, arabic, bookText);
+        }
+
         if (images.Count > 0)
         {
             // Images cannot be OCR'd locally; send them as inline parts to Gemini (AiImage chain).
             markdown = await aiClient.CompleteJsonWithFilesAsync(
                 BuildSystemPrompt(action, arabic),
-                BuildUserPrompt(action, course, outline, scope, arabic, bookText),
+                userPrompt,
                 images,
                 cancellationToken,
                 schema);
@@ -72,7 +115,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         {
             markdown = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(action, arabic),
-                BuildUserPrompt(action, course, outline, scope, arabic, bookText),
+                userPrompt,
                 cancellationToken,
                 schema);
         }
