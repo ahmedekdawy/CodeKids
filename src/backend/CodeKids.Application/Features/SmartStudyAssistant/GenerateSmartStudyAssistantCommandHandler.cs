@@ -129,7 +129,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         }
 
         var questions = wantsQuestions && payload is not null
-            ? ParseQuestions(OnlyFirstJsonElement(payload.QuestionsJson))
+            ? ParseQuestions(payload.QuestionsJson)
             : [];
         var units = wantsUnits && payload is not null
             ? ParseUnits(payload.UnitsJson)
@@ -556,9 +556,30 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
     private static List<SmartStudyAssistantQuestionDto> ParseQuestions(JsonElement questionsJson)
     {
         var result = new List<SmartStudyAssistantQuestionDto>();
-        if (questionsJson.ValueKind != JsonValueKind.Array)
+        if (questionsJson.ValueKind is not (JsonValueKind.Array or JsonValueKind.String))
         {
             return result;
+        }
+
+        if (questionsJson.ValueKind == JsonValueKind.String)
+        {
+            var nested = questionsJson.GetString();
+            if (!string.IsNullOrWhiteSpace(nested))
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(nested);
+                    questionsJson = doc.RootElement;
+                }
+                catch
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                return result;
+            }
         }
 
         var order = 1;
