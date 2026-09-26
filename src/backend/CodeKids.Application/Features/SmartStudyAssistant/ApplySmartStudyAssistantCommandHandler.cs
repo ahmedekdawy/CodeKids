@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Assignments;
 using CodeKids.Application.Features.Courses;
@@ -312,18 +313,108 @@ public sealed class ApplySmartStudyAssistantCommandHandler(
         bool requireOptions = false)
     {
         var result = new List<ApplySmartStudyAssistantQuestionInput>();
-        foreach (var question in raw ?? [])
+
+        static List<string> SynthesizeOptions(string correct, int maxOptions)
+        {
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var list = new List<string>();
+
+            void AddIfUnique(string s)
+            {
+                s = (s ?? string.Empty).Trim();
+                if (s.Length == 0) return;
+                if (set.Add(s)) list.Add(s);
+            }
+
+            AddIfUnique(correct);
+
+            // Simple heuristics to produce distractors when none provided.
+            // Keep it lightweight and deterministic: Arabic generic wrong options.
+            var candidates = new[]
+            {
+                "خيار خاطئ 1",
+                "خيار خاطئ 2",
+                "خيار خاطئ 3",
+                "لا شيء مما سبق",
+                "غير صحيح"
+            };
+
+            // Try small numeric perturbations if a clear integer or decimal/fraction is present.
+            try
+            {
+                var fracMatch = Regex.Match(correct ?? string.Empty, @"^\s*(\d+)\s*/\s*(\d+)\s*$");
+                if (fracMatch.Success && int.TryParse(fracMatch.Groups[1].Value, out var num) && int.TryParse(fracMatch.Groups[2].Value, out var den))
+                {
+                    AddIfUnique($"{num + 1}/{den}");
+                    AddIfUnique($"{Math.Max(num - 1, 1)}/{den}");
+                    AddIfUnique($"{num}/{Math.Max(den + 1, 2)}");
+                }
+                else
+                {
+                    var numMatch = Regex.Match(correct ?? string.Empty, @"-?\d+([.,]\d+)?");
+                    if (numMatch.Success && double.TryParse(numMatch.Value.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var val))
+                    {
+                        AddIfUnique((val + 1).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                        AddIfUnique((Math.Max(val - 1, 0)).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                        AddIfUnique((val * 2).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    }
+                }
+            }
+            catch
+            {
+                // ignore parsing errors and fall back to generic candidates
+            }
+
+            foreach (var c in candidates)
+            {
+                if (list.Count >= maxOptions) break;
+                AddIfUnique(c);
+            }
+
+            // Ensure we have at least 2 options when required.
+            for (var i = 1; list.Count < maxOptions; i++)
+            {
+                AddIfUnique($"خيار خاطئ إضافي {i}");
+            }
+
+            return list.Take(maxOptions).ToList();
+        }
+
+        foreach (var question in raw ?? Array.Empty<ApplySmartStudyAssistantQuestionInput>())
         {
             if (string.IsNullOrWhiteSpace(question.Prompt))
             {
                 continue;
             }
 
-            var options = (question.Options ?? [])
+            var options = (question.Options ?? Array.Empty<string>())
                 .Select(o => (o ?? string.Empty).Trim())
                 .Where(o => o.Length > 0)
                 .Take(4)
                 .ToList();
+
+            // If the AI returned a single string containing multiple options (e.g. newline
+            // separated or comma-separated), try to split it into separate options so quizzes
+            // can be created. Also strip common leading labels like "A)" or "1.".
+            if (options.Count == 1)
+            {
+                var single = options[0];
+                var parts = Regex.Split(single, @"\r\n|\n|\r|;|\|")
+                    .SelectMany(s => s.Split(','))
+                    .Select(s => s.Trim())
+                    .Where(s => s.Length > 0)
+                    .ToList();
+
+                for (var i = 0; i < parts.Count; i++)
+                {
+                    parts[i] = Regex.Replace(parts[i], @"^\s*([A-Za-z]|\d+)[\)\.\-:]\s*", string.Empty);
+                }
+
+                if (parts.Count >= 2)
+                {
+                    options = parts.Take(4).ToList();
+                }
+            }
 
             var type = (question.QuestionType ?? string.Empty).Trim();
             if (!Enum.TryParse<BankQuestionType>(type, true, out _))
@@ -331,12 +422,25 @@ public sealed class ApplySmartStudyAssistantCommandHandler(
                 type = options.Count >= 2 ? nameof(BankQuestionType.Choose) : nameof(BankQuestionType.ShortAnswer);
             }
 
+            // If we require options (e.g., creating a quiz) but none were provided, synthesize them.
             if (requireOptions && options.Count < 2)
             {
+                var correctAnswer = question.CorrectAnswer ?? string.Empty;
+                // Prefer using the provided correctAnswer as the correct option; otherwise use an empty string.
+                var synthesized = SynthesizeOptions(correctAnswer.Trim(), 4);
+                // Ensure at least two options; SynthesizeOptions guarantees this.
+                options = synthesized.Take(4).ToList();
+            }
+
+            if (requireOptions && options.Count < 2)
+            {
+                // Still not enough options -> skip this question.
                 continue;
             }
 
-            var correct = ResolveCorrectKey(options, question.CorrectOption, question.CorrectAnswer)
+            var correctKeyCandidate = ResolveCorrectKey(options, question.CorrectOption, question.CorrectAnswer);
+
+            var correct = correctKeyCandidate
                 ?? (options.Count >= 2 ? "A" : question.CorrectAnswer ?? string.Empty);
 
             result.Add(new ApplySmartStudyAssistantQuestionInput(

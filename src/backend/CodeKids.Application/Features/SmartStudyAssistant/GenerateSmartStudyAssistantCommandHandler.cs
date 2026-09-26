@@ -58,12 +58,55 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             .Where(x => IsImageMime(x.MimeType))
             .Select(x => new IStudyPlanAiClient.AiAttachment(x.MimeType, x.Data))
             .ToList();
+
+        // If there are any attachments, instruct the AI to use ONLY the attached files.
+        var useAttachmentsOnly = attachments.Count > 0;
+        string userPrompt;
+        if (useAttachmentsOnly)
+        {
+            if (!string.IsNullOrWhiteSpace(uploadedText))
+            {
+                userPrompt =
+                    "Use ONLY the attached file content below to generate the requested output. " +
+                    "Do NOT use the selected course, course outline, or any stored course materials.\n\n" +
+                    $"Requested action: {action}\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    "Attached file content (use this exclusively):\n\n" +
+                    uploadedText.Trim() +
+                    "\n\nProduce the output following the system instructions and the JSON schema provided.";
+            }
+            else if (images.Count > 0)
+            {
+                userPrompt =
+                    "Use ONLY the attached images to generate the requested output. " +
+                    "Do NOT use the selected course, course outline, or any stored course materials. " +
+                    "Perform OCR on images if needed and rely exclusively on their content.\n\n" +
+                    $"Requested action: {action}\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    "Attached images are provided separately; use them as the only source of content.\n\n" +
+                    "Produce the output following the system instructions and the JSON schema provided.";
+            }
+            else
+            {
+                userPrompt =
+                    "Use ONLY the attached files to generate the requested output. " +
+                    "Do NOT use the selected course, course outline, or any stored course materials.\n\n" +
+                    $"Requested action: {action}\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    "Produce the output following the system instructions and the JSON schema provided.";
+            }
+        }
+        else
+        {
+            userPrompt = BuildUserPrompt(action, course, outline, scope, arabic, bookText);
+        }
+
         if (images.Count > 0)
         {
             // Images cannot be OCR'd locally; send them as inline parts to Gemini (AiImage chain).
             markdown = await aiClient.CompleteJsonWithFilesAsync(
                 BuildSystemPrompt(action, arabic),
-                BuildUserPrompt(action, course, outline, scope, arabic, bookText),
+                userPrompt,
                 images,
                 cancellationToken,
                 schema);
@@ -72,7 +115,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         {
             markdown = await aiClient.CompleteJsonAsync(
                 BuildSystemPrompt(action, arabic),
-                BuildUserPrompt(action, course, outline, scope, arabic, bookText),
+                userPrompt,
                 cancellationToken,
                 schema);
         }
@@ -102,33 +145,57 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             ["title"] = new { type = "string" },
             ["markdown"] = new { type = "string" }
         };
+
         var required = new List<string> { "title", "markdown" };
 
         if (wantsQuestions)
         {
+            // Provide two representations for questions to maximize compatibility:
+            // 1) A structured "questions" array where each item has choices and an explicit isCorrect flag.
+            // 2) A raw "questionsJson" string in case the model prefers returning a JSON string.
             properties["questions"] = new
             {
                 type = "array",
+                // Do NOT set maxItems here so the model can return as many questions as needed.
                 items = new
                 {
                     type = "object",
                     properties = new
                     {
-                        prompt = new { type = "string" },
-                        questionType = new { type = "string" },
-                        options = new { type = "array", items = new { type = "string" } },
-                        correctOption = new { type = "string" },
-                        correctAnswer = new { type = "string" },
-                        points = new { type = "integer" }
+                        question = new { type = "string" },
+                        // Choices should include an explicit isCorrect boolean on the correct choice(s).
+                        choices = new
+                        {
+                            type = "array",
+                            items = new
+                            {
+                                type = "object",
+                                properties = new
+                                {
+                                    text = new { type = "string" },
+                                    isCorrect = new { type = "boolean" } // explicit correct flag
+                                },
+                                required = new[] { "text" }
+                            }
+                        },
+                        // Optional canonical/short answer field
+                        answer = new { type = "string" },
+                        // Optional metadata like points or difficulty
+                        points = new { type = "number" },
+                        difficulty = new { type = "string" }
                     },
-                    required = new[] { "prompt" }
+                    required = new[] { "question" }
                 }
             };
+
+            properties["questionsJson"] = new { type = "string" };
+
             required.Add("questions");
         }
 
         if (wantsUnits)
         {
+            // Units: structured array and raw fallback string.
             properties["units"] = new
             {
                 type = "array",
@@ -137,17 +204,28 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
                     type = "object",
                     properties = new
                     {
+                        id = new { type = "string" },
                         title = new { type = "string" },
-                        sortOrder = new { type = "integer" },
                         lessons = new
                         {
                             type = "array",
-                            items = new { type = "string" }
+                            items = new
+                            {
+                                type = "object",
+                                properties = new
+                                {
+                                    id = new { type = "string" },
+                                    title = new { type = "string" }
+                                },
+                                required = new[] { "title" }
+                            }
                         }
                     },
                     required = new[] { "title" }
                 }
             };
+            properties["unitsJson"] = new { type = "string" };
+
             required.Add("units");
         }
 
@@ -155,7 +233,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         {
             type = "object",
             properties,
-            required = required.ToArray()
+            required
         };
     }
 
@@ -513,9 +591,30 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
     private static List<SmartStudyAssistantQuestionDto> ParseQuestions(JsonElement questionsJson)
     {
         var result = new List<SmartStudyAssistantQuestionDto>();
-        if (questionsJson.ValueKind != JsonValueKind.Array)
+        if (questionsJson.ValueKind is not (JsonValueKind.Array or JsonValueKind.String))
         {
             return result;
+        }
+
+        if (questionsJson.ValueKind == JsonValueKind.String)
+        {
+            var nested = questionsJson.GetString();
+            if (!string.IsNullOrWhiteSpace(nested))
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(nested);
+                    questionsJson = doc.RootElement;
+                }
+                catch
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                return result;
+            }
         }
 
         var order = 1;
@@ -647,4 +746,38 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
     }
 
     private sealed record AssistantPayload(string? Title, string? Markdown, JsonElement QuestionsJson, JsonElement UnitsJson);
+
+    // Helper: when the AI returns multiple questions, keep only the first question's JSON.
+    // This returns either the original JSON (if it's a single object) or the serialized first
+    // element of an array. Any parse errors fall back to the original string.
+    private static string? OnlyFirstJsonElement(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+            return json;
+
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                using var enumerator = root.EnumerateArray();
+                if (enumerator.MoveNext())
+                {
+                    return JsonSerializer.Serialize(enumerator.Current);
+                }
+
+                // Empty array -> return empty array
+                return "[]";
+            }
+
+            // Not an array -> return as-is
+            return json;
+        }
+        catch
+        {
+            // If parsing fails, just return the original json so existing parsing logic can handle it.
+            return json;
+        }
+    }
 }
