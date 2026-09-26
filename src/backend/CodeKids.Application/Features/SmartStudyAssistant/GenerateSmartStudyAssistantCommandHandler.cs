@@ -145,33 +145,57 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             ["title"] = new { type = "string" },
             ["markdown"] = new { type = "string" }
         };
+
         var required = new List<string> { "title", "markdown" };
 
         if (wantsQuestions)
         {
+            // Provide two representations for questions to maximize compatibility:
+            // 1) A structured "questions" array where each item has choices and an explicit isCorrect flag.
+            // 2) A raw "questionsJson" string in case the model prefers returning a JSON string.
             properties["questions"] = new
             {
                 type = "array",
+                // Do NOT set maxItems here so the model can return as many questions as needed.
                 items = new
                 {
                     type = "object",
                     properties = new
                     {
-                        prompt = new { type = "string" },
-                        questionType = new { type = "string" },
-                        options = new { type = "array", items = new { type = "string" } },
-                        correctOption = new { type = "string" },
-                        correctAnswer = new { type = "string" },
-                        points = new { type = "integer" }
+                        question = new { type = "string" },
+                        // Choices should include an explicit isCorrect boolean on the correct choice(s).
+                        choices = new
+                        {
+                            type = "array",
+                            items = new
+                            {
+                                type = "object",
+                                properties = new
+                                {
+                                    text = new { type = "string" },
+                                    isCorrect = new { type = "boolean" } // explicit correct flag
+                                },
+                                required = new[] { "text" }
+                            }
+                        },
+                        // Optional canonical/short answer field
+                        answer = new { type = "string" },
+                        // Optional metadata like points or difficulty
+                        points = new { type = "number" },
+                        difficulty = new { type = "string" }
                     },
-                    required = new[] { "prompt" }
+                    required = new[] { "question" }
                 }
             };
+
+            properties["questionsJson"] = new { type = "string" };
+
             required.Add("questions");
         }
 
         if (wantsUnits)
         {
+            // Units: structured array and raw fallback string.
             properties["units"] = new
             {
                 type = "array",
@@ -180,17 +204,28 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
                     type = "object",
                     properties = new
                     {
+                        id = new { type = "string" },
                         title = new { type = "string" },
-                        sortOrder = new { type = "integer" },
                         lessons = new
                         {
                             type = "array",
-                            items = new { type = "string" }
+                            items = new
+                            {
+                                type = "object",
+                                properties = new
+                                {
+                                    id = new { type = "string" },
+                                    title = new { type = "string" }
+                                },
+                                required = new[] { "title" }
+                            }
                         }
                     },
                     required = new[] { "title" }
                 }
             };
+            properties["unitsJson"] = new { type = "string" };
+
             required.Add("units");
         }
 
@@ -198,7 +233,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         {
             type = "object",
             properties,
-            required = required.ToArray()
+            required
         };
     }
 
