@@ -57,6 +57,31 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
 
     public bool Exists(string storageKey) => File.Exists(ResolvePath(storageKey));
 
+    public bool SupportsRangeProcessing => true;
+
+    public Task<StorageReadResult> OpenRangeAsync(string storageKey, long? start, long? end, CancellationToken cancellationToken = default)
+    {
+        var fullPath = ResolvePath(storageKey);
+        if (!File.Exists(fullPath))
+        {
+            throw new FileNotFoundException("Media file not found.", storageKey);
+        }
+
+        var stream = File.OpenRead(fullPath);
+        var total = stream.Length;
+        if (start is long from)
+        {
+            stream.Seek(from, SeekOrigin.Begin);
+        }
+
+        var effectiveEnd = Math.Min(end ?? total - 1, total - 1);
+        Stream content = end is long e && e < total - 1
+            ? new PartialReadStream(stream, effectiveEnd - (start ?? 0) + 1)
+            : stream;
+
+        return Task.FromResult(new StorageReadResult(content, true, start ?? 0, effectiveEnd, total));
+    }
+
     private string ResolvePath(string storageKey)
     {
         var fullPath = Path.GetFullPath(Path.Combine(_root, storageKey.Replace('/', Path.DirectorySeparatorChar)));
@@ -70,6 +95,39 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
 
     private static string GuessExtension(string contentType) =>
         MediaFileTypes.ExtensionForContentType(contentType);
+}
+
+/// <summary>A read-only wrapper stream limited to the first <paramref name="length"/> bytes of an underlying stream.</summary>
+public sealed class PartialReadStream(Stream inner, long length) : Stream
+{
+    private long _remaining = length;
+
+    public override bool CanRead => true;
+    public override bool CanSeek => false;
+    public override bool CanWrite => false;
+    public override long Length => throw new NotSupportedException();
+    public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+    public override int Read(byte[] buffer, int offset, int count)
+    {
+        if (_remaining <= 0) return 0;
+        var read = inner.Read(buffer, offset, (int)Math.Min(count, _remaining));
+        _remaining -= read;
+        return read;
+    }
+
+    public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+    {
+        if (_remaining <= 0) return 0;
+        var read = await inner.ReadAsync(buffer[..(int)Math.Min(buffer.Length, _remaining)], cancellationToken);
+        _remaining -= read;
+        return read;
+    }
+
+    public override void Flush() { }
+    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+    public override void SetLength(long value) => throw new NotSupportedException();
+    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 }
 
 public sealed class MediaAccessTokenService(IOptions<MediaOptions> options) : IMediaAccessTokenService

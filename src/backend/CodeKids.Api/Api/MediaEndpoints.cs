@@ -269,8 +269,67 @@ public static class MediaEndpoints
             {
                 return Results.NotFound();
             }
-            var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
             var contentType = MediaFileTypes.ResolveContentType(media.ContentType, media.FileName);
+
+            // Serve proper 206 Partial Content responses so the browser's <video> element
+            // can seek/scrub forward and backward within streamed videos.
+            var rangeHeader = httpContext.Request.Headers.Range.ToString();
+            if (!string.IsNullOrWhiteSpace(rangeHeader) &&
+                System.Net.Http.Headers.RangeHeaderValue.TryParse(rangeHeader, out var range) &&
+                range.Ranges.Count > 0)
+            {
+                var spec = range.Ranges.First();
+                long? start = spec.From;
+                long? end = spec.To;
+
+                if (!start.HasValue && end.HasValue)
+                {
+                    // Suffix range (bytes=-N): last N bytes; requires total length.
+                    var probe = await fileStorage.OpenRangeAsync(media.StorageKey, null, null, cancellationToken);
+                    if (probe.TotalLength is long totalForSuffix)
+                    {
+                        await probe.Content.DisposeAsync();
+                        start = Math.Max(0, totalForSuffix - end.Value);
+                        end = totalForSuffix - 1;
+                    }
+                    else
+                    {
+                        await probe.Content.DisposeAsync();
+                        start = 0;
+                    }
+                }
+
+                var result = await fileStorage.OpenRangeAsync(media.StorageKey, start, end, cancellationToken);
+                if (!result.RangeHandled)
+                {
+                    await result.Content.DisposeAsync();
+                    // Provider cannot serve ranges; fall back to full-content streaming.
+                    var fallback = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
+                    return Results.File(fallback, contentType, enableRangeProcessing: true);
+                }
+
+                if (result.TotalLength.HasValue && start.HasValue && start.Value >= result.TotalLength.Value)
+                {
+                    await result.Content.DisposeAsync();
+                    return Results.StatusCode(StatusCodes.Status416RangeNotSatisfiable);
+                }
+
+                long from = result.Start ?? start ?? 0;
+                long to = result.End ?? (result.TotalLength.HasValue ? result.TotalLength.Value - 1 : from);
+                long totalLength = result.TotalLength ?? to + 1;
+
+                httpContext.Response.StatusCode = StatusCodes.Status206PartialContent;
+                httpContext.Response.ContentType = contentType;
+                httpContext.Response.Headers.AcceptRanges = "bytes";
+                httpContext.Response.Headers.ContentRange = $"bytes {from}-{to}/{totalLength}";
+                httpContext.Response.ContentLength = to - from + 1;
+                await result.Content.CopyToAsync(httpContext.Response.Body, cancellationToken);
+                return Results.Empty;
+            }
+
+            // No Range header: full download; still advertise range support for future seeks.
+            var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
+            httpContext.Response.Headers.AcceptRanges = "bytes";
             return Results.File(
                 stream,
                 contentType: contentType,
@@ -323,7 +382,7 @@ public static class MediaEndpoints
         Guid mediaAssetId,
         CancellationToken cancellationToken)
     {
-        // All tenants use the same connection string — always use the provided request-scoped dbContext.
+        // All tenants use the same connection string ï¿½ always use the provided request-scoped dbContext.
         // Ensure we bypass any global query filters (tenant scoping) and explicitly filter by the token tenant id.
         return await dbContext.MediaAssets
             .AsNoTracking()

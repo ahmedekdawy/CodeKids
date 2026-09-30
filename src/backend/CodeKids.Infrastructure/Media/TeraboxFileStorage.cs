@@ -56,6 +56,16 @@ public sealed class TeraboxFileStorage(
         return await teraboxClient.OpenReadAsync(fsId, remotePath, cancellationToken);
     }
 
+    public async Task<StorageReadResult> OpenRangeAsync(string storageKey, long? start, long? end, CancellationToken cancellationToken = default)
+    {
+        if (!TeraboxStorageKey.TryParse(storageKey, out var fsId, out var remotePath))
+        {
+            throw new InvalidOperationException("Invalid Terabox storage key.");
+        }
+
+        return await teraboxClient.OpenRangeAsync(fsId, remotePath, start, end, cancellationToken);
+    }
+
     public async Task DeleteAsync(string storageKey, CancellationToken cancellationToken = default)
     {
         if (!TeraboxStorageKey.TryParse(storageKey, out _, out var remotePath))

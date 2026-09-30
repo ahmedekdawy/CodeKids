@@ -36,12 +36,27 @@ public sealed class TeraboxOptions
     public string RefreshToken { get; set; } = string.Empty;
 }
 
+/// <summary>Result of a range read; RangeHandled is true when the returned content honors the requested byte range.</summary>
+public sealed record StorageReadResult(
+    Stream Content,
+    bool RangeHandled,
+    long? Start,
+    long? End,
+    long? TotalLength);
+
 public interface IFileStorage
 {
     Task<string> SaveAsync(Stream content, string fileName, string contentType, CancellationToken cancellationToken = default);
     Task<Stream> OpenReadAsync(string storageKey, CancellationToken cancellationToken = default);
     Task DeleteAsync(string storageKey, CancellationToken cancellationToken = default);
     bool Exists(string storageKey);
+
+    /// <summary>True when OpenReadAsync returns a seekable stream so ASP.NET can serve Range requests itself.</summary>
+    bool SupportsRangeProcessing => false;
+
+    /// <summary>Opens a byte range [start, end] of the file (end is inclusive; null means to the end of file).</summary>
+    Task<StorageReadResult> OpenRangeAsync(string storageKey, long? start, long? end, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException("This storage provider does not support range reads.");
 }
 
 public interface ITeraboxDirectLinkResolver
