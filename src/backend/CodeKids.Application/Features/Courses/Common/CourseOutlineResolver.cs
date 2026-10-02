@@ -1,9 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Lessons;
 using CodeKids.Application.Features.StudentAsk;
 using CodeKids.Domain.Entities;
+using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Courses;
@@ -248,7 +250,7 @@ public static class CourseOutlineResolver
         Course course,
         CancellationToken cancellationToken)
     {
-        return await dbContext.Subjects
+        var subjects = await dbContext.Subjects
             .Include(s => s.Units)
                 .ThenInclude(u => u.Lessons)
             .Where(s =>
@@ -260,6 +262,51 @@ public static class CourseOutlineResolver
             .OrderBy(s => s.TermId ?? 99)
             .ThenBy(s => s.Id)
             .ToListAsync(cancellationToken);
+
+        if (subjects.Count > 0)
+        {
+            return subjects;
+        }
+
+        return [await CreateSubjectAsync(dbContext, course, cancellationToken)];
+    }
+
+    private static async Task<Subject> CreateSubjectAsync(
+        IAppDbContext dbContext,
+        Course course,
+        CancellationToken cancellationToken)
+    {
+        var code = string.IsNullOrWhiteSpace(course.SubjectCode)
+            ? SlugCode(course.Title)
+            : course.SubjectCode.Trim();
+        var subject = new Subject
+        {
+            Title = Clamp(course.Title, 200),
+            Code = Clamp(code, 80),
+            Category = string.IsNullOrWhiteSpace(course.Category) ? "core" : course.Category,
+            NameEn = Clamp(course.Title, 200),
+            StageId = course.StageId ?? 1,
+            GradeId = course.Grade,
+            TermId = course.TermId is CourseTerm term ? (int)term : null,
+            TrackCode = course.TrackCode ?? string.Empty,
+            TrackName = course.TrackName ?? string.Empty
+        };
+        dbContext.Subjects.Add(subject);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        course.ExternalSubjectId = subject.Id;
+        if (string.IsNullOrWhiteSpace(course.SubjectCode))
+        {
+            course.SubjectCode = subject.Code;
+        }
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return subject;
+    }
+
+    private static string SlugCode(string title)
+    {
+        var slug = Regex.Replace((title ?? "course").Trim().ToLowerInvariant(), @"[^a-z0-9\u0600-\u06FF]+", "_");
+        slug = slug.Trim('_');
+        return string.IsNullOrWhiteSpace(slug) ? "course" : slug[..Math.Min(slug.Length, 40)];
     }
 
     public static async Task<LessonDto?> ResolvePlayableLessonAsync(

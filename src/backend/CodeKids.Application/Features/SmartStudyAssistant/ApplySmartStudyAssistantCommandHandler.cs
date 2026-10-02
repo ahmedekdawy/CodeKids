@@ -69,10 +69,6 @@ public sealed class ApplySmartStudyAssistantCommandHandler(
 
         // Reuse the existing subject tree so new units merge into the right subject.
         var subjects = await CourseOutlineResolver.LoadRelatedSubjectsAsync(dbContext, course, cancellationToken);
-        if (subjects.Count == 0)
-        {
-            throw new InvalidOperationException("No subject tree is linked to this course. Generate a course tree first.");
-        }
         var subject = subjects[0];
 
         var existingUnits = await dbContext.SubjectUnits

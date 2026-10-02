@@ -453,11 +453,6 @@ public sealed class GenerateCourseTreeCommandHandler(
         CancellationToken cancellationToken)
     {
         var subjects = await CourseOutlineResolver.LoadRelatedSubjectsAsync(dbContext, course, cancellationToken);
-        if (subjects.Count == 0)
-        {
-            var created = await EnsureSubjectAsync(course, cancellationToken);
-            subjects = [created];
-        }
 
         if (mode == CourseTreeMode.Rebuild)
         {
