@@ -22,6 +22,7 @@ public sealed record GenerateSmartStudyAssistantCommand(
     Guid? UnitId,
     Guid? LessonId,
     string? Language,
+    string? Prompt,
     IReadOnlyList<SmartStudyAttachmentFile> Attachments) : ICommand<SmartStudyAssistantResultDto>;
 
 public sealed record SmartStudyAssistantQuestionDto(
