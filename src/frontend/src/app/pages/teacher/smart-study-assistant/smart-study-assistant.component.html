@@ -42,7 +42,16 @@
   </div>
 
   <div class="ssa-card">
-    <h2>2️⃣ رفع الملفات (اختياري — حتى 10 ملفات)</h2>
+    <h2>2️⃣ اكتب وصفاً نصياً (بديل عن رفع الملفات)</h2>
+    <label class="ssa-prompt-label">
+      <textarea [(ngModel)]="prompt" rows="5" class="ssa-prompt"
+                placeholder="مثال: اكتب لي ملخصاً عن درس الكسور العشرية للصف الخامس، يشرح تحويل الكسور إلى كسور عشرية مع أمثلة محلولة، وأنشئ كويزًا من 5 أسئلة عن ذلك."></textarea>
+      <small>يمكنك الاكتفاء بكتابة المطلوب نصياً بدلاً من رفع صور أو ملفات PDF — أو الجمع بين الاثنين.</small>
+    </label>
+  </div>
+
+  <div class="ssa-card">
+    <h2>3️⃣ رفع الملفات (اختياري — حتى 10 ملفات)</h2>
     <div class="ssa-dropzone"
          (drop)="onDrop($event)" (dragover)="onDragOver($event)"
          (click)="openFilePicker()">
@@ -77,7 +86,7 @@
   </div>
 
   <div class="ssa-card">
-    <h2>3️⃣ اختر الإجراء</h2>
+    <h2>4️⃣ اختر الإجراء</h2>
     <div class="ssa-actions">
       @for (item of actions; track item.key) {
         <button type="button"
