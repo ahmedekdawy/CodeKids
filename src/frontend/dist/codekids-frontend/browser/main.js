@@ -48620,6 +48620,7 @@ var AR = {
   "nav.admin.expenses": "\u0645\u0635\u0631\u0648\u0641\u0627\u062A \u0623\u062E\u0631\u0649",
   "nav.admin.whatsapp": "\u0648\u0627\u062A\u0633\u0627\u0628",
   "nav.admin.settings": "\u0647\u0648\u064A\u0629 \u0627\u0644\u0645\u0648\u0642\u0639",
+  "nav.admin.smartAssistant": "\u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A",
   "landing.nav.topStudents": "\u0627\u0644\u0637\u0644\u0627\u0628 \u0627\u0644\u0645\u062A\u0645\u064A\u0632\u0648\u0646",
   "landing.nav.services": "\u0627\u0644\u062E\u062F\u0645\u0627\u062A",
   "landing.nav.systems": "\u0627\u0644\u0623\u0646\u0638\u0645\u0629 \u0627\u0644\u062F\u0631\u0627\u0633\u064A\u0629",
@@ -48979,6 +48980,63 @@ var AR = {
   "play.timer.fullscreenBody": "\u0647\u0630\u0627 \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631 \u064A\u0639\u0645\u0644 \u0641\u064A \u0648\u0636\u0639 \u0645\u0644\u0621 \u0627\u0644\u0634\u0627\u0634\u0629. \u0627\u0644\u0639\u062F\u0651\u0627\u062F \u0645\u0627 \u0632\u0627\u0644 \u064A\u0639\u0645\u0644\u060C \u0644\u0630\u0627 \u0639\u062F \u0625\u0644\u0649 \u0645\u0644\u0621 \u0627\u0644\u0634\u0627\u0634\u0629 \u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0627\u0644\u062D\u0644.",
   "play.timer.fullscreenResume": "\u0627\u0644\u0639\u0648\u062F\u0629 \u0644\u0645\u0644\u0621 \u0627\u0644\u0634\u0627\u0634\u0629",
   "play.submittedScore": "\u0627\u0644\u062D\u0627\u0644\u0629: {status} \xB7 \u0627\u0644\u062F\u0631\u062C\u0629: {score}/{max}",
+  "smartadmin.title": "\u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u0625\u062F\u0627\u0631\u0629",
+  "smartadmin.subtitle": "\u0623\u0636\u0641 \u0645\u0633\u062A\u062E\u062F\u0645\u064A\u0646 \u0648\u0641\u0635\u0648\u0644\u064B\u0627 \u0648\u062E\u0635\u0635 \u0645\u0639\u0644\u0645\u064A\u0646 \u0648\u0633\u062C\u0651\u0644 \u0637\u0644\u0627\u0628\u064B\u0627 \u0648\u0627\u062F\u0641\u0639 \u0627\u0644\u0627\u0634\u062A\u0631\u0627\u0643\u0627\u062A \u0645\u0646 \u0645\u0643\u0627\u0646 \u0648\u0627\u062D\u062F.",
+  "smartadmin.tabUsers": "\u0625\u0636\u0627\u0641\u0629 \u0645\u0633\u062A\u062E\u062F\u0645",
+  "smartadmin.tabClassrooms": "\u0627\u0644\u0641\u0635\u0648\u0644",
+  "smartadmin.tabAssign": "\u062A\u0639\u064A\u064A\u0646 \u0645\u0639\u0644\u0645\u064A\u0646",
+  "smartadmin.tabEnroll": "\u062A\u0633\u062C\u064A\u0644 \u0637\u0627\u0644\u0628",
+  "smartadmin.tabPayments": "\u0627\u0644\u0627\u0634\u062A\u0631\u0627\u0643\u0627\u062A \u0648\u0627\u0644\u0645\u062F\u0641\u0648\u0639\u0627\u062A",
+  "smartadmin.addUserTitle": "\u0625\u0646\u0634\u0627\u0621 \u0645\u0639\u0644\u0645 \u0623\u0648 \u0648\u0644\u064A \u0623\u0645\u0631 \u0623\u0648 \u0637\u0627\u0644\u0628",
+  "smartadmin.addNewUser": "\u0645\u0633\u062A\u062E\u062F\u0645 \u062C\u062F\u064A\u062F",
+  "smartadmin.nameRequired": "\u0627\u0644\u0627\u0633\u0645 \u0645\u0637\u0644\u0648\u0628.",
+  "smartadmin.emailRequired": "\u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A \u0645\u0637\u0644\u0648\u0628.",
+  "smartadmin.passwordRequired": "\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631 \u0645\u0637\u0644\u0648\u0628\u0629.",
+  "smartadmin.userCreated": "\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 {role} \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.userCreateFailed": "\u062A\u0639\u0630\u0651\u0631 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0645\u0633\u062A\u062E\u062F\u0645.",
+  "smartadmin.userDeleted": "\u062A\u0645 \u0627\u0644\u062D\u0630\u0641 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.userDeleteFailed": "\u062A\u0639\u0630\u0651\u0631 \u0627\u0644\u062D\u0630\u0641.",
+  "smartadmin.confirmDeleteUser": "\u062D\u0630\u0641 {name} ({role})\u061F",
+  "smartadmin.classroomTitle": "\u0625\u062F\u0627\u0631\u0629 \u0627\u0644\u0641\u0635\u0648\u0644",
+  "smartadmin.newClassroom": "\u0641\u0635\u0644 \u062C\u062F\u064A\u062F",
+  "smartadmin.classroomNamePlaceholder": "\u0627\u0633\u0645 \u0627\u0644\u0641\u0635\u0644",
+  "smartadmin.classroomNameRequired": "\u0627\u0633\u0645 \u0627\u0644\u0641\u0635\u0644 \u0645\u0637\u0644\u0648\u0628.",
+  "smartadmin.classroomCourseRequired": "\u064A\u062C\u0628 \u0627\u062E\u062A\u064A\u0627\u0631 \u0645\u0627\u062F\u0629 \u0639\u0644\u0649 \u0627\u0644\u0623\u0642\u0644.",
+  "smartadmin.classroomCreated": "\u062A\u0645 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0641\u0635\u0644 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.classroomUpdated": "\u062A\u0645 \u062A\u062D\u062F\u064A\u062B \u0627\u0644\u0641\u0635\u0644 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.classroomDeleted": "\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u0641\u0635\u0644 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.classroomCreateFailed": "\u062A\u0639\u0630\u0651\u0631 \u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0641\u0635\u0644.",
+  "smartadmin.classroomUpdateFailed": "\u062A\u0639\u0630\u0651\u0631 \u062A\u062D\u062F\u064A\u062B \u0627\u0644\u0641\u0635\u0644.",
+  "smartadmin.classroomDeleteFailed": "\u062A\u0639\u0630\u0651\u0631 \u062D\u0630\u0641 \u0627\u0644\u0641\u0635\u0644.",
+  "smartadmin.confirmDeleteClassroom": "\u062D\u0630\u0641 \u0627\u0644\u0641\u0635\u0644 {name}\u061F",
+  "smartadmin.assignTitle": "\u062A\u0639\u064A\u064A\u0646 \u0627\u0644\u0645\u0639\u0644\u0645\u064A\u0646 \u0644\u0644\u0641\u0635\u0648\u0644 \u0648\u0627\u0644\u0645\u0648\u0627\u062F",
+  "smartadmin.assignMode": "\u0646\u0648\u0639 \u0627\u0644\u062A\u0639\u064A\u064A\u0646",
+  "smartadmin.assignSave": "\u062D\u0641\u0638 \u0627\u0644\u062A\u0639\u064A\u064A\u0646",
+  "smartadmin.assignmentSaved": "\u062A\u0645 \u062D\u0641\u0638 \u0627\u0644\u062A\u0639\u064A\u064A\u0646 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.assignmentFailed": "\u062A\u0639\u0630\u0651\u0631 \u062D\u0641\u0638 \u0627\u0644\u062A\u0639\u064A\u064A\u0646.",
+  "smartadmin.assignSelectBoth": "\u064A\u062C\u0628 \u0627\u062E\u062A\u064A\u0627\u0631 \u0627\u0644\u0641\u0635\u0644 \u0648\u0627\u0644\u0645\u0639\u0644\u0645.",
+  "smartadmin.enrollTitle": "\u062A\u0633\u062C\u064A\u0644 \u0637\u0627\u0644\u0628 \u0641\u064A \u0641\u0635\u0644 \u0623\u0648 \u0645\u0627\u062F\u0629",
+  "smartadmin.enrollClassroom": "\u062A\u0633\u062C\u064A\u0644 \u0641\u064A \u0641\u0635\u0644",
+  "smartadmin.enrollSubject": "\u062A\u0633\u062C\u064A\u0644 \u0641\u064A \u0645\u0627\u062F\u0629",
+  "smartadmin.enrollSave": "\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0637\u0627\u0644\u0628",
+  "smartadmin.enrolled": "\u062A\u0645 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0637\u0627\u0644\u0628 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.enrollFailed": "\u062A\u0639\u0630\u0651\u0631 \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0637\u0627\u0644\u0628.",
+  "smartadmin.enrollSelectBoth": "\u064A\u062C\u0628 \u0627\u062E\u062A\u064A\u0627\u0631 \u0627\u0644\u0641\u0635\u0644 \u0648\u0627\u0644\u0637\u0627\u0644\u0628.",
+  "smartadmin.enrollSelectCourse": "\u064A\u062C\u0628 \u0627\u062E\u062A\u064A\u0627\u0631 \u0645\u0627\u062F\u0629.",
+  "smartadmin.paymentsTitle": "\u0627\u0644\u0627\u0634\u062A\u0631\u0627\u0643\u0627\u062A \u0648\u0627\u0644\u0645\u062F\u0641\u0648\u0639\u0627\u062A",
+  "smartadmin.addPaymentTitle": "\u0625\u0636\u0627\u0641\u0629 \u062F\u0641\u0639\u0629 \u0627\u0634\u062A\u0631\u0627\u0643",
+  "smartadmin.paymentsList": "\u0633\u062C\u0644 \u0627\u0644\u0645\u062F\u0641\u0648\u0639\u0627\u062A",
+  "smartadmin.payment": "\u062F\u0641\u0639\u0629 \u0627\u0634\u062A\u0631\u0627\u0643",
+  "smartadmin.paymentDateRequired": "\u062A\u0627\u0631\u064A\u062E \u0627\u0644\u062F\u0641\u0639 \u0645\u0637\u0644\u0648\u0628.",
+  "smartadmin.paymentAmountRequired": "\u0627\u0644\u0645\u0628\u0644\u063A \u0645\u0637\u0644\u0648\u0628.",
+  "smartadmin.paymentCreated": "\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u062F\u0641\u0639\u0629 \u0628\u0646\u062C\u0627\u062D.",
+  "smartadmin.paymentCreateFailed": "\u062A\u0639\u0630\u0651\u0631 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u062F\u0641\u0639\u0629.",
+  "smartadmin.noPayments": "\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u062F\u0641\u0648\u0639\u0627\u062A \u0644\u0647\u0630\u0627 \u0627\u0644\u0634\u0647\u0631.",
+  "common.year": "\u0627\u0644\u0633\u0646\u0629",
+  "common.month": "\u0627\u0644\u0634\u0647\u0631",
+  "common.payer": "\u0627\u0644\u062F\u0627\u0641\u0639",
+  "common.amount": "\u0627\u0644\u0645\u0628\u0644\u063A",
+  "common.other": "\u0623\u062E\u0631\u0649",
   "studentAsk.title": "\u0627\u0633\u0623\u0644 \u0639\u0646 \u0647\u0630\u0627 \u0627\u0644\u062F\u0631\u0633",
   "studentAsk.courseTitle": "\u0627\u0633\u0623\u0644 \u0639\u0646 \u0647\u0630\u0647 \u0627\u0644\u0645\u0627\u062F\u0629",
   "studentAsk.hint": "\u064A\u062C\u0628 \u0623\u0646 \u064A\u0643\u0648\u0646 \u0627\u0644\u0633\u0624\u0627\u0644 \u0639\u0646 \u0647\u0630\u0647 \u0627\u0644\u0645\u0627\u062F\u0629 \u0623\u0648 \u0627\u0644\u0648\u062D\u062F\u0629 \u0623\u0648 \u0627\u0644\u062F\u0631\u0633. \u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0627\u0644\u062E\u0627\u0631\u062C\u064A\u0629 \u0644\u0627 \u062A\u064F\u062C\u0627\u0628.",
@@ -49505,6 +49563,75 @@ var AR = {
   "admin.payroll.exporting": "\u062C\u0627\u0631\u064A \u0627\u0644\u062A\u0635\u062F\u064A\u0631\u2026",
   "admin.payroll.exported": "\u062A\u0645 \u062A\u0646\u0632\u064A\u0644 \u0635\u0648\u0631\u0629 \u0627\u0644\u062A\u0642\u0631\u064A\u0631.",
   "admin.payroll.exportFailed": "\u062A\u0639\u0630\u0651\u0631 \u062A\u0635\u062F\u064A\u0631 \u0635\u0648\u0631\u0629 \u0627\u0644\u062A\u0642\u0631\u064A\u0631.",
+  "guide.opened": "\u062A\u0645 \u0627\u0644\u0641\u062A\u062D",
+  "guide.progress": "\u062A\u0645 {done} \u0645\u0646 {total}",
+  "guide.startHere": "\u0627\u0628\u062F\u0623 \u0647\u0646\u0627",
+  "guide.hide": "\u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u062F\u0644\u064A\u0644",
+  "guide.show": "\u0625\u0638\u0647\u0627\u0631 \u062F\u0644\u064A\u0644 \u0627\u0644\u0628\u062F\u0621",
+  "teacher.guide.title": "\u0627\u0628\u062F\u0623 \u0645\u0646 \u0647\u0646\u0627",
+  "teacher.guide.subtitle": "\u0627\u062A\u0628\u0639 \u0647\u0630\u0647 \u0627\u0644\u062E\u0637\u0648\u0627\u062A \u0644\u062A\u062C\u0647\u064A\u0632 \u0641\u0635\u0648\u0644\u0643. \u062A\u064F\u0639\u0644\u064E\u0651\u0645 \u0643\u0644 \u062E\u0637\u0648\u0629 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627 \u0639\u0646\u062F \u0625\u062A\u0645\u0627\u0645\u0647\u0627.",
+  "teacher.guide.allDone": "\u0623\u0646\u062A \u062C\u0627\u0647\u0632. \u064A\u0645\u0643\u0646\u0643 \u0625\u062E\u0641\u0627\u0621 \u0647\u0630\u0627 \u0627\u0644\u062F\u0644\u064A\u0644 \u0623\u0648 \u0641\u062A\u062D \u0623\u064A \u062E\u0637\u0648\u0629 \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F.",
+  "teacher.guide.students.title": "\u0631\u0627\u062C\u0639 \u0637\u0644\u0627\u0628\u0643",
+  "teacher.guide.students.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0637\u0644\u0627\u0628 \u0644\u062A\u0631\u0649 \u0627\u0644\u0645\u0633\u062C\u0651\u0644\u064A\u0646 \u0641\u064A \u0641\u0635\u0648\u0644\u0643. \u0625\u0630\u0627 \u0643\u0627\u0646\u062A \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0641\u0627\u0631\u063A\u0629 \u0641\u0627\u0637\u0644\u0628 \u0645\u0646 \u0627\u0644\u0645\u062F\u064A\u0631 \u062A\u0639\u064A\u064A\u0646\u0643 \u0644\u0641\u0635\u0644 \u0648\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0637\u0644\u0627\u0628.",
+  "teacher.guide.students.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0637\u0644\u0627\u0628",
+  "teacher.guide.students.count": "\u0627\u0644\u0637\u0644\u0627\u0628: {n}",
+  "teacher.guide.video.title": "\u0623\u0636\u0641 \u0641\u064A\u062F\u064A\u0648 \u0644\u0644\u062F\u0631\u0633",
+  "teacher.guide.video.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0641\u064A\u062F\u064A\u0648\u0647\u0627\u062A \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0645\u0627\u062F\u0629 \u0648\u0627\u0644\u062F\u0631\u0633\u060C \u062B\u0645 \u0627\u0631\u0641\u0639 \u0623\u0648 \u0623\u0631\u0641\u0642 \u0627\u0644\u0641\u064A\u062F\u064A\u0648 \u0627\u0644\u0630\u064A \u0633\u064A\u0634\u0627\u0647\u062F\u0647 \u0637\u0644\u0627\u0628\u0643.",
+  "teacher.guide.video.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0641\u064A\u062F\u064A\u0648\u0647\u0627\u062A",
+  "teacher.guide.video.count": "\u0627\u0644\u0641\u064A\u062F\u064A\u0648\u0647\u0627\u062A: {n}",
+  "teacher.guide.material.title": "\u0627\u0631\u0641\u0639 \u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
+  "teacher.guide.material.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629 \u0648\u0627\u0631\u0641\u0639 \u0627\u0644\u0645\u0630\u0643\u0631\u0627\u062A \u0648\u0623\u0648\u0631\u0627\u0642 \u0627\u0644\u0639\u0645\u0644 \u0648\u0645\u0644\u0641\u0627\u062A PDF \u0644\u0644\u0645\u0627\u062F\u0629 \u0623\u0648 \u0627\u0644\u0648\u062D\u062F\u0629 \u0623\u0648 \u0627\u0644\u062F\u0631\u0633.",
+  "teacher.guide.material.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629",
+  "teacher.guide.material.count": "\u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u0639\u0644\u064A\u0645\u064A\u0629: {n}",
+  "teacher.guide.question.title": "\u062C\u0647\u0651\u0632 \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629",
+  "teacher.guide.question.text": "\u0627\u0641\u062A\u062D \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0648\u0623\u0636\u0641 \u0623\u0633\u0626\u0644\u0629 \u0644\u0645\u0627\u062F\u062A\u0643. \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631\u0627\u062A \u0648\u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A \u062A\u062E\u062A\u0627\u0631 \u0623\u0633\u0626\u0644\u062A\u0647\u0627 \u0645\u0646 \u0647\u0646\u0627.",
+  "teacher.guide.question.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629",
+  "teacher.guide.question.count": "\u0627\u0644\u0623\u0633\u0626\u0644\u0629: {n}",
+  "teacher.guide.exam.title": "\u0623\u0646\u0634\u0626 \u0627\u062E\u062A\u0628\u0627\u0631\u064B\u0627",
+  "teacher.guide.exam.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631\u0627\u062A \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0641\u0635\u0644 \u0648\u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0648\u062D\u062F\u0651\u062F \u0627\u0644\u0648\u0642\u062A\u060C \u062B\u0645 \u0627\u0646\u0634\u0631\u0647 \u0644\u0637\u0644\u0627\u0628\u0643.",
+  "teacher.guide.exam.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631\u0627\u062A",
+  "teacher.guide.exam.count": "\u0627\u0644\u0627\u062E\u062A\u0628\u0627\u0631\u0627\u062A: {n}",
+  "teacher.guide.assignment.title": "\u0623\u0639\u0637\u0650 \u0648\u0627\u062C\u0628\u064B\u0627",
+  "teacher.guide.assignment.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0641\u0635\u0644 \u0648\u0645\u0648\u0639\u062F \u0627\u0644\u062A\u0633\u0644\u064A\u0645 \u0648\u0623\u0636\u0641 \u0627\u0644\u0623\u0633\u0626\u0644\u0629. \u062A\u0638\u0647\u0631 \u0625\u062C\u0627\u0628\u0627\u062A \u0627\u0644\u0637\u0644\u0627\u0628 \u0641\u064A \u0635\u0641\u062D\u0629 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629 \u0644\u0644\u062A\u0635\u062D\u064A\u062D.",
+  "teacher.guide.assignment.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A",
+  "teacher.guide.assignment.count": "\u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A: {n}",
+  "teacher.guide.assistant.title": "\u062C\u0631\u0651\u0628 \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u0645\u0630\u0627\u0643\u0631\u0629",
+  "teacher.guide.assistant.text": "\u0627\u0641\u062A\u062D \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0645\u0627\u062F\u0629 \u0648\u0627\u0644\u062F\u0631\u0633 \u0644\u064A\u062C\u0647\u0651\u0632 \u0644\u0643 \u0645\u0644\u062E\u0635\u0627\u062A \u0648\u0623\u0633\u0626\u0644\u0629 \u062A\u062F\u0631\u064A\u0628\u064A\u0629. \u0631\u0627\u062C\u0639 \u0645\u0627 \u064A\u0646\u062A\u062C\u0647 \u0642\u0628\u0644 \u062A\u0642\u062F\u064A\u0645\u0647 \u0644\u0644\u0637\u0644\u0627\u0628.",
+  "teacher.guide.assistant.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A",
+  "teacher.guide.review.title": "\u0631\u0627\u062C\u0639 \u0625\u062C\u0627\u0628\u0627\u062A \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A",
+  "teacher.guide.review.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629 \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0648\u0627\u062C\u0628\u060C \u062B\u0645 \u0635\u062D\u0651\u062D \u0625\u062C\u0627\u0628\u0629 \u0643\u0644 \u0637\u0627\u0644\u0628 \u0648\u0627\u0643\u062A\u0628 \u0645\u0644\u0627\u062D\u0638\u0627\u062A\u0643. \u064A\u0631\u0649 \u0627\u0644\u0637\u0627\u0644\u0628 \u0627\u0644\u062F\u0631\u062C\u0629 \u0648\u0627\u0644\u0645\u0644\u0627\u062D\u0638\u0627\u062A \u0628\u0639\u062F \u0630\u0644\u0643.",
+  "teacher.guide.review.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0645\u0631\u0627\u062C\u0639\u0629",
+  "teacher.guide.weekly.title": "\u0627\u0645\u0644\u0623 \u0627\u0644\u062A\u0642\u064A\u064A\u0645 \u0627\u0644\u0623\u0633\u0628\u0648\u0639\u064A",
+  "teacher.guide.weekly.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631 \u0627\u0644\u0623\u0633\u0628\u0648\u0639\u064A\u0629 \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0623\u0633\u0628\u0648\u0639\u060C \u062B\u0645 \u0627\u0645\u0644\u0623 \u062A\u0642\u064A\u064A\u0645 \u0643\u0644 \u0637\u0627\u0644\u0628 \u0645\u0646 \u0637\u0644\u0627\u0628\u0643. \u0643\u0631\u0651\u0631 \u0630\u0644\u0643 \u0645\u0631\u0629 \u0643\u0644 \u0623\u0633\u0628\u0648\u0639.",
+  "teacher.guide.weekly.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631 \u0627\u0644\u0623\u0633\u0628\u0648\u0639\u064A\u0629",
+  "teacher.guide.weekly.count": "\u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631 \u0627\u0644\u0623\u0633\u0628\u0648\u0639\u064A\u0629: {n}",
+  "admin.guide.title": "\u0627\u0628\u062F\u0623 \u0645\u0646 \u0647\u0646\u0627",
+  "admin.guide.subtitle": "\u0627\u062A\u0628\u0639 \u0647\u0630\u0647 \u0627\u0644\u062E\u0637\u0648\u0627\u062A \u0628\u0627\u0644\u062A\u0631\u062A\u064A\u0628 \u0644\u0625\u0639\u062F\u0627\u062F \u0627\u0644\u0645\u062F\u0631\u0633\u0629. \u062A\u064F\u0639\u0644\u064E\u0651\u0645 \u0643\u0644 \u062E\u0637\u0648\u0629 \u062A\u0644\u0642\u0627\u0626\u064A\u064B\u0627 \u0639\u0646\u062F \u0625\u062A\u0645\u0627\u0645\u0647\u0627.",
+  "admin.guide.allDone": "\u0627\u0643\u062A\u0645\u0644 \u0627\u0644\u0625\u0639\u062F\u0627\u062F. \u064A\u0645\u0643\u0646\u0643 \u0625\u062E\u0641\u0627\u0621 \u0647\u0630\u0627 \u0627\u0644\u062F\u0644\u064A\u0644 \u0623\u0648 \u0641\u062A\u062D \u0623\u064A \u062E\u0637\u0648\u0629 \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F.",
+  "admin.guide.teacher.title": "\u0623\u0636\u0641 \u0645\u0639\u0644\u0645\u064B\u0627",
+  "admin.guide.teacher.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0645\u0639\u0644\u0645\u064A\u0646 \u0648\u0623\u0646\u0634\u0626 \u062D\u0633\u0627\u0628\u064B\u0627 \u0644\u0643\u0644 \u0645\u0639\u0644\u0645 \u0628\u0627\u0644\u0627\u0633\u0645 \u0648\u0627\u0644\u0628\u0631\u064A\u062F \u0627\u0644\u0625\u0644\u0643\u062A\u0631\u0648\u0646\u064A \u0648\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631. \u064A\u0633\u062C\u0651\u0644 \u0627\u0644\u0645\u0639\u0644\u0645\u0648\u0646 \u0627\u0644\u062F\u062E\u0648\u0644 \u0628\u0647\u0630\u0647 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A.",
+  "admin.guide.teacher.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0645\u0639\u0644\u0645\u064A\u0646",
+  "admin.guide.teacher.count": "\u0627\u0644\u0645\u0639\u0644\u0645\u0648\u0646: {n}",
+  "admin.guide.course.title": "\u0623\u0636\u0641 \u0645\u0627\u062F\u0629",
+  "admin.guide.course.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0645\u0648\u0627\u062F \u0648\u0623\u0646\u0634\u0626 \u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u064A \u062A\u062F\u0631\u0651\u0633\u0647\u0627 \u0645\u0639 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0635\u0641 \u0644\u0643\u0644 \u0645\u0627\u062F\u0629. \u0627\u0644\u0641\u0635\u0648\u0644 \u0648\u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u064A\u0639\u062A\u0645\u062F\u0627\u0646 \u0639\u0644\u0649 \u0627\u0644\u0645\u0648\u0627\u062F.",
+  "admin.guide.course.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0645\u0648\u0627\u062F",
+  "admin.guide.course.count": "\u0627\u0644\u0645\u0648\u0627\u062F: {n}",
+  "admin.guide.classroom.title": "\u0623\u0646\u0634\u0626 \u0641\u0635\u0644\u064B\u0627",
+  "admin.guide.classroom.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0641\u0635\u0648\u0644 \u0648\u0623\u0646\u0634\u0626 \u0641\u0635\u0644\u064B\u0627 \u0628\u0627\u0644\u0627\u0633\u0645 \u0648\u0627\u0644\u0635\u0641. \u0627\u0644\u0641\u0635\u0644 \u064A\u062C\u0645\u0639 \u0627\u0644\u0637\u0644\u0627\u0628 \u0627\u0644\u0630\u064A\u0646 \u064A\u062F\u0631\u0633\u0648\u0646 \u0645\u0639\u064B\u0627.",
+  "admin.guide.classroom.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0641\u0635\u0648\u0644",
+  "admin.guide.classroom.count": "\u0627\u0644\u0641\u0635\u0648\u0644: {n}",
+  "admin.guide.assign.title": "\u0639\u064A\u0651\u0646 \u0627\u0644\u0645\u0639\u0644\u0645\u064A\u0646 \u0644\u0644\u0641\u0635\u0644",
+  "admin.guide.assign.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u062A\u0639\u064A\u064A\u0646 \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0641\u0635\u0644\u060C \u062B\u0645 \u062D\u062F\u0651\u062F \u0627\u0644\u0645\u0639\u0644\u0645 \u0627\u0644\u0630\u064A \u064A\u062F\u0631\u0651\u0633 \u0643\u0644 \u0645\u0627\u062F\u0629 \u0641\u064A\u0647.",
+  "admin.guide.assign.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u062A\u0639\u064A\u064A\u0646",
+  "admin.guide.assign.count": "\u0641\u0635\u0648\u0644 \u0644\u0647\u0627 \u0645\u0639\u0644\u0645\u0648\u0646: {n}",
+  "admin.guide.student.title": "\u0623\u0636\u0641 \u0627\u0644\u0637\u0644\u0627\u0628",
+  "admin.guide.student.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u0637\u0644\u0627\u0628 \u0648\u0623\u0646\u0634\u0626 \u062D\u0633\u0627\u0628\u064B\u0627 \u0644\u0643\u0644 \u0637\u0627\u0644\u0628 \u0645\u0639 \u062A\u062D\u062F\u064A\u062F \u0635\u0641\u0647 \u0648\u0648\u0644\u064A \u0623\u0645\u0631\u0647 \u0625\u0646 \u0648\u064F\u062C\u062F.",
+  "admin.guide.student.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u0637\u0644\u0627\u0628",
+  "admin.guide.student.count": "\u0627\u0644\u0637\u0644\u0627\u0628: {n}",
+  "admin.guide.enroll.title": "\u0633\u062C\u0651\u0644 \u0627\u0644\u0637\u0644\u0627\u0628 \u0641\u064A \u0627\u0644\u0645\u0648\u0627\u062F",
+  "admin.guide.enroll.text": "\u0627\u0641\u062A\u062D \u0635\u0641\u062D\u0629 \u0627\u0644\u062A\u0633\u062C\u064A\u0644 \u0648\u0627\u062E\u062A\u0631 \u0627\u0644\u0641\u0635\u0644 \u0648\u0627\u0644\u0637\u0627\u0644\u0628\u060C \u062B\u0645 \u062D\u062F\u0651\u062F \u0627\u0644\u0645\u0648\u0627\u062F \u0627\u0644\u062A\u064A \u064A\u062F\u0631\u0633\u0647\u0627 \u0627\u0644\u0637\u0627\u0644\u0628. \u062A\u0638\u0647\u0631 \u0647\u0630\u0647 \u0627\u0644\u0645\u0648\u0627\u062F \u0644\u0644\u0637\u0627\u0644\u0628 \u0628\u0639\u062F \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644.",
+  "admin.guide.enroll.action": "\u0627\u0644\u0630\u0647\u0627\u0628 \u0625\u0644\u0649 \u0627\u0644\u062A\u0633\u062C\u064A\u0644",
+  "admin.guide.enroll.count": "\u0639\u062F\u062F \u0627\u0644\u062A\u0633\u062C\u064A\u0644\u0627\u062A: {n}",
   "admin.dashboard.title": "\u0644\u0648\u062D\u0629 \u0627\u0644\u062F\u062E\u0648\u0644",
   "admin.dashboard.subtitle": "\u0639\u062F\u062F \u0627\u0644\u0645\u0639\u0644\u0645\u064A\u0646 \u0648\u0623\u0648\u0644\u064A\u0627\u0621 \u0627\u0644\u0623\u0645\u0648\u0631 \u0648\u0627\u0644\u0637\u0644\u0627\u0628 \u0627\u0644\u0630\u064A\u0646 \u0643\u0627\u0646 \u0622\u062E\u0631 \u062F\u062E\u0648\u0644 \u0644\u0647\u0645 \u0636\u0645\u0646 \u0627\u0644\u0641\u062A\u0631\u0629 \u0627\u0644\u0645\u062D\u062F\u062F\u0629. \u0627\u0644\u0627\u0641\u062A\u0631\u0627\u0636\u064A \u0647\u0648 \u0627\u0644\u0634\u0647\u0631 \u0627\u0644\u062D\u0627\u0644\u064A.",
   "admin.dashboard.dateFrom": "\u0645\u0646",
@@ -50710,6 +50837,7 @@ var EN = {
   "nav.admin.expenses": "Other expenses",
   "nav.admin.whatsapp": "WhatsApp",
   "nav.admin.settings": "Site branding",
+  "nav.admin.smartAssistant": "Smart assistant",
   "landing.nav.topStudents": "Top students",
   "landing.nav.services": "Services",
   "landing.nav.systems": "Study systems",
@@ -51069,6 +51197,63 @@ var EN = {
   "play.timer.fullscreenBody": "This assessment runs in fullscreen. The clock keeps running, so return to fullscreen to carry on answering.",
   "play.timer.fullscreenResume": "Return to fullscreen",
   "play.submittedScore": "Status: {status} \xB7 Score: {score}/{max}",
+  "smartadmin.title": "Admin smart assistant",
+  "smartadmin.subtitle": "Add users and classrooms, assign teachers, enroll students, and manage subscriptions from one place.",
+  "smartadmin.tabUsers": "Add user",
+  "smartadmin.tabClassrooms": "Classrooms",
+  "smartadmin.tabAssign": "Assign teachers",
+  "smartadmin.tabEnroll": "Enroll student",
+  "smartadmin.tabPayments": "Subscriptions & payments",
+  "smartadmin.addUserTitle": "Create teacher, parent, or student",
+  "smartadmin.addNewUser": "New user",
+  "smartadmin.nameRequired": "Name is required.",
+  "smartadmin.emailRequired": "Email is required.",
+  "smartadmin.passwordRequired": "Password is required.",
+  "smartadmin.userCreated": "{role} created successfully.",
+  "smartadmin.userCreateFailed": "Failed to create user.",
+  "smartadmin.userDeleted": "User deleted successfully.",
+  "smartadmin.userDeleteFailed": "Failed to delete user.",
+  "smartadmin.confirmDeleteUser": "Delete {name} ({role})?",
+  "smartadmin.classroomTitle": "Manage classrooms",
+  "smartadmin.newClassroom": "New classroom",
+  "smartadmin.classroomNamePlaceholder": "Classroom name",
+  "smartadmin.classroomNameRequired": "Classroom name is required.",
+  "smartadmin.classroomCourseRequired": "Select at least one course.",
+  "smartadmin.classroomCreated": "Classroom created successfully.",
+  "smartadmin.classroomUpdated": "Classroom updated successfully.",
+  "smartadmin.classroomDeleted": "Classroom deleted successfully.",
+  "smartadmin.classroomCreateFailed": "Failed to create classroom.",
+  "smartadmin.classroomUpdateFailed": "Failed to update classroom.",
+  "smartadmin.classroomDeleteFailed": "Failed to delete classroom.",
+  "smartadmin.confirmDeleteClassroom": "Delete classroom {name}?",
+  "smartadmin.assignTitle": "Assign teachers to classrooms and courses",
+  "smartadmin.assignMode": "Assignment type",
+  "smartadmin.assignSave": "Save assignment",
+  "smartadmin.assignmentSaved": "Assignment saved successfully.",
+  "smartadmin.assignmentFailed": "Failed to save assignment.",
+  "smartadmin.assignSelectBoth": "Select both a classroom and a teacher.",
+  "smartadmin.enrollTitle": "Enroll a student in a classroom or course",
+  "smartadmin.enrollClassroom": "Enroll in classroom",
+  "smartadmin.enrollSubject": "Enroll in course",
+  "smartadmin.enrollSave": "Enroll student",
+  "smartadmin.enrolled": "Student enrolled successfully.",
+  "smartadmin.enrollFailed": "Failed to enroll student.",
+  "smartadmin.enrollSelectBoth": "Select both a classroom and a student.",
+  "smartadmin.enrollSelectCourse": "Select a course.",
+  "smartadmin.paymentsTitle": "Subscriptions & payments",
+  "smartadmin.addPaymentTitle": "Add a subscription payment",
+  "smartadmin.paymentsList": "Payment history",
+  "smartadmin.payment": "subscription payment",
+  "smartadmin.paymentDateRequired": "Payment date is required.",
+  "smartadmin.paymentAmountRequired": "Amount is required.",
+  "smartadmin.paymentCreated": "Payment added successfully.",
+  "smartadmin.paymentCreateFailed": "Failed to add payment.",
+  "smartadmin.noPayments": "No payments for this month.",
+  "common.year": "Year",
+  "common.month": "Month",
+  "common.payer": "Payer",
+  "common.amount": "Amount",
+  "common.other": "other",
   "studentAsk.title": "Ask about this lesson",
   "studentAsk.courseTitle": "Ask about this course",
   "studentAsk.hint": "Questions must be about this course, unit, or lesson. Other topics are not answered.",
@@ -51595,6 +51780,75 @@ var EN = {
   "admin.payroll.exporting": "Exporting\u2026",
   "admin.payroll.exported": "Payroll image downloaded.",
   "admin.payroll.exportFailed": "Could not export payroll image.",
+  "guide.opened": "Opened",
+  "guide.progress": "{done} of {total} done",
+  "guide.startHere": "Start here",
+  "guide.hide": "Hide guide",
+  "guide.show": "Show getting-started guide",
+  "teacher.guide.title": "Getting started",
+  "teacher.guide.subtitle": "Follow these steps to prepare your classes. Each step is ticked automatically once it is done.",
+  "teacher.guide.allDone": "You are all set. You can hide this guide, or reopen any step to add more.",
+  "teacher.guide.students.title": "Check your students",
+  "teacher.guide.students.text": "Open Students to see who is enrolled in your classrooms. If the list is empty, ask the admin to assign you to a classroom and enroll students.",
+  "teacher.guide.students.action": "Go to Students",
+  "teacher.guide.students.count": "{n} students",
+  "teacher.guide.video.title": "Add a lesson video",
+  "teacher.guide.video.text": "Open Videos, pick the course and lesson, then upload or attach the video your students will watch.",
+  "teacher.guide.video.action": "Go to Videos",
+  "teacher.guide.video.count": "{n} videos",
+  "teacher.guide.material.title": "Upload learning materials",
+  "teacher.guide.material.text": "Open Materials and upload notes, worksheets or PDFs for a course, unit or lesson.",
+  "teacher.guide.material.action": "Go to Materials",
+  "teacher.guide.material.count": "{n} materials",
+  "teacher.guide.question.title": "Build your question bank",
+  "teacher.guide.question.text": "Open Question bank and add questions for your course. Exams, quizzes and assignments pick their questions from here.",
+  "teacher.guide.question.action": "Go to Question bank",
+  "teacher.guide.question.count": "{n} questions",
+  "teacher.guide.exam.title": "Create an exam",
+  "teacher.guide.exam.text": "Open Exams, choose the classroom and the questions, set the time, then publish it to your students.",
+  "teacher.guide.exam.action": "Go to Exams",
+  "teacher.guide.exam.count": "{n} exams",
+  "teacher.guide.assignment.title": "Give an assignment",
+  "teacher.guide.assignment.text": "Open Assignments, choose the classroom and due date, and add the questions. Submissions appear under Review for grading.",
+  "teacher.guide.assignment.action": "Go to Assignments",
+  "teacher.guide.assignment.count": "{n} assignments",
+  "teacher.guide.assistant.title": "Try the Smart Study Assistant",
+  "teacher.guide.assistant.text": "Open Smart Study Assistant, pick a course and lesson, and let it draft summaries and practice questions for you. Check what it produces before giving it to students.",
+  "teacher.guide.assistant.action": "Go to Smart Study Assistant",
+  "teacher.guide.review.title": "Review assignment answers",
+  "teacher.guide.review.text": "Open Review, choose an assignment, then mark each student answer and write your feedback. Students see the grade and feedback afterwards.",
+  "teacher.guide.review.action": "Go to Review",
+  "teacher.guide.weekly.title": "Fill the weekly evaluation",
+  "teacher.guide.weekly.text": "Open Weekly reports, pick the week, and fill the evaluation for each of your students. Do this once a week.",
+  "teacher.guide.weekly.action": "Go to Weekly reports",
+  "teacher.guide.weekly.count": "{n} weekly reports",
+  "admin.guide.title": "Getting started",
+  "admin.guide.subtitle": "Follow these steps in order to set up your school. Each step is ticked automatically once it is done.",
+  "admin.guide.allDone": "Setup is complete. You can hide this guide, or reopen any step to add more.",
+  "admin.guide.teacher.title": "Add a teacher",
+  "admin.guide.teacher.text": "Open Teachers and create an account for each teacher with their name, email and password. Teachers sign in with these details.",
+  "admin.guide.teacher.action": "Go to Teachers",
+  "admin.guide.teacher.count": "{n} teachers",
+  "admin.guide.course.title": "Add a course",
+  "admin.guide.course.text": "Open Courses and create the subjects you teach, each with its grade. Classrooms and enrollments are built on courses.",
+  "admin.guide.course.action": "Go to Courses",
+  "admin.guide.course.count": "{n} courses",
+  "admin.guide.classroom.title": "Create a classroom",
+  "admin.guide.classroom.text": "Open Classrooms and create a classroom with a name and grade. A classroom groups the students who study together.",
+  "admin.guide.classroom.action": "Go to Classrooms",
+  "admin.guide.classroom.count": "{n} classrooms",
+  "admin.guide.assign.title": "Assign teachers to the classroom",
+  "admin.guide.assign.text": "Open Assign, pick the classroom, then choose which teacher teaches each course in it.",
+  "admin.guide.assign.action": "Go to Assign",
+  "admin.guide.assign.count": "{n} classrooms with teachers",
+  "admin.guide.student.title": "Add students",
+  "admin.guide.student.text": "Open Students and create an account for each student with their grade and, if you have one, their parent.",
+  "admin.guide.student.action": "Go to Students",
+  "admin.guide.student.count": "{n} students",
+  "admin.guide.enroll.title": "Enroll students in courses",
+  "admin.guide.enroll.text": "Open Enroll, pick the classroom and the student, then choose the courses the student takes. The student sees those courses after signing in.",
+  "admin.guide.enroll.action": "Go to Enroll",
+  "admin.guide.enroll.count": "{n} enrollments",
   "admin.dashboard.title": "Login dashboard",
   "admin.dashboard.subtitle": "Count of teachers, parents, and students whose last login falls in the selected dates. Defaults to the current month.",
   "admin.dashboard.dateFrom": "From",
@@ -67934,72 +68188,72 @@ var StudentMaterialsComponent = class _StudentMaterialsComponent {
       SiteBrandComponent,
       ApiBusyIndicatorComponent,
       MaterialViewerComponent
-    ], template: `<div class="page student-materials-page">
-  <app-api-busy-indicator />
-  <header class="topbar">
-    <div>
-      <app-site-brand />
-      <h1>{{ courseTitle() || ('materials.title' | t) }}</h1>
-      <p class="meta">{{ 'materials.studentHint' | t }}</p>
-    </div>
-    <div class="topbar-actions">
-      <app-theme-switcher />
-      <app-language-switcher />
-      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
-    </div>
-  </header>
-
-  <a class="back" routerLink="/student">{{ 'common.backMissions' | t }}</a>
-
-  @if (error()) {
-    <section class="section-card">
-      <p class="feedback">{{ error() }}</p>
-    </section>
-  } @else if (loading()) {
-    <section class="section-card">
-      <p class="meta">{{ 'common.loading' | t }}</p>
-    </section>
-  } @else if (!groups().length) {
-    <section class="section-card">
-      <p class="meta empty-state">{{ 'materials.studentEmpty' | t }}</p>
-    </section>
-  } @else {
-    @for (group of groups(); track group.id) {
-      <section class="section-card">
-        @if (group.title) {
-          <h2>{{ group.title }}</h2>
-        }
-        <div class="item-list">
-          @for (material of group.items; track material.id) {
-            <button type="button" class="item-row link-row" (click)="open(material)">
-              <div class="item-body">
-                <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>
-                <p class="meta">{{ material.fileName }}</p>
-              </div>
-              <span class="action-ghost">{{ 'materials.open' | t }}</span>
-            </button>
-          }
-        </div>
-      </section>
-    }
-  }
-
-  @if (openMaterial(); as item) {
-    <div class="preview-overlay" (click)="close()">
-      <div class="preview-card" (click)="$event.stopPropagation()">
-        <header class="preview-head">
-          <h3>{{ item.title }}</h3>
-          <button type="button" class="ghost" (click)="close()">{{ 'common.close' | t }}</button>
-        </header>
-        <app-material-viewer
-          [materialId]="item.id"
-          [kind]="item.kind"
-          [title]="item.title"
-        />
-      </div>
-    </div>
-  }
-</div>
+    ], template: `<div class="page student-materials-page">\r
+  <app-api-busy-indicator />\r
+  <header class="topbar">\r
+    <div>\r
+      <app-site-brand />\r
+      <h1>{{ courseTitle() || ('materials.title' | t) }}</h1>\r
+      <p class="meta">{{ 'materials.studentHint' | t }}</p>\r
+    </div>\r
+    <div class="topbar-actions">\r
+      <app-theme-switcher />\r
+      <app-language-switcher />\r
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>\r
+    </div>\r
+  </header>\r
+\r
+  <a class="back" routerLink="/student">{{ 'common.backMissions' | t }}</a>\r
+\r
+  @if (error()) {\r
+    <section class="section-card">\r
+      <p class="feedback">{{ error() }}</p>\r
+    </section>\r
+  } @else if (loading()) {\r
+    <section class="section-card">\r
+      <p class="meta">{{ 'common.loading' | t }}</p>\r
+    </section>\r
+  } @else if (!groups().length) {\r
+    <section class="section-card">\r
+      <p class="meta empty-state">{{ 'materials.studentEmpty' | t }}</p>\r
+    </section>\r
+  } @else {\r
+    @for (group of groups(); track group.id) {\r
+      <section class="section-card">\r
+        @if (group.title) {\r
+          <h2>{{ group.title }}</h2>\r
+        }\r
+        <div class="item-list">\r
+          @for (material of group.items; track material.id) {\r
+            <button type="button" class="item-row link-row" (click)="open(material)">\r
+              <div class="item-body">\r
+                <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>\r
+                <p class="meta">{{ material.fileName }}</p>\r
+              </div>\r
+              <span class="action-ghost">{{ 'materials.open' | t }}</span>\r
+            </button>\r
+          }\r
+        </div>\r
+      </section>\r
+    }\r
+  }\r
+\r
+  @if (openMaterial(); as item) {\r
+    <div class="preview-overlay" (click)="close()">\r
+      <div class="preview-card" (click)="$event.stopPropagation()">\r
+        <header class="preview-head">\r
+          <h3>{{ item.title }}</h3>\r
+          <button type="button" class="ghost" (click)="close()">{{ 'common.close' | t }}</button>\r
+        </header>\r
+        <app-material-viewer\r
+          [materialId]="item.id"\r
+          [kind]="item.kind"\r
+          [title]="item.title"\r
+        />\r
+      </div>\r
+    </div>\r
+  }\r
+</div>\r
 `, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/student-lessons/student-lessons.component.css */\n.student-lessons-page {\n  animation: pageIn 0.4s ease;\n}\n.topbar-actions {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n}\n.section-hint {\n  margin: 0 0 1rem;\n  color: var(--text-muted);\n}\n.lesson-group {\n  display: grid;\n  gap: 0.65rem;\n}\n.lesson-group + .lesson-group {\n  margin-top: 1.25rem;\n  padding-top: 1.1rem;\n  border-top: 1px solid var(--border);\n}\n.lesson-group h2 {\n  margin: 0;\n  font-size: 1.1rem;\n  color: var(--heading);\n}\n.item-list {\n  display: grid;\n  gap: 0.45rem;\n}\n.item-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.85rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  transition: background 0.15s ease, border-color 0.15s ease;\n}\n.item-row.link-row {\n  text-decoration: none;\n  color: inherit;\n  cursor: pointer;\n}\n.item-row:hover {\n  background: var(--elevated-bg-hover);\n  border-color: rgba(95, 211, 188, 0.35);\n}\n.item-body strong {\n  display: block;\n  font-size: 1.05rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.item-body .meta {\n  margin: 0.2rem 0 0;\n  font-size: 0.82rem;\n}\n.action-ghost {\n  flex-shrink: 0;\n  color: var(--teal);\n  font-size: 0.82rem;\n  font-weight: 700;\n}\n.empty-state {\n  margin: 0;\n  padding: 0.65rem 0.15rem;\n}\n@media (max-width: 700px) {\n  .item-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .action-ghost {\n    align-self: stretch;\n    text-align: center;\n  }\n}\n/*# sourceMappingURL=student-lessons.component.css.map */\n", "/* src/app/pages/student-materials/student-materials.component.css */\n.preview-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(15, 23, 42, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 60;\n  padding: 1rem;\n}\n.preview-card {\n  background: var(--panel-bg, #fff);\n  border-radius: var(--radius-lg, 16px);\n  padding: 1.25rem;\n  max-width: min(860px, 95vw);\n  max-height: 90vh;\n  overflow: auto;\n  width: 100%;\n}\n.preview-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n/*# sourceMappingURL=student-materials.component.css.map */\n"] }]
   }], () => [], null);
 })();
@@ -76378,6 +76632,7 @@ var AdminShellComponent = class _AdminShellComponent {
       { labelKey: "nav.admin.classrooms", path: "/admin/create-classroom", icon: "R", categoryKey: "nav.cat.classrooms" },
       { labelKey: "nav.admin.assign", path: "/admin/assign-classroom", icon: "G", categoryKey: "nav.cat.classrooms" },
       { labelKey: "nav.admin.enroll", path: "/admin/enroll-student", icon: "E", categoryKey: "nav.cat.classrooms" },
+      { labelKey: "nav.admin.smartAssistant", path: "/admin/smart-assistant", icon: "M", categoryKey: "nav.cat.content" },
       { labelKey: "nav.admin.teacherAssessments", path: "/admin/teacher-assessments", icon: "Q", categoryKey: "nav.cat.assessments" },
       { labelKey: "nav.admin.weeklyReports", path: "/admin/weekly-reports", icon: "W", categoryKey: "nav.cat.assessments" },
       { labelKey: "nav.admin.timetable", path: "/admin/timetable", icon: "H", categoryKey: "nav.cat.schedule" },
@@ -76431,10 +76686,443 @@ var AdminShellComponent = class _AdminShellComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AdminShellComponent, { className: "AdminShellComponent", filePath: "src/app/pages/admin/admin-shell.component.ts", lineNumber: 17 });
 })();
 
-// src/app/pages/admin/admin-dashboard.component.ts
+// src/app/shared/setup-guide/setup-guide.component.ts
+var _c014 = (a0, a1) => ({ done: a0, total: a1 });
+var _c111 = (a0) => ({ n: a0 });
 var _forTrack017 = ($index, $item) => $item.id;
+function SetupGuideComponent_Conditional_0_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 2);
+    \u0275\u0275listener("click", function SetupGuideComponent_Conditional_0_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.setHidden(false));
+    });
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(2, 1, "guide.show"), " ");
+  }
+}
+function SetupGuideComponent_Conditional_1_For_21_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 15);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const step_r5 = \u0275\u0275nextContext().$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", step_r5.visitOnly ? \u0275\u0275pipeBind1(2, 1, "guide.opened") : \u0275\u0275pipeBind2(3, 3, ctx_r1.prefix() + "." + step_r5.id + ".count", \u0275\u0275pureFunction1(6, _c111, ctx_r1.count(step_r5.id))), " ");
+  }
+}
+function SetupGuideComponent_Conditional_1_For_21_Conditional_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 16);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "guide.startHere"));
+  }
+}
+function SetupGuideComponent_Conditional_1_For_21_Conditional_9_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r6 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17)(1, "p");
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "a", 18);
+    \u0275\u0275listener("click", function SetupGuideComponent_Conditional_1_For_21_Conditional_9_Template_a_click_4_listener() {
+      \u0275\u0275restoreView(_r6);
+      const step_r5 = \u0275\u0275nextContext().$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.markVisited(step_r5));
+    });
+    \u0275\u0275text(5);
+    \u0275\u0275pipe(6, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const step_r5 = \u0275\u0275nextContext().$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 3, ctx_r1.prefix() + "." + step_r5.id + ".text"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("routerLink", step_r5.path);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(6, 5, ctx_r1.prefix() + "." + step_r5.id + ".action"), " ");
+  }
+}
+function SetupGuideComponent_Conditional_1_For_21_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r4 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "li", 11)(1, "button", 12);
+    \u0275\u0275listener("click", function SetupGuideComponent_Conditional_1_For_21_Template_button_click_1_listener() {
+      const step_r5 = \u0275\u0275restoreView(_r4).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.toggle(step_r5.id));
+    });
+    \u0275\u0275elementStart(2, "span", 13);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span", 14);
+    \u0275\u0275text(5);
+    \u0275\u0275pipe(6, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275conditionalCreate(7, SetupGuideComponent_Conditional_1_For_21_Conditional_7_Template, 4, 8, "span", 15)(8, SetupGuideComponent_Conditional_1_For_21_Conditional_8_Template, 3, 3, "span", 16);
+    \u0275\u0275elementEnd();
+    \u0275\u0275conditionalCreate(9, SetupGuideComponent_Conditional_1_For_21_Conditional_9_Template, 7, 7, "div", 17);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const step_r5 = ctx.$implicit;
+    const \u0275$index_38_r7 = ctx.$index;
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275classProp("done", ctx_r1.isDone(step_r5))("next", ctx_r1.nextStep() === step_r5.id)("open", ctx_r1.openStep() === step_r5.id);
+    \u0275\u0275advance();
+    \u0275\u0275attribute("aria-expanded", ctx_r1.openStep() === step_r5.id);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r1.isDone(step_r5) ? "\u2713" : \u0275$index_38_r7 + 1);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 11, ctx_r1.prefix() + "." + step_r5.id + ".title"));
+    \u0275\u0275advance(2);
+    \u0275\u0275conditional(ctx_r1.isDone(step_r5) ? 7 : ctx_r1.nextStep() === step_r5.id ? 8 : -1);
+    \u0275\u0275advance(2);
+    \u0275\u0275conditional(ctx_r1.openStep() === step_r5.id ? 9 : -1);
+  }
+}
+function SetupGuideComponent_Conditional_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "section", 1);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "header", 3)(3, "div")(4, "h3");
+    \u0275\u0275text(5);
+    \u0275\u0275pipe(6, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "p", 4);
+    \u0275\u0275text(8);
+    \u0275\u0275pipe(9, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(10, "button", 5);
+    \u0275\u0275listener("click", function SetupGuideComponent_Conditional_1_Template_button_click_10_listener() {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.setHidden(true));
+    });
+    \u0275\u0275text(11);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(13, "div", 6)(14, "div", 7);
+    \u0275\u0275element(15, "div", 8);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "span");
+    \u0275\u0275text(17);
+    \u0275\u0275pipe(18, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(19, "ol", 9);
+    \u0275\u0275repeaterCreate(20, SetupGuideComponent_Conditional_1_For_21_Template, 10, 13, "li", 10, _forTrack017);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(1, 7, ctx_r1.prefix() + ".title"));
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 9, ctx_r1.prefix() + ".title"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(9, 11, ctx_r1.prefix() + (ctx_r1.allDone() ? ".allDone" : ".subtitle")), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(12, 13, "guide.hide"), " ");
+    \u0275\u0275advance(4);
+    \u0275\u0275styleProp("width", ctx_r1.progress());
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(18, 15, "guide.progress", \u0275\u0275pureFunction2(18, _c014, ctx_r1.doneCount(), ctx_r1.steps().length)));
+    \u0275\u0275advance(3);
+    \u0275\u0275repeater(ctx_r1.steps());
+  }
+}
+var SetupGuideComponent = class _SetupGuideComponent {
+  constructor() {
+    this.prefix = input.required(
+      ...ngDevMode ? [{ debugName: "prefix" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.steps = input.required(
+      ...ngDevMode ? [{ debugName: "steps" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.counts = input(
+      null,
+      ...ngDevMode ? [{ debugName: "counts" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.hidden = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "hidden" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.visited = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "visited" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.picked = signal(
+      void 0,
+      ...ngDevMode ? [{ debugName: "picked" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.doneCount = computed(
+      () => this.steps().filter((s) => this.isDone(s)).length,
+      ...ngDevMode ? [{ debugName: "doneCount" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.allDone = computed(
+      () => this.doneCount() === this.steps().length,
+      ...ngDevMode ? [{ debugName: "allDone" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.progress = computed(
+      () => `${this.doneCount() / this.steps().length * 100}%`,
+      ...ngDevMode ? [{ debugName: "progress" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.nextStep = computed(
+      () => this.steps().find((s) => !this.isDone(s))?.id ?? null,
+      ...ngDevMode ? [{ debugName: "nextStep" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.openStep = computed(
+      () => {
+        const picked = this.picked();
+        return picked === void 0 ? this.nextStep() : picked;
+      },
+      ...ngDevMode ? [{ debugName: "openStep" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+  }
+  get hiddenKey() {
+    return `codekids.guide.hidden.${this.prefix()}`;
+  }
+  get visitedKey() {
+    return `codekids.guide.visited.${this.prefix()}`;
+  }
+  ngOnInit() {
+    this.hidden.set(localStorage.getItem(this.hiddenKey) === "1");
+    this.visited.set((localStorage.getItem(this.visitedKey) ?? "").split(",").filter(Boolean));
+  }
+  count(id) {
+    return this.counts()?.[id] ?? 0;
+  }
+  isDone(step) {
+    return step.visitOnly ? this.visited().includes(step.id) : this.count(step.id) > 0;
+  }
+  markVisited(step) {
+    if (!step.visitOnly || this.visited().includes(step.id))
+      return;
+    this.visited.update((ids) => [...ids, step.id]);
+    localStorage.setItem(this.visitedKey, this.visited().join(","));
+  }
+  toggle(id) {
+    this.picked.set(this.openStep() === id ? null : id);
+  }
+  setHidden(hidden) {
+    this.hidden.set(hidden);
+    if (hidden) {
+      localStorage.setItem(this.hiddenKey, "1");
+    } else {
+      localStorage.removeItem(this.hiddenKey);
+    }
+  }
+  static {
+    this.\u0275fac = function SetupGuideComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SetupGuideComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SetupGuideComponent, selectors: [["app-setup-guide"]], inputs: { prefix: [1, "prefix"], steps: [1, "steps"], counts: [1, "counts"] }, decls: 2, vars: 1, consts: [["type", "button", 1, "guide-reopen"], [1, "guide"], ["type", "button", 1, "guide-reopen", 3, "click"], [1, "guide-head"], [1, "guide-sub"], ["type", "button", 1, "guide-hide", 3, "click"], [1, "guide-progress"], [1, "guide-progress-track"], [1, "guide-progress-fill"], [1, "guide-steps"], [1, "guide-step", 3, "done", "next", "open"], [1, "guide-step"], ["type", "button", 1, "guide-step-head", 3, "click"], [1, "guide-step-num"], [1, "guide-step-title"], [1, "guide-step-badge"], [1, "guide-step-badge", "guide-step-badge-next"], [1, "guide-step-body"], [1, "guide-go", 3, "click", "routerLink"]], template: function SetupGuideComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275conditionalCreate(0, SetupGuideComponent_Conditional_0_Template, 3, 3, "button", 0)(1, SetupGuideComponent_Conditional_1_Template, 22, 21, "section", 1);
+      }
+      if (rf & 2) {
+        \u0275\u0275conditional(ctx.hidden() ? 0 : 1);
+      }
+    }, dependencies: [RouterLink, TranslatePipe], styles: ["\n[_nghost-%COMP%] {\n  display: block;\n  margin-bottom: 1.25rem;\n}\n.guide[_ngcontent-%COMP%] {\n  padding: 1.1rem 1.25rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.guide-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 1rem;\n}\n.guide-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.guide-sub[_ngcontent-%COMP%] {\n  margin: 0.25rem 0 0;\n  color: var(--text-muted);\n}\n.guide-hide[_ngcontent-%COMP%], \n.guide-reopen[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.4rem 0.85rem;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-pill);\n  background: transparent;\n  color: var(--text-muted);\n  cursor: pointer;\n}\n.guide-hide[_ngcontent-%COMP%]:hover, \n.guide-reopen[_ngcontent-%COMP%]:hover {\n  background: var(--surface-strong);\n  color: var(--text);\n}\n.guide-progress[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  margin: 0.9rem 0;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.guide-progress-track[_ngcontent-%COMP%] {\n  flex: 1;\n  height: 8px;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  overflow: hidden;\n}\n.guide-progress-fill[_ngcontent-%COMP%] {\n  height: 100%;\n  border-radius: var(--radius-pill);\n  background: var(--success);\n  transition: width 0.3s ease;\n}\n.guide-steps[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.guide-step[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n}\n.guide-step.next[_ngcontent-%COMP%] {\n  border-color: var(--accent-fg);\n}\n.guide-step-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  width: 100%;\n  padding: 0.7rem 0.9rem;\n  border: 0;\n  border-radius: var(--radius-md);\n  background: transparent;\n  box-shadow: none;\n  text-align: start;\n  cursor: pointer;\n}\n.guide-step-head[_ngcontent-%COMP%]:hover {\n  background: var(--elevated-bg-hover);\n}\n.guide-step-num[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  flex-shrink: 0;\n  width: 1.9rem;\n  height: 1.9rem;\n  border: 1px solid var(--border-strong);\n  border-radius: 50%;\n  font-weight: 700;\n}\n.guide-step.next[_ngcontent-%COMP%]   .guide-step-num[_ngcontent-%COMP%] {\n  border-color: var(--accent);\n  background: var(--accent);\n  color: var(--accent-ink);\n}\n.guide-step.done[_ngcontent-%COMP%]   .guide-step-num[_ngcontent-%COMP%] {\n  border-color: var(--success);\n  background: var(--success);\n  color: var(--accent-ink);\n}\n.guide-step-title[_ngcontent-%COMP%] {\n  flex: 1;\n  font-weight: 600;\n}\n.guide-step-badge[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  padding: 0.15rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  color: var(--text-muted);\n  font-size: 0.82rem;\n}\n.guide-step-badge-next[_ngcontent-%COMP%] {\n  background: var(--accent);\n  color: var(--accent-ink);\n  font-weight: 600;\n}\n.guide-step-body[_ngcontent-%COMP%] {\n  padding: 0 0.9rem 0.9rem;\n  padding-inline-start: 3.55rem;\n}\n.guide-step-body[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 0 0 0.75rem;\n  color: var(--text-muted);\n}\n.guide-go[_ngcontent-%COMP%] {\n  display: inline-block;\n  padding: 0.5rem 1rem;\n  border-radius: var(--radius-pill);\n  background: var(--accent);\n  color: var(--accent-ink);\n  font-weight: 700;\n  text-decoration: none;\n}\n.guide-go[_ngcontent-%COMP%]:hover {\n  background: var(--accent-hot);\n}\n@media (max-width: 560px) {\n  .guide-step-body[_ngcontent-%COMP%] {\n    padding-inline-start: 0.9rem;\n  }\n  .guide-step-head[_ngcontent-%COMP%] {\n    flex-wrap: wrap;\n  }\n}\n/*# sourceMappingURL=setup-guide.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SetupGuideComponent, [{
+    type: Component,
+    args: [{ selector: "app-setup-guide", imports: [RouterLink, TranslatePipe], template: `@if (hidden()) {
+  <button type="button" class="guide-reopen" (click)="setHidden(false)">
+    {{ 'guide.show' | t }}
+  </button>
+} @else {
+  <section class="guide" [attr.aria-label]="prefix() + '.title' | t">
+    <header class="guide-head">
+      <div>
+        <h3>{{ prefix() + '.title' | t }}</h3>
+        <p class="guide-sub">
+          {{ prefix() + (allDone() ? '.allDone' : '.subtitle') | t }}
+        </p>
+      </div>
+      <button type="button" class="guide-hide" (click)="setHidden(true)">
+        {{ 'guide.hide' | t }}
+      </button>
+    </header>
+
+    <div class="guide-progress">
+      <div class="guide-progress-track">
+        <div class="guide-progress-fill" [style.width]="progress()"></div>
+      </div>
+      <span>{{ 'guide.progress' | t: { done: doneCount(), total: steps().length } }}</span>
+    </div>
+
+    <ol class="guide-steps">
+      @for (step of steps(); track step.id; let i = $index) {
+        <li
+          class="guide-step"
+          [class.done]="isDone(step)"
+          [class.next]="nextStep() === step.id"
+          [class.open]="openStep() === step.id">
+          <button
+            type="button"
+            class="guide-step-head"
+            [attr.aria-expanded]="openStep() === step.id"
+            (click)="toggle(step.id)">
+            <span class="guide-step-num">{{ isDone(step) ? '\u2713' : i + 1 }}</span>
+            <span class="guide-step-title">{{ prefix() + '.' + step.id + '.title' | t }}</span>
+            @if (isDone(step)) {
+              <span class="guide-step-badge">
+                {{ step.visitOnly ? ('guide.opened' | t) : (prefix() + '.' + step.id + '.count' | t: { n: count(step.id) }) }}
+              </span>
+            } @else if (nextStep() === step.id) {
+              <span class="guide-step-badge guide-step-badge-next">{{ 'guide.startHere' | t }}</span>
+            }
+          </button>
+          @if (openStep() === step.id) {
+            <div class="guide-step-body">
+              <p>{{ prefix() + '.' + step.id + '.text' | t }}</p>
+              <a class="guide-go" [routerLink]="step.path" (click)="markVisited(step)">
+                {{ prefix() + '.' + step.id + '.action' | t }}
+              </a>
+            </div>
+          }
+        </li>
+      }
+    </ol>
+  </section>
+}
+`, styles: ["/* src/app/shared/setup-guide/setup-guide.component.css */\n:host {\n  display: block;\n  margin-bottom: 1.25rem;\n}\n.guide {\n  padding: 1.1rem 1.25rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.guide-head {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 1rem;\n}\n.guide-head h3 {\n  margin: 0;\n}\n.guide-sub {\n  margin: 0.25rem 0 0;\n  color: var(--text-muted);\n}\n.guide-hide,\n.guide-reopen {\n  flex-shrink: 0;\n  padding: 0.4rem 0.85rem;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-pill);\n  background: transparent;\n  color: var(--text-muted);\n  cursor: pointer;\n}\n.guide-hide:hover,\n.guide-reopen:hover {\n  background: var(--surface-strong);\n  color: var(--text);\n}\n.guide-progress {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  margin: 0.9rem 0;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.guide-progress-track {\n  flex: 1;\n  height: 8px;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  overflow: hidden;\n}\n.guide-progress-fill {\n  height: 100%;\n  border-radius: var(--radius-pill);\n  background: var(--success);\n  transition: width 0.3s ease;\n}\n.guide-steps {\n  display: grid;\n  gap: 0.5rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.guide-step {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n}\n.guide-step.next {\n  border-color: var(--accent-fg);\n}\n.guide-step-head {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  width: 100%;\n  padding: 0.7rem 0.9rem;\n  border: 0;\n  border-radius: var(--radius-md);\n  background: transparent;\n  box-shadow: none;\n  text-align: start;\n  cursor: pointer;\n}\n.guide-step-head:hover {\n  background: var(--elevated-bg-hover);\n}\n.guide-step-num {\n  display: grid;\n  place-items: center;\n  flex-shrink: 0;\n  width: 1.9rem;\n  height: 1.9rem;\n  border: 1px solid var(--border-strong);\n  border-radius: 50%;\n  font-weight: 700;\n}\n.guide-step.next .guide-step-num {\n  border-color: var(--accent);\n  background: var(--accent);\n  color: var(--accent-ink);\n}\n.guide-step.done .guide-step-num {\n  border-color: var(--success);\n  background: var(--success);\n  color: var(--accent-ink);\n}\n.guide-step-title {\n  flex: 1;\n  font-weight: 600;\n}\n.guide-step-badge {\n  flex-shrink: 0;\n  padding: 0.15rem 0.6rem;\n  border-radius: var(--radius-pill);\n  background: var(--surface-strong);\n  color: var(--text-muted);\n  font-size: 0.82rem;\n}\n.guide-step-badge-next {\n  background: var(--accent);\n  color: var(--accent-ink);\n  font-weight: 600;\n}\n.guide-step-body {\n  padding: 0 0.9rem 0.9rem;\n  padding-inline-start: 3.55rem;\n}\n.guide-step-body p {\n  margin: 0 0 0.75rem;\n  color: var(--text-muted);\n}\n.guide-go {\n  display: inline-block;\n  padding: 0.5rem 1rem;\n  border-radius: var(--radius-pill);\n  background: var(--accent);\n  color: var(--accent-ink);\n  font-weight: 700;\n  text-decoration: none;\n}\n.guide-go:hover {\n  background: var(--accent-hot);\n}\n@media (max-width: 560px) {\n  .guide-step-body {\n    padding-inline-start: 0.9rem;\n  }\n  .guide-step-head {\n    flex-wrap: wrap;\n  }\n}\n/*# sourceMappingURL=setup-guide.component.css.map */\n"] }]
+  }], null, { prefix: [{ type: Input, args: [{ isSignal: true, alias: "prefix", required: true }] }], steps: [{ type: Input, args: [{ isSignal: true, alias: "steps", required: true }] }], counts: [{ type: Input, args: [{ isSignal: true, alias: "counts", required: false }] }] });
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SetupGuideComponent, { className: "SetupGuideComponent", filePath: "src/app/shared/setup-guide/setup-guide.component.ts", lineNumber: 23 });
+})();
+
+// src/app/pages/admin/admin-setup-guide.component.ts
+var AdminSetupGuideComponent = class _AdminSetupGuideComponent {
+  constructor() {
+    this.api = inject2(LearningApiService);
+    this.steps = [
+      { id: "teacher", path: "/admin/teachers" },
+      { id: "course", path: "/admin/courses" },
+      { id: "classroom", path: "/admin/create-classroom" },
+      { id: "assign", path: "/admin/assign-classroom" },
+      { id: "student", path: "/admin/students" },
+      { id: "enroll", path: "/admin/enroll-student" }
+    ];
+    this.counts = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "counts" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    forkJoin({
+      teachers: this.api.getUsers("Teacher"),
+      students: this.api.getUsers("Student"),
+      courses: this.api.getCourses(false),
+      classrooms: this.api.getClassrooms()
+    }).subscribe({
+      next: ({ teachers, students, courses, classrooms }) => this.counts.set({
+        teacher: teachers.length,
+        course: courses.length,
+        classroom: classrooms.length,
+        assign: classrooms.filter((c) => c.teachers.length > 0 || (c.courses ?? []).some((x) => !!x.teacherId)).length,
+        student: students.length,
+        enroll: classrooms.reduce((sum, c) => sum + c.students.length, 0)
+      }),
+      // The guide is optional help; the dashboard shows its own load errors.
+      error: () => this.counts.set(null)
+    });
+  }
+  static {
+    this.\u0275fac = function AdminSetupGuideComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _AdminSetupGuideComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminSetupGuideComponent, selectors: [["app-admin-setup-guide"]], decls: 1, vars: 2, consts: [["prefix", "admin.guide", 3, "steps", "counts"]], template: function AdminSetupGuideComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275element(0, "app-setup-guide", 0);
+      }
+      if (rf & 2) {
+        \u0275\u0275property("steps", ctx.steps)("counts", ctx.counts());
+      }
+    }, dependencies: [SetupGuideComponent], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AdminSetupGuideComponent, [{
+    type: Component,
+    args: [{
+      selector: "app-admin-setup-guide",
+      imports: [SetupGuideComponent],
+      template: `<app-setup-guide prefix="admin.guide" [steps]="steps" [counts]="counts()" />`
+    }]
+  }], () => [], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AdminSetupGuideComponent, { className: "AdminSetupGuideComponent", filePath: "src/app/pages/admin/admin-setup-guide.component.ts", lineNumber: 11 });
+})();
+
+// src/app/pages/admin/admin-dashboard.component.ts
+var _forTrack018 = ($index, $item) => $item.id;
 var _forTrack17 = ($index, $item) => $item.date;
-function AdminDashboardComponent_Conditional_47_For_18_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_48_For_18_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr")(1, "td");
     \u0275\u0275text(2);
@@ -76464,7 +77152,7 @@ function AdminDashboardComponent_Conditional_47_For_18_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r1.formatLogin(user_r1.lastLoginDateUtc));
   }
 }
-function AdminDashboardComponent_Conditional_47_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_48_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 12)(1, "table", 18)(2, "thead")(3, "tr")(4, "th");
     \u0275\u0275text(5);
@@ -76483,7 +77171,7 @@ function AdminDashboardComponent_Conditional_47_Template(rf, ctx) {
     \u0275\u0275pipe(15, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(16, "tbody");
-    \u0275\u0275repeaterCreate(17, AdminDashboardComponent_Conditional_47_For_18_Template, 11, 8, "tr", null, _forTrack017);
+    \u0275\u0275repeaterCreate(17, AdminDashboardComponent_Conditional_48_For_18_Template, 11, 8, "tr", null, _forTrack018);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -76500,7 +77188,7 @@ function AdminDashboardComponent_Conditional_47_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r1.loggedInUsers());
   }
 }
-function AdminDashboardComponent_Conditional_48_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_49_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
     \u0275\u0275text(1);
@@ -76512,7 +77200,7 @@ function AdminDashboardComponent_Conditional_48_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "admin.dashboard.noLoggedInUsers"));
   }
 }
-function AdminDashboardComponent_Conditional_53_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_54_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 1);
     \u0275\u0275text(1);
@@ -76524,7 +77212,7 @@ function AdminDashboardComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275textInterpolate2("(", r_r3.fromDate, " \u2013 ", r_r3.toDate, ")");
   }
 }
-function AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Conditional_5_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_71_Conditional_0_For_4_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 26);
     \u0275\u0275text(1);
@@ -76537,24 +77225,24 @@ function AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Conditional_
     \u0275\u0275textInterpolate(ctx_r1.dayLabel(day_r4.date));
   }
 }
-function AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Conditional_6_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_71_Conditional_0_For_4_Conditional_6_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 27);
     \u0275\u0275text(1, "\xA0");
     \u0275\u0275elementEnd();
   }
 }
-function AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_71_Conditional_0_For_4_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 21)(1, "div", 22);
     \u0275\u0275element(2, "div", 23)(3, "div", 24)(4, "div", 25);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(5, AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Conditional_5_Template, 2, 1, "span", 26)(6, AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Conditional_6_Template, 2, 0, "span", 27);
+    \u0275\u0275conditionalCreate(5, AdminDashboardComponent_Conditional_71_Conditional_0_For_4_Conditional_5_Template, 2, 1, "span", 26)(6, AdminDashboardComponent_Conditional_71_Conditional_0_For_4_Conditional_6_Template, 2, 0, "span", 27);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
     const day_r4 = ctx.$implicit;
-    const \u0275$index_162_r5 = ctx.$index;
+    const \u0275$index_164_r5 = ctx.$index;
     const r_r6 = \u0275\u0275nextContext(2);
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275property("title", day_r4.date);
@@ -76568,15 +77256,15 @@ function AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Template(rf,
     \u0275\u0275styleProp("height", ctx_r1.barHeight(day_r4.students));
     \u0275\u0275attribute("title", day_r4.students);
     \u0275\u0275advance();
-    \u0275\u0275conditional(ctx_r1.showDayLabel(\u0275$index_162_r5, r_r6.days) ? 5 : 6);
+    \u0275\u0275conditional(ctx_r1.showDayLabel(\u0275$index_164_r5, r_r6.days) ? 5 : 6);
   }
 }
-function AdminDashboardComponent_Conditional_70_Conditional_0_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_71_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 19);
     \u0275\u0275pipe(1, "t");
     \u0275\u0275elementStart(2, "div", 20);
-    \u0275\u0275repeaterCreate(3, AdminDashboardComponent_Conditional_70_Conditional_0_For_4_Template, 7, 11, "div", 21, _forTrack17);
+    \u0275\u0275repeaterCreate(3, AdminDashboardComponent_Conditional_71_Conditional_0_For_4_Template, 7, 11, "div", 21, _forTrack17);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -76586,7 +77274,7 @@ function AdminDashboardComponent_Conditional_70_Conditional_0_Template(rf, ctx) 
     \u0275\u0275repeater(r_r6.days);
   }
 }
-function AdminDashboardComponent_Conditional_70_Conditional_1_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_71_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
     \u0275\u0275text(1);
@@ -76598,16 +77286,16 @@ function AdminDashboardComponent_Conditional_70_Conditional_1_Template(rf, ctx) 
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "admin.dashboard.noLogins"));
   }
 }
-function AdminDashboardComponent_Conditional_70_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_71_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275conditionalCreate(0, AdminDashboardComponent_Conditional_70_Conditional_0_Template, 5, 3, "div", 19)(1, AdminDashboardComponent_Conditional_70_Conditional_1_Template, 3, 3, "p", 1);
+    \u0275\u0275conditionalCreate(0, AdminDashboardComponent_Conditional_71_Conditional_0_Template, 5, 3, "div", 19)(1, AdminDashboardComponent_Conditional_71_Conditional_1_Template, 3, 3, "p", 1);
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275conditional(ctx_r1.hasLogins() ? 0 : 1);
   }
 }
-function AdminDashboardComponent_Conditional_71_Template(rf, ctx) {
+function AdminDashboardComponent_Conditional_72_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 1);
     \u0275\u0275text(1);
@@ -76757,7 +77445,7 @@ var AdminDashboardComponent = class _AdminDashboardComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminDashboardComponent, selectors: [["app-admin-dashboard"]], decls: 72, vars: 60, consts: [[1, "panel-page"], [1, "meta"], [3, "error"], [1, "block"], [1, "list-filters"], ["type", "date", "name", "filterFromDate", 3, "ngModelChange", "ngModel"], ["type", "date", "name", "filterToDate", 3, "ngModelChange", "ngModel"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "stat-row"], ["type", "button", 1, "stat-card", "stat-card-link", "login-stat", "login-stat-teachers", 3, "click"], ["type", "button", 1, "stat-card", "stat-card-link", "login-stat", "login-stat-parents", 3, "click"], ["type", "button", 1, "stat-card", "stat-card-link", "login-stat", "login-stat-students", 3, "click"], [1, "table-wrap"], [1, "login-chart-legend"], [1, "login-legend-item"], [1, "login-swatch", "login-swatch-teachers"], [1, "login-swatch", "login-swatch-parents"], [1, "login-swatch", "login-swatch-students"], [1, "data-table"], ["role", "img", 1, "login-chart"], [1, "login-chart-bars"], [1, "login-chart-day", 3, "title"], [1, "login-chart-group"], [1, "login-chart-bar", "login-bar-teachers"], [1, "login-chart-bar", "login-bar-parents"], [1, "login-chart-bar", "login-bar-students"], [1, "login-chart-label"], [1, "login-chart-label", "login-chart-label-spacer"]], template: function AdminDashboardComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminDashboardComponent, selectors: [["app-admin-dashboard"]], decls: 73, vars: 60, consts: [[1, "panel-page"], [1, "meta"], [3, "error"], [1, "block"], [1, "list-filters"], ["type", "date", "name", "filterFromDate", 3, "ngModelChange", "ngModel"], ["type", "date", "name", "filterToDate", 3, "ngModelChange", "ngModel"], ["type", "button", 1, "ghost-btn", 3, "click"], [1, "stat-row"], ["type", "button", 1, "stat-card", "stat-card-link", "login-stat", "login-stat-teachers", 3, "click"], ["type", "button", 1, "stat-card", "stat-card-link", "login-stat", "login-stat-parents", 3, "click"], ["type", "button", 1, "stat-card", "stat-card-link", "login-stat", "login-stat-students", 3, "click"], [1, "table-wrap"], [1, "login-chart-legend"], [1, "login-legend-item"], [1, "login-swatch", "login-swatch-teachers"], [1, "login-swatch", "login-swatch-parents"], [1, "login-swatch", "login-swatch-students"], [1, "data-table"], ["role", "img", 1, "login-chart"], [1, "login-chart-bars"], [1, "login-chart-day", 3, "title"], [1, "login-chart-group"], [1, "login-chart-bar", "login-bar-teachers"], [1, "login-chart-bar", "login-bar-parents"], [1, "login-chart-bar", "login-bar-students"], [1, "login-chart-label"], [1, "login-chart-label", "login-chart-label-spacer"]], template: function AdminDashboardComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "h2");
         \u0275\u0275text(2);
@@ -76767,110 +77455,110 @@ var AdminDashboardComponent = class _AdminDashboardComponent {
         \u0275\u0275text(5);
         \u0275\u0275pipe(6, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275element(7, "app-page-feedback", 2);
-        \u0275\u0275elementStart(8, "section", 3)(9, "div", 4)(10, "label");
-        \u0275\u0275text(11);
-        \u0275\u0275pipe(12, "t");
-        \u0275\u0275elementStart(13, "input", 5);
-        \u0275\u0275twoWayListener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_13_listener($event) {
+        \u0275\u0275element(7, "app-page-feedback", 2)(8, "app-admin-setup-guide");
+        \u0275\u0275elementStart(9, "section", 3)(10, "div", 4)(11, "label");
+        \u0275\u0275text(12);
+        \u0275\u0275pipe(13, "t");
+        \u0275\u0275elementStart(14, "input", 5);
+        \u0275\u0275twoWayListener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_14_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.filterFromDate, $event) || (ctx.filterFromDate = $event);
           return $event;
         });
-        \u0275\u0275listener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_13_listener() {
+        \u0275\u0275listener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_14_listener() {
           return ctx.reload();
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(14, "label");
-        \u0275\u0275text(15);
-        \u0275\u0275pipe(16, "t");
-        \u0275\u0275elementStart(17, "input", 6);
-        \u0275\u0275twoWayListener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_17_listener($event) {
+        \u0275\u0275elementStart(15, "label");
+        \u0275\u0275text(16);
+        \u0275\u0275pipe(17, "t");
+        \u0275\u0275elementStart(18, "input", 6);
+        \u0275\u0275twoWayListener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_18_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.filterToDate, $event) || (ctx.filterToDate = $event);
           return $event;
         });
-        \u0275\u0275listener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_17_listener() {
+        \u0275\u0275listener("ngModelChange", function AdminDashboardComponent_Template_input_ngModelChange_18_listener() {
           return ctx.reload();
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(18, "button", 7);
-        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_18_listener() {
+        \u0275\u0275elementStart(19, "button", 7);
+        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_19_listener() {
           return ctx.resetFilters();
         });
-        \u0275\u0275text(19);
-        \u0275\u0275pipe(20, "t");
+        \u0275\u0275text(20);
+        \u0275\u0275pipe(21, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(21, "section", 8)(22, "button", 9);
-        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_22_listener() {
+        \u0275\u0275elementStart(22, "section", 8)(23, "button", 9);
+        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_23_listener() {
           return ctx.selectRole("teachers");
         });
-        \u0275\u0275elementStart(23, "strong");
-        \u0275\u0275text(24);
+        \u0275\u0275elementStart(24, "strong");
+        \u0275\u0275text(25);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(25, "span");
-        \u0275\u0275text(26);
-        \u0275\u0275pipe(27, "t");
+        \u0275\u0275elementStart(26, "span");
+        \u0275\u0275text(27);
+        \u0275\u0275pipe(28, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(28, "button", 10);
-        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_28_listener() {
+        \u0275\u0275elementStart(29, "button", 10);
+        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_29_listener() {
           return ctx.selectRole("parents");
         });
-        \u0275\u0275elementStart(29, "strong");
-        \u0275\u0275text(30);
+        \u0275\u0275elementStart(30, "strong");
+        \u0275\u0275text(31);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(31, "span");
-        \u0275\u0275text(32);
-        \u0275\u0275pipe(33, "t");
+        \u0275\u0275elementStart(32, "span");
+        \u0275\u0275text(33);
+        \u0275\u0275pipe(34, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(34, "button", 11);
-        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_34_listener() {
+        \u0275\u0275elementStart(35, "button", 11);
+        \u0275\u0275listener("click", function AdminDashboardComponent_Template_button_click_35_listener() {
           return ctx.selectRole("students");
         });
-        \u0275\u0275elementStart(35, "strong");
-        \u0275\u0275text(36);
+        \u0275\u0275elementStart(36, "strong");
+        \u0275\u0275text(37);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(37, "span");
-        \u0275\u0275text(38);
-        \u0275\u0275pipe(39, "t");
+        \u0275\u0275elementStart(38, "span");
+        \u0275\u0275text(39);
+        \u0275\u0275pipe(40, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(40, "section", 3)(41, "h3");
-        \u0275\u0275text(42);
-        \u0275\u0275pipe(43, "t");
+        \u0275\u0275elementStart(41, "section", 3)(42, "h3");
+        \u0275\u0275text(43);
+        \u0275\u0275pipe(44, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(44, "p", 1);
-        \u0275\u0275text(45);
-        \u0275\u0275pipe(46, "t");
+        \u0275\u0275elementStart(45, "p", 1);
+        \u0275\u0275text(46);
+        \u0275\u0275pipe(47, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(47, AdminDashboardComponent_Conditional_47_Template, 19, 12, "div", 12)(48, AdminDashboardComponent_Conditional_48_Template, 3, 3, "p", 1);
+        \u0275\u0275conditionalCreate(48, AdminDashboardComponent_Conditional_48_Template, 19, 12, "div", 12)(49, AdminDashboardComponent_Conditional_49_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(49, "section", 3)(50, "h3");
-        \u0275\u0275text(51);
-        \u0275\u0275pipe(52, "t");
-        \u0275\u0275conditionalCreate(53, AdminDashboardComponent_Conditional_53_Template, 2, 2, "span", 1);
+        \u0275\u0275elementStart(50, "section", 3)(51, "h3");
+        \u0275\u0275text(52);
+        \u0275\u0275pipe(53, "t");
+        \u0275\u0275conditionalCreate(54, AdminDashboardComponent_Conditional_54_Template, 2, 2, "span", 1);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(54, "p", 1);
-        \u0275\u0275text(55);
-        \u0275\u0275pipe(56, "t");
+        \u0275\u0275elementStart(55, "p", 1);
+        \u0275\u0275text(56);
+        \u0275\u0275pipe(57, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(57, "div", 13)(58, "span", 14);
-        \u0275\u0275element(59, "i", 15);
-        \u0275\u0275text(60);
-        \u0275\u0275pipe(61, "t");
+        \u0275\u0275elementStart(58, "div", 13)(59, "span", 14);
+        \u0275\u0275element(60, "i", 15);
+        \u0275\u0275text(61);
+        \u0275\u0275pipe(62, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(62, "span", 14);
-        \u0275\u0275element(63, "i", 16);
-        \u0275\u0275text(64);
-        \u0275\u0275pipe(65, "t");
+        \u0275\u0275elementStart(63, "span", 14);
+        \u0275\u0275element(64, "i", 16);
+        \u0275\u0275text(65);
+        \u0275\u0275pipe(66, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(66, "span", 14);
-        \u0275\u0275element(67, "i", 17);
-        \u0275\u0275text(68);
-        \u0275\u0275pipe(69, "t");
+        \u0275\u0275elementStart(67, "span", 14);
+        \u0275\u0275element(68, "i", 17);
+        \u0275\u0275text(69);
+        \u0275\u0275pipe(70, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275conditionalCreate(70, AdminDashboardComponent_Conditional_70_Template, 2, 1)(71, AdminDashboardComponent_Conditional_71_Template, 3, 3, "p", 1);
+        \u0275\u0275conditionalCreate(71, AdminDashboardComponent_Conditional_71_Template, 2, 1)(72, AdminDashboardComponent_Conditional_72_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -76882,209 +77570,211 @@ var AdminDashboardComponent = class _AdminDashboardComponent {
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 32, "admin.dashboard.subtitle"));
         \u0275\u0275advance(2);
         \u0275\u0275property("error", ctx.error());
-        \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(12, 34, "admin.dashboard.dateFrom"), " ");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(13, 34, "admin.dashboard.dateFrom"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.filterFromDate);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(16, 36, "admin.dashboard.dateTo"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(17, 36, "admin.dashboard.dateTo"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.filterToDate);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(20, 38, "common.clearFilters"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(21, 38, "common.clearFilters"), " ");
         \u0275\u0275advance(3);
         \u0275\u0275classProp("active", ctx.selectedRole() === "teachers");
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(ctx.report()?.teacherCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(27, 40, "common.teachers"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(28, 40, "common.teachers"));
         \u0275\u0275advance(2);
         \u0275\u0275classProp("active", ctx.selectedRole() === "parents");
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(ctx.report()?.parentCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(33, 42, "common.parents"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(34, 42, "common.parents"));
         \u0275\u0275advance(2);
         \u0275\u0275classProp("active", ctx.selectedRole() === "students");
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(ctx.report()?.studentCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(39, 44, "common.students"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(40, 44, "common.students"));
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(43, 46, ctx.loggedInTitleKey()));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(44, 46, ctx.loggedInTitleKey()));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(46, 48, "admin.dashboard.loggedInHint"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(47, 48, "admin.dashboard.loggedInHint"));
         \u0275\u0275advance(2);
-        \u0275\u0275conditional(ctx.loggedInUsers().length ? 47 : 48);
+        \u0275\u0275conditional(ctx.loggedInUsers().length ? 48 : 49);
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(52, 50, "admin.dashboard.graphTitle"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(53, 50, "admin.dashboard.graphTitle"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275conditional((tmp_23_0 = ctx.report()) ? 53 : -1, tmp_23_0);
+        \u0275\u0275conditional((tmp_23_0 = ctx.report()) ? 54 : -1, tmp_23_0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(56, 52, "admin.dashboard.graphHint"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(57, 52, "admin.dashboard.graphHint"));
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(61, 54, "common.teachers"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(62, 54, "common.teachers"), " ");
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(65, 56, "common.parents"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(66, 56, "common.parents"), " ");
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(69, 58, "common.students"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(70, 58, "common.students"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275conditional((tmp_28_0 = ctx.report()) ? 70 : 71, tmp_28_0);
+        \u0275\u0275conditional((tmp_28_0 = ctx.report()) ? 71 : 72, tmp_28_0);
       }
-    }, dependencies: [PageFeedbackComponent, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel, TranslatePipe], styles: ['\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.user-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   .chip-row[_ngcontent-%COMP%] {\n  margin-top: 0.45rem;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   .name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%]   .chip-row[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n}\n.wa-destination[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.wa-destination[_ngcontent-%COMP%]   legend[_ngcontent-%COMP%] {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.edit-panel[_ngcontent-%COMP%] {\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  background:\n    linear-gradient(\n      180deg,\n      rgba(95, 211, 188, 0.08),\n      transparent 60%);\n}\n.classroom-edit-form[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .span-3[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .edit-form-hint[_ngcontent-%COMP%] {\n  margin: 0;\n  align-self: center;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n@media (max-width: 1100px) {\n  .student-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@media (max-width: 960px) {\n  .classroom-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .classroom-edit-form[_ngcontent-%COMP%]   .span-3[_ngcontent-%COMP%] {\n    grid-column: auto;\n  }\n  .student-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.field-label[_ngcontent-%COMP%] {\n  margin: 0 0 0.25rem;\n  font-weight: 700;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%]:hover {\n  color: var(--accent-fg);\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%]   .sort-mark[_ngcontent-%COMP%] {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: var(--table-row-hover);\n}\n.data-table[_ngcontent-%COMP%]   tr.is-inactive[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  opacity: 0.58;\n}\n.data-table[_ngcontent-%COMP%]   tr.total-row[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border-top: 2px solid var(--border);\n  background: var(--table-row-total);\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n}\n.row-actions[_ngcontent-%COMP%]   button.danger[_ngcontent-%COMP%] {\n  background: var(--danger-soft-bg);\n  color: var(--danger-soft-fg);\n  box-shadow: none;\n}\n.row-actions[_ngcontent-%COMP%]   button.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview[_ngcontent-%COMP%] {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  object-fit: contain;\n}\n.brand-preview.logo[_ngcontent-%COMP%] {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner[_ngcontent-%COMP%] {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.login-preview-form[_ngcontent-%COMP%], \n.login-preview-visual[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.login-preview-visual[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form[_ngcontent-%COMP%] {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.search-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.55);\n  background: rgba(255, 214, 10, 0.22);\n  color: var(--text);\n  font: inherit;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: none;\n}\n.search-btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  font-size: 0.95em;\n  line-height: 1;\n}\n.search-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.32);\n  box-shadow: none;\n  transform: none;\n}\n.list-filters[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus, \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.list-pager[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]    + input[_ngcontent-%COMP%] {\n  margin-top: 0.4rem;\n}\n.grade-multi[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.grade-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.data-table[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  max-width: 36rem;\n}\n.course-teacher-block[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.course-teacher-block.compact[_ngcontent-%COMP%] {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.calendar-nav[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active[_ngcontent-%COMP%] {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab[_ngcontent-%COMP%]   .day-count[_ngcontent-%COMP%] {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.day-hour[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed var(--border);\n  pointer-events: none;\n}\n.calendar-event[_ngcontent-%COMP%] {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label[_ngcontent-%COMP%] {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  margin-top: auto;\n}\n.calendar-empty[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar[_ngcontent-%COMP%] {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap[_ngcontent-%COMP%] {\n  overflow: auto;\n  max-height: min(80vh, 56rem);\n  border: 3px solid #e8c46a;\n  border-radius: 28px;\n  background:\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 120, 0.35),\n      transparent 22%),\n    radial-gradient(\n      circle at 92% 10%,\n      rgba(168, 216, 255, 0.28),\n      transparent 24%),\n    radial-gradient(\n      circle at 10% 90%,\n      rgba(255, 182, 193, 0.25),\n      transparent 22%),\n    radial-gradient(\n      circle at 90% 88%,\n      rgba(186, 230, 180, 0.28),\n      transparent 24%),\n    linear-gradient(\n      180deg,\n      #fff8e8 0%,\n      #fffdf7 48%,\n      #f7fbff 100%);\n  direction: rtl;\n  position: relative;\n  z-index: 0;\n  isolation: isolate;\n  padding: 1.1rem 1rem 1.25rem;\n  box-shadow: 0 18px 40px rgba(120, 84, 20, 0.12);\n}\n.timetable-board[_ngcontent-%COMP%] {\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n}\n.timetable-deco[_ngcontent-%COMP%] {\n  position: absolute;\n  font-size: 1.55rem;\n  line-height: 1;\n  opacity: 0.88;\n  pointer-events: none;\n  z-index: 1;\n  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));\n}\n.timetable-deco-tl[_ngcontent-%COMP%] {\n  top: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-tr[_ngcontent-%COMP%] {\n  top: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-deco-bl[_ngcontent-%COMP%] {\n  bottom: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-br[_ngcontent-%COMP%] {\n  bottom: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-banner[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n  display: grid;\n  place-items: center;\n  margin: 0.15rem auto 1rem;\n  width: min(28rem, 92%);\n  padding: 0.75rem 1.4rem 0.85rem;\n  border-radius: 18px;\n  border: 3px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8 0%,\n      #f6d06a 100%);\n  box-shadow: 0 8px 0 #c8961a, 0 14px 24px rgba(180, 120, 20, 0.18);\n  text-align: center;\n}\n.timetable-banner-crown[_ngcontent-%COMP%] {\n  position: absolute;\n  top: -0.85rem;\n  font-size: 1.35rem;\n  line-height: 1;\n}\n.timetable-banner-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #1d3a75;\n  font-size: clamp(1.15rem, 2.4vw, 1.65rem);\n  font-weight: 800;\n  letter-spacing: 0.01em;\n}\n.timetable-motto[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.55rem;\n  margin: 1rem auto 0.15rem;\n  width: min(30rem, 94%);\n  padding: 0.55rem 1.1rem;\n  border-radius: 16px;\n  border: 2px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #fff1c2,\n      #f8d978);\n  color: #1d3a75;\n  font-weight: 800;\n  font-size: 1rem;\n  box-shadow: 0 4px 0 #c8961a;\n}\n.timetable-page[_ngcontent-%COMP%] {\n  direction: rtl;\n  text-align: right;\n}\n.timetable[_ngcontent-%COMP%] {\n  width: max-content;\n  border-collapse: separate;\n  border-spacing: 0.28rem;\n  font-size: 0.84rem;\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n  color: #1f2a44;\n  direction: rtl;\n  position: relative;\n  z-index: 2;\n}\n.timetable[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: none;\n  vertical-align: middle;\n}\n.timetable-day-col[_ngcontent-%COMP%], \n.timetable-day[_ngcontent-%COMP%] {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe082,\n      #ffd54f) !important;\n  color: #1d3a75 !important;\n  text-align: center;\n  padding: 0.35rem 0.4rem;\n  font-weight: 800;\n  border-radius: 18px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.35);\n}\n.timetable-day[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.timetable-day-icon[_ngcontent-%COMP%], \n.timetable-day-col-icon[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 1.05rem;\n  line-height: 1;\n  margin-bottom: 0.2rem;\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8,\n      #f0c75a) !important;\n  color: #1d3a75 !important;\n  font-size: 0.78rem;\n  letter-spacing: 0;\n  text-transform: none;\n  padding: 0.28rem 0.32rem;\n  text-align: center;\n  white-space: nowrap;\n  border-radius: 16px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.28);\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%] {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      180deg,\n      #fff3c4,\n      #f5d36a) !important;\n  color: #1d3a75 !important;\n  font-weight: 800;\n}\n.timetable-shift.pm[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      180deg,\n      #d8f5e8,\n      #9ed9bf) !important;\n  color: #14553a !important;\n  border-color: #7cbc9a !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%] {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day[_ngcontent-%COMP%] {\n  position: static !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: none !important;\n}\n.timetable-export-bar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period[_ngcontent-%COMP%] {\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n}\n.timetable-session-id[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-size: 0.92rem;\n  color: #1d3a75;\n}\n.timetable-session-time[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: #4a3b12;\n  margin-top: 0.25rem;\n  font-variant-numeric: tabular-nums;\n  direction: ltr;\n  unicode-bidi: isolate;\n}\n.timetable-clock[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  line-height: 1;\n}\n.timetable-cell[_ngcontent-%COMP%] {\n  width: 1%;\n  min-width: 0;\n  max-width: none;\n  height: auto;\n  min-height: 0;\n  padding: 0.15rem;\n  background: rgba(255, 255, 255, 0.55);\n  vertical-align: middle;\n  overflow: visible;\n  cursor: cell;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    outline 0.15s ease;\n  border-radius: 12px;\n  border: 2px dashed rgba(180, 150, 90, 0.35) !important;\n}\n.timetable-cell.pm[_ngcontent-%COMP%] {\n  background: rgba(232, 255, 246, 0.55);\n}\n.timetable-cell.empty[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.42);\n}\n.timetable-empty[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  min-height: 0;\n  padding: 0.1rem 0.2rem;\n  line-height: 1;\n  color: #9aa3b5;\n  font-size: 0.9rem;\n  font-weight: 700;\n}\n.timetable-cell.drag-over[_ngcontent-%COMP%] {\n  outline: 3px dashed #1d3a75;\n  background: rgba(255, 214, 10, 0.22);\n  transform: scale(1.01);\n}\n.timetable-entry[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: max-content;\n  min-width: max-content;\n  max-width: none;\n  gap: 0.08rem;\n  padding: 0.28rem 0.35rem;\n  border-radius: 10px;\n  border: 2px solid transparent;\n  margin: 0 auto;\n  overflow: visible;\n  cursor: grab;\n  text-align: center;\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n}\n.timetable-entry[_ngcontent-%COMP%]    + .timetable-entry[_ngcontent-%COMP%] {\n  margin-top: 0.18rem;\n}\n.timetable-entry[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);\n}\n.timetable-entry[_ngcontent-%COMP%]:active {\n  cursor: grabbing;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: nowrap;\n  flex-shrink: 0;\n  gap: 0.25rem;\n  margin-top: 0.2rem;\n  cursor: default;\n  justify-content: center;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n}\n.timetable-subject-icon[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.timetable-course[_ngcontent-%COMP%] {\n  font-weight: 800;\n  line-height: 1.2;\n  white-space: nowrap;\n  overflow: visible;\n  color: #1f2a44;\n  font-size: 0.8rem;\n}\n.timetable-teacher[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: #4b5568;\n  white-space: nowrap;\n  overflow: visible;\n  font-weight: 600;\n}\n.timetable-entry[data-tone="0"][_ngcontent-%COMP%] {\n  background: #ffe0e8;\n  border-color: #f5a3b8;\n}\n.timetable-entry[data-tone="1"][_ngcontent-%COMP%] {\n  background: #e8d8ff;\n  border-color: #c4a6f5;\n}\n.timetable-entry[data-tone="2"][_ngcontent-%COMP%] {\n  background: #d8ecff;\n  border-color: #9ec4f0;\n}\n.timetable-entry[data-tone="3"][_ngcontent-%COMP%] {\n  background: #fff0b8;\n  border-color: #e6c85a;\n}\n.timetable-entry[data-tone="4"][_ngcontent-%COMP%] {\n  background: #d8f5e8;\n  border-color: #8fd0b0;\n}\n.timetable-entry[data-tone="5"][_ngcontent-%COMP%] {\n  background: #ffe6cc;\n  border-color: #f0b878;\n}\n.timetable-entry[data-tone="6"][_ngcontent-%COMP%] {\n  background: #e0f0ff;\n  border-color: #9ebfe8;\n}\n.timetable-entry[data-tone="7"][_ngcontent-%COMP%] {\n  background: #f3e0ff;\n  border-color: #d0a8ef;\n}\n.modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card[_ngcontent-%COMP%] {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n}\n.modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-tree[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: var(--surface);\n}\n.tree-unit-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle[_ngcontent-%COMP%] {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title[_ngcontent-%COMP%], \n.tree-lesson-title[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 12rem;\n}\n.ask-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  font-size: 0.82rem;\n  white-space: nowrap;\n  color: var(--text-soft);\n}\n.tree-unit-body[_ngcontent-%COMP%] {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: var(--elevated-bg);\n}\n.tree-inline-form[_ngcontent-%COMP%], \n.tree-add-lesson[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.course-tree-ai[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  padding: 1rem 1.1rem;\n  background: var(--surface);\n}\n.course-tree-prompt-field[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n  margin: 0.75rem 0 0.35rem;\n  width: 100%;\n  max-width: 42rem;\n}\n.course-tree-prompt-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%]:first-child {\n  font-weight: 650;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.course-tree-prompt-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  min-height: 5.5rem;\n  resize: vertical;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n  line-height: 1.45;\n}\n.course-tree-ai-actions[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.course-tree-ai-preview[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px dashed var(--border);\n}\n.login-stat[_ngcontent-%COMP%] {\n  border-top: 3px solid transparent;\n}\n.login-stat-teachers[_ngcontent-%COMP%] {\n  border-top-color: #5fd3bc;\n}\n.login-stat-parents[_ngcontent-%COMP%] {\n  border-top-color: #ffd60a;\n}\n.login-stat-students[_ngcontent-%COMP%] {\n  border-top-color: #4ea8de;\n}\n.login-chart-legend[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.85rem 1.25rem;\n  margin: 0.75rem 0 1rem;\n}\n.login-legend-item[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  color: var(--text-soft);\n  font-size: 0.88rem;\n}\n.login-swatch[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 3px;\n}\n.login-swatch-teachers[_ngcontent-%COMP%], \n.login-bar-teachers[_ngcontent-%COMP%] {\n  background: #5fd3bc;\n}\n.login-swatch-parents[_ngcontent-%COMP%], \n.login-bar-parents[_ngcontent-%COMP%] {\n  background: #ffd60a;\n}\n.login-swatch-students[_ngcontent-%COMP%], \n.login-bar-students[_ngcontent-%COMP%] {\n  background: #4ea8de;\n}\n.login-chart[_ngcontent-%COMP%] {\n  padding: 1rem 0.75rem 0.5rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  overflow-x: auto;\n}\n.login-chart-bars[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  gap: 0.35rem;\n  min-width: 100%;\n  min-height: 220px;\n}\n.login-chart-day[_ngcontent-%COMP%] {\n  flex: 1 1 0;\n  min-width: 1.35rem;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 0.4rem;\n}\n.login-chart-group[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n  gap: 2px;\n  width: 100%;\n  height: 180px;\n}\n.login-chart-bar[_ngcontent-%COMP%] {\n  flex: 1 1 0;\n  min-width: 3px;\n  border-radius: 4px 4px 0 0;\n}\n.login-chart-label[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.72rem;\n  line-height: 1;\n}\n.login-chart-label-spacer[_ngcontent-%COMP%] {\n  visibility: hidden;\n}\n.status-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published[_ngcontent-%COMP%] {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\nlabel.checkbox[_ngcontent-%COMP%] {\n  flex-direction: row;\n  align-items: center;\n  gap: 0.45rem;\n}\n/*# sourceMappingURL=admin-panel.css.map */'] });
+    }, dependencies: [PageFeedbackComponent, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel, AdminSetupGuideComponent, TranslatePipe], styles: ['\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.user-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   .chip-row[_ngcontent-%COMP%] {\n  margin-top: 0.45rem;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   .name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%]   .chip-row[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n}\n.wa-destination[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.wa-destination[_ngcontent-%COMP%]   legend[_ngcontent-%COMP%] {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.edit-panel[_ngcontent-%COMP%] {\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  background:\n    linear-gradient(\n      180deg,\n      rgba(95, 211, 188, 0.08),\n      transparent 60%);\n}\n.classroom-edit-form[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .span-3[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .edit-form-hint[_ngcontent-%COMP%] {\n  margin: 0;\n  align-self: center;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n@media (max-width: 1100px) {\n  .student-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@media (max-width: 960px) {\n  .classroom-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .classroom-edit-form[_ngcontent-%COMP%]   .span-3[_ngcontent-%COMP%] {\n    grid-column: auto;\n  }\n  .student-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.field-label[_ngcontent-%COMP%] {\n  margin: 0 0 0.25rem;\n  font-weight: 700;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%]:hover {\n  color: var(--accent-fg);\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%]   .sort-mark[_ngcontent-%COMP%] {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: var(--table-row-hover);\n}\n.data-table[_ngcontent-%COMP%]   tr.is-inactive[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  opacity: 0.58;\n}\n.data-table[_ngcontent-%COMP%]   tr.total-row[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border-top: 2px solid var(--border);\n  background: var(--table-row-total);\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n}\n.row-actions[_ngcontent-%COMP%]   button.danger[_ngcontent-%COMP%] {\n  background: var(--danger-soft-bg);\n  color: var(--danger-soft-fg);\n  box-shadow: none;\n}\n.row-actions[_ngcontent-%COMP%]   button.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview[_ngcontent-%COMP%] {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  object-fit: contain;\n}\n.brand-preview.logo[_ngcontent-%COMP%] {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner[_ngcontent-%COMP%] {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.login-preview-form[_ngcontent-%COMP%], \n.login-preview-visual[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.login-preview-visual[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form[_ngcontent-%COMP%] {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.search-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.55);\n  background: rgba(255, 214, 10, 0.22);\n  color: var(--text);\n  font: inherit;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: none;\n}\n.search-btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  font-size: 0.95em;\n  line-height: 1;\n}\n.search-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.32);\n  box-shadow: none;\n  transform: none;\n}\n.list-filters[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus, \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.list-pager[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]    + input[_ngcontent-%COMP%] {\n  margin-top: 0.4rem;\n}\n.grade-multi[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.grade-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.data-table[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  max-width: 36rem;\n}\n.course-teacher-block[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.course-teacher-block.compact[_ngcontent-%COMP%] {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.calendar-nav[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active[_ngcontent-%COMP%] {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab[_ngcontent-%COMP%]   .day-count[_ngcontent-%COMP%] {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.day-hour[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed var(--border);\n  pointer-events: none;\n}\n.calendar-event[_ngcontent-%COMP%] {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label[_ngcontent-%COMP%] {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  margin-top: auto;\n}\n.calendar-empty[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar[_ngcontent-%COMP%] {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap[_ngcontent-%COMP%] {\n  overflow: auto;\n  max-height: min(80vh, 56rem);\n  border: 3px solid #e8c46a;\n  border-radius: 28px;\n  background:\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 120, 0.35),\n      transparent 22%),\n    radial-gradient(\n      circle at 92% 10%,\n      rgba(168, 216, 255, 0.28),\n      transparent 24%),\n    radial-gradient(\n      circle at 10% 90%,\n      rgba(255, 182, 193, 0.25),\n      transparent 22%),\n    radial-gradient(\n      circle at 90% 88%,\n      rgba(186, 230, 180, 0.28),\n      transparent 24%),\n    linear-gradient(\n      180deg,\n      #fff8e8 0%,\n      #fffdf7 48%,\n      #f7fbff 100%);\n  direction: rtl;\n  position: relative;\n  z-index: 0;\n  isolation: isolate;\n  padding: 1.1rem 1rem 1.25rem;\n  box-shadow: 0 18px 40px rgba(120, 84, 20, 0.12);\n}\n.timetable-board[_ngcontent-%COMP%] {\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n}\n.timetable-deco[_ngcontent-%COMP%] {\n  position: absolute;\n  font-size: 1.55rem;\n  line-height: 1;\n  opacity: 0.88;\n  pointer-events: none;\n  z-index: 1;\n  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));\n}\n.timetable-deco-tl[_ngcontent-%COMP%] {\n  top: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-tr[_ngcontent-%COMP%] {\n  top: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-deco-bl[_ngcontent-%COMP%] {\n  bottom: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-br[_ngcontent-%COMP%] {\n  bottom: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-banner[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n  display: grid;\n  place-items: center;\n  margin: 0.15rem auto 1rem;\n  width: min(28rem, 92%);\n  padding: 0.75rem 1.4rem 0.85rem;\n  border-radius: 18px;\n  border: 3px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8 0%,\n      #f6d06a 100%);\n  box-shadow: 0 8px 0 #c8961a, 0 14px 24px rgba(180, 120, 20, 0.18);\n  text-align: center;\n}\n.timetable-banner-crown[_ngcontent-%COMP%] {\n  position: absolute;\n  top: -0.85rem;\n  font-size: 1.35rem;\n  line-height: 1;\n}\n.timetable-banner-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #1d3a75;\n  font-size: clamp(1.15rem, 2.4vw, 1.65rem);\n  font-weight: 800;\n  letter-spacing: 0.01em;\n}\n.timetable-motto[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.55rem;\n  margin: 1rem auto 0.15rem;\n  width: min(30rem, 94%);\n  padding: 0.55rem 1.1rem;\n  border-radius: 16px;\n  border: 2px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #fff1c2,\n      #f8d978);\n  color: #1d3a75;\n  font-weight: 800;\n  font-size: 1rem;\n  box-shadow: 0 4px 0 #c8961a;\n}\n.timetable-page[_ngcontent-%COMP%] {\n  direction: rtl;\n  text-align: right;\n}\n.timetable[_ngcontent-%COMP%] {\n  width: max-content;\n  border-collapse: separate;\n  border-spacing: 0.28rem;\n  font-size: 0.84rem;\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n  color: #1f2a44;\n  direction: rtl;\n  position: relative;\n  z-index: 2;\n}\n.timetable[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: none;\n  vertical-align: middle;\n}\n.timetable-day-col[_ngcontent-%COMP%], \n.timetable-day[_ngcontent-%COMP%] {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe082,\n      #ffd54f) !important;\n  color: #1d3a75 !important;\n  text-align: center;\n  padding: 0.35rem 0.4rem;\n  font-weight: 800;\n  border-radius: 18px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.35);\n}\n.timetable-day[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.timetable-day-icon[_ngcontent-%COMP%], \n.timetable-day-col-icon[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 1.05rem;\n  line-height: 1;\n  margin-bottom: 0.2rem;\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8,\n      #f0c75a) !important;\n  color: #1d3a75 !important;\n  font-size: 0.78rem;\n  letter-spacing: 0;\n  text-transform: none;\n  padding: 0.28rem 0.32rem;\n  text-align: center;\n  white-space: nowrap;\n  border-radius: 16px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.28);\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%] {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      180deg,\n      #fff3c4,\n      #f5d36a) !important;\n  color: #1d3a75 !important;\n  font-weight: 800;\n}\n.timetable-shift.pm[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      180deg,\n      #d8f5e8,\n      #9ed9bf) !important;\n  color: #14553a !important;\n  border-color: #7cbc9a !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%] {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day[_ngcontent-%COMP%] {\n  position: static !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: none !important;\n}\n.timetable-export-bar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period[_ngcontent-%COMP%] {\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n}\n.timetable-session-id[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-size: 0.92rem;\n  color: #1d3a75;\n}\n.timetable-session-time[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: #4a3b12;\n  margin-top: 0.25rem;\n  font-variant-numeric: tabular-nums;\n  direction: ltr;\n  unicode-bidi: isolate;\n}\n.timetable-clock[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  line-height: 1;\n}\n.timetable-cell[_ngcontent-%COMP%] {\n  width: 1%;\n  min-width: 0;\n  max-width: none;\n  height: auto;\n  min-height: 0;\n  padding: 0.15rem;\n  background: rgba(255, 255, 255, 0.55);\n  vertical-align: middle;\n  overflow: visible;\n  cursor: cell;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    outline 0.15s ease;\n  border-radius: 12px;\n  border: 2px dashed rgba(180, 150, 90, 0.35) !important;\n}\n.timetable-cell.pm[_ngcontent-%COMP%] {\n  background: rgba(232, 255, 246, 0.55);\n}\n.timetable-cell.empty[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.42);\n}\n.timetable-empty[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  min-height: 0;\n  padding: 0.1rem 0.2rem;\n  line-height: 1;\n  color: #9aa3b5;\n  font-size: 0.9rem;\n  font-weight: 700;\n}\n.timetable-cell.drag-over[_ngcontent-%COMP%] {\n  outline: 3px dashed #1d3a75;\n  background: rgba(255, 214, 10, 0.22);\n  transform: scale(1.01);\n}\n.timetable-entry[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: max-content;\n  min-width: max-content;\n  max-width: none;\n  gap: 0.08rem;\n  padding: 0.28rem 0.35rem;\n  border-radius: 10px;\n  border: 2px solid transparent;\n  margin: 0 auto;\n  overflow: visible;\n  cursor: grab;\n  text-align: center;\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n}\n.timetable-entry[_ngcontent-%COMP%]    + .timetable-entry[_ngcontent-%COMP%] {\n  margin-top: 0.18rem;\n}\n.timetable-entry[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);\n}\n.timetable-entry[_ngcontent-%COMP%]:active {\n  cursor: grabbing;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: nowrap;\n  flex-shrink: 0;\n  gap: 0.25rem;\n  margin-top: 0.2rem;\n  cursor: default;\n  justify-content: center;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n}\n.timetable-subject-icon[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.timetable-course[_ngcontent-%COMP%] {\n  font-weight: 800;\n  line-height: 1.2;\n  white-space: nowrap;\n  overflow: visible;\n  color: #1f2a44;\n  font-size: 0.8rem;\n}\n.timetable-teacher[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: #4b5568;\n  white-space: nowrap;\n  overflow: visible;\n  font-weight: 600;\n}\n.timetable-entry[data-tone="0"][_ngcontent-%COMP%] {\n  background: #ffe0e8;\n  border-color: #f5a3b8;\n}\n.timetable-entry[data-tone="1"][_ngcontent-%COMP%] {\n  background: #e8d8ff;\n  border-color: #c4a6f5;\n}\n.timetable-entry[data-tone="2"][_ngcontent-%COMP%] {\n  background: #d8ecff;\n  border-color: #9ec4f0;\n}\n.timetable-entry[data-tone="3"][_ngcontent-%COMP%] {\n  background: #fff0b8;\n  border-color: #e6c85a;\n}\n.timetable-entry[data-tone="4"][_ngcontent-%COMP%] {\n  background: #d8f5e8;\n  border-color: #8fd0b0;\n}\n.timetable-entry[data-tone="5"][_ngcontent-%COMP%] {\n  background: #ffe6cc;\n  border-color: #f0b878;\n}\n.timetable-entry[data-tone="6"][_ngcontent-%COMP%] {\n  background: #e0f0ff;\n  border-color: #9ebfe8;\n}\n.timetable-entry[data-tone="7"][_ngcontent-%COMP%] {\n  background: #f3e0ff;\n  border-color: #d0a8ef;\n}\n.modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card[_ngcontent-%COMP%] {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n}\n.modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-tree[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: var(--surface);\n}\n.tree-unit-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle[_ngcontent-%COMP%] {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title[_ngcontent-%COMP%], \n.tree-lesson-title[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 12rem;\n}\n.ask-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  font-size: 0.82rem;\n  white-space: nowrap;\n  color: var(--text-soft);\n}\n.tree-unit-body[_ngcontent-%COMP%] {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: var(--elevated-bg);\n}\n.tree-inline-form[_ngcontent-%COMP%], \n.tree-add-lesson[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.course-tree-ai[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  padding: 1rem 1.1rem;\n  background: var(--surface);\n}\n.course-tree-prompt-field[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n  margin: 0.75rem 0 0.35rem;\n  width: 100%;\n  max-width: 42rem;\n}\n.course-tree-prompt-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%]:first-child {\n  font-weight: 650;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.course-tree-prompt-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  min-height: 5.5rem;\n  resize: vertical;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n  line-height: 1.45;\n}\n.course-tree-ai-actions[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.course-tree-ai-preview[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px dashed var(--border);\n}\n.login-stat[_ngcontent-%COMP%] {\n  border-top: 3px solid transparent;\n}\n.login-stat-teachers[_ngcontent-%COMP%] {\n  border-top-color: #5fd3bc;\n}\n.login-stat-parents[_ngcontent-%COMP%] {\n  border-top-color: #ffd60a;\n}\n.login-stat-students[_ngcontent-%COMP%] {\n  border-top-color: #4ea8de;\n}\n.login-chart-legend[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.85rem 1.25rem;\n  margin: 0.75rem 0 1rem;\n}\n.login-legend-item[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  color: var(--text-soft);\n  font-size: 0.88rem;\n}\n.login-swatch[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 3px;\n}\n.login-swatch-teachers[_ngcontent-%COMP%], \n.login-bar-teachers[_ngcontent-%COMP%] {\n  background: #5fd3bc;\n}\n.login-swatch-parents[_ngcontent-%COMP%], \n.login-bar-parents[_ngcontent-%COMP%] {\n  background: #ffd60a;\n}\n.login-swatch-students[_ngcontent-%COMP%], \n.login-bar-students[_ngcontent-%COMP%] {\n  background: #4ea8de;\n}\n.login-chart[_ngcontent-%COMP%] {\n  padding: 1rem 0.75rem 0.5rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  overflow-x: auto;\n}\n.login-chart-bars[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  gap: 0.35rem;\n  min-width: 100%;\n  min-height: 220px;\n}\n.login-chart-day[_ngcontent-%COMP%] {\n  flex: 1 1 0;\n  min-width: 1.35rem;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 0.4rem;\n}\n.login-chart-group[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n  gap: 2px;\n  width: 100%;\n  height: 180px;\n}\n.login-chart-bar[_ngcontent-%COMP%] {\n  flex: 1 1 0;\n  min-width: 3px;\n  border-radius: 4px 4px 0 0;\n}\n.login-chart-label[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.72rem;\n  line-height: 1;\n}\n.login-chart-label-spacer[_ngcontent-%COMP%] {\n  visibility: hidden;\n}\n.status-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published[_ngcontent-%COMP%] {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\nlabel.checkbox[_ngcontent-%COMP%] {\n  flex-direction: row;\n  align-items: center;\n  gap: 0.45rem;\n}\n/*# sourceMappingURL=admin-panel.css.map */'] });
   }
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AdminDashboardComponent, [{
     type: Component,
-    args: [{ selector: "app-admin-dashboard", imports: [PageFeedbackComponent, FormsModule, TranslatePipe], template: `<div class="panel-page">\r
-  <h2>{{ 'admin.dashboard.title' | t }}</h2>\r
-  <p class="meta">{{ 'admin.dashboard.subtitle' | t }}</p>\r
-\r
-  <app-page-feedback [error]="error()" />\r
-\r
-  <section class="block">\r
-    <div class="list-filters">\r
-      <label>\r
-        {{ 'admin.dashboard.dateFrom' | t }}\r
-        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reload()" />\r
-      </label>\r
-      <label>\r
-        {{ 'admin.dashboard.dateTo' | t }}\r
-        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reload()" />\r
-      </label>\r
-      <button type="button" class="ghost-btn" (click)="resetFilters()">\r
-        {{ 'common.clearFilters' | t }}\r
-      </button>\r
-    </div>\r
-  </section>\r
-\r
-  <section class="stat-row">\r
-    <button\r
-      type="button"\r
-      class="stat-card stat-card-link login-stat login-stat-teachers"\r
-      [class.active]="selectedRole() === 'teachers'"\r
-      (click)="selectRole('teachers')">\r
-      <strong>{{ report()?.teacherCount || 0 }}</strong>\r
-      <span>{{ 'common.teachers' | t }}</span>\r
-    </button>\r
-    <button\r
-      type="button"\r
-      class="stat-card stat-card-link login-stat login-stat-parents"\r
-      [class.active]="selectedRole() === 'parents'"\r
-      (click)="selectRole('parents')">\r
-      <strong>{{ report()?.parentCount || 0 }}</strong>\r
-      <span>{{ 'common.parents' | t }}</span>\r
-    </button>\r
-    <button\r
-      type="button"\r
-      class="stat-card stat-card-link login-stat login-stat-students"\r
-      [class.active]="selectedRole() === 'students'"\r
-      (click)="selectRole('students')">\r
-      <strong>{{ report()?.studentCount || 0 }}</strong>\r
-      <span>{{ 'common.students' | t }}</span>\r
-    </button>\r
-  </section>\r
-\r
-  <section class="block">\r
-    <h3>{{ loggedInTitleKey() | t }}</h3>\r
-    <p class="meta">{{ 'admin.dashboard.loggedInHint' | t }}</p>\r
-    @if (loggedInUsers().length) {\r
-      <div class="table-wrap">\r
-        <table class="data-table">\r
-          <thead>\r
-            <tr>\r
-              <th>{{ 'common.name' | t }}</th>\r
-              <th>{{ 'common.email' | t }}</th>\r
-              <th>{{ 'common.mobile' | t }}</th>\r
-              <th>{{ 'admin.dashboard.lastLogin' | t }}</th>\r
-            </tr>\r
-          </thead>\r
-          <tbody>\r
-            @for (user of loggedInUsers(); track user.id) {\r
-              <tr>\r
-                <td>{{ user.displayName }}</td>\r
-                <td>{{ user.email || ('common.emDash' | t) }}</td>\r
-                <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>\r
-                <td>{{ formatLogin(user.lastLoginDateUtc) }}</td>\r
-              </tr>\r
-            }\r
-          </tbody>\r
-        </table>\r
-      </div>\r
-    } @else {\r
-      <p class="meta">{{ 'admin.dashboard.noLoggedInUsers' | t }}</p>\r
-    }\r
-  </section>\r
-\r
-  <section class="block">\r
-    <h3>\r
-      {{ 'admin.dashboard.graphTitle' | t }}\r
-      @if (report(); as r) {\r
-        <span class="meta">({{ r.fromDate }} \u2013 {{ r.toDate }})</span>\r
-      }\r
-    </h3>\r
-    <p class="meta">{{ 'admin.dashboard.graphHint' | t }}</p>\r
-\r
-    <div class="login-chart-legend">\r
-      <span class="login-legend-item">\r
-        <i class="login-swatch login-swatch-teachers"></i>\r
-        {{ 'common.teachers' | t }}\r
-      </span>\r
-      <span class="login-legend-item">\r
-        <i class="login-swatch login-swatch-parents"></i>\r
-        {{ 'common.parents' | t }}\r
-      </span>\r
-      <span class="login-legend-item">\r
-        <i class="login-swatch login-swatch-students"></i>\r
-        {{ 'common.students' | t }}\r
-      </span>\r
-    </div>\r
-\r
-    @if (report(); as r) {\r
-      @if (hasLogins()) {\r
-        <div class="login-chart" role="img" [attr.aria-label]="'admin.dashboard.graphTitle' | t">\r
-          <div class="login-chart-bars">\r
-            @for (day of r.days; track day.date; let i = $index) {\r
-              <div class="login-chart-day" [title]="day.date">\r
-                <div class="login-chart-group">\r
-                  <div\r
-                    class="login-chart-bar login-bar-teachers"\r
-                    [style.height]="barHeight(day.teachers)"\r
-                    [attr.title]="day.teachers"></div>\r
-                  <div\r
-                    class="login-chart-bar login-bar-parents"\r
-                    [style.height]="barHeight(day.parents)"\r
-                    [attr.title]="day.parents"></div>\r
-                  <div\r
-                    class="login-chart-bar login-bar-students"\r
-                    [style.height]="barHeight(day.students)"\r
-                    [attr.title]="day.students"></div>\r
-                </div>\r
-                @if (showDayLabel(i, r.days)) {\r
-                  <span class="login-chart-label">{{ dayLabel(day.date) }}</span>\r
-                } @else {\r
-                  <span class="login-chart-label login-chart-label-spacer">&nbsp;</span>\r
-                }\r
-              </div>\r
-            }\r
-          </div>\r
-        </div>\r
-      } @else {\r
-        <p class="meta">{{ 'admin.dashboard.noLogins' | t }}</p>\r
-      }\r
-    } @else {\r
-      <p class="meta">{{ 'common.noData' | t }}</p>\r
-    }\r
-  </section>\r
-</div>\r
+    args: [{ selector: "app-admin-dashboard", imports: [PageFeedbackComponent, FormsModule, TranslatePipe, AdminSetupGuideComponent], template: `<div class="panel-page">
+  <h2>{{ 'admin.dashboard.title' | t }}</h2>
+  <p class="meta">{{ 'admin.dashboard.subtitle' | t }}</p>
+
+  <app-page-feedback [error]="error()" />
+
+  <app-admin-setup-guide />
+
+  <section class="block">
+    <div class="list-filters">
+      <label>
+        {{ 'admin.dashboard.dateFrom' | t }}
+        <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reload()" />
+      </label>
+      <label>
+        {{ 'admin.dashboard.dateTo' | t }}
+        <input type="date" [(ngModel)]="filterToDate" name="filterToDate" (ngModelChange)="reload()" />
+      </label>
+      <button type="button" class="ghost-btn" (click)="resetFilters()">
+        {{ 'common.clearFilters' | t }}
+      </button>
+    </div>
+  </section>
+
+  <section class="stat-row">
+    <button
+      type="button"
+      class="stat-card stat-card-link login-stat login-stat-teachers"
+      [class.active]="selectedRole() === 'teachers'"
+      (click)="selectRole('teachers')">
+      <strong>{{ report()?.teacherCount || 0 }}</strong>
+      <span>{{ 'common.teachers' | t }}</span>
+    </button>
+    <button
+      type="button"
+      class="stat-card stat-card-link login-stat login-stat-parents"
+      [class.active]="selectedRole() === 'parents'"
+      (click)="selectRole('parents')">
+      <strong>{{ report()?.parentCount || 0 }}</strong>
+      <span>{{ 'common.parents' | t }}</span>
+    </button>
+    <button
+      type="button"
+      class="stat-card stat-card-link login-stat login-stat-students"
+      [class.active]="selectedRole() === 'students'"
+      (click)="selectRole('students')">
+      <strong>{{ report()?.studentCount || 0 }}</strong>
+      <span>{{ 'common.students' | t }}</span>
+    </button>
+  </section>
+
+  <section class="block">
+    <h3>{{ loggedInTitleKey() | t }}</h3>
+    <p class="meta">{{ 'admin.dashboard.loggedInHint' | t }}</p>
+    @if (loggedInUsers().length) {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.name' | t }}</th>
+              <th>{{ 'common.email' | t }}</th>
+              <th>{{ 'common.mobile' | t }}</th>
+              <th>{{ 'admin.dashboard.lastLogin' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of loggedInUsers(); track user.id) {
+              <tr>
+                <td>{{ user.displayName }}</td>
+                <td>{{ user.email || ('common.emDash' | t) }}</td>
+                <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
+                <td>{{ formatLogin(user.lastLoginDateUtc) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="meta">{{ 'admin.dashboard.noLoggedInUsers' | t }}</p>
+    }
+  </section>
+
+  <section class="block">
+    <h3>
+      {{ 'admin.dashboard.graphTitle' | t }}
+      @if (report(); as r) {
+        <span class="meta">({{ r.fromDate }} \u2013 {{ r.toDate }})</span>
+      }
+    </h3>
+    <p class="meta">{{ 'admin.dashboard.graphHint' | t }}</p>
+
+    <div class="login-chart-legend">
+      <span class="login-legend-item">
+        <i class="login-swatch login-swatch-teachers"></i>
+        {{ 'common.teachers' | t }}
+      </span>
+      <span class="login-legend-item">
+        <i class="login-swatch login-swatch-parents"></i>
+        {{ 'common.parents' | t }}
+      </span>
+      <span class="login-legend-item">
+        <i class="login-swatch login-swatch-students"></i>
+        {{ 'common.students' | t }}
+      </span>
+    </div>
+
+    @if (report(); as r) {
+      @if (hasLogins()) {
+        <div class="login-chart" role="img" [attr.aria-label]="'admin.dashboard.graphTitle' | t">
+          <div class="login-chart-bars">
+            @for (day of r.days; track day.date; let i = $index) {
+              <div class="login-chart-day" [title]="day.date">
+                <div class="login-chart-group">
+                  <div
+                    class="login-chart-bar login-bar-teachers"
+                    [style.height]="barHeight(day.teachers)"
+                    [attr.title]="day.teachers"></div>
+                  <div
+                    class="login-chart-bar login-bar-parents"
+                    [style.height]="barHeight(day.parents)"
+                    [attr.title]="day.parents"></div>
+                  <div
+                    class="login-chart-bar login-bar-students"
+                    [style.height]="barHeight(day.students)"
+                    [attr.title]="day.students"></div>
+                </div>
+                @if (showDayLabel(i, r.days)) {
+                  <span class="login-chart-label">{{ dayLabel(day.date) }}</span>
+                } @else {
+                  <span class="login-chart-label login-chart-label-spacer">&nbsp;</span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <p class="meta">{{ 'admin.dashboard.noLogins' | t }}</p>
+      }
+    } @else {
+      <p class="meta">{{ 'common.noData' | t }}</p>
+    }
+  </section>
+</div>
 `, styles: ['/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/admin/admin-panel.css */\n.user-row {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table th,\n.data-table td {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table td .chip-row {\n  margin-top: 0.45rem;\n}\n.data-table td .name-cell {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.meeting-form label .chip-row input {\n  flex: 1;\n  min-width: 0;\n}\n.wa-destination {\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.wa-destination legend {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.edit-panel {\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  background:\n    linear-gradient(\n      180deg,\n      rgba(95, 211, 188, 0.08),\n      transparent 60%);\n}\n.classroom-edit-form {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form .form-actions {\n  grid-column: 1 / -1;\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n.classroom-edit-form .span-3 {\n  grid-column: 1 / -1;\n}\n.classroom-edit-form .edit-form-hint {\n  margin: 0;\n  align-self: center;\n}\n.classroom-edit-form .form-actions {\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n@media (max-width: 1100px) {\n  .student-edit-form {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@media (max-width: 960px) {\n  .classroom-edit-form {\n    grid-template-columns: 1fr;\n  }\n  .classroom-edit-form .span-3 {\n    grid-column: auto;\n  }\n  .student-edit-form {\n    grid-template-columns: 1fr;\n  }\n}\n.field-label {\n  margin: 0 0 0.25rem;\n  font-weight: 700;\n}\n.data-table th {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table th.sortable {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table th.sortable:hover {\n  color: var(--accent-fg);\n}\n.data-table th .sort-mark {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table tr:hover td {\n  background: var(--table-row-hover);\n}\n.data-table tr.is-inactive td {\n  opacity: 0.58;\n}\n.data-table tr.total-row td {\n  border-top: 2px solid var(--border);\n  background: var(--table-row-total);\n}\n.data-table input,\n.data-table select {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table input:focus,\n.data-table select:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions button {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions app-icon-action-button {\n  display: inline-flex;\n}\n.row-actions button.danger {\n  background: var(--danger-soft-bg);\n  color: var(--danger-soft-fg);\n  box-shadow: none;\n}\n.row-actions button.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  object-fit: contain;\n}\n.brand-preview.logo {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.login-preview-form,\n.login-preview-visual {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.login-preview-visual {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual img {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.search-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.55);\n  background: rgba(255, 214, 10, 0.22);\n  color: var(--text);\n  font: inherit;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: none;\n}\n.search-btn i {\n  font-size: 0.95em;\n  line-height: 1;\n}\n.search-btn:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.32);\n  box-shadow: none;\n  transform: none;\n}\n.list-filters {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters select,\n.list-filters input {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters select:focus,\n.list-filters input:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters .meta {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager .meta {\n  margin: 0;\n}\n.list-pager button:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table td input + input {\n  margin-top: 0.4rem;\n}\n.grade-multi,\n.stage-multi,\n.teachers-multi {\n  grid-column: 1 / -1;\n}\n.grade-multi .meta,\n.stage-multi .meta,\n.teachers-multi .meta {\n  margin-top: 0.35rem;\n}\n.data-table app-searchable-multi-select {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi app-searchable-multi-select {\n  max-width: 36rem;\n}\n.course-teacher-block {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.course-teacher-block.compact {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row select {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block .meta {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar h3 {\n  margin: 0;\n}\n.calendar-nav {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav .meta {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab .day-count {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.day-hour {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed var(--border);\n  pointer-events: none;\n}\n.calendar-event {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event .row-actions {\n  margin-top: auto;\n}\n.calendar-empty {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap {\n  overflow: auto;\n  max-height: min(80vh, 56rem);\n  border: 3px solid #e8c46a;\n  border-radius: 28px;\n  background:\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 120, 0.35),\n      transparent 22%),\n    radial-gradient(\n      circle at 92% 10%,\n      rgba(168, 216, 255, 0.28),\n      transparent 24%),\n    radial-gradient(\n      circle at 10% 90%,\n      rgba(255, 182, 193, 0.25),\n      transparent 22%),\n    radial-gradient(\n      circle at 90% 88%,\n      rgba(186, 230, 180, 0.28),\n      transparent 24%),\n    linear-gradient(\n      180deg,\n      #fff8e8 0%,\n      #fffdf7 48%,\n      #f7fbff 100%);\n  direction: rtl;\n  position: relative;\n  z-index: 0;\n  isolation: isolate;\n  padding: 1.1rem 1rem 1.25rem;\n  box-shadow: 0 18px 40px rgba(120, 84, 20, 0.12);\n}\n.timetable-board {\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n}\n.timetable-deco {\n  position: absolute;\n  font-size: 1.55rem;\n  line-height: 1;\n  opacity: 0.88;\n  pointer-events: none;\n  z-index: 1;\n  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));\n}\n.timetable-deco-tl {\n  top: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-tr {\n  top: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-deco-bl {\n  bottom: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-br {\n  bottom: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-banner {\n  position: relative;\n  z-index: 2;\n  display: grid;\n  place-items: center;\n  margin: 0.15rem auto 1rem;\n  width: min(28rem, 92%);\n  padding: 0.75rem 1.4rem 0.85rem;\n  border-radius: 18px;\n  border: 3px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8 0%,\n      #f6d06a 100%);\n  box-shadow: 0 8px 0 #c8961a, 0 14px 24px rgba(180, 120, 20, 0.18);\n  text-align: center;\n}\n.timetable-banner-crown {\n  position: absolute;\n  top: -0.85rem;\n  font-size: 1.35rem;\n  line-height: 1;\n}\n.timetable-banner-title {\n  margin: 0;\n  color: #1d3a75;\n  font-size: clamp(1.15rem, 2.4vw, 1.65rem);\n  font-weight: 800;\n  letter-spacing: 0.01em;\n}\n.timetable-motto {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.55rem;\n  margin: 1rem auto 0.15rem;\n  width: min(30rem, 94%);\n  padding: 0.55rem 1.1rem;\n  border-radius: 16px;\n  border: 2px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #fff1c2,\n      #f8d978);\n  color: #1d3a75;\n  font-weight: 800;\n  font-size: 1rem;\n  box-shadow: 0 4px 0 #c8961a;\n}\n.timetable-page {\n  direction: rtl;\n  text-align: right;\n}\n.timetable {\n  width: max-content;\n  border-collapse: separate;\n  border-spacing: 0.28rem;\n  font-size: 0.84rem;\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n  color: #1f2a44;\n  direction: rtl;\n  position: relative;\n  z-index: 2;\n}\n.timetable th,\n.timetable td {\n  border: none;\n  vertical-align: middle;\n}\n.timetable-day-col,\n.timetable-day {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe082,\n      #ffd54f) !important;\n  color: #1d3a75 !important;\n  text-align: center;\n  padding: 0.35rem 0.4rem;\n  font-weight: 800;\n  border-radius: 18px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.35);\n}\n.timetable-day {\n  text-align: center;\n}\n.timetable-day-icon,\n.timetable-day-col-icon {\n  display: block;\n  font-size: 1.05rem;\n  line-height: 1;\n  margin-bottom: 0.2rem;\n}\n.timetable thead th {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8,\n      #f0c75a) !important;\n  color: #1d3a75 !important;\n  font-size: 0.78rem;\n  letter-spacing: 0;\n  text-transform: none;\n  padding: 0.28rem 0.32rem;\n  text-align: center;\n  white-space: nowrap;\n  border-radius: 16px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.28);\n}\n.timetable thead .timetable-day-col {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift {\n  background:\n    linear-gradient(\n      180deg,\n      #fff3c4,\n      #f5d36a) !important;\n  color: #1d3a75 !important;\n  font-weight: 800;\n}\n.timetable-shift.pm {\n  background:\n    linear-gradient(\n      180deg,\n      #d8f5e8,\n      #9ed9bf) !important;\n  color: #14553a !important;\n  border-color: #7cbc9a !important;\n}\n.timetable-wrap.exporting {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting .timetable thead th,\n.timetable-wrap.exporting .timetable-day-col,\n.timetable-wrap.exporting .timetable-day {\n  position: static !important;\n}\n.timetable-wrap.exporting .row-actions {\n  display: none !important;\n}\n.timetable-export-bar {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period {\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n}\n.timetable-session-id {\n  font-weight: 800;\n  font-size: 0.92rem;\n  color: #1d3a75;\n}\n.timetable-session-time {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: #4a3b12;\n  margin-top: 0.25rem;\n  font-variant-numeric: tabular-nums;\n  direction: ltr;\n  unicode-bidi: isolate;\n}\n.timetable-clock {\n  font-size: 0.85rem;\n  line-height: 1;\n}\n.timetable-cell {\n  width: 1%;\n  min-width: 0;\n  max-width: none;\n  height: auto;\n  min-height: 0;\n  padding: 0.15rem;\n  background: rgba(255, 255, 255, 0.55);\n  vertical-align: middle;\n  overflow: visible;\n  cursor: cell;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    outline 0.15s ease;\n  border-radius: 12px;\n  border: 2px dashed rgba(180, 150, 90, 0.35) !important;\n}\n.timetable-cell.pm {\n  background: rgba(232, 255, 246, 0.55);\n}\n.timetable-cell.empty {\n  background: rgba(255, 255, 255, 0.42);\n}\n.timetable-empty {\n  display: grid;\n  place-items: center;\n  min-height: 0;\n  padding: 0.1rem 0.2rem;\n  line-height: 1;\n  color: #9aa3b5;\n  font-size: 0.9rem;\n  font-weight: 700;\n}\n.timetable-cell.drag-over {\n  outline: 3px dashed #1d3a75;\n  background: rgba(255, 214, 10, 0.22);\n  transform: scale(1.01);\n}\n.timetable-entry {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: max-content;\n  min-width: max-content;\n  max-width: none;\n  gap: 0.08rem;\n  padding: 0.28rem 0.35rem;\n  border-radius: 10px;\n  border: 2px solid transparent;\n  margin: 0 auto;\n  overflow: visible;\n  cursor: grab;\n  text-align: center;\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n}\n.timetable-entry + .timetable-entry {\n  margin-top: 0.18rem;\n}\n.timetable-entry:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);\n}\n.timetable-entry:active {\n  cursor: grabbing;\n}\n.timetable-entry .row-actions {\n  display: flex;\n  flex-wrap: nowrap;\n  flex-shrink: 0;\n  gap: 0.25rem;\n  margin-top: 0.2rem;\n  cursor: default;\n  justify-content: center;\n}\n.timetable-entry .row-actions app-icon-action-button {\n  display: inline-flex;\n  flex-shrink: 0;\n}\n.timetable-subject-icon {\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.timetable-course {\n  font-weight: 800;\n  line-height: 1.2;\n  white-space: nowrap;\n  overflow: visible;\n  color: #1f2a44;\n  font-size: 0.8rem;\n}\n.timetable-teacher {\n  font-size: 0.7rem;\n  color: #4b5568;\n  white-space: nowrap;\n  overflow: visible;\n  font-weight: 600;\n}\n.timetable-entry[data-tone="0"] {\n  background: #ffe0e8;\n  border-color: #f5a3b8;\n}\n.timetable-entry[data-tone="1"] {\n  background: #e8d8ff;\n  border-color: #c4a6f5;\n}\n.timetable-entry[data-tone="2"] {\n  background: #d8ecff;\n  border-color: #9ec4f0;\n}\n.timetable-entry[data-tone="3"] {\n  background: #fff0b8;\n  border-color: #e6c85a;\n}\n.timetable-entry[data-tone="4"] {\n  background: #d8f5e8;\n  border-color: #8fd0b0;\n}\n.timetable-entry[data-tone="5"] {\n  background: #ffe6cc;\n  border-color: #f0b878;\n}\n.timetable-entry[data-tone="6"] {\n  background: #e0f0ff;\n  border-color: #9ebfe8;\n}\n.timetable-entry[data-tone="7"] {\n  background: #f3e0ff;\n  border-color: #d0a8ef;\n}\n.modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n}\n.modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head h3 {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-tree {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: var(--surface);\n}\n.tree-unit-head {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title,\n.tree-lesson-title {\n  flex: 1;\n  min-width: 12rem;\n}\n.ask-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  font-size: 0.82rem;\n  white-space: nowrap;\n  color: var(--text-soft);\n}\n.tree-unit-body {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: var(--elevated-bg);\n}\n.tree-inline-form,\n.tree-add-lesson {\n  width: 100%;\n}\n.course-tree-ai {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  padding: 1rem 1.1rem;\n  background: var(--surface);\n}\n.course-tree-prompt-field {\n  display: grid;\n  gap: 0.45rem;\n  margin: 0.75rem 0 0.35rem;\n  width: 100%;\n  max-width: 42rem;\n}\n.course-tree-prompt-field > span:first-child {\n  font-weight: 650;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.course-tree-prompt-field textarea {\n  width: 100%;\n  min-height: 5.5rem;\n  resize: vertical;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n  line-height: 1.45;\n}\n.course-tree-ai-actions {\n  margin-top: 0.35rem;\n}\n.course-tree-ai-preview {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px dashed var(--border);\n}\n.login-stat {\n  border-top: 3px solid transparent;\n}\n.login-stat-teachers {\n  border-top-color: #5fd3bc;\n}\n.login-stat-parents {\n  border-top-color: #ffd60a;\n}\n.login-stat-students {\n  border-top-color: #4ea8de;\n}\n.login-chart-legend {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.85rem 1.25rem;\n  margin: 0.75rem 0 1rem;\n}\n.login-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  color: var(--text-soft);\n  font-size: 0.88rem;\n}\n.login-swatch {\n  display: inline-block;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 3px;\n}\n.login-swatch-teachers,\n.login-bar-teachers {\n  background: #5fd3bc;\n}\n.login-swatch-parents,\n.login-bar-parents {\n  background: #ffd60a;\n}\n.login-swatch-students,\n.login-bar-students {\n  background: #4ea8de;\n}\n.login-chart {\n  padding: 1rem 0.75rem 0.5rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  overflow-x: auto;\n}\n.login-chart-bars {\n  display: flex;\n  align-items: flex-end;\n  gap: 0.35rem;\n  min-width: 100%;\n  min-height: 220px;\n}\n.login-chart-day {\n  flex: 1 1 0;\n  min-width: 1.35rem;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 0.4rem;\n}\n.login-chart-group {\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n  gap: 2px;\n  width: 100%;\n  height: 180px;\n}\n.login-chart-bar {\n  flex: 1 1 0;\n  min-width: 3px;\n  border-radius: 4px 4px 0 0;\n}\n.login-chart-label {\n  color: var(--text-muted);\n  font-size: 0.72rem;\n  line-height: 1;\n}\n.login-chart-label-spacer {\n  visibility: hidden;\n}\n.status-badge {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\nlabel.checkbox {\n  flex-direction: row;\n  align-items: center;\n  gap: 0.45rem;\n}\n/*# sourceMappingURL=admin-panel.css.map */\n'] }]
   }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AdminDashboardComponent, { className: "AdminDashboardComponent", filePath: "src/app/pages/admin/admin-dashboard.component.ts", lineNumber: 17 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AdminDashboardComponent, { className: "AdminDashboardComponent", filePath: "src/app/pages/admin/admin-dashboard.component.ts", lineNumber: 18 });
 })();
 function startOfMonthLocal() {
   const d = /* @__PURE__ */ new Date();
@@ -77119,8 +77809,8 @@ function totalPages(count, pageSize) {
 }
 
 // src/app/shared/searchable-multi-select/searchable-multi-select.component.ts
-var _c014 = ["panel"];
-var _forTrack018 = ($index, $item) => $item.value;
+var _c015 = ["panel"];
+var _forTrack019 = ($index, $item) => $item.value;
 function SearchableMultiSelectComponent_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -77192,7 +77882,7 @@ function SearchableMultiSelectComponent_Conditional_6_Template(rf, ctx) {
     });
     \u0275\u0275domElementEnd();
     \u0275\u0275domElementStart(4, "div", 9);
-    \u0275\u0275repeaterCreate(5, SearchableMultiSelectComponent_Conditional_6_For_6_Template, 4, 4, "button", 10, _forTrack018, false, SearchableMultiSelectComponent_Conditional_6_ForEmpty_7_Template, 3, 3, "p", 11);
+    \u0275\u0275repeaterCreate(5, SearchableMultiSelectComponent_Conditional_6_For_6_Template, 4, 4, "button", 10, _forTrack019, false, SearchableMultiSelectComponent_Conditional_6_ForEmpty_7_Template, 3, 3, "p", 11);
     \u0275\u0275domElementEnd()();
   }
   if (rf & 2) {
@@ -77405,7 +78095,7 @@ var SearchableMultiSelectComponent = class _SearchableMultiSelectComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SearchableMultiSelectComponent, selectors: [["app-searchable-multi-select"]], viewQuery: function SearchableMultiSelectComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.panel, _c014, 5);
+        \u0275\u0275viewQuerySignal(ctx.panel, _c015, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -77556,12 +78246,12 @@ function nextSort(currentKey, nextKey, currentDir) {
 }
 
 // src/app/pages/admin/admin-users.component.ts
-var _c015 = (a0) => ({ value: "active", label: a0 });
-var _c111 = (a0) => ({ value: "inactive", label: a0 });
+var _c016 = (a0) => ({ value: "active", label: a0 });
+var _c112 = (a0) => ({ value: "inactive", label: a0 });
 var _c27 = (a0, a1) => [a0, a1];
 var _c33 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c43 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack019 = ($index, $item) => $item.id;
+var _forTrack020 = ($index, $item) => $item.id;
 var arrowFn03 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 var arrowFn1 = (ctx, view) => (s) => {
   \u0275\u0275restoreView(view);
@@ -78800,7 +79490,7 @@ var AdminUsersComponent = class _AdminUsersComponent {
         \u0275\u0275pipe(99, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(100, "tbody");
-        \u0275\u0275repeaterCreate(101, AdminUsersComponent_For_102_Template, 22, 23, "tr", 22, _forTrack019, false, AdminUsersComponent_ForEmpty_103_Template, 4, 4, "tr");
+        \u0275\u0275repeaterCreate(101, AdminUsersComponent_For_102_Template, 22, 23, "tr", 22, _forTrack020, false, AdminUsersComponent_ForEmpty_103_Template, 4, 4, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(104, "div", 23)(105, "button", 24);
         \u0275\u0275listener("click", function AdminUsersComponent_Template_button_click_105_listener() {
@@ -78878,7 +79568,7 @@ var AdminUsersComponent = class _AdminUsersComponent {
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(61, 91, "common.status"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterStatus())("emptyLabel", \u0275\u0275pipeBind1(63, 93, "common.all"))("options", \u0275\u0275pureFunction2(126, _c27, \u0275\u0275pureFunction1(122, _c015, \u0275\u0275pipeBind1(64, 95, "admin.users.statusActive")), \u0275\u0275pureFunction1(124, _c111, \u0275\u0275pipeBind1(65, 97, "admin.users.statusInactive"))));
+        \u0275\u0275property("ngModel", ctx.filterStatus())("emptyLabel", \u0275\u0275pipeBind1(63, 93, "common.all"))("options", \u0275\u0275pureFunction2(126, _c27, \u0275\u0275pureFunction1(122, _c016, \u0275\u0275pipeBind1(64, 95, "admin.users.statusActive")), \u0275\u0275pureFunction1(124, _c112, \u0275\u0275pipeBind1(65, 97, "admin.users.statusInactive"))));
         \u0275\u0275control();
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(68, 99, "common.rowsPerPage"), " ");
@@ -79302,12 +79992,12 @@ function toRateRows(rates) {
 }
 
 // src/app/pages/admin/admin-students.component.ts
-var _c016 = (a0) => ({ value: "active", label: a0 });
-var _c112 = (a0) => ({ value: "inactive", label: a0 });
+var _c017 = (a0) => ({ value: "active", label: a0 });
+var _c113 = (a0) => ({ value: "inactive", label: a0 });
 var _c28 = (a0, a1) => [a0, a1];
 var _c34 = (a0, a1) => ({ shown: a0, total: a1 });
 var _c44 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack020 = ($index, $item) => $item.id;
+var _forTrack021 = ($index, $item) => $item.id;
 var arrowFn04 = (ctx, view) => (p) => ({ value: p.id, label: p.displayName + " (" + (p.email || p.mobilePhone) + ")" });
 var arrowFn12 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminStudentsComponent_Conditional_51_Template(rf, ctx) {
@@ -80170,7 +80860,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
         \u0275\u0275pipe(139, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(140, "tbody");
-        \u0275\u0275repeaterCreate(141, AdminStudentsComponent_For_142_Template, 32, 33, "tr", 27, _forTrack020, false, AdminStudentsComponent_ForEmpty_143_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(141, AdminStudentsComponent_For_142_Template, 32, 33, "tr", 27, _forTrack021, false, AdminStudentsComponent_ForEmpty_143_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(144, "div", 28)(145, "button", 29);
         \u0275\u0275listener("click", function AdminStudentsComponent_Template_button_click_145_listener() {
@@ -80269,7 +80959,7 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(84, 136, "common.status"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterStatus())("emptyLabel", \u0275\u0275pipeBind1(86, 138, "common.all"))("options", \u0275\u0275pureFunction2(179, _c28, \u0275\u0275pureFunction1(175, _c016, \u0275\u0275pipeBind1(87, 140, "admin.users.statusActive")), \u0275\u0275pureFunction1(177, _c112, \u0275\u0275pipeBind1(88, 142, "admin.users.statusInactive"))));
+        \u0275\u0275property("ngModel", ctx.filterStatus())("emptyLabel", \u0275\u0275pipeBind1(86, 138, "common.all"))("options", \u0275\u0275pureFunction2(179, _c28, \u0275\u0275pureFunction1(175, _c017, \u0275\u0275pipeBind1(87, 140, "admin.users.statusActive")), \u0275\u0275pureFunction1(177, _c113, \u0275\u0275pipeBind1(88, 142, "admin.users.statusInactive"))));
         \u0275\u0275control();
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(91, 144, "common.rowsPerPage"), " ");
@@ -80574,9 +81264,9 @@ var AdminStudentsComponent = class _AdminStudentsComponent {
 })();
 
 // src/app/pages/admin/admin-courses.component.ts
-var _c017 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c113 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack021 = ($index, $item) => $item.id;
+var _c018 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c114 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack022 = ($index, $item) => $item.id;
 var arrowFn05 = (ctx, view) => (term) => ({ value: term, label: ctx.termLabel(term) });
 var arrowFn13 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 var arrowFn22 = (ctx, view) => (term) => {
@@ -81669,7 +82359,7 @@ var AdminCoursesComponent = class _AdminCoursesComponent {
         \u0275\u0275pipe(141, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(142, "tbody");
-        \u0275\u0275repeaterCreate(143, AdminCoursesComponent_For_144_Template, 3, 1, "tr", null, _forTrack021);
+        \u0275\u0275repeaterCreate(143, AdminCoursesComponent_For_144_Template, 3, 1, "tr", null, _forTrack022);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(145, "div", 29)(146, "button", 30);
         \u0275\u0275listener("click", function AdminCoursesComponent_Template_button_click_146_listener() {
@@ -81788,7 +82478,7 @@ var AdminCoursesComponent = class _AdminCoursesComponent {
         \u0275\u0275advance();
         \u0275\u0275conditional(ctx.hasActiveFilters() ? 93 : -1);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(96, 133, "common.ofShown", \u0275\u0275pureFunction2(161, _c017, ctx.courses().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(96, 133, "common.ofShown", \u0275\u0275pureFunction2(161, _c018, ctx.courses().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(103, 136, "common.title"), " ");
         \u0275\u0275advance(3);
@@ -81828,7 +82518,7 @@ var AdminCoursesComponent = class _AdminCoursesComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(148, 154, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(151, 156, "common.pageOf", \u0275\u0275pureFunction2(164, _c113, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(151, 156, "common.pageOf", \u0275\u0275pureFunction2(164, _c114, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -82079,11 +82769,11 @@ var AdminCoursesComponent = class _AdminCoursesComponent {
 })();
 
 // src/app/pages/admin/admin-course-tree.component.ts
-var _c018 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c114 = (a0) => ({ count: a0 });
+var _c019 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c115 = (a0) => ({ count: a0 });
 var _c29 = (a0) => ["/courses", a0];
 var _c35 = (a0) => ({ video: a0 });
-var _forTrack022 = ($index, $item) => $item.id || "orphan";
+var _forTrack023 = ($index, $item) => $item.id || "orphan";
 var _forTrack18 = ($index, $item) => $item.sortOrder + $item.title;
 var _forTrack22 = ($index, $item) => $item.id;
 var arrowFn06 = (ctx, view) => (u2) => !!u2.id;
@@ -82220,7 +82910,7 @@ function AdminCourseTreeComponent_Conditional_31_Conditional_33_Template(rf, ctx
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 4, "admin.courseTree.aiPreview"));
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2(" \xB7 ", \u0275\u0275pipeBind2(6, 6, "admin.courseTree.aiUnits", \u0275\u0275pureFunction1(12, _c114, ctx_r1.aiDraftUnitCount())), " \xB7 ", \u0275\u0275pipeBind2(7, 9, "admin.courseTree.aiLessons", \u0275\u0275pureFunction1(14, _c114, ctx_r1.aiDraftLessonCount())), " ");
+    \u0275\u0275textInterpolate2(" \xB7 ", \u0275\u0275pipeBind2(6, 6, "admin.courseTree.aiUnits", \u0275\u0275pureFunction1(12, _c115, ctx_r1.aiDraftUnitCount())), " \xB7 ", \u0275\u0275pipeBind2(7, 9, "admin.courseTree.aiLessons", \u0275\u0275pureFunction1(14, _c115, ctx_r1.aiDraftLessonCount())), " ");
     \u0275\u0275advance(3);
     \u0275\u0275conditional(draft_r5.notes ? 8 : -1);
     \u0275\u0275advance(2);
@@ -82960,7 +83650,7 @@ function AdminCourseTreeComponent_Conditional_31_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(66, AdminCourseTreeComponent_Conditional_31_Conditional_66_Template, 6, 3);
     \u0275\u0275conditionalCreate(67, AdminCourseTreeComponent_Conditional_31_Conditional_67_Template, 3, 3, "p", 1);
     \u0275\u0275elementStart(68, "div", 27);
-    \u0275\u0275repeaterCreate(69, AdminCourseTreeComponent_Conditional_31_For_70_Template, 7, 3, "div", 28, _forTrack022);
+    \u0275\u0275repeaterCreate(69, AdminCourseTreeComponent_Conditional_31_For_70_Template, 7, 3, "div", 28, _forTrack023);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -83690,7 +84380,7 @@ var AdminCourseTreeComponent = class _AdminCourseTreeComponent {
         \u0275\u0275advance(2);
         \u0275\u0275conditional(ctx.hasActiveFilters() ? 20 : -1);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(23, 32, "common.ofShown", \u0275\u0275pureFunction2(39, _c018, ctx.filteredCourses().length, ctx.courses().length)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(23, 32, "common.ofShown", \u0275\u0275pureFunction2(39, _c019, ctx.filteredCourses().length, ctx.courses().length)));
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(26, 35, "admin.courseTree.selectCourse"), " ");
         \u0275\u0275advance(2);
@@ -84172,8 +84862,8 @@ var ClassroomZoomLinksEditorComponent = class _ClassroomZoomLinksEditorComponent
 })();
 
 // src/app/pages/admin/admin-create-classroom.component.ts
-var _c019 = (a0) => ({ name: a0 });
-var _forTrack023 = ($index, $item) => $item.id;
+var _c020 = (a0) => ({ name: a0 });
+var _forTrack024 = ($index, $item) => $item.id;
 var arrowFn07 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var _forTrack19 = ($index, $item) => $item.url + $item.name;
 function AdminCreateClassroomComponent_Conditional_45_Template(rf, ctx) {
@@ -84562,7 +85252,7 @@ var AdminCreateClassroomComponent = class _AdminCreateClassroomComponent {
         \u0275\u0275pipe(72, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(73, "tbody");
-        \u0275\u0275repeaterCreate(74, AdminCreateClassroomComponent_For_75_Template, 19, 5, "tr", null, _forTrack023);
+        \u0275\u0275repeaterCreate(74, AdminCreateClassroomComponent_For_75_Template, 19, 5, "tr", null, _forTrack024);
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -84573,7 +85263,7 @@ var AdminCreateClassroomComponent = class _AdminCreateClassroomComponent {
         \u0275\u0275advance(2);
         \u0275\u0275property("ok", ctx.message())("error", ctx.error());
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(ctx.editingId() ? \u0275\u0275pipeBind2(11, 33, "admin.classrooms.editTitle", \u0275\u0275pureFunction1(69, _c019, ctx.formName)) : \u0275\u0275pipeBind1(12, 36, "admin.classrooms.create"));
+        \u0275\u0275textInterpolate(ctx.editingId() ? \u0275\u0275pipeBind2(11, 33, "admin.classrooms.editTitle", \u0275\u0275pureFunction1(69, _c020, ctx.formName)) : \u0275\u0275pipeBind1(12, 36, "admin.classrooms.create"));
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(16, 38, "common.name"), " ");
         \u0275\u0275advance(2);
@@ -85253,9 +85943,9 @@ function normalizeClassroom(room) {
 }
 
 // src/app/pages/admin/admin-enroll-student.component.ts
-var _c020 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c115 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack024 = ($index, $item) => $item.classroomId + $item.studentId;
+var _c021 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c116 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack025 = ($index, $item) => $item.classroomId + $item.studentId;
 var arrowFn09 = (ctx, view) => (s) => ({ value: s.id, label: ctx.studentLabel(s) });
 var arrowFn16 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn24 = (ctx, view) => (s) => ({ value: s, label: "" + s });
@@ -86009,7 +86699,7 @@ var AdminEnrollStudentComponent = class _AdminEnrollStudentComponent {
         \u0275\u0275pipe(84, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(85, "tbody");
-        \u0275\u0275repeaterCreate(86, AdminEnrollStudentComponent_For_87_Template, 15, 10, "tr", null, _forTrack024, false, AdminEnrollStudentComponent_ForEmpty_88_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(86, AdminEnrollStudentComponent_For_87_Template, 15, 10, "tr", null, _forTrack025, false, AdminEnrollStudentComponent_ForEmpty_88_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(89, "div", 19)(90, "button", 20);
         \u0275\u0275listener("click", function AdminEnrollStudentComponent_Template_button_click_90_listener() {
@@ -86082,7 +86772,7 @@ var AdminEnrollStudentComponent = class _AdminEnrollStudentComponent {
         \u0275\u0275advance();
         \u0275\u0275conditional(ctx.hasActiveFilters() ? 54 : -1);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(57, 86, "common.ofShown", \u0275\u0275pureFunction2(106, _c020, ctx.enrollmentRows().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(57, 86, "common.ofShown", \u0275\u0275pureFunction2(106, _c021, ctx.enrollmentRows().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(64, 89, "common.classroom"), " ");
         \u0275\u0275advance(3);
@@ -86108,7 +86798,7 @@ var AdminEnrollStudentComponent = class _AdminEnrollStudentComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(92, 99, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(95, 101, "common.pageOf", \u0275\u0275pureFunction2(109, _c115, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(95, 101, "common.pageOf", \u0275\u0275pureFunction2(109, _c116, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -86279,7 +86969,7 @@ var AdminEnrollStudentComponent = class _AdminEnrollStudentComponent {
 })();
 
 // src/app/pages/admin/admin-site-settings.component.ts
-var _c021 = (a0, a1) => ({ min: a0, max: a1 });
+var _c022 = (a0, a1) => ({ min: a0, max: a1 });
 function AdminSiteSettingsComponent_Conditional_20_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275element(0, "img", 9);
@@ -86833,7 +87523,7 @@ var AdminSiteSettingsComponent = class _AdminSiteSettingsComponent {
         \u0275\u0275property("min", ctx.minSessionCount)("max", ctx.maxSessionCount);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(82, 76, "admin.site.sessionCountHint", \u0275\u0275pureFunction2(90, _c021, ctx.minSessionCount, ctx.maxSessionCount)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(82, 76, "admin.site.sessionCountHint", \u0275\u0275pureFunction2(90, _c022, ctx.minSessionCount, ctx.maxSessionCount)));
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(85, 79, "admin.site.pmStart"), " ");
         \u0275\u0275advance(2);
@@ -86841,7 +87531,7 @@ var AdminSiteSettingsComponent = class _AdminSiteSettingsComponent {
         \u0275\u0275property("min", ctx.minPmStartTime)("max", ctx.maxPmStartTime);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(89, 81, "admin.site.pmStartHint", \u0275\u0275pureFunction2(93, _c021, ctx.minPmStartTime, ctx.maxPmStartTime)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(89, 81, "admin.site.pmStartHint", \u0275\u0275pureFunction2(93, _c022, ctx.minPmStartTime, ctx.maxPmStartTime)));
         \u0275\u0275advance(3);
         \u0275\u0275classProp("is-dirty", ctx.isDirty());
         \u0275\u0275advance(2);
@@ -87045,7 +87735,7 @@ function toDateInputValue(date) {
 }
 
 // src/app/pages/admin/admin-whatsapp.component.ts
-var _forTrack025 = ($index, $item) => $item.phone;
+var _forTrack026 = ($index, $item) => $item.phone;
 function AdminWhatsAppComponent_Conditional_23_Conditional_11_For_12_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
@@ -87253,7 +87943,7 @@ function AdminWhatsAppComponent_Conditional_33_Template(rf, ctx) {
     \u0275\u0275pipe(16, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(17, "tbody");
-    \u0275\u0275repeaterCreate(18, AdminWhatsAppComponent_Conditional_33_For_19_Template, 8, 5, "tr", null, _forTrack025);
+    \u0275\u0275repeaterCreate(18, AdminWhatsAppComponent_Conditional_33_For_19_Template, 8, 5, "tr", null, _forTrack026);
     \u0275\u0275elementEnd()()();
     \u0275\u0275conditionalCreate(20, AdminWhatsAppComponent_Conditional_33_Conditional_20_Template, 6, 7, "p", 1);
     \u0275\u0275elementEnd();
@@ -87648,8 +88338,8 @@ var AdminWhatsAppComponent = class _AdminWhatsAppComponent {
 })();
 
 // src/app/pages/admin/admin-appointments.component.ts
-var _c022 = (a0) => ({ minutes: a0 });
-var _forTrack026 = ($index, $item) => $item.key;
+var _c023 = (a0) => ({ minutes: a0 });
+var _forTrack027 = ($index, $item) => $item.key;
 var _forTrack110 = ($index, $item) => $item.appointment.id;
 var arrowFn010 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var arrowFn17 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
@@ -88384,7 +89074,7 @@ var AdminAppointmentsComponent = class _AdminAppointmentsComponent {
         \u0275\u0275text(62);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(63, "div", 16);
-        \u0275\u0275repeaterCreate(64, AdminAppointmentsComponent_For_65_Template, 3, 4, "button", 17, _forTrack026);
+        \u0275\u0275repeaterCreate(64, AdminAppointmentsComponent_For_65_Template, 3, 4, "button", 17, _forTrack027);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(66, "div", 18)(67, "div", 19);
         \u0275\u0275repeaterCreate(68, AdminAppointmentsComponent_For_69_Template, 2, 3, "div", 20, \u0275\u0275repeaterTrackByIdentity);
@@ -88428,7 +89118,7 @@ var AdminAppointmentsComponent = class _AdminAppointmentsComponent {
         \u0275\u0275twoWayProperty("ngModel", ctx.endsAtLocal);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(34, 54, "admin.appointments.sessionHint", \u0275\u0275pureFunction1(71, _c022, ctx.sessionMinutes)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(34, 54, "admin.appointments.sessionHint", \u0275\u0275pureFunction1(71, _c023, ctx.sessionMinutes)));
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(37, 57, "common.description"), " ");
         \u0275\u0275advance(2);
@@ -88818,11 +89508,11 @@ function timetableSessionOrdinalKey(sessionNumber) {
 }
 
 // src/app/pages/admin/admin-timetable.component.ts
-var _c023 = ["timetableWrap"];
-var _c116 = (a0) => ({ value: "am", label: a0 });
+var _c024 = ["timetableWrap"];
+var _c117 = (a0) => ({ value: "am", label: a0 });
 var _c210 = (a0) => ({ value: "pm", label: a0 });
 var _c36 = (a0, a1) => [a0, a1];
-var _forTrack027 = ($index, $item) => $item.key;
+var _forTrack028 = ($index, $item) => $item.key;
 var _forTrack111 = ($index, $item) => $item.dayOfWeek;
 var arrowFn011 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var arrowFn18 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
@@ -89005,7 +89695,7 @@ function AdminTimetableComponent_For_68_Template(rf, ctx) {
     \u0275\u0275elementStart(4, "span");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(6, AdminTimetableComponent_For_68_For_7_Template, 4, 7, "td", 34, _forTrack027);
+    \u0275\u0275repeaterCreate(6, AdminTimetableComponent_For_68_For_7_Template, 4, 7, "td", 34, _forTrack028);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -89215,7 +89905,7 @@ function AdminTimetableComponent_Conditional_80_Template(rf, ctx) {
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(39, 60, "admin.timetable.period"), " ");
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngModel", ctx_r0.period)("emptyLabel", \u0275\u0275pipeBind1(41, 62, "common.select"))("options", \u0275\u0275pureFunction2(76, _c36, \u0275\u0275pureFunction1(72, _c116, \u0275\u0275pipeBind1(42, 64, "admin.timetable.am")), \u0275\u0275pureFunction1(74, _c210, \u0275\u0275pipeBind1(43, 66, "admin.timetable.pm"))));
+    \u0275\u0275property("ngModel", ctx_r0.period)("emptyLabel", \u0275\u0275pipeBind1(41, 62, "common.select"))("options", \u0275\u0275pureFunction2(76, _c36, \u0275\u0275pureFunction1(72, _c117, \u0275\u0275pipeBind1(42, 64, "admin.timetable.am")), \u0275\u0275pureFunction1(74, _c210, \u0275\u0275pipeBind1(43, 66, "admin.timetable.pm"))));
     \u0275\u0275control();
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(47, 68, ctx_r0.editingId() ? "common.save" : "admin.timetable.create"));
@@ -89809,7 +90499,7 @@ var AdminTimetableComponent = class _AdminTimetableComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminTimetableComponent, selectors: [["app-admin-timetable"]], viewQuery: function AdminTimetableComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c023, 5);
+        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c024, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -89907,7 +90597,7 @@ var AdminTimetableComponent = class _AdminTimetableComponent {
         \u0275\u0275conditionalCreate(62, AdminTimetableComponent_Conditional_62_Template, 2, 2, "th", 24);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(63, "tr");
-        \u0275\u0275repeaterCreate(64, AdminTimetableComponent_For_65_Template, 7, 2, "th", 25, _forTrack027);
+        \u0275\u0275repeaterCreate(64, AdminTimetableComponent_For_65_Template, 7, 2, "th", 25, _forTrack028);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(66, "tbody");
         \u0275\u0275repeaterCreate(67, AdminTimetableComponent_For_68_Template, 8, 2, "tr", null, _forTrack111);
@@ -89948,7 +90638,7 @@ var AdminTimetableComponent = class _AdminTimetableComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(22, 41, "admin.timetable.period"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(24, 43, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(67, _c36, \u0275\u0275pureFunction1(63, _c116, \u0275\u0275pipeBind1(25, 45, "admin.timetable.am")), \u0275\u0275pureFunction1(65, _c210, \u0275\u0275pipeBind1(26, 47, "admin.timetable.pm"))));
+        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(24, 43, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(67, _c36, \u0275\u0275pureFunction1(63, _c117, \u0275\u0275pipeBind1(25, 45, "admin.timetable.am")), \u0275\u0275pureFunction1(65, _c210, \u0275\u0275pipeBind1(26, 47, "admin.timetable.pm"))));
         \u0275\u0275control();
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(29, 49, "admin.timetable.create"), " ");
@@ -90296,9 +90986,9 @@ function payloadCombinedGrades(value) {
 }
 
 // src/app/pages/admin/admin-study-plans.component.ts
-var _c024 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c117 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack028 = ($index, $item) => $item.id;
+var _c025 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c118 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack029 = ($index, $item) => $item.id;
 var arrowFn012 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminStudyPlansComponent_For_72_Template(rf, ctx) {
   if (rf & 1) {
@@ -90748,7 +91438,7 @@ var AdminStudyPlansComponent = class _AdminStudyPlansComponent {
         \u0275\u0275text(69);
         \u0275\u0275elementEnd()()()();
         \u0275\u0275elementStart(70, "tbody");
-        \u0275\u0275repeaterCreate(71, AdminStudyPlansComponent_For_72_Template, 12, 9, "tr", 15, _forTrack028, false, AdminStudyPlansComponent_ForEmpty_73_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(71, AdminStudyPlansComponent_For_72_Template, 12, 9, "tr", 15, _forTrack029, false, AdminStudyPlansComponent_ForEmpty_73_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(74, "div", 16)(75, "button", 17);
         \u0275\u0275listener("click", function AdminStudyPlansComponent_Template_button_click_75_listener() {
@@ -90809,7 +91499,7 @@ var AdminStudyPlansComponent = class _AdminStudyPlansComponent {
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(37, 60, "common.clearFilters"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(40, 62, "common.ofShown", \u0275\u0275pureFunction2(82, _c024, ctx.plans().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(40, 62, "common.ofShown", \u0275\u0275pureFunction2(82, _c025, ctx.plans().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(47, 65, "common.teacher"), " ");
         \u0275\u0275advance(3);
@@ -90837,7 +91527,7 @@ var AdminStudyPlansComponent = class _AdminStudyPlansComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(77, 75, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(80, 77, "common.pageOf", \u0275\u0275pureFunction2(85, _c117, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(80, 77, "common.pageOf", \u0275\u0275pureFunction2(85, _c118, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -90998,7 +91688,7 @@ var AdminStudyPlansComponent = class _AdminStudyPlansComponent {
 })();
 
 // src/app/pages/admin/admin-weekly-reports.component.ts
-var _forTrack029 = ($index, $item) => $item.id;
+var _forTrack030 = ($index, $item) => $item.id;
 function AdminWeeklyReportsComponent_For_70_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "tr")(1, "td");
@@ -91317,7 +92007,7 @@ var AdminWeeklyReportsComponent = class _AdminWeeklyReportsComponent {
         \u0275\u0275pipe(67, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(68, "tbody");
-        \u0275\u0275repeaterCreate(69, AdminWeeklyReportsComponent_For_70_Template, 23, 17, "tr", null, _forTrack029, false, AdminWeeklyReportsComponent_ForEmpty_71_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(69, AdminWeeklyReportsComponent_For_70_Template, 23, 17, "tr", null, _forTrack030, false, AdminWeeklyReportsComponent_ForEmpty_71_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -91495,9 +92185,9 @@ function toLocalDateString2(d) {
 }
 
 // src/app/pages/admin/admin-teacher-assessments.component.ts
-var _c025 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c118 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack030 = ($index, $item) => $item.kind + $item.id;
+var _c026 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c119 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack031 = ($index, $item) => $item.kind + $item.id;
 var arrowFn013 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminTeacherAssessmentsComponent_Conditional_42_Template(rf, ctx) {
   if (rf & 1) {
@@ -92027,7 +92717,7 @@ var AdminTeacherAssessmentsComponent = class _AdminTeacherAssessmentsComponent {
         \u0275\u0275pipe(77, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(78, "tbody");
-        \u0275\u0275repeaterCreate(79, AdminTeacherAssessmentsComponent_For_80_Template, 23, 16, "tr", null, _forTrack030, false, AdminTeacherAssessmentsComponent_ForEmpty_81_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(79, AdminTeacherAssessmentsComponent_For_80_Template, 23, 16, "tr", null, _forTrack031, false, AdminTeacherAssessmentsComponent_ForEmpty_81_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(82, "div", 17)(83, "button", 18);
         \u0275\u0275listener("click", function AdminTeacherAssessmentsComponent_Template_button_click_83_listener() {
@@ -92095,7 +92785,7 @@ var AdminTeacherAssessmentsComponent = class _AdminTeacherAssessmentsComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(46, 71, "common.search"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(49, 73, "common.ofShown", \u0275\u0275pureFunction2(99, _c025, ctx.rows().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(49, 73, "common.ofShown", \u0275\u0275pureFunction2(99, _c026, ctx.rows().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(56, 76, "admin.teacherAssessments.kind"));
         \u0275\u0275advance(3);
@@ -92119,7 +92809,7 @@ var AdminTeacherAssessmentsComponent = class _AdminTeacherAssessmentsComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(85, 92, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(88, 94, "common.pageOf", \u0275\u0275pureFunction2(102, _c118, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(88, 94, "common.pageOf", \u0275\u0275pureFunction2(102, _c119, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -92306,7 +92996,7 @@ function toLocalDateString3(d) {
 }
 
 // src/app/pages/admin/admin-attendance.component.ts
-var _forTrack031 = ($index, $item) => $item.id;
+var _forTrack032 = ($index, $item) => $item.id;
 var arrowFn014 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
 var arrowFn19 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var arrowFn26 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
@@ -92721,7 +93411,7 @@ var AdminAttendanceComponent = class _AdminAttendanceComponent {
         \u0275\u0275pipe(80, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(81, "tbody");
-        \u0275\u0275repeaterCreate(82, AdminAttendanceComponent_For_83_Template, 11, 4, "tr", null, _forTrack031, false, AdminAttendanceComponent_ForEmpty_84_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(82, AdminAttendanceComponent_For_83_Template, 11, 4, "tr", null, _forTrack032, false, AdminAttendanceComponent_ForEmpty_84_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -92957,9 +93647,9 @@ function toLocalDateString4(d) {
 }
 
 // src/app/pages/admin/admin-student-attendance.component.ts
-var _c026 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c119 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack032 = ($index, $item) => $item.id;
+var _c027 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c120 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack033 = ($index, $item) => $item.id;
 var arrowFn015 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function AdminStudentAttendanceComponent_For_110_Template(rf, ctx) {
   if (rf & 1) {
@@ -93557,7 +94247,7 @@ var AdminStudentAttendanceComponent = class _AdminStudentAttendanceComponent {
         \u0275\u0275pipe(107, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(108, "tbody");
-        \u0275\u0275repeaterCreate(109, AdminStudentAttendanceComponent_For_110_Template, 16, 8, "tr", null, _forTrack032, false, AdminStudentAttendanceComponent_ForEmpty_111_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(109, AdminStudentAttendanceComponent_For_110_Template, 16, 8, "tr", null, _forTrack033, false, AdminStudentAttendanceComponent_ForEmpty_111_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(112, "div", 22)(113, "button", 23);
         \u0275\u0275listener("click", function AdminStudentAttendanceComponent_Template_button_click_113_listener() {
@@ -93646,7 +94336,7 @@ var AdminStudentAttendanceComponent = class _AdminStudentAttendanceComponent {
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 102, "common.clearFilters"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(72, 104, "common.ofShown", \u0275\u0275pureFunction2(128, _c026, ctx.rows().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(72, 104, "common.ofShown", \u0275\u0275pureFunction2(128, _c027, ctx.rows().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(79, 107, "common.student"), " ");
         \u0275\u0275advance(3);
@@ -93678,7 +94368,7 @@ var AdminStudentAttendanceComponent = class _AdminStudentAttendanceComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(115, 121, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(118, 123, "common.pageOf", \u0275\u0275pureFunction2(131, _c119, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(118, 123, "common.pageOf", \u0275\u0275pureFunction2(131, _c120, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -93869,8 +94559,8 @@ function toLocalDateString5(d) {
 }
 
 // src/app/pages/admin/admin-payroll.component.ts
-var _c027 = ["reportTable"];
-var _forTrack033 = ($index, $item) => $item.id;
+var _c028 = ["reportTable"];
+var _forTrack034 = ($index, $item) => $item.id;
 var arrowFn016 = (ctx, view) => (y) => ({ value: y, label: "" + y });
 var arrowFn110 = (ctx, view) => (m) => ({ value: m, label: ctx.monthLabel(m) });
 var arrowFn27 = (ctx, view) => (t) => ({ value: t.id, label: t.displayName });
@@ -94270,7 +94960,7 @@ var AdminPayrollComponent = class _AdminPayrollComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdminPayrollComponent, selectors: [["app-admin-payroll"]], viewQuery: function AdminPayrollComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.reportEl, _c027, 5);
+        \u0275\u0275viewQuerySignal(ctx.reportEl, _c028, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -94604,7 +95294,7 @@ var AdminPayrollComponent = class _AdminPayrollComponent {
         \u0275\u0275pipe(153, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(154, "tbody");
-        \u0275\u0275repeaterCreate(155, AdminPayrollComponent_For_156_Template, 14, 7, "tr", null, _forTrack033, false, AdminPayrollComponent_ForEmpty_157_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(155, AdminPayrollComponent_For_156_Template, 14, 7, "tr", null, _forTrack034, false, AdminPayrollComponent_ForEmpty_157_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -95406,10 +96096,10 @@ function toLocalDateString7(d) {
 }
 
 // src/app/pages/admin/admin-payments.component.ts
-var _c028 = (a0) => ({ value: "parent", label: a0 });
-var _c120 = (a0) => ({ value: "student", label: a0 });
+var _c029 = (a0) => ({ value: "parent", label: a0 });
+var _c121 = (a0) => ({ value: "student", label: a0 });
 var _c211 = (a0, a1) => [a0, a1];
-var _forTrack034 = ($index, $item) => $item.id;
+var _forTrack035 = ($index, $item) => $item.id;
 var arrowFn017 = (ctx, view) => (y) => ({ value: y, label: "" + y });
 var arrowFn111 = (ctx, view) => (m) => ({ value: m, label: ctx.monthLabel(m) });
 var arrowFn28 = (ctx, view) => (p) => ({ value: p.id, label: p.displayName });
@@ -95962,7 +96652,7 @@ var AdminPaymentsComponent = class _AdminPaymentsComponent {
         \u0275\u0275pipe(97, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(98, "tbody");
-        \u0275\u0275repeaterCreate(99, AdminPaymentsComponent_For_100_Template, 20, 13, "tr", null, _forTrack034, false, AdminPaymentsComponent_ForEmpty_101_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(99, AdminPaymentsComponent_For_100_Template, 20, 13, "tr", null, _forTrack035, false, AdminPaymentsComponent_ForEmpty_101_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -95977,7 +96667,7 @@ var AdminPaymentsComponent = class _AdminPaymentsComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(15, 51, "admin.payments.payerType"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.payerKind)("options", \u0275\u0275pureFunction2(109, _c211, \u0275\u0275pureFunction1(105, _c028, \u0275\u0275pipeBind1(17, 53, "common.parent")), \u0275\u0275pureFunction1(107, _c120, \u0275\u0275pipeBind1(18, 55, "admin.payments.orphanStudent"))));
+        \u0275\u0275property("ngModel", ctx.payerKind)("options", \u0275\u0275pureFunction2(109, _c211, \u0275\u0275pureFunction1(105, _c029, \u0275\u0275pipeBind1(17, 53, "common.parent")), \u0275\u0275pureFunction1(107, _c121, \u0275\u0275pipeBind1(18, 55, "admin.payments.orphanStudent"))));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275conditional(ctx.payerKind === "parent" ? 19 : 20);
@@ -96016,7 +96706,7 @@ var AdminPaymentsComponent = class _AdminPaymentsComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(52, 75, "admin.payments.payerType"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterPayerKind)("emptyLabel", \u0275\u0275pipeBind1(54, 77, "common.all"))("options", \u0275\u0275pureFunction2(116, _c211, \u0275\u0275pureFunction1(112, _c028, \u0275\u0275pipeBind1(55, 79, "common.parent")), \u0275\u0275pureFunction1(114, _c120, \u0275\u0275pipeBind1(56, 81, "admin.payments.orphanStudent"))));
+        \u0275\u0275property("ngModel", ctx.filterPayerKind)("emptyLabel", \u0275\u0275pipeBind1(54, 77, "common.all"))("options", \u0275\u0275pureFunction2(116, _c211, \u0275\u0275pureFunction1(112, _c029, \u0275\u0275pipeBind1(55, 79, "common.parent")), \u0275\u0275pureFunction1(114, _c121, \u0275\u0275pipeBind1(56, 81, "admin.payments.orphanStudent"))));
         \u0275\u0275control();
         \u0275\u0275advance(4);
         \u0275\u0275conditional(ctx.filterPayerKind === "parent" ? 57 : -1);
@@ -96273,7 +96963,7 @@ function yearOptions2() {
 }
 
 // src/app/pages/admin/admin-other-expenses.component.ts
-var _forTrack035 = ($index, $item) => $item.id;
+var _forTrack036 = ($index, $item) => $item.id;
 function AdminOtherExpensesComponent_For_78_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -96580,7 +97270,7 @@ var AdminOtherExpensesComponent = class _AdminOtherExpensesComponent {
         \u0275\u0275pipe(75, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(76, "tbody");
-        \u0275\u0275repeaterCreate(77, AdminOtherExpensesComponent_For_78_Template, 12, 6, "tr", null, _forTrack035, false, AdminOtherExpensesComponent_ForEmpty_79_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(77, AdminOtherExpensesComponent_For_78_Template, 12, 6, "tr", null, _forTrack036, false, AdminOtherExpensesComponent_ForEmpty_79_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -96778,7 +97468,7 @@ function toLocalDateString9(d) {
 }
 
 // src/app/pages/course-play/course-play.component.ts
-var _forTrack036 = ($index, $item) => $item.id;
+var _forTrack037 = ($index, $item) => $item.id;
 function CoursePlayComponent_Conditional_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 2);
@@ -96823,7 +97513,7 @@ function CoursePlayComponent_Conditional_6_Conditional_9_Conditional_4_Template(
 function CoursePlayComponent_Conditional_6_Conditional_9_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 5)(1, "nav", 6);
-    \u0275\u0275repeaterCreate(2, CoursePlayComponent_Conditional_6_Conditional_9_For_3_Template, 2, 3, "button", 7, _forTrack036);
+    \u0275\u0275repeaterCreate(2, CoursePlayComponent_Conditional_6_Conditional_9_For_3_Template, 2, 3, "button", 7, _forTrack037);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(4, CoursePlayComponent_Conditional_6_Conditional_9_Conditional_4_Template, 1, 3, "app-protected-video-player", 8);
     \u0275\u0275elementEnd();
@@ -97024,8 +97714,8 @@ var CoursePlayComponent = class _CoursePlayComponent {
 })();
 
 // src/app/pages/admin/admin-videos.component.ts
-var _c029 = (a0) => [a0];
-var _forTrack037 = ($index, $item) => $item.id;
+var _c030 = (a0) => [a0];
+var _forTrack038 = ($index, $item) => $item.id;
 var arrowFn018 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 function AdminVideosComponent_Conditional_56_Template(rf, ctx) {
   if (rf & 1) {
@@ -97172,7 +97862,7 @@ function AdminVideosComponent_Conditional_80_Template(rf, ctx) {
     \u0275\u0275advance();
     \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(6, 2, "videos.close"));
     \u0275\u0275advance(3);
-    \u0275\u0275repeater(\u0275\u0275pureFunction1(4, _c029, ctx_r1.previewKey()));
+    \u0275\u0275repeater(\u0275\u0275pureFunction1(4, _c030, ctx_r1.previewKey()));
   }
 }
 var AdminVideosComponent = class _AdminVideosComponent {
@@ -97512,7 +98202,7 @@ var AdminVideosComponent = class _AdminVideosComponent {
         \u0275\u0275pipe(75, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(76, "tbody");
-        \u0275\u0275repeaterCreate(77, AdminVideosComponent_For_78_Template, 16, 11, "tr", 19, _forTrack037, false, AdminVideosComponent_ForEmpty_79_Template, 5, 5, "tr");
+        \u0275\u0275repeaterCreate(77, AdminVideosComponent_For_78_Template, 16, 11, "tr", 19, _forTrack038, false, AdminVideosComponent_ForEmpty_79_Template, 5, 5, "tr");
         \u0275\u0275elementEnd()()()()();
         \u0275\u0275conditionalCreate(80, AdminVideosComponent_Conditional_80_Template, 10, 6, "div", 20);
       }
@@ -97817,18 +98507,88 @@ var TeacherShellComponent = class _TeacherShellComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherShellComponent, { className: "TeacherShellComponent", filePath: "src/app/pages/teacher/teacher-shell.component.ts", lineNumber: 17 });
 })();
 
+// src/app/pages/teacher/teacher-setup-guide.component.ts
+var TeacherSetupGuideComponent = class _TeacherSetupGuideComponent {
+  constructor() {
+    this.api = inject2(LearningApiService);
+    this.steps = [
+      { id: "students", path: "/teacher/students" },
+      { id: "video", path: "/teacher/videos" },
+      { id: "material", path: "/teacher/materials" },
+      { id: "assistant", path: "/teacher/smart-study-assistant", visitOnly: true },
+      { id: "question", path: "/teacher/question-bank" },
+      { id: "exam", path: "/teacher/exams" },
+      { id: "assignment", path: "/teacher/assignments" },
+      { id: "review", path: "/teacher/review", visitOnly: true },
+      { id: "weekly", path: "/teacher/weekly-reports" }
+    ];
+    this.counts = signal(
+      null,
+      ...ngDevMode ? [{ debugName: "counts" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    forkJoin({
+      classrooms: this.api.getClassrooms().pipe(catchError(() => of([]))),
+      videos: this.api.getVideoLibrary().pipe(catchError(() => of(null))),
+      materials: this.api.getLearningMaterials().pipe(catchError(() => of([]))),
+      questions: this.api.getBankQuestions().pipe(catchError(() => of([]))),
+      exams: this.api.getExams().pipe(catchError(() => of([]))),
+      assignments: this.api.getAssignments().pipe(catchError(() => of([]))),
+      weekly: this.api.listWeeklyReports().pipe(catchError(() => of([])))
+    }).subscribe(({ classrooms, videos, materials, questions, exams, assignments, weekly }) => this.counts.set({
+      students: new Set(classrooms.flatMap((c) => (c.students ?? []).map((s) => s.studentId))).size,
+      video: (videos?.lessonVideos?.length ?? 0) + (videos?.courseVideos?.length ?? 0),
+      material: materials.length,
+      question: questions.length,
+      exam: exams.length,
+      assignment: assignments.length,
+      weekly: weekly.length
+    }));
+  }
+  static {
+    this.\u0275fac = function TeacherSetupGuideComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _TeacherSetupGuideComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherSetupGuideComponent, selectors: [["app-teacher-setup-guide"]], decls: 1, vars: 2, consts: [["prefix", "teacher.guide", 3, "steps", "counts"]], template: function TeacherSetupGuideComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275element(0, "app-setup-guide", 0);
+      }
+      if (rf & 2) {
+        \u0275\u0275property("steps", ctx.steps)("counts", ctx.counts());
+      }
+    }, dependencies: [SetupGuideComponent], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TeacherSetupGuideComponent, [{
+    type: Component,
+    args: [{
+      selector: "app-teacher-setup-guide",
+      imports: [SetupGuideComponent],
+      template: `<app-setup-guide prefix="teacher.guide" [steps]="steps" [counts]="counts()" />`
+    }]
+  }], () => [], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherSetupGuideComponent, { className: "TeacherSetupGuideComponent", filePath: "src/app/pages/teacher/teacher-setup-guide.component.ts", lineNumber: 11 });
+})();
+
 // src/app/pages/teacher/teacher-overview.component.ts
-var _c030 = (a0) => ({ name: a0 });
-var _c121 = (a0, a1, a2, a3) => ({ students: a0, classrooms: a1, xp: a2, behind: a3 });
+var _c031 = (a0) => ({ name: a0 });
+var _c122 = (a0, a1, a2, a3) => ({ students: a0, classrooms: a1, xp: a2, behind: a3 });
 var _c212 = (a0) => ({ count: a0 });
 var _c37 = (a0) => ({ list: a0 });
 var _c45 = () => [];
 var _c53 = (a0, a1) => ({ lesson: a0, percent: a1 });
-var _forTrack038 = ($index, $item) => $item.gradeLabel;
+var _forTrack039 = ($index, $item) => $item.gradeLabel;
 var _forTrack113 = ($index, $item) => $item.url + $item.name;
 var _forTrack24 = ($index, $item) => $item.studentId;
 var _forTrack32 = ($index, $item) => $item.lessonId;
-function TeacherOverviewComponent_For_74_Conditional_7_Template(rf, ctx) {
+function TeacherOverviewComponent_For_75_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 5);
     \u0275\u0275text(1);
@@ -97841,7 +98601,7 @@ function TeacherOverviewComponent_For_74_Conditional_7_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "teacher.overview.coursesForGrade", \u0275\u0275pureFunction1(4, _c37, group_r1.courseTitles.join(", "))));
   }
 }
-function TeacherOverviewComponent_For_74_For_9_Template(rf, ctx) {
+function TeacherOverviewComponent_For_75_For_9_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 16)(1, "div")(2, "strong");
     \u0275\u0275text(3);
@@ -97865,7 +98625,7 @@ function TeacherOverviewComponent_For_74_For_9_Template(rf, ctx) {
     \u0275\u0275textInterpolate(link_r2.name);
   }
 }
-function TeacherOverviewComponent_For_74_For_12_Template(rf, ctx) {
+function TeacherOverviewComponent_For_75_For_12_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "li");
     \u0275\u0275text(1);
@@ -97877,7 +98637,7 @@ function TeacherOverviewComponent_For_74_For_12_Template(rf, ctx) {
     \u0275\u0275textInterpolate(student_r3.displayName);
   }
 }
-function TeacherOverviewComponent_For_74_ForEmpty_13_Template(rf, ctx) {
+function TeacherOverviewComponent_For_75_ForEmpty_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "li", 5);
     \u0275\u0275text(1);
@@ -97889,7 +98649,7 @@ function TeacherOverviewComponent_For_74_ForEmpty_13_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "common.emDash"));
   }
 }
-function TeacherOverviewComponent_For_74_Template(rf, ctx) {
+function TeacherOverviewComponent_For_75_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 14)(1, "div", 15)(2, "strong");
     \u0275\u0275text(3);
@@ -97898,10 +98658,10 @@ function TeacherOverviewComponent_For_74_Template(rf, ctx) {
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275conditionalCreate(7, TeacherOverviewComponent_For_74_Conditional_7_Template, 3, 6, "p", 5);
-    \u0275\u0275repeaterCreate(8, TeacherOverviewComponent_For_74_For_9_Template, 8, 4, "div", 16, _forTrack113);
+    \u0275\u0275conditionalCreate(7, TeacherOverviewComponent_For_75_Conditional_7_Template, 3, 6, "p", 5);
+    \u0275\u0275repeaterCreate(8, TeacherOverviewComponent_For_75_For_9_Template, 8, 4, "div", 16, _forTrack113);
     \u0275\u0275elementStart(10, "ul", 17);
-    \u0275\u0275repeaterCreate(11, TeacherOverviewComponent_For_74_For_12_Template, 2, 1, "li", null, _forTrack24, false, TeacherOverviewComponent_For_74_ForEmpty_13_Template, 3, 3, "li", 5);
+    \u0275\u0275repeaterCreate(11, TeacherOverviewComponent_For_75_For_12_Template, 2, 1, "li", null, _forTrack24, false, TeacherOverviewComponent_For_75_ForEmpty_13_Template, 3, 3, "li", 5);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -97918,7 +98678,7 @@ function TeacherOverviewComponent_For_74_Template(rf, ctx) {
     \u0275\u0275repeater(group_r1.students);
   }
 }
-function TeacherOverviewComponent_ForEmpty_75_Template(rf, ctx) {
+function TeacherOverviewComponent_ForEmpty_76_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 5);
     \u0275\u0275text(1);
@@ -97930,7 +98690,7 @@ function TeacherOverviewComponent_ForEmpty_75_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "teacher.overview.noStudentsByGrade"));
   }
 }
-function TeacherOverviewComponent_Conditional_76_For_5_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_77_For_5_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 5);
     \u0275\u0275text(1);
@@ -97942,13 +98702,13 @@ function TeacherOverviewComponent_Conditional_76_For_5_Template(rf, ctx) {
     \u0275\u0275textInterpolate(lesson_r4);
   }
 }
-function TeacherOverviewComponent_Conditional_76_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_77_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 4)(1, "h3");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, TeacherOverviewComponent_Conditional_76_For_5_Template, 2, 1, "p", 5, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275repeaterCreate(4, TeacherOverviewComponent_Conditional_77_For_5_Template, 2, 1, "p", 5, \u0275\u0275repeaterTrackByIdentity);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -97959,7 +98719,7 @@ function TeacherOverviewComponent_Conditional_76_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r4.dashboard()?.topWeakLessons || \u0275\u0275pureFunction0(3, _c45));
   }
 }
-function TeacherOverviewComponent_Conditional_77_For_13_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_78_For_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 5);
     \u0275\u0275text(1);
@@ -97972,7 +98732,7 @@ function TeacherOverviewComponent_Conditional_77_For_13_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "teacher.overview.weakLine", \u0275\u0275pureFunction2(4, _c53, weak_r6.lessonTitle, weak_r6.accuracyPercent)));
   }
 }
-function TeacherOverviewComponent_Conditional_77_ForEmpty_14_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_78_ForEmpty_14_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 5);
     \u0275\u0275text(1);
@@ -97984,7 +98744,7 @@ function TeacherOverviewComponent_Conditional_77_ForEmpty_14_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "teacher.overview.noWeak"));
   }
 }
-function TeacherOverviewComponent_Conditional_77_Template(rf, ctx) {
+function TeacherOverviewComponent_Conditional_78_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 4)(1, "h3");
     \u0275\u0275text(2);
@@ -98000,13 +98760,13 @@ function TeacherOverviewComponent_Conditional_77_Template(rf, ctx) {
     \u0275\u0275pipe(10, "t");
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(12, TeacherOverviewComponent_Conditional_77_For_13_Template, 3, 7, "p", 5, _forTrack32, false, TeacherOverviewComponent_Conditional_77_ForEmpty_14_Template, 3, 3, "p", 5);
+    \u0275\u0275repeaterCreate(12, TeacherOverviewComponent_Conditional_78_For_13_Template, 3, 7, "p", 5, _forTrack32, false, TeacherOverviewComponent_Conditional_78_ForEmpty_14_Template, 3, 3, "p", 5);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
     const d_r7 = ctx;
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 4, "teacher.overview.diagnosis", \u0275\u0275pureFunction1(17, _c030, d_r7.classroomName)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 4, "teacher.overview.diagnosis", \u0275\u0275pureFunction1(17, _c031, d_r7.classroomName)));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 9, "teacher.overview.behind", \u0275\u0275pureFunction1(19, _c37, d_r7.behindStudents.join(", ") || \u0275\u0275pipeBind1(6, 7, "common.emDash"))));
     \u0275\u0275advance(4);
@@ -98184,7 +98944,7 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherOverviewComponent, selectors: [["app-teacher-overview"]], decls: 78, vars: 73, consts: [[1, "panel-page"], [3, "ok", "error"], [1, "hero-strip"], [1, "eyebrow"], [1, "block"], [1, "meta"], [1, "meeting-form", 3, "ngSubmit"], ["name", "teacherEmail", "type", "email", "autocomplete", "email", 3, "ngModelChange", "ngModel"], ["name", "teacherMobile", "autocomplete", "tel", 3, "ngModelChange", "ngModel"], ["name", "teacherPassword", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["name", "teacherPasswordConfirm", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["type", "submit", 3, "disabled"], [1, "stat-row"], [1, "stat-card"], [1, "grade-roster"], [1, "grade-roster-head"], [1, "meeting-row"], [1, "student-name-list"], ["target", "_blank", "rel", "noopener", 1, "chip", "quiz", 3, "href"]], template: function TeacherOverviewComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherOverviewComponent, selectors: [["app-teacher-overview"]], decls: 79, vars: 73, consts: [[1, "panel-page"], [3, "ok", "error"], [1, "hero-strip"], [1, "eyebrow"], [1, "block"], [1, "meta"], [1, "meeting-form", 3, "ngSubmit"], ["name", "teacherEmail", "type", "email", "autocomplete", "email", 3, "ngModelChange", "ngModel"], ["name", "teacherMobile", "autocomplete", "tel", 3, "ngModelChange", "ngModel"], ["name", "teacherPassword", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["name", "teacherPasswordConfirm", "type", "password", "autocomplete", "new-password", 3, "ngModelChange", "ngModel"], ["type", "submit", 3, "disabled"], [1, "stat-row"], [1, "stat-card"], [1, "grade-roster"], [1, "grade-roster-head"], [1, "meeting-row"], [1, "student-name-list"], ["target", "_blank", "rel", "noopener", 1, "chip", "quiz", 3, "href"]], template: function TeacherOverviewComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275element(1, "app-page-feedback", 1);
@@ -98200,107 +98960,108 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
         \u0275\u0275text(11);
         \u0275\u0275pipe(12, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(13, "section", 4)(14, "h3");
-        \u0275\u0275text(15);
-        \u0275\u0275pipe(16, "t");
+        \u0275\u0275element(13, "app-teacher-setup-guide");
+        \u0275\u0275elementStart(14, "section", 4)(15, "h3");
+        \u0275\u0275text(16);
+        \u0275\u0275pipe(17, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(17, "p", 5);
-        \u0275\u0275text(18);
-        \u0275\u0275pipe(19, "t");
+        \u0275\u0275elementStart(18, "p", 5);
+        \u0275\u0275text(19);
+        \u0275\u0275pipe(20, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(20, "form", 6);
-        \u0275\u0275listener("ngSubmit", function TeacherOverviewComponent_Template_form_ngSubmit_20_listener() {
+        \u0275\u0275elementStart(21, "form", 6);
+        \u0275\u0275listener("ngSubmit", function TeacherOverviewComponent_Template_form_ngSubmit_21_listener() {
           return ctx.saveAccount();
         });
-        \u0275\u0275elementStart(21, "label");
-        \u0275\u0275text(22);
-        \u0275\u0275pipe(23, "t");
-        \u0275\u0275elementStart(24, "input", 7);
-        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_24_listener($event) {
+        \u0275\u0275elementStart(22, "label");
+        \u0275\u0275text(23);
+        \u0275\u0275pipe(24, "t");
+        \u0275\u0275elementStart(25, "input", 7);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_25_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.email, $event) || (ctx.email = $event);
           return $event;
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(25, "label");
-        \u0275\u0275text(26);
-        \u0275\u0275pipe(27, "t");
-        \u0275\u0275elementStart(28, "input", 8);
-        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_28_listener($event) {
+        \u0275\u0275elementStart(26, "label");
+        \u0275\u0275text(27);
+        \u0275\u0275pipe(28, "t");
+        \u0275\u0275elementStart(29, "input", 8);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_29_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.mobilePhone, $event) || (ctx.mobilePhone = $event);
           return $event;
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(29, "label");
-        \u0275\u0275text(30);
-        \u0275\u0275pipe(31, "t");
-        \u0275\u0275elementStart(32, "input", 9);
-        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_32_listener($event) {
+        \u0275\u0275elementStart(30, "label");
+        \u0275\u0275text(31);
+        \u0275\u0275pipe(32, "t");
+        \u0275\u0275elementStart(33, "input", 9);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_33_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.password, $event) || (ctx.password = $event);
           return $event;
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(33, "label");
-        \u0275\u0275text(34);
-        \u0275\u0275pipe(35, "t");
-        \u0275\u0275elementStart(36, "input", 10);
-        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_36_listener($event) {
+        \u0275\u0275elementStart(34, "label");
+        \u0275\u0275text(35);
+        \u0275\u0275pipe(36, "t");
+        \u0275\u0275elementStart(37, "input", 10);
+        \u0275\u0275twoWayListener("ngModelChange", function TeacherOverviewComponent_Template_input_ngModelChange_37_listener($event) {
           \u0275\u0275twoWayBindingSet(ctx.passwordConfirm, $event) || (ctx.passwordConfirm = $event);
           return $event;
         });
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(37, "button", 11);
-        \u0275\u0275text(38);
-        \u0275\u0275pipe(39, "t");
+        \u0275\u0275elementStart(38, "button", 11);
+        \u0275\u0275text(39);
         \u0275\u0275pipe(40, "t");
+        \u0275\u0275pipe(41, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(41, "section", 12)(42, "div", 13)(43, "strong");
-        \u0275\u0275text(44);
+        \u0275\u0275elementStart(42, "section", 12)(43, "div", 13)(44, "strong");
+        \u0275\u0275text(45);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(45, "span");
-        \u0275\u0275text(46);
-        \u0275\u0275pipe(47, "t");
+        \u0275\u0275elementStart(46, "span");
+        \u0275\u0275text(47);
+        \u0275\u0275pipe(48, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(48, "div", 13)(49, "strong");
-        \u0275\u0275text(50);
+        \u0275\u0275elementStart(49, "div", 13)(50, "strong");
+        \u0275\u0275text(51);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(51, "span");
-        \u0275\u0275text(52);
-        \u0275\u0275pipe(53, "t");
+        \u0275\u0275elementStart(52, "span");
+        \u0275\u0275text(53);
+        \u0275\u0275pipe(54, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(54, "div", 13)(55, "strong");
-        \u0275\u0275text(56);
+        \u0275\u0275elementStart(55, "div", 13)(56, "strong");
+        \u0275\u0275text(57);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(57, "span");
-        \u0275\u0275text(58);
-        \u0275\u0275pipe(59, "t");
+        \u0275\u0275elementStart(58, "span");
+        \u0275\u0275text(59);
+        \u0275\u0275pipe(60, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(60, "div", 13)(61, "strong");
-        \u0275\u0275text(62);
+        \u0275\u0275elementStart(61, "div", 13)(62, "strong");
+        \u0275\u0275text(63);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(63, "span");
-        \u0275\u0275text(64);
-        \u0275\u0275pipe(65, "t");
+        \u0275\u0275elementStart(64, "span");
+        \u0275\u0275text(65);
+        \u0275\u0275pipe(66, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(66, "section", 4)(67, "h3");
-        \u0275\u0275text(68);
-        \u0275\u0275pipe(69, "t");
+        \u0275\u0275elementStart(67, "section", 4)(68, "h3");
+        \u0275\u0275text(69);
+        \u0275\u0275pipe(70, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(70, "p", 5);
-        \u0275\u0275text(71);
-        \u0275\u0275pipe(72, "t");
+        \u0275\u0275elementStart(71, "p", 5);
+        \u0275\u0275text(72);
+        \u0275\u0275pipe(73, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(73, TeacherOverviewComponent_For_74_Template, 14, 9, "div", 14, _forTrack038, false, TeacherOverviewComponent_ForEmpty_75_Template, 3, 3, "p", 5);
+        \u0275\u0275repeaterCreate(74, TeacherOverviewComponent_For_75_Template, 14, 9, "div", 14, _forTrack039, false, TeacherOverviewComponent_ForEmpty_76_Template, 3, 3, "p", 5);
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(76, TeacherOverviewComponent_Conditional_76_Template, 6, 4, "section", 4);
-        \u0275\u0275conditionalCreate(77, TeacherOverviewComponent_Conditional_77_Template, 15, 23, "section", 4);
+        \u0275\u0275conditionalCreate(77, TeacherOverviewComponent_Conditional_77_Template, 6, 4, "section", 4);
+        \u0275\u0275conditionalCreate(78, TeacherOverviewComponent_Conditional_78_Template, 15, 23, "section", 4);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
@@ -98310,71 +99071,71 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 30, "teacher.overview.eyebrow"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(9, 32, "teacher.overview.welcome", \u0275\u0275pureFunction1(66, _c030, ctx.dashboard()?.teacherName || "")));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(9, 32, "teacher.overview.welcome", \u0275\u0275pureFunction1(66, _c031, ctx.dashboard()?.teacherName || "")));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(12, 35, "teacher.overview.summary", \u0275\u0275pureFunction4(68, _c121, ctx.dashboard()?.studentCount || 0, ctx.classrooms().length, ctx.dashboard()?.averageXp || 0, ctx.dashboard()?.behindCount || 0)), " ");
-        \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(16, 38, "teacher.account.title"));
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(12, 35, "teacher.overview.summary", \u0275\u0275pureFunction4(68, _c122, ctx.dashboard()?.studentCount || 0, ctx.classrooms().length, ctx.dashboard()?.averageXp || 0, ctx.dashboard()?.behindCount || 0)), " ");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 38, "teacher.account.title"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(19, 40, "teacher.account.hint"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(20, 40, "teacher.account.hint"));
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(23, 42, "common.email"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(24, 42, "common.email"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.email);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(27, 44, "common.mobile"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(28, 44, "common.mobile"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.mobilePhone);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(31, 46, "common.newPasswordOptional"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(32, 46, "common.newPasswordOptional"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.password);
         \u0275\u0275control();
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(35, 48, "auth.reset.confirmPassword"), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(36, 48, "auth.reset.confirmPassword"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.passwordConfirm);
         \u0275\u0275control();
         \u0275\u0275advance();
         \u0275\u0275property("disabled", ctx.savingAccount());
         \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", ctx.savingAccount() ? \u0275\u0275pipeBind1(39, 50, "common.saving") : \u0275\u0275pipeBind1(40, 52, "common.save"), " ");
+        \u0275\u0275textInterpolate1(" ", ctx.savingAccount() ? \u0275\u0275pipeBind1(40, 50, "common.saving") : \u0275\u0275pipeBind1(41, 52, "common.save"), " ");
         \u0275\u0275advance(6);
         \u0275\u0275textInterpolate(ctx.dashboard()?.studentCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(47, 54, "common.students"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(48, 54, "common.students"));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.classrooms().length);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(53, 56, "common.classroom"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(54, 56, "common.classroom"));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.dashboard()?.averageXp || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(59, 58, "teacher.overview.avgXp"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(60, 58, "teacher.overview.avgXp"));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.dashboard()?.behindCount || 0);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(65, 60, "teacher.overview.needAttention"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(66, 60, "teacher.overview.needAttention"));
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 62, "teacher.overview.studentsByGrade"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(70, 62, "teacher.overview.studentsByGrade"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(72, 64, "teacher.overview.studentsByGradeHint"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(73, 64, "teacher.overview.studentsByGradeHint"));
         \u0275\u0275advance(2);
         \u0275\u0275repeater(ctx.studentsByGrade());
         \u0275\u0275advance(3);
-        \u0275\u0275conditional(ctx.dashboard()?.topWeakLessons?.length ? 76 : -1);
+        \u0275\u0275conditional(ctx.dashboard()?.topWeakLessons?.length ? 77 : -1);
         \u0275\u0275advance();
-        \u0275\u0275conditional((tmp_33_0 = ctx.diagnosis()) ? 77 : -1, tmp_33_0);
+        \u0275\u0275conditional((tmp_33_0 = ctx.diagnosis()) ? 78 : -1, tmp_33_0);
       }
-    }, dependencies: [FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, NgModel, NgForm, PageFeedbackComponent, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.question-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  padding: 1rem;\n  margin: 0.85rem 0;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.question-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.question-prompt[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n}\n.question-prompt[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  min-height: 4.2em;\n  resize: vertical;\n  width: 100%;\n}\n.options-editor[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  margin-top: 0.25rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.link-row[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row[_ngcontent-%COMP%]:hover, \n.meeting-row.link-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.detail-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.meeting-form[_ngcontent-%COMP%], \n.qb-form[_ngcontent-%COMP%], \n.form-card[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  gap: 1rem;\n}\n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%]   .questions-group[_ngcontent-%COMP%], \n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.questions-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n}\n.grade-roster[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.grade-roster-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  flex: 0 0 auto;\n}\n.students-table-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.4fr repeat(4, 1fr) 0.8fr auto;\n  cursor: pointer;\n}\n.students-table-row.head[_ngcontent-%COMP%] {\n  cursor: default;\n}\n.student-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n@media (max-width: 900px) {\n  .students-table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.list-title-row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.status-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published[_ngcontent-%COMP%] {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.choice-options[_ngcontent-%COMP%] {\n  list-style: none;\n  margin: 0.4rem 0 0.6rem;\n  padding: 0;\n  display: grid;\n  gap: 0.35rem;\n}\n.choice-options[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n  align-items: baseline;\n  padding: 0.4rem 0.6rem;\n  border-radius: 8px;\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n  background: var(--elevated-bg);\n}\n.choice-options[_ngcontent-%COMP%]   li.is-student[_ngcontent-%COMP%] {\n  border-color: var(--accent, #5b8def);\n}\n.choice-options[_ngcontent-%COMP%]   li.is-key[_ngcontent-%COMP%] {\n  background: var(--badge-ok-bg, rgba(80, 180, 120, 0.16));\n}\n.choice-options[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  min-width: 1.4rem;\n}\n/*# sourceMappingURL=teacher-panel.css.map */"] });
+    }, dependencies: [FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, NgModel, NgForm, PageFeedbackComponent, TeacherSetupGuideComponent, TranslatePipe], styles: ["\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.question-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  padding: 1rem;\n  margin: 0.85rem 0;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.question-card-head[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.question-prompt[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n}\n.question-prompt[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  min-height: 4.2em;\n  resize: vertical;\n  width: 100%;\n}\n.options-editor[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  margin-top: 0.25rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.link-row[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row[_ngcontent-%COMP%]:hover, \n.meeting-row.link-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.detail-identity[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n}\n.meeting-form[_ngcontent-%COMP%], \n.qb-form[_ngcontent-%COMP%], \n.form-card[_ngcontent-%COMP%]   form[_ngcontent-%COMP%] {\n  gap: 1rem;\n}\n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%]   .questions-group[_ngcontent-%COMP%], \n.panel-page[_ngcontent-%COMP%]   .meeting-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.questions-group[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n}\n.grade-roster[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.grade-roster-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  flex: 0 0 auto;\n}\n.students-table-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.4fr repeat(4, 1fr) 0.8fr auto;\n  cursor: pointer;\n}\n.students-table-row.head[_ngcontent-%COMP%] {\n  cursor: default;\n}\n.student-row[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n@media (max-width: 900px) {\n  .students-table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.list-title-row[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.status-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published[_ngcontent-%COMP%] {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.choice-options[_ngcontent-%COMP%] {\n  list-style: none;\n  margin: 0.4rem 0 0.6rem;\n  padding: 0;\n  display: grid;\n  gap: 0.35rem;\n}\n.choice-options[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n  align-items: baseline;\n  padding: 0.4rem 0.6rem;\n  border-radius: 8px;\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n  background: var(--elevated-bg);\n}\n.choice-options[_ngcontent-%COMP%]   li.is-student[_ngcontent-%COMP%] {\n  border-color: var(--accent, #5b8def);\n}\n.choice-options[_ngcontent-%COMP%]   li.is-key[_ngcontent-%COMP%] {\n  background: var(--badge-ok-bg, rgba(80, 180, 120, 0.16));\n}\n.choice-options[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  min-width: 1.4rem;\n}\n/*# sourceMappingURL=teacher-panel.css.map */"] });
   }
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TeacherOverviewComponent, [{
     type: Component,
-    args: [{ selector: "app-teacher-overview", imports: [FormsModule, TranslatePipe, PageFeedbackComponent], template: `<div class="panel-page">\r
+    args: [{ selector: "app-teacher-overview", imports: [FormsModule, TranslatePipe, PageFeedbackComponent, TeacherSetupGuideComponent], template: `<div class="panel-page">\r
   <app-page-feedback [ok]="message()" [error]="error()" />\r
 \r
   <section class="hero-strip">\r
@@ -98391,6 +99152,8 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
       </p>\r
     </div>\r
   </section>\r
+\r
+  <app-teacher-setup-guide />\r
 \r
   <section class="block">\r
     <h3>{{ 'teacher.account.title' | t }}</h3>\r
@@ -98497,12 +99260,12 @@ var TeacherOverviewComponent = class _TeacherOverviewComponent {
   }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherOverviewComponent, { className: "TeacherOverviewComponent", filePath: "src/app/pages/teacher/teacher-overview.component.ts", lineNumber: 25 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TeacherOverviewComponent, { className: "TeacherOverviewComponent", filePath: "src/app/pages/teacher/teacher-overview.component.ts", lineNumber: 26 });
 })();
 
 // src/app/pages/teacher/teacher-zoom.component.ts
-var _c031 = (a0) => ({ email: a0 });
-var _forTrack039 = ($index, $item) => $item.id;
+var _c032 = (a0) => ({ email: a0 });
+var _forTrack040 = ($index, $item) => $item.id;
 var arrowFn019 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var _forTrack114 = ($index, $item) => $item.gradeLabel;
 var _forTrack25 = ($index, $item) => $item.url + $item.name;
@@ -98577,7 +99340,7 @@ function TeacherZoomComponent_Conditional_8_For_8_Template(rf, ctx) {
     \u0275\u0275elementStart(0, "div", 18)(1, "div", 19)(2, "strong");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(4, TeacherZoomComponent_Conditional_8_For_8_For_5_Template, 10, 7, "div", 17, _forTrack039);
+    \u0275\u0275repeaterCreate(4, TeacherZoomComponent_Conditional_8_For_8_For_5_Template, 10, 7, "div", 17, _forTrack040);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -98994,7 +99757,7 @@ function TeacherZoomComponent_Conditional_16_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r3 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind2(3, 6, "teacher.zoom.connectedAs", \u0275\u0275pureFunction1(15, _c031, ctx_r3.zoomStatus()?.email || \u0275\u0275pipeBind1(2, 4, "teacher.zoom.zoomAccount"))), ". ", \u0275\u0275pipeBind1(4, 9, "teacher.zoom.personalActive"), " ");
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind2(3, 6, "teacher.zoom.connectedAs", \u0275\u0275pureFunction1(15, _c032, ctx_r3.zoomStatus()?.email || \u0275\u0275pipeBind1(2, 4, "teacher.zoom.zoomAccount"))), ". ", \u0275\u0275pipeBind1(4, 9, "teacher.zoom.personalActive"), " ");
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(8, 11, "teacher.zoom.disconnect"));
     \u0275\u0275advance(3);
@@ -99590,7 +100353,7 @@ var TeacherZoomComponent = class _TeacherZoomComponent {
         \u0275\u0275text(72);
         \u0275\u0275pipe(73, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(74, TeacherZoomComponent_For_75_Template, 14, 15, "div", 17, _forTrack039, false, TeacherZoomComponent_ForEmpty_76_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(74, TeacherZoomComponent_For_75_Template, 14, 15, "div", 17, _forTrack040, false, TeacherZoomComponent_ForEmpty_76_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -99928,7 +100691,7 @@ function assessmentWhatsAppShareUrl(options) {
 }
 
 // src/app/pages/teacher/assessment-student-links-dialog.component.ts
-var _forTrack040 = ($index, $item) => $item.studentId;
+var _forTrack041 = ($index, $item) => $item.studentId;
 function AssessmentStudentLinksDialogComponent_Conditional_29_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 11);
@@ -100018,7 +100781,7 @@ function AssessmentStudentLinksDialogComponent_Conditional_32_ForEmpty_3_Templat
 function AssessmentStudentLinksDialogComponent_Conditional_32_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "ul", 13);
-    \u0275\u0275repeaterCreate(1, AssessmentStudentLinksDialogComponent_Conditional_32_For_2_Template, 11, 8, "li", 14, _forTrack040, false, AssessmentStudentLinksDialogComponent_Conditional_32_ForEmpty_3_Template, 3, 3, "li", 3);
+    \u0275\u0275repeaterCreate(1, AssessmentStudentLinksDialogComponent_Conditional_32_For_2_Template, 11, 8, "li", 14, _forTrack041, false, AssessmentStudentLinksDialogComponent_Conditional_32_ForEmpty_3_Template, 3, 3, "li", 3);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -100324,9 +101087,9 @@ var AssessmentStudentLinksDialogComponent = class _AssessmentStudentLinksDialogC
 })();
 
 // src/app/shared/math-prompt-editor/math-prompt-editor.component.ts
-var _c032 = ["editor"];
-var _c122 = ["fracNumInput"];
-var _forTrack041 = ($index, $item) => $item.cmd;
+var _c033 = ["editor"];
+var _c123 = ["fracNumInput"];
+var _forTrack042 = ($index, $item) => $item.cmd;
 var _forTrack115 = ($index, $item) => $item.value || "default";
 var _forTrack26 = ($index, $item) => $item.id;
 function MathPromptEditorComponent_For_5_Conditional_3_Template(rf, ctx) {
@@ -101242,7 +102005,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _MathPromptEditorComponent, selectors: [["app-math-prompt-editor"]], viewQuery: function MathPromptEditorComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c032, 7)(_c122, 5);
+        \u0275\u0275viewQuery(_c033, 7)(_c123, 5);
       }
       if (rf & 2) {
         let _t;
@@ -101267,9 +102030,9 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         \u0275\u0275elementStart(0, "div", 2)(1, "div", 3);
         \u0275\u0275pipe(2, "t");
         \u0275\u0275elementStart(3, "div", 4);
-        \u0275\u0275repeaterCreate(4, MathPromptEditorComponent_For_5_Template, 6, 13, "button", 5, _forTrack041);
+        \u0275\u0275repeaterCreate(4, MathPromptEditorComponent_For_5_Template, 6, 13, "button", 5, _forTrack042);
         \u0275\u0275element(6, "span", 6);
-        \u0275\u0275repeaterCreate(7, MathPromptEditorComponent_For_8_Template, 4, 7, "button", 7, _forTrack041);
+        \u0275\u0275repeaterCreate(7, MathPromptEditorComponent_For_8_Template, 4, 7, "button", 7, _forTrack042);
         \u0275\u0275element(9, "span", 6);
         \u0275\u0275elementStart(10, "label", 8);
         \u0275\u0275pipe(11, "t");
@@ -101695,10 +102458,10 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
 })();
 
 // src/app/shared/image-crop-editor/image-crop-editor.component.ts
-var _c033 = ["workCanvas"];
-var _c123 = (a0) => ({ percent: a0 });
+var _c034 = ["workCanvas"];
+var _c124 = (a0) => ({ percent: a0 });
 var _c213 = (a0, a1) => ({ width: a0, height: a1 });
-var _forTrack042 = ($index, $item) => $item.key;
+var _forTrack043 = ($index, $item) => $item.key;
 function ImageCropEditorComponent_For_22_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -102251,7 +103014,7 @@ var ImageCropEditorComponent = class _ImageCropEditorComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ImageCropEditorComponent, selectors: [["app-image-crop-editor"]], viewQuery: function ImageCropEditorComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.canvasEl, _c033, 5);
+        \u0275\u0275viewQuerySignal(ctx.canvasEl, _c034, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -102294,7 +103057,7 @@ var ImageCropEditorComponent = class _ImageCropEditorComponent {
         \u0275\u0275domElementEnd()();
         \u0275\u0275domElementStart(19, "div", 4);
         \u0275\u0275pipe(20, "t");
-        \u0275\u0275repeaterCreate(21, ImageCropEditorComponent_For_22_Template, 3, 6, "button", 6, _forTrack042);
+        \u0275\u0275repeaterCreate(21, ImageCropEditorComponent_For_22_Template, 3, 6, "button", 6, _forTrack043);
         \u0275\u0275domElementEnd();
         \u0275\u0275domElementStart(23, "div", 4);
         \u0275\u0275pipe(24, "t");
@@ -102398,7 +103161,7 @@ var ImageCropEditorComponent = class _ImageCropEditorComponent {
         \u0275\u0275advance(5);
         \u0275\u0275conditional(ctx.ready() ? 37 : -1);
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(41, 60, "teacher.questionImage.cropScale", \u0275\u0275pureFunction1(75, _c123, ctx.scalePercent())), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(41, 60, "teacher.questionImage.cropScale", \u0275\u0275pureFunction1(75, _c124, ctx.scalePercent())), " ");
         \u0275\u0275advance(2);
         \u0275\u0275domProperty("value", ctx.scalePercent())("disabled", !ctx.ready());
         \u0275\u0275advance(2);
@@ -102547,8 +103310,8 @@ var ImageCropEditorComponent = class _ImageCropEditorComponent {
 })();
 
 // src/app/shared/question-image-upload/question-image-upload.component.ts
-var _c034 = ["cameraVideo"];
-var _c124 = ["cameraFile"];
+var _c035 = ["cameraVideo"];
+var _c125 = ["cameraFile"];
 function QuestionImageUploadComponent_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -102865,7 +103628,7 @@ var QuestionImageUploadComponent = class _QuestionImageUploadComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _QuestionImageUploadComponent, selectors: [["app-question-image-upload"]], viewQuery: function QuestionImageUploadComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.videoEl, _c034, 5)(ctx.cameraFileEl, _c124, 5);
+        \u0275\u0275viewQuerySignal(ctx.videoEl, _c035, 5)(ctx.cameraFileEl, _c125, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance(2);
@@ -103037,8 +103800,8 @@ var QuestionImageUploadComponent = class _QuestionImageUploadComponent {
 })();
 
 // src/app/shared/question-draft-editor/question-draft-editor.component.ts
-var _c035 = (a0) => ({ value: "True", label: a0 });
-var _c125 = (a0) => ({ value: "False", label: a0 });
+var _c036 = (a0) => ({ value: "True", label: a0 });
+var _c126 = (a0) => ({ value: "False", label: a0 });
 var _c214 = (a0, a1) => [a0, a1];
 var arrowFn020 = (ctx, view) => (t) => ({ value: t, label: ctx.typeLabel(t) });
 var arrowFn112 = (ctx, view) => (t) => {
@@ -103046,7 +103809,7 @@ var arrowFn112 = (ctx, view) => (t) => {
   const ctx_r1 = \u0275\u0275nextContext(2);
   return \u0275\u0275resetView({ value: t, label: ctx_r1.typeLabel(t) });
 };
-var _forTrack043 = ($index, $item) => $item.key;
+var _forTrack044 = ($index, $item) => $item.key;
 var arrowFn29 = (ctx, view) => (o) => {
   \u0275\u0275restoreView(view);
   const ctx_r1 = \u0275\u0275nextContext(4);
@@ -103201,7 +103964,7 @@ function QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_20_Templ
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 4, "common.correctAnswer"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", child_r4.correctAnswer);
-    \u0275\u0275property("name", ctx_r1.namePrefix + "-cCorrect-" + \u0275$index_64_r7)("options", \u0275\u0275pureFunction2(14, _c214, \u0275\u0275pureFunction1(10, _c035, \u0275\u0275pipeBind1(5, 6, "common.true")), \u0275\u0275pureFunction1(12, _c125, \u0275\u0275pipeBind1(6, 8, "common.false"))));
+    \u0275\u0275property("name", ctx_r1.namePrefix + "-cCorrect-" + \u0275$index_64_r7)("options", \u0275\u0275pureFunction2(14, _c214, \u0275\u0275pureFunction1(10, _c036, \u0275\u0275pipeBind1(5, 6, "common.true")), \u0275\u0275pureFunction1(12, _c126, \u0275\u0275pipeBind1(6, 8, "common.false"))));
     \u0275\u0275control();
   }
 }
@@ -103342,7 +104105,7 @@ function QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_21_Condi
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_21_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack043);
+    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_19_For_15_Conditional_21_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack044);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -103678,7 +104441,7 @@ function QuestionDraftEditorComponent_Conditional_22_Template(rf, ctx) {
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 4, "common.correctAnswer"));
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.draft.correctAnswer);
-    \u0275\u0275property("name", ctx_r1.namePrefix + "-correct")("options", \u0275\u0275pureFunction2(14, _c214, \u0275\u0275pureFunction1(10, _c035, \u0275\u0275pipeBind1(5, 6, "common.true")), \u0275\u0275pureFunction1(12, _c125, \u0275\u0275pipeBind1(6, 8, "common.false"))));
+    \u0275\u0275property("name", ctx_r1.namePrefix + "-correct")("options", \u0275\u0275pureFunction2(14, _c214, \u0275\u0275pureFunction1(10, _c036, \u0275\u0275pipeBind1(5, 6, "common.true")), \u0275\u0275pureFunction1(12, _c126, \u0275\u0275pipeBind1(6, 8, "common.false"))));
     \u0275\u0275control();
   }
 }
@@ -103902,7 +104665,7 @@ function QuestionDraftEditorComponent_Conditional_26_Conditional_11_Template(rf,
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_26_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack043);
+    \u0275\u0275repeaterCreate(4, QuestionDraftEditorComponent_Conditional_26_Conditional_11_For_5_Template, 3, 3, "label", 25, _forTrack044);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -104608,8 +105371,8 @@ var QuestionDraftEditorComponent = class _QuestionDraftEditorComponent {
 })();
 
 // src/app/pages/teacher/teacher-quizzes.component.ts
-var _c036 = (a0) => ({ count: a0 });
-var _c126 = () => ({ standalone: true });
+var _c037 = (a0) => ({ count: a0 });
+var _c127 = () => ({ standalone: true });
 var _c215 = (a0) => ({ n: a0 });
 var _c38 = (a0, a1) => ({ page: a0, pages: a1 });
 var arrowFn021 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
@@ -104617,7 +105380,7 @@ var arrowFn113 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn210 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn37 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
 var arrowFn43 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
-var _forTrack044 = ($index, $item) => $item.id;
+var _forTrack045 = ($index, $item) => $item.id;
 var _forTrack116 = ($index, $item) => $item.questionId;
 function TeacherQuizzesComponent_Conditional_15_Template(rf, ctx) {
   if (rf & 1) {
@@ -104886,7 +105649,7 @@ function TeacherQuizzesComponent_Conditional_96_Template(rf, ctx) {
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(11, "div", 52);
-    \u0275\u0275repeaterCreate(12, TeacherQuizzesComponent_Conditional_96_For_13_Template, 17, 14, "article", 53, _forTrack044, false, TeacherQuizzesComponent_Conditional_96_ForEmpty_14_Template, 3, 3, "p", 44);
+    \u0275\u0275repeaterCreate(12, TeacherQuizzesComponent_Conditional_96_For_13_Template, 17, 14, "article", 53, _forTrack045, false, TeacherQuizzesComponent_Conditional_96_ForEmpty_14_Template, 3, 3, "p", 44);
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(15, TeacherQuizzesComponent_Conditional_96_Conditional_15_Template, 10, 15, "div", 45);
     \u0275\u0275elementEnd();
@@ -105088,7 +105851,7 @@ function TeacherQuizzesComponent_Conditional_127_Template(rf, ctx) {
     \u0275\u0275pipe(30, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(31, "tbody");
-    \u0275\u0275repeaterCreate(32, TeacherQuizzesComponent_Conditional_127_For_33_Template, 32, 31, "tr", 70, _forTrack044);
+    \u0275\u0275repeaterCreate(32, TeacherQuizzesComponent_Conditional_127_For_33_Template, 32, 31, "tr", 70, _forTrack045);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -105950,30 +106713,30 @@ var TeacherQuizzesComponent = class _TeacherQuizzesComponent {
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(101, 110, "teacher.quizzes.list"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(104, 112, "teacher.quizzes.countLabel", \u0275\u0275pureFunction1(131, _c036, ctx.quizzes().length)));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(104, 112, "teacher.quizzes.countLabel", \u0275\u0275pureFunction1(131, _c037, ctx.quizzes().length)));
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(108, 115, "teacher.quizzes.dateFrom"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.filterFromDate);
-        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(133, _c126));
+        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(133, _c127));
         \u0275\u0275control();
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(112, 117, "teacher.quizzes.dateTo"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.filterToDate);
-        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(134, _c126));
+        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(134, _c127));
         \u0275\u0275control();
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(116, 119, "common.grade"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.filterGrade);
-        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(135, _c126))("emptyLabel", \u0275\u0275pipeBind1(118, 121, "common.allGrades"))("options", ctx.grades.map(\u0275\u0275arrowFunction(123, arrowFn43, ctx)));
+        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(135, _c127))("emptyLabel", \u0275\u0275pipeBind1(118, 121, "common.allGrades"))("options", ctx.grades.map(\u0275\u0275arrowFunction(123, arrowFn43, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(121, 124, "teacher.quizzes.subject"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.filterCourseId);
-        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(136, _c126))("emptyLabel", \u0275\u0275pipeBind1(123, 126, "teacher.quizzes.allSubjects"))("options", ctx.courses().map(\u0275\u0275arrowFunction(128, arrowFn021, ctx)));
+        \u0275\u0275property("ngModelOptions", \u0275\u0275pureFunction0(136, _c127))("emptyLabel", \u0275\u0275pipeBind1(123, 126, "teacher.quizzes.allSubjects"))("options", ctx.courses().map(\u0275\u0275arrowFunction(128, arrowFn021, ctx)));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(126, 129, "common.clearFilters"), " ");
@@ -106390,10 +107153,10 @@ function toLocalDateString10(d) {
 }
 
 // src/app/pages/teacher/teacher-assignments.component.ts
-var _c037 = (a0) => ({ value: "ShortAnswer", label: a0 });
-var _c127 = (a0) => ({ value: "MultipleChoice", label: a0 });
+var _c038 = (a0) => ({ value: "ShortAnswer", label: a0 });
+var _c128 = (a0) => ({ value: "MultipleChoice", label: a0 });
 var _c216 = (a0, a1) => [a0, a1];
-var _forTrack045 = ($index, $item) => $item.id;
+var _forTrack046 = ($index, $item) => $item.id;
 var arrowFn022 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn114 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn211 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
@@ -107342,7 +108105,7 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
         \u0275\u0275conditionalCreate(117, TeacherAssignmentsComponent_Conditional_117_Template, 3, 3, "button", 34);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(118, "div", 40);
-        \u0275\u0275repeaterCreate(119, TeacherAssignmentsComponent_For_120_Template, 25, 28, "article", 41, _forTrack045, false, TeacherAssignmentsComponent_ForEmpty_121_Template, 3, 3, "p", 42);
+        \u0275\u0275repeaterCreate(119, TeacherAssignmentsComponent_For_120_Template, 25, 28, "article", 41, _forTrack046, false, TeacherAssignmentsComponent_ForEmpty_121_Template, 3, 3, "p", 42);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(122, TeacherAssignmentsComponent_Conditional_122_Template, 2, 7, "app-assessment-student-links-dialog", 43);
         \u0275\u0275elementEnd();
@@ -107418,7 +108181,7 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(70, 97, "teacher.ai.preferredType"), " ");
         \u0275\u0275advance(2);
         \u0275\u0275twoWayProperty("ngModel", ctx.assignmentType);
-        \u0275\u0275property("options", \u0275\u0275pureFunction2(130, _c216, \u0275\u0275pureFunction1(126, _c037, \u0275\u0275pipeBind1(72, 99, "assignType.shortAnswer")), \u0275\u0275pureFunction1(128, _c127, \u0275\u0275pipeBind1(73, 101, "assignType.multipleChoice"))));
+        \u0275\u0275property("options", \u0275\u0275pureFunction2(130, _c216, \u0275\u0275pureFunction1(126, _c038, \u0275\u0275pipeBind1(72, 99, "assignType.shortAnswer")), \u0275\u0275pureFunction1(128, _c128, \u0275\u0275pipeBind1(73, 101, "assignType.multipleChoice"))));
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275property("disabled", ctx.generating() || !ctx.assignmentClassroomId || !ctx.assignmentCourseId);
@@ -107762,8 +108525,8 @@ var TeacherAssignmentsComponent = class _TeacherAssignmentsComponent {
 })();
 
 // src/app/pages/teacher/teacher-review.component.ts
-var _c038 = (a0, a1) => ({ score: a0, max: a1 });
-var _forTrack046 = ($index, $item) => $item.id;
+var _c039 = (a0, a1) => ({ score: a0, max: a1 });
+var _forTrack047 = ($index, $item) => $item.id;
 var arrowFn023 = (ctx, view) => (a) => ({ value: a.id, label: a.title });
 var _forTrack117 = ($index, $item) => $item.questionId;
 var _forTrack27 = ($index, $item) => $item.key;
@@ -107929,7 +108692,7 @@ function TeacherReviewComponent_For_19_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(submission_r6.studentName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", submission_r6.status, " \xB7 ", \u0275\u0275pipeBind2(7, 12, "teacher.review.scoreLine", \u0275\u0275pureFunction2(19, _c038, submission_r6.score ?? \u0275\u0275pipeBind1(5, 8, "common.emDash"), submission_r6.maxScore ?? \u0275\u0275pipeBind1(6, 10, "common.emDash"))));
+    \u0275\u0275textInterpolate2("", submission_r6.status, " \xB7 ", \u0275\u0275pipeBind2(7, 12, "teacher.review.scoreLine", \u0275\u0275pureFunction2(19, _c039, submission_r6.score ?? \u0275\u0275pipeBind1(5, 8, "common.emDash"), submission_r6.maxScore ?? \u0275\u0275pipeBind1(6, 10, "common.emDash"))));
     \u0275\u0275advance(4);
     \u0275\u0275repeater(submission_r6.answers);
     \u0275\u0275advance(3);
@@ -108109,7 +108872,7 @@ var TeacherReviewComponent = class _TeacherReviewComponent {
         \u0275\u0275text(16);
         \u0275\u0275pipe(17, "t");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275repeaterCreate(18, TeacherReviewComponent_For_19_Template, 18, 22, "section", 3, _forTrack046);
+        \u0275\u0275repeaterCreate(18, TeacherReviewComponent_For_19_Template, 18, 22, "section", 3, _forTrack047);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
@@ -108226,11 +108989,11 @@ var TeacherReviewComponent = class _TeacherReviewComponent {
 })();
 
 // src/app/pages/teacher/teacher-students.component.ts
-var _c039 = () => [];
-var _c128 = (a0, a1, a2, a3) => ({ n: a0, name: a1, xp: a2, pct: a3 });
+var _c040 = () => [];
+var _c129 = (a0, a1, a2, a3) => ({ n: a0, name: a1, xp: a2, pct: a3 });
 var _c217 = (a0, a1, a2, a3) => ({ lesson: a0, pct: a1, wrong: a2, total: a3 });
 var _c39 = (a0, a1, a2, a3, a4) => ({ lesson: a0, pct: a1, done: a2, total: a3, sec: a4 });
-var _forTrack047 = ($index, $item) => $item.studentId;
+var _forTrack048 = ($index, $item) => $item.studentId;
 var _forTrack118 = ($index, $item) => $item.lessonId;
 var _forTrack28 = ($index, $item) => $item.mediaAssetId + $item.lastEventAtUtc;
 function TeacherStudentsComponent_For_32_Template(rf, ctx) {
@@ -108477,7 +109240,7 @@ function TeacherStudentsComponent_Conditional_34_Template(rf, ctx) {
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(student_r5.displayName);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(9, 16, "teacher.students.levelDetail", \u0275\u0275pureFunction4(33, _c128, student_r5.level.levelNumber, student_r5.level.name, student_r5.totalXp, student_r5.level.progressPercent)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(9, 16, "teacher.students.levelDetail", \u0275\u0275pureFunction4(33, _c129, student_r5.level.levelNumber, student_r5.level.name, student_r5.totalXp, student_r5.level.progressPercent)), " ");
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(12, 19, "teacher.students.parent"), " ", student_r5.parentName || \u0275\u0275pipeBind1(13, 21, "common.emDash"), " ");
     \u0275\u0275advance(3);
@@ -108619,7 +109382,7 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
         \u0275\u0275text(29);
         \u0275\u0275pipe(30, "t");
         \u0275\u0275elementEnd()();
-        \u0275\u0275repeaterCreate(31, TeacherStudentsComponent_For_32_Template, 18, 15, "div", 6, _forTrack047, false, TeacherStudentsComponent_ForEmpty_33_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(31, TeacherStudentsComponent_For_32_Template, 18, 15, "div", 6, _forTrack048, false, TeacherStudentsComponent_ForEmpty_33_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(34, TeacherStudentsComponent_Conditional_34_Template, 39, 38, "section", 3);
         \u0275\u0275elementEnd();
@@ -108645,7 +109408,7 @@ var TeacherStudentsComponent = class _TeacherStudentsComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(30, 25, "common.actions"));
         \u0275\u0275advance(2);
-        \u0275\u0275repeater(ctx.dashboard()?.students || \u0275\u0275pureFunction0(27, _c039));
+        \u0275\u0275repeater(ctx.dashboard()?.students || \u0275\u0275pureFunction0(27, _c040));
         \u0275\u0275advance(3);
         \u0275\u0275conditional((tmp_10_0 = ctx.detail()) ? 34 : -1, tmp_10_0);
       }
@@ -108774,6 +109537,8 @@ var SmartStudyAssistantService = class _SmartStudyAssistantService {
     if (payload.lessonId)
       form.set("lessonId", payload.lessonId);
     form.set("language", payload.language ?? "ar");
+    if (payload.prompt?.trim())
+      form.set("prompt", payload.prompt.trim());
     for (const file of payload.files ?? []) {
       form.append("files", file, file.name);
     }
@@ -108902,8 +109667,8 @@ function escapeHtml(value) {
 }
 
 // src/app/pages/teacher/smart-study-assistant/smart-study-assistant.component.ts
-var _c040 = ["fileInput"];
-var _forTrack048 = ($index, $item) => $item.id;
+var _c041 = ["fileInput"];
+var _forTrack049 = ($index, $item) => $item.id;
 var _forTrack119 = ($index, $item) => $item.key;
 function SmartStudyAssistantComponent_For_18_Template(rf, ctx) {
   if (rf & 1) {
@@ -108944,35 +109709,35 @@ function SmartStudyAssistantComponent_For_34_Template(rf, ctx) {
     \u0275\u0275textInterpolate(lesson_r4.title);
   }
 }
-function SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_1_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_48_For_2_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "img", 21);
+    \u0275\u0275element(0, "img", 23);
   }
   if (rf & 2) {
     const entry_r7 = \u0275\u0275nextContext().$implicit;
     \u0275\u0275property("src", entry_r7.preview, \u0275\u0275sanitizeUrl);
   }
 }
-function SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_2_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_48_For_2_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 22);
+    \u0275\u0275elementStart(0, "span", 24);
     \u0275\u0275text(1, "\u{1F4C4}");
     \u0275\u0275elementEnd();
   }
 }
-function SmartStudyAssistantComponent_Conditional_41_For_2_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_48_For_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 18);
-    \u0275\u0275conditionalCreate(1, SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_1_Template, 1, 1, "img", 21)(2, SmartStudyAssistantComponent_Conditional_41_For_2_Conditional_2_Template, 2, 0, "span", 22);
+    \u0275\u0275elementStart(0, "div", 20);
+    \u0275\u0275conditionalCreate(1, SmartStudyAssistantComponent_Conditional_48_For_2_Conditional_1_Template, 1, 1, "img", 23)(2, SmartStudyAssistantComponent_Conditional_48_For_2_Conditional_2_Template, 2, 0, "span", 24);
     \u0275\u0275elementStart(3, "div")(4, "strong");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(6, "small");
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "button", 23);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_41_For_2_Template_button_click_8_listener($event) {
+    \u0275\u0275elementStart(8, "button", 25);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_48_For_2_Template_button_click_8_listener($event) {
       const $index_r8 = \u0275\u0275restoreView(_r6).$index;
       const ctx_r8 = \u0275\u0275nextContext(2);
       ctx_r8.removeFile($index_r8);
@@ -108991,13 +109756,13 @@ function SmartStudyAssistantComponent_Conditional_41_For_2_Template(rf, ctx) {
     \u0275\u0275textInterpolate1("", (entry_r7.file.size / 1024 / 1024).toFixed(2), " \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A");
   }
 }
-function SmartStudyAssistantComponent_Conditional_41_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_48_Template(rf, ctx) {
   if (rf & 1) {
     const _r5 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 17);
-    \u0275\u0275repeaterCreate(1, SmartStudyAssistantComponent_Conditional_41_For_2_Template, 10, 3, "div", 18, \u0275\u0275repeaterTrackByIndex);
-    \u0275\u0275elementStart(3, "button", 19);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_41_Template_button_click_3_listener($event) {
+    \u0275\u0275elementStart(0, "div", 19);
+    \u0275\u0275repeaterCreate(1, SmartStudyAssistantComponent_Conditional_48_For_2_Template, 10, 3, "div", 20, \u0275\u0275repeaterTrackByIndex);
+    \u0275\u0275elementStart(3, "button", 21);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_48_Template_button_click_3_listener($event) {
       \u0275\u0275restoreView(_r5);
       const ctx_r8 = \u0275\u0275nextContext();
       ctx_r8.clearFiles();
@@ -109005,7 +109770,7 @@ function SmartStudyAssistantComponent_Conditional_41_Template(rf, ctx) {
     });
     \u0275\u0275text(4, "\u{1F5D1}\uFE0F \u0645\u0633\u062D \u0627\u0644\u0643\u0644");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(5, "small", 20);
+    \u0275\u0275elementStart(5, "small", 22);
     \u0275\u0275text(6, "\u0627\u0646\u0642\u0631 \u0623\u0648 \u0623\u0641\u0644\u062A \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F \u0645\u0646 \u0627\u0644\u0645\u0644\u0641\u0627\u062A");
     \u0275\u0275elementEnd();
   }
@@ -109015,9 +109780,9 @@ function SmartStudyAssistantComponent_Conditional_41_Template(rf, ctx) {
     \u0275\u0275repeater(ctx_r8.files());
   }
 }
-function SmartStudyAssistantComponent_Conditional_42_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_49_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 12)(1, "span", 24);
+    \u0275\u0275elementStart(0, "div", 14)(1, "span", 26);
     \u0275\u0275text(2, "\u2B06\uFE0F");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(3, "p")(4, "strong");
@@ -109030,21 +109795,21 @@ function SmartStudyAssistantComponent_Conditional_42_Template(rf, ctx) {
     \u0275\u0275elementEnd()();
   }
 }
-function SmartStudyAssistantComponent_For_48_Conditional_7_Template(rf, ctx) {
+function SmartStudyAssistantComponent_For_55_Conditional_7_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "span", 27);
+    \u0275\u0275element(0, "span", 29);
   }
 }
-function SmartStudyAssistantComponent_For_48_Template(rf, ctx) {
+function SmartStudyAssistantComponent_For_55_Template(rf, ctx) {
   if (rf & 1) {
     const _r10 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 25);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_For_48_Template_button_click_0_listener() {
+    \u0275\u0275elementStart(0, "button", 27);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_For_55_Template_button_click_0_listener() {
       const item_r11 = \u0275\u0275restoreView(_r10).$implicit;
       const ctx_r8 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r8.runAction(item_r11.key));
     });
-    \u0275\u0275elementStart(1, "span", 26);
+    \u0275\u0275elementStart(1, "span", 28);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(3, "strong");
@@ -109053,7 +109818,7 @@ function SmartStudyAssistantComponent_For_48_Template(rf, ctx) {
     \u0275\u0275elementStart(5, "small");
     \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(7, SmartStudyAssistantComponent_For_48_Conditional_7_Template, 1, 0, "span", 27);
+    \u0275\u0275conditionalCreate(7, SmartStudyAssistantComponent_For_55_Conditional_7_Template, 1, 0, "span", 29);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -109070,18 +109835,18 @@ function SmartStudyAssistantComponent_For_48_Template(rf, ctx) {
     \u0275\u0275conditional(ctx_r8.loading() && ctx_r8.activeAction() === item_r11.key ? 7 : -1);
   }
 }
-function SmartStudyAssistantComponent_Conditional_49_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_56_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 15);
+    \u0275\u0275elementStart(0, "p", 17);
     \u0275\u0275text(1, "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0644\u064A\u0644 \u0628\u0648\u0627\u0633\u0637\u0629 Gemini... \u0642\u062F \u064A\u0633\u062A\u063A\u0631\u0642 \u0630\u0644\u0643 \u0644\u062D\u0638\u0627\u062A\u060C \u0644\u0627 \u062A\u063A\u0644\u0642 \u0627\u0644\u0635\u0641\u062D\u0629.");
     \u0275\u0275elementEnd();
   }
 }
-function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
     const _r13 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 34);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3_Template_button_click_0_listener() {
+    \u0275\u0275elementStart(0, "button", 36);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_3_Template_button_click_0_listener() {
       \u0275\u0275restoreView(_r13);
       const ctx_r8 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r8.applyTo("tree"));
@@ -109096,35 +109861,35 @@ function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3
     \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "tree" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0636\u0627\u0641\u0629..." : "\u{1F333} \u0641\u0647\u0631\u0633 \u0627\u0644\u0645\u0627\u062F\u0629 (\u0648\u062D\u062F\u0627\u062A \u0648\u062F\u0631\u0648\u0633)", " ");
   }
 }
-function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r14 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 34);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_0_listener() {
+    \u0275\u0275elementStart(0, "button", 36);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_4_Template_button_click_0_listener() {
       \u0275\u0275restoreView(_r14);
       const ctx_r8 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r8.applyTo("bank"));
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(2, "button", 34);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_2_listener() {
+    \u0275\u0275elementStart(2, "button", 36);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_4_Template_button_click_2_listener() {
       \u0275\u0275restoreView(_r14);
       const ctx_r8 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r8.applyTo("quiz"));
     });
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "button", 34);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_4_listener() {
+    \u0275\u0275elementStart(4, "button", 36);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_4_Template_button_click_4_listener() {
       \u0275\u0275restoreView(_r14);
       const ctx_r8 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r8.applyTo("assignment"));
     });
     \u0275\u0275text(5);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "button", 34);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template_button_click_6_listener() {
+    \u0275\u0275elementStart(6, "button", 36);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_4_Template_button_click_6_listener() {
       \u0275\u0275restoreView(_r14);
       const ctx_r8 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r8.applyTo("exam"));
@@ -109151,13 +109916,13 @@ function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4
     \u0275\u0275textInterpolate1(" ", ctx_r8.applying() === "exam" ? "\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638..." : "\u{1F4DD} \u0623\u0633\u0626\u0644\u0629 \u0627\u062E\u062A\u0628\u0627\u0631", " ");
   }
 }
-function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_57_Conditional_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 31)(1, "span");
+    \u0275\u0275elementStart(0, "div", 33)(1, "span");
     \u0275\u0275text(2, "\u0623\u0636\u0641 \u0627\u0644\u0646\u062A\u064A\u062C\u0629 \u0625\u0644\u0649:");
     \u0275\u0275elementEnd();
-    \u0275\u0275conditionalCreate(3, SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_3_Template, 2, 2, "button", 33);
-    \u0275\u0275conditionalCreate(4, SmartStudyAssistantComponent_Conditional_50_Conditional_9_Conditional_4_Template, 8, 8);
+    \u0275\u0275conditionalCreate(3, SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_3_Template, 2, 2, "button", 35);
+    \u0275\u0275conditionalCreate(4, SmartStudyAssistantComponent_Conditional_57_Conditional_9_Conditional_4_Template, 8, 8);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -109168,30 +109933,30 @@ function SmartStudyAssistantComponent_Conditional_50_Conditional_9_Template(rf, 
     \u0275\u0275conditional(ctx_r8.hasQuestions() ? 4 : -1);
   }
 }
-function SmartStudyAssistantComponent_Conditional_50_Template(rf, ctx) {
+function SmartStudyAssistantComponent_Conditional_57_Template(rf, ctx) {
   if (rf & 1) {
     const _r12 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 16)(1, "div", 28)(2, "h2");
+    \u0275\u0275elementStart(0, "div", 18)(1, "div", 30)(2, "h2");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 29)(5, "button", 19);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Template_button_click_5_listener() {
+    \u0275\u0275elementStart(4, "div", 31)(5, "button", 21);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Template_button_click_5_listener() {
       \u0275\u0275restoreView(_r12);
       const ctx_r8 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r8.copyResult());
     });
     \u0275\u0275text(6, "\u{1F4CB} \u0646\u0633\u062E \u0627\u0644\u0646\u0635");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "button", 30);
-    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_50_Template_button_click_7_listener() {
+    \u0275\u0275elementStart(7, "button", 32);
+    \u0275\u0275listener("click", function SmartStudyAssistantComponent_Conditional_57_Template_button_click_7_listener() {
       \u0275\u0275restoreView(_r12);
       const ctx_r8 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r8.downloadPdf());
     });
     \u0275\u0275text(8, "\u2B07\uFE0F \u062A\u062D\u0645\u064A\u0644 \u0643\u0640 PDF");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275conditionalCreate(9, SmartStudyAssistantComponent_Conditional_50_Conditional_9_Template, 5, 2, "div", 31);
-    \u0275\u0275element(10, "article", 32);
+    \u0275\u0275conditionalCreate(9, SmartStudyAssistantComponent_Conditional_57_Conditional_9_Template, 5, 2, "div", 33);
+    \u0275\u0275element(10, "article", 34);
     \u0275\u0275pipe(11, "safeHtml");
     \u0275\u0275elementEnd();
   }
@@ -109296,6 +110061,7 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
         []
       )
     );
+    this.prompt = "";
     this.activeAction = signal(
       null,
       ...ngDevMode ? [{ debugName: "activeAction" }] : (
@@ -109469,6 +110235,10 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
         this.error.set("\u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u0623\u0648\u0644\u0627\u064B.");
         return;
       }
+      if (!this.files().length && !this.prompt.trim()) {
+        this.error.set("\u0627\u0631\u0641\u0639 \u0645\u0644\u0641\u0627\u064B \u0623\u0648 \u0627\u0643\u062A\u0628 \u0648\u0635\u0641\u0627\u064B \u0646\u0635\u064A\u0627\u064B \u0644\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u0637\u0644\u0648\u0628.");
+        return;
+      }
       if (this.loading())
         return;
       this.error.set("");
@@ -109485,6 +110255,7 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
           unitId: this.unitId() || null,
           lessonId: this.lessonId() || null,
           language: "ar",
+          prompt: this.prompt.trim() || null,
           files: this.files().map((f) => f.file)
         }));
         this.result.set(result);
@@ -109603,12 +110374,12 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SmartStudyAssistantComponent, selectors: [["app-smart-study-assistant"]], viewQuery: function SmartStudyAssistantComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.fileInput, _c040, 5);
+        \u0275\u0275viewQuerySignal(ctx.fileInput, _c041, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
       }
-    }, decls: 51, vars: 10, consts: [["fileInput", ""], [1, "ssa-page"], [1, "ssa-header"], [3, "ok", "error"], [1, "ssa-card"], [1, "ssa-grid"], [3, "ngModelChange", "ngModel"], ["value", ""], [3, "value"], [3, "ngModelChange", "ngModel", "disabled"], [1, "ssa-dropzone", 3, "drop", "dragover", "click"], ["type", "file", "accept", ".pdf,.jpg,.jpeg,.png", "multiple", "", "hidden", "", 3, "change"], [1, "ssa-dropzone-hint"], [1, "ssa-actions"], ["type", "button", 1, "ssa-action", 3, "disabled"], [1, "ssa-loading"], [1, "ssa-card", "ssa-result"], [1, "ssa-files"], [1, "ssa-file"], ["type", "button", 1, "ssa-tool", 3, "click"], [1, "ssa-addmore"], ["alt", "\u0645\u0639\u0627\u064A\u0646\u0629", 3, "src"], [1, "ssa-file-icon"], ["type", "button", 1, "ssa-remove", 3, "click"], [1, "ssa-dropzone-icon"], ["type", "button", 1, "ssa-action", 3, "click", "disabled"], [1, "ssa-action-icon"], ["aria-hidden", "true", 1, "ssa-spinner"], [1, "ssa-result-head"], [1, "ssa-result-tools"], ["type", "button", 1, "ssa-tool", "primary", 3, "click"], [1, "ssa-apply"], [1, "ssa-markdown", 3, "innerHTML"], ["type", "button", 1, "ssa-tool", 3, "disabled"], ["type", "button", 1, "ssa-tool", 3, "click", "disabled"]], template: function SmartStudyAssistantComponent_Template(rf, ctx) {
+    }, decls: 58, vars: 11, consts: [["fileInput", ""], [1, "ssa-page"], [1, "ssa-header"], [3, "ok", "error"], [1, "ssa-card"], [1, "ssa-grid"], [3, "ngModelChange", "ngModel"], ["value", ""], [3, "value"], [3, "ngModelChange", "ngModel", "disabled"], [1, "ssa-prompt-label"], ["rows", "5", "placeholder", "\u0645\u062B\u0627\u0644: \u0627\u0643\u062A\u0628 \u0644\u064A \u0645\u0644\u062E\u0635\u0627\u064B \u0639\u0646 \u062F\u0631\u0633 \u0627\u0644\u0643\u0633\u0648\u0631 \u0627\u0644\u0639\u0634\u0631\u064A\u0629 \u0644\u0644\u0635\u0641 \u0627\u0644\u062E\u0627\u0645\u0633\u060C \u064A\u0634\u0631\u062D \u062A\u062D\u0648\u064A\u0644 \u0627\u0644\u0643\u0633\u0648\u0631 \u0625\u0644\u0649 \u0643\u0633\u0648\u0631 \u0639\u0634\u0631\u064A\u0629 \u0645\u0639 \u0623\u0645\u062B\u0644\u0629 \u0645\u062D\u0644\u0648\u0644\u0629\u060C \u0648\u0623\u0646\u0634\u0626 \u0643\u0648\u064A\u0632\u064B\u0627 \u0645\u0646 5 \u0623\u0633\u0626\u0644\u0629 \u0639\u0646 \u0630\u0644\u0643.", 1, "ssa-prompt", 3, "ngModelChange", "ngModel"], [1, "ssa-dropzone", 3, "drop", "dragover", "click"], ["type", "file", "accept", ".pdf,.jpg,.jpeg,.png", "multiple", "", "hidden", "", 3, "change"], [1, "ssa-dropzone-hint"], [1, "ssa-actions"], ["type", "button", 1, "ssa-action", 3, "disabled"], [1, "ssa-loading"], [1, "ssa-card", "ssa-result"], [1, "ssa-files"], [1, "ssa-file"], ["type", "button", 1, "ssa-tool", 3, "click"], [1, "ssa-addmore"], ["alt", "\u0645\u0639\u0627\u064A\u0646\u0629", 3, "src"], [1, "ssa-file-icon"], ["type", "button", 1, "ssa-remove", 3, "click"], [1, "ssa-dropzone-icon"], ["type", "button", 1, "ssa-action", 3, "click", "disabled"], [1, "ssa-action-icon"], ["aria-hidden", "true", 1, "ssa-spinner"], [1, "ssa-result-head"], [1, "ssa-result-tools"], ["type", "button", 1, "ssa-tool", "primary", 3, "click"], [1, "ssa-apply"], [1, "ssa-markdown", 3, "innerHTML"], ["type", "button", 1, "ssa-tool", 3, "disabled"], ["type", "button", 1, "ssa-tool", 3, "click", "disabled"]], template: function SmartStudyAssistantComponent_Template(rf, ctx) {
       if (rf & 1) {
         const _r1 = \u0275\u0275getCurrentView();
         \u0275\u0275elementStart(0, "section", 1)(1, "header", 2)(2, "h1");
@@ -109636,7 +110407,7 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
         \u0275\u0275elementStart(15, "option", 7);
         \u0275\u0275text(16, "\u2014 \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u2014");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(17, SmartStudyAssistantComponent_For_18_Template, 2, 2, "option", 8, _forTrack048);
+        \u0275\u0275repeaterCreate(17, SmartStudyAssistantComponent_For_18_Template, 2, 2, "option", 8, _forTrack049);
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
@@ -109655,7 +110426,7 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
         \u0275\u0275elementStart(23, "option", 7);
         \u0275\u0275text(24, "\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(25, SmartStudyAssistantComponent_For_26_Template, 2, 2, "option", 8, _forTrack048);
+        \u0275\u0275repeaterCreate(25, SmartStudyAssistantComponent_For_26_Template, 2, 2, "option", 8, _forTrack049);
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
@@ -109671,37 +110442,51 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
         \u0275\u0275elementStart(31, "option", 7);
         \u0275\u0275text(32, "\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(33, SmartStudyAssistantComponent_For_34_Template, 2, 2, "option", 8, _forTrack048);
+        \u0275\u0275repeaterCreate(33, SmartStudyAssistantComponent_For_34_Template, 2, 2, "option", 8, _forTrack049);
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(35, "div", 4)(36, "h2");
-        \u0275\u0275text(37, "2\uFE0F\u20E3 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A (\u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014 \u062D\u062A\u0649 10 \u0645\u0644\u0641\u0627\u062A)");
+        \u0275\u0275text(37, "2\uFE0F\u20E3 \u0627\u0643\u062A\u0628 \u0648\u0635\u0641\u0627\u064B \u0646\u0635\u064A\u0627\u064B (\u0628\u062F\u064A\u0644 \u0639\u0646 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A)");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(38, "div", 10);
-        \u0275\u0275listener("drop", function SmartStudyAssistantComponent_Template_div_drop_38_listener($event) {
+        \u0275\u0275elementStart(38, "label", 10)(39, "textarea", 11);
+        \u0275\u0275twoWayListener("ngModelChange", function SmartStudyAssistantComponent_Template_textarea_ngModelChange_39_listener($event) {
+          \u0275\u0275restoreView(_r1);
+          \u0275\u0275twoWayBindingSet(ctx.prompt, $event) || (ctx.prompt = $event);
+          return \u0275\u0275resetView($event);
+        });
+        \u0275\u0275elementEnd();
+        \u0275\u0275controlCreate();
+        \u0275\u0275elementStart(40, "small");
+        \u0275\u0275text(41, "\u064A\u0645\u0643\u0646\u0643 \u0627\u0644\u0627\u0643\u062A\u0641\u0627\u0621 \u0628\u0643\u062A\u0627\u0628\u0629 \u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u0646\u0635\u064A\u0627\u064B \u0628\u062F\u0644\u0627\u064B \u0645\u0646 \u0631\u0641\u0639 \u0635\u0648\u0631 \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u2014 \u0623\u0648 \u0627\u0644\u062C\u0645\u0639 \u0628\u064A\u0646 \u0627\u0644\u0627\u062B\u0646\u064A\u0646.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(42, "div", 4)(43, "h2");
+        \u0275\u0275text(44, "3\uFE0F\u20E3 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A (\u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014 \u062D\u062A\u0649 10 \u0645\u0644\u0641\u0627\u062A)");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(45, "div", 12);
+        \u0275\u0275listener("drop", function SmartStudyAssistantComponent_Template_div_drop_45_listener($event) {
           return ctx.onDrop($event);
-        })("dragover", function SmartStudyAssistantComponent_Template_div_dragover_38_listener($event) {
+        })("dragover", function SmartStudyAssistantComponent_Template_div_dragover_45_listener($event) {
           return ctx.onDragOver($event);
-        })("click", function SmartStudyAssistantComponent_Template_div_click_38_listener() {
+        })("click", function SmartStudyAssistantComponent_Template_div_click_45_listener() {
           return ctx.openFilePicker();
         });
-        \u0275\u0275elementStart(39, "input", 11, 0);
-        \u0275\u0275listener("change", function SmartStudyAssistantComponent_Template_input_change_39_listener($event) {
+        \u0275\u0275elementStart(46, "input", 13, 0);
+        \u0275\u0275listener("change", function SmartStudyAssistantComponent_Template_input_change_46_listener($event) {
           return ctx.onFilesChosen($event);
         });
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(41, SmartStudyAssistantComponent_Conditional_41_Template, 7, 0)(42, SmartStudyAssistantComponent_Conditional_42_Template, 9, 0, "div", 12);
+        \u0275\u0275conditionalCreate(48, SmartStudyAssistantComponent_Conditional_48_Template, 7, 0)(49, SmartStudyAssistantComponent_Conditional_49_Template, 9, 0, "div", 14);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(43, "div", 4)(44, "h2");
-        \u0275\u0275text(45, "3\uFE0F\u20E3 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621");
+        \u0275\u0275elementStart(50, "div", 4)(51, "h2");
+        \u0275\u0275text(52, "4\uFE0F\u20E3 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(46, "div", 13);
-        \u0275\u0275repeaterCreate(47, SmartStudyAssistantComponent_For_48_Template, 8, 5, "button", 14, _forTrack119);
+        \u0275\u0275elementStart(53, "div", 15);
+        \u0275\u0275repeaterCreate(54, SmartStudyAssistantComponent_For_55_Template, 8, 5, "button", 16, _forTrack119);
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(49, SmartStudyAssistantComponent_Conditional_49_Template, 2, 0, "p", 15);
+        \u0275\u0275conditionalCreate(56, SmartStudyAssistantComponent_Conditional_56_Template, 2, 0, "p", 17);
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(50, SmartStudyAssistantComponent_Conditional_50_Template, 12, 5, "div", 16);
+        \u0275\u0275conditionalCreate(57, SmartStudyAssistantComponent_Conditional_57_Template, 12, 5, "div", 18);
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
@@ -109724,171 +110509,183 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
         \u0275\u0275control();
         \u0275\u0275advance(3);
         \u0275\u0275repeater(ctx.lessons());
-        \u0275\u0275advance(8);
-        \u0275\u0275conditional(ctx.files().length > 0 ? 41 : 42);
+        \u0275\u0275advance(6);
+        \u0275\u0275twoWayProperty("ngModel", ctx.prompt);
+        \u0275\u0275control();
+        \u0275\u0275advance(9);
+        \u0275\u0275conditional(ctx.files().length > 0 ? 48 : 49);
         \u0275\u0275advance(6);
         \u0275\u0275repeater(ctx.actions);
         \u0275\u0275advance(2);
-        \u0275\u0275conditional(ctx.loading() ? 49 : -1);
+        \u0275\u0275conditional(ctx.loading() ? 56 : -1);
         \u0275\u0275advance();
-        \u0275\u0275conditional(ctx.resultMarkdown() ? 50 : -1);
+        \u0275\u0275conditional(ctx.resultMarkdown() ? 57 : -1);
       }
-    }, dependencies: [FormsModule, NgSelectOption, \u0275NgSelectMultipleOption, SelectControlValueAccessor, NgControlStatus, NgModel, PageFeedbackComponent, SafeHtmlPipe], styles: ["\n.ssa-page[_ngcontent-%COMP%] {\n  max-width: 960px;\n  margin: 0 auto;\n  display: grid;\n  gap: 18px;\n  padding-bottom: 48px;\n}\n.ssa-header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  margin: 0 0 6px;\n  font-size: 1.5rem;\n}\n.ssa-header[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--text-muted, #5b6b7c);\n  font-size: 0.95rem;\n}\n.ssa-card[_ngcontent-%COMP%] {\n  background: var(--surface, #fff);\n  border: 1px solid var(--border, #dbe4ec);\n  border-radius: 14px;\n  padding: 18px 20px;\n  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);\n}\n.ssa-card[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0 0 14px;\n  font-size: 1.05rem;\n  color: var(--heading, #14344b);\n}\n.ssa-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 12px;\n}\n.ssa-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 6px;\n  font-size: 0.85rem;\n  color: var(--text-muted, #5b6b7c);\n}\n.ssa-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  padding: 9px 12px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 9px;\n  background: var(--input-bg, #fff);\n  font: inherit;\n  color: var(--text, #1c2434);\n}\n.ssa-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-dropzone[_ngcontent-%COMP%] {\n  border: 2px dashed var(--border, #b8c8d8);\n  border-radius: 12px;\n  padding: 26px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: border-color 0.15s ease, background 0.15s ease;\n}\n.ssa-dropzone[_ngcontent-%COMP%]:hover {\n  border-color: var(--accent, #3d84c6);\n  background: rgb(61 132 198 / 4%);\n}\n.ssa-dropzone-icon[_ngcontent-%COMP%] {\n  font-size: 1.8rem;\n}\n.ssa-dropzone-hint[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 6px 0 2px;\n}\n.ssa-dropzone-hint[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-files[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 10px;\n  width: 100%;\n  text-align: start;\n}\n.ssa-addmore[_ngcontent-%COMP%] {\n  display: block;\n  margin-top: 10px;\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-apply[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 8px;\n  margin-top: 12px;\n  padding: 10px 12px;\n  background: rgb(61 132 198 / 6%);\n  border-radius: 10px;\n  font-size: 0.9rem;\n}\n.ssa-apply[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n.ssa-file[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  text-align: start;\n}\n.ssa-file[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 72px;\n  height: 72px;\n  object-fit: cover;\n  border-radius: 10px;\n  border: 1px solid var(--border, #dbe4ec);\n}\n.ssa-file-icon[_ngcontent-%COMP%] {\n  font-size: 2.2rem;\n}\n.ssa-file[_ngcontent-%COMP%]   div[_ngcontent-%COMP%] {\n  flex: 1;\n  display: grid;\n}\n.ssa-file[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-remove[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #dbe4ec);\n  background: transparent;\n  color: #b3413c;\n  border-radius: 8px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font: inherit;\n}\n.ssa-remove[_ngcontent-%COMP%]:hover {\n  background: #fdecea;\n}\n.ssa-actions[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));\n  gap: 12px;\n}\n.ssa-action[_ngcontent-%COMP%] {\n  position: relative;\n  display: grid;\n  gap: 4px;\n  justify-items: start;\n  padding: 14px 16px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 12px;\n  background: var(--surface, #fff);\n  cursor: pointer;\n  text-align: start;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    transform 0.1s ease,\n    box-shadow 0.15s ease;\n}\n.ssa-action[_ngcontent-%COMP%]:hover:not(:disabled) {\n  border-color: var(--accent, #3d84c6);\n  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);\n  transform: translateY(-1px);\n}\n.ssa-action[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: wait;\n}\n.ssa-action-icon[_ngcontent-%COMP%] {\n  font-size: 1.4rem;\n}\n.ssa-action[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n  font-size: 0.78rem;\n  line-height: 1.5;\n}\n.ssa-spinner[_ngcontent-%COMP%] {\n  position: absolute;\n  inset-inline-end: 14px;\n  top: 14px;\n  width: 16px;\n  height: 16px;\n  border: 2px solid var(--border, #c6d2dd);\n  border-top-color: var(--accent, #3d84c6);\n  border-radius: 50%;\n  animation: _ngcontent-%COMP%_ssa-spin 0.8s linear infinite;\n}\n@keyframes _ngcontent-%COMP%_ssa-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.ssa-loading[_ngcontent-%COMP%] {\n  margin: 14px 0 0;\n  color: var(--accent, #2f6da8);\n  font-size: 0.9rem;\n}\n.ssa-result-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.ssa-result-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.ssa-result-tools[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 8px;\n}\n.ssa-tool[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #c6d2dd);\n  background: var(--surface, #fff);\n  border-radius: 9px;\n  padding: 7px 14px;\n  font: inherit;\n  cursor: pointer;\n}\n.ssa-tool[_ngcontent-%COMP%]:hover {\n  border-color: var(--accent, #3d84c6);\n}\n.ssa-tool.primary[_ngcontent-%COMP%] {\n  background: var(--accent, #2f6da8);\n  border-color: var(--accent, #2f6da8);\n  color: #fff;\n}\n.ssa-markdown[_ngcontent-%COMP%] {\n  margin-top: 12px;\n  line-height: 1.9;\n  overflow-x: auto;\n}\n.ssa-markdown[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: var(--heading, #14344b);\n  margin: 1.2em 0 0.4em;\n}\n.ssa-markdown[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%]:first-child, \n.ssa-markdown[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%]:first-child, \n.ssa-markdown[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%]:first-child {\n  margin-top: 0;\n}\n.ssa-markdown[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   ol[_ngcontent-%COMP%] {\n  padding-inline-start: 24px;\n}\n.ssa-markdown[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  border-collapse: collapse;\n  width: 100%;\n  margin: 12px 0;\n}\n.ssa-markdown[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #c6d2dd);\n  padding: 6px 10px;\n  text-align: start;\n}\n.ssa-markdown[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  background: rgb(61 132 198 / 8%);\n}\n.ssa-markdown[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  background: var(--surface-muted, #f4f7fa);\n  padding: 12px;\n  border-radius: 8px;\n  white-space: pre-wrap;\n}\n.ssa-markdown[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n  border-inline-start: 4px solid var(--accent, #7aa7c7);\n  margin: 8px 0;\n  padding: 4px 14px;\n  color: var(--text-muted, #44566b);\n}\n.ssa-markdown[_ngcontent-%COMP%]   code[_ngcontent-%COMP%] {\n  background: var(--surface-muted, #f0f4f8);\n  padding: 1px 5px;\n  border-radius: 4px;\n  font-size: 0.9em;\n}\n.ssa-markdown[_ngcontent-%COMP%]   hr[_ngcontent-%COMP%] {\n  border: none;\n  border-top: 1px solid var(--border, #dbe4ec);\n}\n/*# sourceMappingURL=smart-study-assistant.component.css.map */"] });
+    }, dependencies: [FormsModule, NgSelectOption, \u0275NgSelectMultipleOption, DefaultValueAccessor, SelectControlValueAccessor, NgControlStatus, NgModel, PageFeedbackComponent, SafeHtmlPipe], styles: ["\n.ssa-page[_ngcontent-%COMP%] {\n  max-width: 960px;\n  margin: 0 auto;\n  display: grid;\n  gap: 18px;\n  padding-bottom: 48px;\n}\n.ssa-header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  margin: 0 0 6px;\n  font-size: 1.5rem;\n}\n.ssa-header[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--text-muted, #5b6b7c);\n  font-size: 0.95rem;\n}\n.ssa-card[_ngcontent-%COMP%] {\n  background: var(--surface, #fff);\n  border: 1px solid var(--border, #dbe4ec);\n  border-radius: 14px;\n  padding: 18px 20px;\n  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);\n}\n.ssa-card[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0 0 14px;\n  font-size: 1.05rem;\n  color: var(--heading, #14344b);\n}\n.ssa-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 12px;\n}\n.ssa-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 6px;\n  font-size: 0.85rem;\n  color: var(--text-muted, #5b6b7c);\n}\n.ssa-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  padding: 9px 12px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 9px;\n  background: var(--input-bg, #fff);\n  font: inherit;\n  color: var(--text, #1c2434);\n}\n.ssa-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-dropzone[_ngcontent-%COMP%] {\n  border: 2px dashed var(--border, #b8c8d8);\n  border-radius: 12px;\n  padding: 26px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: border-color 0.15s ease, background 0.15s ease;\n}\n.ssa-dropzone[_ngcontent-%COMP%]:hover {\n  border-color: var(--accent, #3d84c6);\n  background: rgb(61 132 198 / 4%);\n}\n.ssa-dropzone-icon[_ngcontent-%COMP%] {\n  font-size: 1.8rem;\n}\n.ssa-dropzone-hint[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  margin: 6px 0 2px;\n}\n.ssa-dropzone-hint[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-files[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 10px;\n  width: 100%;\n  text-align: start;\n}\n.ssa-addmore[_ngcontent-%COMP%] {\n  display: block;\n  margin-top: 10px;\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-apply[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 8px;\n  margin-top: 12px;\n  padding: 10px 12px;\n  background: rgb(61 132 198 / 6%);\n  border-radius: 10px;\n  font-size: 0.9rem;\n}\n.ssa-apply[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n.ssa-file[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  text-align: start;\n}\n.ssa-file[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 72px;\n  height: 72px;\n  object-fit: cover;\n  border-radius: 10px;\n  border: 1px solid var(--border, #dbe4ec);\n}\n.ssa-file-icon[_ngcontent-%COMP%] {\n  font-size: 2.2rem;\n}\n.ssa-file[_ngcontent-%COMP%]   div[_ngcontent-%COMP%] {\n  flex: 1;\n  display: grid;\n}\n.ssa-file[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-remove[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #dbe4ec);\n  background: transparent;\n  color: #b3413c;\n  border-radius: 8px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font: inherit;\n}\n.ssa-remove[_ngcontent-%COMP%]:hover {\n  background: #fdecea;\n}\n.ssa-actions[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));\n  gap: 12px;\n}\n.ssa-action[_ngcontent-%COMP%] {\n  position: relative;\n  display: grid;\n  gap: 4px;\n  justify-items: start;\n  padding: 14px 16px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 12px;\n  background: var(--surface, #fff);\n  cursor: pointer;\n  text-align: start;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    transform 0.1s ease,\n    box-shadow 0.15s ease;\n}\n.ssa-action[_ngcontent-%COMP%]:hover:not(:disabled) {\n  border-color: var(--accent, #3d84c6);\n  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);\n  transform: translateY(-1px);\n}\n.ssa-action[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: wait;\n}\n.ssa-action-icon[_ngcontent-%COMP%] {\n  font-size: 1.4rem;\n}\n.ssa-action[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text-muted, #7a8a9a);\n  font-size: 0.78rem;\n  line-height: 1.5;\n}\n.ssa-spinner[_ngcontent-%COMP%] {\n  position: absolute;\n  inset-inline-end: 14px;\n  top: 14px;\n  width: 16px;\n  height: 16px;\n  border: 2px solid var(--border, #c6d2dd);\n  border-top-color: var(--accent, #3d84c6);\n  border-radius: 50%;\n  animation: _ngcontent-%COMP%_ssa-spin 0.8s linear infinite;\n}\n@keyframes _ngcontent-%COMP%_ssa-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.ssa-loading[_ngcontent-%COMP%] {\n  margin: 14px 0 0;\n  color: var(--accent, #2f6da8);\n  font-size: 0.9rem;\n}\n.ssa-result-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.ssa-result-head[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.ssa-result-tools[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 8px;\n}\n.ssa-tool[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #c6d2dd);\n  background: var(--surface, #fff);\n  border-radius: 9px;\n  padding: 7px 14px;\n  font: inherit;\n  cursor: pointer;\n}\n.ssa-tool[_ngcontent-%COMP%]:hover {\n  border-color: var(--accent, #3d84c6);\n}\n.ssa-tool.primary[_ngcontent-%COMP%] {\n  background: var(--accent, #2f6da8);\n  border-color: var(--accent, #2f6da8);\n  color: #fff;\n}\n.ssa-markdown[_ngcontent-%COMP%] {\n  margin-top: 12px;\n  line-height: 1.9;\n  overflow-x: auto;\n}\n.ssa-markdown[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: var(--heading, #14344b);\n  margin: 1.2em 0 0.4em;\n}\n.ssa-markdown[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%]:first-child, \n.ssa-markdown[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%]:first-child, \n.ssa-markdown[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%]:first-child {\n  margin-top: 0;\n}\n.ssa-markdown[_ngcontent-%COMP%]   ul[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   ol[_ngcontent-%COMP%] {\n  padding-inline-start: 24px;\n}\n.ssa-markdown[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  border-collapse: collapse;\n  width: 100%;\n  margin: 12px 0;\n}\n.ssa-markdown[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.ssa-markdown[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: 1px solid var(--border, #c6d2dd);\n  padding: 6px 10px;\n  text-align: start;\n}\n.ssa-markdown[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  background: rgb(61 132 198 / 8%);\n}\n.ssa-markdown[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  background: var(--surface-muted, #f4f7fa);\n  padding: 12px;\n  border-radius: 8px;\n  white-space: pre-wrap;\n}\n.ssa-markdown[_ngcontent-%COMP%]   blockquote[_ngcontent-%COMP%] {\n  border-inline-start: 4px solid var(--accent, #7aa7c7);\n  margin: 8px 0;\n  padding: 4px 14px;\n  color: var(--text-muted, #44566b);\n}\n.ssa-markdown[_ngcontent-%COMP%]   code[_ngcontent-%COMP%] {\n  background: var(--surface-muted, #f0f4f8);\n  padding: 1px 5px;\n  border-radius: 4px;\n  font-size: 0.9em;\n}\n.ssa-markdown[_ngcontent-%COMP%]   hr[_ngcontent-%COMP%] {\n  border: none;\n  border-top: 1px solid var(--border, #dbe4ec);\n}\n.ssa-prompt-label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n}\n.ssa-prompt[_ngcontent-%COMP%] {\n  width: 100%;\n  resize: vertical;\n  min-height: 110px;\n  padding: 0.7rem 0.9rem;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 10px;\n  font: inherit;\n  line-height: 1.7;\n  background: var(--surface, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-prompt[_ngcontent-%COMP%]:focus {\n  outline: 2px solid #0f766e;\n  outline-offset: 1px;\n}\n/*# sourceMappingURL=smart-study-assistant.component.css.map */"] });
   }
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SmartStudyAssistantComponent, [{
     type: Component,
-    args: [{ selector: "app-smart-study-assistant", imports: [FormsModule, SafeHtmlPipe, PageFeedbackComponent], template: `<section class="ssa-page">
-  <header class="ssa-header">
-    <h1>\u{1F916} \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629</h1>
-    <p>\u0627\u0631\u0641\u0639 \u0635\u0648\u0631\u0627\u064B \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF\u060C \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u0648\u0627\u0644\u0648\u062D\u062F\u0629 \u0648\u0627\u0644\u062F\u0631\u0633\u060C \u062B\u0645 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u2014 \u0648\u0633\u064A\u062D\u0644\u0644 Gemini \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0648\u064A\u0646\u0634\u0626 \u0627\u0644\u0646\u062A\u064A\u062C\u0629\u060C \u0648\u064A\u0645\u0643\u0646\u0643 \u0625\u0636\u0627\u0641\u062A\u0647\u0627 \u0645\u0628\u0627\u0634\u0631\u0629 \u0644\u0644\u0645\u0646\u0647\u062C \u0623\u0648 \u0627\u0644\u0643\u0648\u064A\u0632\u0627\u062A \u0623\u0648 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A.</p>
-  </header>
-
-  <app-page-feedback [ok]="message()" [error]="error()" />
-
-  <div class="ssa-card">
-    <h2>1\uFE0F\u20E3 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0633\u064A\u0627\u0642</h2>
-    <div class="ssa-grid">
-      <label>
-        <span>\u0627\u0644\u0643\u0648\u0631\u0633</span>
-        <select [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseModelChange($event)">
-          <option value="">\u2014 \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u2014</option>
-          @for (course of courses(); track course.id) {
-            <option [value]="course.id">{{ course.title }}</option>
-          }
-        </select>
-      </label>
-
-      <label>
-        <span>\u0627\u0644\u0648\u062D\u062F\u0629</span>
-        <select [(ngModel)]="selectedUnitId" (ngModelChange)="onUnitModelChange($event)" [disabled]="!courseId()">
-          <option value="">\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014</option>
-          @for (unit of units(); track unit.id) {
-            <option [value]="unit.id">{{ unit.title }}</option>
-          }
-        </select>
-      </label>
-
-      <label>
-        <span>\u0627\u0644\u062F\u0631\u0633</span>
-        <select [(ngModel)]="selectedLessonId" [disabled]="!unitId()">
-          <option value="">\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014</option>
-          @for (lesson of lessons(); track lesson.id) {
-            <option [value]="lesson.id">{{ lesson.title }}</option>
-          }
-        </select>
-      </label>
-    </div>
-  </div>
-
-  <div class="ssa-card">
-    <h2>2\uFE0F\u20E3 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A (\u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014 \u062D\u062A\u0649 10 \u0645\u0644\u0641\u0627\u062A)</h2>
-    <div class="ssa-dropzone"
-         (drop)="onDrop($event)" (dragover)="onDragOver($event)"
-         (click)="openFilePicker()">
-      <input #fileInput type="file" accept=".pdf,.jpg,.jpeg,.png" multiple (change)="onFilesChosen($event)" hidden>
-      @if (files().length > 0) {
-        <div class="ssa-files">
-          @for (entry of files(); track $index) {
-            <div class="ssa-file">
-              @if (entry.preview) {
-                <img [src]="entry.preview" alt="\u0645\u0639\u0627\u064A\u0646\u0629">
-              } @else {
-                <span class="ssa-file-icon">\u{1F4C4}</span>
-              }
-              <div>
-                <strong>{{ entry.file.name }}</strong>
-                <small>{{ (entry.file.size / 1024 / 1024).toFixed(2) }} \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A</small>
-              </div>
-              <button type="button" class="ssa-remove" (click)="removeFile($index); $event.stopPropagation()">\u2715</button>
-            </div>
-          }
-          <button type="button" class="ssa-tool" (click)="clearFiles(); $event.stopPropagation()">\u{1F5D1}\uFE0F \u0645\u0633\u062D \u0627\u0644\u0643\u0644</button>
-        </div>
-        <small class="ssa-addmore">\u0627\u0646\u0642\u0631 \u0623\u0648 \u0623\u0641\u0644\u062A \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F \u0645\u0646 \u0627\u0644\u0645\u0644\u0641\u0627\u062A</small>
-      } @else {
-        <div class="ssa-dropzone-hint">
-          <span class="ssa-dropzone-icon">\u2B06\uFE0F</span>
-          <p><strong>\u0627\u0633\u062D\u0628 \u0648\u0623\u0641\u0644\u062A</strong> \u0635\u0648\u0631 \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u0647\u0646\u0627</p>
-          <small>\u0623\u0648 \u0627\u0646\u0642\u0631 \u0644\u0644\u0627\u062E\u062A\u064A\u0627\u0631 \u2014 JPG / PNG / PDF \u062D\u062A\u0649 25 \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A \u0644\u0643\u0644 \u0645\u0644\u0641</small>
-        </div>
-      }
-    </div>
-  </div>
-
-  <div class="ssa-card">
-    <h2>3\uFE0F\u20E3 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621</h2>
-    <div class="ssa-actions">
-      @for (item of actions; track item.key) {
-        <button type="button"
-                class="ssa-action"
-                [disabled]="loading()"
-                (click)="runAction(item.key)">
-          <span class="ssa-action-icon">{{ item.icon }}</span>
-          <strong>{{ item.label }}</strong>
-          <small>{{ item.hint }}</small>
-          @if (loading() && activeAction() === item.key) {
-            <span class="ssa-spinner" aria-hidden="true"></span>
-          }
-        </button>
-      }
-    </div>
-    @if (loading()) {
-      <p class="ssa-loading">\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0644\u064A\u0644 \u0628\u0648\u0627\u0633\u0637\u0629 Gemini... \u0642\u062F \u064A\u0633\u062A\u063A\u0631\u0642 \u0630\u0644\u0643 \u0644\u062D\u0638\u0627\u062A\u060C \u0644\u0627 \u062A\u063A\u0644\u0642 \u0627\u0644\u0635\u0641\u062D\u0629.</p>
-    }
-  </div>
-
-  @if (resultMarkdown()) {
-    <div class="ssa-card ssa-result">
-      <div class="ssa-result-head">
-        <h2>{{ resultTitle() || '\u0627\u0644\u0646\u062A\u064A\u062C\u0629' }}</h2>
-        <div class="ssa-result-tools">
-          <button type="button" class="ssa-tool" (click)="copyResult()">\u{1F4CB} \u0646\u0633\u062E \u0627\u0644\u0646\u0635</button>
-          <button type="button" class="ssa-tool primary" (click)="downloadPdf()">\u2B07\uFE0F \u062A\u062D\u0645\u064A\u0644 \u0643\u0640 PDF</button>
-        </div>
-      </div>
-
-      @if (hasQuestions() || hasUnits()) {
-        <div class="ssa-apply">
-          <span>\u0623\u0636\u0641 \u0627\u0644\u0646\u062A\u064A\u062C\u0629 \u0625\u0644\u0649:</span>
-          @if (hasUnits()) {
-            <button type="button" class="ssa-tool"
-                    [disabled]="applying() !== null"
-                    (click)="applyTo('tree')">
-              {{ applying() === 'tree' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0636\u0627\u0641\u0629...' : '\u{1F333} \u0641\u0647\u0631\u0633 \u0627\u0644\u0645\u0627\u062F\u0629 (\u0648\u062D\u062F\u0627\u062A \u0648\u062F\u0631\u0648\u0633)' }}
-            </button>
-          }
-          @if (hasQuestions()) {
-            <button type="button" class="ssa-tool"
-                    [disabled]="applying() !== null"
-                    (click)="applyTo('bank')">
-              {{ applying() === 'bank' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638...' : '\u{1F5C3}\uFE0F \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629' }}
-            </button>
-            <button type="button" class="ssa-tool"
-                    [disabled]="applying() !== null"
-                    (click)="applyTo('quiz')">
-              {{ applying() === 'quiz' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621...' : '\u2753 \u0643\u0648\u064A\u0632 \u062C\u062F\u064A\u062F' }}
-            </button>
-            <button type="button" class="ssa-tool"
-                    [disabled]="applying() !== null"
-                    (click)="applyTo('assignment')">
-              {{ applying() === 'assignment' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621...' : '\u{1F4DA} \u0648\u0627\u062C\u0628 \u062C\u062F\u064A\u062F' }}
-            </button>
-            <button type="button" class="ssa-tool"
-                    [disabled]="applying() !== null"
-                    (click)="applyTo('exam')">
-              {{ applying() === 'exam' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638...' : '\u{1F4DD} \u0623\u0633\u0626\u0644\u0629 \u0627\u062E\u062A\u0628\u0627\u0631' }}
-            </button>
-          }
-        </div>
-      }
-
-      <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>
-    </div>
-  }
-</section>
-`, styles: ["/* src/app/pages/teacher/smart-study-assistant/smart-study-assistant.component.css */\n.ssa-page {\n  max-width: 960px;\n  margin: 0 auto;\n  display: grid;\n  gap: 18px;\n  padding-bottom: 48px;\n}\n.ssa-header h1 {\n  margin: 0 0 6px;\n  font-size: 1.5rem;\n}\n.ssa-header p {\n  margin: 0;\n  color: var(--text-muted, #5b6b7c);\n  font-size: 0.95rem;\n}\n.ssa-card {\n  background: var(--surface, #fff);\n  border: 1px solid var(--border, #dbe4ec);\n  border-radius: 14px;\n  padding: 18px 20px;\n  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);\n}\n.ssa-card h2 {\n  margin: 0 0 14px;\n  font-size: 1.05rem;\n  color: var(--heading, #14344b);\n}\n.ssa-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 12px;\n}\n.ssa-grid label {\n  display: grid;\n  gap: 6px;\n  font-size: 0.85rem;\n  color: var(--text-muted, #5b6b7c);\n}\n.ssa-grid select {\n  padding: 9px 12px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 9px;\n  background: var(--input-bg, #fff);\n  font: inherit;\n  color: var(--text, #1c2434);\n}\n.ssa-grid select option {\n  background: var(--bg-elevated, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-dropzone {\n  border: 2px dashed var(--border, #b8c8d8);\n  border-radius: 12px;\n  padding: 26px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: border-color 0.15s ease, background 0.15s ease;\n}\n.ssa-dropzone:hover {\n  border-color: var(--accent, #3d84c6);\n  background: rgb(61 132 198 / 4%);\n}\n.ssa-dropzone-icon {\n  font-size: 1.8rem;\n}\n.ssa-dropzone-hint p {\n  margin: 6px 0 2px;\n}\n.ssa-dropzone-hint small {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-files {\n  display: grid;\n  gap: 10px;\n  width: 100%;\n  text-align: start;\n}\n.ssa-addmore {\n  display: block;\n  margin-top: 10px;\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-apply {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 8px;\n  margin-top: 12px;\n  padding: 10px 12px;\n  background: rgb(61 132 198 / 6%);\n  border-radius: 10px;\n  font-size: 0.9rem;\n}\n.ssa-apply span {\n  font-weight: 600;\n}\n.ssa-file {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  text-align: start;\n}\n.ssa-file img {\n  width: 72px;\n  height: 72px;\n  object-fit: cover;\n  border-radius: 10px;\n  border: 1px solid var(--border, #dbe4ec);\n}\n.ssa-file-icon {\n  font-size: 2.2rem;\n}\n.ssa-file div {\n  flex: 1;\n  display: grid;\n}\n.ssa-file small {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-remove {\n  border: 1px solid var(--border, #dbe4ec);\n  background: transparent;\n  color: #b3413c;\n  border-radius: 8px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font: inherit;\n}\n.ssa-remove:hover {\n  background: #fdecea;\n}\n.ssa-actions {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));\n  gap: 12px;\n}\n.ssa-action {\n  position: relative;\n  display: grid;\n  gap: 4px;\n  justify-items: start;\n  padding: 14px 16px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 12px;\n  background: var(--surface, #fff);\n  cursor: pointer;\n  text-align: start;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    transform 0.1s ease,\n    box-shadow 0.15s ease;\n}\n.ssa-action:hover:not(:disabled) {\n  border-color: var(--accent, #3d84c6);\n  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);\n  transform: translateY(-1px);\n}\n.ssa-action:disabled {\n  opacity: 0.55;\n  cursor: wait;\n}\n.ssa-action-icon {\n  font-size: 1.4rem;\n}\n.ssa-action small {\n  color: var(--text-muted, #7a8a9a);\n  font-size: 0.78rem;\n  line-height: 1.5;\n}\n.ssa-spinner {\n  position: absolute;\n  inset-inline-end: 14px;\n  top: 14px;\n  width: 16px;\n  height: 16px;\n  border: 2px solid var(--border, #c6d2dd);\n  border-top-color: var(--accent, #3d84c6);\n  border-radius: 50%;\n  animation: ssa-spin 0.8s linear infinite;\n}\n@keyframes ssa-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.ssa-loading {\n  margin: 14px 0 0;\n  color: var(--accent, #2f6da8);\n  font-size: 0.9rem;\n}\n.ssa-result-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.ssa-result-head h2 {\n  margin: 0;\n}\n.ssa-result-tools {\n  display: flex;\n  gap: 8px;\n}\n.ssa-tool {\n  border: 1px solid var(--border, #c6d2dd);\n  background: var(--surface, #fff);\n  border-radius: 9px;\n  padding: 7px 14px;\n  font: inherit;\n  cursor: pointer;\n}\n.ssa-tool:hover {\n  border-color: var(--accent, #3d84c6);\n}\n.ssa-tool.primary {\n  background: var(--accent, #2f6da8);\n  border-color: var(--accent, #2f6da8);\n  color: #fff;\n}\n.ssa-markdown {\n  margin-top: 12px;\n  line-height: 1.9;\n  overflow-x: auto;\n}\n.ssa-markdown h1,\n.ssa-markdown h2,\n.ssa-markdown h3 {\n  color: var(--heading, #14344b);\n  margin: 1.2em 0 0.4em;\n}\n.ssa-markdown h1:first-child,\n.ssa-markdown h2:first-child,\n.ssa-markdown h3:first-child {\n  margin-top: 0;\n}\n.ssa-markdown ul,\n.ssa-markdown ol {\n  padding-inline-start: 24px;\n}\n.ssa-markdown table {\n  border-collapse: collapse;\n  width: 100%;\n  margin: 12px 0;\n}\n.ssa-markdown th,\n.ssa-markdown td {\n  border: 1px solid var(--border, #c6d2dd);\n  padding: 6px 10px;\n  text-align: start;\n}\n.ssa-markdown th {\n  background: rgb(61 132 198 / 8%);\n}\n.ssa-markdown pre {\n  background: var(--surface-muted, #f4f7fa);\n  padding: 12px;\n  border-radius: 8px;\n  white-space: pre-wrap;\n}\n.ssa-markdown blockquote {\n  border-inline-start: 4px solid var(--accent, #7aa7c7);\n  margin: 8px 0;\n  padding: 4px 14px;\n  color: var(--text-muted, #44566b);\n}\n.ssa-markdown code {\n  background: var(--surface-muted, #f0f4f8);\n  padding: 1px 5px;\n  border-radius: 4px;\n  font-size: 0.9em;\n}\n.ssa-markdown hr {\n  border: none;\n  border-top: 1px solid var(--border, #dbe4ec);\n}\n/*# sourceMappingURL=smart-study-assistant.component.css.map */\n"] }]
+    args: [{ selector: "app-smart-study-assistant", imports: [FormsModule, SafeHtmlPipe, PageFeedbackComponent], template: `<section class="ssa-page">\r
+  <header class="ssa-header">\r
+    <h1>\u{1F916} \u0627\u0644\u0645\u0633\u0627\u0639\u062F \u0627\u0644\u0630\u0643\u064A \u0644\u0644\u062F\u0631\u0627\u0633\u0629</h1>\r
+    <p>\u0627\u0631\u0641\u0639 \u0635\u0648\u0631\u0627\u064B \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF\u060C \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u0648\u0627\u0644\u0648\u062D\u062F\u0629 \u0648\u0627\u0644\u062F\u0631\u0633\u060C \u062B\u0645 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u2014 \u0648\u0633\u064A\u062D\u0644\u0644 Gemini \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0648\u064A\u0646\u0634\u0626 \u0627\u0644\u0646\u062A\u064A\u062C\u0629\u060C \u0648\u064A\u0645\u0643\u0646\u0643 \u0625\u0636\u0627\u0641\u062A\u0647\u0627 \u0645\u0628\u0627\u0634\u0631\u0629 \u0644\u0644\u0645\u0646\u0647\u062C \u0623\u0648 \u0627\u0644\u0643\u0648\u064A\u0632\u0627\u062A \u0623\u0648 \u0627\u0644\u0648\u0627\u062C\u0628\u0627\u062A.</p>\r
+  </header>\r
+\r
+  <app-page-feedback [ok]="message()" [error]="error()" />\r
+\r
+  <div class="ssa-card">\r
+    <h2>1\uFE0F\u20E3 \u062A\u062D\u062F\u064A\u062F \u0627\u0644\u0633\u064A\u0627\u0642</h2>\r
+    <div class="ssa-grid">\r
+      <label>\r
+        <span>\u0627\u0644\u0643\u0648\u0631\u0633</span>\r
+        <select [(ngModel)]="selectedCourseId" (ngModelChange)="onCourseModelChange($event)">\r
+          <option value="">\u2014 \u0627\u062E\u062A\u0631 \u0627\u0644\u0643\u0648\u0631\u0633 \u2014</option>\r
+          @for (course of courses(); track course.id) {\r
+            <option [value]="course.id">{{ course.title }}</option>\r
+          }\r
+        </select>\r
+      </label>\r
+\r
+      <label>\r
+        <span>\u0627\u0644\u0648\u062D\u062F\u0629</span>\r
+        <select [(ngModel)]="selectedUnitId" (ngModelChange)="onUnitModelChange($event)" [disabled]="!courseId()">\r
+          <option value="">\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014</option>\r
+          @for (unit of units(); track unit.id) {\r
+            <option [value]="unit.id">{{ unit.title }}</option>\r
+          }\r
+        </select>\r
+      </label>\r
+\r
+      <label>\r
+        <span>\u0627\u0644\u062F\u0631\u0633</span>\r
+        <select [(ngModel)]="selectedLessonId" [disabled]="!unitId()">\r
+          <option value="">\u2014 \u0627\u0644\u0643\u0644 / \u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014</option>\r
+          @for (lesson of lessons(); track lesson.id) {\r
+            <option [value]="lesson.id">{{ lesson.title }}</option>\r
+          }\r
+        </select>\r
+      </label>\r
+    </div>\r
+  </div>\r
+\r
+  <div class="ssa-card">\r
+    <h2>2\uFE0F\u20E3 \u0627\u0643\u062A\u0628 \u0648\u0635\u0641\u0627\u064B \u0646\u0635\u064A\u0627\u064B (\u0628\u062F\u064A\u0644 \u0639\u0646 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A)</h2>\r
+    <label class="ssa-prompt-label">\r
+      <textarea [(ngModel)]="prompt" rows="5" class="ssa-prompt"\r
+                placeholder="\u0645\u062B\u0627\u0644: \u0627\u0643\u062A\u0628 \u0644\u064A \u0645\u0644\u062E\u0635\u0627\u064B \u0639\u0646 \u062F\u0631\u0633 \u0627\u0644\u0643\u0633\u0648\u0631 \u0627\u0644\u0639\u0634\u0631\u064A\u0629 \u0644\u0644\u0635\u0641 \u0627\u0644\u062E\u0627\u0645\u0633\u060C \u064A\u0634\u0631\u062D \u062A\u062D\u0648\u064A\u0644 \u0627\u0644\u0643\u0633\u0648\u0631 \u0625\u0644\u0649 \u0643\u0633\u0648\u0631 \u0639\u0634\u0631\u064A\u0629 \u0645\u0639 \u0623\u0645\u062B\u0644\u0629 \u0645\u062D\u0644\u0648\u0644\u0629\u060C \u0648\u0623\u0646\u0634\u0626 \u0643\u0648\u064A\u0632\u064B\u0627 \u0645\u0646 5 \u0623\u0633\u0626\u0644\u0629 \u0639\u0646 \u0630\u0644\u0643."></textarea>\r
+      <small>\u064A\u0645\u0643\u0646\u0643 \u0627\u0644\u0627\u0643\u062A\u0641\u0627\u0621 \u0628\u0643\u062A\u0627\u0628\u0629 \u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u0646\u0635\u064A\u0627\u064B \u0628\u062F\u0644\u0627\u064B \u0645\u0646 \u0631\u0641\u0639 \u0635\u0648\u0631 \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u2014 \u0623\u0648 \u0627\u0644\u062C\u0645\u0639 \u0628\u064A\u0646 \u0627\u0644\u0627\u062B\u0646\u064A\u0646.</small>\r
+    </label>\r
+  </div>\r
+\r
+  <div class="ssa-card">\r
+    <h2>3\uFE0F\u20E3 \u0631\u0641\u0639 \u0627\u0644\u0645\u0644\u0641\u0627\u062A (\u0627\u062E\u062A\u064A\u0627\u0631\u064A \u2014 \u062D\u062A\u0649 10 \u0645\u0644\u0641\u0627\u062A)</h2>\r
+    <div class="ssa-dropzone"\r
+         (drop)="onDrop($event)" (dragover)="onDragOver($event)"\r
+         (click)="openFilePicker()">\r
+      <input #fileInput type="file" accept=".pdf,.jpg,.jpeg,.png" multiple (change)="onFilesChosen($event)" hidden>\r
+      @if (files().length > 0) {\r
+        <div class="ssa-files">\r
+          @for (entry of files(); track $index) {\r
+            <div class="ssa-file">\r
+              @if (entry.preview) {\r
+                <img [src]="entry.preview" alt="\u0645\u0639\u0627\u064A\u0646\u0629">\r
+              } @else {\r
+                <span class="ssa-file-icon">\u{1F4C4}</span>\r
+              }\r
+              <div>\r
+                <strong>{{ entry.file.name }}</strong>\r
+                <small>{{ (entry.file.size / 1024 / 1024).toFixed(2) }} \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A</small>\r
+              </div>\r
+              <button type="button" class="ssa-remove" (click)="removeFile($index); $event.stopPropagation()">\u2715</button>\r
+            </div>\r
+          }\r
+          <button type="button" class="ssa-tool" (click)="clearFiles(); $event.stopPropagation()">\u{1F5D1}\uFE0F \u0645\u0633\u062D \u0627\u0644\u0643\u0644</button>\r
+        </div>\r
+        <small class="ssa-addmore">\u0627\u0646\u0642\u0631 \u0623\u0648 \u0623\u0641\u0644\u062A \u0644\u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0632\u064A\u062F \u0645\u0646 \u0627\u0644\u0645\u0644\u0641\u0627\u062A</small>\r
+      } @else {\r
+        <div class="ssa-dropzone-hint">\r
+          <span class="ssa-dropzone-icon">\u2B06\uFE0F</span>\r
+          <p><strong>\u0627\u0633\u062D\u0628 \u0648\u0623\u0641\u0644\u062A</strong> \u0635\u0648\u0631 \u0623\u0648 \u0645\u0644\u0641\u0627\u062A PDF \u0647\u0646\u0627</p>\r
+          <small>\u0623\u0648 \u0627\u0646\u0642\u0631 \u0644\u0644\u0627\u062E\u062A\u064A\u0627\u0631 \u2014 JPG / PNG / PDF \u062D\u062A\u0649 25 \u0645\u064A\u062C\u0627\u0628\u0627\u064A\u062A \u0644\u0643\u0644 \u0645\u0644\u0641</small>\r
+        </div>\r
+      }\r
+    </div>\r
+  </div>\r
+\r
+  <div class="ssa-card">\r
+    <h2>4\uFE0F\u20E3 \u0627\u062E\u062A\u0631 \u0627\u0644\u0625\u062C\u0631\u0627\u0621</h2>\r
+    <div class="ssa-actions">\r
+      @for (item of actions; track item.key) {\r
+        <button type="button"\r
+                class="ssa-action"\r
+                [disabled]="loading()"\r
+                (click)="runAction(item.key)">\r
+          <span class="ssa-action-icon">{{ item.icon }}</span>\r
+          <strong>{{ item.label }}</strong>\r
+          <small>{{ item.hint }}</small>\r
+          @if (loading() && activeAction() === item.key) {\r
+            <span class="ssa-spinner" aria-hidden="true"></span>\r
+          }\r
+        </button>\r
+      }\r
+    </div>\r
+    @if (loading()) {\r
+      <p class="ssa-loading">\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062A\u062D\u0644\u064A\u0644 \u0628\u0648\u0627\u0633\u0637\u0629 Gemini... \u0642\u062F \u064A\u0633\u062A\u063A\u0631\u0642 \u0630\u0644\u0643 \u0644\u062D\u0638\u0627\u062A\u060C \u0644\u0627 \u062A\u063A\u0644\u0642 \u0627\u0644\u0635\u0641\u062D\u0629.</p>\r
+    }\r
+  </div>\r
+\r
+  @if (resultMarkdown()) {\r
+    <div class="ssa-card ssa-result">\r
+      <div class="ssa-result-head">\r
+        <h2>{{ resultTitle() || '\u0627\u0644\u0646\u062A\u064A\u062C\u0629' }}</h2>\r
+        <div class="ssa-result-tools">\r
+          <button type="button" class="ssa-tool" (click)="copyResult()">\u{1F4CB} \u0646\u0633\u062E \u0627\u0644\u0646\u0635</button>\r
+          <button type="button" class="ssa-tool primary" (click)="downloadPdf()">\u2B07\uFE0F \u062A\u062D\u0645\u064A\u0644 \u0643\u0640 PDF</button>\r
+        </div>\r
+      </div>\r
+\r
+      @if (hasQuestions() || hasUnits()) {\r
+        <div class="ssa-apply">\r
+          <span>\u0623\u0636\u0641 \u0627\u0644\u0646\u062A\u064A\u062C\u0629 \u0625\u0644\u0649:</span>\r
+          @if (hasUnits()) {\r
+            <button type="button" class="ssa-tool"\r
+                    [disabled]="applying() !== null"\r
+                    (click)="applyTo('tree')">\r
+              {{ applying() === 'tree' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0636\u0627\u0641\u0629...' : '\u{1F333} \u0641\u0647\u0631\u0633 \u0627\u0644\u0645\u0627\u062F\u0629 (\u0648\u062D\u062F\u0627\u062A \u0648\u062F\u0631\u0648\u0633)' }}\r
+            </button>\r
+          }\r
+          @if (hasQuestions()) {\r
+            <button type="button" class="ssa-tool"\r
+                    [disabled]="applying() !== null"\r
+                    (click)="applyTo('bank')">\r
+              {{ applying() === 'bank' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638...' : '\u{1F5C3}\uFE0F \u0628\u0646\u0643 \u0627\u0644\u0623\u0633\u0626\u0644\u0629' }}\r
+            </button>\r
+            <button type="button" class="ssa-tool"\r
+                    [disabled]="applying() !== null"\r
+                    (click)="applyTo('quiz')">\r
+              {{ applying() === 'quiz' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621...' : '\u2753 \u0643\u0648\u064A\u0632 \u062C\u062F\u064A\u062F' }}\r
+            </button>\r
+            <button type="button" class="ssa-tool"\r
+                    [disabled]="applying() !== null"\r
+                    (click)="applyTo('assignment')">\r
+              {{ applying() === 'assignment' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u0625\u0646\u0634\u0627\u0621...' : '\u{1F4DA} \u0648\u0627\u062C\u0628 \u062C\u062F\u064A\u062F' }}\r
+            </button>\r
+            <button type="button" class="ssa-tool"\r
+                    [disabled]="applying() !== null"\r
+                    (click)="applyTo('exam')">\r
+              {{ applying() === 'exam' ? '\u23F3 \u062C\u0627\u0631\u064D \u0627\u0644\u062D\u0641\u0638...' : '\u{1F4DD} \u0623\u0633\u0626\u0644\u0629 \u0627\u062E\u062A\u0628\u0627\u0631' }}\r
+            </button>\r
+          }\r
+        </div>\r
+      }\r
+\r
+      <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>\r
+    </div>\r
+  }\r
+</section>\r
+`, styles: ["/* src/app/pages/teacher/smart-study-assistant/smart-study-assistant.component.css */\n.ssa-page {\n  max-width: 960px;\n  margin: 0 auto;\n  display: grid;\n  gap: 18px;\n  padding-bottom: 48px;\n}\n.ssa-header h1 {\n  margin: 0 0 6px;\n  font-size: 1.5rem;\n}\n.ssa-header p {\n  margin: 0;\n  color: var(--text-muted, #5b6b7c);\n  font-size: 0.95rem;\n}\n.ssa-card {\n  background: var(--surface, #fff);\n  border: 1px solid var(--border, #dbe4ec);\n  border-radius: 14px;\n  padding: 18px 20px;\n  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);\n}\n.ssa-card h2 {\n  margin: 0 0 14px;\n  font-size: 1.05rem;\n  color: var(--heading, #14344b);\n}\n.ssa-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));\n  gap: 12px;\n}\n.ssa-grid label {\n  display: grid;\n  gap: 6px;\n  font-size: 0.85rem;\n  color: var(--text-muted, #5b6b7c);\n}\n.ssa-grid select {\n  padding: 9px 12px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 9px;\n  background: var(--input-bg, #fff);\n  font: inherit;\n  color: var(--text, #1c2434);\n}\n.ssa-grid select option {\n  background: var(--bg-elevated, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-dropzone {\n  border: 2px dashed var(--border, #b8c8d8);\n  border-radius: 12px;\n  padding: 26px 16px;\n  text-align: center;\n  cursor: pointer;\n  transition: border-color 0.15s ease, background 0.15s ease;\n}\n.ssa-dropzone:hover {\n  border-color: var(--accent, #3d84c6);\n  background: rgb(61 132 198 / 4%);\n}\n.ssa-dropzone-icon {\n  font-size: 1.8rem;\n}\n.ssa-dropzone-hint p {\n  margin: 6px 0 2px;\n}\n.ssa-dropzone-hint small {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-files {\n  display: grid;\n  gap: 10px;\n  width: 100%;\n  text-align: start;\n}\n.ssa-addmore {\n  display: block;\n  margin-top: 10px;\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-apply {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 8px;\n  margin-top: 12px;\n  padding: 10px 12px;\n  background: rgb(61 132 198 / 6%);\n  border-radius: 10px;\n  font-size: 0.9rem;\n}\n.ssa-apply span {\n  font-weight: 600;\n}\n.ssa-file {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  text-align: start;\n}\n.ssa-file img {\n  width: 72px;\n  height: 72px;\n  object-fit: cover;\n  border-radius: 10px;\n  border: 1px solid var(--border, #dbe4ec);\n}\n.ssa-file-icon {\n  font-size: 2.2rem;\n}\n.ssa-file div {\n  flex: 1;\n  display: grid;\n}\n.ssa-file small {\n  color: var(--text-muted, #7a8a9a);\n}\n.ssa-remove {\n  border: 1px solid var(--border, #dbe4ec);\n  background: transparent;\n  color: #b3413c;\n  border-radius: 8px;\n  padding: 6px 12px;\n  cursor: pointer;\n  font: inherit;\n}\n.ssa-remove:hover {\n  background: #fdecea;\n}\n.ssa-actions {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));\n  gap: 12px;\n}\n.ssa-action {\n  position: relative;\n  display: grid;\n  gap: 4px;\n  justify-items: start;\n  padding: 14px 16px;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 12px;\n  background: var(--surface, #fff);\n  cursor: pointer;\n  text-align: start;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    transform 0.1s ease,\n    box-shadow 0.15s ease;\n}\n.ssa-action:hover:not(:disabled) {\n  border-color: var(--accent, #3d84c6);\n  box-shadow: 0 4px 12px rgb(61 132 198 / 15%);\n  transform: translateY(-1px);\n}\n.ssa-action:disabled {\n  opacity: 0.55;\n  cursor: wait;\n}\n.ssa-action-icon {\n  font-size: 1.4rem;\n}\n.ssa-action small {\n  color: var(--text-muted, #7a8a9a);\n  font-size: 0.78rem;\n  line-height: 1.5;\n}\n.ssa-spinner {\n  position: absolute;\n  inset-inline-end: 14px;\n  top: 14px;\n  width: 16px;\n  height: 16px;\n  border: 2px solid var(--border, #c6d2dd);\n  border-top-color: var(--accent, #3d84c6);\n  border-radius: 50%;\n  animation: ssa-spin 0.8s linear infinite;\n}\n@keyframes ssa-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.ssa-loading {\n  margin: 14px 0 0;\n  color: var(--accent, #2f6da8);\n  font-size: 0.9rem;\n}\n.ssa-result-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n}\n.ssa-result-head h2 {\n  margin: 0;\n}\n.ssa-result-tools {\n  display: flex;\n  gap: 8px;\n}\n.ssa-tool {\n  border: 1px solid var(--border, #c6d2dd);\n  background: var(--surface, #fff);\n  border-radius: 9px;\n  padding: 7px 14px;\n  font: inherit;\n  cursor: pointer;\n}\n.ssa-tool:hover {\n  border-color: var(--accent, #3d84c6);\n}\n.ssa-tool.primary {\n  background: var(--accent, #2f6da8);\n  border-color: var(--accent, #2f6da8);\n  color: #fff;\n}\n.ssa-markdown {\n  margin-top: 12px;\n  line-height: 1.9;\n  overflow-x: auto;\n}\n.ssa-markdown h1,\n.ssa-markdown h2,\n.ssa-markdown h3 {\n  color: var(--heading, #14344b);\n  margin: 1.2em 0 0.4em;\n}\n.ssa-markdown h1:first-child,\n.ssa-markdown h2:first-child,\n.ssa-markdown h3:first-child {\n  margin-top: 0;\n}\n.ssa-markdown ul,\n.ssa-markdown ol {\n  padding-inline-start: 24px;\n}\n.ssa-markdown table {\n  border-collapse: collapse;\n  width: 100%;\n  margin: 12px 0;\n}\n.ssa-markdown th,\n.ssa-markdown td {\n  border: 1px solid var(--border, #c6d2dd);\n  padding: 6px 10px;\n  text-align: start;\n}\n.ssa-markdown th {\n  background: rgb(61 132 198 / 8%);\n}\n.ssa-markdown pre {\n  background: var(--surface-muted, #f4f7fa);\n  padding: 12px;\n  border-radius: 8px;\n  white-space: pre-wrap;\n}\n.ssa-markdown blockquote {\n  border-inline-start: 4px solid var(--accent, #7aa7c7);\n  margin: 8px 0;\n  padding: 4px 14px;\n  color: var(--text-muted, #44566b);\n}\n.ssa-markdown code {\n  background: var(--surface-muted, #f0f4f8);\n  padding: 1px 5px;\n  border-radius: 4px;\n  font-size: 0.9em;\n}\n.ssa-markdown hr {\n  border: none;\n  border-top: 1px solid var(--border, #dbe4ec);\n}\n.ssa-prompt-label {\n  display: grid;\n  gap: 0.4rem;\n}\n.ssa-prompt {\n  width: 100%;\n  resize: vertical;\n  min-height: 110px;\n  padding: 0.7rem 0.9rem;\n  border: 1px solid var(--border, #c6d2dd);\n  border-radius: 10px;\n  font: inherit;\n  line-height: 1.7;\n  background: var(--surface, #fff);\n  color: var(--text, #1c2434);\n}\n.ssa-prompt:focus {\n  outline: 2px solid #0f766e;\n  outline-offset: 1px;\n}\n/*# sourceMappingURL=smart-study-assistant.component.css.map */\n"] }]
   }], () => [], { fileInput: [{ type: ViewChild, args: ["fileInput", { isSignal: true }] }] });
 })();
 (() => {
@@ -109896,7 +110693,7 @@ var SmartStudyAssistantComponent = class _SmartStudyAssistantComponent {
 })();
 
 // src/app/pages/teacher/teacher-question-bank.component.ts
-var _forTrack049 = ($index, $item) => $item.id;
+var _forTrack050 = ($index, $item) => $item.id;
 var arrowFn024 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn115 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn212 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
@@ -109946,7 +110743,7 @@ function TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template(rf, c
 function TeacherQuestionBankComponent_For_42_Conditional_10_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "ul");
-    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template, 5, 6, "li", null, _forTrack049);
+    \u0275\u0275repeaterCreate(1, TeacherQuestionBankComponent_For_42_Conditional_10_For_2_Template, 5, 6, "li", null, _forTrack050);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -110227,7 +111024,7 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
         \u0275\u0275text(39);
         \u0275\u0275pipe(40, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(41, TeacherQuestionBankComponent_For_42_Template, 13, 16, "div", 14, _forTrack049, false, TeacherQuestionBankComponent_ForEmpty_43_Template, 3, 3, "p", 1);
+        \u0275\u0275repeaterCreate(41, TeacherQuestionBankComponent_For_42_Template, 13, 16, "div", 14, _forTrack050, false, TeacherQuestionBankComponent_ForEmpty_43_Template, 3, 3, "p", 1);
         \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
@@ -110364,8 +111161,8 @@ var TeacherQuestionBankComponent = class _TeacherQuestionBankComponent {
 })();
 
 // src/app/pages/teacher/teacher-exams.component.ts
-var _c041 = (a0) => ({ count: a0 });
-var _forTrack050 = ($index, $item) => $item.id;
+var _c042 = (a0) => ({ count: a0 });
+var _forTrack051 = ($index, $item) => $item.id;
 var arrowFn025 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
 var arrowFn116 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn213 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
@@ -110856,7 +111653,7 @@ function TeacherExamsComponent_Conditional_105_Template(rf, ctx) {
     \u0275\u0275text(9);
     \u0275\u0275pipe(10, "t");
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(11, TeacherExamsComponent_Conditional_105_For_12_Template, 24, 17, "article", 59, _forTrack050, false, TeacherExamsComponent_Conditional_105_ForEmpty_13_Template, 3, 3, "p", 35);
+    \u0275\u0275repeaterCreate(11, TeacherExamsComponent_Conditional_105_For_12_Template, 24, 17, "article", 59, _forTrack051, false, TeacherExamsComponent_Conditional_105_ForEmpty_13_Template, 3, 3, "p", 35);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -111494,7 +112291,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275conditionalCreate(84, TeacherExamsComponent_Conditional_84_Template, 3, 3, "button", 27);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(85, "div", 28);
-        \u0275\u0275repeaterCreate(86, TeacherExamsComponent_For_87_Template, 12, 13, "label", 29, _forTrack050, false, TeacherExamsComponent_ForEmpty_88_Template, 3, 3, "p", 30);
+        \u0275\u0275repeaterCreate(86, TeacherExamsComponent_For_87_Template, 12, 13, "label", 29, _forTrack051, false, TeacherExamsComponent_ForEmpty_88_Template, 3, 3, "p", 30);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(89, "div", 31)(90, "button", 32);
         \u0275\u0275text(91);
@@ -111508,7 +112305,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275text(99);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(100, "div", 33);
-        \u0275\u0275repeaterCreate(101, TeacherExamsComponent_For_102_Template, 24, 26, "article", 34, _forTrack050, false, TeacherExamsComponent_ForEmpty_103_Template, 3, 3, "p", 35);
+        \u0275\u0275repeaterCreate(101, TeacherExamsComponent_For_102_Template, 24, 26, "article", 34, _forTrack051, false, TeacherExamsComponent_ForEmpty_103_Template, 3, 3, "p", 35);
         \u0275\u0275elementEnd()();
         \u0275\u0275conditionalCreate(104, TeacherExamsComponent_Conditional_104_Template, 2, 7, "app-assessment-student-links-dialog", 36);
         \u0275\u0275conditionalCreate(105, TeacherExamsComponent_Conditional_105_Template, 14, 8, "section", 4);
@@ -111591,7 +112388,7 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
         \u0275\u0275advance(2);
         \u0275\u0275classProp("empty", !ctx.selectedCount());
         \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(80, 100, "teacher.exams.selectedCount", \u0275\u0275pureFunction1(109, _c041, ctx.selectedCount())), " ");
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(80, 100, "teacher.exams.selectedCount", \u0275\u0275pureFunction1(109, _c042, ctx.selectedCount())), " ");
         \u0275\u0275advance(3);
         \u0275\u0275twoWayProperty("ngModel", ctx.bankSearch);
         \u0275\u0275property("placeholder", \u0275\u0275pipeBind1(83, 103, "teacher.exams.searchBank"));
@@ -111991,11 +112788,11 @@ var TeacherExamsComponent = class _TeacherExamsComponent {
 })();
 
 // src/app/pages/teacher/teacher-videos.component.ts
-var _c042 = (a0) => ({ percent: a0 });
-var _c129 = (a0) => ["/courses", a0];
+var _c043 = (a0) => ({ percent: a0 });
+var _c130 = (a0) => ["/courses", a0];
 var _c218 = (a0) => ({ video: a0 });
 var _c310 = (a0) => [a0];
-var _forTrack051 = ($index, $item) => $item.id;
+var _forTrack052 = ($index, $item) => $item.id;
 var arrowFn026 = (ctx, view) => (c) => {
   \u0275\u0275restoreView(view);
   const ctx_r0 = \u0275\u0275nextContext();
@@ -112056,7 +112853,7 @@ function TeacherVideosComponent_Conditional_53_Conditional_47_Template(rf, ctx) 
     \u0275\u0275advance(2);
     \u0275\u0275styleProp("width", ctx_r0.uploadProgress(), "%");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c042, ctx_r0.uploadProgress() ?? 0)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c043, ctx_r0.uploadProgress() ?? 0)));
   }
 }
 function TeacherVideosComponent_Conditional_53_For_89_Conditional_10_Template(rf, ctx) {
@@ -112356,7 +113153,7 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275pipe(86, "t");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(87, "div", 51);
-    \u0275\u0275repeaterCreate(88, TeacherVideosComponent_Conditional_53_For_89_Template, 19, 14, "article", 52, _forTrack051, false, TeacherVideosComponent_Conditional_53_ForEmpty_90_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(88, TeacherVideosComponent_Conditional_53_For_89_Template, 19, 14, "article", 52, _forTrack052, false, TeacherVideosComponent_Conditional_53_ForEmpty_90_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -112415,7 +113212,7 @@ function TeacherVideosComponent_Conditional_53_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275property("disabled", ctx_r0.uploading() || !ctx_r0.lessonVideoFile());
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(54, 80, "videos.uploadProgress", \u0275\u0275pureFunction1(108, _c042, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(55, 83, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
+    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(54, 80, "videos.uploadProgress", \u0275\u0275pureFunction1(108, _c043, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(55, 83, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(60, 85, "videos.lessonList"));
     \u0275\u0275advance(3);
@@ -112517,7 +113314,7 @@ function TeacherVideosComponent_Conditional_54_For_24_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(ctx_r0.formatDate(video_r9.createdAtUtc));
     \u0275\u0275advance(2);
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(15, _c129, video_r9.courseId))("queryParams", \u0275\u0275pureFunction1(17, _c218, video_r9.id));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(15, _c130, video_r9.courseId))("queryParams", \u0275\u0275pureFunction1(17, _c218, video_r9.id));
     \u0275\u0275advance();
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(15, 11, "videos.openStudentView"), " ");
     \u0275\u0275advance(3);
@@ -112580,7 +113377,7 @@ function TeacherVideosComponent_Conditional_54_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(21, TeacherVideosComponent_Conditional_54_Conditional_21_Template, 3, 3, "button", 69);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(22, "div", 51);
-    \u0275\u0275repeaterCreate(23, TeacherVideosComponent_Conditional_54_For_24_Template, 19, 19, "article", 52, _forTrack051, false, TeacherVideosComponent_Conditional_54_ForEmpty_25_Template, 3, 3, "p", 53);
+    \u0275\u0275repeaterCreate(23, TeacherVideosComponent_Conditional_54_For_24_Template, 19, 19, "article", 52, _forTrack052, false, TeacherVideosComponent_Conditional_54_ForEmpty_25_Template, 3, 3, "p", 53);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -112641,7 +113438,7 @@ function TeacherVideosComponent_Conditional_55_Conditional_32_Template(rf, ctx) 
     \u0275\u0275advance(2);
     \u0275\u0275styleProp("width", ctx_r0.uploadProgress(), "%");
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c042, ctx_r0.uploadProgress() ?? 0)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(5, 3, "videos.uploadProgress", \u0275\u0275pureFunction1(6, _c043, ctx_r0.uploadProgress() ?? 0)));
   }
 }
 function TeacherVideosComponent_Conditional_55_For_64_Template(rf, ctx) {
@@ -112866,7 +113663,7 @@ function TeacherVideosComponent_Conditional_55_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275property("disabled", ctx_r0.uploading() || !ctx_r0.solutionVideoFile());
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(39, 47, "videos.uploadProgress", \u0275\u0275pureFunction1(65, _c042, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(40, 50, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
+    \u0275\u0275textInterpolate1(" ", ctx_r0.uploadProgress() != null ? \u0275\u0275pipeBind2(39, 47, "videos.uploadProgress", \u0275\u0275pureFunction1(65, _c043, ctx_r0.uploadProgress() ?? 0)) : \u0275\u0275pipeBind1(40, 50, ctx_r0.uploading() ? "videos.uploadingFile" : "videos.attachFile"), " ");
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(45, 52, "videos.solutionList"));
     \u0275\u0275advance(3);
@@ -113039,7 +113836,7 @@ function TeacherVideosComponent_Conditional_56_Conditional_17_Template(rf, ctx) 
     \u0275\u0275pipe(46, "t");
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(47, "tbody");
-    \u0275\u0275repeaterCreate(48, TeacherVideosComponent_Conditional_56_Conditional_17_For_49_Template, 16, 8, "tr", null, _forTrack051, false, TeacherVideosComponent_Conditional_56_Conditional_17_ForEmpty_50_Template, 4, 3, "tr");
+    \u0275\u0275repeaterCreate(48, TeacherVideosComponent_Conditional_56_Conditional_17_For_49_Template, 16, 8, "tr", null, _forTrack052, false, TeacherVideosComponent_Conditional_56_Conditional_17_ForEmpty_50_Template, 4, 3, "tr");
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -114523,7 +115320,7 @@ var TeacherVideosComponent = class _TeacherVideosComponent {
 })();
 
 // src/app/pages/teacher/teacher-materials.component.ts
-var _forTrack052 = ($index, $item) => $item.id;
+var _forTrack053 = ($index, $item) => $item.id;
 var arrowFn027 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 var arrowFn118 = (ctx, view) => (u2) => ({ value: u2.id, label: u2.title });
 var arrowFn215 = (ctx, view) => (l) => ({ value: l.id, label: l.title });
@@ -114614,7 +115411,7 @@ function TeacherMaterialsComponent_Conditional_78_For_2_Template(rf, ctx) {
 function TeacherMaterialsComponent_Conditional_78_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 25);
-    \u0275\u0275repeaterCreate(1, TeacherMaterialsComponent_Conditional_78_For_2_Template, 13, 12, "div", 27, _forTrack052);
+    \u0275\u0275repeaterCreate(1, TeacherMaterialsComponent_Conditional_78_For_2_Template, 13, 12, "div", 27, _forTrack053);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -115016,7 +115813,7 @@ var TeacherMaterialsComponent = class _TeacherMaterialsComponent {
         \u0275\u0275text(68);
         \u0275\u0275pipe(69, "t");
         \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(70, TeacherMaterialsComponent_For_71_Template, 2, 2, "option", 23, _forTrack052);
+        \u0275\u0275repeaterCreate(70, TeacherMaterialsComponent_For_71_Template, 2, 2, "option", 23, _forTrack053);
         \u0275\u0275elementEnd();
         \u0275\u0275controlCreate();
         \u0275\u0275elementEnd();
@@ -115141,149 +115938,149 @@ var TeacherMaterialsComponent = class _TeacherMaterialsComponent {
       SearchableSelectComponent,
       TranslatePipe,
       MaterialViewerComponent
-    ], template: `<div class="panel-page">
-  <header class="videos-head">
-    <h2>{{ 'materials.title' | t }}</h2>
-    <p class="meta">{{ 'materials.subtitle' | t }}</p>
-  </header>
-
-  <app-page-feedback [ok]="info()" [error]="error()" />
-
-  <section class="block">
-    <div class="card-head">
-      <h3>{{ 'materials.upload' | t }}</h3>
-      <p class="meta">{{ 'materials.uploadHint' | t }}</p>
-    </div>
-
-    <form class="upload-form" (ngSubmit)="attachMaterial()">
-      <div class="field-grid">
-        <label>
-          {{ 'common.course' | t }}
-          <app-searchable-select
-            [(ngModel)]="selectedCourseId"
-            name="materialCourseId"
-            (ngModelChange)="onCourseChange()"
-            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
-          />
-        </label>
-        <label>
-          {{ 'common.unit' | t }}
-          <app-searchable-select
-            [(ngModel)]="selectedUnitId"
-            name="materialUnitId"
-            (ngModelChange)="onUnitChange()"
-            [emptyLabel]="'common.selectUnit' | t"
-            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"
-          />
-        </label>
-        <label>
-          {{ 'common.lesson' | t }}
-          <app-searchable-select
-            [(ngModel)]="selectedLessonId"
-            name="materialLessonId"
-            [emptyLabel]="'materials.optionalLesson' | t"
-            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
-          />
-        </label>
-        <label>
-          {{ 'common.title' | t }}
-          <input [(ngModel)]="materialTitle" name="materialTitle" [placeholder]="'materials.optionalTitle' | t" />
-        </label>
-      </div>
-
-      <div class="source-row">
-        <div class="source-file">
-          <span class="source-file-label">{{ 'materials.file' | t }}</span>
-          <div class="source-file-row">
-            <label class="file-btn" [class.disabled]="uploading()">
-              {{ 'materials.chooseFile' | t }}
-              <input
-                type="file"
-                accept="application/pdf,image/png,image/jpeg,image/webp,image/gif,audio/*"
-                hidden
-                (change)="onFileSelected($event)"
-                [disabled]="uploading()"
-              />
-            </label>
-            @if (file(); as selected) {
-              <span class="file-name">{{ selected.name }}</span>
-            }
-          </div>
-          <p class="meta">{{ 'materials.allowedTypes' | t }}</p>
-        </div>
-
-        <button type="submit" [disabled]="uploading()">
-          {{ (uploading() ? 'common.loading' : 'materials.upload') | t }}
-        </button>
-      </div>
-    </form>
-  </section>
-
-  <section class="block">
-    <div class="card-head">
-      <h3>{{ 'materials.list' | t }}</h3>
-      <span class="count-pill">{{ filteredMaterials().length }}</span>
-    </div>
-
-    <div class="field-grid">
-      <label>
-        {{ 'common.course' | t }}
-        <select [(ngModel)]="filterCourseId" name="materialFilterCourse">
-          <option value="">{{ 'common.all' | t }}</option>
-          @for (course of courses(); track course.id) {
-            <option [value]="course.id">{{ courseLabel(course) }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        {{ 'materials.search' | t }}
-        <input [(ngModel)]="filterSearch" name="materialSearch" [placeholder]="'materials.searchPlaceholder' | t" />
-      </label>
-    </div>
-
-    @if (!filteredMaterials().length) {
-      <p class="meta">{{ 'materials.empty' | t }}</p>
-    } @else {
-      <div class="material-list">
-        @for (material of filteredMaterials(); track material.id) {
-          <div class="material-row">
-            <button type="button" class="material-main" (click)="openPreview(material)">
-              <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>
-              <p class="meta">
-                {{ material.courseTitle }} \xB7 {{ scopeLabel(material) }}
-                \xB7 {{ material.fileName }} ({{ formatBytes(material.sizeBytes) }})
-              </p>
-            </button>
-            <div class="material-actions">
-              <button type="button" class="ghost-btn small-btn" (click)="openPreview(material)">
-                {{ 'materials.preview' | t }}
-              </button>
-              <button type="button" class="ghost-btn small-btn danger" (click)="deleteMaterial(material)">
-                {{ 'common.delete' | t }}
-              </button>
-            </div>
-          </div>
-        }
-      </div>
-    }
-  </section>
-
-  @if (preview(); as item) {
-    <div class="preview-overlay" (click)="closePreview()">
-      <div class="preview-card" (click)="$event.stopPropagation()">
-        <header class="preview-head">
-          <h3>{{ item.title }}</h3>
-          <button type="button" class="ghost-btn small-btn" (click)="closePreview()">{{ 'common.close' | t }}</button>
-        </header>
-        <app-material-viewer
-          [materialId]="item.id"
-          [kind]="item.kind"
-          [title]="item.title"
-        />
-      </div>
-    </div>
-  }
-</div>
+    ], template: `<div class="panel-page">\r
+  <header class="videos-head">\r
+    <h2>{{ 'materials.title' | t }}</h2>\r
+    <p class="meta">{{ 'materials.subtitle' | t }}</p>\r
+  </header>\r
+\r
+  <app-page-feedback [ok]="info()" [error]="error()" />\r
+\r
+  <section class="block">\r
+    <div class="card-head">\r
+      <h3>{{ 'materials.upload' | t }}</h3>\r
+      <p class="meta">{{ 'materials.uploadHint' | t }}</p>\r
+    </div>\r
+\r
+    <form class="upload-form" (ngSubmit)="attachMaterial()">\r
+      <div class="field-grid">\r
+        <label>\r
+          {{ 'common.course' | t }}\r
+          <app-searchable-select\r
+            [(ngModel)]="selectedCourseId"\r
+            name="materialCourseId"\r
+            (ngModelChange)="onCourseChange()"\r
+            [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"\r
+          />\r
+        </label>\r
+        <label>\r
+          {{ 'common.unit' | t }}\r
+          <app-searchable-select\r
+            [(ngModel)]="selectedUnitId"\r
+            name="materialUnitId"\r
+            (ngModelChange)="onUnitChange()"\r
+            [emptyLabel]="'common.selectUnit' | t"\r
+            [options]="unitsForCourse().map(u => ({ value: u.id, label: u.title }))"\r
+          />\r
+        </label>\r
+        <label>\r
+          {{ 'common.lesson' | t }}\r
+          <app-searchable-select\r
+            [(ngModel)]="selectedLessonId"\r
+            name="materialLessonId"\r
+            [emptyLabel]="'materials.optionalLesson' | t"\r
+            [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"\r
+          />\r
+        </label>\r
+        <label>\r
+          {{ 'common.title' | t }}\r
+          <input [(ngModel)]="materialTitle" name="materialTitle" [placeholder]="'materials.optionalTitle' | t" />\r
+        </label>\r
+      </div>\r
+\r
+      <div class="source-row">\r
+        <div class="source-file">\r
+          <span class="source-file-label">{{ 'materials.file' | t }}</span>\r
+          <div class="source-file-row">\r
+            <label class="file-btn" [class.disabled]="uploading()">\r
+              {{ 'materials.chooseFile' | t }}\r
+              <input\r
+                type="file"\r
+                accept="application/pdf,image/png,image/jpeg,image/webp,image/gif,audio/*"\r
+                hidden\r
+                (change)="onFileSelected($event)"\r
+                [disabled]="uploading()"\r
+              />\r
+            </label>\r
+            @if (file(); as selected) {\r
+              <span class="file-name">{{ selected.name }}</span>\r
+            }\r
+          </div>\r
+          <p class="meta">{{ 'materials.allowedTypes' | t }}</p>\r
+        </div>\r
+\r
+        <button type="submit" [disabled]="uploading()">\r
+          {{ (uploading() ? 'common.loading' : 'materials.upload') | t }}\r
+        </button>\r
+      </div>\r
+    </form>\r
+  </section>\r
+\r
+  <section class="block">\r
+    <div class="card-head">\r
+      <h3>{{ 'materials.list' | t }}</h3>\r
+      <span class="count-pill">{{ filteredMaterials().length }}</span>\r
+    </div>\r
+\r
+    <div class="field-grid">\r
+      <label>\r
+        {{ 'common.course' | t }}\r
+        <select [(ngModel)]="filterCourseId" name="materialFilterCourse">\r
+          <option value="">{{ 'common.all' | t }}</option>\r
+          @for (course of courses(); track course.id) {\r
+            <option [value]="course.id">{{ courseLabel(course) }}</option>\r
+          }\r
+        </select>\r
+      </label>\r
+      <label>\r
+        {{ 'materials.search' | t }}\r
+        <input [(ngModel)]="filterSearch" name="materialSearch" [placeholder]="'materials.searchPlaceholder' | t" />\r
+      </label>\r
+    </div>\r
+\r
+    @if (!filteredMaterials().length) {\r
+      <p class="meta">{{ 'materials.empty' | t }}</p>\r
+    } @else {\r
+      <div class="material-list">\r
+        @for (material of filteredMaterials(); track material.id) {\r
+          <div class="material-row">\r
+            <button type="button" class="material-main" (click)="openPreview(material)">\r
+              <strong>{{ kindIcon(material.kind) }} {{ material.title }}</strong>\r
+              <p class="meta">\r
+                {{ material.courseTitle }} \xB7 {{ scopeLabel(material) }}\r
+                \xB7 {{ material.fileName }} ({{ formatBytes(material.sizeBytes) }})\r
+              </p>\r
+            </button>\r
+            <div class="material-actions">\r
+              <button type="button" class="ghost-btn small-btn" (click)="openPreview(material)">\r
+                {{ 'materials.preview' | t }}\r
+              </button>\r
+              <button type="button" class="ghost-btn small-btn danger" (click)="deleteMaterial(material)">\r
+                {{ 'common.delete' | t }}\r
+              </button>\r
+            </div>\r
+          </div>\r
+        }\r
+      </div>\r
+    }\r
+  </section>\r
+\r
+  @if (preview(); as item) {\r
+    <div class="preview-overlay" (click)="closePreview()">\r
+      <div class="preview-card" (click)="$event.stopPropagation()">\r
+        <header class="preview-head">\r
+          <h3>{{ item.title }}</h3>\r
+          <button type="button" class="ghost-btn small-btn" (click)="closePreview()">{{ 'common.close' | t }}</button>\r
+        </header>\r
+        <app-material-viewer\r
+          [materialId]="item.id"\r
+          [kind]="item.kind"\r
+          [title]="item.title"\r
+        />\r
+      </div>\r
+    </div>\r
+  }\r
+</div>\r
 `, styles: ["/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/teacher/teacher-panel.css */\n.question-card {\n  display: grid;\n  gap: 0.85rem;\n  padding: 1rem;\n  margin: 0.85rem 0;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.question-card-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.75rem;\n}\n.question-prompt {\n  display: grid;\n  gap: 0.4rem;\n}\n.question-prompt textarea {\n  min-height: 4.2em;\n  resize: vertical;\n  width: 100%;\n}\n.options-editor {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  margin-top: 0.25rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n}\n.link-row {\n  width: 100%;\n  text-align: left;\n  cursor: pointer;\n  background: transparent;\n  border: 0;\n  border-radius: var(--radius-md);\n  transition: background 0.15s ease;\n}\n.table-row.link-row:hover,\n.meeting-row.link-row:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n.name-cell {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.detail-identity {\n  display: flex;\n  align-items: center;\n}\n.meeting-form,\n.qb-form,\n.form-card form {\n  gap: 1rem;\n}\n.panel-page .meeting-form .questions-group,\n.panel-page .meeting-form .form-actions {\n  grid-column: 1 / -1;\n}\n.questions-group {\n  display: grid;\n  gap: 0.85rem;\n}\n.grade-roster {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.85rem 0.9rem;\n  margin-top: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.grade-roster-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.student-name-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem 0.75rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.student-name-list li {\n  padding: 0.25rem 0.55rem;\n  border-radius: var(--radius-sm);\n  background: rgba(95, 211, 188, 0.1);\n  border: 1px solid rgba(95, 211, 188, 0.2);\n  font-weight: 500;\n}\n.row-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  flex: 0 0 auto;\n}\n.students-table-row {\n  grid-template-columns: 1.4fr repeat(4, 1fr) 0.8fr auto;\n  cursor: pointer;\n}\n.students-table-row.head {\n  cursor: default;\n}\n.student-row:hover {\n  background: rgba(95, 211, 188, 0.08);\n}\n@media (max-width: 900px) {\n  .students-table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.list-title-row {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.status-badge {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.choice-options {\n  list-style: none;\n  margin: 0.4rem 0 0.6rem;\n  padding: 0;\n  display: grid;\n  gap: 0.35rem;\n}\n.choice-options li {\n  display: flex;\n  gap: 0.5rem;\n  align-items: baseline;\n  padding: 0.4rem 0.6rem;\n  border-radius: 8px;\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));\n  background: var(--elevated-bg);\n}\n.choice-options li.is-student {\n  border-color: var(--accent, #5b8def);\n}\n.choice-options li.is-key {\n  background: var(--badge-ok-bg, rgba(80, 180, 120, 0.16));\n}\n.choice-options strong {\n  min-width: 1.4rem;\n}\n/*# sourceMappingURL=teacher-panel.css.map */\n", "/* src/app/pages/teacher/teacher-videos.component.css */\n.videos-head h2 {\n  margin: 0;\n}\n.videos-head .meta {\n  margin: 0.3rem 0 0;\n  max-width: 46rem;\n}\n.card-head {\n  display: grid;\n  gap: 0.3rem;\n  padding-bottom: 0.55rem;\n  margin-bottom: 0.35rem;\n  border-bottom: 1px solid var(--border);\n}\n.card-head.row {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: baseline;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.card-head h3 {\n  margin: 0;\n}\n.card-head .meta {\n  margin: 0;\n}\n.video-tabs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n  padding: 0.35rem;\n  border-radius: var(--radius-pill, 999px);\n  background: var(--surface);\n  border: 1px solid var(--border);\n}\n.video-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  padding: 0.5rem 0.9rem;\n  border: 1px solid transparent;\n  border-radius: var(--radius-pill, 999px);\n  background: transparent;\n  color: var(--text-muted);\n  font: inherit;\n  font-weight: 700;\n  box-shadow: none;\n  cursor: pointer;\n  transition:\n    background 0.18s ease,\n    color 0.18s ease,\n    border-color 0.18s ease;\n}\n.video-tab:hover:not(:disabled) {\n  transform: none;\n  box-shadow: none;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n}\n.video-tab.active {\n  background: rgba(95, 211, 188, 0.14);\n  border-color: rgba(95, 211, 188, 0.32);\n  color: var(--text);\n}\n.tab-icon {\n  display: inline-flex;\n  align-items: center;\n  color: var(--teal, #5fd3bc);\n}\n.tab-icon svg {\n  width: 1.1rem;\n  height: 1.1rem;\n}\n.tab-label {\n  white-space: nowrap;\n}\n.tab-count {\n  min-width: 1.5rem;\n  padding: 0.1rem 0.45rem;\n  border-radius: var(--radius-pill, 999px);\n  background: var(--elevated-bg-hover);\n  border: 1px solid var(--border);\n  font-size: 0.76rem;\n  text-align: center;\n}\n.video-tab.active .tab-count {\n  background: rgba(255, 214, 10, 0.18);\n  border-color: rgba(255, 214, 10, 0.35);\n  color: var(--accent-fg);\n}\n.video-tab-panel {\n  animation: tab-panel-in 0.22s ease;\n}\n@keyframes tab-panel-in {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n.upload-form {\n  display: grid;\n  gap: var(--space-3);\n}\n.field-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));\n  gap: var(--space-3);\n  align-items: start;\n}\n.source-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);\n  gap: var(--space-3);\n  align-items: start;\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  border: 1px dashed var(--border-strong);\n  background: var(--elevated-bg);\n}\n.source-file {\n  display: grid;\n  gap: 0.4rem;\n  min-width: 0;\n}\n.source-file-label {\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\n.source-file-row {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.6rem;\n  min-width: 0;\n}\n.file-btn {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn.disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n}\n.file-name {\n  flex: 1 1 8rem;\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\n.upload-progress {\n  display: grid;\n  gap: 0.35rem;\n}\n.upload-progress-bar {\n  overflow: hidden;\n  height: 0.55rem;\n  border-radius: 999px;\n  background: var(--elevated-bg-hover);\n  border: 1px solid var(--border);\n}\n.upload-progress-fill {\n  display: block;\n  height: 100%;\n  border-radius: inherit;\n  background:\n    linear-gradient(\n      90deg,\n      var(--teal, #5fd3bc),\n      var(--accent, #ffd60a));\n  transition: width 0.15s ease;\n}\n.upload-progress-label {\n  font-size: 0.85rem;\n  color: var(--text-muted);\n}\n.video-filters {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));\n  gap: 0.75rem;\n  align-items: end;\n  margin-bottom: 0.35rem;\n}\n.video-filters label {\n  display: grid;\n  gap: 0.35rem;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.video-filters input {\n  width: 100%;\n  border-radius: var(--radius-sm, 8px);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.55rem 0.65rem;\n  font: inherit;\n}\n.video-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));\n  gap: var(--space-3);\n}\n.video-card {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.75rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  transition: border-color 0.18s ease, transform 0.18s ease;\n}\n.video-card:hover {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.video-thumb {\n  display: grid;\n  place-items: center;\n  width: 100%;\n  aspect-ratio: 16 / 9;\n  padding: 0;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-sm, 10px);\n  background:\n    radial-gradient(\n      circle at 70% 25%,\n      rgba(255, 214, 10, 0.2),\n      transparent 45%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n  box-shadow: none;\n  cursor: pointer;\n}\n.video-thumb:hover:not(:disabled) {\n  transform: none;\n  box-shadow: none;\n  border-color: rgba(95, 211, 188, 0.5);\n}\n.thumb-play {\n  display: block;\n  width: 0;\n  height: 0;\n  border-style: solid;\n  border-width: 0.85rem 0 0.85rem 1.35rem;\n  border-color: transparent transparent transparent rgba(255, 255, 255, 0.92);\n  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));\n}\n.video-card-body {\n  display: grid;\n  gap: 0.4rem;\n  min-width: 0;\n}\n.video-card-title {\n  color: var(--heading);\n  line-height: 1.3;\n  overflow-wrap: anywhere;\n}\n.video-card-meta {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.35rem;\n}\n.video-chip {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  color: var(--text-muted);\n  font-size: 0.76rem;\n  font-weight: 650;\n}\n.video-chip.subtle {\n  background: transparent;\n  color: var(--text-soft);\n}\n.video-chip.warn {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\n.video-card-actions {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.4rem;\n  padding-top: 0.15rem;\n}\n.small-btn {\n  padding: 0.4rem 0.7rem;\n  font-size: 0.82rem;\n}\n.video-empty {\n  grid-column: 1 / -1;\n  margin: 0;\n  padding: 1.5rem 1rem;\n  text-align: center;\n  border-radius: var(--radius-md);\n  border: 1px dashed var(--border-strong);\n  background: var(--elevated-bg);\n}\n.analytics-lookup {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem;\n}\n.analytics-lookup label {\n  flex: 1 1 18rem;\n  display: grid;\n  gap: 0.35rem;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.flag-cell {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n}\n.table-wrap {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.92rem;\n}\n.data-table th,\n.data-table td {\n  padding: 0.75rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table th {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.78rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table tr:hover td {\n  background: var(--table-row-hover);\n}\n.video-modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 1000;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.82);\n  -webkit-backdrop-filter: blur(4px);\n  backdrop-filter: blur(4px);\n}\n.video-modal {\n  width: min(960px, 100%);\n  max-height: min(92vh, 900px);\n  overflow: auto;\n  border-radius: 16px;\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n  padding: 1rem 1rem 1.25rem;\n}\n.video-modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n.video-modal-head h3 {\n  margin: 0;\n  font-size: 1.05rem;\n  color: var(--text);\n}\n.modal-close {\n  width: 2.2rem;\n  height: 2.2rem;\n  border: 0;\n  border-radius: 10px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  font-size: 1.35rem;\n  line-height: 1;\n  box-shadow: none;\n  cursor: pointer;\n}\n.modal-close:hover {\n  background: var(--surface-strong);\n  transform: none;\n  box-shadow: none;\n}\n@media (max-width: 760px) {\n  .source-row {\n    grid-template-columns: 1fr;\n  }\n  .video-filters {\n    grid-template-columns: 1fr;\n  }\n  .video-tabs {\n    border-radius: var(--radius-lg);\n  }\n  .video-tab {\n    flex: 1 1 auto;\n    justify-content: center;\n  }\n}\n/*# sourceMappingURL=teacher-videos.component.css.map */\n", "/* src/app/pages/teacher/teacher-materials.component.css */\n.material-list {\n  display: grid;\n  gap: 0.6rem;\n  margin-top: 0.85rem;\n}\n.material-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  padding: 0.75rem 0.9rem;\n  border-radius: var(--radius-md, 12px);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.material-main {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  background: transparent;\n  border: 0;\n  cursor: pointer;\n  color: inherit;\n  display: grid;\n  gap: 0.25rem;\n}\n.material-actions {\n  display: flex;\n  gap: 0.4rem;\n  align-items: center;\n  flex-shrink: 0;\n}\n.ghost-btn.danger {\n  color: var(--danger, #f87171);\n}\n.count-pill {\n  border-radius: 999px;\n  padding: 0.1rem 0.6rem;\n  font-size: 0.85rem;\n  background: var(--elevated-bg);\n  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));\n}\n.preview-overlay {\n  position: fixed;\n  inset: 0;\n  background: rgba(15, 23, 42, 0.6);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 60;\n  padding: 1rem;\n}\n.preview-card {\n  background: var(--panel-bg, #fff);\n  border-radius: var(--radius-lg, 16px);\n  padding: 1.25rem;\n  max-width: min(860px, 95vw);\n  max-height: 90vh;\n  overflow: auto;\n  width: 100%;\n}\n.preview-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  margin-bottom: 0.75rem;\n}\n/*# sourceMappingURL=teacher-materials.component.css.map */\n"] }]
   }], () => [], null);
 })();
@@ -115293,7 +116090,7 @@ var TeacherMaterialsComponent = class _TeacherMaterialsComponent {
 
 // src/app/pages/teacher/teacher-whatsapp.component.ts
 var arrowFn028 = (ctx, view) => (r) => ({ value: r.id, label: r.name });
-var _forTrack053 = ($index, $item) => $item.studentId;
+var _forTrack054 = ($index, $item) => $item.studentId;
 function TeacherWhatsAppComponent_Conditional_15_Conditional_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "a", 13);
@@ -115451,7 +116248,7 @@ function TeacherWhatsAppComponent_Conditional_29_Template(rf, ctx) {
     \u0275\u0275text(10);
     \u0275\u0275pipe(11, "t");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275repeaterCreate(12, TeacherWhatsAppComponent_Conditional_29_For_13_Template, 8, 6, "label", 18, _forTrack053, false, TeacherWhatsAppComponent_Conditional_29_ForEmpty_14_Template, 3, 3, "p", 1);
+    \u0275\u0275repeaterCreate(12, TeacherWhatsAppComponent_Conditional_29_For_13_Template, 8, 6, "label", 18, _forTrack054, false, TeacherWhatsAppComponent_Conditional_29_ForEmpty_14_Template, 3, 3, "p", 1);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(15, "label", 8)(16, "input", 19);
     \u0275\u0275twoWayListener("ngModelChange", function TeacherWhatsAppComponent_Conditional_29_Template_input_ngModelChange_16_listener($event) {
@@ -115970,7 +116767,7 @@ var TeacherWhatsAppComponent = class _TeacherWhatsAppComponent {
 })();
 
 // src/app/pages/teacher/teacher-appointments.component.ts
-var _forTrack054 = ($index, $item) => $item.key;
+var _forTrack055 = ($index, $item) => $item.key;
 var _forTrack122 = ($index, $item) => $item.appointment.id;
 function TeacherAppointmentsComponent_For_27_Conditional_2_Template(rf, ctx) {
   if (rf & 1) {
@@ -116284,7 +117081,7 @@ var TeacherAppointmentsComponent = class _TeacherAppointmentsComponent {
         \u0275\u0275text(24);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(25, "div", 7);
-        \u0275\u0275repeaterCreate(26, TeacherAppointmentsComponent_For_27_Template, 3, 4, "button", 8, _forTrack054);
+        \u0275\u0275repeaterCreate(26, TeacherAppointmentsComponent_For_27_Template, 3, 4, "button", 8, _forTrack055);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(28, "div", 9)(29, "div", 10);
         \u0275\u0275repeaterCreate(30, TeacherAppointmentsComponent_For_31_Template, 2, 3, "div", 11, \u0275\u0275repeaterTrackByIdentity);
@@ -116515,11 +117312,11 @@ function formatDayLabel2(date, lang) {
 }
 
 // src/app/pages/teacher/teacher-timetable.component.ts
-var _c043 = ["timetableWrap"];
-var _c130 = (a0) => ({ value: "am", label: a0 });
+var _c044 = ["timetableWrap"];
+var _c131 = (a0) => ({ value: "am", label: a0 });
 var _c219 = (a0) => ({ value: "pm", label: a0 });
 var _c311 = (a0, a1) => [a0, a1];
-var _forTrack055 = ($index, $item) => $item.key;
+var _forTrack056 = ($index, $item) => $item.key;
 var _forTrack123 = ($index, $item) => $item.dayOfWeek;
 var arrowFn029 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var _forTrack210 = ($index, $item) => $item.entry.id;
@@ -116621,7 +117418,7 @@ function TeacherTimetableComponent_For_57_Template(rf, ctx) {
     \u0275\u0275elementStart(4, "span");
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275repeaterCreate(6, TeacherTimetableComponent_For_57_For_7_Template, 4, 5, "td", 31, _forTrack055);
+    \u0275\u0275repeaterCreate(6, TeacherTimetableComponent_For_57_For_7_Template, 4, 5, "td", 31, _forTrack056);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -116827,7 +117624,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherTimetableComponent, selectors: [["app-teacher-timetable"]], viewQuery: function TeacherTimetableComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c043, 5);
+        \u0275\u0275viewQuerySignal(ctx.timetableWrap, _c044, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -116903,7 +117700,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
         \u0275\u0275conditionalCreate(51, TeacherTimetableComponent_Conditional_51_Template, 2, 2, "th", 22);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(52, "tr");
-        \u0275\u0275repeaterCreate(53, TeacherTimetableComponent_For_54_Template, 7, 2, "th", 23, _forTrack055);
+        \u0275\u0275repeaterCreate(53, TeacherTimetableComponent_For_54_Template, 7, 2, "th", 23, _forTrack056);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(55, "tbody");
         \u0275\u0275repeaterCreate(56, TeacherTimetableComponent_For_57_Template, 8, 2, "tr", null, _forTrack123);
@@ -116938,7 +117735,7 @@ var TeacherTimetableComponent = class _TeacherTimetableComponent {
         \u0275\u0275advance(3);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(17, 29, "admin.timetable.period"), " ");
         \u0275\u0275advance(2);
-        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(19, 31, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(51, _c311, \u0275\u0275pureFunction1(47, _c130, \u0275\u0275pipeBind1(20, 33, "admin.timetable.am")), \u0275\u0275pureFunction1(49, _c219, \u0275\u0275pipeBind1(21, 35, "admin.timetable.pm"))));
+        \u0275\u0275property("ngModel", ctx.filterPeriod())("emptyLabel", \u0275\u0275pipeBind1(19, 31, "admin.timetable.allPeriods"))("options", \u0275\u0275pureFunction2(51, _c311, \u0275\u0275pureFunction1(47, _c131, \u0275\u0275pipeBind1(20, 33, "admin.timetable.am")), \u0275\u0275pureFunction1(49, _c219, \u0275\u0275pipeBind1(21, 35, "admin.timetable.pm"))));
         \u0275\u0275control();
         \u0275\u0275advance(5);
         \u0275\u0275property("disabled", ctx.exporting());
@@ -117131,7 +117928,7 @@ function readGradeList2(value) {
 }
 
 // src/app/pages/teacher/teacher-attendance.component.ts
-var _forTrack056 = ($index, $item) => $item.id;
+var _forTrack057 = ($index, $item) => $item.id;
 var arrowFn030 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 var arrowFn119 = (ctx, view) => (c) => ({ value: c.id, label: ctx.courseLabel(c) });
 function TeacherAttendanceComponent_Conditional_30_Template(rf, ctx) {
@@ -117476,7 +118273,7 @@ var TeacherAttendanceComponent = class _TeacherAttendanceComponent {
         \u0275\u0275pipe(67, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(68, "tbody");
-        \u0275\u0275repeaterCreate(69, TeacherAttendanceComponent_For_70_Template, 9, 3, "tr", null, _forTrack056, false, TeacherAttendanceComponent_ForEmpty_71_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(69, TeacherAttendanceComponent_For_70_Template, 9, 3, "tr", null, _forTrack057, false, TeacherAttendanceComponent_ForEmpty_71_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -117676,9 +118473,9 @@ function toLocalDateString11(d) {
 }
 
 // src/app/pages/teacher/teacher-student-attendance.component.ts
-var _c044 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c131 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack057 = ($index, $item) => $item.id;
+var _c045 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c132 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack058 = ($index, $item) => $item.id;
 var arrowFn031 = (ctx, view) => (s) => ({ value: s, label: "" + s });
 function TeacherStudentAttendanceComponent_For_107_Template(rf, ctx) {
   if (rf & 1) {
@@ -118266,7 +119063,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275pipe(104, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(105, "tbody");
-        \u0275\u0275repeaterCreate(106, TeacherStudentAttendanceComponent_For_107_Template, 13, 5, "tr", null, _forTrack057, false, TeacherStudentAttendanceComponent_ForEmpty_108_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(106, TeacherStudentAttendanceComponent_For_107_Template, 13, 5, "tr", null, _forTrack058, false, TeacherStudentAttendanceComponent_ForEmpty_108_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(109, "div", 22)(110, "button", 23);
         \u0275\u0275listener("click", function TeacherStudentAttendanceComponent_Template_button_click_110_listener() {
@@ -118355,7 +119152,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275advance(2);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 101, "common.clearFilters"));
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(72, 103, "common.ofShown", \u0275\u0275pureFunction2(125, _c044, ctx.rows().length, ctx.totalCount())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(72, 103, "common.ofShown", \u0275\u0275pureFunction2(125, _c045, ctx.rows().length, ctx.totalCount())));
         \u0275\u0275advance(7);
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(79, 106, "common.student"), " ");
         \u0275\u0275advance(3);
@@ -118385,7 +119182,7 @@ var TeacherStudentAttendanceComponent = class _TeacherStudentAttendanceComponent
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(112, 118, "common.previous"), " ");
         \u0275\u0275advance(3);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(115, 120, "common.pageOf", \u0275\u0275pureFunction2(128, _c131, ctx.page(), ctx.totalPages())));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(115, 120, "common.pageOf", \u0275\u0275pureFunction2(128, _c132, ctx.page(), ctx.totalPages())));
         \u0275\u0275advance(2);
         \u0275\u0275property("disabled", ctx.page() >= ctx.totalPages());
         \u0275\u0275advance();
@@ -118574,7 +119371,7 @@ function toLocalDateString12(d) {
 }
 
 // src/app/pages/teacher/teacher-weekly-reports.component.ts
-var _forTrack058 = ($index, $item) => $item.studentId;
+var _forTrack059 = ($index, $item) => $item.studentId;
 var _forTrack124 = ($index, $item) => $item.id;
 var arrowFn032 = (ctx, view) => (g) => ({ value: g, label: ctx.gradeLabel(g) });
 function TeacherWeeklyReportsComponent_For_52_For_17_Template(rf, ctx) {
@@ -119081,7 +119878,7 @@ var TeacherWeeklyReportsComponent = class _TeacherWeeklyReportsComponent {
         \u0275\u0275pipe(49, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(50, "tbody");
-        \u0275\u0275repeaterCreate(51, TeacherWeeklyReportsComponent_For_52_Template, 29, 24, "tr", null, _forTrack058, false, TeacherWeeklyReportsComponent_ForEmpty_53_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(51, TeacherWeeklyReportsComponent_For_52_Template, 29, 24, "tr", null, _forTrack059, false, TeacherWeeklyReportsComponent_ForEmpty_53_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(54, TeacherWeeklyReportsComponent_Conditional_54_Template, 7, 8);
         \u0275\u0275elementEnd();
@@ -119464,8 +120261,8 @@ function toLocalDateString13(d) {
 }
 
 // src/app/pages/teacher/teacher-study-plans.component.ts
-var _c045 = ["planWrap"];
-var _forTrack059 = ($index, $item) => $item.id;
+var _c046 = ["planWrap"];
+var _forTrack060 = ($index, $item) => $item.id;
 var _forTrack125 = ($index, $item) => $item.weekNumber;
 function TeacherStudyPlansComponent_Conditional_46_Template(rf, ctx) {
   if (rf & 1) {
@@ -120115,7 +120912,7 @@ var TeacherStudyPlansComponent = class _TeacherStudyPlansComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TeacherStudyPlansComponent, selectors: [["app-teacher-study-plans"]], viewQuery: function TeacherStudyPlansComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.planWrap, _c045, 5);
+        \u0275\u0275viewQuerySignal(ctx.planWrap, _c046, 5);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance();
@@ -120322,7 +121119,7 @@ var TeacherStudyPlansComponent = class _TeacherStudyPlansComponent {
         \u0275\u0275pipe(117, "t");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(118, "tbody");
-        \u0275\u0275repeaterCreate(119, TeacherStudyPlansComponent_For_120_Template, 13, 4, "tr", null, _forTrack059, false, TeacherStudyPlansComponent_ForEmpty_121_Template, 4, 3, "tr");
+        \u0275\u0275repeaterCreate(119, TeacherStudyPlansComponent_For_120_Template, 13, 4, "tr", null, _forTrack060, false, TeacherStudyPlansComponent_ForEmpty_121_Template, 4, 3, "tr");
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
@@ -120771,9 +121568,9 @@ function toLocalDateString14(d) {
 }
 
 // src/app/shared/asked-questions-board/asked-questions-board.component.ts
-var _c046 = (a0, a1) => ({ shown: a0, total: a1 });
-var _c132 = (a0, a1) => ({ page: a0, pages: a1 });
-var _forTrack060 = ($index, $item) => $item.id;
+var _c047 = (a0, a1) => ({ shown: a0, total: a1 });
+var _c133 = (a0, a1) => ({ page: a0, pages: a1 });
+var _forTrack061 = ($index, $item) => $item.id;
 function AskedQuestionsBoardComponent_Conditional_35_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "p", 11);
@@ -120796,7 +121593,7 @@ function AskedQuestionsBoardComponent_Conditional_36_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "common.ofShown", \u0275\u0275pureFunction2(4, _c046, ctx_r0.pagedItems().length, ctx_r0.items().length)));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(2, 1, "common.ofShown", \u0275\u0275pureFunction2(4, _c047, ctx_r0.pagedItems().length, ctx_r0.items().length)));
   }
 }
 function AskedQuestionsBoardComponent_For_38_Conditional_5_Template(rf, ctx) {
@@ -121083,7 +121880,7 @@ function AskedQuestionsBoardComponent_Conditional_39_Template(rf, ctx) {
     \u0275\u0275advance();
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(3, 5, "common.previous"), " ");
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(6, 7, "common.pageOf", \u0275\u0275pureFunction2(12, _c132, ctx_r0.page(), ctx_r0.totalPages())));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(6, 7, "common.pageOf", \u0275\u0275pureFunction2(12, _c133, ctx_r0.page(), ctx_r0.totalPages())));
     \u0275\u0275advance(2);
     \u0275\u0275property("disabled", ctx_r0.page() >= ctx_r0.totalPages());
     \u0275\u0275advance();
@@ -121416,7 +122213,7 @@ var AskedQuestionsBoardComponent = class _AskedQuestionsBoardComponent {
         });
         \u0275\u0275elementEnd()()();
         \u0275\u0275conditionalCreate(35, AskedQuestionsBoardComponent_Conditional_35_Template, 3, 3, "p", 11)(36, AskedQuestionsBoardComponent_Conditional_36_Template, 3, 7, "p", 11);
-        \u0275\u0275repeaterCreate(37, AskedQuestionsBoardComponent_For_38_Template, 14, 10, "article", 12, _forTrack060);
+        \u0275\u0275repeaterCreate(37, AskedQuestionsBoardComponent_For_38_Template, 14, 10, "article", 12, _forTrack061);
         \u0275\u0275conditionalCreate(39, AskedQuestionsBoardComponent_Conditional_39_Template, 10, 15, "div", 13);
       }
       if (rf & 2) {
@@ -121762,11 +122559,11 @@ var ChatRealtimeService = class _ChatRealtimeService {
 })();
 
 // src/app/shared/chat-board/chat-board.component.ts
-var _c047 = (a0) => ({ value: "Direct", label: a0 });
-var _c133 = (a0) => ({ value: "Group", label: a0 });
+var _c048 = (a0) => ({ value: "Direct", label: a0 });
+var _c134 = (a0) => ({ value: "Group", label: a0 });
 var _c220 = (a0) => ({ value: "Class", label: a0 });
 var _c312 = (a0, a1, a2) => [a0, a1, a2];
-var _forTrack061 = ($index, $item) => $item.id;
+var _forTrack062 = ($index, $item) => $item.id;
 var _forTrack126 = ($index, $item) => $item.userId;
 function ChatBoardComponent_Conditional_1_Conditional_26_Template(rf, ctx) {
   if (rf & 1) {
@@ -121904,7 +122701,7 @@ function ChatBoardComponent_Conditional_1_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(21, 31, "chat.kind"), " ");
     \u0275\u0275advance(2);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.kind);
-    \u0275\u0275property("options", \u0275\u0275pureFunction3(47, _c312, \u0275\u0275pureFunction1(41, _c047, \u0275\u0275pipeBind1(23, 33, "chat.kindDirect")), \u0275\u0275pureFunction1(43, _c133, \u0275\u0275pipeBind1(24, 35, "chat.kindGroup")), \u0275\u0275pureFunction1(45, _c220, \u0275\u0275pipeBind1(25, 37, "chat.kindClass"))));
+    \u0275\u0275property("options", \u0275\u0275pureFunction3(47, _c312, \u0275\u0275pureFunction1(41, _c048, \u0275\u0275pipeBind1(23, 33, "chat.kindDirect")), \u0275\u0275pureFunction1(43, _c134, \u0275\u0275pipeBind1(24, 35, "chat.kindGroup")), \u0275\u0275pureFunction1(45, _c220, \u0275\u0275pipeBind1(25, 37, "chat.kindClass"))));
     \u0275\u0275control();
     \u0275\u0275advance(4);
     \u0275\u0275conditional(ctx_r1.kind !== "Class" ? 26 : -1);
@@ -122080,7 +122877,7 @@ function ChatBoardComponent_Conditional_11_Template(rf, ctx) {
     \u0275\u0275conditionalCreate(6, ChatBoardComponent_Conditional_11_Conditional_6_Template, 3, 0, "div", 21);
     \u0275\u0275conditionalCreate(7, ChatBoardComponent_Conditional_11_Conditional_7_Template, 3, 3, "p", 22);
     \u0275\u0275elementStart(8, "div", 23);
-    \u0275\u0275repeaterCreate(9, ChatBoardComponent_Conditional_11_For_10_Template, 11, 13, "article", 24, _forTrack061);
+    \u0275\u0275repeaterCreate(9, ChatBoardComponent_Conditional_11_For_10_Template, 11, 13, "article", 24, _forTrack062);
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(11, "form", 25);
     \u0275\u0275listener("ngSubmit", function ChatBoardComponent_Conditional_11_Template_form_ngSubmit_11_listener() {
@@ -122486,7 +123283,7 @@ var ChatBoardComponent = class _ChatBoardComponent {
         \u0275\u0275pipe(6, "t");
         \u0275\u0275elementEnd();
         \u0275\u0275conditionalCreate(7, ChatBoardComponent_Conditional_7_Template, 3, 3, "p", 4);
-        \u0275\u0275repeaterCreate(8, ChatBoardComponent_For_9_Template, 7, 5, "button", 5, _forTrack061);
+        \u0275\u0275repeaterCreate(8, ChatBoardComponent_For_9_Template, 7, 5, "button", 5, _forTrack062);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(10, "section", 6);
         \u0275\u0275conditionalCreate(11, ChatBoardComponent_Conditional_11_Template, 17, 14)(12, ChatBoardComponent_Conditional_12_Template, 3, 3, "p", 4);
@@ -122733,10 +123530,10 @@ var TeacherChatComponent = class _TeacherChatComponent {
 })();
 
 // src/app/pages/exam-play/exam-play.component.ts
-var _c048 = (a0) => ({ seconds: a0 });
-var _c134 = (a0) => ({ count: a0 });
+var _c049 = (a0) => ({ seconds: a0 });
+var _c135 = (a0) => ({ count: a0 });
 var _c221 = (a0) => ({ minutes: a0 });
-var _forTrack062 = ($index, $item) => $item.questionId;
+var _forTrack063 = ($index, $item) => $item.questionId;
 var _forTrack127 = ($index, $item) => $item.id;
 function ExamPlayComponent_Conditional_8_Template(rf, ctx) {
   if (rf & 1) {
@@ -122787,7 +123584,7 @@ function ExamPlayComponent_Conditional_11_Conditional_11_Template(rf, ctx) {
   }
   if (rf & 2) {
     const attempt_r1 = \u0275\u0275nextContext();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "play.timeSeconds", \u0275\u0275pureFunction1(4, _c048, attempt_r1.durationSeconds)), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(1, 1, "play.timeSeconds", \u0275\u0275pureFunction1(4, _c049, attempt_r1.durationSeconds)), " ");
   }
 }
 function ExamPlayComponent_Conditional_11_Conditional_12_Template(rf, ctx) {
@@ -122866,7 +123663,7 @@ function ExamPlayComponent_Conditional_11_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275conditionalCreate(12, ExamPlayComponent_Conditional_11_Conditional_12_Template, 2, 1, "p");
     \u0275\u0275element(13, "app-question-image-display", 6);
-    \u0275\u0275repeaterCreate(14, ExamPlayComponent_Conditional_11_For_15_Template, 11, 12, "div", 7, _forTrack062);
+    \u0275\u0275repeaterCreate(14, ExamPlayComponent_Conditional_11_For_15_Template, 11, 12, "div", 7, _forTrack063);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -122955,7 +123752,7 @@ function ExamPlayComponent_Conditional_12_Conditional_7_Template(rf, ctx) {
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 6, "play.timer.readyTitle"));
     \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 8, "play.timer.questionCount", \u0275\u0275pureFunction1(13, _c134, ctx_r2.questionCount())));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(7, 8, "play.timer.questionCount", \u0275\u0275pureFunction1(13, _c135, ctx_r2.questionCount())));
     \u0275\u0275advance(2);
     \u0275\u0275conditional(current_r5.durationMinutes ? 8 : 9);
     \u0275\u0275advance(2);
@@ -123737,6 +124534,3159 @@ var AssessmentLinkEntryComponent = class _AssessmentLinkEntryComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AssessmentLinkEntryComponent, { className: "AssessmentLinkEntryComponent", filePath: "src/app/pages/assessment-link-entry/assessment-link-entry.component.ts", lineNumber: 26 });
 })();
 
+// src/app/pages/admin/smart-assistant-admin.component.ts
+var _c050 = (a0, a1) => ({ page: a0, pages: a1 });
+var _c136 = (a0) => ({ n: a0 });
+function SmartAssistantAdminComponent_section_32_div_9_div_36_div_8_button_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r6 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 42);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_9_div_36_div_8_button_1_Template_button_click_0_listener() {
+      const p_r7 = \u0275\u0275restoreView(_r6).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(5);
+      return \u0275\u0275resetView(ctx_r1.selectParent(p_r7.id));
+    });
+    \u0275\u0275elementStart(1, "span", 43);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "span", 44);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const p_r7 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(p_r7.displayName);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(p_r7.email);
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_9_div_36_div_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 40);
+    \u0275\u0275template(1, SmartAssistantAdminComponent_section_32_div_9_div_36_div_8_button_1_Template, 5, 2, "button", 41);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r1.parentSuggestions());
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_9_div_36_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r4 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17)(1, "label", 36);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 37)(5, "input", 38, 0);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275listener("input", function SmartAssistantAdminComponent_section_32_div_9_div_36_Template_input_input_5_listener() {
+      \u0275\u0275restoreView(_r4);
+      const userParentInput_r5 = \u0275\u0275reference(6);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.onParentIdInput(userParentInput_r5.value));
+    })("focus", function SmartAssistantAdminComponent_section_32_div_9_div_36_Template_input_focus_5_listener() {
+      \u0275\u0275restoreView(_r4);
+      const userParentInput_r5 = \u0275\u0275reference(6);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.onParentIdInput(userParentInput_r5.value));
+    })("blur", function SmartAssistantAdminComponent_section_32_div_9_div_36_Template_input_blur_5_listener() {
+      \u0275\u0275restoreView(_r4);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.clearParentSuggestionsAfter());
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(8, SmartAssistantAdminComponent_section_32_div_9_div_36_div_8_Template, 2, 1, "div", 39);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 5, "auth.parentId"));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(7, 7, "auth.parentIdPlaceholder")))("value", ctx_r1.userFormParentId);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", ctx_r1.parentSuggestions().length);
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_9_div_37_option_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const g_r9 = ctx.$implicit;
+    \u0275\u0275property("value", g_r9.id);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(g_r9.name);
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_9_div_37_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r8 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17)(1, "label", 45);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "select", 46);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_32_div_9_div_37_Template_select_change_4_listener($event) {
+      \u0275\u0275restoreView(_r8);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.userFormGrade = +$event.target.value || 0);
+    });
+    \u0275\u0275elementStart(5, "option", 47);
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(8, SmartAssistantAdminComponent_section_32_div_9_div_37_option_8_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 5, "common.grade"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("value", ctx_r1.userFormGrade || "");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngValue", 0);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 7, "common.none"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.grades());
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_9_div_38_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r10 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17)(1, "label", 50);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "select", 51);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_32_div_9_div_38_Template_select_ngModelChange_4_listener($event) {
+      \u0275\u0275restoreView(_r10);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      \u0275\u0275twoWayBindingSet(ctx_r1.userFormSchoolType, $event) || (ctx_r1.userFormSchoolType = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(5, "option", 52);
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "option", 53);
+    \u0275\u0275text(9);
+    \u0275\u0275pipe(10, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "option", 54);
+    \u0275\u0275text(12);
+    \u0275\u0275pipe(13, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(3, 5, "common.schoolType"));
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.userFormSchoolType);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 7, "common.none"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 9, "common.schoolTypeArabic"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(13, 11, "common.schoolTypeLanguage"));
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_9_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 16)(1, "div", 17)(2, "label", 18);
+    \u0275\u0275text(3);
+    \u0275\u0275pipe(4, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "input", 19);
+    \u0275\u0275pipe(6, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_32_div_9_Template_input_ngModelChange_5_listener($event) {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.userFormName, $event) || (ctx_r1.userFormName = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "div", 17)(8, "label", 20);
+    \u0275\u0275text(9);
+    \u0275\u0275pipe(10, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "input", 21);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_32_div_9_Template_input_ngModelChange_11_listener($event) {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.userFormEmail, $event) || (ctx_r1.userFormEmail = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "div", 17)(13, "label", 22);
+    \u0275\u0275text(14);
+    \u0275\u0275pipe(15, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "input", 23);
+    \u0275\u0275pipe(17, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_32_div_9_Template_input_ngModelChange_16_listener($event) {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.userFormPassword, $event) || (ctx_r1.userFormPassword = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementStart(18, "button", 24);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_9_Template_button_click_18_listener() {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.showingUserPassword.update((v) => !v));
+    });
+    \u0275\u0275text(19);
+    \u0275\u0275pipe(20, "t");
+    \u0275\u0275pipe(21, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(22, "div", 17)(23, "label", 25);
+    \u0275\u0275text(24);
+    \u0275\u0275pipe(25, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(26, "select", 26);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_32_div_9_Template_select_ngModelChange_26_listener($event) {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.userFormRole, $event) || (ctx_r1.userFormRole = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(27, "option", 27);
+    \u0275\u0275text(28);
+    \u0275\u0275pipe(29, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(30, "option", 28);
+    \u0275\u0275text(31);
+    \u0275\u0275pipe(32, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(33, "option", 29);
+    \u0275\u0275text(34);
+    \u0275\u0275pipe(35, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(36, SmartAssistantAdminComponent_section_32_div_9_div_36_Template, 9, 9, "div", 30)(37, SmartAssistantAdminComponent_section_32_div_9_div_37_Template, 9, 9, "div", 30)(38, SmartAssistantAdminComponent_section_32_div_9_div_38_Template, 14, 13, "div", 30);
+    \u0275\u0275elementStart(39, "div", 17)(40, "label", 31);
+    \u0275\u0275text(41);
+    \u0275\u0275pipe(42, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(43, "input", 32);
+    \u0275\u0275pipe(44, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_32_div_9_Template_input_ngModelChange_43_listener($event) {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.userFormMobile, $event) || (ctx_r1.userFormMobile = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(45, "div", 33)(46, "button", 34);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_9_Template_button_click_46_listener() {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.createUser());
+    });
+    \u0275\u0275text(47);
+    \u0275\u0275pipe(48, "t");
+    \u0275\u0275pipe(49, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(50, "button", 35);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_9_Template_button_click_50_listener() {
+      \u0275\u0275restoreView(_r3);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.resetUserForm());
+    });
+    \u0275\u0275text(51);
+    \u0275\u0275pipe(52, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(4, 28, "common.name"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(6, 30, "auth.displayNamePlaceholder")));
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.userFormName);
+    \u0275\u0275control();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(10, 32, "common.email"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.userFormEmail);
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(15, 34, "common.password"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(17, 36, "common.password")))("type", ctx_r1.showingUserPassword() ? "text" : "password");
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.userFormPassword);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275attribute("aria-label", ctx_r1.showingUserPassword() ? "common.hide" : "common.show");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r1.showingUserPassword() ? \u0275\u0275pipeBind1(20, 38, "common.hide") : \u0275\u0275pipeBind1(21, 40, "common.show"), " ");
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(25, 42, "common.role"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.userFormRole);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(29, 44, "role.teacher"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(32, 46, "role.parent"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(35, 48, "role.student"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r1.userFormRole === "student");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.userFormRole === "student");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.userFormRole === "student");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(42, 50, "common.mobile"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(44, 52, "common.mobile")));
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.userFormMobile);
+    \u0275\u0275control();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(48, 54, "common.add"), " ", \u0275\u0275pipeBind1(49, 56, "role." + ctx_r1.userFormRole), " ");
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(52, 58, "common.cancel"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_option_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const opt_r12 = ctx.$implicit;
+    \u0275\u0275property("value", opt_r12.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 2, opt_r12.label));
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_div_25_span_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const user_r14 = \u0275\u0275nextContext().$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r1.getUserGradeLabel(user_r14));
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_div_25_span_10_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "common.emDash"));
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_div_25_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r13 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 70)(1, "span", 71);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "span", 72);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "span", 73);
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "span", 74);
+    \u0275\u0275template(9, SmartAssistantAdminComponent_section_32_div_10_div_25_span_9_Template, 2, 1, "span", 75)(10, SmartAssistantAdminComponent_section_32_div_10_div_25_span_10_Template, 3, 3, "span", 75);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "span", 76)(12, "button", 77);
+    \u0275\u0275pipe(13, "t");
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_div_25_Template_button_click_12_listener() {
+      const user_r14 = \u0275\u0275restoreView(_r13).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.deleteUser(user_r14));
+    });
+    \u0275\u0275text(14);
+    \u0275\u0275pipe(15, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const user_r14 = ctx.$implicit;
+    \u0275\u0275classProp("admin-table-row--inactive", !user_r14.isActive);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(user_r14.displayName);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(user_r14.email);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 9, "role." + user_r14.role.toLowerCase()));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", user_r14.role === "Student");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", user_r14.role !== "Student");
+    \u0275\u0275advance(2);
+    \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(13, 11, "common.delete"));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(15, 13, "common.delete"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_div_26_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 78);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(2, 1, "common.noData"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_div_27_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r15 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 79)(1, "div", 80);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 81)(5, "button", 82);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_div_27_Template_button_click_5_listener() {
+      \u0275\u0275restoreView(_r15);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.setUsersPage(ctx_r1.usersPage() - 1));
+    });
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "button", 82);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_div_27_Template_button_click_8_listener() {
+      \u0275\u0275restoreView(_r15);
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.setUsersPage(ctx_r1.usersPage() + 1));
+    });
+    \u0275\u0275text(9);
+    \u0275\u0275pipe(10, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind2(3, 5, "common.pageOf", \u0275\u0275pureFunction2(12, _c050, ctx_r1.usersPage(), ctx_r1.totalPages())), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275property("disabled", ctx_r1.usersPage() <= 1);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(7, 8, "common.previous"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("disabled", ctx_r1.usersPage() >= ctx_r1.totalPages());
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(10, 10, "common.next"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_32_div_10_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r11 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 55)(1, "div", 56)(2, "div", 57)(3, "label", 58);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "select", 59);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_32_div_10_Template_select_change_6_listener($event) {
+      \u0275\u0275restoreView(_r11);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.setUsersRole($event.target.value));
+    });
+    \u0275\u0275template(7, SmartAssistantAdminComponent_section_32_div_10_option_7_Template, 3, 4, "option", 48);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(8, "div", 60)(9, "div", 61)(10, "span", 62);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_Template_span_click_10_listener() {
+      \u0275\u0275restoreView(_r11);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.setUsersSort("displayName"));
+    });
+    \u0275\u0275text(11);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "span", 63);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_Template_span_click_13_listener() {
+      \u0275\u0275restoreView(_r11);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.setUsersSort("email"));
+    });
+    \u0275\u0275text(14);
+    \u0275\u0275pipe(15, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(16, "span", 64);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_Template_span_click_16_listener() {
+      \u0275\u0275restoreView(_r11);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.setUsersSort("role"));
+    });
+    \u0275\u0275text(17);
+    \u0275\u0275pipe(18, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(19, "span", 65);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_div_10_Template_span_click_19_listener() {
+      \u0275\u0275restoreView(_r11);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.setUsersSort("grade"));
+    });
+    \u0275\u0275text(20);
+    \u0275\u0275pipe(21, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(22, "span", 66);
+    \u0275\u0275text(23);
+    \u0275\u0275pipe(24, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(25, SmartAssistantAdminComponent_section_32_div_10_div_25_Template, 16, 15, "div", 67)(26, SmartAssistantAdminComponent_section_32_div_10_div_26_Template, 3, 3, "div", 68);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(27, SmartAssistantAdminComponent_section_32_div_10_div_27_Template, 11, 15, "div", 69);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 15, "common.role"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("value", ctx_r1.usersRoleFilter());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r1.userRoleOptions);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(12, 17, "common.name"), " ", ctx_r1.sortMark("displayName"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(15, 19, "common.email"), " ", ctx_r1.sortMark("email"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(18, 21, "common.role"), " ", ctx_r1.sortMark("role"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(21, 23, "common.grade"), " ", ctx_r1.sortMark("grade"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(24, 25, "common.actions"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.sortedUsers());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r1.sortedUsers().length);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.totalPages() > 1);
+  }
+}
+function SmartAssistantAdminComponent_section_32_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "section", 10);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "div", 11)(3, "h2", 12);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "button", 13);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_32_Template_button_click_6_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.userFormMode.set("create"));
+    });
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(9, SmartAssistantAdminComponent_section_32_div_9_Template, 53, 60, "div", 14)(10, SmartAssistantAdminComponent_section_32_div_10_Template, 28, 27, "div", 15);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275ariaProperty("aria-label", \u0275\u0275interpolate(\u0275\u0275pipeBind1(1, 6, "smartadmin.tabUsers")));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 8, "smartadmin.addUserTitle"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(8, 10, "smartadmin.addNewUser"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r1.userFormMode() === "create");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.userFormMode() === "list");
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_9_option_21_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const g_r18 = ctx.$implicit;
+    \u0275\u0275property("value", g_r18.id);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(g_r18.name);
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_9_div_27_option_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const c_r21 = ctx.$implicit;
+    \u0275\u0275property("value", c_r21.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(c_r21.label);
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_9_div_27_option_10_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const t_r22 = ctx.$implicit;
+    \u0275\u0275property("value", t_r22.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(t_r22.label);
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_9_div_27_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r19 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 93)(1, "select", 94);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_33_div_9_div_27_Template_select_change_1_listener($event) {
+      const i_r20 = \u0275\u0275restoreView(_r19).index;
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.setCourseAssignCourse(i_r20, $event.target.value));
+    });
+    \u0275\u0275elementStart(2, "option", 52);
+    \u0275\u0275text(3);
+    \u0275\u0275pipe(4, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(5, SmartAssistantAdminComponent_section_33_div_9_div_27_option_5_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "select", 94);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_33_div_9_div_27_Template_select_change_6_listener($event) {
+      const i_r20 = \u0275\u0275restoreView(_r19).index;
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.setCourseAssignTeacher(i_r20, $event.target.value));
+    });
+    \u0275\u0275elementStart(7, "option", 52);
+    \u0275\u0275text(8);
+    \u0275\u0275pipe(9, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(10, SmartAssistantAdminComponent_section_33_div_9_div_27_option_10_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "button", 77);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_div_9_div_27_Template_button_click_11_listener() {
+      const i_r20 = \u0275\u0275restoreView(_r19).index;
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.removeCourseAssign(i_r20));
+    });
+    \u0275\u0275text(13);
+    \u0275\u0275pipe(14, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const course_r23 = ctx.$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275property("value", course_r23.courseId);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(4, 8, "common.selectCourse"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.courseOptions());
+    \u0275\u0275advance();
+    \u0275\u0275property("value", course_r23.teacherId);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 10, "common.unassigned"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.teacherOptions());
+    \u0275\u0275advance();
+    \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(12, 12, "common.remove"));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(14, 14, "common.remove"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_9_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r17 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 16)(1, "div", 17)(2, "label", 83);
+    \u0275\u0275text(3);
+    \u0275\u0275pipe(4, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "input", 84);
+    \u0275\u0275pipe(6, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_33_div_9_Template_input_ngModelChange_5_listener($event) {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.classroomFormName, $event) || (ctx_r1.classroomFormName = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "div", 17)(8, "label", 85);
+    \u0275\u0275text(9);
+    \u0275\u0275pipe(10, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "textarea", 86);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_33_div_9_Template_textarea_ngModelChange_11_listener($event) {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.classroomFormDescription, $event) || (ctx_r1.classroomFormDescription = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "div", 17)(14, "label", 87);
+    \u0275\u0275text(15);
+    \u0275\u0275pipe(16, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "select", 88);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_33_div_9_Template_select_change_17_listener($event) {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.classroomFormGrade = +$event.target.value || "");
+    });
+    \u0275\u0275elementStart(18, "option", 47);
+    \u0275\u0275text(19);
+    \u0275\u0275pipe(20, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(21, SmartAssistantAdminComponent_section_33_div_9_option_21_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(22, "div", 17)(23, "label", 89);
+    \u0275\u0275text(24);
+    \u0275\u0275pipe(25, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(26, "div", 90);
+    \u0275\u0275template(27, SmartAssistantAdminComponent_section_33_div_9_div_27_Template, 15, 16, "div", 91);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(28, "div", 17)(29, "button", 92);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_div_9_Template_button_click_29_listener() {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.addCourseAssign());
+    });
+    \u0275\u0275text(30);
+    \u0275\u0275pipe(31, "t");
+    \u0275\u0275pipe(32, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(33, "div", 33)(34, "button", 34);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_div_9_Template_button_click_34_listener() {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.saveClassroom());
+    });
+    \u0275\u0275text(35);
+    \u0275\u0275pipe(36, "t");
+    \u0275\u0275pipe(37, "t");
+    \u0275\u0275pipe(38, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(39, "button", 35);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_div_9_Template_button_click_39_listener() {
+      \u0275\u0275restoreView(_r17);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.cancelClassroomEdit());
+    });
+    \u0275\u0275text(40);
+    \u0275\u0275pipe(41, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(4, 20, "common.name"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(6, 22, "smartadmin.classroomNamePlaceholder")));
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.classroomFormName);
+    \u0275\u0275control();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 24, "common.description"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(12, 26, "common.descriptionPlaceholder")));
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.classroomFormDescription);
+    \u0275\u0275control();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(16, 28, "common.grade"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("value", ctx_r1.classroomFormGrade || "");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngValue", "");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(20, 30, "common.none"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.grades());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(25, 32, "common.course"), " *");
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngForOf", ctx_r1.classroomFormCourses);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(31, 34, "common.add"), " ", \u0275\u0275pipeBind1(32, 36, "common.course"), " ");
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate2(" ", ctx_r1.editingClassroom() ? \u0275\u0275pipeBind1(36, 38, "common.edit") : \u0275\u0275pipeBind1(37, 40, "common.add"), " ", \u0275\u0275pipeBind1(38, 42, "common.classroom"), " ");
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(41, 44, "common.cancel"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_div_18_span_10_span_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const room_r25 = \u0275\u0275nextContext(2).$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate2(" +", room_r25.courses.length - 1, " ", \u0275\u0275pipeBind2(2, 2, "common.other", \u0275\u0275pureFunction1(5, _c136, room_r25.courses.length - 1)), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_div_18_span_10_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275template(2, SmartAssistantAdminComponent_section_33_div_10_div_18_span_10_span_2_Template, 3, 7, "span", 75);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const room_r25 = \u0275\u0275nextContext().$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r1.courseLabel(room_r25.courses[0], ctx_r1.locale), " ");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", room_r25.courses.length > 1);
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_div_18_span_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const room_r25 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(room_r25.courseTitle || room_r25.courseId);
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_div_18_span_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, "common.none"));
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_div_18_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r24 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 70)(1, "span", 71);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "span", 95);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "span", 74);
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "span", 96);
+    \u0275\u0275template(10, SmartAssistantAdminComponent_section_33_div_10_div_18_span_10_Template, 3, 2, "span", 75)(11, SmartAssistantAdminComponent_section_33_div_10_div_18_span_11_Template, 2, 1, "span", 75)(12, SmartAssistantAdminComponent_section_33_div_10_div_18_span_12_Template, 3, 3, "span", 75);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "span", 76)(14, "button", 24);
+    \u0275\u0275pipe(15, "t");
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_div_10_div_18_Template_button_click_14_listener() {
+      const room_r25 = \u0275\u0275restoreView(_r24).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.startEditClassroom(room_r25));
+    });
+    \u0275\u0275text(16);
+    \u0275\u0275pipe(17, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "button", 77);
+    \u0275\u0275pipe(19, "t");
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_div_10_div_18_Template_button_click_18_listener() {
+      const room_r25 = \u0275\u0275restoreView(_r24).$implicit;
+      const ctx_r1 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r1.deleteClassroom(room_r25));
+    });
+    \u0275\u0275text(20);
+    \u0275\u0275pipe(21, "t");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const room_r25 = ctx.$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(room_r25.name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(room_r25.description || \u0275\u0275pipeBind1(5, 10, "common.none"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", room_r25.grade ? ctx_r1.gradeLabel(room_r25.grade) : \u0275\u0275pipeBind1(8, 12, "common.emDash"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", room_r25.courses?.length);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", room_r25.courseId && !room_r25.courses?.length);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !room_r25.courseId && !room_r25.courses?.length);
+    \u0275\u0275advance(2);
+    \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(15, 14, "common.edit"));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(17, 16, "common.edit"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275attribute("aria-label", \u0275\u0275pipeBind1(19, 18, "common.delete"));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(21, 20, "common.delete"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_div_19_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 78);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(2, 1, "common.noData"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_33_div_10_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 55)(1, "div", 60)(2, "div", 61)(3, "span", 71);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "span", 95);
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "span", 74);
+    \u0275\u0275text(10);
+    \u0275\u0275pipe(11, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "span", 96);
+    \u0275\u0275text(13);
+    \u0275\u0275pipe(14, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "span", 66);
+    \u0275\u0275text(16);
+    \u0275\u0275pipe(17, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(18, SmartAssistantAdminComponent_section_33_div_10_div_18_Template, 22, 22, "div", 97)(19, SmartAssistantAdminComponent_section_33_div_10_div_19_Template, 3, 3, "div", 68);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 7, "common.name"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(8, 9, "common.description"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(11, 11, "common.grade"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(14, 13, "common.course"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 15, "common.actions"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.classrooms());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r1.classrooms().length);
+  }
+}
+function SmartAssistantAdminComponent_section_33_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r16 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "section", 10);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "div", 11)(3, "h2", 12);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "button", 13);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_33_Template_button_click_6_listener() {
+      \u0275\u0275restoreView(_r16);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.startNewClassroom());
+    });
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(9, SmartAssistantAdminComponent_section_33_div_9_Template, 42, 46, "div", 14)(10, SmartAssistantAdminComponent_section_33_div_10_Template, 20, 17, "div", 15);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275ariaProperty("aria-label", \u0275\u0275interpolate(\u0275\u0275pipeBind1(1, 6, "smartadmin.tabClassrooms")));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 8, "smartadmin.classroomTitle"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(8, 10, "smartadmin.newClassroom"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r1.editingClassroom());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r1.editingClassroom());
+  }
+}
+function SmartAssistantAdminComponent_section_34_option_26_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const c_r27 = ctx.$implicit;
+    \u0275\u0275property("value", c_r27.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(c_r27.label);
+  }
+}
+function SmartAssistantAdminComponent_section_34_div_27_option_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const c_r29 = ctx.$implicit;
+    \u0275\u0275property("value", c_r29.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(c_r29.label);
+  }
+}
+function SmartAssistantAdminComponent_section_34_div_27_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r28 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17)(1, "label", 106);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "select", 107);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_34_div_27_Template_select_ngModelChange_4_listener($event) {
+      \u0275\u0275restoreView(_r28);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      \u0275\u0275twoWayBindingSet(ctx_r1.assignCourseId, $event) || (ctx_r1.assignCourseId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(5, "option", 52);
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(8, SmartAssistantAdminComponent_section_34_div_27_option_8_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(3, 4, "common.course"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.assignCourseId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 6, "common.selectCourse"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.assignCourseOptions());
+  }
+}
+function SmartAssistantAdminComponent_section_34_option_37_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const t_r30 = ctx.$implicit;
+    \u0275\u0275property("value", t_r30.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(t_r30.label);
+  }
+}
+function SmartAssistantAdminComponent_section_34_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r26 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "section", 10);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "div", 11)(3, "h2", 12);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(6, "div", 16)(7, "div", 17)(8, "label", 98);
+    \u0275\u0275text(9);
+    \u0275\u0275pipe(10, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "select", 99);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_34_Template_select_ngModelChange_11_listener($event) {
+      \u0275\u0275restoreView(_r26);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.assignMode, $event) || (ctx_r1.assignMode = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(12, "option", 100);
+    \u0275\u0275text(13);
+    \u0275\u0275pipe(14, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "option", 101);
+    \u0275\u0275text(16);
+    \u0275\u0275pipe(17, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "div", 17)(19, "label", 102);
+    \u0275\u0275text(20);
+    \u0275\u0275pipe(21, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(22, "select", 103);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_34_Template_select_ngModelChange_22_listener($event) {
+      \u0275\u0275restoreView(_r26);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.assignClassroomId, $event) || (ctx_r1.assignClassroomId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(23, "option", 52);
+    \u0275\u0275text(24);
+    \u0275\u0275pipe(25, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(26, SmartAssistantAdminComponent_section_34_option_26_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(27, SmartAssistantAdminComponent_section_34_div_27_Template, 9, 8, "div", 30);
+    \u0275\u0275elementStart(28, "div", 17)(29, "label", 104);
+    \u0275\u0275text(30);
+    \u0275\u0275pipe(31, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(32, "select", 105);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_34_Template_select_ngModelChange_32_listener($event) {
+      \u0275\u0275restoreView(_r26);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.assignTeacherId, $event) || (ctx_r1.assignTeacherId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(33, "option", 52);
+    \u0275\u0275text(34);
+    \u0275\u0275pipe(35, "t");
+    \u0275\u0275pipe(36, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(37, SmartAssistantAdminComponent_section_34_option_37_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(38, "div", 33)(39, "button", 34);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_34_Template_button_click_39_listener() {
+      \u0275\u0275restoreView(_r26);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.saveAssignment());
+    });
+    \u0275\u0275text(40);
+    \u0275\u0275pipe(41, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(42, "button", 35);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_34_Template_button_click_42_listener() {
+      \u0275\u0275restoreView(_r26);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.resetAssignmentForm());
+    });
+    \u0275\u0275text(43);
+    \u0275\u0275pipe(44, "t");
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275ariaProperty("aria-label", \u0275\u0275interpolate(\u0275\u0275pipeBind1(1, 19, "smartadmin.tabAssign")));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 21, "smartadmin.assignTitle"));
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 23, "smartadmin.assignMode"));
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.assignMode);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(14, 25, "common.classroom"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(17, 27, "common.course"));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(21, 29, "common.classroom"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.assignClassroomId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(25, 31, "common.selectClassroom"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.assignClassroomOptions());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.assignMode === "course");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(31, 33, "role.teacher"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.assignTeacherId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(35, 35, "common.select"), " ", \u0275\u0275pipeBind1(36, 37, "role.teacher"));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngForOf", ctx_r1.teacherOptions());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(41, 39, "smartadmin.assignSave"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(44, 41, "common.cancel"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_35_option_22_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const c_r32 = ctx.$implicit;
+    \u0275\u0275property("value", c_r32.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(c_r32.label);
+  }
+}
+function SmartAssistantAdminComponent_section_35_option_32_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const s_r33 = ctx.$implicit;
+    \u0275\u0275property("value", s_r33.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(s_r33.label);
+  }
+}
+function SmartAssistantAdminComponent_section_35_div_33_option_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const c_r35 = ctx.$implicit;
+    \u0275\u0275property("value", c_r35.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(c_r35.label);
+  }
+}
+function SmartAssistantAdminComponent_section_35_div_33_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r34 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 17)(1, "label", 114);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "select", 115);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_35_div_33_Template_select_change_4_listener($event) {
+      \u0275\u0275restoreView(_r34);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.setEnrollCourse($event.target.value));
+    });
+    \u0275\u0275elementStart(5, "option", 52);
+    \u0275\u0275text(6);
+    \u0275\u0275pipe(7, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(8, SmartAssistantAdminComponent_section_35_div_33_option_8_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(3, 4, "common.course"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("value", ctx_r1.enrollCourseIds[0] || "");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(7, 6, "common.selectCourse"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.courseOptions());
+  }
+}
+function SmartAssistantAdminComponent_section_35_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r31 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "section", 10);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "div", 11)(3, "h2", 12);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "div", 108)(7, "button", 109);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_35_Template_button_click_7_listener() {
+      \u0275\u0275restoreView(_r31);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.enrollMode = "classroom");
+    });
+    \u0275\u0275text(8);
+    \u0275\u0275pipe(9, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "button", 109);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_35_Template_button_click_10_listener() {
+      \u0275\u0275restoreView(_r31);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.enrollMode = "subject");
+    });
+    \u0275\u0275text(11);
+    \u0275\u0275pipe(12, "t");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(13, "div", 16)(14, "div", 17)(15, "label", 110);
+    \u0275\u0275text(16);
+    \u0275\u0275pipe(17, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "select", 111);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_35_Template_select_ngModelChange_18_listener($event) {
+      \u0275\u0275restoreView(_r31);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.enrollClassroomId, $event) || (ctx_r1.enrollClassroomId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(19, "option", 52);
+    \u0275\u0275text(20);
+    \u0275\u0275pipe(21, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(22, SmartAssistantAdminComponent_section_35_option_22_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "div", 17)(24, "label", 112);
+    \u0275\u0275text(25);
+    \u0275\u0275pipe(26, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(27, "select", 113);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_35_Template_select_ngModelChange_27_listener($event) {
+      \u0275\u0275restoreView(_r31);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.enrollStudentId, $event) || (ctx_r1.enrollStudentId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(28, "option", 52);
+    \u0275\u0275text(29);
+    \u0275\u0275pipe(30, "t");
+    \u0275\u0275pipe(31, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(32, SmartAssistantAdminComponent_section_35_option_32_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(33, SmartAssistantAdminComponent_section_35_div_33_Template, 9, 8, "div", 30);
+    \u0275\u0275elementStart(34, "div", 33)(35, "button", 34);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_35_Template_button_click_35_listener() {
+      \u0275\u0275restoreView(_r31);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.enrollStudent());
+    });
+    \u0275\u0275text(36);
+    \u0275\u0275pipe(37, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(38, "button", 35);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_35_Template_button_click_38_listener() {
+      \u0275\u0275restoreView(_r31);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.clearEnrollForm());
+    });
+    \u0275\u0275text(39);
+    \u0275\u0275pipe(40, "t");
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275ariaProperty("aria-label", \u0275\u0275interpolate(\u0275\u0275pipeBind1(1, 25, "smartadmin.tabEnroll")));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 27, "smartadmin.enrollTitle"));
+    \u0275\u0275advance(3);
+    \u0275\u0275classProp("btn-primary", ctx_r1.enrollMode === "classroom")("btn-secondary", ctx_r1.enrollMode !== "classroom");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(9, 29, "smartadmin.enrollClassroom"), " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("btn-primary", ctx_r1.enrollMode === "subject")("btn-secondary", ctx_r1.enrollMode !== "subject");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(12, 31, "smartadmin.enrollSubject"), " ");
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(17, 33, "common.classroom"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.enrollClassroomId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(21, 35, "common.selectClassroom"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.enrollClassroomOptions());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(26, 37, "role.student"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.enrollStudentId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate2("", \u0275\u0275pipeBind1(30, 39, "common.select"), " ", \u0275\u0275pipeBind1(31, 41, "role.student"));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngForOf", ctx_r1.enrollStudentOptions());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.enrollMode === "subject");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(37, 43, "smartadmin.enrollSave"), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(40, 45, "common.cancel"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_36_option_19_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const p_r37 = ctx.$implicit;
+    \u0275\u0275property("value", p_r37.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(p_r37.label);
+  }
+}
+function SmartAssistantAdminComponent_section_36_option_28_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const s_r38 = ctx.$implicit;
+    \u0275\u0275property("value", s_r38.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(s_r38.label);
+  }
+}
+function SmartAssistantAdminComponent_section_36_option_35_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const y_r39 = ctx.$implicit;
+    \u0275\u0275property("value", y_r39.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(y_r39.label);
+  }
+}
+function SmartAssistantAdminComponent_section_36_option_41_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "option", 49);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const m_r40 = ctx.$implicit;
+    \u0275\u0275property("value", m_r40.value);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(m_r40.label);
+  }
+}
+function SmartAssistantAdminComponent_section_36_div_85_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 70)(1, "span", 135);
+    \u0275\u0275text(2);
+    \u0275\u0275pipe(3, "date");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span", 136);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "span", 137);
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "number");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "span", 138);
+    \u0275\u0275text(10);
+    \u0275\u0275pipe(11, "t");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const p_r41 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 4, p_r41.paymentDate, "shortDate"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(p_r41.payerLabel);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(8, 7, p_r41.amount, "1.2-2"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(p_r41.notes || \u0275\u0275pipeBind1(11, 10, "common.none"));
+  }
+}
+function SmartAssistantAdminComponent_section_36_div_86_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 78);
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(2, 1, "smartadmin.noPayments"), " ");
+  }
+}
+function SmartAssistantAdminComponent_section_36_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r36 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "section", 10);
+    \u0275\u0275pipe(1, "t");
+    \u0275\u0275elementStart(2, "div", 11)(3, "h2", 12);
+    \u0275\u0275text(4);
+    \u0275\u0275pipe(5, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(6, "div", 116)(7, "div", 117)(8, "h3", 118);
+    \u0275\u0275text(9);
+    \u0275\u0275pipe(10, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "div", 17)(12, "label", 119);
+    \u0275\u0275text(13);
+    \u0275\u0275pipe(14, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(15, "select", 120);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_36_Template_select_ngModelChange_15_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.paymentParentId, $event) || (ctx_r1.paymentParentId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(16, "option", 52);
+    \u0275\u0275text(17);
+    \u0275\u0275pipe(18, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(19, SmartAssistantAdminComponent_section_36_option_19_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(20, "div", 17)(21, "label", 121);
+    \u0275\u0275text(22);
+    \u0275\u0275pipe(23, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(24, "select", 122);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_36_Template_select_ngModelChange_24_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.paymentStudentId, $event) || (ctx_r1.paymentStudentId = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementStart(25, "option", 52);
+    \u0275\u0275text(26);
+    \u0275\u0275pipe(27, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(28, SmartAssistantAdminComponent_section_36_option_28_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(29, "div", 123)(30, "div", 124)(31, "label", 125);
+    \u0275\u0275text(32);
+    \u0275\u0275pipe(33, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(34, "select", 126);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_36_Template_select_change_34_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onPaymentYearChange($event.target.value));
+    });
+    \u0275\u0275template(35, SmartAssistantAdminComponent_section_36_option_35_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(36, "div", 124)(37, "label", 127);
+    \u0275\u0275text(38);
+    \u0275\u0275pipe(39, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(40, "select", 128);
+    \u0275\u0275listener("change", function SmartAssistantAdminComponent_section_36_Template_select_change_40_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onPaymentMonthChange($event.target.value));
+    });
+    \u0275\u0275template(41, SmartAssistantAdminComponent_section_36_option_41_Template, 2, 2, "option", 48);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(42, "div", 17)(43, "label", 129);
+    \u0275\u0275text(44);
+    \u0275\u0275pipe(45, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(46, "input", 130);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_36_Template_input_ngModelChange_46_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.paymentAmount, $event) || (ctx_r1.paymentAmount = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(47, "div", 17)(48, "label", 131);
+    \u0275\u0275text(49);
+    \u0275\u0275pipe(50, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(51, "input", 132);
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_36_Template_input_ngModelChange_51_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.paymentDate, $event) || (ctx_r1.paymentDate = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(52, "div", 17)(53, "label", 133);
+    \u0275\u0275text(54);
+    \u0275\u0275pipe(55, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(56, "input", 134);
+    \u0275\u0275pipe(57, "t");
+    \u0275\u0275twoWayListener("ngModelChange", function SmartAssistantAdminComponent_section_36_Template_input_ngModelChange_56_listener($event) {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.paymentNotes, $event) || (ctx_r1.paymentNotes = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275controlCreate();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(58, "div", 33)(59, "button", 34);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_36_Template_button_click_59_listener() {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.createPayment());
+    });
+    \u0275\u0275text(60);
+    \u0275\u0275pipe(61, "t");
+    \u0275\u0275pipe(62, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(63, "button", 35);
+    \u0275\u0275listener("click", function SmartAssistantAdminComponent_section_36_Template_button_click_63_listener() {
+      \u0275\u0275restoreView(_r36);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.resetPaymentForm());
+    });
+    \u0275\u0275text(64);
+    \u0275\u0275pipe(65, "t");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(66, "div", 117)(67, "h3", 118);
+    \u0275\u0275text(68);
+    \u0275\u0275pipe(69, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(70, "div", 55)(71, "div", 60)(72, "div", 61)(73, "span", 135);
+    \u0275\u0275text(74);
+    \u0275\u0275pipe(75, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(76, "span", 136);
+    \u0275\u0275text(77);
+    \u0275\u0275pipe(78, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(79, "span", 137);
+    \u0275\u0275text(80);
+    \u0275\u0275pipe(81, "t");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(82, "span", 138);
+    \u0275\u0275text(83);
+    \u0275\u0275pipe(84, "t");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(85, SmartAssistantAdminComponent_section_36_div_85_Template, 12, 12, "div", 97)(86, SmartAssistantAdminComponent_section_36_div_86_Template, 3, 3, "div", 68);
+    \u0275\u0275elementEnd()()()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275ariaProperty("aria-label", \u0275\u0275interpolate(\u0275\u0275pipeBind1(1, 36, "smartadmin.tabPayments")));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(5, 38, "smartadmin.paymentsTitle"));
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(10, 40, "smartadmin.addPaymentTitle"));
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(14, 42, "role.parent"));
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.paymentParentId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(18, 44, "common.all"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.paymentParentOptions());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(23, 46, "role.student"));
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.paymentStudentId);
+    \u0275\u0275control();
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(27, 48, "common.all"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.paymentStudentOptions());
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(33, 50, "common.year"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("value", ctx_r1.paymentYear);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r1.paymentYearOptions());
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(39, 52, "common.month"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("value", ctx_r1.paymentMonth);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", ctx_r1.paymentMonthOptions);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(45, 54, "common.amount"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.paymentAmount);
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1("", \u0275\u0275pipeBind1(50, 56, "common.date"), " *");
+    \u0275\u0275advance(2);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.paymentDate);
+    \u0275\u0275control();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(55, 58, "common.notes"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("placeholder", \u0275\u0275interpolate(\u0275\u0275pipeBind1(57, 60, "common.notes")));
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.paymentNotes);
+    \u0275\u0275control();
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate2(" ", \u0275\u0275pipeBind1(61, 62, "common.add"), " ", \u0275\u0275pipeBind1(62, 64, "smartadmin.payment"), " ");
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(65, 66, "common.cancel"), " ");
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(69, 68, "smartadmin.paymentsList"));
+    \u0275\u0275advance(6);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(75, 70, "common.date"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(78, 72, "common.payer"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(81, 74, "common.amount"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(84, 76, "common.notes"));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", ctx_r1.payments());
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r1.payments().length);
+  }
+}
+var SmartAssistantAdminComponent = class _SmartAssistantAdminComponent {
+  constructor() {
+    this.api = inject2(LearningApiService);
+    this.locale = inject2(LocaleService);
+    this.activeTab = signal(
+      "users",
+      ...ngDevMode ? [{ debugName: "activeTab" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.users = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "users" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.classrooms = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "classrooms" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.grades = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "grades" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.courses = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "courses" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.payments = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "payments" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.message = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "message" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.error = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "error" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.loading = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "loading" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.userFormMode = signal(
+      "list",
+      ...ngDevMode ? [{ debugName: "userFormMode" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.showingUserPassword = signal(
+      false,
+      ...ngDevMode ? [{ debugName: "showingUserPassword" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.usersPage = signal(
+      1,
+      ...ngDevMode ? [{ debugName: "usersPage" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.usersPageSize = signal(
+      25,
+      ...ngDevMode ? [{ debugName: "usersPageSize" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.usersTotalCount = signal(
+      0,
+      ...ngDevMode ? [{ debugName: "usersTotalCount" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.usersSortKey = signal(
+      "displayName",
+      ...ngDevMode ? [{ debugName: "usersSortKey" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.usersSortDir = signal(
+      "asc",
+      ...ngDevMode ? [{ debugName: "usersSortDir" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.usersRoleFilter = signal(
+      "",
+      ...ngDevMode ? [{ debugName: "usersRoleFilter" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.filteredUsers = computed(
+      () => {
+        const rows = this.users().slice();
+        const role = this.usersRoleFilter();
+        if (role) {
+          return rows.filter((u2) => u2.role === role);
+        }
+        return rows;
+      },
+      ...ngDevMode ? [{ debugName: "filteredUsers" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.sortedUsers = computed(
+      () => {
+        this.locale.lang();
+        return sortBy(this.filteredUsers(), this.usersSortKey(), this.usersSortDir());
+      },
+      ...ngDevMode ? [{ debugName: "sortedUsers" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.totalPages = computed(
+      () => Math.max(1, Math.ceil(this.usersTotalCount() / this.usersPageSize())),
+      ...ngDevMode ? [{ debugName: "totalPages" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.userRoleOptions = [
+      { value: "", label: this.locale.t("common.all") },
+      { value: "Teacher", label: this.locale.t("role.teacher") },
+      { value: "Parent", label: this.locale.t("role.parent") },
+      { value: "Student", label: this.locale.t("role.student") }
+    ];
+    this.classroomOptions = computed(
+      () => this.classrooms().slice().sort((a, b) => a.name.localeCompare(b.name)).map((r) => ({ value: r.id, label: r.name })),
+      ...ngDevMode ? [{ debugName: "classroomOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.teacherOptions = computed(
+      () => this.users().filter((u2) => u2.role === "Teacher").slice().sort((a, b) => a.displayName.localeCompare(b.displayName)).map((u2) => ({ value: u2.id, label: `${u2.displayName} \u2014 ${u2.email}` })),
+      ...ngDevMode ? [{ debugName: "teacherOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.studentOptions = computed(
+      () => this.users().filter((u2) => u2.role === "Student").slice().sort((a, b) => a.displayName.localeCompare(b.displayName)).map((u2) => ({ value: u2.id, label: `${u2.displayName} \u2014 ${u2.email}` })),
+      ...ngDevMode ? [{ debugName: "studentOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.courseOptions = computed(
+      () => this.courses().slice().sort((a, b) => a.title.localeCompare(b.title)).map((c) => ({ value: c.id, label: `${c.title}${c.grade ? " (" + formatGradeLabel((k, p) => this.locale.t(k, p), c.grade) + ")" : ""}` })),
+      ...ngDevMode ? [{ debugName: "courseOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.paymentYearOptions = computed(
+      () => {
+        const current = (/* @__PURE__ */ new Date()).getFullYear();
+        return [current - 1, current, current + 1].map((y) => ({ value: y, label: String(y) }));
+      },
+      ...ngDevMode ? [{ debugName: "paymentYearOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.paymentMonthOptions = Array.from({ length: 12 }, (_, i) => ({
+      value: i + 1,
+      label: String(i + 1)
+    }));
+    this.userFormName = "";
+    this.userFormEmail = "";
+    this.userFormPassword = "";
+    this.userFormMobile = "";
+    this.userFormRole = "student";
+    this.userFormGrade = 0;
+    this.userFormParentId = "";
+    this.userFormSchoolType = "";
+    this.parentSearchTimer = null;
+    this.parentSuggestions = signal(
+      [],
+      ...ngDevMode ? [{ debugName: "parentSuggestions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.classroomFormName = "";
+    this.classroomFormDescription = "";
+    this.classroomFormGrade = "";
+    this.classroomFormCourses = [];
+    this.classroomEditingId = null;
+    this.editingClassroom = computed(
+      () => this.classroomEditingId !== null,
+      ...ngDevMode ? [{ debugName: "editingClassroom" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.assignMode = "classroom";
+    this.assignClassroomId = "";
+    this.assignCourseId = "";
+    this.assignTeacherId = "";
+    this.assignClassroomOptions = this.classroomOptions;
+    this.assignCourseOptions = this.courseOptions;
+    this.enrollClassroomId = "";
+    this.enrollStudentId = "";
+    this.enrollCourseIds = [];
+    this.enrollMode = "classroom";
+    this.enrollClassroomOptions = this.classroomOptions;
+    this.enrollStudentOptions = this.studentOptions;
+    this.paymentParentId = "";
+    this.paymentStudentId = "";
+    this.paymentYear = (/* @__PURE__ */ new Date()).getFullYear();
+    this.paymentMonth = (/* @__PURE__ */ new Date()).getMonth() + 1;
+    this.paymentAmount = 0;
+    this.paymentDate = "";
+    this.paymentNotes = "";
+    this.paymentParentOptions = computed(
+      () => this.users().filter((u2) => u2.role === "Parent").slice().sort((a, b) => a.displayName.localeCompare(b.displayName)).map((u2) => ({ value: u2.id, label: `${u2.displayName} \u2014 ${u2.email}` })),
+      ...ngDevMode ? [{ debugName: "paymentParentOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.paymentStudentOptions = computed(
+      () => this.users().filter((u2) => u2.role === "Student").slice().sort((a, b) => a.displayName.localeCompare(b.displayName)).map((u2) => ({ value: u2.id, label: `${u2.displayName} \u2014 ${u2.email}` })),
+      ...ngDevMode ? [{ debugName: "paymentStudentOptions" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
+    this.reload();
+  }
+  reload() {
+    this.loading.set(true);
+    this.api.getUsers().subscribe((users) => this.users.set(users));
+    this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
+    this.api.getGrades().subscribe((grades) => this.grades.set(grades));
+    this.api.getCourses().subscribe((courses) => this.courses.set(courses));
+    this.loadPayments();
+    this.loadUsersPage();
+  }
+  loadUsersPage() {
+    this.api.getUsers(this.usersRoleFilter() || void 0).subscribe((all) => {
+      const paged = all.slice((this.usersPage() - 1) * this.usersPageSize(), this.usersPage() * this.usersPageSize());
+      this.users.set(paged);
+      this.usersTotalCount.set(all.length);
+    });
+  }
+  setUsersPage(page) {
+    this.usersPage.set(page);
+    this.loadUsersPage();
+  }
+  setUsersRole(role) {
+    this.usersRoleFilter.set(role);
+    this.usersPage.set(1);
+    this.loadUsersPage();
+  }
+  setUsersSort(key) {
+    this.usersSortDir.set(nextSort(this.usersSortKey(), key, this.usersSortDir()));
+    this.usersSortKey.set(key);
+  }
+  sortMark(key) {
+    if (this.usersSortKey() !== key)
+      return "";
+    return this.usersSortDir() === "asc" ? "\u2191" : "\u2193";
+  }
+  getUserGradeLabel(user) {
+    if (user.grade == null)
+      return this.locale.t("common.emDash");
+    return formatGradeLabel((k, p) => this.locale.t(k, p), user.grade);
+  }
+  gradeLabel(grade) {
+    return formatGradeLabel((k, p) => this.locale.t(k, p), grade);
+  }
+  deleteUser(user) {
+    if (!confirm(this.locale.t("smartadmin.confirmDeleteUser", {
+      name: user.displayName,
+      role: this.locale.t(`role.${user.role.toLowerCase()}`)
+    }))) {
+      return;
+    }
+    this.clearStatus();
+    this.api.deleteUser(user.id).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.userDeleted"));
+        this.reload();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, "smartadmin.userDeleteFailed"))
+    });
+  }
+  courseLabel(course, locale) {
+    if (!course)
+      return locale.t("common.none");
+    const name = course.courseTitle || course.courseId;
+    if (course.courseGrade == null)
+      return name;
+    return `${name} (${formatGradeLabel((k, p) => locale.t(k, p), course.courseGrade)})`;
+  }
+  onParentIdInput(value) {
+    const trimmed = (value || "").trim();
+    if (this.parentSearchTimer)
+      clearTimeout(this.parentSearchTimer);
+    if (trimmed.length < 2) {
+      this.parentSuggestions.set([]);
+      return;
+    }
+    this.parentSearchTimer = setTimeout(() => {
+      this.api.getUsers("Parent").subscribe((parents) => this.parentSuggestions.set(parents.filter((p) => (p.displayName + " " + p.email).toLowerCase().includes(trimmed.toLowerCase())).slice(0, 8).map((p) => ({ id: p.id, displayName: p.displayName, email: p.email }))));
+    }, 250);
+  }
+  clearParentSuggestions() {
+    this.parentSuggestions.set([]);
+    if (this.parentSearchTimer)
+      clearTimeout(this.parentSearchTimer);
+  }
+  clearParentSuggestionsAfter() {
+    setTimeout(() => this.clearParentSuggestions(), 200);
+  }
+  selectParent(parentId) {
+    this.userFormParentId = parentId;
+    this.clearParentSuggestions();
+  }
+  resetUserForm() {
+    this.userFormName = "";
+    this.userFormEmail = "";
+    this.userFormPassword = "";
+    this.userFormMobile = "";
+    this.userFormRole = "student";
+    this.userFormGrade = 0;
+    this.userFormParentId = "";
+    this.userFormSchoolType = "";
+    this.clearParentSuggestions();
+    this.clearStatus();
+  }
+  createUser() {
+    this.clearStatus();
+    if (!this.userFormName.trim()) {
+      this.error.set(this.locale.t("smartadmin.nameRequired"));
+      return;
+    }
+    if (!this.userFormEmail.trim()) {
+      this.error.set(this.locale.t("smartadmin.emailRequired"));
+      return;
+    }
+    if (!this.userFormPassword) {
+      this.error.set(this.locale.t("smartadmin.passwordRequired"));
+      return;
+    }
+    const role = this.userFormRole === "teacher" ? "Teacher" : this.userFormRole === "parent" ? "Parent" : "Student";
+    const payload = {
+      email: this.userFormEmail.trim(),
+      displayName: this.userFormName.trim(),
+      password: this.userFormPassword,
+      role,
+      mobilePhone: this.userFormMobile || null,
+      parentId: role === "Student" && this.userFormParentId ? this.userFormParentId : null,
+      grade: this.userFormGrade || null,
+      schoolType: this.userFormSchoolType || null
+    };
+    this.loading.set(true);
+    this.api.createUser(payload).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.userCreated", { role: this.roleLabel(role) }));
+        this.resetUserForm();
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, "smartadmin.userCreateFailed"));
+        this.loading.set(false);
+      }
+    });
+  }
+  roleLabel(role) {
+    return this.locale.t(`role.${role.toLowerCase()}`);
+  }
+  setClassroomCoursesFromRoom(room) {
+    const courses = room.courses ?? [];
+    this.classroomFormCourses = courses.length ? courses.map((c) => ({ courseId: c.courseId, teacherId: c.teacherId })) : room.courseId ? [{ courseId: room.courseId, teacherId: "" }] : [];
+  }
+  startNewClassroom() {
+    this.classroomEditingId = null;
+    this.classroomFormName = "";
+    this.classroomFormDescription = "";
+    this.classroomFormGrade = "";
+    this.classroomFormCourses = [];
+    this.clearStatus();
+  }
+  startEditClassroom(room) {
+    this.classroomEditingId = room.id;
+    this.classroomFormName = room.name;
+    this.classroomFormDescription = room.description;
+    this.classroomFormGrade = room.grade ?? "";
+    this.setClassroomCoursesFromRoom(room);
+  }
+  cancelClassroomEdit() {
+    this.classroomEditingId = null;
+    this.classroomFormName = "";
+    this.classroomFormDescription = "";
+    this.classroomFormGrade = "";
+    this.classroomFormCourses = [];
+    this.clearStatus();
+  }
+  setCourseAssignCourse(index, courseId) {
+    const list = [...this.classroomFormCourses];
+    list[index] = __spreadProps(__spreadValues({}, list[index]), { courseId: String(courseId) });
+    this.classroomFormCourses = list;
+  }
+  setCourseAssignTeacher(index, teacherId) {
+    const list = [...this.classroomFormCourses];
+    list[index] = __spreadProps(__spreadValues({}, list[index]), { teacherId: String(teacherId) });
+    this.classroomFormCourses = list;
+  }
+  removeCourseAssign(index) {
+    this.classroomFormCourses = this.classroomFormCourses.filter((_, i) => i !== index);
+  }
+  addCourseAssign() {
+    this.classroomFormCourses = [...this.classroomFormCourses, { courseId: "", teacherId: "" }];
+  }
+  saveClassroom() {
+    this.clearStatus();
+    if (!this.classroomFormName.trim()) {
+      this.error.set(this.locale.t("smartadmin.classroomNameRequired"));
+      return;
+    }
+    if (!this.classroomFormCourses.length) {
+      this.error.set(this.locale.t("smartadmin.classroomCourseRequired"));
+      return;
+    }
+    const payload = {
+      name: this.classroomFormName.trim(),
+      description: this.classroomFormDescription || void 0,
+      grade: this.classroomFormGrade === "" ? null : Number(this.classroomFormGrade),
+      courses: this.classroomFormCourses.length ? [...this.classroomFormCourses] : null
+    };
+    const editing = this.classroomEditingId;
+    this.loading.set(true);
+    if (editing) {
+      this.api.updateClassroom(editing, payload).subscribe({
+        next: () => {
+          this.message.set(this.locale.t("smartadmin.classroomUpdated"));
+          this.cancelClassroomEdit();
+          this.reload();
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.error.set(this.locale.fromApiError(err, "smartadmin.classroomUpdateFailed"));
+          this.loading.set(false);
+        }
+      });
+      return;
+    }
+    this.api.createClassroom(payload).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.classroomCreated"));
+        this.cancelClassroomEdit();
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, "smartadmin.classroomCreateFailed"));
+        this.loading.set(false);
+      }
+    });
+  }
+  deleteClassroom(room) {
+    if (!confirm(this.locale.t("smartadmin.confirmDeleteClassroom", { name: room.name })))
+      return;
+    this.clearStatus();
+    this.api.deleteClassroom(room.id).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.classroomDeleted"));
+        this.reload();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, "smartadmin.classroomDeleteFailed"))
+    });
+  }
+  resetAssignmentForm() {
+    this.assignClassroomId = "";
+    this.assignCourseId = "";
+    this.assignTeacherId = "";
+    this.clearStatus();
+  }
+  saveAssignment() {
+    this.clearStatus();
+    if (this.assignMode === "classroom") {
+      if (!this.assignClassroomId || !this.assignTeacherId) {
+        this.error.set(this.locale.t("smartadmin.assignSelectBoth"));
+        return;
+      }
+      this.loading.set(true);
+      this.api.assignClassroom(this.assignClassroomId, { courses: null }).subscribe({
+        next: () => {
+          this.message.set(this.locale.t("smartadmin.assignmentSaved"));
+          this.assignTeacherId = "";
+          this.reload();
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.error.set(this.locale.fromApiError(err, "smartadmin.assignmentFailed"));
+          this.loading.set(false);
+        }
+      });
+      return;
+    }
+    if (!this.assignCourseId || !this.assignTeacherId) {
+      this.error.set(this.locale.t("smartadmin.assignSelectBoth"));
+      return;
+    }
+    this.loading.set(true);
+    const payload = {
+      courseId: this.assignCourseId,
+      teacherId: this.assignTeacherId
+    };
+    this.api.assignClassroom(this.assignClassroomId, { courses: [payload] }).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.assignmentSaved"));
+        this.assignTeacherId = "";
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, "smartadmin.assignmentFailed"));
+        this.loading.set(false);
+      }
+    });
+  }
+  clearEnrollForm() {
+    this.enrollClassroomId = "";
+    this.enrollStudentId = "";
+    this.enrollCourseIds = [];
+    this.clearStatus();
+  }
+  setEnrollCourse(courseId) {
+    const id = String(courseId);
+    this.enrollCourseIds = id ? [id] : [];
+  }
+  enrollStudent() {
+    this.clearStatus();
+    if (!this.enrollClassroomId || !this.enrollStudentId) {
+      this.error.set(this.locale.t("smartadmin.enrollSelectBoth"));
+      return;
+    }
+    if (this.enrollMode === "subject") {
+      if (!this.enrollCourseIds.length) {
+        this.error.set(this.locale.t("smartadmin.enrollSelectCourse"));
+        return;
+      }
+    }
+    this.loading.set(true);
+    this.api.addStudentToClassroom(this.enrollClassroomId, this.enrollStudentId, this.enrollCourseIds).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.enrolled"));
+        this.clearEnrollForm();
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, "smartadmin.enrollFailed"));
+        this.loading.set(false);
+      }
+    });
+  }
+  loadPayments() {
+    this.api.getTuitionPayments({
+      year: this.paymentYear,
+      month: this.paymentMonth
+    }).subscribe((payments) => this.payments.set(payments));
+  }
+  onPaymentMonthChange(month) {
+    this.paymentMonth = Number(month);
+    this.loadPayments();
+  }
+  onPaymentYearChange(year) {
+    this.paymentYear = Number(year);
+    this.loadPayments();
+  }
+  createPayment() {
+    this.clearStatus();
+    if (!this.paymentDate) {
+      this.error.set(this.locale.t("smartadmin.paymentDateRequired"));
+      return;
+    }
+    if (!this.paymentAmount || this.paymentAmount <= 0) {
+      this.error.set(this.locale.t("smartadmin.paymentAmountRequired"));
+      return;
+    }
+    this.loading.set(true);
+    this.api.createTuitionPayment({
+      parentId: this.paymentParentId || null,
+      studentId: this.paymentStudentId || null,
+      year: this.paymentYear,
+      month: this.paymentMonth,
+      amount: this.paymentAmount,
+      paymentDate: this.paymentDate,
+      notes: this.paymentNotes || null
+    }).subscribe({
+      next: () => {
+        this.message.set(this.locale.t("smartadmin.paymentCreated"));
+        this.resetPaymentForm();
+        this.loadPayments();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, "smartadmin.paymentCreateFailed"));
+        this.loading.set(false);
+      }
+    });
+  }
+  resetPaymentForm() {
+    this.paymentParentId = "";
+    this.paymentStudentId = "";
+    this.paymentYear = (/* @__PURE__ */ new Date()).getFullYear();
+    this.paymentMonth = (/* @__PURE__ */ new Date()).getMonth() + 1;
+    this.paymentAmount = 0;
+    this.paymentDate = "";
+    this.paymentNotes = "";
+    this.loadPayments();
+  }
+  clearStatus() {
+    this.message.set("");
+    this.error.set("");
+  }
+  static {
+    this.\u0275fac = function SmartAssistantAdminComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SmartAssistantAdminComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SmartAssistantAdminComponent, selectors: [["app-smart-assistant-admin"]], decls: 37, vars: 43, consts: [["userParentInput", ""], [1, "admin-container"], [1, "admin-page-header"], [1, "admin-page-title"], [1, "admin-page-icon"], [1, "admin-page-subtitle"], ["role", "tablist", 1, "admin-tabs"], ["role", "tab", 3, "click"], [3, "ok", "error"], ["class", "admin-card", 3, "aria-label", 4, "ngIf"], [1, "admin-card", 3, "aria-label"], [1, "admin-card-header"], [1, "admin-card-title"], [1, "admin-link-btn", 3, "click"], ["class", "admin-form", 4, "ngIf"], ["class", "admin-table-wrap", 4, "ngIf"], [1, "admin-form"], [1, "form-row"], ["for", "user-name", 1, "form-label"], ["id", "user-name", "type", "text", "autocomplete", "name", 1, "form-input", 3, "ngModelChange", "ngModel", "placeholder"], ["for", "user-email", 1, "form-label"], ["id", "user-email", "type", "email", "autocomplete", "email", "placeholder", "teacher@codekids.local", 1, "form-input", 3, "ngModelChange", "ngModel"], ["for", "user-password", 1, "form-label"], ["id", "user-password", "autocomplete", "new-password", 1, "form-input", 3, "ngModelChange", "type", "ngModel", "placeholder"], ["type", "button", 1, "icon-btn", "secondary", "icon-btn-sm", 3, "click"], ["for", "user-role", "data-fix-roles", "", 1, "form-label"], ["id", "user-role", 1, "form-select", 3, "ngModelChange", "ngModel"], ["value", "teacher"], ["value", "parent"], ["value", "student"], ["class", "form-row", 4, "ngIf"], ["for", "user-mobile", 1, "form-label"], ["id", "user-mobile", "type", "tel", 1, "form-input", 3, "ngModelChange", "ngModel", "placeholder"], [1, "form-row", "form-actions"], ["type", "button", 1, "btn", "btn-primary", 3, "click"], ["type", "button", 1, "btn", "btn-secondary", 3, "click"], ["for", "user-parent", 1, "form-label"], [1, "searchable-input-wrap"], ["id", "user-parent", "type", "text", 1, "form-input", 3, "input", "focus", "blur", "value", "placeholder"], ["class", "searchable-suggestions", 4, "ngIf"], [1, "searchable-suggestions"], ["type", "button", "class", "searchable-suggestion", 3, "click", 4, "ngFor", "ngForOf"], ["type", "button", 1, "searchable-suggestion", 3, "click"], [1, "searchable-suggestion-label"], [1, "searchable-suggestion-sub"], ["for", "user-grade", 1, "form-label"], ["id", "user-grade", 1, "form-select", 3, "change", "value"], [3, "ngValue"], [3, "value", 4, "ngFor", "ngForOf"], [3, "value"], ["for", "user-school-type", 1, "form-label"], ["id", "user-school-type", 1, "form-select", 3, "ngModelChange", "ngModel"], ["value", ""], ["value", "Arabic"], ["value", "Language"], [1, "admin-table-wrap"], [1, "admin-table-toolbar"], [1, "admin-filter-row"], [1, "form-label", "filter-label"], [1, "form-select", "filter-select", 3, "change", "value"], [1, "admin-table"], [1, "admin-table-head"], [1, "admin-table-cell", "admin-table-name", 3, "click"], [1, "admin-table-cell", "admin-table-email", 3, "click"], [1, "admin-table-cell", "admin-table-role", 3, "click"], [1, "admin-table-cell", "admin-table-grade", 3, "click"], [1, "admin-table-cell", "admin-table-actions"], ["class", "admin-table-row", 3, "admin-table-row--inactive", 4, "ngFor", "ngForOf"], ["class", "admin-table-empty", 4, "ngIf"], ["class", "admin-pagination", 4, "ngIf"], [1, "admin-table-row"], [1, "admin-table-cell", "admin-table-name"], [1, "admin-table-cell", "admin-table-email"], [1, "admin-table-cell", "admin-table-role"], [1, "admin-table-cell", "admin-table-grade"], [4, "ngIf"], [1, "admin-table-cell", "admin-table-actions", "admin-table-actions-right"], ["type", "button", 1, "icon-btn", "danger", "icon-btn-sm", 3, "click"], [1, "admin-table-empty"], [1, "admin-pagination"], [1, "admin-pagination-info"], [1, "admin-pagination-controls"], ["type", "button", 1, "btn", "btn-secondary", "btn-sm", 3, "click", "disabled"], ["for", "classroom-name", 1, "form-label"], ["id", "classroom-name", "type", "text", 1, "form-input", 3, "ngModelChange", "ngModel", "placeholder"], ["for", "classroom-description", 1, "form-label"], ["id", "classroom-description", "rows", "3", 1, "form-input", "form-textarea", 3, "ngModelChange", "ngModel", "placeholder"], ["for", "classroom-grade", 1, "form-label"], ["id", "classroom-grade", 1, "form-select", 3, "change", "value"], [1, "form-label"], [1, "course-assign-list"], ["class", "course-assign-row", 4, "ngFor", "ngForOf"], ["type", "button", 1, "btn", "btn-ghost-sm", 3, "click"], [1, "course-assign-row"], [1, "form-select", 3, "change", "value"], [1, "admin-table-cell", "admin-table-description"], [1, "admin-table-cell", "admin-table-courses"], ["class", "admin-table-row", 4, "ngFor", "ngForOf"], ["for", "assign-mode", 1, "form-label"], ["id", "assign-mode", 1, "form-select", 3, "ngModelChange", "ngModel"], ["value", "classroom"], ["value", "course"], ["for", "assign-classroom", 1, "form-label"], ["id", "assign-classroom", 1, "form-select", 3, "ngModelChange", "ngModel"], ["for", "assign-teacher", 1, "form-label"], ["id", "assign-teacher", 1, "form-select", 3, "ngModelChange", "ngModel"], ["for", "assign-course", 1, "form-label"], ["id", "assign-course", 1, "form-select", 3, "ngModelChange", "ngModel"], [1, "admin-tab-toggle"], ["type", "button", 3, "click"], ["for", "enroll-classroom", 1, "form-label"], ["id", "enroll-classroom", 1, "form-select", 3, "ngModelChange", "ngModel"], ["for", "enroll-student", 1, "form-label"], ["id", "enroll-student", 1, "form-select", 3, "ngModelChange", "ngModel"], ["for", "enroll-courses", 1, "form-label"], ["id", "enroll-courses", 1, "form-select", 3, "change", "value"], [1, "admin-form", "admin-form--split"], [1, "form-section"], [1, "form-section-title"], ["for", "payment-parent", 1, "form-label"], ["id", "payment-parent", 1, "form-select", 3, "ngModelChange", "ngModel"], ["for", "payment-student", 1, "form-label"], ["id", "payment-student", 1, "form-select", 3, "ngModelChange", "ngModel"], [1, "form-row", "form-row--inline"], [1, "form-field"], ["for", "payment-year", 1, "form-label"], ["id", "payment-year", 1, "form-select", 3, "change", "value"], ["for", "payment-month", 1, "form-label"], ["id", "payment-month", 1, "form-select", 3, "change", "value"], ["for", "payment-amount", 1, "form-label"], ["id", "payment-amount", "type", "number", "min", "0", "step", "0.01", "placeholder", "0.00", 1, "form-input", 3, "ngModelChange", "ngModel"], ["for", "payment-date", 1, "form-label"], ["id", "payment-date", "type", "date", 1, "form-input", 3, "ngModelChange", "ngModel"], ["for", "payment-notes", 1, "form-label"], ["id", "payment-notes", "type", "text", 1, "form-input", 3, "ngModelChange", "ngModel", "placeholder"], [1, "admin-table-cell", "admin-table-date"], [1, "admin-table-cell", "admin-table-payer"], [1, "admin-table-cell", "admin-table-amount"], [1, "admin-table-cell", "admin-table-notes"]], template: function SmartAssistantAdminComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "h1", 3)(3, "span", 4);
+        \u0275\u0275text(4, "\u{1F9E0}");
+        \u0275\u0275elementEnd();
+        \u0275\u0275text(5);
+        \u0275\u0275pipe(6, "t");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(7, "p", 5);
+        \u0275\u0275text(8);
+        \u0275\u0275pipe(9, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(10, "ul", 6)(11, "li")(12, "a", 7);
+        \u0275\u0275listener("click", function SmartAssistantAdminComponent_Template_a_click_12_listener() {
+          return ctx.activeTab.set("users");
+        });
+        \u0275\u0275text(13);
+        \u0275\u0275pipe(14, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(15, "li")(16, "a", 7);
+        \u0275\u0275listener("click", function SmartAssistantAdminComponent_Template_a_click_16_listener() {
+          return ctx.activeTab.set("classrooms");
+        });
+        \u0275\u0275text(17);
+        \u0275\u0275pipe(18, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(19, "li")(20, "a", 7);
+        \u0275\u0275listener("click", function SmartAssistantAdminComponent_Template_a_click_20_listener() {
+          return ctx.activeTab.set("assign");
+        });
+        \u0275\u0275text(21);
+        \u0275\u0275pipe(22, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(23, "li")(24, "a", 7);
+        \u0275\u0275listener("click", function SmartAssistantAdminComponent_Template_a_click_24_listener() {
+          return ctx.activeTab.set("enroll");
+        });
+        \u0275\u0275text(25);
+        \u0275\u0275pipe(26, "t");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(27, "li")(28, "a", 7);
+        \u0275\u0275listener("click", function SmartAssistantAdminComponent_Template_a_click_28_listener() {
+          return ctx.activeTab.set("payments");
+        });
+        \u0275\u0275text(29);
+        \u0275\u0275pipe(30, "t");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275element(31, "app-page-feedback", 8);
+        \u0275\u0275template(32, SmartAssistantAdminComponent_section_32_Template, 11, 12, "section", 9)(33, SmartAssistantAdminComponent_section_33_Template, 11, 12, "section", 9)(34, SmartAssistantAdminComponent_section_34_Template, 45, 43, "section", 9)(35, SmartAssistantAdminComponent_section_35_Template, 41, 47, "section", 9)(36, SmartAssistantAdminComponent_section_36_Template, 87, 78, "section", 9);
+        \u0275\u0275elementEnd();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(6, 29, "smartadmin.title"), " ");
+        \u0275\u0275advance(3);
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(9, 31, "smartadmin.subtitle"));
+        \u0275\u0275advance(3);
+        \u0275\u0275classProp("active", ctx.activeTab() === "users");
+        \u0275\u0275advance();
+        \u0275\u0275attribute("aria-selected", ctx.activeTab() === "users");
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(14, 33, "smartadmin.tabUsers"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275classProp("active", ctx.activeTab() === "classrooms");
+        \u0275\u0275advance();
+        \u0275\u0275attribute("aria-selected", ctx.activeTab() === "classrooms");
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(18, 35, "smartadmin.tabClassrooms"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275classProp("active", ctx.activeTab() === "assign");
+        \u0275\u0275advance();
+        \u0275\u0275attribute("aria-selected", ctx.activeTab() === "assign");
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(22, 37, "smartadmin.tabAssign"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275classProp("active", ctx.activeTab() === "enroll");
+        \u0275\u0275advance();
+        \u0275\u0275attribute("aria-selected", ctx.activeTab() === "enroll");
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(26, 39, "smartadmin.tabEnroll"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275classProp("active", ctx.activeTab() === "payments");
+        \u0275\u0275advance();
+        \u0275\u0275attribute("aria-selected", ctx.activeTab() === "payments");
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(30, 41, "smartadmin.tabPayments"), " ");
+        \u0275\u0275advance(2);
+        \u0275\u0275property("ok", ctx.message())("error", ctx.error());
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.activeTab() === "users");
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.activeTab() === "classrooms");
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.activeTab() === "assign");
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.activeTab() === "enroll");
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.activeTab() === "payments");
+      }
+    }, dependencies: [
+      NgIf,
+      NgForOf,
+      FormsModule,
+      NgSelectOption,
+      \u0275NgSelectMultipleOption,
+      DefaultValueAccessor,
+      NumberValueAccessor,
+      SelectControlValueAccessor,
+      NgControlStatus,
+      MinValidator,
+      NgModel,
+      PageFeedbackComponent,
+      DatePipe,
+      DecimalPipe,
+      TranslatePipe
+    ], styles: ['\n.page[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   span[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   li[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   td[_ngcontent-%COMP%], \n.page[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.topbar[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%], \n.grid-two[_ngcontent-%COMP%], \n.grid-cards[_ngcontent-%COMP%], \n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand[_ngcontent-%COMP%] {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1[_ngcontent-%COMP%], \nh2[_ngcontent-%COMP%], \nh3[_ngcontent-%COMP%], \nh4[_ngcontent-%COMP%] {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1[_ngcontent-%COMP%] {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2[_ngcontent-%COMP%] {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n.hero-strip[_ngcontent-%COMP%] {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.hero-strip[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: var(--hero-fg);\n}\n.eyebrow[_ngcontent-%COMP%], \n.meta[_ngcontent-%COMP%], \n.back[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.eyebrow[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back[_ngcontent-%COMP%]:hover {\n  color: var(--heading);\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%], \n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%] {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill[_ngcontent-%COMP%], \nbutton[_ngcontent-%COMP%] {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton[_ngcontent-%COMP%]:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton[_ngcontent-%COMP%]:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton[_ngcontent-%COMP%]:focus-visible, \n.chip[_ngcontent-%COMP%]:focus-visible, \n.list-btn[_ngcontent-%COMP%]:focus-visible, \na[_ngcontent-%COMP%]:focus-visible, \ninput[_ngcontent-%COMP%]:focus-visible, \nselect[_ngcontent-%COMP%]:focus-visible, \ntextarea[_ngcontent-%COMP%]:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost[_ngcontent-%COMP%], \n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost[_ngcontent-%COMP%]:hover:not(:disabled), \n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n}\n.block[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%] {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block[_ngcontent-%COMP%]:has(app-searchable-select.ss--open), \n.block[_ngcontent-%COMP%]:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block[_ngcontent-%COMP%]    > h3[_ngcontent-%COMP%] {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block[_ngcontent-%COMP%]   p[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.block[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: var(--text);\n}\n.chip-row[_ngcontent-%COMP%], \n.avatar-row[_ngcontent-%COMP%] {\n  flex-wrap: wrap;\n}\n.chip[_ngcontent-%COMP%], \n.list-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip[_ngcontent-%COMP%]:hover, \n.list-btn[_ngcontent-%COMP%]:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz[_ngcontent-%COMP%] {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn[_ngcontent-%COMP%] {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active[_ngcontent-%COMP%], \n.avatar.selected[_ngcontent-%COMP%], \n.badge.earned[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar[_ngcontent-%COMP%] {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.avatar[_ngcontent-%COMP%]   small[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.badge[_ngcontent-%COMP%]   small[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.avatar[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji[_ngcontent-%COMP%] {\n  font-size: 2rem;\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=radio][_ngcontent-%COMP%], \ninput[type=checkbox][_ngcontent-%COMP%] {\n  accent-color: var(--accent);\n}\ntextarea[_ngcontent-%COMP%], \ninput[type=text][_ngcontent-%COMP%], \ninput[type=email][_ngcontent-%COMP%], \ninput[type=password][_ngcontent-%COMP%], \ninput[type=number][_ngcontent-%COMP%], \ninput[type=datetime-local][_ngcontent-%COMP%], \ninput[type=file][_ngcontent-%COMP%], \nselect[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea[_ngcontent-%COMP%] {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea[_ngcontent-%COMP%]::placeholder, \ninput[_ngcontent-%COMP%]::placeholder {\n  color: var(--text-soft);\n}\ntextarea[_ngcontent-%COMP%]:hover, \ninput[_ngcontent-%COMP%]:hover, \nselect[_ngcontent-%COMP%]:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea[_ngcontent-%COMP%]:focus, \ninput[_ngcontent-%COMP%]:focus, \nselect[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n}\n.feedback[_ngcontent-%COMP%] {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok[_ngcontent-%COMP%] {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light][_ngcontent-%COMP%]   .feedback.ok[_ngcontent-%COMP%] {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html[_ngcontent-%COMP%] {\n  color: var(--prompt-fg);\n}\n.prompt-html[_ngcontent-%COMP%]   b[_ngcontent-%COMP%], \n.prompt-html[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  font-weight: 800;\n}\n.table[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two[_ngcontent-%COMP%], \n   .table-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: _ngcontent-%COMP%_pageIn 0.35s ease;\n}\n.panel-page[_ngcontent-%COMP%]    > h2[_ngcontent-%COMP%] {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page[_ngcontent-%COMP%]    > .meta[_ngcontent-%COMP%] {\n  margin-top: -0.55rem;\n}\n.meeting-form[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   label.checkbox[_ngcontent-%COMP%], \nlabel.checkbox[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.meeting-form[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.form-grid[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%], \n.meeting-row[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  color: inherit;\n}\n.form-card[_ngcontent-%COMP%] {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card[_ngcontent-%COMP%] {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card[_ngcontent-%COMP%]   strong[_ngcontent-%COMP%] {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link[_ngcontent-%COMP%]:hover, \nbutton.stat-card-link[_ngcontent-%COMP%]:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active[_ngcontent-%COMP%] {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes _ngcontent-%COMP%_pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page[_ngcontent-%COMP%] {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip[_ngcontent-%COMP%] {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools[_ngcontent-%COMP%] {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl][_ngcontent-%COMP%]   .student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%] {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-icon[_ngcontent-%COMP%] {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab-label[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:hover, \n.student-side-tools[_ngcontent-%COMP%]   .side-tab[_ngcontent-%COMP%]:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools[_ngcontent-%COMP%] {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n\n.user-row[_ngcontent-%COMP%] {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table[_ngcontent-%COMP%] {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   .chip-row[_ngcontent-%COMP%] {\n  margin-top: 0.45rem;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   .name-cell[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.meeting-form[_ngcontent-%COMP%]   label[_ngcontent-%COMP%]   .chip-row[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 0;\n}\n.wa-destination[_ngcontent-%COMP%] {\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.wa-destination[_ngcontent-%COMP%]   legend[_ngcontent-%COMP%] {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.edit-panel[_ngcontent-%COMP%] {\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  background:\n    linear-gradient(\n      180deg,\n      rgba(95, 211, 188, 0.08),\n      transparent 60%);\n}\n.classroom-edit-form[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form[_ngcontent-%COMP%] {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .span-3[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .edit-form-hint[_ngcontent-%COMP%] {\n  margin: 0;\n  align-self: center;\n}\n.classroom-edit-form[_ngcontent-%COMP%]   .form-actions[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n@media (max-width: 1100px) {\n  .student-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@media (max-width: 960px) {\n  .classroom-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .classroom-edit-form[_ngcontent-%COMP%]   .span-3[_ngcontent-%COMP%] {\n    grid-column: auto;\n  }\n  .student-edit-form[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.field-label[_ngcontent-%COMP%] {\n  margin: 0 0 0.25rem;\n  font-weight: 700;\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%] {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table[_ngcontent-%COMP%]   th.sortable[_ngcontent-%COMP%]:hover {\n  color: var(--accent-fg);\n}\n.data-table[_ngcontent-%COMP%]   th[_ngcontent-%COMP%]   .sort-mark[_ngcontent-%COMP%] {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:hover   td[_ngcontent-%COMP%] {\n  background: var(--table-row-hover);\n}\n.data-table[_ngcontent-%COMP%]   tr.is-inactive[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  opacity: 0.58;\n}\n.data-table[_ngcontent-%COMP%]   tr.total-row[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border-top: 2px solid var(--border);\n  background: var(--table-row-total);\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%], \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus, \n.data-table[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n}\n.row-actions[_ngcontent-%COMP%]   button.danger[_ngcontent-%COMP%] {\n  background: var(--danger-soft-bg);\n  color: var(--danger-soft-fg);\n  box-shadow: none;\n}\n.row-actions[_ngcontent-%COMP%]   button.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap[_ngcontent-%COMP%] {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview[_ngcontent-%COMP%] {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  object-fit: contain;\n}\n.brand-preview.logo[_ngcontent-%COMP%] {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner[_ngcontent-%COMP%] {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.login-preview-form[_ngcontent-%COMP%], \n.login-preview-visual[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.login-preview-visual[_ngcontent-%COMP%] {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form[_ngcontent-%COMP%] {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.ghost-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.search-btn[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.55);\n  background: rgba(255, 214, 10, 0.22);\n  color: var(--text);\n  font: inherit;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: none;\n}\n.search-btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%] {\n  font-size: 0.95em;\n  line-height: 1;\n}\n.search-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.32);\n  box-shadow: none;\n  transform: none;\n}\n.list-filters[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%], \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus, \n.list-filters[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.list-pager[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]    + input[_ngcontent-%COMP%] {\n  margin-top: 0.4rem;\n}\n.grade-multi[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n}\n.grade-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.stage-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%], \n.teachers-multi[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.data-table[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi[_ngcontent-%COMP%]   app-searchable-multi-select[_ngcontent-%COMP%] {\n  max-width: 36rem;\n}\n.course-teacher-block[_ngcontent-%COMP%] {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.course-teacher-block.compact[_ngcontent-%COMP%] {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row[_ngcontent-%COMP%]   label[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n}\n.calendar-nav[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav[_ngcontent-%COMP%]   .meta[_ngcontent-%COMP%] {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active[_ngcontent-%COMP%] {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab[_ngcontent-%COMP%]   .day-count[_ngcontent-%COMP%] {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours[_ngcontent-%COMP%] {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.day-hour[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid[_ngcontent-%COMP%] {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed var(--border);\n  pointer-events: none;\n}\n.calendar-event[_ngcontent-%COMP%] {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label[_ngcontent-%COMP%] {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time[_ngcontent-%COMP%] {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  margin-top: auto;\n}\n.calendar-empty[_ngcontent-%COMP%] {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar[_ngcontent-%COMP%] {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap[_ngcontent-%COMP%] {\n  overflow: auto;\n  max-height: min(80vh, 56rem);\n  border: 3px solid #e8c46a;\n  border-radius: 28px;\n  background:\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 120, 0.35),\n      transparent 22%),\n    radial-gradient(\n      circle at 92% 10%,\n      rgba(168, 216, 255, 0.28),\n      transparent 24%),\n    radial-gradient(\n      circle at 10% 90%,\n      rgba(255, 182, 193, 0.25),\n      transparent 22%),\n    radial-gradient(\n      circle at 90% 88%,\n      rgba(186, 230, 180, 0.28),\n      transparent 24%),\n    linear-gradient(\n      180deg,\n      #fff8e8 0%,\n      #fffdf7 48%,\n      #f7fbff 100%);\n  direction: rtl;\n  position: relative;\n  z-index: 0;\n  isolation: isolate;\n  padding: 1.1rem 1rem 1.25rem;\n  box-shadow: 0 18px 40px rgba(120, 84, 20, 0.12);\n}\n.timetable-board[_ngcontent-%COMP%] {\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n}\n.timetable-deco[_ngcontent-%COMP%] {\n  position: absolute;\n  font-size: 1.55rem;\n  line-height: 1;\n  opacity: 0.88;\n  pointer-events: none;\n  z-index: 1;\n  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));\n}\n.timetable-deco-tl[_ngcontent-%COMP%] {\n  top: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-tr[_ngcontent-%COMP%] {\n  top: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-deco-bl[_ngcontent-%COMP%] {\n  bottom: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-br[_ngcontent-%COMP%] {\n  bottom: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-banner[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n  display: grid;\n  place-items: center;\n  margin: 0.15rem auto 1rem;\n  width: min(28rem, 92%);\n  padding: 0.75rem 1.4rem 0.85rem;\n  border-radius: 18px;\n  border: 3px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8 0%,\n      #f6d06a 100%);\n  box-shadow: 0 8px 0 #c8961a, 0 14px 24px rgba(180, 120, 20, 0.18);\n  text-align: center;\n}\n.timetable-banner-crown[_ngcontent-%COMP%] {\n  position: absolute;\n  top: -0.85rem;\n  font-size: 1.35rem;\n  line-height: 1;\n}\n.timetable-banner-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #1d3a75;\n  font-size: clamp(1.15rem, 2.4vw, 1.65rem);\n  font-weight: 800;\n  letter-spacing: 0.01em;\n}\n.timetable-motto[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.55rem;\n  margin: 1rem auto 0.15rem;\n  width: min(30rem, 94%);\n  padding: 0.55rem 1.1rem;\n  border-radius: 16px;\n  border: 2px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #fff1c2,\n      #f8d978);\n  color: #1d3a75;\n  font-weight: 800;\n  font-size: 1rem;\n  box-shadow: 0 4px 0 #c8961a;\n}\n.timetable-page[_ngcontent-%COMP%] {\n  direction: rtl;\n  text-align: right;\n}\n.timetable[_ngcontent-%COMP%] {\n  width: max-content;\n  border-collapse: separate;\n  border-spacing: 0.28rem;\n  font-size: 0.84rem;\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n  color: #1f2a44;\n  direction: rtl;\n  position: relative;\n  z-index: 2;\n}\n.timetable[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  border: none;\n  vertical-align: middle;\n}\n.timetable-day-col[_ngcontent-%COMP%], \n.timetable-day[_ngcontent-%COMP%] {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe082,\n      #ffd54f) !important;\n  color: #1d3a75 !important;\n  text-align: center;\n  padding: 0.35rem 0.4rem;\n  font-weight: 800;\n  border-radius: 18px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.35);\n}\n.timetable-day[_ngcontent-%COMP%] {\n  text-align: center;\n}\n.timetable-day-icon[_ngcontent-%COMP%], \n.timetable-day-col-icon[_ngcontent-%COMP%] {\n  display: block;\n  font-size: 1.05rem;\n  line-height: 1;\n  margin-bottom: 0.2rem;\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8,\n      #f0c75a) !important;\n  color: #1d3a75 !important;\n  font-size: 0.78rem;\n  letter-spacing: 0;\n  text-transform: none;\n  padding: 0.28rem 0.32rem;\n  text-align: center;\n  white-space: nowrap;\n  border-radius: 16px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.28);\n}\n.timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%] {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      180deg,\n      #fff3c4,\n      #f5d36a) !important;\n  color: #1d3a75 !important;\n  font-weight: 800;\n}\n.timetable-shift.pm[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      180deg,\n      #d8f5e8,\n      #9ed9bf) !important;\n  color: #14553a !important;\n  border-color: #7cbc9a !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%] {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable[_ngcontent-%COMP%]   thead[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day-col[_ngcontent-%COMP%], \n.timetable-wrap.exporting[_ngcontent-%COMP%]   .timetable-day[_ngcontent-%COMP%] {\n  position: static !important;\n}\n.timetable-wrap.exporting[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: none !important;\n}\n.timetable-export-bar[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period[_ngcontent-%COMP%] {\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n}\n.timetable-session-id[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-size: 0.92rem;\n  color: #1d3a75;\n}\n.timetable-session-time[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: #4a3b12;\n  margin-top: 0.25rem;\n  font-variant-numeric: tabular-nums;\n  direction: ltr;\n  unicode-bidi: isolate;\n}\n.timetable-clock[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  line-height: 1;\n}\n.timetable-cell[_ngcontent-%COMP%] {\n  width: 1%;\n  min-width: 0;\n  max-width: none;\n  height: auto;\n  min-height: 0;\n  padding: 0.15rem;\n  background: rgba(255, 255, 255, 0.55);\n  vertical-align: middle;\n  overflow: visible;\n  cursor: cell;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    outline 0.15s ease;\n  border-radius: 12px;\n  border: 2px dashed rgba(180, 150, 90, 0.35) !important;\n}\n.timetable-cell.pm[_ngcontent-%COMP%] {\n  background: rgba(232, 255, 246, 0.55);\n}\n.timetable-cell.empty[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.42);\n}\n.timetable-empty[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  min-height: 0;\n  padding: 0.1rem 0.2rem;\n  line-height: 1;\n  color: #9aa3b5;\n  font-size: 0.9rem;\n  font-weight: 700;\n}\n.timetable-cell.drag-over[_ngcontent-%COMP%] {\n  outline: 3px dashed #1d3a75;\n  background: rgba(255, 214, 10, 0.22);\n  transform: scale(1.01);\n}\n.timetable-entry[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: max-content;\n  min-width: max-content;\n  max-width: none;\n  gap: 0.08rem;\n  padding: 0.28rem 0.35rem;\n  border-radius: 10px;\n  border: 2px solid transparent;\n  margin: 0 auto;\n  overflow: visible;\n  cursor: grab;\n  text-align: center;\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n}\n.timetable-entry[_ngcontent-%COMP%]    + .timetable-entry[_ngcontent-%COMP%] {\n  margin-top: 0.18rem;\n}\n.timetable-entry[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);\n}\n.timetable-entry[_ngcontent-%COMP%]:active {\n  cursor: grabbing;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: nowrap;\n  flex-shrink: 0;\n  gap: 0.25rem;\n  margin-top: 0.2rem;\n  cursor: default;\n  justify-content: center;\n}\n.timetable-entry[_ngcontent-%COMP%]   .row-actions[_ngcontent-%COMP%]   app-icon-action-button[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n}\n.timetable-subject-icon[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.timetable-course[_ngcontent-%COMP%] {\n  font-weight: 800;\n  line-height: 1.2;\n  white-space: nowrap;\n  overflow: visible;\n  color: #1f2a44;\n  font-size: 0.8rem;\n}\n.timetable-teacher[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: #4b5568;\n  white-space: nowrap;\n  overflow: visible;\n  font-weight: 600;\n}\n.timetable-entry[data-tone="0"][_ngcontent-%COMP%] {\n  background: #ffe0e8;\n  border-color: #f5a3b8;\n}\n.timetable-entry[data-tone="1"][_ngcontent-%COMP%] {\n  background: #e8d8ff;\n  border-color: #c4a6f5;\n}\n.timetable-entry[data-tone="2"][_ngcontent-%COMP%] {\n  background: #d8ecff;\n  border-color: #9ec4f0;\n}\n.timetable-entry[data-tone="3"][_ngcontent-%COMP%] {\n  background: #fff0b8;\n  border-color: #e6c85a;\n}\n.timetable-entry[data-tone="4"][_ngcontent-%COMP%] {\n  background: #d8f5e8;\n  border-color: #8fd0b0;\n}\n.timetable-entry[data-tone="5"][_ngcontent-%COMP%] {\n  background: #ffe6cc;\n  border-color: #f0b878;\n}\n.timetable-entry[data-tone="6"][_ngcontent-%COMP%] {\n  background: #e0f0ff;\n  border-color: #9ebfe8;\n}\n.timetable-entry[data-tone="7"][_ngcontent-%COMP%] {\n  background: #f3e0ff;\n  border-color: #d0a8ef;\n}\n.modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card[_ngcontent-%COMP%] {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n}\n.modal-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-tree[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: var(--surface);\n}\n.tree-unit-head[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle[_ngcontent-%COMP%] {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title[_ngcontent-%COMP%], \n.tree-lesson-title[_ngcontent-%COMP%] {\n  flex: 1;\n  min-width: 12rem;\n}\n.ask-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  font-size: 0.82rem;\n  white-space: nowrap;\n  color: var(--text-soft);\n}\n.tree-unit-body[_ngcontent-%COMP%] {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: var(--elevated-bg);\n}\n.tree-inline-form[_ngcontent-%COMP%], \n.tree-add-lesson[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.course-tree-ai[_ngcontent-%COMP%] {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  padding: 1rem 1.1rem;\n  background: var(--surface);\n}\n.course-tree-prompt-field[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.45rem;\n  margin: 0.75rem 0 0.35rem;\n  width: 100%;\n  max-width: 42rem;\n}\n.course-tree-prompt-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%]:first-child {\n  font-weight: 650;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.course-tree-prompt-field[_ngcontent-%COMP%]   textarea[_ngcontent-%COMP%] {\n  width: 100%;\n  min-height: 5.5rem;\n  resize: vertical;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n  line-height: 1.45;\n}\n.course-tree-ai-actions[_ngcontent-%COMP%] {\n  margin-top: 0.35rem;\n}\n.course-tree-ai-preview[_ngcontent-%COMP%] {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px dashed var(--border);\n}\n.login-stat[_ngcontent-%COMP%] {\n  border-top: 3px solid transparent;\n}\n.login-stat-teachers[_ngcontent-%COMP%] {\n  border-top-color: #5fd3bc;\n}\n.login-stat-parents[_ngcontent-%COMP%] {\n  border-top-color: #ffd60a;\n}\n.login-stat-students[_ngcontent-%COMP%] {\n  border-top-color: #4ea8de;\n}\n.login-chart-legend[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.85rem 1.25rem;\n  margin: 0.75rem 0 1rem;\n}\n.login-legend-item[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  color: var(--text-soft);\n  font-size: 0.88rem;\n}\n.login-swatch[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 3px;\n}\n.login-swatch-teachers[_ngcontent-%COMP%], \n.login-bar-teachers[_ngcontent-%COMP%] {\n  background: #5fd3bc;\n}\n.login-swatch-parents[_ngcontent-%COMP%], \n.login-bar-parents[_ngcontent-%COMP%] {\n  background: #ffd60a;\n}\n.login-swatch-students[_ngcontent-%COMP%], \n.login-bar-students[_ngcontent-%COMP%] {\n  background: #4ea8de;\n}\n.login-chart[_ngcontent-%COMP%] {\n  padding: 1rem 0.75rem 0.5rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  overflow-x: auto;\n}\n.login-chart-bars[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  gap: 0.35rem;\n  min-width: 100%;\n  min-height: 220px;\n}\n.login-chart-day[_ngcontent-%COMP%] {\n  flex: 1 1 0;\n  min-width: 1.35rem;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 0.4rem;\n}\n.login-chart-group[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n  gap: 2px;\n  width: 100%;\n  height: 180px;\n}\n.login-chart-bar[_ngcontent-%COMP%] {\n  flex: 1 1 0;\n  min-width: 3px;\n  border-radius: 4px 4px 0 0;\n}\n.login-chart-label[_ngcontent-%COMP%] {\n  color: var(--text-muted);\n  font-size: 0.72rem;\n  line-height: 1;\n}\n.login-chart-label-spacer[_ngcontent-%COMP%] {\n  visibility: hidden;\n}\n.status-badge[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published[_ngcontent-%COMP%] {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft[_ngcontent-%COMP%] {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\nlabel.checkbox[_ngcontent-%COMP%] {\n  flex-direction: row;\n  align-items: center;\n  gap: 0.45rem;\n}\n/*# sourceMappingURL=admin-panel.css.map */'] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(SmartAssistantAdminComponent, [{
+    type: Component,
+    args: [{ selector: "app-smart-assistant-admin", imports: [
+      NgIf,
+      NgForOf,
+      DatePipe,
+      DecimalPipe,
+      FormsModule,
+      PageFeedbackComponent,
+      TranslatePipe
+    ], template: `<div class="admin-container">
+  <div class="admin-page-header">
+    <h1 class="admin-page-title">
+      <span class="admin-page-icon">\u{1F9E0}</span>
+      {{ 'smartadmin.title' | t }}
+    </h1>
+    <p class="admin-page-subtitle">{{ 'smartadmin.subtitle' | t }}</p>
+  </div>
+
+  <ul class="admin-tabs" role="tablist">
+    <li [class.active]="activeTab() === 'users'">
+      <a (click)="activeTab.set('users')" [attr.aria-selected]="activeTab() === 'users'" role="tab">
+        {{ 'smartadmin.tabUsers' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'classrooms'">
+      <a (click)="activeTab.set('classrooms')" [attr.aria-selected]="activeTab() === 'classrooms'" role="tab">
+        {{ 'smartadmin.tabClassrooms' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'assign'">
+      <a (click)="activeTab.set('assign')" [attr.aria-selected]="activeTab() === 'assign'" role="tab">
+        {{ 'smartadmin.tabAssign' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'enroll'">
+      <a (click)="activeTab.set('enroll')" [attr.aria-selected]="activeTab() === 'enroll'" role="tab">
+        {{ 'smartadmin.tabEnroll' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'payments'">
+      <a (click)="activeTab.set('payments')" [attr.aria-selected]="activeTab() === 'payments'" role="tab">
+        {{ 'smartadmin.tabPayments' | t }}
+      </a>
+    </li>
+  </ul>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <!-- ============= USERS TAB ============= -->
+  <section *ngIf="activeTab() === 'users'" class="admin-card" aria-label="{{ 'smartadmin.tabUsers' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.addUserTitle' | t }}</h2>
+      <button class="admin-link-btn" (click)="userFormMode.set('create')">
+        {{ 'smartadmin.addNewUser' | t }}
+      </button>
+    </div>
+
+    <div *ngIf="userFormMode() === 'create'" class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="user-name">{{ 'common.name' | t }} *</label>
+        <input
+          id="user-name"
+          class="form-input"
+          type="text"
+          [(ngModel)]="userFormName"
+          autocomplete="name"
+          placeholder="{{ 'auth.displayNamePlaceholder' | t }}"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-email">{{ 'common.email' | t }} *</label>
+        <input
+          id="user-email"
+          class="form-input"
+          type="email"
+          [(ngModel)]="userFormEmail"
+          autocomplete="email"
+          placeholder="teacher@codekids.local"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-password">{{ 'common.password' | t }} *</label>
+        <input
+          id="user-password"
+          class="form-input"
+          [type]="showingUserPassword() ? 'text' : 'password'"
+          [(ngModel)]="userFormPassword"
+          autocomplete="new-password"
+          placeholder="{{ 'common.password' | t }}"
+        />
+        <button
+          class="icon-btn secondary icon-btn-sm"
+          type="button"
+          (click)="showingUserPassword.update((v) => !v)"
+          [attr.aria-label]="showingUserPassword() ? 'common.hide' : 'common.show'"
+        >
+          {{ showingUserPassword() ? ("common.hide" | t) : ("common.show" | t) }}
+        </button>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-role" data-fix-roles>{{ 'common.role' | t }} *</label>
+        <select id="user-role" class="form-select" [(ngModel)]="userFormRole">
+          <option value="teacher">{{ 'role.teacher' | t }}</option>
+          <option value="parent">{{ 'role.parent' | t }}</option>
+          <option value="student">{{ 'role.student' | t }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="userFormRole === 'student'">
+        <label class="form-label" for="user-parent">{{ 'auth.parentId' | t }}</label>
+        <div class="searchable-input-wrap">
+          <input
+            id="user-parent"
+            class="form-input"
+            type="text"
+            [value]="userFormParentId"
+            (input)="onParentIdInput(userParentInput.value)"
+            (focus)="onParentIdInput(userParentInput.value)"
+            (blur)="clearParentSuggestionsAfter()"
+            placeholder="{{ 'auth.parentIdPlaceholder' | t }}"
+            #userParentInput
+          />
+          <div class="searchable-suggestions" *ngIf="parentSuggestions().length">
+            <button
+              type="button"
+              class="searchable-suggestion"
+              *ngFor="let p of parentSuggestions()"
+              (click)="selectParent(p.id)"
+            >
+              <span class="searchable-suggestion-label">{{ p.displayName }}</span>
+              <span class="searchable-suggestion-sub">{{ p.email }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="userFormRole === 'student'">
+        <label class="form-label" for="user-grade">{{ 'common.grade' | t }}</label>
+        <select id="user-grade" class="form-select" [value]="userFormGrade || ''" (change)="userFormGrade = +$any($event.target).value || 0">
+          <option [ngValue]="0">{{ 'common.none' | t }}</option>
+          <option *ngFor="let g of grades()" [value]="g.id">{{ g.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="userFormRole === 'student'">
+        <label class="form-label" for="user-school-type">{{ 'common.schoolType' | t }}</label>
+        <select id="user-school-type" class="form-select" [(ngModel)]="userFormSchoolType">
+          <option value="">{{ 'common.none' | t }}</option>
+          <option value="Arabic">{{ 'common.schoolTypeArabic' | t }}</option>
+          <option value="Language">{{ 'common.schoolTypeLanguage' | t }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-mobile">{{ 'common.mobile' | t }}</label>
+        <input
+          id="user-mobile"
+          class="form-input"
+          type="tel"
+          [(ngModel)]="userFormMobile"
+          placeholder="{{ 'common.mobile' | t }}"
+        />
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="createUser()">
+          {{ 'common.add' | t }} {{ 'role.' + userFormRole | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetUserForm()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="userFormMode() === 'list'" class="admin-table-wrap">
+      <div class="admin-table-toolbar">
+        <div class="admin-filter-row">
+          <label class="form-label filter-label">{{ 'common.role' | t }}</label>
+          <select
+            class="form-select filter-select"
+            [value]="usersRoleFilter()"
+            (change)="setUsersRole($any($event.target).value)"
+          >
+            <option *ngFor="let opt of userRoleOptions" [value]="opt.value">{{ opt.label | t }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-table">
+        <div class="admin-table-head">
+          <span class="admin-table-cell admin-table-name" (click)="setUsersSort('displayName')">
+            {{ 'common.name' | t }} {{ sortMark('displayName') }}
+          </span>
+          <span class="admin-table-cell admin-table-email" (click)="setUsersSort('email')">
+            {{ 'common.email' | t }} {{ sortMark('email') }}
+          </span>
+          <span class="admin-table-cell admin-table-role" (click)="setUsersSort('role')">
+            {{ 'common.role' | t }} {{ sortMark('role') }}
+          </span>
+          <span class="admin-table-cell admin-table-grade" (click)="setUsersSort('grade')">
+            {{ 'common.grade' | t }} {{ sortMark('grade') }}
+          </span>
+          <span class="admin-table-cell admin-table-actions">{{ 'common.actions' | t }}</span>
+        </div>
+
+        <div
+          *ngFor="let user of sortedUsers()"
+          class="admin-table-row"
+          [class.admin-table-row--inactive]="!user.isActive"
+        >
+          <span class="admin-table-cell admin-table-name">{{ user.displayName }}</span>
+          <span class="admin-table-cell admin-table-email">{{ user.email }}</span>
+          <span class="admin-table-cell admin-table-role">{{ 'role.' + user.role.toLowerCase() | t }}</span>
+          <span class="admin-table-cell admin-table-grade">
+            <span *ngIf="user.role === 'Student'">{{ getUserGradeLabel(user) }}</span>
+            <span *ngIf="user.role !== 'Student'">{{ 'common.emDash' | t }}</span>
+          </span>
+          <span class="admin-table-cell admin-table-actions admin-table-actions-right">
+            <button
+              class="icon-btn danger icon-btn-sm"
+              type="button"
+              (click)="deleteUser(user)"
+              [attr.aria-label]="'common.delete' | t"
+            >
+              {{ 'common.delete' | t }}
+            </button>
+          </span>
+        </div>
+
+        <div *ngIf="!sortedUsers().length" class="admin-table-empty">
+          {{ 'common.noData' | t }}
+        </div>
+      </div>
+
+      <div class="admin-pagination" *ngIf="totalPages() > 1">
+        <div class="admin-pagination-info">
+          {{ 'common.pageOf' | t:{ page: usersPage(), pages: totalPages() } }}
+        </div>
+        <div class="admin-pagination-controls">
+          <button
+            class="btn btn-secondary btn-sm"
+            type="button"
+            [disabled]="usersPage() <= 1"
+            (click)="setUsersPage(usersPage() - 1)"
+          >
+            {{ 'common.previous' | t }}
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            type="button"
+            [disabled]="usersPage() >= totalPages()"
+            (click)="setUsersPage(usersPage() + 1)"
+          >
+            {{ 'common.next' | t }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= CLASSROOMS TAB ============= -->
+  <section *ngIf="activeTab() === 'classrooms'" class="admin-card" aria-label="{{ 'smartadmin.tabClassrooms' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.classroomTitle' | t }}</h2>
+      <button class="admin-link-btn" (click)="startNewClassroom()">
+        {{ 'smartadmin.newClassroom' | t }}
+      </button>
+    </div>
+
+    <div *ngIf="editingClassroom()" class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="classroom-name">{{ 'common.name' | t }} *</label>
+        <input
+          id="classroom-name"
+          class="form-input"
+          type="text"
+          [(ngModel)]="classroomFormName"
+          placeholder="{{ 'smartadmin.classroomNamePlaceholder' | t }}"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="classroom-description">{{ 'common.description' | t }}</label>
+        <textarea
+          id="classroom-description"
+          class="form-input form-textarea"
+          [(ngModel)]="classroomFormDescription"
+          rows="3"
+          placeholder="{{ 'common.descriptionPlaceholder' | t }}"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="classroom-grade">{{ 'common.grade' | t }}</label>
+        <select id="classroom-grade" class="form-select" [value]="classroomFormGrade || ''" (change)="classroomFormGrade = +$any($event.target).value || ''">
+          <option [ngValue]="''">{{ 'common.none' | t }}</option>
+          <option *ngFor="let g of grades()" [value]="g.id">{{ g.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'common.course' | t }} *</label>
+        <div class="course-assign-list">
+          <div *ngFor="let course of classroomFormCourses; let i = index" class="course-assign-row">
+            <select class="form-select" [value]="course.courseId" (change)="setCourseAssignCourse(i, $any($event.target).value)">
+              <option value="">{{ 'common.selectCourse' | t }}</option>
+              <option *ngFor="let c of courseOptions()" [value]="c.value">{{ c.label }}</option>
+            </select>
+            <select class="form-select" [value]="course.teacherId" (change)="setCourseAssignTeacher(i, $any($event.target).value)">
+              <option value="">{{ 'common.unassigned' | t }}</option>
+              <option *ngFor="let t of teacherOptions()" [value]="t.value">{{ t.label }}</option>
+            </select>
+            <button
+              class="icon-btn danger icon-btn-sm"
+              type="button"
+              (click)="removeCourseAssign(i)"
+              [attr.aria-label]="'common.remove' | t"
+            >
+              {{ 'common.remove' | t }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <button class="btn btn-ghost-sm" type="button" (click)="addCourseAssign()">
+          {{ 'common.add' | t }} {{ 'common.course' | t }}
+        </button>
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="saveClassroom()">
+          {{ editingClassroom() ? ('common.edit' | t) : ('common.add' | t) }} {{ 'common.classroom' | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="cancelClassroomEdit()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!editingClassroom()" class="admin-table-wrap">
+      <div class="admin-table">
+        <div class="admin-table-head">
+          <span class="admin-table-cell admin-table-name">{{ 'common.name' | t }}</span>
+          <span class="admin-table-cell admin-table-description">{{ 'common.description' | t }}</span>
+          <span class="admin-table-cell admin-table-grade">{{ 'common.grade' | t }}</span>
+          <span class="admin-table-cell admin-table-courses">{{ 'common.course' | t }}</span>
+          <span class="admin-table-cell admin-table-actions">{{ 'common.actions' | t }}</span>
+        </div>
+
+        <div *ngFor="let room of classrooms()" class="admin-table-row">
+          <span class="admin-table-cell admin-table-name">{{ room.name }}</span>
+          <span class="admin-table-cell admin-table-description">{{ room.description || ('common.none' | t) }}</span>
+          <span class="admin-table-cell admin-table-grade">
+            {{ room.grade ? gradeLabel(room.grade) : ('common.emDash' | t) }}
+          </span>
+          <span class="admin-table-cell admin-table-courses">
+            <span *ngIf="room.courses?.length">
+              {{ courseLabel(room.courses[0], locale) }}
+              <span *ngIf="room.courses.length > 1">
+                +{{ room.courses.length - 1 }} {{ 'common.other' | t:{ n: room.courses.length - 1 } }}
+              </span>
+            </span>
+            <span *ngIf="room.courseId && !room.courses?.length">{{ room.courseTitle || room.courseId }}</span>
+            <span *ngIf="!room.courseId && !room.courses?.length">{{ 'common.none' | t }}</span>
+          </span>
+          <span class="admin-table-cell admin-table-actions admin-table-actions-right">
+            <button
+              class="icon-btn secondary icon-btn-sm"
+              type="button"
+              (click)="startEditClassroom(room)"
+              [attr.aria-label]="'common.edit' | t"
+            >
+              {{ 'common.edit' | t }}
+            </button>
+            <button
+              class="icon-btn danger icon-btn-sm"
+              type="button"
+              (click)="deleteClassroom(room)"
+              [attr.aria-label]="'common.delete' | t"
+            >
+              {{ 'common.delete' | t }}
+            </button>
+          </span>
+        </div>
+
+        <div *ngIf="!classrooms().length" class="admin-table-empty">
+          {{ 'common.noData' | t }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= ASSIGN TAB ============= -->
+  <section *ngIf="activeTab() === 'assign'" class="admin-card" aria-label="{{ 'smartadmin.tabAssign' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.assignTitle' | t }}</h2>
+    </div>
+
+    <div class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="assign-mode">{{ 'smartadmin.assignMode' | t }}</label>
+        <select id="assign-mode" class="form-select" [(ngModel)]="assignMode">
+          <option value="classroom">{{ 'common.classroom' | t }}</option>
+          <option value="course">{{ 'common.course' | t }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="assign-classroom">{{ 'common.classroom' | t }} *</label>
+        <select id="assign-classroom" class="form-select" [(ngModel)]="assignClassroomId">
+          <option value="">{{ 'common.selectClassroom' | t }}</option>
+          <option *ngFor="let c of assignClassroomOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="assignMode === 'course'">
+        <label class="form-label" for="assign-course">{{ 'common.course' | t }} *</label>
+        <select id="assign-course" class="form-select" [(ngModel)]="assignCourseId">
+          <option value="">{{ 'common.selectCourse' | t }}</option>
+          <option *ngFor="let c of assignCourseOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="assign-teacher">{{ 'role.teacher' | t }} *</label>
+        <select id="assign-teacher" class="form-select" [(ngModel)]="assignTeacherId">
+          <option value="">{{ 'common.select' | t }} {{ 'role.teacher' | t }}</option>
+          <option *ngFor="let t of teacherOptions()" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="saveAssignment()">
+          {{ 'smartadmin.assignSave' | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetAssignmentForm()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= ENROLL TAB ============= -->
+  <section *ngIf="activeTab() === 'enroll'" class="admin-card" aria-label="{{ 'smartadmin.tabEnroll' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.enrollTitle' | t }}</h2>
+      <div class="admin-tab-toggle">
+        <button
+          [class.btn-primary]="enrollMode === 'classroom'"
+          [class.btn-secondary]="enrollMode !== 'classroom'"
+          type="button"
+          (click)="enrollMode = 'classroom'"
+        >
+          {{ 'smartadmin.enrollClassroom' | t }}
+        </button>
+        <button
+          [class.btn-primary]="enrollMode === 'subject'"
+          [class.btn-secondary]="enrollMode !== 'subject'"
+          type="button"
+          (click)="enrollMode = 'subject'"
+        >
+          {{ 'smartadmin.enrollSubject' | t }}
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="enroll-classroom">{{ 'common.classroom' | t }} *</label>
+        <select id="enroll-classroom" class="form-select" [(ngModel)]="enrollClassroomId">
+          <option value="">{{ 'common.selectClassroom' | t }}</option>
+          <option *ngFor="let c of enrollClassroomOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="enroll-student">{{ 'role.student' | t }} *</label>
+        <select id="enroll-student" class="form-select" [(ngModel)]="enrollStudentId">
+          <option value="">{{ 'common.select' | t }} {{ 'role.student' | t }}</option>
+          <option *ngFor="let s of enrollStudentOptions()" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="enrollMode === 'subject'">
+        <label class="form-label" for="enroll-courses">{{ 'common.course' | t }} *</label>
+        <select id="enroll-courses" class="form-select" [value]="enrollCourseIds[0] || ''" (change)="setEnrollCourse($any($event.target).value)">
+          <option value="">{{ 'common.selectCourse' | t }}</option>
+          <option *ngFor="let c of courseOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="enrollStudent()">
+          {{ 'smartadmin.enrollSave' | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="clearEnrollForm()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= PAYMENTS TAB ============= -->
+  <section *ngIf="activeTab() === 'payments'" class="admin-card" aria-label="{{ 'smartadmin.tabPayments' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.paymentsTitle' | t }}</h2>
+    </div>
+
+    <div class="admin-form admin-form--split">
+      <div class="form-section">
+        <h3 class="form-section-title">{{ 'smartadmin.addPaymentTitle' | t }}</h3>
+        <div class="form-row">
+          <label class="form-label" for="payment-parent">{{ 'role.parent' | t }}</label>
+          <select id="payment-parent" class="form-select" [(ngModel)]="paymentParentId">
+            <option value="">{{ 'common.all' | t }}</option>
+            <option *ngFor="let p of paymentParentOptions()" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-student">{{ 'role.student' | t }}</label>
+          <select id="payment-student" class="form-select" [(ngModel)]="paymentStudentId">
+            <option value="">{{ 'common.all' | t }}</option>
+            <option *ngFor="let s of paymentStudentOptions()" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-row form-row--inline">
+          <div class="form-field">
+            <label class="form-label" for="payment-year">{{ 'common.year' | t }}</label>
+            <select id="payment-year" class="form-select" [value]="paymentYear" (change)="onPaymentYearChange($any($event.target).value)">
+              <option *ngFor="let y of paymentYearOptions()" [value]="y.value">{{ y.label }}</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="payment-month">{{ 'common.month' | t }}</label>
+            <select id="payment-month" class="form-select" [value]="paymentMonth" (change)="onPaymentMonthChange($any($event.target).value)">
+              <option *ngFor="let m of paymentMonthOptions" [value]="m.value">{{ m.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-amount">{{ 'common.amount' | t }} *</label>
+          <input
+            id="payment-amount"
+            class="form-input"
+            type="number"
+            min="0"
+            step="0.01"
+            [(ngModel)]="paymentAmount"
+            placeholder="0.00"
+          />
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-date">{{ 'common.date' | t }} *</label>
+          <input
+            id="payment-date"
+            class="form-input"
+            type="date"
+            [(ngModel)]="paymentDate"
+          />
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-notes">{{ 'common.notes' | t }}</label>
+          <input
+            id="payment-notes"
+            class="form-input"
+            type="text"
+            [(ngModel)]="paymentNotes"
+            placeholder="{{ 'common.notes' | t }}"
+          />
+        </div>
+
+        <div class="form-row form-actions">
+          <button class="btn btn-primary" type="button" (click)="createPayment()">
+            {{ 'common.add' | t }} {{ 'smartadmin.payment' | t }}
+          </button>
+          <button class="btn btn-secondary" type="button" (click)="resetPaymentForm()">
+            {{ 'common.cancel' | t }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">{{ 'smartadmin.paymentsList' | t }}</h3>
+        <div class="admin-table-wrap">
+          <div class="admin-table">
+            <div class="admin-table-head">
+              <span class="admin-table-cell admin-table-date">{{ 'common.date' | t }}</span>
+              <span class="admin-table-cell admin-table-payer">{{ 'common.payer' | t }}</span>
+              <span class="admin-table-cell admin-table-amount">{{ 'common.amount' | t }}</span>
+              <span class="admin-table-cell admin-table-notes">{{ 'common.notes' | t }}</span>
+            </div>
+
+            <div *ngFor="let p of payments()" class="admin-table-row">
+              <span class="admin-table-cell admin-table-date">{{ p.paymentDate | date:'shortDate' }}</span>
+              <span class="admin-table-cell admin-table-payer">{{ p.payerLabel }}</span>
+              <span class="admin-table-cell admin-table-amount">{{ p.amount | number:'1.2-2' }}</span>
+              <span class="admin-table-cell admin-table-notes">{{ p.notes || ('common.none' | t) }}</span>
+            </div>
+
+            <div *ngIf="!payments().length" class="admin-table-empty">
+              {{ 'smartadmin.noPayments' | t }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`, styles: ['/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/admin/admin-panel.css */\n.user-row {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table th,\n.data-table td {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table td .chip-row {\n  margin-top: 0.45rem;\n}\n.data-table td .name-cell {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.meeting-form label .chip-row input {\n  flex: 1;\n  min-width: 0;\n}\n.wa-destination {\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.wa-destination legend {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.edit-panel {\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  background:\n    linear-gradient(\n      180deg,\n      rgba(95, 211, 188, 0.08),\n      transparent 60%);\n}\n.classroom-edit-form {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form .form-actions {\n  grid-column: 1 / -1;\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n.classroom-edit-form .span-3 {\n  grid-column: 1 / -1;\n}\n.classroom-edit-form .edit-form-hint {\n  margin: 0;\n  align-self: center;\n}\n.classroom-edit-form .form-actions {\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n@media (max-width: 1100px) {\n  .student-edit-form {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@media (max-width: 960px) {\n  .classroom-edit-form {\n    grid-template-columns: 1fr;\n  }\n  .classroom-edit-form .span-3 {\n    grid-column: auto;\n  }\n  .student-edit-form {\n    grid-template-columns: 1fr;\n  }\n}\n.field-label {\n  margin: 0 0 0.25rem;\n  font-weight: 700;\n}\n.data-table th {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table th.sortable {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table th.sortable:hover {\n  color: var(--accent-fg);\n}\n.data-table th .sort-mark {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table tr:hover td {\n  background: var(--table-row-hover);\n}\n.data-table tr.is-inactive td {\n  opacity: 0.58;\n}\n.data-table tr.total-row td {\n  border-top: 2px solid var(--border);\n  background: var(--table-row-total);\n}\n.data-table input,\n.data-table select {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table input:focus,\n.data-table select:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions button {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions app-icon-action-button {\n  display: inline-flex;\n}\n.row-actions button.danger {\n  background: var(--danger-soft-bg);\n  color: var(--danger-soft-fg);\n  box-shadow: none;\n}\n.row-actions button.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  object-fit: contain;\n}\n.brand-preview.logo {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.login-preview-form,\n.login-preview-visual {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.login-preview-visual {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual img {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.search-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.55);\n  background: rgba(255, 214, 10, 0.22);\n  color: var(--text);\n  font: inherit;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: none;\n}\n.search-btn i {\n  font-size: 0.95em;\n  line-height: 1;\n}\n.search-btn:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.32);\n  box-shadow: none;\n  transform: none;\n}\n.list-filters {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters select,\n.list-filters input {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters select:focus,\n.list-filters input:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters .meta {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager .meta {\n  margin: 0;\n}\n.list-pager button:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table td input + input {\n  margin-top: 0.4rem;\n}\n.grade-multi,\n.stage-multi,\n.teachers-multi {\n  grid-column: 1 / -1;\n}\n.grade-multi .meta,\n.stage-multi .meta,\n.teachers-multi .meta {\n  margin-top: 0.35rem;\n}\n.data-table app-searchable-multi-select {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi app-searchable-multi-select {\n  max-width: 36rem;\n}\n.course-teacher-block {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.course-teacher-block.compact {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row select {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block .meta {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar h3 {\n  margin: 0;\n}\n.calendar-nav {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav .meta {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab .day-count {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.day-hour {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed var(--border);\n  pointer-events: none;\n}\n.calendar-event {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event .row-actions {\n  margin-top: auto;\n}\n.calendar-empty {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap {\n  overflow: auto;\n  max-height: min(80vh, 56rem);\n  border: 3px solid #e8c46a;\n  border-radius: 28px;\n  background:\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 120, 0.35),\n      transparent 22%),\n    radial-gradient(\n      circle at 92% 10%,\n      rgba(168, 216, 255, 0.28),\n      transparent 24%),\n    radial-gradient(\n      circle at 10% 90%,\n      rgba(255, 182, 193, 0.25),\n      transparent 22%),\n    radial-gradient(\n      circle at 90% 88%,\n      rgba(186, 230, 180, 0.28),\n      transparent 24%),\n    linear-gradient(\n      180deg,\n      #fff8e8 0%,\n      #fffdf7 48%,\n      #f7fbff 100%);\n  direction: rtl;\n  position: relative;\n  z-index: 0;\n  isolation: isolate;\n  padding: 1.1rem 1rem 1.25rem;\n  box-shadow: 0 18px 40px rgba(120, 84, 20, 0.12);\n}\n.timetable-board {\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n}\n.timetable-deco {\n  position: absolute;\n  font-size: 1.55rem;\n  line-height: 1;\n  opacity: 0.88;\n  pointer-events: none;\n  z-index: 1;\n  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));\n}\n.timetable-deco-tl {\n  top: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-tr {\n  top: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-deco-bl {\n  bottom: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-br {\n  bottom: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-banner {\n  position: relative;\n  z-index: 2;\n  display: grid;\n  place-items: center;\n  margin: 0.15rem auto 1rem;\n  width: min(28rem, 92%);\n  padding: 0.75rem 1.4rem 0.85rem;\n  border-radius: 18px;\n  border: 3px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8 0%,\n      #f6d06a 100%);\n  box-shadow: 0 8px 0 #c8961a, 0 14px 24px rgba(180, 120, 20, 0.18);\n  text-align: center;\n}\n.timetable-banner-crown {\n  position: absolute;\n  top: -0.85rem;\n  font-size: 1.35rem;\n  line-height: 1;\n}\n.timetable-banner-title {\n  margin: 0;\n  color: #1d3a75;\n  font-size: clamp(1.15rem, 2.4vw, 1.65rem);\n  font-weight: 800;\n  letter-spacing: 0.01em;\n}\n.timetable-motto {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.55rem;\n  margin: 1rem auto 0.15rem;\n  width: min(30rem, 94%);\n  padding: 0.55rem 1.1rem;\n  border-radius: 16px;\n  border: 2px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #fff1c2,\n      #f8d978);\n  color: #1d3a75;\n  font-weight: 800;\n  font-size: 1rem;\n  box-shadow: 0 4px 0 #c8961a;\n}\n.timetable-page {\n  direction: rtl;\n  text-align: right;\n}\n.timetable {\n  width: max-content;\n  border-collapse: separate;\n  border-spacing: 0.28rem;\n  font-size: 0.84rem;\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n  color: #1f2a44;\n  direction: rtl;\n  position: relative;\n  z-index: 2;\n}\n.timetable th,\n.timetable td {\n  border: none;\n  vertical-align: middle;\n}\n.timetable-day-col,\n.timetable-day {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe082,\n      #ffd54f) !important;\n  color: #1d3a75 !important;\n  text-align: center;\n  padding: 0.35rem 0.4rem;\n  font-weight: 800;\n  border-radius: 18px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.35);\n}\n.timetable-day {\n  text-align: center;\n}\n.timetable-day-icon,\n.timetable-day-col-icon {\n  display: block;\n  font-size: 1.05rem;\n  line-height: 1;\n  margin-bottom: 0.2rem;\n}\n.timetable thead th {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8,\n      #f0c75a) !important;\n  color: #1d3a75 !important;\n  font-size: 0.78rem;\n  letter-spacing: 0;\n  text-transform: none;\n  padding: 0.28rem 0.32rem;\n  text-align: center;\n  white-space: nowrap;\n  border-radius: 16px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.28);\n}\n.timetable thead .timetable-day-col {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift {\n  background:\n    linear-gradient(\n      180deg,\n      #fff3c4,\n      #f5d36a) !important;\n  color: #1d3a75 !important;\n  font-weight: 800;\n}\n.timetable-shift.pm {\n  background:\n    linear-gradient(\n      180deg,\n      #d8f5e8,\n      #9ed9bf) !important;\n  color: #14553a !important;\n  border-color: #7cbc9a !important;\n}\n.timetable-wrap.exporting {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting .timetable thead th,\n.timetable-wrap.exporting .timetable-day-col,\n.timetable-wrap.exporting .timetable-day {\n  position: static !important;\n}\n.timetable-wrap.exporting .row-actions {\n  display: none !important;\n}\n.timetable-export-bar {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period {\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n}\n.timetable-session-id {\n  font-weight: 800;\n  font-size: 0.92rem;\n  color: #1d3a75;\n}\n.timetable-session-time {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: #4a3b12;\n  margin-top: 0.25rem;\n  font-variant-numeric: tabular-nums;\n  direction: ltr;\n  unicode-bidi: isolate;\n}\n.timetable-clock {\n  font-size: 0.85rem;\n  line-height: 1;\n}\n.timetable-cell {\n  width: 1%;\n  min-width: 0;\n  max-width: none;\n  height: auto;\n  min-height: 0;\n  padding: 0.15rem;\n  background: rgba(255, 255, 255, 0.55);\n  vertical-align: middle;\n  overflow: visible;\n  cursor: cell;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    outline 0.15s ease;\n  border-radius: 12px;\n  border: 2px dashed rgba(180, 150, 90, 0.35) !important;\n}\n.timetable-cell.pm {\n  background: rgba(232, 255, 246, 0.55);\n}\n.timetable-cell.empty {\n  background: rgba(255, 255, 255, 0.42);\n}\n.timetable-empty {\n  display: grid;\n  place-items: center;\n  min-height: 0;\n  padding: 0.1rem 0.2rem;\n  line-height: 1;\n  color: #9aa3b5;\n  font-size: 0.9rem;\n  font-weight: 700;\n}\n.timetable-cell.drag-over {\n  outline: 3px dashed #1d3a75;\n  background: rgba(255, 214, 10, 0.22);\n  transform: scale(1.01);\n}\n.timetable-entry {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: max-content;\n  min-width: max-content;\n  max-width: none;\n  gap: 0.08rem;\n  padding: 0.28rem 0.35rem;\n  border-radius: 10px;\n  border: 2px solid transparent;\n  margin: 0 auto;\n  overflow: visible;\n  cursor: grab;\n  text-align: center;\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n}\n.timetable-entry + .timetable-entry {\n  margin-top: 0.18rem;\n}\n.timetable-entry:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);\n}\n.timetable-entry:active {\n  cursor: grabbing;\n}\n.timetable-entry .row-actions {\n  display: flex;\n  flex-wrap: nowrap;\n  flex-shrink: 0;\n  gap: 0.25rem;\n  margin-top: 0.2rem;\n  cursor: default;\n  justify-content: center;\n}\n.timetable-entry .row-actions app-icon-action-button {\n  display: inline-flex;\n  flex-shrink: 0;\n}\n.timetable-subject-icon {\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.timetable-course {\n  font-weight: 800;\n  line-height: 1.2;\n  white-space: nowrap;\n  overflow: visible;\n  color: #1f2a44;\n  font-size: 0.8rem;\n}\n.timetable-teacher {\n  font-size: 0.7rem;\n  color: #4b5568;\n  white-space: nowrap;\n  overflow: visible;\n  font-weight: 600;\n}\n.timetable-entry[data-tone="0"] {\n  background: #ffe0e8;\n  border-color: #f5a3b8;\n}\n.timetable-entry[data-tone="1"] {\n  background: #e8d8ff;\n  border-color: #c4a6f5;\n}\n.timetable-entry[data-tone="2"] {\n  background: #d8ecff;\n  border-color: #9ec4f0;\n}\n.timetable-entry[data-tone="3"] {\n  background: #fff0b8;\n  border-color: #e6c85a;\n}\n.timetable-entry[data-tone="4"] {\n  background: #d8f5e8;\n  border-color: #8fd0b0;\n}\n.timetable-entry[data-tone="5"] {\n  background: #ffe6cc;\n  border-color: #f0b878;\n}\n.timetable-entry[data-tone="6"] {\n  background: #e0f0ff;\n  border-color: #9ebfe8;\n}\n.timetable-entry[data-tone="7"] {\n  background: #f3e0ff;\n  border-color: #d0a8ef;\n}\n.modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n}\n.modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head h3 {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-tree {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: var(--surface);\n}\n.tree-unit-head {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title,\n.tree-lesson-title {\n  flex: 1;\n  min-width: 12rem;\n}\n.ask-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  font-size: 0.82rem;\n  white-space: nowrap;\n  color: var(--text-soft);\n}\n.tree-unit-body {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: var(--elevated-bg);\n}\n.tree-inline-form,\n.tree-add-lesson {\n  width: 100%;\n}\n.course-tree-ai {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  padding: 1rem 1.1rem;\n  background: var(--surface);\n}\n.course-tree-prompt-field {\n  display: grid;\n  gap: 0.45rem;\n  margin: 0.75rem 0 0.35rem;\n  width: 100%;\n  max-width: 42rem;\n}\n.course-tree-prompt-field > span:first-child {\n  font-weight: 650;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.course-tree-prompt-field textarea {\n  width: 100%;\n  min-height: 5.5rem;\n  resize: vertical;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n  line-height: 1.45;\n}\n.course-tree-ai-actions {\n  margin-top: 0.35rem;\n}\n.course-tree-ai-preview {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px dashed var(--border);\n}\n.login-stat {\n  border-top: 3px solid transparent;\n}\n.login-stat-teachers {\n  border-top-color: #5fd3bc;\n}\n.login-stat-parents {\n  border-top-color: #ffd60a;\n}\n.login-stat-students {\n  border-top-color: #4ea8de;\n}\n.login-chart-legend {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.85rem 1.25rem;\n  margin: 0.75rem 0 1rem;\n}\n.login-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  color: var(--text-soft);\n  font-size: 0.88rem;\n}\n.login-swatch {\n  display: inline-block;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 3px;\n}\n.login-swatch-teachers,\n.login-bar-teachers {\n  background: #5fd3bc;\n}\n.login-swatch-parents,\n.login-bar-parents {\n  background: #ffd60a;\n}\n.login-swatch-students,\n.login-bar-students {\n  background: #4ea8de;\n}\n.login-chart {\n  padding: 1rem 0.75rem 0.5rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  overflow-x: auto;\n}\n.login-chart-bars {\n  display: flex;\n  align-items: flex-end;\n  gap: 0.35rem;\n  min-width: 100%;\n  min-height: 220px;\n}\n.login-chart-day {\n  flex: 1 1 0;\n  min-width: 1.35rem;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 0.4rem;\n}\n.login-chart-group {\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n  gap: 2px;\n  width: 100%;\n  height: 180px;\n}\n.login-chart-bar {\n  flex: 1 1 0;\n  min-width: 3px;\n  border-radius: 4px 4px 0 0;\n}\n.login-chart-label {\n  color: var(--text-muted);\n  font-size: 0.72rem;\n  line-height: 1;\n}\n.login-chart-label-spacer {\n  visibility: hidden;\n}\n.status-badge {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\nlabel.checkbox {\n  flex-direction: row;\n  align-items: center;\n  gap: 0.45rem;\n}\n/*# sourceMappingURL=admin-panel.css.map */\n'] }]
+  }], () => [], null);
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SmartAssistantAdminComponent, { className: "SmartAssistantAdminComponent", filePath: "src/app/pages/admin/smart-assistant-admin.component.ts", lineNumber: 37 });
+})();
+
 // src/app/app.routes.ts
 var routes = [
   { path: "", pathMatch: "full", component: LandingComponent },
@@ -123877,7 +127827,8 @@ var routes = [
       { path: "other-expenses", component: AdminOtherExpensesComponent },
       { path: "whatsapp", component: AdminWhatsAppComponent },
       { path: "site-settings", component: AdminSiteSettingsComponent },
-      { path: "classrooms", redirectTo: "create-classroom" }
+      { path: "classrooms", redirectTo: "create-classroom" },
+      { path: "smart-assistant", component: SmartAssistantAdminComponent }
     ]
   },
   { path: "**", redirectTo: "login" }
@@ -124020,7 +127971,7 @@ var ChatNotifyService = class _ChatNotifyService {
 })();
 
 // src/app/shared/toast/toast-host.component.ts
-var _forTrack063 = ($index, $item) => $item.id;
+var _forTrack064 = ($index, $item) => $item.id;
 function ToastHostComponent_For_2_Conditional_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275domElementStart(0, "strong", 3);
@@ -124118,7 +128069,7 @@ var ToastHostComponent = class _ToastHostComponent {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ToastHostComponent, selectors: [["app-toast-host"]], decls: 3, vars: 0, consts: [["aria-live", "polite", "aria-relevant", "additions", 1, "toast-stack"], ["type", "button", 1, "toast", 3, "ok", "chat", "notification"], ["type", "button", 1, "toast", 3, "click"], [1, "toast-title"], [1, "toast-body"], [1, "toast-hint"]], template: function ToastHostComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275domElementStart(0, "div", 0);
-        \u0275\u0275repeaterCreate(1, ToastHostComponent_For_2_Template, 4, 7, "button", 1, _forTrack063);
+        \u0275\u0275repeaterCreate(1, ToastHostComponent_For_2_Template, 4, 7, "button", 1, _forTrack064);
         \u0275\u0275domElementEnd();
       }
       if (rf & 2) {
@@ -124163,7 +128114,7 @@ var ToastHostComponent = class _ToastHostComponent {
 })();
 
 // src/app/app/app.component.ts
-var _c049 = (a0) => ({ name: a0 });
+var _c051 = (a0) => ({ name: a0 });
 function AppComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -124184,7 +128135,7 @@ function AppComponent_Conditional_0_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 2, "auth.impersonating", \u0275\u0275pureFunction1(7, _c049, ctx_r1.auth.user()?.displayName || "")));
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(3, 2, "auth.impersonating", \u0275\u0275pureFunction1(7, _c051, ctx_r1.auth.user()?.displayName || "")));
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(6, 5, "auth.stopImpersonating"));
   }
