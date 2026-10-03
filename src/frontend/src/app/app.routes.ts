@@ -31,7 +31,6 @@ import { AdminTimetableComponent } from './pages/admin/admin-timetable.component
 import { AdminStudyPlansComponent } from './pages/admin/admin-study-plans.component';
 import { AdminWeeklyReportsComponent } from './pages/admin/admin-weekly-reports.component';
 import { AdminTeacherAssessmentsComponent } from './pages/admin/admin-teacher-assessments.component';
-import { GradeCertificatesComponent } from './pages/admin/grade-certificates.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
 import { AdminStudentAttendanceComponent } from './pages/admin/admin-student-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
@@ -47,7 +46,6 @@ import { TeacherQuizzesComponent } from './pages/teacher/teacher-quizzes.compone
 import { TeacherAssignmentsComponent } from './pages/teacher/teacher-assignments.component';
 import { TeacherReviewComponent } from './pages/teacher/teacher-review.component';
 import { TeacherStudentsComponent } from './pages/teacher/teacher-students.component';
-import { SmartStudyAssistantComponent } from './pages/teacher/smart-study-assistant/smart-study-assistant.component';
 import { TeacherQuestionBankComponent } from './pages/teacher/teacher-question-bank.component';
 import { TeacherExamsComponent } from './pages/teacher/teacher-exams.component';
 import { TeacherVideosComponent } from './pages/teacher/teacher-videos.component';
@@ -155,7 +153,13 @@ export const routes: Routes = [
       { path: 'overview', component: TeacherOverviewComponent },
       { path: 'videos', component: TeacherVideosComponent },
       { path: 'materials', component: TeacherMaterialsComponent },
-      { path: 'smart-study-assistant', component: SmartStudyAssistantComponent },
+      {
+        path: 'smart-study-assistant',
+        loadComponent: () =>
+          import('./pages/teacher/smart-study-assistant/smart-study-assistant.component').then(
+            (m) => m.SmartStudyAssistantComponent
+          )
+      },
       { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'asked-questions', component: TeacherAskedQuestionsComponent },
       { path: 'chat', component: TeacherChatComponent },
@@ -165,7 +169,11 @@ export const routes: Routes = [
       { path: 'attendance', component: TeacherAttendanceComponent },
       { path: 'student-attendance', component: TeacherStudentAttendanceComponent },
       { path: 'weekly-reports', component: TeacherWeeklyReportsComponent },
-      { path: 'grade-certificates', component: GradeCertificatesComponent },
+      {
+        path: 'grade-certificates',
+        loadComponent: () =>
+          import('./pages/admin/grade-certificates.component').then((m) => m.GradeCertificatesComponent)
+      },
       { path: 'study-plans', component: TeacherStudyPlansComponent },
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
       { path: 'question-bank', component: TeacherQuestionBankComponent },
@@ -198,7 +206,11 @@ export const routes: Routes = [
       { path: 'timetable', component: AdminTimetableComponent },
       { path: 'study-plans', component: AdminStudyPlansComponent },
       { path: 'weekly-reports', component: AdminWeeklyReportsComponent },
-      { path: 'grade-certificates', component: GradeCertificatesComponent },
+      {
+        path: 'grade-certificates',
+        loadComponent: () =>
+          import('./pages/admin/grade-certificates.component').then((m) => m.GradeCertificatesComponent)
+      },
       { path: 'teacher-assessments', component: AdminTeacherAssessmentsComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
       { path: 'student-attendance', component: AdminStudentAttendanceComponent },
