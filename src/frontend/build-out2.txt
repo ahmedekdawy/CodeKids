@@ -1,0 +1,74 @@
+❯ Building...
+✔ Building...
+Application bundle generation failed. [5.928 seconds] - 2026-10-03T03:20:29.305Z
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2552: Cannot find name 'SmartAssistantAdminComponent'. Did you mean 'SmartStudyAssistantComponent'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.routes.ts:208:44:
+[37m      208 │ ...ath: 'smart-assistant', component: [32mSmartAssistantAdminComponent[37m }
+          ╵                                       [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:30:
+[37m      18 │ import { PageFeedbackComponent[32m' from '[37m../../shared/page-feedback/p...
+         ╵                               [32m~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ',' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:38:
+[37m      18 │ ...{ PageFeedbackComponent' from '[32m.[37m./../shared/page-feedback/page-...
+         ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1003: Identifier expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:39:
+[37m      18 │ ... PageFeedbackComponent' from '.[32m.[37m/../shared/page-feedback/page-f...
+         ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1003: Identifier expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:40:
+[37m      18 │ ...PageFeedbackComponent' from '..[32m/[37m../shared/page-feedback/page-fe...
+         ╵                                   [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1141: String literal expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:40:
+[37m      18 │ ...ponent' from '..[32m/../shared/page-feedback/page-feedback.component[37m';
+         ╵                    [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1005: ';' expected.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:88:
+[37m      18 │ ...ponent' from '../../shared/page-feedback/page-feedback.component[32m';[37m
+         ╵                                                                    [32m~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS1002: Unterminated string literal.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:18:90:
+[37m      18 │ ...onent' from '../../shared/page-feedback/page-feedback.component';[32m[37m
+         ╵                                                                     [32m^[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG1010: 'imports' must be an array of components, directives, pipes, or NgModules.
+  Value could not be determined statically.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:4:
+[37m      32 │     [32mPageFeedbackComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Unknown reference.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:4:
+[37m      32 │     [32mPageFeedbackComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+

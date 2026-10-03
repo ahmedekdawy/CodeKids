@@ -1,0 +1,2381 @@
+❯ Building...
+✔ Building...
+Application bundle generation failed. [7.816 seconds] - 2026-10-03T03:19:41.223Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:45:12:
+[37m      45 │   <section *[32mngIf[37m="activeTab() === 'users'" class="admin-card" aria...
+         ╵             [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:53:10:
+[37m      53 │     <div *[32mngIf[37m="userFormMode() === 'create'" class="admin-form">
+         ╵           [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:107:29:
+[37m      107 │       <div class="form-row" *[32mngIf[37m="userFormRole === 'student'">
+          ╵                              [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:121:47:
+[37m      121 │ ...lass="searchable-suggestions" *[32mngIf[37m="parentSuggestions().length">
+          ╵                                   [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:125:15:
+[37m      125 │               *[32mngFor[37m="let p of parentSuggestions()"
+          ╵                [32m~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:135:29:
+[37m      135 │       <div class="form-row" *[32mngIf[37m="userFormRole === 'student'">
+          ╵                              [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:143:29:
+[37m      143 │       <div class="form-row" *[32mngIf[37m="userFormRole === 'student'">
+          ╵                              [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:173:10:
+[37m      173 │     <div *[32mngIf[37m="userFormMode() === 'list'" class="admin-table-wrap">
+          ╵           [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:205:11:
+[37m      205 │           *[32mngFor[37m="let user of sortedUsers()"
+          ╵            [32m~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:213:19:
+[37m      213 │             <span *[32mngIf[37m="user.role === 'Student'">{{ getUserGrade...
+          ╵                    [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:214:19:
+[37m      214 │             <span *[32mngIf[37m="user.role !== 'Student'">{{ 'common.emDa...
+          ╵                    [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:228:14:
+[37m      228 │         <div *[32mngIf[37m="!sortedUsers().length" class="admin-table-emp...
+          ╵               [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:233:37:
+[37m      233 │       <div class="admin-pagination" *[32mngIf[37m="totalPages() > 1">
+          ╵                                      [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:260:12:
+[37m      260 │   <section *[32mngIf[37m="activeTab() === 'classrooms'" class="admin-card...
+          ╵             [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:268:10:
+[37m      268 │     <div *[32mngIf[37m="editingClassroom()" class="admin-form">
+          ╵           [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:302:16:
+[37m      302 │           <div *[32mngFor[37m="let course of classroomFormCourses; let i ...
+          ╵                 [32m~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:339:10:
+[37m      339 │     <div *[32mngIf[37m="!editingClassroom()" class="admin-table-wrap">
+          ╵           [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:349:14:
+[37m      349 │         <div *[32mngFor[37m="let room of classrooms()" class="admin-table...
+          ╵               [32m~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:356:19:
+[37m      356 │             <span *[32mngIf[37m="room.courses?.length">
+          ╵                    [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:358:21:
+[37m      358 │               <span *[32mngIf[37m="(room.courses?.length || 0) > 1">
+          ╵                      [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:362:19:
+[37m      362 │             <span *[32mngIf[37m="room.courseId && !room.courses?.length">...
+          ╵                    [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:363:19:
+[37m      363 │             <span *[32mngIf[37m="!room.courseId && !room.courses?.length"...
+          ╵                    [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:385:14:
+[37m      385 │         <div *[32mngIf[37m="!classrooms().length" class="admin-table-empty">
+          ╵               [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:393:12:
+[37m      393 │   <section *[32mngIf[37m="activeTab() === 'assign'" class="admin-card" ar...
+          ╵             [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:415:29:
+[37m      415 │       <div class="form-row" *[32mngIf[37m="assignMode === 'course'">
+          ╵                              [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:443:12:
+[37m      443 │   <section *[32mngIf[37m="activeTab() === 'enroll'" class="admin-card" ar...
+          ╵             [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:483:29:
+[37m      483 │       <div class="form-row" *[32mngIf[37m="enrollMode === 'subject'">
+          ╵                              [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:503:12:
+[37m      503 │   <section *[32mngIf[37m="activeTab() === 'payments'" class="admin-card" ...
+          ╵             [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:597:18:
+[37m      597 │             <div *[32mngFor[37m="let p of payments()" class="admin-table-...
+          ╵                   [32m~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component. Find more at https://v22.angular.dev/extended-diagnostics/NG8103[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:604:18:
+[37m      604 │             <div *[32mngIf[37m="!payments().length" class="admin-table-em...
+          ╵                   [32m~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: SearchableSelectComponent is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:28:4:
+[37m      28 │     [32mSearchableSelectComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IconActionButtonComponent is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:29:4:
+[37m      29 │     [32mIconActionButtonComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: TranslatePipe is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:30:4:
+[37m      30 │     [32mTranslatePipe[37m
+         ╵     [32m~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2552: Cannot find name 'SmartAssistantAdminComponent'. Did you mean 'SmartStudyAssistantComponent'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.routes.ts:208:44:
+[37m      208 │ ...ath: 'smart-assistant', component: [32mSmartAssistantAdminComponent[37m }
+          ╵                                       [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:5:30:
+[37m      5 │       {{ 'smartadmin.title' | [32mtranslate[37m }}
+        ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:7:62:
+[37m      7 │ ...s="admin-page-subtitle">{{ 'smartadmin.subtitle' | [32mtranslate[37m }}</p>
+        ╵                                                       [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:13:35:
+[37m      13 │         {{ 'smartadmin.tabUsers' | [32mtranslate[37m }}
+         ╵                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:18:40:
+[37m      18 │         {{ 'smartadmin.tabClassrooms' | [32mtranslate[37m }}
+         ╵                                         [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:23:36:
+[37m      23 │         {{ 'smartadmin.tabAssign' | [32mtranslate[37m }}
+         ╵                                     [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:28:36:
+[37m      28 │         {{ 'smartadmin.tabEnroll' | [32mtranslate[37m }}
+         ╵                                     [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:33:38:
+[37m      33 │         {{ 'smartadmin.tabPayments' | [32mtranslate[37m }}
+         ╵                                       [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'message' since it isn't a known property of 'app-page-feedback'.
+1. If 'app-page-feedback' is an Angular component and it has 'message' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'app-page-feedback' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:39:4:
+[37m      39 │     [32m[message]="message()"[37m
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8002: Can't bind to 'loading' since it isn't a known property of 'app-page-feedback'.
+1. If 'app-page-feedback' is an Angular component and it has 'loading' input, then verify that it is included in the '@Component.imports' of this component.
+2. If 'app-page-feedback' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the '@Component.schemas' of this component to suppress this message.
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the '@Component.schemas' of this component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:41:4:
+[37m      41 │     [32m[loading]="loading()"[37m
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:45:101:
+[37m      45 │ ..."admin-card" aria-label="{{ 'smartadmin.tabUsers' | [32mtranslate[37m }}">
+         ╵                                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:47:66:
+[37m      47 │ ...admin-card-title">{{ 'smartadmin.addUserTitle' | [32mtranslate[37m }}</h2>
+         ╵                                                     [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:49:37:
+[37m      49 │         {{ 'smartadmin.addNewUser' | [32mtranslate[37m }}
+         ╵                                      [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:55:69:
+[37m      55 │ ...m-label" for="user-name">{{ 'common.name' | [32mtranslate[37m }} *</label>
+         ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:62:58:
+[37m      62 │ ...     placeholder="{{ 'auth.displayNamePlaceholder' | [32mtranslate[37m }}"
+         ╵                                                         [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:67:71:
+[37m      67 │ ...label" for="user-email">{{ 'common.email' | [32mtranslate[37m }} *</label>
+         ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:79:77:
+[37m      79 │ ... for="user-password">{{ 'common.password' | [32mtranslate[37m }} *</label>
+         ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:86:46:
+[37m      86 │           placeholder="{{ 'common.password' | [32mtranslate[37m }}"
+         ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Conditional expression wingUserPassword() ? 'common.hide' | translate : 'common.show' | translate  requires all 3 expressions at the end of the expression [ showingUserPassword() ? 'common.hide' | translate : 'common.show' | translate ] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@93:10[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:94:10:
+[37m      94 │           [32m{{ showingUserPassword() ? 'common.hide' | translate : '[37m...
+         ╵           [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:94:53:
+[37m      94 │ ...ssword() ? 'common.hide' | [32mtranslate[37m : 'common.show' | translat...
+         ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:94:81:
+[37m      94 │ ...sword() ? 'common.hide' | translate : 'common.show' | [32mtranslate[37m }}
+         ╵                                                          [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:99:69:
+[37m      99 │ ...m-label" for="user-role">{{ 'common.role' | [32mtranslate[37m }} *</label>
+         ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:101:54:
+[37m      101 │ ...<option value="teacher">{{ 'role.teacher' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:102:52:
+[37m      102 │ ...  <option value="parent">{{ 'role.parent' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:103:54:
+[37m      103 │ ...<option value="student">{{ 'role.student' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:108:73:
+[37m      108 │ ...abel" for="user-parent">{{ 'auth.parentId' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:118:57:
+[37m      118 │ ...       placeholder="{{ 'auth.parentIdPlaceholder' | [32mtranslate[37m }}"
+          ╵                                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:136:71:
+[37m      136 │ ...-label" for="user-grade">{{ 'common.grade' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'Number' does not exist on type 'SmartAssistantAdminComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:137:136:
+[37m      137 │ ...e = $any($event.target).value ? [32mNumber[37m($event.target.value) : 0">
+          ╵                                    [32m~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'value' does not exist on type 'EventTarget'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:137:157:
+[37m      137 │ ...e = $any($event.target).value ? Number($event.target.[32mvalue[37m) : 0">
+          ╵                                                         [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2531: Object is possibly 'null'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:137:157:
+[37m      137 │ ...e = $any($event.target).value ? Number($event.target.[32mvalue[37m) : 0">
+          ╵                                                         [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:138:51:
+[37m      138 │ ...   <option [ngValue]="0">{{ 'common.none' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:144:82:
+[37m      144 │ ...="user-school-type">{{ 'common.schoolType' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:146:46:
+[37m      146 │           <option value="">{{ 'common.none' | [32mtranslate[37m }}</option>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:147:64:
+[37m      147 │ ...lue="Arabic">{{ 'common.schoolTypeArabic' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:148:68:
+[37m      148 │ ..."Language">{{ 'common.schoolTypeLanguage' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:153:73:
+[37m      153 │ ...abel" for="user-mobile">{{ 'common.mobile' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:159:44:
+[37m      159 │           placeholder="{{ 'common.mobile' | [32mtranslate[37m }}"
+          ╵                                             [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:165:28:
+[37m      165 │           {{ 'common.add' | [32mtranslate[37m }} {{ 'role.' + userFormRol...
+          ╵                             [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:165:69:
+[37m      165 │ ...mmon.add' | translate }} {{ 'role.' + userFormRole | [32mtranslate[37m }}
+          ╵                                                         [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:168:31:
+[37m      168 │           {{ 'common.cancel' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:176:68:
+[37m      176 │ ..."form-label filter-label">{{ 'common.role' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Cannot have a pipe in an action expression at column 54 in [setUsersRole($any($event.target).value as UserRole | '')] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@179:22[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:180:22:
+[37m      180 │ ...(change)="[32msetUsersRole($any($event.target).value as UserRole |[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 40 in [setUsersRole($any($event.target).value as UserRole | '')] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@179:22[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:180:22:
+[37m      180 │ ...(change)="[32msetUsersRole($any($event.target).value as UserRole |[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Unexpected end of input, expected identifier or keyword at the end of the expression [setUsersRole($any($event.target).value as UserRole | '')] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@179:22[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:180:22:
+[37m      180 │ ...(change)="[32msetUsersRole($any($event.target).value as UserRole |[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name ''.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:180:78:
+[37m      180 │ ...hange)="setUsersRole($any($event.target).value as UserRole | '')[32m[37m"
+          ╵                                                                    [32m^[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:182:91:
+[37m      182 │ ...Options" [value]="opt.value">{{ opt.label | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:190:31:
+[37m      190 │ ...        {{ 'common.name' | [32mtranslate[37m }} {{ sortMark('displayNa...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:193:32:
+[37m      193 │             {{ 'common.email' | [32mtranslate[37m }} {{ sortMark('email') }}
+          ╵                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:196:31:
+[37m      196 │             {{ 'common.role' | [32mtranslate[37m }} {{ sortMark('role') }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:199:32:
+[37m      199 │             {{ 'common.grade' | [32mtranslate[37m }} {{ sortMark('grade') }}
+          ╵                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:201:83:
+[37m      201 │ ...ll admin-table-actions">{{ 'common.actions' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:211:97:
+[37m      211 │ ...-role">{{ 'role.' + user.role.toLowerCase() | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:214:71:
+[37m      214 │ ...user.role !== 'Student'">{{ 'common.emDash' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:221:51:
+[37m      221 │               [attr.aria-label]="'common.delete' | [32mtranslate[37m"
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:223:35:
+[37m      223 │               {{ 'common.delete' | [32mtranslate[37m }}
+          ╵                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:229:31:
+[37m      229 │           {{ 'common.noData' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:235:31:
+[37m      235 │ ...      {{ 'common.pageOf' | [32mtranslate[37m:{ page: usersPage(), page...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:244:35:
+[37m      244 │             {{ 'common.previous' | [32mtranslate[37m }}
+          ╵                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:252:31:
+[37m      252 │             {{ 'common.next' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:260:111:
+[37m      260 │ ...-card" aria-label="{{ 'smartadmin.tabClassrooms' | [32mtranslate[37m }}">
+          ╵                                                       [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:262:68:
+[37m      262 │ ...in-card-title">{{ 'smartadmin.classroomTitle' | [32mtranslate[37m }}</h2>
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:264:39:
+[37m      264 │         {{ 'smartadmin.newClassroom' | [32mtranslate[37m }}
+          ╵                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:270:74:
+[37m      270 │ ...l" for="classroom-name">{{ 'common.name' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:276:66:
+[37m      276 │ ...eholder="{{ 'smartadmin.classroomNamePlaceholder' | [32mtranslate[37m }}"
+          ╵                                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:281:88:
+[37m      281 │ ...sroom-description">{{ 'common.description' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:287:60:
+[37m      287 │ ...  placeholder="{{ 'common.descriptionPlaceholder' | [32mtranslate[37m }}"
+          ╵                                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:292:76:
+[37m      292 │ ...l" for="classroom-grade">{{ 'common.grade' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'Number' does not exist on type 'SmartAssistantAdminComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:293:151:
+[37m      293 │ ... = $any($event.target).value ? [32mNumber[37m($event.target.value) : ''">
+          ╵                                   [32m~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'value' does not exist on type 'EventTarget'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:293:172:
+[37m      293 │ ... = $any($event.target).value ? Number($event.target.[32mvalue[37m) : ''">
+          ╵                                                        [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2531: Object is possibly 'null'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:293:172:
+[37m      293 │ ... = $any($event.target).value ? Number($event.target.[32mvalue[37m) : ''">
+          ╵                                                        [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:294:52:
+[37m      294 │ ...  <option [ngValue]="''">{{ 'common.none' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:300:55:
+[37m      300 │ ...el class="form-label">{{ 'common.course' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:304:58:
+[37m      304 │ ...<option value="">{{ 'common.selectCourse' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:308:56:
+[37m      308 │ ...  <option value="">{{ 'common.unassigned' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:315:51:
+[37m      315 │               [attr.aria-label]="'common.remove' | [32mtranslate[37m"
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:317:35:
+[37m      317 │               {{ 'common.remove' | [32mtranslate[37m }}
+          ╵                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:325:28:
+[37m      325 │           {{ 'common.add' | [32mtranslate[37m }} {{ 'common.course' | tra...
+          ╵                             [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:325:62:
+[37m      325 │ ... {{ 'common.add' | translate }} {{ 'common.course' | [32mtranslate[37m }}
+          ╵                                                         [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:331:51:
+[37m      331 │ ...sroom() ? ('common.edit' | [32mtranslate[37m) : ('common.add' | transl...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:331:80:
+[37m      331 │ ...anslate) : ('common.add' | [32mtranslate[37m) }} {{ 'common.classroom'...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:331:118:
+[37m      331 │ ...'common.add' | translate) }} {{ 'common.classroom' | [32mtranslate[37m }}
+          ╵                                                         [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:334:31:
+[37m      334 │           {{ 'common.cancel' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:342:77:
+[37m      342 │ ...ble-cell admin-table-name">{{ 'common.name' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:343:91:
+[37m      343 │ ...-table-description">{{ 'common.description' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:344:79:
+[37m      344 │ ...e-cell admin-table-grade">{{ 'common.grade' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:345:82:
+[37m      345 │ ...ell admin-table-courses">{{ 'common.course' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:346:83:
+[37m      346 │ ...ll admin-table-actions">{{ 'common.actions' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:351:105:
+[37m      351 │ ...ion">{{ room.description || ('common.none' | [32mtranslate[37m) }}</span>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'formatGradeLabel' does not exist on type 'SmartAssistantAdminComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:353:28:
+[37m      353 │ ...       {{ room.grade ? [32mformatGradeLabel[37m((k, p) => locale.t(k, ...
+          ╵                           [32m~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:353:104:
+[37m      353 │ ...=> locale.t(k, p), room.grade) : ('common.emDash' | [32mtranslate[37m) }}
+          ╵                                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:359:75:
+[37m      359 │ ...- 1 }} {{ 'common.other' | [32mtranslate[37m:{ n: (room.courses?.lengt...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:363:85:
+[37m      363 │ ... && !room.courses?.length">{{ 'common.none' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:370:49:
+[37m      370 │               [attr.aria-label]="'common.edit' | [32mtranslate[37m"
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:372:33:
+[37m      372 │               {{ 'common.edit' | [32mtranslate[37m }}
+          ╵                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:378:51:
+[37m      378 │               [attr.aria-label]="'common.delete' | [32mtranslate[37m"
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:380:35:
+[37m      380 │               {{ 'common.delete' | [32mtranslate[37m }}
+          ╵                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:386:31:
+[37m      386 │           {{ 'common.noData' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:393:103:
+[37m      393 │ ...dmin-card" aria-label="{{ 'smartadmin.tabAssign' | [32mtranslate[37m }}">
+          ╵                                                       [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:395:65:
+[37m      395 │ ...admin-card-title">{{ 'smartadmin.assignTitle' | [32mtranslate[37m }}</h2>
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:400:81:
+[37m      400 │ ...r="assign-mode">{{ 'smartadmin.assignMode' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:402:60:
+[37m      402 │ ...n value="classroom">{{ 'common.classroom' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:403:54:
+[37m      403 │ ...<option value="course">{{ 'common.course' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:408:81:
+[37m      408 │ ..."assign-classroom">{{ 'common.classroom' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:410:57:
+[37m      410 │ ...tion value="">{{ 'common.selectClassroom' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:416:75:
+[37m      416 │ ..." for="assign-course">{{ 'common.course' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:418:54:
+[37m      418 │ ...<option value="">{{ 'common.selectCourse' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:424:75:
+[37m      424 │ ..." for="assign-teacher">{{ 'role.teacher' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:426:48:
+[37m      426 │ ...ue="">{{ 'common.select' | [32mtranslate[37m }} {{ 'role.teacher' | tr...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:426:81:
+[37m      426 │ ....select' | translate }} {{ 'role.teacher' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:433:39:
+[37m      433 │           {{ 'smartadmin.assignSave' | [32mtranslate[37m }}
+          ╵                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:436:31:
+[37m      436 │           {{ 'common.cancel' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:443:103:
+[37m      443 │ ...dmin-card" aria-label="{{ 'smartadmin.tabEnroll' | [32mtranslate[37m }}">
+          ╵                                                       [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:445:65:
+[37m      445 │ ...admin-card-title">{{ 'smartadmin.enrollTitle' | [32mtranslate[37m }}</h2>
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:453:44:
+[37m      453 │           {{ 'smartadmin.enrollClassroom' | [32mtranslate[37m }}
+          ╵                                             [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:461:42:
+[37m      461 │           {{ 'smartadmin.enrollSubject' | [32mtranslate[37m }}
+          ╵                                           [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:468:81:
+[37m      468 │ ..."enroll-classroom">{{ 'common.classroom' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:470:57:
+[37m      470 │ ...tion value="">{{ 'common.selectClassroom' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:476:75:
+[37m      476 │ ..." for="enroll-student">{{ 'role.student' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:478:48:
+[37m      478 │ ...ue="">{{ 'common.select' | [32mtranslate[37m }} {{ 'role.student' | tr...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:478:81:
+[37m      478 │ ....select' | translate }} {{ 'role.student' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:484:76:
+[37m      484 │ ... for="enroll-courses">{{ 'common.course' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:486:54:
+[37m      486 │ ...<option value="">{{ 'common.selectCourse' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:493:39:
+[37m      493 │           {{ 'smartadmin.enrollSave' | [32mtranslate[37m }}
+          ╵                                        [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:496:31:
+[37m      496 │           {{ 'common.cancel' | [32mtranslate[37m }}
+          ╵                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:503:107:
+[37m      503 │ ...in-card" aria-label="{{ 'smartadmin.tabPayments' | [32mtranslate[37m }}">
+          ╵                                                       [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:505:67:
+[37m      505 │ ...min-card-title">{{ 'smartadmin.paymentsTitle' | [32mtranslate[37m }}</h2>
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:510:73:
+[37m      510 │ ...ection-title">{{ 'smartadmin.addPaymentTitle' | [32mtranslate[37m }}</h3>
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:512:76:
+[37m      512 │ ...bel" for="payment-parent">{{ 'role.parent' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:514:47:
+[37m      514 │             <option value="">{{ 'common.all' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:520:78:
+[37m      520 │ ...l" for="payment-student">{{ 'role.student' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:522:47:
+[37m      522 │             <option value="">{{ 'common.all' | [32mtranslate[37m }}</option>
+          ╵                                                [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:529:76:
+[37m      529 │ ...label" for="payment-year">{{ 'common.year' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:535:78:
+[37m      535 │ ...bel" for="payment-month">{{ 'common.month' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:543:78:
+[37m      543 │ ... for="payment-amount">{{ 'common.amount' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:556:74:
+[37m      556 │ ...bel" for="payment-date">{{ 'common.date' | [32mtranslate[37m }} *</label>
+          ╵                                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:566:76:
+[37m      566 │ ...bel" for="payment-notes">{{ 'common.notes' | [32mtranslate[37m }}</label>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:572:45:
+[37m      572 │             placeholder="{{ 'common.notes' | [32mtranslate[37m }}"
+          ╵                                              [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:578:30:
+[37m      578 │             {{ 'common.add' | [32mtranslate[37m }} {{ 'smartadmin.payment...
+          ╵                               [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:578:69:
+[37m      578 │ ...common.add' | translate }} {{ 'smartadmin.payment' | [32mtranslate[37m }}
+          ╵                                                         [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:581:33:
+[37m      581 │             {{ 'common.cancel' | [32mtranslate[37m }}
+          ╵                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:587:70:
+[37m      587 │ ...m-section-title">{{ 'smartadmin.paymentsList' | [32mtranslate[37m }}</h3>
+          ╵                                                    [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:591:81:
+[37m      591 │ ...ble-cell admin-table-date">{{ 'common.date' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:592:83:
+[37m      592 │ ...e-cell admin-table-payer">{{ 'common.payer' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:593:85:
+[37m      593 │ ...cell admin-table-amount">{{ 'common.amount' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:594:83:
+[37m      594 │ ...e-cell admin-table-notes">{{ 'common.notes' | [32mtranslate[37m }}</span>
+          ╵                                                  [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'date'.
+To fix this, import the "DatePipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:598:81:
+[37m      598 │ ...l admin-table-date">{{ p.paymentDate | [32mdate[37m:'shortDate' }}</span>
+          ╵                                           [32m~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'number'.
+To fix this, import the "DecimalPipe" class from "@angular/common" and add it to the "imports" array of the component.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:600:78:
+[37m      600 │ ...e-cell admin-table-amount">{{ p.amount | [32mnumber[37m:'1.2-2' }}</span>
+          ╵                                             [32m~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:601:94:
+[37m      601 │ ...-table-notes">{{ p.notes || ('common.none' | [32mtranslate[37m) }}</span>
+          ╵                                                 [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name 'translate'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:605:43:
+[37m      605 │               {{ 'smartadmin.noPayments' | [32mtranslate[37m }}
+          ╵                                            [32m~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:32:15:
+[37m      32 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2304: Cannot find name 'ClassroomCourse'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:200:22:
+[37m      200 │   courseLabel(course: [32mClassroomCourse[37m | null | undefined, locale:...
+          ╵                       [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2540: Cannot assign to 'parentSearchTimer' because it is a read-only property.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:227:9:
+[37m      227 │     this.[32mparentSearchTimer[37m = setTimeout(() => {
+          ╵          [32m~~~~~~~~~~~~~~~~~[0m
+
+

@@ -7,6 +7,7 @@ import { Classroom, ClassroomDiagnosis, TeacherDashboard } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { formatGradeLabel } from '../../grade.util';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { TeacherSetupGuideComponent } from './teacher-setup-guide.component';
 
 type GradeStudentGroup = {
   grade: number | null;
@@ -18,7 +19,7 @@ type GradeStudentGroup = {
 
 @Component({
   selector: 'app-teacher-overview',
-  imports: [FormsModule, TranslatePipe, PageFeedbackComponent],
+  imports: [FormsModule, TranslatePipe, PageFeedbackComponent, TeacherSetupGuideComponent],
   templateUrl: './teacher-overview.component.html',
   styleUrl: './teacher-panel.css'
 })

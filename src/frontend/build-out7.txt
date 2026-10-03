@@ -1,0 +1,384 @@
+❯ Building...
+✔ Building...
+Application bundle generation failed. [25.597 seconds] - 2026-10-03T03:24:40.324Z
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. Find more at https://v22.angular.dev/extended-diagnostics/NG8107[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:354:42:
+[37m      354 │               <span *ngIf="(room.courses?.[32mlength[37m || 0) > 1">
+          ╵                                           [32m~~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. Find more at https://v22.angular.dev/extended-diagnostics/NG8107[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:355:35:
+[37m      355 │ ...         +{{ (room.courses?.[32mlength[37m || 0) - 1 }} {{ 'common.oth...
+          ╵                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8107: NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. Find more at https://v22.angular.dev/extended-diagnostics/NG8107[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:355:97:
+[37m      355 │ ...} {{ 'common.other' | t:{ n: (room.courses?.[32mlength[37m || 0) - 1 } }}
+          ╵                                                [32m~~~~~~[0m
+
+  Warning occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: NgClass is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:31:4:
+[37m      31 │     [32mNgClass[37m,
+         ╵     [32m~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: PageFeedbackComponent is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:34:4:
+[37m      34 │     [32mPageFeedbackComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: SearchableSelectComponent is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:35:4:
+[37m      35 │     [32mSearchableSelectComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mNG8113: IconActionButtonComponent is not used within the template of SmartAssistantAdminComponent[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:36:4:
+[37m      36 │     [32mIconActionButtonComponent[37m,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2552: Cannot find name 'SmartAssistantAdminComponent'. Did you mean 'SmartStudyAssistantComponent'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/app.routes.ts:208:44:
+[37m      208 │ ...ath: 'smart-assistant', component: [32mSmartAssistantAdminComponent[37m }
+          ╵                                       [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'Number' does not exist on type 'SmartAssistantAdminComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:133:136:
+[37m      133 │ ...e = $any($event.target).value ? [32mNumber[37m($event.target.value) : 0">
+          ╵                                    [32m~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'value' does not exist on type 'EventTarget'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:133:157:
+[37m      133 │ ...e = $any($event.target).value ? Number($event.target.[32mvalue[37m) : 0">
+          ╵                                                         [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2531: Object is possibly 'null'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:133:157:
+[37m      133 │ ...e = $any($event.target).value ? Number($event.target.[32mvalue[37m) : 0">
+          ╵                                                         [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2349: This expression is not callable.
+  No constituent of type '"" | UserRole' is callable.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:175:21:
+[37m      175 │             [value]="[32musersRoleFilter[37m()"
+          ╵                      [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Cannot have a pipe in an action expression at column 54 in [setUsersRole($any($event.target).value as UserRole | '')] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@175:22[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:176:22:
+[37m      176 │ ...(change)="[32msetUsersRole($any($event.target).value as UserRole |[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 40 in [setUsersRole($any($event.target).value as UserRole | '')] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@175:22[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:176:22:
+[37m      176 │ ...(change)="[32msetUsersRole($any($event.target).value as UserRole |[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Unexpected end of input, expected identifier or keyword at the end of the expression [setUsersRole($any($event.target).value as UserRole | '')] in D:\Projects\CodeKids\src\frontend\src\app\pages\admin\smart-assistant-admin.component.html@175:22[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:176:22:
+[37m      176 │ ...(change)="[32msetUsersRole($any($event.target).value as UserRole |[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'setUsersRole' does not exist on type 'SmartAssistantAdminComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:176:22:
+[37m      176 │             (change)="[32msetUsersRole[37m($any($event.target).value as U...
+          ╵                       [32m~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mNG8004: No pipe found with name ''.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:176:78:
+[37m      176 │ ...hange)="setUsersRole($any($event.target).value as UserRole | '')[32m[37m"
+          ╵                                                                    [32m^[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'Number' does not exist on type 'SmartAssistantAdminComponent'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:289:151:
+[37m      289 │ ... = $any($event.target).value ? [32mNumber[37m($event.target.value) : ''">
+          ╵                                   [32m~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2339: Property 'value' does not exist on type 'EventTarget'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:289:172:
+[37m      289 │ ... = $any($event.target).value ? Number($event.target.[32mvalue[37m) : ''">
+          ╵                                                        [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2531: Object is possibly 'null'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:289:172:
+[37m      289 │ ... = $any($event.target).value ? Number($event.target.[32mvalue[37m) : ''">
+          ╵                                                        [32m~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2349: This expression is not callable.
+  Type 'ClassroomCourseAssignment[]' has no call signatures.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:298:37:
+[37m      298 │ ...ngFor="let course of [32mclassroomFormCourses[37m() let i = index" cla...
+          ╵                         [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: string; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:407:32:
+[37m      407 │ ...tion *ngFor="let c [32mof assignClassroomOptions[37m" [value]="c.value...
+          ╵                       [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: string; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:415:32:
+[37m      415 │ ...ption *ngFor="let c [32mof assignCourseOptions[37m" [value]="c.value">...
+          ╵                        [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: string; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:467:32:
+[37m      467 │ ...tion *ngFor="let c [32mof enrollClassroomOptions[37m" [value]="c.value...
+          ╵                       [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: string; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:475:32:
+[37m      475 │ ...ption *ngFor="let s [32mof enrollStudentOptions[37m" [value]="s.value"...
+          ╵                        [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: string; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:511:34:
+[37m      511 │ ...ption *ngFor="let p [32mof paymentParentOptions[37m" [value]="p.value"...
+          ╵                        [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: string; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:519:34:
+[37m      519 │ ...tion *ngFor="let s [32mof paymentStudentOptions[37m" [value]="s.value"...
+          ╵                       [32m~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Signal<{ value: number; label: string; }[]>' is not assignable to type 'NgIterable<any> | null | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.html:527:36:
+[37m      527 │ ...option *ngFor="let y [32mof paymentYearOptions[37m" [value]="y.value">...
+          ╵                         [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component SmartAssistantAdminComponent.
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:39:15:
+[37m      39 │   templateUrl: [32m'./smart-assistant-admin.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2687: All declarations of 'locale' must have identical modifiers.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:44:11:
+[37m      44 │   readonly [32mlocale[37m = inject(LocaleService);
+         ╵            [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2349: This expression is not callable.
+  No constituent of type '"" | UserRole' is callable.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:70:22:
+[37m      70 │     const role = this.[32musersRoleFilter[37m();
+         ╵                       [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2349: This expression is not callable.
+  No constituent of type '"" | UserRole' is callable.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:149:21:
+[37m      149 │       .getUsers(this.[32musersRoleFilter[37m() || undefined)
+          ╵                      [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2540: Cannot assign to 'usersRoleFilter' because it is a read-only property.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:167:9:
+[37m      167 │     this.[32musersRoleFilter[37m = role;
+          ╵          [32m~~~~~~~~~~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2300: Duplicate identifier 'locale'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:664:2:
+[37m      664 │   [32mlocale[37m = this.locale;
+          ╵   [32m~~~~~~[0m
+
+
+[31mX [41;31m[[41;97mERROR[41;31m][0m [1mTS2687: All declarations of 'locale' must have identical modifiers.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/pages/admin/smart-assistant-admin.component.ts:664:2:
+[37m      664 │   [32mlocale[37m = this.locale;
+          ╵   [32m~~~~~~[0m
+
+

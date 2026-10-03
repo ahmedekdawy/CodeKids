@@ -1,0 +1,608 @@
+<div class="admin-container">
+  <div class="admin-page-header">
+    <h1 class="admin-page-title">
+      <span class="admin-page-icon">🧠</span>
+      {{ 'smartadmin.title' | t }}
+    </h1>
+    <p class="admin-page-subtitle">{{ 'smartadmin.subtitle' | t }}</p>
+  </div>
+
+  <ul class="admin-tabs" role="tablist">
+    <li [class.active]="activeTab() === 'users'">
+      <a (click)="activeTab.set('users')" [attr.aria-selected]="activeTab() === 'users'" role="tab">
+        {{ 'smartadmin.tabUsers' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'classrooms'">
+      <a (click)="activeTab.set('classrooms')" [attr.aria-selected]="activeTab() === 'classrooms'" role="tab">
+        {{ 'smartadmin.tabClassrooms' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'assign'">
+      <a (click)="activeTab.set('assign')" [attr.aria-selected]="activeTab() === 'assign'" role="tab">
+        {{ 'smartadmin.tabAssign' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'enroll'">
+      <a (click)="activeTab.set('enroll')" [attr.aria-selected]="activeTab() === 'enroll'" role="tab">
+        {{ 'smartadmin.tabEnroll' | t }}
+      </a>
+    </li>
+    <li [class.active]="activeTab() === 'payments'">
+      <a (click)="activeTab.set('payments')" [attr.aria-selected]="activeTab() === 'payments'" role="tab">
+        {{ 'smartadmin.tabPayments' | t }}
+      </a>
+    </li>
+  </ul>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <!-- ============= USERS TAB ============= -->
+  <section *ngIf="activeTab() === 'users'" class="admin-card" aria-label="{{ 'smartadmin.tabUsers' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.addUserTitle' | t }}</h2>
+      <button class="admin-link-btn" (click)="userFormMode.set('create')">
+        {{ 'smartadmin.addNewUser' | t }}
+      </button>
+    </div>
+
+    <div *ngIf="userFormMode() === 'create'" class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="user-name">{{ 'common.name' | t }} *</label>
+        <input
+          id="user-name"
+          class="form-input"
+          type="text"
+          [(ngModel)]="userFormName"
+          autocomplete="name"
+          placeholder="{{ 'auth.displayNamePlaceholder' | t }}"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-email">{{ 'common.email' | t }} *</label>
+        <input
+          id="user-email"
+          class="form-input"
+          type="email"
+          [(ngModel)]="userFormEmail"
+          autocomplete="email"
+          placeholder="teacher@codekids.local"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-password">{{ 'common.password' | t }} *</label>
+        <input
+          id="user-password"
+          class="form-input"
+          [type]="showingUserPassword() ? 'text' : 'password'"
+          [(ngModel)]="userFormPassword"
+          autocomplete="new-password"
+          placeholder="{{ 'common.password' | t }}"
+        />
+        <button
+          class="icon-btn secondary icon-btn-sm"
+          type="button"
+          (click)="showingUserPassword.update((v) => !v)"
+          [attr.aria-label]="showingUserPassword() ? 'common.hide' : 'common.show'"
+        >
+          {{ showingUserPassword() ? ("common.hide" | t) : ("common.show" | t) }}
+        </button>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-role" data-fix-roles>{{ 'common.role' | t }} *</label>
+        <select id="user-role" class="form-select" [(ngModel)]="userFormRole">
+          <option value="teacher">{{ 'role.teacher' | t }}</option>
+          <option value="parent">{{ 'role.parent' | t }}</option>
+          <option value="student">{{ 'role.student' | t }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="userFormRole === 'student'">
+        <label class="form-label" for="user-parent">{{ 'auth.parentId' | t }}</label>
+        <div class="searchable-input-wrap">
+          <input
+            id="user-parent"
+            class="form-input"
+            type="text"
+            [value]="userFormParentId"
+            (input)="onParentIdInput(userParentInput.value)"
+            (focus)="onParentIdInput(userParentInput.value)"
+            (blur)="clearParentSuggestionsAfter()"
+            placeholder="{{ 'auth.parentIdPlaceholder' | t }}"
+            #userParentInput
+          />
+          <div class="searchable-suggestions" *ngIf="parentSuggestions().length">
+            <button
+              type="button"
+              class="searchable-suggestion"
+              *ngFor="let p of parentSuggestions()"
+              (click)="selectParent(p.id)"
+            >
+              <span class="searchable-suggestion-label">{{ p.displayName }}</span>
+              <span class="searchable-suggestion-sub">{{ p.email }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="userFormRole === 'student'">
+        <label class="form-label" for="user-grade">{{ 'common.grade' | t }}</label>
+        <select id="user-grade" class="form-select" [value]="userFormGrade || ''" (change)="userFormGrade = +$any($event.target).value || 0">
+          <option [ngValue]="0">{{ 'common.none' | t }}</option>
+          <option *ngFor="let g of grades()" [value]="g.id">{{ g.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="userFormRole === 'student'">
+        <label class="form-label" for="user-school-type">{{ 'common.schoolType' | t }}</label>
+        <select id="user-school-type" class="form-select" [(ngModel)]="userFormSchoolType">
+          <option value="">{{ 'common.none' | t }}</option>
+          <option value="Arabic">{{ 'common.schoolTypeArabic' | t }}</option>
+          <option value="Language">{{ 'common.schoolTypeLanguage' | t }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="user-mobile">{{ 'common.mobile' | t }}</label>
+        <input
+          id="user-mobile"
+          class="form-input"
+          type="tel"
+          [(ngModel)]="userFormMobile"
+          placeholder="{{ 'common.mobile' | t }}"
+        />
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="createUser()">
+          {{ 'common.add' | t }} {{ 'role.' + userFormRole | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetUserForm()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="userFormMode() === 'list'" class="admin-table-wrap">
+      <div class="admin-table-toolbar">
+        <div class="admin-filter-row">
+          <label class="form-label filter-label">{{ 'common.role' | t }}</label>
+          <select
+            class="form-select filter-select"
+            [value]="usersRoleFilter()"
+            (change)="setUsersRole($any($event.target).value)"
+          >
+            <option *ngFor="let opt of userRoleOptions" [value]="opt.value">{{ opt.label | t }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-table">
+        <div class="admin-table-head">
+          <span class="admin-table-cell admin-table-name" (click)="setUsersSort('displayName')">
+            {{ 'common.name' | t }} {{ sortMark('displayName') }}
+          </span>
+          <span class="admin-table-cell admin-table-email" (click)="setUsersSort('email')">
+            {{ 'common.email' | t }} {{ sortMark('email') }}
+          </span>
+          <span class="admin-table-cell admin-table-role" (click)="setUsersSort('role')">
+            {{ 'common.role' | t }} {{ sortMark('role') }}
+          </span>
+          <span class="admin-table-cell admin-table-grade" (click)="setUsersSort('grade')">
+            {{ 'common.grade' | t }} {{ sortMark('grade') }}
+          </span>
+          <span class="admin-table-cell admin-table-actions">{{ 'common.actions' | t }}</span>
+        </div>
+
+        <div
+          *ngFor="let user of sortedUsers()"
+          class="admin-table-row"
+          [class.admin-table-row--inactive]="!user.isActive"
+        >
+          <span class="admin-table-cell admin-table-name">{{ user.displayName }}</span>
+          <span class="admin-table-cell admin-table-email">{{ user.email }}</span>
+          <span class="admin-table-cell admin-table-role">{{ 'role.' + user.role.toLowerCase() | t }}</span>
+          <span class="admin-table-cell admin-table-grade">
+            <span *ngIf="user.role === 'Student'">{{ getUserGradeLabel(user) }}</span>
+            <span *ngIf="user.role !== 'Student'">{{ 'common.emDash' | t }}</span>
+          </span>
+          <span class="admin-table-cell admin-table-actions admin-table-actions-right">
+            <button
+              class="icon-btn danger icon-btn-sm"
+              type="button"
+              (click)="deleteUser(user)"
+              [attr.aria-label]="'common.delete' | t"
+            >
+              {{ 'common.delete' | t }}
+            </button>
+          </span>
+        </div>
+
+        <div *ngIf="!sortedUsers().length" class="admin-table-empty">
+          {{ 'common.noData' | t }}
+        </div>
+      </div>
+
+      <div class="admin-pagination" *ngIf="totalPages() > 1">
+        <div class="admin-pagination-info">
+          {{ 'common.pageOf' | t:{ page: usersPage(), pages: totalPages() } }}
+        </div>
+        <div class="admin-pagination-controls">
+          <button
+            class="btn btn-secondary btn-sm"
+            type="button"
+            [disabled]="usersPage() <= 1"
+            (click)="setUsersPage(usersPage() - 1)"
+          >
+            {{ 'common.previous' | t }}
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            type="button"
+            [disabled]="usersPage() >= totalPages()"
+            (click)="setUsersPage(usersPage() + 1)"
+          >
+            {{ 'common.next' | t }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= CLASSROOMS TAB ============= -->
+  <section *ngIf="activeTab() === 'classrooms'" class="admin-card" aria-label="{{ 'smartadmin.tabClassrooms' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.classroomTitle' | t }}</h2>
+      <button class="admin-link-btn" (click)="startNewClassroom()">
+        {{ 'smartadmin.newClassroom' | t }}
+      </button>
+    </div>
+
+    <div *ngIf="editingClassroom()" class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="classroom-name">{{ 'common.name' | t }} *</label>
+        <input
+          id="classroom-name"
+          class="form-input"
+          type="text"
+          [(ngModel)]="classroomFormName"
+          placeholder="{{ 'smartadmin.classroomNamePlaceholder' | t }}"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="classroom-description">{{ 'common.description' | t }}</label>
+        <textarea
+          id="classroom-description"
+          class="form-input form-textarea"
+          [(ngModel)]="classroomFormDescription"
+          rows="3"
+          placeholder="{{ 'common.descriptionPlaceholder' | t }}"
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="classroom-grade">{{ 'common.grade' | t }}</label>
+        <select id="classroom-grade" class="form-select" [value]="classroomFormGrade || ''" (change)="classroomFormGrade = +$any($event.target).value || ''">
+          <option [ngValue]="''">{{ 'common.none' | t }}</option>
+          <option *ngFor="let g of grades()" [value]="g.id">{{ g.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'common.course' | t }} *</label>
+        <div class="course-assign-list">
+          <div *ngFor="let course of classroomFormCourses; let i = index" class="course-assign-row">
+            <select class="form-select" [value]="course.courseId" (change)="setCourseAssignCourse(i, $any($event.target).value)">
+              <option value="">{{ 'common.selectCourse' | t }}</option>
+              <option *ngFor="let c of courseOptions()" [value]="c.value">{{ c.label }}</option>
+            </select>
+            <select class="form-select" [value]="course.teacherId" (change)="setCourseAssignTeacher(i, $any($event.target).value)">
+              <option value="">{{ 'common.unassigned' | t }}</option>
+              <option *ngFor="let t of teacherOptions()" [value]="t.value">{{ t.label }}</option>
+            </select>
+            <button
+              class="icon-btn danger icon-btn-sm"
+              type="button"
+              (click)="removeCourseAssign(i)"
+              [attr.aria-label]="'common.remove' | t"
+            >
+              {{ 'common.remove' | t }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <button class="btn btn-ghost-sm" type="button" (click)="addCourseAssign()">
+          {{ 'common.add' | t }} {{ 'common.course' | t }}
+        </button>
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="saveClassroom()">
+          {{ editingClassroom() ? ('common.edit' | t) : ('common.add' | t) }} {{ 'common.classroom' | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="cancelClassroomEdit()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!editingClassroom()" class="admin-table-wrap">
+      <div class="admin-table">
+        <div class="admin-table-head">
+          <span class="admin-table-cell admin-table-name">{{ 'common.name' | t }}</span>
+          <span class="admin-table-cell admin-table-description">{{ 'common.description' | t }}</span>
+          <span class="admin-table-cell admin-table-grade">{{ 'common.grade' | t }}</span>
+          <span class="admin-table-cell admin-table-courses">{{ 'common.course' | t }}</span>
+          <span class="admin-table-cell admin-table-actions">{{ 'common.actions' | t }}</span>
+        </div>
+
+        <div *ngFor="let room of classrooms()" class="admin-table-row">
+          <span class="admin-table-cell admin-table-name">{{ room.name }}</span>
+          <span class="admin-table-cell admin-table-description">{{ room.description || ('common.none' | t) }}</span>
+          <span class="admin-table-cell admin-table-grade">
+            {{ room.grade ? gradeLabel(room.grade) : ('common.emDash' | t) }}
+          </span>
+          <span class="admin-table-cell admin-table-courses">
+            <span *ngIf="room.courses?.length">
+              {{ courseLabel(room.courses[0], locale) }}
+              <span *ngIf="room.courses.length > 1">
+                +{{ room.courses.length - 1 }} {{ 'common.other' | t:{ n: room.courses.length - 1 } }}
+              </span>
+            </span>
+            <span *ngIf="room.courseId && !room.courses?.length">{{ room.courseTitle || room.courseId }}</span>
+            <span *ngIf="!room.courseId && !room.courses?.length">{{ 'common.none' | t }}</span>
+          </span>
+          <span class="admin-table-cell admin-table-actions admin-table-actions-right">
+            <button
+              class="icon-btn secondary icon-btn-sm"
+              type="button"
+              (click)="startEditClassroom(room)"
+              [attr.aria-label]="'common.edit' | t"
+            >
+              {{ 'common.edit' | t }}
+            </button>
+            <button
+              class="icon-btn danger icon-btn-sm"
+              type="button"
+              (click)="deleteClassroom(room)"
+              [attr.aria-label]="'common.delete' | t"
+            >
+              {{ 'common.delete' | t }}
+            </button>
+          </span>
+        </div>
+
+        <div *ngIf="!classrooms().length" class="admin-table-empty">
+          {{ 'common.noData' | t }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= ASSIGN TAB ============= -->
+  <section *ngIf="activeTab() === 'assign'" class="admin-card" aria-label="{{ 'smartadmin.tabAssign' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.assignTitle' | t }}</h2>
+    </div>
+
+    <div class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="assign-mode">{{ 'smartadmin.assignMode' | t }}</label>
+        <select id="assign-mode" class="form-select" [(ngModel)]="assignMode">
+          <option value="classroom">{{ 'common.classroom' | t }}</option>
+          <option value="course">{{ 'common.course' | t }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="assign-classroom">{{ 'common.classroom' | t }} *</label>
+        <select id="assign-classroom" class="form-select" [(ngModel)]="assignClassroomId">
+          <option value="">{{ 'common.selectClassroom' | t }}</option>
+          <option *ngFor="let c of assignClassroomOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="assignMode === 'course'">
+        <label class="form-label" for="assign-course">{{ 'common.course' | t }} *</label>
+        <select id="assign-course" class="form-select" [(ngModel)]="assignCourseId">
+          <option value="">{{ 'common.selectCourse' | t }}</option>
+          <option *ngFor="let c of assignCourseOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="assign-teacher">{{ 'role.teacher' | t }} *</label>
+        <select id="assign-teacher" class="form-select" [(ngModel)]="assignTeacherId">
+          <option value="">{{ 'common.select' | t }} {{ 'role.teacher' | t }}</option>
+          <option *ngFor="let t of teacherOptions()" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="saveAssignment()">
+          {{ 'smartadmin.assignSave' | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="resetAssignmentForm()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= ENROLL TAB ============= -->
+  <section *ngIf="activeTab() === 'enroll'" class="admin-card" aria-label="{{ 'smartadmin.tabEnroll' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.enrollTitle' | t }}</h2>
+      <div class="admin-tab-toggle">
+        <button
+          [class.btn-primary]="enrollMode === 'classroom'"
+          [class.btn-secondary]="enrollMode !== 'classroom'"
+          type="button"
+          (click)="enrollMode = 'classroom'"
+        >
+          {{ 'smartadmin.enrollClassroom' | t }}
+        </button>
+        <button
+          [class.btn-primary]="enrollMode === 'subject'"
+          [class.btn-secondary]="enrollMode !== 'subject'"
+          type="button"
+          (click)="enrollMode = 'subject'"
+        >
+          {{ 'smartadmin.enrollSubject' | t }}
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-form">
+      <div class="form-row">
+        <label class="form-label" for="enroll-classroom">{{ 'common.classroom' | t }} *</label>
+        <select id="enroll-classroom" class="form-select" [(ngModel)]="enrollClassroomId">
+          <option value="">{{ 'common.selectClassroom' | t }}</option>
+          <option *ngFor="let c of enrollClassroomOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="enroll-student">{{ 'role.student' | t }} *</label>
+        <select id="enroll-student" class="form-select" [(ngModel)]="enrollStudentId">
+          <option value="">{{ 'common.select' | t }} {{ 'role.student' | t }}</option>
+          <option *ngFor="let s of enrollStudentOptions()" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row" *ngIf="enrollMode === 'subject'">
+        <label class="form-label" for="enroll-courses">{{ 'common.course' | t }} *</label>
+        <select id="enroll-courses" class="form-select" [value]="enrollCourseIds[0] || ''" (change)="setEnrollCourse($any($event.target).value)">
+          <option value="">{{ 'common.selectCourse' | t }}</option>
+          <option *ngFor="let c of courseOptions()" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </div>
+
+      <div class="form-row form-actions">
+        <button class="btn btn-primary" type="button" (click)="enrollStudent()">
+          {{ 'smartadmin.enrollSave' | t }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="clearEnrollForm()">
+          {{ 'common.cancel' | t }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= PAYMENTS TAB ============= -->
+  <section *ngIf="activeTab() === 'payments'" class="admin-card" aria-label="{{ 'smartadmin.tabPayments' | t }}">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">{{ 'smartadmin.paymentsTitle' | t }}</h2>
+    </div>
+
+    <div class="admin-form admin-form--split">
+      <div class="form-section">
+        <h3 class="form-section-title">{{ 'smartadmin.addPaymentTitle' | t }}</h3>
+        <div class="form-row">
+          <label class="form-label" for="payment-parent">{{ 'role.parent' | t }}</label>
+          <select id="payment-parent" class="form-select" [(ngModel)]="paymentParentId">
+            <option value="">{{ 'common.all' | t }}</option>
+            <option *ngFor="let p of paymentParentOptions()" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-student">{{ 'role.student' | t }}</label>
+          <select id="payment-student" class="form-select" [(ngModel)]="paymentStudentId">
+            <option value="">{{ 'common.all' | t }}</option>
+            <option *ngFor="let s of paymentStudentOptions()" [value]="s.value">{{ s.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-row form-row--inline">
+          <div class="form-field">
+            <label class="form-label" for="payment-year">{{ 'common.year' | t }}</label>
+            <select id="payment-year" class="form-select" [value]="paymentYear" (change)="onPaymentYearChange($any($event.target).value)">
+              <option *ngFor="let y of paymentYearOptions()" [value]="y.value">{{ y.label }}</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="payment-month">{{ 'common.month' | t }}</label>
+            <select id="payment-month" class="form-select" [value]="paymentMonth" (change)="onPaymentMonthChange($any($event.target).value)">
+              <option *ngFor="let m of paymentMonthOptions" [value]="m.value">{{ m.label }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-amount">{{ 'common.amount' | t }} *</label>
+          <input
+            id="payment-amount"
+            class="form-input"
+            type="number"
+            min="0"
+            step="0.01"
+            [(ngModel)]="paymentAmount"
+            placeholder="0.00"
+          />
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-date">{{ 'common.date' | t }} *</label>
+          <input
+            id="payment-date"
+            class="form-input"
+            type="date"
+            [(ngModel)]="paymentDate"
+          />
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="payment-notes">{{ 'common.notes' | t }}</label>
+          <input
+            id="payment-notes"
+            class="form-input"
+            type="text"
+            [(ngModel)]="paymentNotes"
+            placeholder="{{ 'common.notes' | t }}"
+          />
+        </div>
+
+        <div class="form-row form-actions">
+          <button class="btn btn-primary" type="button" (click)="createPayment()">
+            {{ 'common.add' | t }} {{ 'smartadmin.payment' | t }}
+          </button>
+          <button class="btn btn-secondary" type="button" (click)="resetPaymentForm()">
+            {{ 'common.cancel' | t }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">{{ 'smartadmin.paymentsList' | t }}</h3>
+        <div class="admin-table-wrap">
+          <div class="admin-table">
+            <div class="admin-table-head">
+              <span class="admin-table-cell admin-table-date">{{ 'common.date' | t }}</span>
+              <span class="admin-table-cell admin-table-payer">{{ 'common.payer' | t }}</span>
+              <span class="admin-table-cell admin-table-amount">{{ 'common.amount' | t }}</span>
+              <span class="admin-table-cell admin-table-notes">{{ 'common.notes' | t }}</span>
+            </div>
+
+            <div *ngFor="let p of payments()" class="admin-table-row">
+              <span class="admin-table-cell admin-table-date">{{ p.paymentDate | date:'shortDate' }}</span>
+              <span class="admin-table-cell admin-table-payer">{{ p.payerLabel }}</span>
+              <span class="admin-table-cell admin-table-amount">{{ p.amount | number:'1.2-2' }}</span>
+              <span class="admin-table-cell admin-table-notes">{{ p.notes || ('common.none' | t) }}</span>
+            </div>
+
+            <div *ngIf="!payments().length" class="admin-table-empty">
+              {{ 'smartadmin.noPayments' | t }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

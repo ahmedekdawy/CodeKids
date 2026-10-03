@@ -1,0 +1,60 @@
+@if (hidden()) {
+  <button type="button" class="guide-reopen" (click)="setHidden(false)">
+    {{ 'guide.show' | t }}
+  </button>
+} @else {
+  <section class="guide" [attr.aria-label]="prefix() + '.title' | t">
+    <header class="guide-head">
+      <div>
+        <h3>{{ prefix() + '.title' | t }}</h3>
+        <p class="guide-sub">
+          {{ prefix() + (allDone() ? '.allDone' : '.subtitle') | t }}
+        </p>
+      </div>
+      <button type="button" class="guide-hide" (click)="setHidden(true)">
+        {{ 'guide.hide' | t }}
+      </button>
+    </header>
+
+    <div class="guide-progress">
+      <div class="guide-progress-track">
+        <div class="guide-progress-fill" [style.width]="progress()"></div>
+      </div>
+      <span>{{ 'guide.progress' | t: { done: doneCount(), total: steps().length } }}</span>
+    </div>
+
+    <ol class="guide-steps">
+      @for (step of steps(); track step.id; let i = $index) {
+        <li
+          class="guide-step"
+          [class.done]="isDone(step)"
+          [class.next]="nextStep() === step.id"
+          [class.open]="openStep() === step.id">
+          <button
+            type="button"
+            class="guide-step-head"
+            [attr.aria-expanded]="openStep() === step.id"
+            (click)="toggle(step.id)">
+            <span class="guide-step-num">{{ isDone(step) ? '✓' : i + 1 }}</span>
+            <span class="guide-step-title">{{ prefix() + '.' + step.id + '.title' | t }}</span>
+            @if (isDone(step)) {
+              <span class="guide-step-badge">
+                {{ step.visitOnly ? ('guide.opened' | t) : (prefix() + '.' + step.id + '.count' | t: { n: count(step.id) }) }}
+              </span>
+            } @else if (nextStep() === step.id) {
+              <span class="guide-step-badge guide-step-badge-next">{{ 'guide.startHere' | t }}</span>
+            }
+          </button>
+          @if (openStep() === step.id) {
+            <div class="guide-step-body">
+              <p>{{ prefix() + '.' + step.id + '.text' | t }}</p>
+              <a class="guide-go" [routerLink]="step.path" (click)="markVisited(step)">
+                {{ prefix() + '.' + step.id + '.action' | t }}
+              </a>
+            </div>
+          }
+        </li>
+      }
+    </ol>
+  </section>
+}

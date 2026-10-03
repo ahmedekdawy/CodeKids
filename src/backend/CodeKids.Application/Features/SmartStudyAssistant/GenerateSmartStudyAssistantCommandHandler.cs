@@ -59,6 +59,15 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             .Select(x => new IStudyPlanAiClient.AiAttachment(x.MimeType, x.Data))
             .ToList();
 
+        // Teacher-typed free-text prompt acts as an extra instruction / content source
+        // when no files were uploaded, so the assistant can run from a description alone.
+        var prompt = (command.Prompt ?? string.Empty).Trim();
+        if (prompt.Length > 6000)
+        {
+            prompt = prompt[..6000];
+        }
+        var usePromptOnly = prompt.Length > 0 && attachments.Count == 0;
+
         // If there are any attachments, instruct the AI to use ONLY the attached files.
         var useAttachmentsOnly = attachments.Count > 0;
         string userPrompt;
@@ -96,9 +105,29 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
                     "Produce the output following the system instructions and the JSON schema provided.";
             }
         }
+        else if (usePromptOnly)
+        {
+            // No files: generate from the typed prompt, ignoring stored course materials.
+            userPrompt =
+                "Use ONLY the text request below to generate the requested output. " +
+                "Do NOT use the selected course, course outline, or any stored course materials." +
+                (arabic ? " اكتب النتيجة باللغة العربية." : " Write the output in English.") +
+                "\n\n" +
+                $"Requested action: {action}\n" +
+                $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                "Teacher request (use this exclusively):\n\n" +
+                prompt +
+                "\n\nProduce the output following the system instructions and the JSON schema provided.";
+        }
         else
         {
             userPrompt = BuildUserPrompt(action, course, outline, scope, arabic, bookText);
+            if (prompt.Length > 0)
+            {
+                userPrompt += "\n\n" + (arabic
+                    ? $"تعليمات إضافية من المعلم:\n{prompt}"
+                    : $"Additional teacher instructions:\n{prompt}");
+            }
         }
 
         if (images.Count > 0)

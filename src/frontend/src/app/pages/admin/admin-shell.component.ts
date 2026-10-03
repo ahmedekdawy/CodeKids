@@ -32,6 +32,8 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.assign', path: '/admin/assign-classroom', icon: 'G', categoryKey: 'nav.cat.classrooms' },
     { labelKey: 'nav.admin.enroll', path: '/admin/enroll-student', icon: 'E', categoryKey: 'nav.cat.classrooms' },
 
+    { labelKey: 'nav.admin.smartAssistant', path: '/admin/smart-assistant', icon: 'M', categoryKey: 'nav.cat.content' },
+
     { labelKey: 'nav.admin.teacherAssessments', path: '/admin/teacher-assessments', icon: 'Q', categoryKey: 'nav.cat.assessments' },
     { labelKey: 'nav.admin.weeklyReports', path: '/admin/weekly-reports', icon: 'W', categoryKey: 'nav.cat.assessments' },
 

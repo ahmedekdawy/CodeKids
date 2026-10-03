@@ -36,6 +36,7 @@ public static class SmartStudyAssistantEndpoints
                 Guid.TryParse(form["unitId"], out var unitId);
                 Guid.TryParse(form["lessonId"], out var lessonId);
                 var language = form["language"].ToString();
+                var prompt = form["prompt"].ToString();
 
                 var attachments = new List<SmartStudyAttachmentFile>();
                 foreach (var file in form.Files.Take(MaxFiles))
@@ -70,6 +71,7 @@ public static class SmartStudyAssistantEndpoints
                         unitId == Guid.Empty ? null : unitId,
                         lessonId == Guid.Empty ? null : lessonId,
                         language,
+                        string.IsNullOrWhiteSpace(prompt) ? null : prompt,
                         attachments),
                     cancellationToken));
             }

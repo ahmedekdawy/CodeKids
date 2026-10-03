@@ -50,6 +50,7 @@ export class SmartStudyAssistantComponent {
   selectedLessonId = '';
 
   readonly files = signal<FileEntry[]>([]);
+  prompt = '';
 
   readonly activeAction = signal<SmartStudyAction | null>(null);
 
@@ -197,6 +198,10 @@ export class SmartStudyAssistantComponent {
       this.error.set('اختر الكورس أولاً.');
       return;
     }
+    if (!this.files().length && !this.prompt.trim()) {
+      this.error.set('ارفع ملفاً أو اكتب وصفاً نصياً للمحتوى المطلوب.');
+      return;
+    }
     if (this.loading()) return;
 
     this.error.set('');
@@ -214,6 +219,7 @@ export class SmartStudyAssistantComponent {
         unitId: this.unitId() || null,
         lessonId: this.lessonId() || null,
         language: 'ar',
+        prompt: this.prompt.trim() || null,
         files: this.files().map((f) => f.file)
       }));
       this.result.set(result);

@@ -317,3 +317,26 @@
   border: none;
   border-top: 1px solid var(--border, #dbe4ec);
 }
+
+.ssa-prompt-label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.ssa-prompt {
+  width: 100%;
+  resize: vertical;
+  min-height: 110px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border, #c6d2dd);
+  border-radius: 10px;
+  font: inherit;
+  line-height: 1.7;
+  background: var(--surface, #fff);
+  color: var(--text, #1c2434);
+}
+
+.ssa-prompt:focus {
+  outline: 2px solid #0f766e;
+  outline-offset: 1px;
+}

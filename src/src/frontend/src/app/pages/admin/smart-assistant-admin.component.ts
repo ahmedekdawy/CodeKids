@@ -1,0 +1,678 @@
+import { Component, inject, signal, computed, effect } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgClass, DecimalPipe, DatePipe } from '@angular/common';
+import { LocaleService } from '../../i18n/locale.service';
+import { LearningApiService } from '../../learning-api.service';
+import {
+  ManagedUser,
+  Classroom,
+  ClassroomCourse,
+  ClassroomCourseAssignment,
+  TuitionPayment,
+  Grade,
+  Course,
+  UserRole
+} from '../../models';
+import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { TranslatePipe } from '../../shared/translate.pipe';
+import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
+import { SortDir, nextSort, sortBy } from '../../sort.util';
+import { formatGradeLabel } from '../../grade.util';
+
+type UserTab = 'teacher' | 'parent' | 'student';
+
+@Component({
+  selector: 'app-smart-assistant-admin',
+  imports: [
+    FormsModule,
+    NgIf,
+    NgFor,
+    NgClass,
+    DecimalPipe,
+    DatePipe,
+    SearchableSelectComponent,
+    IconActionButtonComponent,
+    TranslatePipe
+  ],
+  templateUrl: './smart-assistant-admin.component.html',
+  styleUrl: './admin-panel.css'
+})
+export class SmartAssistantAdminComponent {
+  private readonly api = inject(LearningApiService);
+  readonly locale = inject(LocaleService);
+
+  readonly activeTab = signal<'users' | 'classrooms' | 'assign' | 'enroll' | 'payments'>('users');
+
+  readonly users = signal<ManagedUser[]>([]);
+  readonly classrooms = signal<Classroom[]>([]);
+  readonly grades = signal<Grade[]>([]);
+  readonly courses = signal<Course[]>([]);
+  readonly payments = signal<TuitionPayment[]>([]);
+  readonly message = signal('');
+  readonly error = signal('');
+  readonly loading = signal(false);
+
+  readonly userFormMode = signal<'create' | 'list'>('list');
+  readonly showingUserPassword = signal(false);
+
+  readonly usersPage = signal(1);
+  readonly usersPageSize = signal(25);
+  readonly usersTotalCount = signal(0);
+
+  readonly usersSortKey = signal('displayName');
+  readonly usersSortDir = signal<SortDir>('asc');
+  usersRoleFilter: UserRole | '' = '';
+
+  readonly filteredUsers = computed(() => {
+    const rows = this.users().slice();
+    const role = this.usersRoleFilter;
+    if (role) {
+      return rows.filter((u) => u.role === role);
+    }
+    return rows;
+  });
+
+  readonly sortedUsers = computed(() => {
+    this.locale.lang();
+    return sortBy(this.filteredUsers(), this.usersSortKey(), this.usersSortDir());
+  });
+
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.usersTotalCount() / this.usersPageSize()))
+  );
+
+  readonly userRoleOptions = [
+    { value: '' as const, label: this.locale.t('common.all') },
+    { value: 'Teacher' as const, label: this.locale.t('role.teacher') },
+    { value: 'Parent' as const, label: this.locale.t('role.parent') },
+    { value: 'Student' as const, label: this.locale.t('role.student') }
+  ];
+
+  readonly classroomOptions = computed(() =>
+    this.classrooms()
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((r) => ({ value: r.id, label: r.name }))
+  );
+
+  readonly teacherOptions = computed(() =>
+    this.users()
+      .filter((u) => u.role === 'Teacher')
+      .slice()
+      .sort((a, b) => a.displayName.localeCompare(b.displayName))
+      .map((u) => ({ value: u.id, label: `${u.displayName} — ${u.email}` }))
+  );
+
+  readonly studentOptions = computed(() =>
+    this.users()
+      .filter((u) => u.role === 'Student')
+      .slice()
+      .sort((a, b) => a.displayName.localeCompare(b.displayName))
+      .map((u) => ({ value: u.id, label: `${u.displayName} — ${u.email}` }))
+  );
+
+  readonly courseOptions = computed(() =>
+    this.courses()
+      .slice()
+      .sort((a, b) => a.title.localeCompare(b.title))
+      .map((c) => ({ value: c.id, label: `${c.title}${c.grade ? ' (' + formatGradeLabel((k, p) => this.locale.t(k, p), c.grade) + ')' : ''}` }))
+  );
+
+  readonly paymentYearOptions = computed(() => {
+    const current = new Date().getFullYear();
+    return [current - 1, current, current + 1].map((y) => ({ value: y, label: String(y) }));
+  });
+
+  readonly paymentMonthOptions = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: String(i + 1)
+  }));
+
+  constructor() {
+    this.reload();
+  }
+
+  reload(): void {
+    this.loading.set(true);
+    this.api.getUsers().subscribe((users) => this.users.set(users));
+    this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
+    this.api.getGrades().subscribe((grades) => this.grades.set(grades));
+    this.api.getCourses().subscribe((courses) => this.courses.set(courses));
+    this.loadPayments();
+    this.loadUsersPage();
+  }
+
+  loadUsersPage(): void {
+    this.api
+      .getUsers(this.usersRoleFilter || undefined)
+      .subscribe((all) => {
+        const paged = all.slice(
+          (this.usersPage() - 1) * this.usersPageSize(),
+          this.usersPage() * this.usersPageSize()
+        );
+        this.users.set(paged);
+        this.usersTotalCount.set(all.length);
+      });
+  }
+
+  setUsersPage(page: number): void {
+    this.usersPage.set(page);
+    this.loadUsersPage();
+  }
+
+  setUsersRoleString(raw: string): void {
+    const role = (raw === 'Teacher' || raw === 'Parent' || raw === 'Student') ? raw as UserRole : '';
+    this.usersRoleFilter = role;
+    this.usersPage.set(1);
+    this.loadUsersPage();
+  }
+
+  setUsersSort(key: string): void {
+    this.usersSortDir.set(nextSort(this.usersSortKey(), key, this.usersSortDir()));
+    this.usersSortKey.set(key);
+  }
+
+  sortMark(key: string): string {
+    if (this.usersSortKey() !== key) return '';
+    return this.usersSortDir() === 'asc' ? '↑' : '↓';
+  }
+
+  roleLabel(role: UserRole): string {
+    return this.locale.t(`role.${role.toLowerCase()}`);
+  }
+
+  getUserGradeLabel(user: ManagedUser): string {
+    if (user.grade == null) return this.locale.t('common.emDash');
+    return formatGradeLabel((k, p) => this.locale.t(k, p), user.grade);
+  }
+
+  deleteUser(user: ManagedUser): void {
+    if (
+      !confirm(
+        this.locale.t('smartadmin.confirmDeleteUser', {
+          name: user.displayName,
+          role: this.locale.t(`role.${user.role.toLowerCase()}`)
+        })
+      )
+    ) {
+      return;
+    }
+    this.clearStatus();
+    this.api.deleteUser(user.id).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('smartadmin.userDeleted'));
+        this.reload();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'smartadmin.userDeleteFailed'))
+    });
+  }
+
+  courseLabel(course: ClassroomCourse | null | undefined, locale: LocaleService): string {
+    if (!course) return locale.t('common.none');
+    const name = course.courseTitle || course.courseId;
+    if (course.courseGrade == null) return name;
+    return `${name} (${formatGradeLabel((k, p) => locale.t(k, p), course.courseGrade)})`;
+  }
+
+  // ---------- Add user form ----------
+  userFormName = '';
+  userFormEmail = '';
+  userFormPassword = '';
+  userFormMobile = '';
+  userFormRole: UserTab = 'student';
+  userFormGrade = 0;
+  userFormParentId = '';
+  userFormSchoolType: 'Arabic' | 'Language' | '' = '';
+
+  parentSearchTimer: ReturnType<typeof setTimeout> | null = null;
+  readonly parentSuggestions = signal<{ id: string; displayName: string; email: string }[]>([]);
+
+  onParentIdInput(value: string): void {
+    const trimmed = (value || '').trim();
+    if (this.parentSearchTimer) clearTimeout(this.parentSearchTimer);
+    if (trimmed.length < 2) {
+      this.parentSuggestions.set([]);
+      return;
+    }
+    this.parentSearchTimer = setTimeout(() => {
+      this.api
+        .getUsers('Parent')
+        .subscribe((parents) =>
+          this.parentSuggestions.set(
+            parents
+              .filter((p) =>
+                (p.displayName + ' ' + p.email).toLowerCase().includes(trimmed.toLowerCase())
+              )
+              .slice(0, 8)
+              .map((p) => ({ id: p.id, displayName: p.displayName, email: p.email }))
+          )
+        );
+    }, 250);
+  }
+
+  clearParentSuggestions(): void {
+    this.parentSuggestions.set([]);
+    if (this.parentSearchTimer) clearTimeout(this.parentSearchTimer);
+  }
+
+  clearParentSuggestionsAfter(): void {
+    setTimeout(() => this.clearParentSuggestions(), 200);
+  }
+
+  selectParent(parentId: string): void {
+    this.userFormParentId = parentId;
+    this.clearParentSuggestions();
+  }
+
+  resetUserForm(): void {
+    this.userFormName = '';
+    this.userFormEmail = '';
+    this.userFormPassword = '';
+    this.userFormMobile = '';
+    this.userFormRole = 'student';
+    this.userFormGrade = 0;
+    this.userFormParentId = '';
+    this.userFormSchoolType = '';
+    this.clearParentSuggestions();
+    this.clearStatus();
+    this.userFormMode.set('list');
+  }
+
+  createUser(): void {
+    this.clearStatus();
+    if (!this.userFormName.trim()) {
+      this.error.set(this.locale.t('smartadmin.nameRequired'));
+      return;
+    }
+    if (!this.userFormEmail.trim()) {
+      this.error.set(this.locale.t('smartadmin.emailRequired'));
+      return;
+    }
+    if (!this.userFormPassword) {
+      this.error.set(this.locale.t('smartadmin.passwordRequired'));
+      return;
+    }
+
+    const role: UserRole =
+      this.userFormRole === 'teacher'
+        ? 'Teacher'
+        : this.userFormRole === 'parent'
+          ? 'Parent'
+          : 'Student';
+
+    const payload: Parameters<typeof this.api.createUser>[0] = {
+      email: this.userFormEmail.trim(),
+      displayName: this.userFormName.trim(),
+      password: this.userFormPassword,
+      role,
+      mobilePhone: this.userFormMobile || null,
+      parentId: role === 'Student' && this.userFormParentId ? this.userFormParentId : null,
+      grade: (this.userFormGrade || null) as number | null,
+      schoolType: (this.userFormSchoolType || null) as 'Arabic' | 'Language' | null
+    };
+
+    this.loading.set(true);
+    this.api.createUser(payload).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('smartadmin.userCreated', { role: this.roleLabel(role) }));
+        this.resetUserForm();
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, 'smartadmin.userCreateFailed'));
+        this.loading.set(false);
+      }
+    });
+  }
+
+  // ---------- Classroom form ----------
+  classroomFormName = '';
+  classroomFormDescription = '';
+  classroomFormGrade: number | '' = '';
+  classroomFormCourses: ClassroomCourseAssignment[] = [];
+  classroomEditingId: string | null = null;
+
+  readonly editingClassroom = signal(false);
+  get editingClassroomSig(): boolean {
+    return this.editingClassroom();
+  }
+
+  setClassroomCoursesFromRoom(room: Classroom): void {
+    const courses = room.courses ?? [];
+    this.classroomFormCourses =
+      courses.length
+        ? courses.map((c) => ({ courseId: c.courseId, teacherId: c.teacherId }))
+        : room.courseId
+          ? [{ courseId: room.courseId, teacherId: '' }]
+          : [];
+  }
+
+  startNewClassroom(): void {
+    this.classroomEditingId = null;
+    this.classroomFormName = '';
+    this.classroomFormDescription = '';
+    this.classroomFormGrade = '';
+    this.classroomFormCourses = [];
+    this.clearStatus();
+    this.editingClassroom.set(false);
+  }
+
+  startEditClassroom(room: Classroom): void {
+    this.classroomEditingId = room.id;
+    this.classroomFormName = room.name;
+    this.classroomFormDescription = room.description;
+    this.classroomFormGrade = room.grade ?? '';
+    this.setClassroomCoursesFromRoom(room);
+    this.editingClassroom.set(true);
+  }
+
+  cancelClassroomEdit(): void {
+    this.classroomEditingId = null;
+    this.classroomFormName = '';
+    this.classroomFormDescription = '';
+    this.classroomFormGrade = '';
+    this.classroomFormCourses = [];
+    this.clearStatus();
+    this.editingClassroom.set(false);
+  }
+
+  setCourseAssignCourse(index: number, courseId: string | number): void {
+    const list = [...this.classroomFormCourses];
+    list[index] = { ...list[index], courseId: String(courseId) };
+    this.classroomFormCourses = list;
+  }
+
+  setCourseAssignTeacher(index: number, teacherId: string | number): void {
+    const list = [...this.classroomFormCourses];
+    list[index] = { ...list[index], teacherId: String(teacherId) };
+    this.classroomFormCourses = list;
+  }
+
+  removeCourseAssign(index: number): void {
+    this.classroomFormCourses = this.classroomFormCourses.filter((_, i) => i !== index);
+  }
+
+  addCourseAssign(): void {
+    this.classroomFormCourses = [...this.classroomFormCourses, { courseId: '', teacherId: '' }];
+  }
+
+  saveClassroom(): void {
+    this.clearStatus();
+    if (!this.classroomFormName.trim()) {
+      this.error.set(this.locale.t('smartadmin.classroomNameRequired'));
+      return;
+    }
+    if (!this.classroomFormCourses.length) {
+      this.error.set(this.locale.t('smartadmin.classroomCourseRequired'));
+      return;
+    }
+
+    const payload = {
+      name: this.classroomFormName.trim(),
+      description: this.classroomFormDescription || undefined,
+      grade: this.classroomFormGrade === '' ? null : Number(this.classroomFormGrade),
+      courses: this.classroomFormCourses.length ? [...this.classroomFormCourses] : null
+    };
+
+    const editing = this.classroomEditingId;
+    this.loading.set(true);
+    if (editing) {
+      this.api.updateClassroom(editing, payload as Parameters<typeof this.api.updateClassroom>[1]).subscribe({
+        next: () => {
+          this.message.set(this.locale.t('smartadmin.classroomUpdated'));
+          this.cancelClassroomEdit();
+          this.reload();
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.error.set(this.locale.fromApiError(err, 'smartadmin.classroomUpdateFailed'));
+          this.loading.set(false);
+        }
+      });
+      return;
+    }
+
+    this.api.createClassroom(payload as Parameters<typeof this.api.createClassroom>[0]).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('smartadmin.classroomCreated'));
+        this.cancelClassroomEdit();
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, 'smartadmin.classroomCreateFailed'));
+        this.loading.set(false);
+      }
+    });
+  }
+
+  deleteClassroom(room: Classroom): void {
+    if (!confirm(this.locale.t('smartadmin.confirmDeleteClassroom', { name: room.name }))) return;
+    this.clearStatus();
+    this.api.deleteClassroom(room.id).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('smartadmin.classroomDeleted'));
+        this.reload();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'smartadmin.classroomDeleteFailed'))
+    });
+  }
+
+  // ---------- Assign teachers ----------
+  assignMode: 'classroom' | 'course' = 'classroom';
+  assignClassroomId = '';
+  assignCourseId = '';
+  assignTeacherId = '';
+
+  readonly assignClassroomOptions = this.classroomOptions;
+  readonly assignCourseOptions = this.courseOptions;
+
+  resetAssignmentForm(): void {
+    this.assignClassroomId = '';
+    this.assignCourseId = '';
+    this.assignTeacherId = '';
+    this.clearStatus();
+  }
+
+  saveAssignment(): void {
+    this.clearStatus();
+    if (this.assignMode === 'classroom') {
+      if (!this.assignClassroomId || !this.assignTeacherId) {
+        this.error.set(this.locale.t('smartadmin.assignSelectBoth'));
+        return;
+      }
+      this.loading.set(true);
+      this.api
+        .assignClassroom(this.assignClassroomId, { courses: null as null })
+        .subscribe({
+          next: () => {
+            this.message.set(this.locale.t('smartadmin.assignmentSaved'));
+            this.assignTeacherId = '';
+            this.reload();
+            this.loading.set(false);
+          },
+          error: (err) => {
+            this.error.set(this.locale.fromApiError(err, 'smartadmin.assignmentFailed'));
+            this.loading.set(false);
+          }
+        });
+      return;
+    }
+
+    if (!this.assignCourseId || !this.assignTeacherId) {
+      this.error.set(this.locale.t('smartadmin.assignSelectBoth'));
+      return;
+    }
+    this.loading.set(true);
+    const payload: ClassroomCourseAssignment = {
+      courseId: this.assignCourseId,
+      teacherId: this.assignTeacherId
+    };
+    this.api.assignClassroom(this.assignClassroomId, { courses: [payload] }).subscribe({
+      next: () => {
+        this.message.set(this.locale.t('smartadmin.assignmentSaved'));
+        this.assignTeacherId = '';
+        this.reload();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(this.locale.fromApiError(err, 'smartadmin.assignmentFailed'));
+        this.loading.set(false);
+      }
+    });
+  }
+
+  // ---------- Enroll student ----------
+  enrollClassroomId = '';
+  enrollStudentId = '';
+  enrollCourseIds: string[] = [];
+  enrollMode: 'classroom' | 'subject' = 'classroom';
+
+  readonly enrollClassroomOptions = this.classroomOptions;
+  readonly enrollStudentOptions = this.studentOptions;
+
+  clearEnrollForm(): void {
+    this.enrollClassroomId = '';
+    this.enrollStudentId = '';
+    this.enrollCourseIds = [];
+    this.clearStatus();
+  }
+
+  setEnrollCourse(courseId: string | number): void {
+    const id = String(courseId);
+    this.enrollCourseIds = id ? [id] : [];
+  }
+
+  enrollStudent(): void {
+    this.clearStatus();
+    if (!this.enrollClassroomId || !this.enrollStudentId) {
+      this.error.set(this.locale.t('smartadmin.enrollSelectBoth'));
+      return;
+    }
+
+    if (this.enrollMode === 'subject') {
+      if (!this.enrollCourseIds.length) {
+        this.error.set(this.locale.t('smartadmin.enrollSelectCourse'));
+        return;
+      }
+    }
+
+    this.loading.set(true);
+    this.api
+      .addStudentToClassroom(this.enrollClassroomId, this.enrollStudentId, this.enrollCourseIds)
+      .subscribe({
+        next: () => {
+          this.message.set(this.locale.t('smartadmin.enrolled'));
+          this.clearEnrollForm();
+          this.reload();
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.error.set(this.locale.fromApiError(err, 'smartadmin.enrollFailed'));
+          this.loading.set(false);
+        }
+      });
+  }
+
+  // ---------- Payments ----------
+  paymentParentId = '';
+  paymentStudentId = '';
+  paymentYear = new Date().getFullYear();
+  paymentMonth = new Date().getMonth() + 1;
+  paymentAmount = 0;
+  paymentDate = '';
+  paymentNotes = '';
+
+  readonly paymentParentOptions = computed(() =>
+    this.users()
+      .filter((u) => u.role === 'Parent')
+      .slice()
+      .sort((a, b) => a.displayName.localeCompare(b.displayName))
+      .map((p) => ({ value: p.id, label: `${p.displayName} — ${p.email}` }))
+  );
+
+  readonly paymentStudentOptions = computed(() =>
+    this.users()
+      .filter((u) => u.role === 'Student')
+      .slice()
+      .sort((a, b) => a.displayName.localeCompare(b.displayName))
+      .map((s) => ({ value: s.id, label: `${s.displayName} — ${s.email}` }))
+  );
+
+  loadPayments(): void {
+    this.api
+      .getTuitionPayments({
+        parentId: this.paymentParentId || undefined,
+        studentId: this.paymentStudentId || undefined,
+        year: this.paymentYear,
+        month: this.paymentMonth
+      })
+      .subscribe((payments) => this.payments.set(payments));
+  }
+
+  onPaymentMonthChange(month: string | number): void {
+    this.paymentMonth = Number(month);
+    this.loadPayments();
+  }
+
+  onPaymentYearChange(year: string | number): void {
+    this.paymentYear = Number(year);
+    this.loadPayments();
+  }
+
+  createPayment(): void {
+    this.clearStatus();
+    if (!this.paymentDate) {
+      this.error.set(this.locale.t('smartadmin.paymentDateRequired'));
+      return;
+    }
+    if (!this.paymentAmount || this.paymentAmount <= 0) {
+      this.error.set(this.locale.t('smartadmin.paymentAmountRequired'));
+      return;
+    }
+    this.loading.set(true);
+    this.api
+      .createTuitionPayment({
+        parentId: this.paymentParentId || null,
+        studentId: this.paymentStudentId || null,
+        year: this.paymentYear,
+        month: this.paymentMonth,
+        amount: this.paymentAmount,
+        paymentDate: this.paymentDate,
+        notes: this.paymentNotes || null
+      })
+      .subscribe({
+        next: () => {
+          this.message.set(this.locale.t('smartadmin.paymentCreated'));
+          this.resetPaymentForm();
+          this.loadPayments();
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.error.set(this.locale.fromApiError(err, 'smartadmin.paymentCreateFailed'));
+          this.loading.set(false);
+        }
+      });
+  }
+
+  resetPaymentForm(): void {
+    this.paymentParentId = '';
+    this.paymentStudentId = '';
+    this.paymentYear = new Date().getFullYear();
+    this.paymentMonth = new Date().getMonth() + 1;
+    this.paymentAmount = 0;
+    this.paymentDate = '';
+    this.paymentNotes = '';
+    this.loadPayments();
+  }
+
+  // template helpers
+  formatGradeLabel = formatGradeLabel;
+  locale = this.locale;
+
+  private clearStatus(): void {
+    this.message.set('');
+    this.error.set('');
+  }
+}

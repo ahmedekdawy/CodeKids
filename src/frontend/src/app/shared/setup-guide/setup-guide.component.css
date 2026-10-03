@@ -1,0 +1,181 @@
+:host {
+  display: block;
+  margin-bottom: 1.25rem;
+}
+
+.guide {
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.guide-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.guide-head h3 {
+  margin: 0;
+}
+
+.guide-sub {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.guide-hide,
+.guide-reopen {
+  flex-shrink: 0;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.guide-hide:hover,
+.guide-reopen:hover {
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.guide-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.9rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.guide-progress-track {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  overflow: hidden;
+}
+
+.guide-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--success);
+  transition: width 0.3s ease;
+}
+
+.guide-steps {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-step {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--elevated-bg);
+}
+
+.guide-step.next {
+  border-color: var(--accent-fg);
+}
+
+.guide-step-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: none;
+  text-align: start;
+  cursor: pointer;
+}
+
+.guide-step-head:hover {
+  background: var(--elevated-bg-hover);
+}
+
+.guide-step-num {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.guide-step.next .guide-step-num {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.guide-step.done .guide-step-num {
+  border-color: var(--success);
+  background: var(--success);
+  color: var(--accent-ink);
+}
+
+.guide-step-title {
+  flex: 1;
+  font-weight: 600;
+}
+
+.guide-step-badge {
+  flex-shrink: 0;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.guide-step-badge-next {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.guide-step-body {
+  padding: 0 0.9rem 0.9rem;
+  padding-inline-start: 3.55rem;
+}
+
+.guide-step-body p {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+}
+
+.guide-go {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.guide-go:hover {
+  background: var(--accent-hot);
+}
+
+@media (max-width: 560px) {
+  .guide-step-body {
+    padding-inline-start: 0.9rem;
+  }
+
+  .guide-step-head {
+    flex-wrap: wrap;
+  }
+}

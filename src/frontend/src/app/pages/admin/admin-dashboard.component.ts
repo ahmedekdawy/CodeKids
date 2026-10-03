@@ -5,12 +5,13 @@ import { LearningApiService } from '../../learning-api.service';
 import { AdminLoginDashboard, AdminLoginDashboardDay, AdminLoginUser } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { AdminSetupGuideComponent } from './admin-setup-guide.component';
 
 type LoginRole = 'teachers' | 'parents' | 'students';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [PageFeedbackComponent, FormsModule, TranslatePipe],
+  imports: [PageFeedbackComponent, FormsModule, TranslatePipe, AdminSetupGuideComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-panel.css'
 })
