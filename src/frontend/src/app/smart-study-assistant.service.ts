@@ -53,6 +53,7 @@ export class SmartStudyAssistantService {
     lessonId?: string | null;
     language?: string;
     prompt?: string | null;
+    questionCount?: number | null;
     files?: File[];
   }): Observable<SmartStudyResult> {
     const form = new FormData();
@@ -62,6 +63,7 @@ export class SmartStudyAssistantService {
     if (payload.lessonId) form.set('lessonId', payload.lessonId);
     form.set('language', payload.language ?? 'ar');
     if (payload.prompt?.trim()) form.set('prompt', payload.prompt.trim());
+    if (payload.questionCount) form.set('questionCount', String(payload.questionCount));
     for (const file of payload.files ?? []) {
       form.append('files', file, file.name);
     }

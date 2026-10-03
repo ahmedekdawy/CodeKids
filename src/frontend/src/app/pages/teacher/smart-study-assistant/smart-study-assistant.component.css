@@ -44,7 +44,8 @@
   color: var(--text-muted, #5b6b7c);
 }
 
-.ssa-grid select {
+.ssa-grid select,
+.ssa-grid input {
   padding: 9px 12px;
   border: 1px solid var(--border, #c6d2dd);
   border-radius: 9px;
@@ -339,4 +340,100 @@
 .ssa-prompt:focus {
   outline: 2px solid #0f766e;
   outline-offset: 1px;
+}
+
+.ssa-questions {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ssa-questions h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--heading, #14344b);
+}
+
+.ssa-questions small {
+  color: var(--text-muted, #7a8a9a);
+}
+
+.ssa-question {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #c6d2dd);
+  border-radius: 12px;
+}
+
+.ssa-question-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.ssa-question-head strong {
+  flex: 1;
+}
+
+.ssa-points {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #5b6b7c);
+}
+
+.ssa-points input {
+  width: 70px;
+}
+
+.ssa-question input[type='text'],
+.ssa-question input[type='number'],
+.ssa-question textarea {
+  padding: 8px 11px;
+  border: 1px solid var(--border, #c6d2dd);
+  border-radius: 9px;
+  background: var(--input-bg, #fff);
+  font: inherit;
+  color: var(--text, #1c2434);
+}
+
+.ssa-question textarea {
+  width: 100%;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.ssa-options {
+  display: grid;
+  gap: 8px;
+}
+
+.ssa-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ssa-option input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
+
+.ssa-answer {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #5b6b7c);
+}
+
+.ssa-original {
+  margin-top: 14px;
+}
+
+.ssa-original summary {
+  cursor: pointer;
+  color: var(--text-muted, #5b6b7c);
 }
