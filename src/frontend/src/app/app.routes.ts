@@ -31,6 +31,7 @@ import { AdminTimetableComponent } from './pages/admin/admin-timetable.component
 import { AdminStudyPlansComponent } from './pages/admin/admin-study-plans.component';
 import { AdminWeeklyReportsComponent } from './pages/admin/admin-weekly-reports.component';
 import { AdminTeacherAssessmentsComponent } from './pages/admin/admin-teacher-assessments.component';
+import { GradeCertificatesComponent } from './pages/admin/grade-certificates.component';
 import { AdminAttendanceComponent } from './pages/admin/admin-attendance.component';
 import { AdminStudentAttendanceComponent } from './pages/admin/admin-student-attendance.component';
 import { AdminPayrollComponent } from './pages/admin/admin-payroll.component';
@@ -164,6 +165,7 @@ export const routes: Routes = [
       { path: 'attendance', component: TeacherAttendanceComponent },
       { path: 'student-attendance', component: TeacherStudentAttendanceComponent },
       { path: 'weekly-reports', component: TeacherWeeklyReportsComponent },
+      { path: 'grade-certificates', component: GradeCertificatesComponent },
       { path: 'study-plans', component: TeacherStudyPlansComponent },
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
       { path: 'question-bank', component: TeacherQuestionBankComponent },
@@ -196,6 +198,7 @@ export const routes: Routes = [
       { path: 'timetable', component: AdminTimetableComponent },
       { path: 'study-plans', component: AdminStudyPlansComponent },
       { path: 'weekly-reports', component: AdminWeeklyReportsComponent },
+      { path: 'grade-certificates', component: GradeCertificatesComponent },
       { path: 'teacher-assessments', component: AdminTeacherAssessmentsComponent },
       { path: 'attendance', component: AdminAttendanceComponent },
       { path: 'student-attendance', component: AdminStudentAttendanceComponent },

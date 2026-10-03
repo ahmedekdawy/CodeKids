@@ -1,0 +1,60 @@
+.certificate-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.degree-input {
+  width: 5.5rem;
+  text-align: center;
+}
+
+.sheet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.sheet-head h3 {
+  margin: 0;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.max-chip {
+  display: inline-block;
+  margin-inline-start: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+}
+
+.total-cell {
+  font-weight: 800;
+}
+
+tr.is-open td {
+  background: var(--surface-strong);
+}

@@ -38,6 +38,7 @@ export class TeacherShellComponent {
     { labelKey: 'nav.teacher.students', path: '/teacher/students', icon: 'S', categoryKey: 'nav.cat.communication' },
     { labelKey: 'nav.teacher.askedQuestions', path: '/teacher/asked-questions', icon: '?', categoryKey: 'nav.cat.communication' },
     { labelKey: 'nav.teacher.chat', path: '/teacher/chat', icon: 'C', categoryKey: 'nav.cat.communication' },
-    { labelKey: 'nav.teacher.weeklyReports', path: '/teacher/weekly-reports', icon: 'W', categoryKey: 'nav.cat.communication' }
+    { labelKey: 'nav.teacher.weeklyReports', path: '/teacher/weekly-reports', icon: 'W', categoryKey: 'nav.cat.communication' },
+    { labelKey: 'nav.teacher.gradeCertificates', path: '/teacher/grade-certificates', icon: 'D', categoryKey: 'nav.cat.assessments' }
   ];
 }

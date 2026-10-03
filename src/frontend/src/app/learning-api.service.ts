@@ -82,7 +82,10 @@ import {
   SiteSettings,
   Stage,
   StudentAskedQuestion,
-  Subject
+  Subject,
+  GradeCertificateListItem,
+  GradeCertificateSheet,
+  SaveGradeCertificatePayload
 } from './models';
 import { normalizePmStartMinutes } from './fixed-timetable.util';
 import { resolveApiBaseUrl } from './api-base-url';
@@ -1194,6 +1197,34 @@ export class LearningApiService {
 
   deleteCourse(courseId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/admin/courses/${courseId}`);
+  }
+
+  listGradeCertificates(): Observable<GradeCertificateListItem[]> {
+    return this.http.get<GradeCertificateListItem[]>(`${this.baseUrl}/grade-certificates`);
+  }
+
+  getGradeCertificate(certificateId: string): Observable<GradeCertificateSheet> {
+    return this.http.get<GradeCertificateSheet>(`${this.baseUrl}/grade-certificates/${certificateId}`);
+  }
+
+  createGradeCertificate(payload: SaveGradeCertificatePayload): Observable<GradeCertificateSheet> {
+    return this.http.post<GradeCertificateSheet>(`${this.baseUrl}/admin/grade-certificates`, payload);
+  }
+
+  updateGradeCertificate(certificateId: string, payload: SaveGradeCertificatePayload): Observable<GradeCertificateSheet> {
+    return this.http.put<GradeCertificateSheet>(`${this.baseUrl}/admin/grade-certificates/${certificateId}`, payload);
+  }
+
+  deleteGradeCertificate(certificateId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/grade-certificates/${certificateId}`);
+  }
+
+  /** A null degree clears that student's mark for the subject. */
+  saveGradeCertificateMarks(
+    certificateId: string,
+    entries: { subjectId: string; studentId: string; degree: number | null }[]
+  ): Observable<GradeCertificateSheet> {
+    return this.http.put<GradeCertificateSheet>(`${this.baseUrl}/grade-certificates/${certificateId}/marks`, { entries });
   }
 
   getClassrooms(): Observable<Classroom[]> {

@@ -76,6 +76,7 @@ using CodeKids.Api.Hubs;
 using CodeKids.Application.Features.Timetable;
 
 using CodeKids.Application.Features.WeeklyReports;
+using CodeKids.Application.Features.GradeCertificates;
 
 using CodeKids.Application.Features.ZoomConnect;
 
@@ -515,6 +516,16 @@ builder.Services.AddScoped<IQueryHandler<ListTopWeeklyStudentsQuery, IReadOnlyLi
 
 builder.Services.AddScoped<ICommandHandler<SaveWeeklyReportsCommand, IReadOnlyList<StudentWeeklyReportGridRowDto>>, SaveWeeklyReportsCommandHandler>();
 
+builder.Services.AddScoped<IQueryHandler<ListGradeCertificatesQuery, IReadOnlyList<GradeCertificateListItemDto>>, ListGradeCertificatesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<GetGradeCertificateSheetQuery, GradeCertificateSheetDto>, GetGradeCertificateSheetQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<SaveGradeCertificateCommand, GradeCertificateSheetDto>, SaveGradeCertificateCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteGradeCertificateCommand, bool>, DeleteGradeCertificateCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<SaveGradeCertificateMarksCommand, GradeCertificateSheetDto>, SaveGradeCertificateMarksCommandHandler>();
+
 builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<ListAdminWeeklyStudyPlansQuery, PagedWeeklyStudyPlansResultDto>, ListAdminWeeklyStudyPlansQueryHandler>();
 
@@ -765,6 +776,8 @@ app.MapSiteSettingsEndpoints();
 app.MapTimetableEndpoints();
 
 app.MapWeeklyReportsEndpoints();
+
+app.MapGradeCertificatesEndpoints();
 
 app.MapStudyPlansEndpoints();
 

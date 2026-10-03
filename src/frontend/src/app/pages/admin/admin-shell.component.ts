@@ -36,6 +36,7 @@ export class AdminShellComponent {
 
     { labelKey: 'nav.admin.teacherAssessments', path: '/admin/teacher-assessments', icon: 'Q', categoryKey: 'nav.cat.assessments' },
     { labelKey: 'nav.admin.weeklyReports', path: '/admin/weekly-reports', icon: 'W', categoryKey: 'nav.cat.assessments' },
+    { labelKey: 'nav.admin.gradeCertificates', path: '/admin/grade-certificates', icon: 'D', categoryKey: 'nav.cat.assessments' },
 
     { labelKey: 'nav.admin.timetable', path: '/admin/timetable', icon: 'H', categoryKey: 'nav.cat.schedule' },
     { labelKey: 'nav.admin.appointments', path: '/admin/appointments', icon: 'K', categoryKey: 'nav.cat.schedule' },

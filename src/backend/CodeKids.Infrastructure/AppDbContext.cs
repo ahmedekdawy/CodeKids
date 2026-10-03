@@ -69,6 +69,9 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
     public DbSet<LessonVideo> LessonVideos => Set<LessonVideo>();
     public DbSet<LearningMaterial> LearningMaterials => Set<LearningMaterial>();
+    public DbSet<GradeCertificate> GradeCertificates => Set<GradeCertificate>();
+    public DbSet<GradeCertificateSubject> GradeCertificateSubjects => Set<GradeCertificateSubject>();
+    public DbSet<GradeCertificateMark> GradeCertificateMarks => Set<GradeCertificateMark>();
     public DbSet<VideoWatchSession> VideoWatchSessions => Set<VideoWatchSession>();
     public DbSet<WhatsAppReportLog> WhatsAppReportLogs => Set<WhatsAppReportLog>();
     public DbSet<StudentAskedQuestion> StudentAskedQuestions => Set<StudentAskedQuestion>();
@@ -867,6 +870,47 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.MediaAssetId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<GradeCertificate>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
+            entity.HasIndex(x => x.ClassroomId);
+            entity.HasOne(x => x.Classroom)
+                .WithMany()
+                .HasForeignKey(x => x.ClassroomId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<GradeCertificateSubject>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.MaxDegree).HasPrecision(7, 2);
+            entity.HasIndex(x => new { x.CertificateId, x.CourseId }).IsUnique();
+            entity.HasOne(x => x.Certificate)
+                .WithMany(x => x.Subjects)
+                .HasForeignKey(x => x.CertificateId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Course)
+                .WithMany()
+                .HasForeignKey(x => x.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<GradeCertificateMark>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Degree).HasPrecision(7, 2);
+            entity.HasIndex(x => new { x.SubjectId, x.StudentId }).IsUnique();
+            entity.HasOne(x => x.Subject)
+                .WithMany(x => x.Marks)
+                .HasForeignKey(x => x.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<LearningMaterial>(entity =>
