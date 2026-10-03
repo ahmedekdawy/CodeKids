@@ -52,6 +52,9 @@ public interface IAppDbContext
     DbSet<MediaAsset> MediaAssets { get; }
     DbSet<LessonVideo> LessonVideos { get; }
     DbSet<LearningMaterial> LearningMaterials { get; }
+    DbSet<GradeCertificate> GradeCertificates { get; }
+    DbSet<GradeCertificateSubject> GradeCertificateSubjects { get; }
+    DbSet<GradeCertificateMark> GradeCertificateMarks { get; }
     DbSet<VideoWatchSession> VideoWatchSessions { get; }
     DbSet<WhatsAppReportLog> WhatsAppReportLogs { get; }
     DbSet<StudentAskedQuestion> StudentAskedQuestions { get; }

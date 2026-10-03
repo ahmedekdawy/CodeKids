@@ -11,6 +11,11 @@ import {
   formatGradeLabel
 } from '../../grade.util';
 import { AssessmentStudentLinksDialogComponent } from './assessment-student-links-dialog.component';
+import {
+  AssessmentPreview,
+  AssessmentPreviewDialogComponent,
+  previewQuestionsFromDrafts
+} from './assessment-preview-dialog.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
@@ -36,7 +41,8 @@ import {
     TranslatePipe,
     QuestionDraftEditorComponent,
     IconActionButtonComponent,
-    AssessmentStudentLinksDialogComponent
+    AssessmentStudentLinksDialogComponent,
+    AssessmentPreviewDialogComponent
   ],
   templateUrl: './teacher-assignments.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-assignments.component.css']
@@ -53,6 +59,7 @@ export class TeacherAssignmentsComponent {
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
   readonly linksAssignment = signal<Assignment | null>(null);
+  readonly preview = signal<AssessmentPreview | null>(null);
 
   assignmentTitle = '';
   assignmentDescription = '';
@@ -390,6 +397,43 @@ export class TeacherAssignmentsComponent {
         this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
       }
     });
+  }
+
+  /** Student view of a saved assignment, so the teacher can check it before publishing. */
+  previewAssignment(assignment: Assignment): void {
+    this.preview.set({
+      kind: 'assignment',
+      id: assignment.id,
+      title: assignment.title,
+      description: assignment.description,
+      classroomName: assignment.classroomName,
+      xpReward: assignment.xpReward,
+      isPublished: assignment.isPublished,
+      questions: assignment.questions
+    });
+  }
+
+  /** Student view of the assignment currently in the form, before it is saved. */
+  previewForm(): void {
+    this.preview.set({
+      kind: 'assignment',
+      title: this.assignmentTitle.trim(),
+      description: this.assignmentDescription.trim(),
+      classroomName: this.classrooms().find((room) => room.id === this.assignmentClassroomId)?.name,
+      xpReward: this.assignmentXp,
+      isPublished: false,
+      questions: previewQuestionsFromDrafts(this.questions)
+    });
+  }
+
+  closePreview(): void {
+    this.preview.set(null);
+  }
+
+  publishFromPreview(): void {
+    const assignment = this.assignments().find((item) => item.id === this.preview()?.id);
+    this.closePreview();
+    if (assignment) this.publishAssignment(assignment);
   }
 
   openStudentLinks(assignment: Assignment): void {

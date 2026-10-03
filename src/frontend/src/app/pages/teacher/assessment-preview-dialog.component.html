@@ -1,0 +1,65 @@
+<div
+  class="preview-backdrop"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'teacher.assessments.previewTitle' | t"
+  (click)="close()"
+>
+  <div class="preview-modal" (click)="$event.stopPropagation()">
+    <header class="preview-head">
+      <div>
+        <span class="preview-tag">{{ 'teacher.assessments.previewTitle' | t }}</span>
+        <h3>{{ preview.title || ('teacher.assessments.previewUntitled' | t) }}</h3>
+      </div>
+      <button type="button" class="modal-close" (click)="close()" [attr.aria-label]="'common.close' | t">×</button>
+    </header>
+
+    <p class="preview-hint">{{ 'teacher.assessments.previewHint' | t }}</p>
+
+    <section class="preview-body">
+      @if (preview.description) {
+        <p>{{ preview.description }}</p>
+      }
+      <p class="meta">
+        @if (preview.classroomName) {
+          {{ preview.classroomName }} ·
+        }
+        {{ 'play.timer.questionCount' | t: { count: questionCount() } }}
+        @if (preview.xpReward != null) {
+          · {{ preview.xpReward }} {{ 'common.xp' | t }}
+        }
+        @if (preview.kind !== 'assignment') {
+          ·
+          @if (preview.durationMinutes) {
+            {{ 'play.timer.limit' | t: { minutes: preview.durationMinutes } }}
+          } @else {
+            {{ 'play.timer.noLimit' | t }}
+          }
+        }
+      </p>
+
+      @for (question of preview.questions; track question.id; let i = $index) {
+        <div class="question">
+          <strong>{{ i + 1 }}.</strong>
+          <app-question-play-prompt
+            [question]="question"
+            [answers]="answers()"
+            [multiAnswers]="multiAnswers()"
+            answerUpload="none"
+            (answerChange)="setAnswer($event.questionId, $event.value)"
+            (multiToggle)="toggleMulti($event.questionId, $event.key)"
+          />
+        </div>
+      } @empty {
+        <p class="meta">{{ 'teacher.assessments.previewEmpty' | t }}</p>
+      }
+    </section>
+
+    <footer class="preview-actions">
+      @if (canPublish()) {
+        <button type="button" (click)="publish.emit()">{{ 'teacher.assessments.publishNow' | t }}</button>
+      }
+      <button type="button" class="ghost-btn" (click)="close()">{{ 'common.close' | t }}</button>
+    </footer>
+  </div>
+</div>

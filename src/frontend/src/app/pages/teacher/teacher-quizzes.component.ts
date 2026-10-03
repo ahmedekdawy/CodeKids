@@ -9,6 +9,11 @@ import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-se
 import { Classroom, Course, CourseLesson, CourseUnit, QuizAttemptReview, TeacherQuizListItem } from '../../models';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { AssessmentStudentLinksDialogComponent } from './assessment-student-links-dialog.component';
+import {
+  AssessmentPreview,
+  AssessmentPreviewDialogComponent,
+  previewQuestionsFromDrafts
+} from './assessment-preview-dialog.component';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { QuestionImageDisplayComponent } from '../../shared/question-image-display/question-image-display.component';
@@ -36,7 +41,8 @@ import { paginate, totalPages } from '../../list-query.util';
     SafeHtmlPipe,
     QuestionDraftEditorComponent,
     QuestionImageDisplayComponent,
-    AssessmentStudentLinksDialogComponent
+    AssessmentStudentLinksDialogComponent,
+    AssessmentPreviewDialogComponent
   ],
   templateUrl: './teacher-quizzes.component.html',
   styleUrls: ['./teacher-panel.css', '../admin/admin-panel.css', './teacher-quizzes.component.css']
@@ -71,6 +77,7 @@ export class TeacherQuizzesComponent {
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
   readonly linksQuiz = signal<TeacherQuizListItem | null>(null);
+  readonly preview = signal<AssessmentPreview | null>(null);
   editingQuizId: string | null = null;
 
   filterFromDate = startOfMonthLocal();
@@ -370,6 +377,51 @@ export class TeacherQuizzesComponent {
         this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
       }
     });
+  }
+
+  /** Student view of a saved quiz, so the teacher can check it before publishing. */
+  previewQuiz(quiz: TeacherQuizListItem): void {
+    this.error.set('');
+    this.api.getTeacherQuiz(quiz.id).subscribe({
+      next: (detail) =>
+        this.preview.set({
+          kind: 'quiz',
+          id: detail.id,
+          title: detail.title,
+          description: detail.description,
+          classroomName: quiz.classroomName,
+          xpReward: detail.xpReward,
+          durationMinutes: detail.durationMinutes,
+          isPublished: detail.isPublished,
+          questions: previewQuestionsFromDrafts(detail.questions.map((question) => draftFromQuizQuestion(question)))
+        }),
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'teacher.assessments.previewLoadFailed'))
+    });
+  }
+
+  /** Student view of the quiz currently in the form, before it is saved. */
+  previewForm(): void {
+    const formValue = this.quizForm.getRawValue();
+    this.preview.set({
+      kind: 'quiz',
+      title: formValue.title.trim(),
+      description: formValue.description.trim(),
+      classroomName: this.classrooms().find((room) => room.id === formValue.classroomId)?.name,
+      xpReward: Number(formValue.xp) || 0,
+      durationMinutes: Number(formValue.durationMinutes) > 0 ? Number(formValue.durationMinutes) : null,
+      isPublished: false,
+      questions: previewQuestionsFromDrafts(this.questions)
+    });
+  }
+
+  closePreview(): void {
+    this.preview.set(null);
+  }
+
+  publishFromPreview(): void {
+    const quiz = this.quizzes().find((item) => item.id === this.preview()?.id);
+    this.closePreview();
+    if (quiz) this.publishQuiz(quiz);
   }
 
   openStudentLinks(quiz: TeacherQuizListItem): void {

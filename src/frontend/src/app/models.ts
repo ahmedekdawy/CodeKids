@@ -1403,3 +1403,46 @@ export interface ExamAttempt {
   durationSeconds?: number | null;
   answers: ExamAnswerReview[];
 }
+
+export interface GradeCertificateListItem {
+  id: string;
+  title: string;
+  classroomId: string;
+  classroomName: string;
+  grade?: number | null;
+  subjectCount: number;
+  studentCount: number;
+  createdAtUtc: string;
+}
+
+export interface GradeCertificateSubject {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  maxDegree: number;
+  includedInTotal: boolean;
+  sortOrder: number;
+}
+
+export interface GradeCertificateStudent {
+  studentId: string;
+  studentName: string;
+  marks: { subjectId: string; degree: number }[];
+}
+
+/** A certificate with its subjects and each student's degrees; teachers only receive their own subjects. */
+export interface GradeCertificateSheet {
+  id: string;
+  title: string;
+  classroomId: string;
+  classroomName: string;
+  grade?: number | null;
+  subjects: GradeCertificateSubject[];
+  students: GradeCertificateStudent[];
+}
+
+export interface SaveGradeCertificatePayload {
+  classroomId: string;
+  title: string;
+  subjects: { courseId: string; maxDegree: number; includedInTotal: boolean }[];
+}

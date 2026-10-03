@@ -143,6 +143,7 @@
 
       <div class="form-actions">
         <button type="submit">{{ (editingAssignmentId ? 'teacher.assignments.save' : 'teacher.assignments.create') | t }}</button>
+        <button type="button" class="ghost-btn" (click)="previewForm()">{{ 'teacher.assessments.preview' | t }}</button>
         @if (editingAssignmentId) {
           <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
         }
@@ -223,6 +224,11 @@
                 (action)="openStudentLinks(assignment)"
               />
             }
+            <app-icon-action-button
+              kind="preview"
+              [label]="'teacher.assessments.preview' | t"
+              (action)="previewAssignment(assignment)"
+            />
             <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(assignment)" />
             <app-icon-action-button
               kind="delete"
@@ -249,6 +255,14 @@
       [courseLabel]="linksCourseLabel(assignment)"
       [kindLabel]="'nav.teacher.assignments' | t"
       (closed)="closeStudentLinks()"
+    />
+  }
+
+  @if (preview(); as current) {
+    <app-assessment-preview-dialog
+      [preview]="current"
+      (closed)="closePreview()"
+      (publish)="publishFromPreview()"
     />
   }
 </div>

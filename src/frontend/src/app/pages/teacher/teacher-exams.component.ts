@@ -6,6 +6,7 @@ import { BankQuestion, ChoiceOption, Classroom, Course, CourseLesson, CourseUnit
 import { choiceKeySelected, formatChoiceAnswer } from '../../shared/question-draft/question-draft.util';
 import { classroomEffectiveGrade, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { AssessmentStudentLinksDialogComponent } from './assessment-student-links-dialog.component';
+import { AssessmentPreview, AssessmentPreviewDialogComponent } from './assessment-preview-dialog.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
@@ -33,7 +34,8 @@ interface AttemptDraft {
     QuestionImageDisplayComponent,
     QuestionImageUploadComponent,
     SafeHtmlPipe,
-    AssessmentStudentLinksDialogComponent
+    AssessmentStudentLinksDialogComponent,
+    AssessmentPreviewDialogComponent
   ],
   templateUrl: './teacher-exams.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-exams.component.css']
@@ -52,6 +54,7 @@ export class TeacherExamsComponent {
   readonly generating = signal(false);
   readonly publishingId = signal<string | null>(null);
   readonly linksExam = signal<Exam | null>(null);
+  readonly preview = signal<AssessmentPreview | null>(null);
 
   title = '';
   description = '';
@@ -282,6 +285,46 @@ export class TeacherExamsComponent {
         this.error.set(this.locale.fromApiError(err, 'teacher.assessments.publishFailed'));
       }
     });
+  }
+
+  /** Student view of a saved exam, so the teacher can check it before publishing. */
+  previewExam(exam: Exam): void {
+    this.preview.set({
+      kind: 'exam',
+      id: exam.id,
+      title: exam.title,
+      description: exam.description,
+      classroomName: exam.classroomName,
+      xpReward: exam.xpReward,
+      durationMinutes: exam.durationMinutes,
+      isPublished: exam.isPublished,
+      questions: exam.questions
+    });
+  }
+
+  /** Student view of the exam currently in the form (the selected bank questions), before it is saved. */
+  previewForm(): void {
+    const selected = this.selectedIds();
+    this.preview.set({
+      kind: 'exam',
+      title: this.title.trim(),
+      description: this.description.trim(),
+      classroomName: this.classrooms().find((room) => room.id === this.classroomId)?.name,
+      xpReward: this.xpReward,
+      durationMinutes: this.durationMinutes > 0 ? this.durationMinutes : null,
+      isPublished: false,
+      questions: this.bank().filter((question) => selected.has(question.id))
+    });
+  }
+
+  closePreview(): void {
+    this.preview.set(null);
+  }
+
+  publishFromPreview(): void {
+    const exam = this.exams().find((item) => item.id === this.preview()?.id);
+    this.closePreview();
+    if (exam) this.publishExam(exam);
   }
 
   openStudentLinks(exam: Exam): void {
