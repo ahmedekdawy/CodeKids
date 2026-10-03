@@ -1,0 +1,104 @@
+@import '../../styles/dashboard-shared.css';
+
+.preview-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(4, 10, 22, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+.preview-modal {
+  width: min(820px, 100%);
+  max-height: min(92vh, 900px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  border: 1px solid var(--border-strong);
+  background: var(--modal-bg);
+  box-shadow: var(--modal-shadow);
+  padding: 1rem 1rem 1.1rem;
+}
+
+.preview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.preview-head h3 {
+  margin: 0.3rem 0 0;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.preview-tag {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent, #3d8bfd);
+  background: color-mix(in srgb, var(--accent, #3d8bfd) 14%, transparent);
+}
+
+.modal-close {
+  padding: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--elevated-bg-hover);
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  filter: brightness(1.08);
+}
+
+.preview-hint {
+  margin: 0.5rem 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.preview-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
+}
+
+.preview-body > p {
+  margin: 0 0 0.6rem;
+}
+
+.preview-body .meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.question {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}

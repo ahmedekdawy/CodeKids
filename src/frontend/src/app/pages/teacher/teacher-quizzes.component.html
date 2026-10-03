@@ -125,6 +125,7 @@
 
       <div class="form-actions">
         <button type="submit">{{ (editingQuizId ? 'teacher.quizzes.save' : 'teacher.quizzes.create') | t }}</button>
+        <button type="button" class="ghost-btn" (click)="previewForm()">{{ 'teacher.assessments.preview' | t }}</button>
         @if (editingQuizId) {
           <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
         }
@@ -299,6 +300,11 @@
                       />
                     }
                     <app-icon-action-button
+                      kind="preview"
+                      [label]="'teacher.assessments.preview' | t"
+                      (action)="previewQuiz(quiz)"
+                    />
+                    <app-icon-action-button
                       kind="review"
                       [label]="'teacher.quizzes.review' | t"
                       (action)="reviewQuiz(quiz)"
@@ -338,6 +344,14 @@
       [courseLabel]="quiz.courseTitle"
       [kindLabel]="'nav.teacher.quizzes' | t"
       (closed)="closeStudentLinks()"
+    />
+  }
+
+  @if (preview(); as current) {
+    <app-assessment-preview-dialog
+      [preview]="current"
+      (closed)="closePreview()"
+      (publish)="publishFromPreview()"
     />
   }
 </div>

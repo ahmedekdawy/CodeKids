@@ -11,7 +11,8 @@ export type IconActionKind =
   | 'activate'
   | 'share'
   | 'copyLink'
-  | 'review';
+  | 'review'
+  | 'preview';
 
 @Component({
   selector: 'app-icon-action-button',
@@ -38,6 +39,7 @@ export class IconActionButtonComponent {
     if (this.kind === 'share') return 'Share';
     if (this.kind === 'copyLink') return 'Copy student link';
     if (this.kind === 'review') return 'Review answers';
+    if (this.kind === 'preview') return 'Preview';
     return 'Delete';
   }
 }

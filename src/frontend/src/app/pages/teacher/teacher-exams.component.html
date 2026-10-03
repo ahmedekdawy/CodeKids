@@ -138,6 +138,9 @@
 
       <div class="form-actions">
         <button type="submit" [disabled]="!selectedCount()">{{ 'teacher.exams.create' | t }}</button>
+        <button type="button" class="ghost-btn" [disabled]="!selectedCount()" (click)="previewForm()">
+          {{ 'teacher.assessments.preview' | t }}
+        </button>
       </div>
     </form>
   </section>
@@ -175,6 +178,11 @@
           </div>
 
           <div class="exam-card-actions">
+            <app-icon-action-button
+              kind="preview"
+              [label]="'teacher.assessments.preview' | t"
+              (action)="previewExam(exam)"
+            />
             <app-icon-action-button
               kind="review"
               [label]="'teacher.exams.viewAttempts' | t"
@@ -325,5 +333,13 @@
         <p class="meta exam-empty">{{ 'teacher.exams.noAttempts' | t }}</p>
       }
     </section>
+  }
+
+  @if (preview(); as current) {
+    <app-assessment-preview-dialog
+      [preview]="current"
+      (closed)="closePreview()"
+      (publish)="publishFromPreview()"
+    />
   }
 </div>
