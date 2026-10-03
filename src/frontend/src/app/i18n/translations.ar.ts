@@ -1184,6 +1184,11 @@ export const AR: Record<string, string> = {
   'certificates.deleteFailed': 'تعذر حذف الشهادة.',
   'certificates.marksSaveFailed': 'تعذر حفظ الدرجات.',
   'certificates.popupBlocked': 'من فضلك اسمح بالنوافذ المنبثقة لطباعة الشهادات.',
+  'certificates.image': 'صورة',
+  'certificates.imageAll': 'تصدير كل الشهادات كصور',
+  'certificates.exporting': 'جارٍ التصدير...',
+  'certificates.exported': 'تم تصدير الشهادة كصورة.',
+  'certificates.exportFailed': 'تعذر تصدير الشهادة كصورة.',
 
   'admin.weeklyReports.title': 'التقارير الأسبوعية للطلاب',
   'admin.weeklyReports.subtitle': 'عرض التقييمات الأسبوعية لكل الطلاب. صفِّ حسب المعلم أو الصف أو نطاق التاريخ.',

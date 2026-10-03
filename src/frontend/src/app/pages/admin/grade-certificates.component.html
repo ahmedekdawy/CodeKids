@@ -158,6 +158,14 @@
             <button type="button" class="ghost-btn" [disabled]="!current.students.length" (click)="printCertificates()">
               {{ 'certificates.printAll' | t }}
             </button>
+            <button
+              type="button"
+              class="ghost-btn"
+              [disabled]="!current.students.length || exporting()"
+              (click)="exportCertificateImages()"
+            >
+              {{ (exporting() ? 'certificates.exporting' : 'certificates.imageAll') | t }}
+            </button>
           }
           <button type="button" class="ghost-btn" (click)="closeSheet()">{{ 'common.close' | t }}</button>
         </div>
@@ -230,9 +238,19 @@
                 }
                 @if (isAdmin()) {
                   <td>
-                    <button type="button" class="ghost-btn small-btn" (click)="printCertificates(student)">
-                      {{ 'certificates.print' | t }}
-                    </button>
+                    <div class="row-actions">
+                      <button type="button" class="ghost-btn small-btn" (click)="printCertificates(student)">
+                        {{ 'certificates.print' | t }}
+                      </button>
+                      <button
+                        type="button"
+                        class="ghost-btn small-btn"
+                        [disabled]="exporting()"
+                        (click)="exportCertificateImages(student)"
+                      >
+                        {{ 'certificates.image' | t }}
+                      </button>
+                    </div>
                   </td>
                 }
               </tr>

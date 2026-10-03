@@ -14,6 +14,7 @@ import {
   GradeCertificateSubject
 } from '../../models';
 import { formatGradeLabel } from '../../grade.util';
+import { downloadElementAsPng } from '../../export-image.util';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
@@ -53,6 +54,7 @@ export class GradeCertificatesComponent {
   readonly message = signal('');
   readonly error = signal('');
   readonly saving = signal(false);
+  readonly exporting = signal(false);
 
   // Admin create/edit form.
   editingId: string | null = null;
@@ -297,7 +299,7 @@ export class GradeCertificatesComponent {
     this.error.set('');
   }
 
-  // ---- Printing ----------------------------------------------------------------------
+  // ---- Printing and image export ----------------------------------------------------
 
   /** Prints one certificate per page: for one student, or for the whole classroom. */
   async printCertificates(student?: GradeCertificateStudent): Promise<void> {
@@ -315,53 +317,7 @@ export class GradeCertificatesComponent {
     // The window is opened first (inside the click) so pop-up blockers allow it.
     const brand = await this.loadPrintBrand();
     const rtl = this.locale.lang() === 'ar';
-    const logoHtml = brand.logo ? `<img class="logo" src="${escapeHtml(brand.logo)}" alt="">` : '';
-    const counted = this.totalSubjects(sheet);
-    const extra = this.extraSubjects(sheet);
-    const t = (key: string) => escapeHtml(this.locale.t(key));
-    const cell = (value: number | null) => (value == null ? '' : formatDegree(value));
-
-    const pages = students
-      .map((item) => {
-        const head = [
-          `<th>${t('certificates.print.subject')}</th>`,
-          ...counted.map((subject) => `<th>${escapeHtml(subject.courseTitle)}</th>`),
-          `<th>${t('certificates.total')}</th>`,
-          ...extra.map((subject) => `<th>${escapeHtml(subject.courseTitle)}</th>`)
-        ].join('');
-        const max = [
-          `<td>${t('certificates.print.maxDegree')}</td>`,
-          ...counted.map((subject) => `<td>${formatDegree(subject.maxDegree)}</td>`),
-          `<td>${formatDegree(this.maxTotal(sheet))}</td>`,
-          ...extra.map((subject) => `<td>${formatDegree(subject.maxDegree)}</td>`)
-        ].join('');
-        const degrees = [
-          `<td>${t('certificates.print.degree')}</td>`,
-          ...counted.map((subject) => `<td>${cell(this.degreeOf(item.studentId, subject.id))}</td>`),
-          `<td>${cell(this.studentTotal(sheet, item.studentId))}</td>`,
-          ...extra.map((subject) => `<td>${cell(this.degreeOf(item.studentId, subject.id))}</td>`)
-        ].join('');
-
-        return `
-<section class="certificate">
-  <div class="frame">
-    <header>
-      <div class="brand">${logoHtml}<span>${escapeHtml(brand.name)}</span></div>
-      <h1>${escapeHtml(sheet.title)}</h1>
-    </header>
-    <div class="who">
-      <p><b>${t('certificates.print.studentName')} :</b> ${escapeHtml(item.studentName)}</p>
-      <p><b>${t('certificates.print.grade')} :</b> ${escapeHtml(this.gradeLabel(sheet.grade))} — ${escapeHtml(sheet.classroomName)}</p>
-    </div>
-    <table>
-      <tr class="head">${head}</tr>
-      <tr class="max">${max}</tr>
-      <tr class="degree">${degrees}</tr>
-    </table>
-  </div>
-</section>`;
-      })
-      .join('');
+    const pages = students.map((item) => this.certificateHtml(sheet, item, brand)).join('');
 
     win.document.write(`<!DOCTYPE html>
 <html dir="${rtl ? 'rtl' : 'ltr'}" lang="${rtl ? 'ar' : 'en'}">
@@ -370,22 +326,10 @@ export class GradeCertificatesComponent {
   <title>${escapeHtml(sheet.title)}</title>
   <style>
     @page { size: A4 landscape; margin: 10mm; }
-    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body { margin: 0; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; color: #1c1c1c; }
-    .certificate { page-break-after: always; break-after: page; padding: 4mm; }
-    .certificate:last-child { page-break-after: auto; break-after: auto; }
-    .frame { border: 10px double #b8862e; outline: 3px solid #7a1f1f; outline-offset: -18px; padding: 14mm 14mm 16mm; min-height: 165mm; }
-    header { display: flex; align-items: center; gap: 12mm; }
-    .brand { display: grid; justify-items: center; gap: 2mm; font-weight: 800; font-size: 13pt; min-width: 30mm; }
-    .logo { max-width: 34mm; max-height: 34mm; object-fit: contain; }
-    h1 { flex: 1; margin: 0; text-align: center; font-size: 22pt; color: #7a1f1f; }
-    .who { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6mm 20mm; margin: 12mm 0 8mm; font-size: 16pt; }
-    .who p { margin: 0; }
-    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    th, td { border: 1.5px solid #222; padding: 4mm 2mm; text-align: center; font-size: 15pt; font-weight: 700; }
-    tr.head th { background: #8fce4a; color: #7a1f1f; }
-    tr.max td { background: #ffff00; color: #7a1f1f; }
-    tr.degree td { background: #e6e6e6; }
+    body { margin: 0; }
+    .gc-cert { page-break-after: always; break-after: page; }
+    .gc-cert:last-child { page-break-after: auto; break-after: auto; }
+    ${CERTIFICATE_CSS}
   </style>
 </head>
 <body>${pages}</body>
@@ -393,6 +337,105 @@ export class GradeCertificatesComponent {
     win.document.close();
     win.focus();
     setTimeout(() => win.print(), 300);
+  }
+
+  /** Downloads the certificate as a PNG image: for one student, or one image per student. */
+  async exportCertificateImages(student?: GradeCertificateStudent): Promise<void> {
+    const sheet = this.sheet();
+    if (!sheet || this.exporting()) return;
+    const students = student ? [student] : sheet.students;
+    if (!students.length) return;
+
+    this.clearFeedback();
+    this.exporting.set(true);
+
+    // Certificates are drawn off-screen at A4-landscape width, then captured one by one.
+    const host = document.createElement('div');
+    host.dir = this.locale.lang() === 'ar' ? 'rtl' : 'ltr';
+    host.style.cssText = 'position:fixed;left:-20000px;top:0;width:1123px;background:#ffffff;';
+    host.innerHTML = `<style>${CERTIFICATE_CSS}</style>`;
+    document.body.appendChild(host);
+
+    try {
+      const brand = await this.loadPrintBrand();
+      for (const item of students) {
+        const holder = document.createElement('div');
+        holder.innerHTML = this.certificateHtml(sheet, item, brand);
+        host.appendChild(holder);
+        const logo = holder.querySelector('img');
+        if (logo && !logo.complete) {
+          await new Promise<void>((resolve) => {
+            logo.onload = () => resolve();
+            logo.onerror = () => resolve();
+          });
+        }
+        await downloadElementAsPng(
+          holder.firstElementChild as HTMLElement,
+          safeFileName(`${sheet.title} - ${item.studentName}`),
+          { backgroundColor: '#ffffff' }
+        );
+        holder.remove();
+      }
+      this.message.set(this.locale.t('certificates.exported'));
+    } catch {
+      this.error.set(this.locale.t('certificates.exportFailed'));
+    } finally {
+      host.remove();
+      this.exporting.set(false);
+    }
+  }
+
+  /** One student's certificate markup, shared by printing and image export. */
+  private certificateHtml(
+    sheet: GradeCertificateSheet,
+    student: GradeCertificateStudent,
+    brand: { name: string; logo: string | null }
+  ): string {
+    const counted = this.totalSubjects(sheet);
+    const extra = this.extraSubjects(sheet);
+    const t = (key: string) => escapeHtml(this.locale.t(key));
+    const cell = (value: number | null) => (value == null ? '' : formatDegree(value));
+    const logoHtml = brand.logo ? `<img class="logo" src="${escapeHtml(brand.logo)}" alt="">` : '';
+
+    const head = [
+      `<th>${t('certificates.print.subject')}</th>`,
+      ...counted.map((subject) => `<th>${escapeHtml(subject.courseTitle)}</th>`),
+      `<th>${t('certificates.total')}</th>`,
+      ...extra.map((subject) => `<th>${escapeHtml(subject.courseTitle)}</th>`)
+    ].join('');
+    const max = [
+      `<td>${t('certificates.print.maxDegree')}</td>`,
+      ...counted.map((subject) => `<td>${formatDegree(subject.maxDegree)}</td>`),
+      `<td>${formatDegree(this.maxTotal(sheet))}</td>`,
+      ...extra.map((subject) => `<td>${formatDegree(subject.maxDegree)}</td>`)
+    ].join('');
+    const degrees = [
+      `<td>${t('certificates.print.degree')}</td>`,
+      ...counted.map((subject) => `<td>${cell(this.degreeOf(student.studentId, subject.id))}</td>`),
+      `<td>${cell(this.studentTotal(sheet, student.studentId))}</td>`,
+      ...extra.map((subject) => `<td>${cell(this.degreeOf(student.studentId, subject.id))}</td>`)
+    ].join('');
+
+    return `
+<section class="gc-cert">
+  <div class="frame">
+    <div class="frame-inner">
+      <div class="top">
+        <div class="brand">${logoHtml}<span>${escapeHtml(brand.name)}</span></div>
+        <h1>${escapeHtml(sheet.title)}</h1>
+      </div>
+      <div class="who">
+        <p><b>${t('certificates.print.studentName')} :</b> ${escapeHtml(student.studentName)}</p>
+        <p><b>${t('certificates.print.grade')} :</b> ${escapeHtml(this.gradeLabel(sheet.grade))} — ${escapeHtml(sheet.classroomName)}</p>
+      </div>
+      <table>
+        <tr class="head">${head}</tr>
+        <tr class="max">${max}</tr>
+        <tr class="degree">${degrees}</tr>
+      </table>
+    </div>
+  </div>
+</section>`;
   }
 
   /**
@@ -418,6 +461,29 @@ export class GradeCertificatesComponent {
     }
     return { name: this.brand.siteName(), logo };
   }
+}
+
+/** Certificate look, scoped to .gc-cert so it works both in the print window and inside the app page. */
+const CERTIFICATE_CSS = `
+    .gc-cert, .gc-cert * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .gc-cert { padding: 4mm; background: #ffffff; color: #1c1c1c; font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif; }
+    .gc-cert .frame { border: 10px double #b8862e; padding: 5px; }
+    .gc-cert .frame-inner { border: 3px solid #7a1f1f; padding: 12mm 12mm 14mm; min-height: 160mm; }
+    .gc-cert .top { display: flex; align-items: center; gap: 12mm; }
+    .gc-cert .brand { display: flex; flex-direction: column; align-items: center; gap: 2mm; font-weight: 800; font-size: 13pt; min-width: 30mm; }
+    .gc-cert .logo { max-width: 34mm; max-height: 34mm; object-fit: contain; }
+    .gc-cert h1 { flex: 1; margin: 0; text-align: center; font-size: 22pt; color: #7a1f1f; }
+    .gc-cert .who { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6mm 20mm; margin: 12mm 0 8mm; font-size: 16pt; }
+    .gc-cert .who p { margin: 0; }
+    .gc-cert table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .gc-cert th, .gc-cert td { border: 1.5px solid #222; padding: 4mm 2mm; text-align: center; font-size: 15pt; font-weight: 700; color: #1c1c1c; }
+    .gc-cert tr.head th { background: #8fce4a; color: #7a1f1f; }
+    .gc-cert tr.max td { background: #ffff00; color: #7a1f1f; }
+    .gc-cert tr.degree td { background: #e6e6e6; }
+`;
+
+function safeFileName(value: string): string {
+  return value.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim() || 'certificate';
 }
 
 function blobToDataUrl(blob: Blob): Promise<string> {

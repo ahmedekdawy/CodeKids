@@ -1185,6 +1185,11 @@ export const EN: Record<string, string> = {
   'certificates.deleteFailed': 'Could not delete the certificate.',
   'certificates.marksSaveFailed': 'Could not save the degrees.',
   'certificates.popupBlocked': 'Please allow pop-ups to print the certificates.',
+  'certificates.image': 'Image',
+  'certificates.imageAll': 'Export all as images',
+  'certificates.exporting': 'Exporting...',
+  'certificates.exported': 'Certificate exported as an image.',
+  'certificates.exportFailed': 'Could not export the certificate as an image.',
 
   'admin.weeklyReports.title': 'Student weekly reports',
   'admin.weeklyReports.subtitle': 'View weekly evaluations for all students. Filter by teacher, grade, or date range.',
