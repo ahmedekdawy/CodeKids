@@ -64,6 +64,7 @@ import { ExamPlayComponent } from './pages/exam-play/exam-play.component';
 import { StudentAskedQuestionsComponent } from './pages/student-asked-questions/student-asked-questions.component';
 import { StudentChatComponent } from './pages/student-chat/student-chat.component';
 import { AssessmentLinkEntryComponent } from './pages/assessment-link-entry/assessment-link-entry.component';
+import { SmartAssistantAdminComponent } from './pages/admin/smart-assistant-admin.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: LandingComponent },
@@ -204,7 +205,8 @@ export const routes: Routes = [
       { path: 'other-expenses', component: AdminOtherExpensesComponent },
       { path: 'whatsapp', component: AdminWhatsAppComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
-      { path: 'classrooms', redirectTo: 'create-classroom' }
+      { path: 'classrooms', redirectTo: 'create-classroom' },
+      { path: 'smart-assistant', component: SmartAssistantAdminComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }
