@@ -18,6 +18,8 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
     : ICommandHandler<GenerateSmartStudyAssistantCommand, SmartStudyAssistantResultDto>
 {
     private const int BookTextMaxCharacters = 24000;
+    private const int DefaultQuizQuestionCount = 5;
+    private const int MaxQuestionCount = 50;
 
     private static readonly string[] ValidActions = ["Outline", "Summary", "Assignment", "Quiz"];
 
@@ -38,7 +40,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         var outline = await CourseOutlineResolver.ResolveAsync(dbContext, course, cancellationToken);
         var scope = ResolveScope(outline, command.UnitId, command.LessonId);
         var arabic = IsArabic(command.Language);
-        var bookText = await bookTextProvider.TryGetBookTextAsync(course, BookTextMaxCharacters, cancellationToken);
+        var bookText = string.Empty;// await bookTextProvider.TryGetBookTextAsync(course, BookTextMaxCharacters, cancellationToken);
 
         // Prefer freshly uploaded files over the stored course book.
         var attachments = ResolveAttachments(command);
@@ -52,6 +54,17 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         var wantsUnits = action == AssistantAction.Outline;
         var wantsQuestions = action is AssistantAction.Assignment or AssistantAction.Quiz;
         var schema = BuildSchema(wantsUnits, wantsQuestions);
+
+        // Teacher-chosen number of questions; a quiz falls back to the default when none is sent.
+        int? questionCount = wantsQuestions
+            ? command.QuestionCount is int requested
+                ? Math.Clamp(requested, 1, MaxQuestionCount)
+                : action == AssistantAction.Quiz ? DefaultQuizQuestionCount : null
+            : null;
+
+        // Course / unit / lesson names are sent with every prompt so the output targets the selection.
+        var context = BuildContext(course, outline, scope, arabic, questionCount);
+        var systemPrompt = BuildSystemPrompt(action, arabic, questionCount);
 
         string markdown;
         var images = attachments
@@ -77,9 +90,10 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             {
                 userPrompt =
                     "Use ONLY the attached file content below to generate the requested output. " +
-                    "Do NOT use the selected course, course outline, or any stored course materials.\n\n" +
+                    "Do NOT use any stored course materials; the course, unit and lesson below only identify what the output is for.\n\n" +
                     $"Requested action: {action}\n" +
-                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n" +
+                    context + "\n\n" +
                     "Attached file content (use this exclusively):\n\n" +
                     uploadedText.Trim() +
                     "\n\nProduce the output following the system instructions and the JSON schema provided.";
@@ -88,10 +102,11 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             {
                 userPrompt =
                     "Use ONLY the attached images to generate the requested output. " +
-                    "Do NOT use the selected course, course outline, or any stored course materials. " +
+                    "Do NOT use any stored course materials; the course, unit and lesson below only identify what the output is for. " +
                     "Perform OCR on images if needed and rely exclusively on their content.\n\n" +
                     $"Requested action: {action}\n" +
-                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n" +
+                    context + "\n\n" +
                     "Attached images are provided separately; use them as the only source of content.\n\n" +
                     "Produce the output following the system instructions and the JSON schema provided.";
             }
@@ -99,9 +114,10 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             {
                 userPrompt =
                     "Use ONLY the attached files to generate the requested output. " +
-                    "Do NOT use the selected course, course outline, or any stored course materials.\n\n" +
+                    "Do NOT use any stored course materials; the course, unit and lesson below only identify what the output is for.\n\n" +
                     $"Requested action: {action}\n" +
-                    $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                    $"Language: {(arabic ? "Arabic" : "English")}\n" +
+                    context + "\n\n" +
                     "Produce the output following the system instructions and the JSON schema provided.";
             }
         }
@@ -109,19 +125,20 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         {
             // No files: generate from the typed prompt, ignoring stored course materials.
             userPrompt =
-                "Use ONLY the text request below to generate the requested output. " +
-                "Do NOT use the selected course, course outline, or any stored course materials." +
+                "Use the text request below to generate the requested output, for the course, unit and lesson named below. " +
+                "Do NOT use any stored course materials." +
                 (arabic ? " اكتب النتيجة باللغة العربية." : " Write the output in English.") +
                 "\n\n" +
                 $"Requested action: {action}\n" +
-                $"Language: {(arabic ? "Arabic" : "English")}\n\n" +
+                $"Language: {(arabic ? "Arabic" : "English")}\n" +
+                context + "\n\n" +
                 "Teacher request (use this exclusively):\n\n" +
                 prompt +
                 "\n\nProduce the output following the system instructions and the JSON schema provided.";
         }
         else
         {
-            userPrompt = BuildUserPrompt(action, course, outline, scope, arabic, bookText);
+            userPrompt = BuildUserPrompt(action, course, outline, scope, arabic, bookText, context);
             if (prompt.Length > 0)
             {
                 userPrompt += "\n\n" + (arabic
@@ -134,7 +151,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         {
             // Images cannot be OCR'd locally; send them as inline parts to Gemini (AiImage chain).
             markdown = await aiClient.CompleteJsonWithFilesAsync(
-                BuildSystemPrompt(action, arabic),
+                systemPrompt,
                 userPrompt,
                 images,
                 cancellationToken,
@@ -143,7 +160,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         else
         {
             markdown = await aiClient.CompleteJsonAsync(
-                BuildSystemPrompt(action, arabic),
+                systemPrompt,
                 userPrompt,
                 cancellationToken,
                 schema);
@@ -382,8 +399,51 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         return new CurriculumScope(requestedUnits, requestedLessons);
     }
 
-    private static string BuildSystemPrompt(AssistantAction action, bool arabic)
+    // Names of the selected course, unit and lesson (unit/lesson only when chosen),
+    // plus the requested number of questions for assignment/quiz.
+    private static string BuildContext(
+        Course course,
+        CourseContentOutline outline,
+        CurriculumScope scope,
+        bool arabic,
+        int? questionCount)
     {
+        var unitTitle = scope.UnitIds.Count > 0
+            ? outline.Units.FirstOrDefault(x => x.Id == scope.UnitIds[0])?.Title
+            : null;
+        var lessonTitle = scope.LessonIds.Count > 0
+            ? outline.Lessons.FirstOrDefault(x => x.Id == scope.LessonIds[0])?.Title
+            : null;
+
+        var sb = new StringBuilder();
+        sb.Append(arabic ? $"المادة: {course.Title}" : $"Course: {course.Title}");
+        if (!string.IsNullOrWhiteSpace(unitTitle))
+        {
+            sb.Append('\n').Append(arabic ? $"الوحدة: {unitTitle}" : $"Unit: {unitTitle}");
+        }
+
+        if (!string.IsNullOrWhiteSpace(lessonTitle))
+        {
+            sb.Append('\n').Append(arabic ? $"الدرس: {lessonTitle}" : $"Lesson: {lessonTitle}");
+        }
+
+        if (questionCount is int count)
+        {
+            sb.Append('\n').Append(arabic
+                ? $"عدد الأسئلة المطلوب: {count} بالضبط"
+                : $"Number of questions required: exactly {count}");
+        }
+
+        return sb.ToString();
+    }
+
+    private static string BuildSystemPrompt(AssistantAction action, bool arabic, int? questionCount)
+    {
+        var quizCount = questionCount ?? DefaultQuizQuestionCount;
+        var assignmentCount = questionCount is int n
+            ? arabic ? $" أنشئ {n} من الأسئلة بالضبط." : $" Create exactly {n} questions."
+            : string.Empty;
+
         var taskRule = action switch
         {
             AssistantAction.Outline => arabic
@@ -392,12 +452,13 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
             AssistantAction.Summary => arabic
                 ? "لخّص المحتوى في ملخص دراسي منظّم بعناوين ونقاط مهمة وتنسيق Markdown."
                 : "Summarize the content into an organized study summary with headings and key points in Markdown.",
-            AssistantAction.Assignment => arabic
+            AssistantAction.Assignment => (arabic
                 ? "أنشئ أسئلة تطبيقية تقيس فهم الطالب للدرس، مع الإجابات النموذجية المختصرة بعد كل سؤال."
-                : "Create applied questions that measure student understanding, with brief model answers after each question.",
+                : "Create applied questions that measure student understanding, with brief model answers after each question.")
+                + assignmentCount,
             _ => arabic
-                ? "أنشئ 5 أسئلة اختيار من متعدد (4 خيارات لكل سؤال) بناءً على المحتوى، مع مفتاح الإجابات الصحيحة في النهاية."
-                : "Create 5 multiple-choice questions (4 options each) based on the content, with an answer key at the end."
+                ? $"أنشئ {quizCount} من أسئلة الاختيار من متعدد بالضبط (4 خيارات لكل سؤال) بناءً على المحتوى، مع مفتاح الإجابات الصحيحة في النهاية."
+                : $"Create exactly {quizCount} multiple-choice questions (4 options each) based on the content, with an answer key at the end."
         };
 
         // Structured fields the backend persists when the teacher maps results to
@@ -411,8 +472,8 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
                 ? "أضف أيضاً خاصية questions كمصفوفة من {prompt, questionType (Choose أو TrueFalse أو ShortAnswer أو Paragraph), options:[نصوص], correctOption (A/B/C/D), correctAnswer, points}."
                 : "Also add a questions property: an array of {prompt, questionType (Choose/TrueFalse/ShortAnswer/Paragraph), options:[strings], correctOption (A/B/C/D), correctAnswer, points}.",
             AssistantAction.Quiz => arabic
-                ? "أضف أيضاً خاصية questions كمصفوفة من 5 أسئلة {prompt, questionType (Choose), options:[4 نصوص], correctOption (A/B/C/D), correctAnswer, points:1}."
-                : "Also add a questions property: an array of 5 {prompt, questionType (Choose), options:[4 strings], correctOption (A/B/C/D), correctAnswer, points:1}.",
+                ? $"أضف أيضاً خاصية questions كمصفوفة من {quizCount} أسئلة {{prompt, questionType (Choose), options:[4 نصوص], correctOption (A/B/C/D), correctAnswer, points:1}}."
+                : $"Also add a questions property: an array of {quizCount} {{prompt, questionType (Choose), options:[4 strings], correctOption (A/B/C/D), correctAnswer, points:1}}.",
             _ => string.Empty
         };
 
@@ -452,7 +513,8 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         CourseContentOutline outline,
         CurriculumScope scope,
         bool arabic,
-        string bookText)
+        string bookText,
+        string context)
     {
         var actionName = action switch
         {
@@ -466,7 +528,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         if (arabic)
         {
             sb.AppendLine($"المطلوب: {actionName}.");
-            sb.AppendLine($"المادة: {course.Title}");
+            sb.AppendLine(context);
             if (!string.IsNullOrWhiteSpace(course.Description))
             {
                 sb.AppendLine($"الوصف: {course.Description.Trim()}");
@@ -475,7 +537,7 @@ public sealed class GenerateSmartStudyAssistantCommandHandler(
         else
         {
             sb.AppendLine($"Requested: {actionName}.");
-            sb.AppendLine($"Subject: {course.Title}");
+            sb.AppendLine(context);
             if (!string.IsNullOrWhiteSpace(course.Description))
             {
                 sb.AppendLine($"Description: {course.Description.Trim()}");

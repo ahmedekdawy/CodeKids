@@ -51,6 +51,7 @@ export class SmartStudyAssistantComponent {
 
   readonly files = signal<FileEntry[]>([]);
   prompt = '';
+  questionCount = 5;
 
   readonly activeAction = signal<SmartStudyAction | null>(null);
 
@@ -59,14 +60,16 @@ export class SmartStudyAssistantComponent {
   readonly resultMarkdown = signal('');
   readonly renderedHtml = computed(() => renderMarkdown(this.resultMarkdown()));
 
-  readonly hasQuestions = computed(() => (this.result()?.questions?.length ?? 0) > 0);
+  // Editable copy of the generated questions; this is what gets saved on apply.
+  readonly questions = signal<SmartStudyQuestion[]>([]);
+  readonly hasQuestions = computed(() => this.questions().length > 0);
   readonly hasUnits = computed(() => (this.result()?.units?.length ?? 0) > 0);
 
   readonly actions: { key: SmartStudyAction; label: string; icon: string; hint: string }[] = [
     { key: 'Outline', label: 'إنشاء فهرس للمادة', icon: '🗂️', hint: 'استخراج العناوين الرئيسية والفرعية في قائمة شجرية' },
     { key: 'Summary', label: 'تلخيص المحتوى', icon: '📝', hint: 'ملخص دراسي منظم بأهم النقاط' },
     { key: 'Assignment', label: 'توليد واجب / أسئلة مقالية', icon: '📚', hint: 'أسئلة تطبيقية تقيس فهم الدرس مع الإجابات' },
-    { key: 'Quiz', label: 'إنشاء كويز / اختيار من متعدد', icon: '❓', hint: '5 أسئلة اختيار من متعدد مع مفتاح الإجابات' }
+    { key: 'Quiz', label: 'إنشاء كويز / اختيار من متعدد', icon: '❓', hint: 'أسئلة اختيار من متعدد مع مفتاح الإجابات' }
   ];
 
   constructor() {
@@ -87,6 +90,8 @@ export class SmartStudyAssistantComponent {
     this.courseId.set(courseId);
     this.unitId.set('');
     this.lessonId.set('');
+    this.selectedUnitId = '';
+    this.selectedLessonId = '';
     this.units.set([]);
     this.lessons.set([]);
     if (!courseId) return;
@@ -102,6 +107,7 @@ export class SmartStudyAssistantComponent {
   async onUnitChange(unitId: string): Promise<void> {
     this.unitId.set(unitId);
     this.lessonId.set('');
+    this.selectedLessonId = '';
     this.lessons.set([]);
     if (!unitId) return;
 
@@ -193,6 +199,11 @@ export class SmartStudyAssistantComponent {
     void this.onUnitChange(value);
   }
 
+  onLessonModelChange(value: string): void {
+    this.selectedLessonId = value;
+    this.lessonId.set(value);
+  }
+
   async runAction(action: SmartStudyAction): Promise<void> {
     if (!this.courseId()) {
       this.error.set('اختر الكورس أولاً.');
@@ -204,11 +215,19 @@ export class SmartStudyAssistantComponent {
     }
     if (this.loading()) return;
 
+    const wantsQuestions = action === 'Assignment' || action === 'Quiz';
+    const questionCount = Math.trunc(Number(this.questionCount));
+    if (wantsQuestions && !(questionCount >= 1 && questionCount <= 50)) {
+      this.error.set('عدد الأسئلة يجب أن يكون بين 1 و 50.');
+      return;
+    }
+
     this.error.set('');
     this.message.set('');
     this.activeAction.set(action);
     this.loading.set(true);
     this.result.set(null);
+    this.questions.set([]);
     this.resultTitle.set('');
     this.resultMarkdown.set('');
 
@@ -220,9 +239,11 @@ export class SmartStudyAssistantComponent {
         lessonId: this.lessonId() || null,
         language: 'ar',
         prompt: this.prompt.trim() || null,
+        questionCount: wantsQuestions ? questionCount : null,
         files: this.files().map((f) => f.file)
       }));
       this.result.set(result);
+      this.questions.set((result.questions ?? []).map((q) => ({ ...q, options: [...(q.options ?? [])] })));
       this.resultTitle.set(result.title);
       this.resultMarkdown.set(result.markdown);
       this.message.set('تم إنشاء المحتوى بنجاح ✨');
@@ -238,6 +259,20 @@ export class SmartStudyAssistantComponent {
     const result = this.result();
     if (!result || !this.courseId() || this.applying()) return;
 
+    const questions = this.questions().map((q, i) => ({
+      ...q,
+      prompt: q.prompt.trim(),
+      options: q.options.map((o) => o.trim()),
+      sortOrder: i + 1
+    }));
+    if (target !== 'tree') {
+      const invalid = questions.findIndex((q) => !q.prompt || q.options.some((o) => !o));
+      if (invalid >= 0) {
+        this.error.set(`السؤال رقم ${invalid + 1} يحتوي على نص سؤال أو اختيار فارغ. أكمله أو احذفه قبل الحفظ.`);
+        return;
+      }
+    }
+
     this.error.set('');
     this.applying.set(target);
     try {
@@ -249,7 +284,7 @@ export class SmartStudyAssistantComponent {
         unitId: this.unitId() || null,
         lessonId: this.lessonId() || null,
         mode: 'update',
-        questions: result.questions?.length ? result.questions : null,
+        questions: questions.length ? questions : null,
         units: result.units?.length ? result.units : null
       }));
       this.message.set(response.message);
@@ -258,6 +293,50 @@ export class SmartStudyAssistantComponent {
     } finally {
       this.applying.set(null);
     }
+  }
+
+  optionLetter(index: number): string {
+    return String.fromCharCode(65 + index);
+  }
+
+  isCorrectOption(question: SmartStudyQuestion, index: number): boolean {
+    const key = (question.correctOption ?? '').trim().toUpperCase();
+    if (/^[A-Z]$/.test(key)) return key === this.optionLetter(index);
+    const answer = (question.correctAnswer ?? '').trim();
+    return answer.length > 0 && answer === (question.options[index] ?? '').trim();
+  }
+
+  updateQuestion(index: number, patch: Partial<SmartStudyQuestion>): void {
+    this.questions.update((list) => list.map((q, i) => (i === index ? { ...q, ...patch } : q)));
+  }
+
+  updateOption(index: number, optionIndex: number, value: string): void {
+    const question = this.questions()[index];
+    if (!question) return;
+    const wasCorrect = this.isCorrectOption(question, optionIndex);
+    const options = question.options.map((o, i) => (i === optionIndex ? value : o));
+    // Keep the stored answer text in step with the option it points at.
+    this.updateQuestion(index, wasCorrect
+      ? { options, correctOption: this.optionLetter(optionIndex), correctAnswer: value }
+      : { options });
+  }
+
+  setCorrectOption(index: number, optionIndex: number): void {
+    const question = this.questions()[index];
+    if (!question) return;
+    this.updateQuestion(index, {
+      correctOption: this.optionLetter(optionIndex),
+      correctAnswer: question.options[optionIndex] ?? ''
+    });
+  }
+
+  updatePoints(index: number, value: number | string): void {
+    const points = Math.trunc(Number(value));
+    this.updateQuestion(index, { points: points >= 1 ? points : 1 });
+  }
+
+  removeQuestion(index: number): void {
+    this.questions.update((list) => list.filter((_, i) => i !== index));
   }
 
   async copyResult(): Promise<void> {

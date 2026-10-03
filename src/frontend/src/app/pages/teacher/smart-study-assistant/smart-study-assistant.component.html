@@ -31,12 +31,17 @@
 
       <label>
         <span>الدرس</span>
-        <select [(ngModel)]="selectedLessonId" [disabled]="!unitId()">
+        <select [(ngModel)]="selectedLessonId" (ngModelChange)="onLessonModelChange($event)" [disabled]="!unitId()">
           <option value="">— الكل / اختياري —</option>
           @for (lesson of lessons(); track lesson.id) {
             <option [value]="lesson.id">{{ lesson.title }}</option>
           }
         </select>
+      </label>
+
+      <label>
+        <span>عدد الأسئلة (للواجب والكويز)</span>
+        <input type="number" min="1" max="50" step="1" [(ngModel)]="questionCount">
       </label>
     </div>
   </div>
@@ -117,6 +122,48 @@
         </div>
       </div>
 
+      @if (hasQuestions()) {
+        <div class="ssa-questions">
+          <h3>راجع الأسئلة قبل الحفظ ({{ questions().length }})</h3>
+          <small>يمكنك تعديل أي سؤال أو حذفه — ما يظهر هنا هو ما سيتم حفظه.</small>
+          @for (question of questions(); track $index; let qi = $index) {
+            <div class="ssa-question">
+              <div class="ssa-question-head">
+                <strong>السؤال {{ qi + 1 }}</strong>
+                <label class="ssa-points">
+                  <span>الدرجة</span>
+                  <input type="number" min="1" step="1"
+                         [ngModel]="question.points" (ngModelChange)="updatePoints(qi, $event)">
+                </label>
+                <button type="button" class="ssa-remove" (click)="removeQuestion(qi)">🗑️ حذف</button>
+              </div>
+              <textarea rows="2" class="ssa-question-text"
+                        [ngModel]="question.prompt" (ngModelChange)="updateQuestion(qi, { prompt: $event })"></textarea>
+
+              @if (question.options.length > 0) {
+                <div class="ssa-options">
+                  @for (option of question.options; track $index; let oi = $index) {
+                    <label class="ssa-option">
+                      <input type="radio" [name]="'ssa-correct-' + qi" title="الإجابة الصحيحة"
+                             [checked]="isCorrectOption(question, oi)" (change)="setCorrectOption(qi, oi)">
+                      <span>{{ optionLetter(oi) }}</span>
+                      <input type="text" [ngModel]="option" (ngModelChange)="updateOption(qi, oi, $event)">
+                    </label>
+                  }
+                  <small>حدد الدائرة بجانب الإجابة الصحيحة.</small>
+                </div>
+              } @else {
+                <label class="ssa-answer">
+                  <span>الإجابة النموذجية</span>
+                  <textarea rows="2"
+                            [ngModel]="question.correctAnswer" (ngModelChange)="updateQuestion(qi, { correctAnswer: $event })"></textarea>
+                </label>
+              }
+            </div>
+          }
+        </div>
+      }
+
       @if (hasQuestions() || hasUnits()) {
         <div class="ssa-apply">
           <span>أضف النتيجة إلى:</span>
@@ -152,7 +199,14 @@
         </div>
       }
 
-      <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>
+      @if (hasQuestions()) {
+        <details class="ssa-original">
+          <summary>عرض النص الأصلي كما أنشأه المساعد (قبل التعديل)</summary>
+          <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>
+        </details>
+      } @else {
+        <article class="ssa-markdown" [innerHTML]="renderedHtml() | safeHtml"></article>
+      }
     </div>
   }
 </section>
