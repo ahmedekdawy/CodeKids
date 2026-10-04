@@ -17,6 +17,7 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
 export class TeacherShellComponent {
   readonly navItems: PanelNavItem[] = [
     { labelKey: 'nav.teacher.overview', path: '/teacher/overview', icon: 'O' },
+    { labelKey: 'nav.teacher.account', path: '/teacher/account', icon: '👤' },
 
     { labelKey: 'nav.cat.content', path: '/teacher/videos', icon: 'V', categoryKey: 'nav.cat.content' },
     { labelKey: 'nav.teacher.materials', path: '/teacher/materials', icon: 'M', categoryKey: 'nav.cat.content' },

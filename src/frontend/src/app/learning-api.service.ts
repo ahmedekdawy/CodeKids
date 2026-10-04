@@ -85,7 +85,8 @@ import {
   Subject,
   GradeCertificateListItem,
   GradeCertificateSheet,
-  SaveGradeCertificatePayload
+  SaveGradeCertificatePayload,
+  StudentGradeCertificate
 } from './models';
 import { normalizePmStartMinutes } from './fixed-timetable.util';
 import { resolveApiBaseUrl } from './api-base-url';
@@ -1225,6 +1226,28 @@ export class LearningApiService {
     entries: { subjectId: string; studentId: string; degree: number | null }[]
   ): Observable<GradeCertificateSheet> {
     return this.http.put<GradeCertificateSheet>(`${this.baseUrl}/grade-certificates/${certificateId}/marks`, { entries });
+  }
+
+  approveGradeCertificate(certificateId: string): Observable<{ changed: number }> {
+    return this.http.post<{ changed: number }>(`${this.baseUrl}/admin/grade-certificates/${certificateId}/approve`, {});
+  }
+
+  approveAllGradeCertificates(): Observable<{ approvedCount: number }> {
+    return this.http.post<{ approvedCount: number }>(`${this.baseUrl}/admin/grade-certificates/approve-all`, {});
+  }
+
+  revokeGradeCertificateApproval(certificateId: string): Observable<{ changed: number }> {
+    return this.http.post<{ changed: number }>(`${this.baseUrl}/admin/grade-certificates/${certificateId}/revoke-approval`, {});
+  }
+
+  /** Approved certificates with the student's own degrees. */
+  getStudentGradeCertificates(studentId: string): Observable<StudentGradeCertificate[]> {
+    return this.http.get<StudentGradeCertificate[]>(`${this.baseUrl}/students/${studentId}/grade-certificates`);
+  }
+
+  /** Approved certificates of a child of the signed-in parent, with the child's degrees. */
+  getChildGradeCertificates(childId: string): Observable<StudentGradeCertificate[]> {
+    return this.http.get<StudentGradeCertificate[]>(`${this.baseUrl}/parent/children/${childId}/grade-certificates`);
   }
 
   getClassrooms(): Observable<Classroom[]> {

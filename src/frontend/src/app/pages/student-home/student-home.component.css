@@ -4,6 +4,38 @@
   animation: pageIn 0.4s ease;
 }
 
+.certificates-card .row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.certificates-card .item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.certificates-card .item-row:last-of-type {
+  border-bottom: none;
+}
+
+.certificates-card .item-body strong {
+  display: block;
+}
+
+.certificates-card .item-body .meta {
+  margin: 0.15rem 0 0;
+}
+
+app-certificate-preview {
+  margin-top: 0.5rem;
+}
+
 .student-topbar {
   position: relative;
   z-index: 50;

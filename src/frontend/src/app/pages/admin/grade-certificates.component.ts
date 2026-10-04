@@ -14,7 +14,14 @@ import {
   GradeCertificateSubject
 } from '../../models';
 import { formatGradeLabel } from '../../grade.util';
-import { downloadElementAsPng } from '../../export-image.util';
+import {
+  CertificatePrintModel,
+  certificateMaxTotal,
+  certificateTotal,
+  exportCertificateModelImages,
+  printCertificateModels,
+  safeCertificateFileName
+} from '../../shared/certificate-print/certificate-print.util';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
@@ -55,6 +62,7 @@ export class GradeCertificatesComponent {
   readonly error = signal('');
   readonly saving = signal(false);
   readonly exporting = signal(false);
+  readonly approving = signal(false);
 
   // Admin create/edit form.
   editingId: string | null = null;
@@ -169,6 +177,72 @@ export class GradeCertificatesComponent {
       },
       error: (err) => this.error.set(this.locale.fromApiError(err, 'certificates.deleteFailed'))
     });
+  }
+
+  // ---- Admin: approval ----------------------------------------------------------------
+
+  /** Approves one certificate; afterwards the student and their parent can see it. */
+  approveCertificate(certificate: GradeCertificateListItem): void {
+    if (this.approving()) return;
+    this.clearFeedback();
+    this.approving.set(true);
+    this.api.approveGradeCertificate(certificate.id).subscribe({
+      next: () => {
+        this.approving.set(false);
+        this.message.set(this.locale.t('certificates.approved'));
+        this.reload();
+      },
+      error: (err) => {
+        this.approving.set(false);
+        this.error.set(this.locale.fromApiError(err, 'certificates.approveFailed'));
+      }
+    });
+  }
+
+  /** Approves every not-yet-approved certificate in one go. */
+  approveAllCertificates(): void {
+    if (this.approving()) return;
+    this.clearFeedback();
+    this.approving.set(true);
+    this.api.approveAllGradeCertificates().subscribe({
+      next: (result) => {
+        this.approving.set(false);
+        this.message.set(
+          this.locale.t('certificates.approvedAll', { count: result?.approvedCount ?? 0 })
+        );
+        this.reload();
+      },
+      error: (err) => {
+        this.approving.set(false);
+        this.error.set(this.locale.fromApiError(err, 'certificates.approveFailed'));
+      }
+    });
+  }
+
+  /** Takes the approval back so the certificate disappears from the student and parent views. */
+  revokeApproval(certificate: GradeCertificateListItem): void {
+    if (this.approving()) return;
+    this.clearFeedback();
+    this.approving.set(true);
+    this.api.revokeGradeCertificateApproval(certificate.id).subscribe({
+      next: () => {
+        this.approving.set(false);
+        this.message.set(this.locale.t('certificates.approvalRevoked'));
+        this.reload();
+      },
+      error: (err) => {
+        this.approving.set(false);
+        this.error.set(this.locale.fromApiError(err, 'certificates.approveFailed'));
+      }
+    });
+  }
+
+  approvedCount(): number {
+    return this.certificates().filter((certificate) => certificate.isApproved).length;
+  }
+
+  pendingCount(): number {
+    return this.certificates().filter((certificate) => !certificate.isApproved).length;
   }
 
   /** Classroom subjects as form rows; subjects already on the certificate keep their settings. */
@@ -308,35 +382,12 @@ export class GradeCertificatesComponent {
     const students = student ? [student] : sheet.students;
     if (!students.length) return;
 
-    const win = window.open('', '_blank');
-    if (!win) {
-      this.error.set(this.locale.t('certificates.popupBlocked'));
-      return;
-    }
-
-    // The window is opened first (inside the click) so pop-up blockers allow it.
     const brand = await this.loadPrintBrand();
-    const rtl = this.locale.lang() === 'ar';
-    const pages = students.map((item) => this.certificateHtml(sheet, item, brand)).join('');
-
-    win.document.write(`<!DOCTYPE html>
-<html dir="${rtl ? 'rtl' : 'ltr'}" lang="${rtl ? 'ar' : 'en'}">
-<head>
-  <meta charset="utf-8">
-  <title>${escapeHtml(sheet.title)}</title>
-  <style>
-    @page { size: A4 landscape; margin: 10mm; }
-    body { margin: 0; }
-    .gc-cert { page-break-after: always; break-after: page; }
-    .gc-cert:last-child { page-break-after: auto; break-after: auto; }
-    ${CERTIFICATE_CSS}
-  </style>
-</head>
-<body>${pages}</body>
-</html>`);
-    win.document.close();
-    win.focus();
-    setTimeout(() => win.print(), 300);
+    const models = students.map((item) => this.printModel(sheet, item, brand));
+    const printed = await printCertificateModels(models, this.locale.lang() === 'ar', sheet.title);
+    if (!printed) {
+      this.error.set(this.locale.t('certificates.popupBlocked'));
+    }
   }
 
   /** Downloads the certificate as a PNG image: for one student, or one image per student. */
@@ -349,99 +400,60 @@ export class GradeCertificatesComponent {
     this.clearFeedback();
     this.exporting.set(true);
 
-    // Certificates are drawn off-screen at A4-landscape width, then captured one by one.
-    const host = document.createElement('div');
-    host.dir = this.locale.lang() === 'ar' ? 'rtl' : 'ltr';
-    host.style.cssText = 'position:fixed;left:-20000px;top:0;width:1123px;background:#ffffff;';
-    host.innerHTML = `<style>${CERTIFICATE_CSS}</style>`;
-    document.body.appendChild(host);
-
     try {
       const brand = await this.loadPrintBrand();
-      for (const item of students) {
-        const holder = document.createElement('div');
-        holder.innerHTML = this.certificateHtml(sheet, item, brand);
-        host.appendChild(holder);
-        const logo = holder.querySelector('img');
-        if (logo && !logo.complete) {
-          await new Promise<void>((resolve) => {
-            logo.onload = () => resolve();
-            logo.onerror = () => resolve();
-          });
-        }
-        await downloadElementAsPng(
-          holder.firstElementChild as HTMLElement,
-          safeFileName(`${sheet.title} - ${item.studentName}`),
-          { backgroundColor: '#ffffff' }
-        );
-        holder.remove();
-      }
+      const items = students.map((item) => ({
+        model: this.printModel(sheet, item, brand),
+        fileName: safeCertificateFileName(`${sheet.title} - ${item.studentName}`)
+      }));
+      await exportCertificateModelImages(items, this.locale.lang() === 'ar');
       this.message.set(this.locale.t('certificates.exported'));
     } catch {
       this.error.set(this.locale.t('certificates.exportFailed'));
     } finally {
-      host.remove();
       this.exporting.set(false);
     }
   }
 
-  /** One student's certificate markup, shared by printing and image export. */
-  private certificateHtml(
+  /** Resolves one student's certificate into the shared printable model. */
+  private printModel(
     sheet: GradeCertificateSheet,
     student: GradeCertificateStudent,
     brand: { name: string; logo: string | null }
-  ): string {
-    const counted = this.totalSubjects(sheet);
-    const extra = this.extraSubjects(sheet);
-    const t = (key: string) => escapeHtml(this.locale.t(key));
-    const cell = (value: number | null) => (value == null ? '' : formatDegree(value));
-    const logoHtml = brand.logo ? `<img class="logo" src="${escapeHtml(brand.logo)}" alt="">` : '';
-
-    const head = [
-      `<th>${t('certificates.print.subject')}</th>`,
-      ...counted.map((subject) => `<th>${escapeHtml(subject.courseTitle)}</th>`),
-      `<th>${t('certificates.total')}</th>`,
-      ...extra.map((subject) => `<th>${escapeHtml(subject.courseTitle)}</th>`)
-    ].join('');
-    const max = [
-      `<td>${t('certificates.print.maxDegree')}</td>`,
-      ...counted.map((subject) => `<td>${formatDegree(subject.maxDegree)}</td>`),
-      `<td>${formatDegree(this.maxTotal(sheet))}</td>`,
-      ...extra.map((subject) => `<td>${formatDegree(subject.maxDegree)}</td>`)
-    ].join('');
-    const degrees = [
-      `<td>${t('certificates.print.degree')}</td>`,
-      ...counted.map((subject) => `<td>${cell(this.degreeOf(student.studentId, subject.id))}</td>`),
-      `<td>${cell(this.studentTotal(sheet, student.studentId))}</td>`,
-      ...extra.map((subject) => `<td>${cell(this.degreeOf(student.studentId, subject.id))}</td>`)
-    ].join('');
-
-    return `
-<section class="gc-cert">
-  <div class="frame">
-    <div class="frame-inner">
-      <div class="top">
-        <div class="brand">${logoHtml}<span>${escapeHtml(brand.name)}</span></div>
-        <h1>${escapeHtml(sheet.title)}</h1>
-      </div>
-      <div class="who">
-        <p><b>${t('certificates.print.studentName')} :</b> ${escapeHtml(student.studentName)}</p>
-        <p><b>${t('certificates.print.grade')} :</b> ${escapeHtml(this.gradeLabel(sheet.grade))} — ${escapeHtml(sheet.classroomName)}</p>
-      </div>
-      <table>
-        <tr class="head">${head}</tr>
-        <tr class="max">${max}</tr>
-        <tr class="degree">${degrees}</tr>
-      </table>
-    </div>
-  </div>
-</section>`;
-  }
-
-  /**
-   * Platform name and logo from the site settings, read fresh so the certificate never shows the
-   * built-in default. The logo is inlined as a data URL so it is ready when the print dialog opens.
-   */
+  ): CertificatePrintModel {
+    const counted = this.totalSubjects(sheet).map((subject) => ({
+      title: subject.courseTitle,
+      maxDegree: subject.maxDegree,
+      degree: this.degreeOf(student.studentId, subject.id)
+    }));
+    const extra = this.extraSubjects(sheet).map((subject) => ({
+      title: subject.courseTitle,
+      maxDegree: subject.maxDegree,
+      degree: this.degreeOf(student.studentId, subject.id)
+    }));
+    const labels = {
+      subject: this.locale.t('certificates.print.subject'),
+      studentName: this.locale.t('certificates.print.studentName'),
+      grade: this.locale.t('certificates.print.grade'),
+      maxDegree: this.locale.t('certificates.print.maxDegree'),
+      degree: this.locale.t('certificates.print.degree'),
+      total: this.locale.t('certificates.total')
+    };
+    return {
+      title: sheet.title,
+      studentName: student.studentName,
+      gradeLine: `${this.gradeLabel(sheet.grade)} — ${sheet.classroomName}`,
+      brand,
+      labels,
+      counted,
+      extra,
+      maxTotal: certificateMaxTotal(counted),
+      total: certificateTotal(counted)
+    };
+  }/**
+ * Platform name and logo from the site settings, read fresh so the certificate never shows the
+ * built-in default. The logo is inlined as a data URL so it is ready when the print dialog opens.
+ */
   private async loadPrintBrand(): Promise<{ name: string; logo: string | null }> {
     try {
       this.brand.apply(await firstValueFrom(this.api.getSiteSettings()));
@@ -463,29 +475,6 @@ export class GradeCertificatesComponent {
   }
 }
 
-/** Certificate look, scoped to .gc-cert so it works both in the print window and inside the app page. */
-const CERTIFICATE_CSS = `
-    .gc-cert, .gc-cert * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .gc-cert { padding: 4mm; background: #ffffff; color: #1c1c1c; font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif; }
-    .gc-cert .frame { border: 10px double #b8862e; padding: 5px; }
-    .gc-cert .frame-inner { border: 3px solid #7a1f1f; padding: 12mm 12mm 14mm; min-height: 160mm; }
-    .gc-cert .top { display: flex; align-items: center; gap: 12mm; }
-    .gc-cert .brand { display: flex; flex-direction: column; align-items: center; gap: 2mm; font-weight: 800; font-size: 13pt; min-width: 30mm; }
-    .gc-cert .logo { max-width: 34mm; max-height: 34mm; object-fit: contain; }
-    .gc-cert h1 { flex: 1; margin: 0; text-align: center; font-size: 22pt; color: #7a1f1f; }
-    .gc-cert .who { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6mm 20mm; margin: 12mm 0 8mm; font-size: 16pt; }
-    .gc-cert .who p { margin: 0; }
-    .gc-cert table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .gc-cert th, .gc-cert td { border: 1.5px solid #222; padding: 4mm 2mm; text-align: center; font-size: 15pt; font-weight: 700; color: #1c1c1c; }
-    .gc-cert tr.head th { background: #8fce4a; color: #7a1f1f; }
-    .gc-cert tr.max td { background: #ffff00; color: #7a1f1f; }
-    .gc-cert tr.degree td { background: #e6e6e6; }
-`;
-
-function safeFileName(value: string): string {
-  return value.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim() || 'certificate';
-}
-
 function blobToDataUrl(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -493,12 +482,4 @@ function blobToDataUrl(blob: Blob): Promise<string> {
     reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(blob);
   });
-}
-
-function escapeHtml(value: string): string {
-  return (value ?? '').replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
-}
-
-function formatDegree(value: number): string {
-  return String(Math.round(value * 100) / 100);
 }

@@ -1,9 +1,21 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../auth.service';
 import { LearningApiService } from '../../learning-api.service';
-import { Assignment, Avatar, Badge, Classroom, Course, CourseQuiz, CourseTerm, CourseVideoSummary, Exam, StudentSummary } from '../../models';
+import { SiteBrandService } from '../../site-brand.service';
+import { Assignment, Avatar, Badge, Classroom, Course, CourseQuiz, CourseTerm, CourseVideoSummary, Exam, StudentGradeCertificate, StudentSummary } from '../../models';
+import {
+  CertificatePrintModel,
+  defaultCertificateLabels,
+  exportCertificateModelImages,
+  printCertificateModels,
+  safeCertificateFileName,
+  studentCertificatePrintModels
+} from '../../shared/certificate-print/certificate-print.util';
+import { CertificatePreviewComponent } from '../../shared/certificate-preview/certificate-preview.component';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
@@ -24,6 +36,7 @@ import { PROFILE_PHOTO_MAX_BYTES, PROFILE_PHOTO_TYPES } from '../../shared/user-
     FormsModule,
     RouterLink,
     TranslatePipe,
+    CertificatePreviewComponent,
     LanguageSwitcherComponent,
     ThemeSwitcherComponent,
     SiteBrandComponent,
@@ -39,6 +52,8 @@ export class StudentHomeComponent {
   readonly auth = inject(AuthService);
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly brand = inject(SiteBrandService);
+  private readonly http = inject(HttpClient);
 
   readonly courses = signal<Course[]>([]);
   readonly summary = signal<StudentSummary | null>(null);
@@ -47,6 +62,9 @@ export class StudentHomeComponent {
   readonly classrooms = signal<Classroom[]>([]);
   readonly assignments = signal<Assignment[]>([]);
   readonly exams = signal<Exam[]>([]);
+  readonly certificates = signal<StudentGradeCertificate[]>([]);
+  readonly openCertificateId = signal<string | null>(null);
+  readonly exportingCertificates = signal(false);
 
   readonly photoBusy = signal(false);
   readonly photoError = signal('');
@@ -76,6 +94,84 @@ export class StudentHomeComponent {
     this.api.getClassrooms().subscribe((classrooms) => this.classrooms.set(classrooms));
     this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
     this.api.getExams().subscribe((exams) => this.exams.set(exams));
+    if (this.auth.user()?.id) {
+      this.api.getStudentGradeCertificates(this.auth.user()!.id).subscribe({
+        next: (certificates) => this.certificates.set(certificates ?? []),
+        error: () => this.certificates.set([])
+      });
+    }
+  }
+
+  toggleCertificate(certificateId: string): void {
+    this.openCertificateId.set(this.openCertificateId() === certificateId ? null : certificateId);
+  }
+
+  formatDate(value: string | null | undefined): string {
+    if (!value) return this.locale.t('common.emDash');
+    const date = value.length <= 10 ? new Date(`${value}T00:00:00`) : new Date(value);
+    return date.toLocaleDateString(this.locale.lang());
+  }
+
+  /** Prints the selected certificate, or all approved certificates when none is selected. */
+  async printCertificates(): Promise<void> {
+    const models = await this.buildCertificateModels();
+    if (!models.length) return;
+    const printed = await printCertificateModels(models, this.locale.lang() === 'ar', this.printTitle(models));
+    if (!printed) {
+      this.photoError.set(this.locale.t('certificates.popupBlocked'));
+    }
+  }
+
+  /** Downloads one PNG per certificate; selected one first, or all approved certificates. */
+  async exportCertificateImages(): Promise<void> {
+    if (this.exportingCertificates()) return;
+    this.exportingCertificates.set(true);
+    try {
+      const models = await this.buildCertificateModels();
+      const items = models.map((model) => ({
+        model,
+        fileName: safeCertificateFileName(`${model.title} - ${model.studentName}`)
+      }));
+      await exportCertificateModelImages(items, this.locale.lang() === 'ar');
+    } catch {
+      // Download failures are surfaced by the browser itself.
+    } finally {
+      this.exportingCertificates.set(false);
+    }
+  }
+
+  private async buildCertificateModels(): Promise<CertificatePrintModel[]> {
+    const openId = this.openCertificateId();
+    const items = openId
+      ? this.certificates().filter((certificate) => certificate.id === openId)
+      : this.certificates();
+    if (!items.length) return [];
+    const brand = await this.loadPrintBrand();
+    return studentCertificatePrintModels(
+      items,
+      this.auth.user()?.displayName || '',
+      this.gradeLabel(items[0]?.grade),
+      brand,
+      defaultCertificateLabels((key) => this.locale.t(key))
+    );
+  }
+
+  private printTitle(models: CertificatePrintModel[]): string {
+    return models.length === 1 ? models[0].title : this.locale.t('certificates.title');
+  }
+
+  private async loadPrintBrand(): Promise<{ name: string; logo: string | null }> {
+    const logoUrl = this.brand.logoUrl();
+    let logo: string | null = null;
+    if (logoUrl) {
+      const absolute = new URL(logoUrl, window.location.origin).href;
+      try {
+        logo = await blobToDataUrl(await firstValueFrom(this.http.get(absolute, { responseType: 'blob' })));
+      } catch {
+        logo = absolute;
+      }
+    }
+    return { name: this.brand.siteName(), logo };
   }
 
   onPhotoSelected(event: Event): void {
@@ -200,4 +296,13 @@ export class StudentHomeComponent {
     if (linked.length === 1) return linked[0].courseId === courseId;
     return false;
   }
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ''));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
 }

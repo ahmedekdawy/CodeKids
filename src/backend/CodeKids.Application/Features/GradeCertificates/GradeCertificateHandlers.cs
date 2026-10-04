@@ -53,7 +53,9 @@ public sealed class ListGradeCertificatesQueryHandler(IAppDbContext dbContext)
                 x.Classroom.Grade,
                 x.Subjects.Count,
                 x.Classroom.Students.Count,
-                x.CreatedAtUtc))
+                x.CreatedAtUtc,
+                x.IsApproved,
+                x.ApprovedAtUtc))
             .ToListAsync(cancellationToken);
     }
 }
@@ -107,6 +109,8 @@ public sealed class GetGradeCertificateSheetQueryHandler(IAppDbContext dbContext
             certificate.ClassroomId,
             certificate.Classroom?.Name ?? string.Empty,
             certificate.Classroom?.Grade,
+            certificate.IsApproved,
+            certificate.ApprovedAtUtc,
             subjects
                 .Select(x => new GradeCertificateSubjectDto(
                     x.Id, x.CourseId, x.Course?.Title ?? string.Empty, x.MaxDegree, x.IncludedInTotal, x.SortOrder))
@@ -352,5 +356,165 @@ public sealed class SaveGradeCertificateMarksCommandHandler(IAppDbContext dbCont
         return await new GetGradeCertificateSheetQueryHandler(dbContext).Handle(
             new GetGradeCertificateSheetQuery(certificate.Id, command.UserId, command.IsAdmin),
             cancellationToken);
+    }
+}
+
+internal static class ApprovedCertificateReader
+{
+    /// <summary>Approved certificates of one student with that student's degrees; newest approval first.</summary>
+    internal static async Task<IReadOnlyList<StudentGradeCertificateDto>> ListAsync(
+        IAppDbContext dbContext,
+        Guid studentId,
+        CancellationToken cancellationToken)
+    {
+        var classroomIds = await dbContext.ClassroomStudents
+            .AsNoTracking()
+            .Where(x => x.StudentId == studentId)
+            .Select(x => x.ClassroomId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+        if (classroomIds.Count == 0)
+        {
+            return [];
+        }
+
+        var certificates = await dbContext.GradeCertificates
+            .AsNoTracking()
+            .Include(x => x.Classroom)
+            .Include(x => x.Subjects).ThenInclude(x => x.Course)
+            .Where(x => x.IsApproved && classroomIds.Contains(x.ClassroomId))
+            .OrderByDescending(x => x.ApprovedAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(cancellationToken);
+
+        var subjectIds = certificates.SelectMany(x => x.Subjects).Select(x => x.Id).ToList();
+        var marks = await dbContext.GradeCertificateMarks
+            .AsNoTracking()
+            .Where(x => x.StudentId == studentId && subjectIds.Contains(x.SubjectId))
+            .Select(x => new { x.SubjectId, x.Degree })
+            .ToListAsync(cancellationToken);
+        var degrees = marks.ToDictionary(x => x.SubjectId, x => x.Degree);
+
+        return certificates
+            .Select(certificate => new StudentGradeCertificateDto(
+                certificate.Id,
+                certificate.Title,
+                certificate.ClassroomId,
+                certificate.Classroom?.Name ?? string.Empty,
+                certificate.Classroom?.Grade,
+                certificate.ApprovedAtUtc ?? certificate.CreatedAtUtc,
+                certificate.Subjects
+                    .OrderBy(x => x.SortOrder)
+                    .ThenBy(x => x.Course?.Title)
+                    .Select(x => new GradeCertificateSubjectDto(
+                        x.Id, x.CourseId, x.Course?.Title ?? string.Empty, x.MaxDegree, x.IncludedInTotal, x.SortOrder))
+                    .ToList(),
+                certificate.Subjects
+                    .Where(x => degrees.ContainsKey(x.Id))
+                    .OrderBy(x => x.SortOrder)
+                    .Select(x => new GradeCertificateMarkDto(x.Id, degrees[x.Id]))
+                    .ToList()))
+            .ToList();
+    }
+}
+
+public sealed class ApproveGradeCertificateCommandHandler(IAppDbContext dbContext)
+    : ICommandHandler<ApproveGradeCertificateCommand, int>
+{
+    public async Task<int> Handle(ApproveGradeCertificateCommand command, CancellationToken cancellationToken)
+    {
+        var certificate = await dbContext.GradeCertificates
+            .FirstOrDefaultAsync(x => x.Id == command.CertificateId, cancellationToken)
+            ?? throw new InvalidOperationException("Certificate not found.");
+
+        if (certificate.IsApproved)
+        {
+            return 0;
+        }
+
+        certificate.IsApproved = true;
+        certificate.ApprovedAtUtc = DateTimeOffset.UtcNow;
+        certificate.ApprovedByUserId = command.UserId;
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return 1;
+    }
+}
+
+public sealed class RevokeGradeCertificateApprovalCommandHandler(IAppDbContext dbContext)
+    : ICommandHandler<RevokeGradeCertificateApprovalCommand, int>
+{
+    public async Task<int> Handle(RevokeGradeCertificateApprovalCommand command, CancellationToken cancellationToken)
+    {
+        var certificate = await dbContext.GradeCertificates
+            .FirstOrDefaultAsync(x => x.Id == command.CertificateId, cancellationToken)
+            ?? throw new InvalidOperationException("Certificate not found.");
+
+        if (!certificate.IsApproved)
+        {
+            return 0;
+        }
+
+        certificate.IsApproved = false;
+        certificate.ApprovedAtUtc = null;
+        certificate.ApprovedByUserId = null;
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return 1;
+    }
+}
+
+public sealed class ApproveAllGradeCertificatesCommandHandler(IAppDbContext dbContext)
+    : ICommandHandler<ApproveAllGradeCertificatesCommand, int>
+{
+    public async Task<int> Handle(ApproveAllGradeCertificatesCommand command, CancellationToken cancellationToken)
+    {
+        // Tenant isolation comes from the global query filter on TenantEntity.
+        var pending = await dbContext.GradeCertificates
+            .Where(x => !x.IsApproved)
+            .ToListAsync(cancellationToken);
+        if (pending.Count == 0)
+        {
+            return 0;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        foreach (var certificate in pending)
+        {
+            certificate.IsApproved = true;
+            certificate.ApprovedAtUtc = now;
+            certificate.ApprovedByUserId = command.UserId;
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return pending.Count;
+    }
+}
+
+public sealed class ListStudentGradeCertificatesQueryHandler(IAppDbContext dbContext)
+    : IQueryHandler<ListStudentGradeCertificatesQuery, IReadOnlyList<StudentGradeCertificateDto>>
+{
+    public Task<IReadOnlyList<StudentGradeCertificateDto>> Handle(
+        ListStudentGradeCertificatesQuery query,
+        CancellationToken cancellationToken)
+        => ApprovedCertificateReader.ListAsync(dbContext, query.StudentId, cancellationToken);
+}
+
+public sealed class ListChildGradeCertificatesQueryHandler(IAppDbContext dbContext)
+    : IQueryHandler<ListChildGradeCertificatesQuery, IReadOnlyList<StudentGradeCertificateDto>>
+{
+    public async Task<IReadOnlyList<StudentGradeCertificateDto>> Handle(
+        ListChildGradeCertificatesQuery query,
+        CancellationToken cancellationToken)
+    {
+        var child = await dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == query.ChildId && x.Role == UserRole.Student, cancellationToken)
+            ?? throw new InvalidOperationException("Student not found.");
+
+        if (child.ParentId != query.ParentId)
+        {
+            throw new InvalidOperationException("This student is not linked to your account.");
+        }
+
+        return await ApprovedCertificateReader.ListAsync(dbContext, child.Id, cancellationToken);
     }
 }

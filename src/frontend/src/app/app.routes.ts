@@ -145,12 +145,23 @@ export const routes: Routes = [
     component: StudyPlanViewComponent
   },
   {
+    path: 'parent/account',
+    canActivate: [authGuard, roleGuard(['Parent'])],
+    loadComponent: () =>
+      import('./pages/parent-account/parent-account.component').then((m) => m.ParentAccountComponent)
+  },
+  {
     path: 'teacher',
     canActivate: [authGuard, roleGuard(['Teacher'])],
     component: TeacherShellComponent,
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: TeacherOverviewComponent },
+      {
+        path: 'account',
+        loadComponent: () =>
+          import('./pages/teacher/teacher-account.component').then((m) => m.TeacherAccountComponent)
+      },
       { path: 'videos', component: TeacherVideosComponent },
       { path: 'materials', component: TeacherMaterialsComponent },
       {

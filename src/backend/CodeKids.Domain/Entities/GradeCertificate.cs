@@ -9,6 +9,11 @@ public class GradeCertificate : TenantEntity
     public Guid CreatedByUserId { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
+    /// <summary>Approved by a system admin; only approved certificates are visible to students and their parents.</summary>
+    public bool IsApproved { get; set; }
+    public DateTimeOffset? ApprovedAtUtc { get; set; }
+    public Guid? ApprovedByUserId { get; set; }
+
     public Classroom? Classroom { get; set; }
     public List<GradeCertificateSubject> Subjects { get; set; } = [];
 }
