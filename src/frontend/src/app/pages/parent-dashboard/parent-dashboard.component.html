@@ -6,6 +6,7 @@
       <h1>{{ 'parent.title' | t }}</h1>
     </div>
     <div class="topbar-actions">
+      <a class="chip quiz" routerLink="/parent/account">{{ 'parent.accountNav' | t }}</a>
       <app-notification-bell />
       <app-theme-switcher />
       <app-language-switcher />
@@ -29,67 +30,6 @@
   }
 
   @if (!selectedChildId()) {
-    <section class="block">
-      <header class="section-head">
-        <div>
-          <h2>{{ 'parent.accountTitle' | t }}</h2>
-          <p class="section-hint">{{ 'parent.accountHint' | t }}</p>
-        </div>
-      </header>
-      <form class="meeting-form" (ngSubmit)="saveParentAccount()">
-        <label>
-          {{ 'common.email' | t }}
-          <input [(ngModel)]="parentEmail" name="parentEmail" type="email" autocomplete="email" />
-        </label>
-        <label>
-          {{ 'common.mobile' | t }}
-          <input [(ngModel)]="parentMobile" name="parentMobile" autocomplete="tel" />
-        </label>
-        <label>
-          {{ 'common.newPasswordOptional' | t }}
-          <input [(ngModel)]="parentPassword" name="parentPassword" type="password" autocomplete="new-password" />
-        </label>
-        <label>
-          {{ 'auth.reset.confirmPassword' | t }}
-          <input [(ngModel)]="parentPasswordConfirm" name="parentPasswordConfirm" type="password" autocomplete="new-password" />
-        </label>
-        <button type="submit" [disabled]="savingParent()">
-          {{ savingParent() ? ('common.saving' | t) : ('common.save' | t) }}
-        </button>
-      </form>
-    </section>
-
-    <section class="block">
-      <h3>{{ 'parent.zoomTitle' | t }}</h3>
-      @if (classroomsWithZoom().length) {
-        <p class="group-label">{{ 'classroom.zoomLinkTitle' | t }}</p>
-        @for (room of classroomsWithZoom(); track room.id) {
-          @for (link of room.zoomLinks; track link.url + link.name) {
-            <div class="meeting-row">
-              <div>
-                <strong>{{ link.name }}</strong>
-                <p class="meta">{{ room.name }}</p>
-              </div>
-              <a class="chip quiz" [href]="link.url" target="_blank" rel="noopener">{{ link.name }}</a>
-            </div>
-          }
-        }
-      }
-      @for (meeting of meetings(); track meeting.id) {
-        <div class="meeting-row">
-          <div>
-            <strong>{{ meeting.title }}</strong>
-            <p class="meta">
-              {{ formatWhen(meeting.startsAtUtc) }} · {{ meeting.durationMinutes }} {{ 'common.min' | t }} · {{ meeting.hostName }}
-            </p>
-          </div>
-          <a class="chip quiz" [href]="meeting.joinUrl" target="_blank" rel="noopener">{{ 'parent.openJoin' | t }}</a>
-        </div>
-      } @empty {
-        <p class="meta">{{ 'parent.noMeetings' | t }}</p>
-      }
-    </section>
-
     <section>
       <header class="section-head">
         <h2>{{ 'parent.childrenTitle' | t }}</h2>
@@ -247,6 +187,59 @@
             </div>
           } @else {
             <p class="meta">{{ 'parent.noEvaluations' | t }}</p>
+          }
+        </section>
+
+        <section class="block">
+          <div class="sheet-head">
+            <div>
+              <h3>{{ 'certificates.parentTitle' | t }}</h3>
+              <p class="section-hint">{{ 'certificates.parentHint' | t }}</p>
+            </div>
+            @if (certificates().length) {
+              <div class="row-actions">
+                <button type="button" class="ghost-btn" (click)="printCertificates()">
+                  {{ 'certificates.printAll' | t }}
+                </button>
+                <button
+                  type="button"
+                  class="ghost-btn"
+                  [disabled]="exportingCertificates()"
+                  (click)="exportCertificateImages()"
+                >
+                  {{ (exportingCertificates() ? 'certificates.exporting' : 'certificates.imageAll') | t }}
+                </button>
+              </div>
+            }
+          </div>
+
+          @if (certificatesLoading()) {
+            <p class="meta">{{ 'common.loading' | t }}</p>
+          } @else if (!certificates().length) {
+            <p class="meta">{{ 'certificates.noneYet' | t }}</p>
+          } @else {
+            <div class="item-list">
+              @for (certificate of certificates(); track certificate.id) {
+                <div class="item-row">
+                  <div class="item-body">
+                    <strong>{{ certificate.title }}</strong>
+                    <p class="meta">{{ certificate.classroomName }} · {{ formatDate(certificate.approvedAtUtc) }}</p>
+                  </div>
+                  <div class="row-actions">
+                    <button type="button" class="ghost-btn small-btn" (click)="toggleCertificate(certificate.id)">
+                      {{ (openCertificateId() === certificate.id ? 'certificates.hide' : 'certificates.show') | t }}
+                    </button>
+                  </div>
+                </div>
+                @if (openCertificateId() === certificate.id) {
+                  <app-certificate-preview
+                    [certificate]="certificate"
+                    [studentName]="selectedChild()?.displayName || overview()?.displayName || ''"
+                    [gradeLabelText]="gradeLabel(certificate.grade)"
+                  />
+                }
+              }
+            </div>
           }
         </section>
       }

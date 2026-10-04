@@ -1413,6 +1413,8 @@ export interface GradeCertificateListItem {
   subjectCount: number;
   studentCount: number;
   createdAtUtc: string;
+  isApproved: boolean;
+  approvedAtUtc?: string | null;
 }
 
 export interface GradeCertificateSubject {
@@ -1437,8 +1439,22 @@ export interface GradeCertificateSheet {
   classroomId: string;
   classroomName: string;
   grade?: number | null;
+  isApproved: boolean;
+  approvedAtUtc?: string | null;
   subjects: GradeCertificateSubject[];
   students: GradeCertificateStudent[];
+}
+
+/** An approved certificate as seen by the student or their parent, with that student's degrees. */
+export interface StudentGradeCertificate {
+  id: string;
+  title: string;
+  classroomId: string;
+  classroomName: string;
+  grade?: number | null;
+  approvedAtUtc: string;
+  subjects: GradeCertificateSubject[];
+  marks: { subjectId: string; degree: number }[];
 }
 
 export interface SaveGradeCertificatePayload {

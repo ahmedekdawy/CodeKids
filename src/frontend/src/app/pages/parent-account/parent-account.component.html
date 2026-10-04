@@ -1,0 +1,52 @@
+<div class="page parent-page">
+  <app-api-busy-indicator />
+  <header class="topbar">
+    <div>
+      <app-site-brand />
+      <h1>{{ 'parent.accountTitle' | t }}</h1>
+    </div>
+    <div class="topbar-actions">
+      <a class="chip quiz" routerLink="/parent">{{ 'parent.backToChildren' | t }}</a>
+      <app-theme-switcher />
+      <app-language-switcher />
+      <button type="button" class="ghost" (click)="auth.logout()">{{ 'common.signOut' | t }}</button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="feedback">{{ error() }}</p>
+  }
+  @if (message()) {
+    <p class="feedback ok">{{ message() }}</p>
+  }
+
+  <section class="block">
+    <header class="section-head">
+      <div>
+        <h2>{{ 'parent.accountTitle' | t }}</h2>
+        <p class="section-hint">{{ 'parent.accountHint' | t }}</p>
+      </div>
+    </header>
+    <form class="meeting-form" (ngSubmit)="saveAccount()">
+      <label>
+        {{ 'common.email' | t }}
+        <input [(ngModel)]="parentEmail" name="parentEmail" type="email" autocomplete="email" />
+      </label>
+      <label>
+        {{ 'common.mobile' | t }}
+        <input [(ngModel)]="parentMobile" name="parentMobile" autocomplete="tel" />
+      </label>
+      <label>
+        {{ 'common.newPasswordOptional' | t }}
+        <input [(ngModel)]="parentPassword" name="parentPassword" type="password" autocomplete="new-password" />
+      </label>
+      <label>
+        {{ 'auth.reset.confirmPassword' | t }}
+        <input [(ngModel)]="parentPasswordConfirm" name="parentPasswordConfirm" type="password" autocomplete="new-password" />
+      </label>
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? ('common.saving' | t) : ('common.save' | t) }}
+      </button>
+    </form>
+  </section>
+</div>

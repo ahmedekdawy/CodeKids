@@ -1,9 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
+import { SiteBrandService } from '../../site-brand.service';
 import { formatGradeLabel } from '../../grade.util';
 import { classroomHasZoomLinks } from '../../shared/classroom-zoom-links/classroom-zoom-links.util';
 import {
@@ -14,8 +17,18 @@ import {
   ParentAssessmentItem,
   ParentChildCourse,
   ParentChildOverview,
-  ParentDashboard
+  ParentDashboard,
+  StudentGradeCertificate
 } from '../../models';
+import {
+  CertificatePrintModel,
+  defaultCertificateLabels,
+  exportCertificateModelImages,
+  printCertificateModels,
+  safeCertificateFileName,
+  studentCertificatePrintModels
+} from '../../shared/certificate-print/certificate-print.util';
+import { CertificatePreviewComponent } from '../../shared/certificate-preview/certificate-preview.component';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 import { ThemeSwitcherComponent } from '../../shared/theme-switcher/theme-switcher.component';
 import { SiteBrandComponent } from '../../shared/site-brand/site-brand.component';
@@ -27,7 +40,7 @@ import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, IconActionButtonComponent, UserPhotoComponent],
+  imports: [FormsModule, RouterLink, TranslatePipe, SiteBrandComponent, LanguageSwitcherComponent, ThemeSwitcherComponent, NotificationBellComponent, ApiBusyIndicatorComponent, IconActionButtonComponent, UserPhotoComponent, CertificatePreviewComponent],
   templateUrl: './parent-dashboard.component.html',
   styleUrl: './parent-dashboard.component.css'
 })
@@ -35,6 +48,8 @@ export class ParentDashboardComponent {
   readonly auth = inject(AuthService);
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly brand = inject(SiteBrandService);
+  private readonly http = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -45,16 +60,15 @@ export class ParentDashboardComponent {
   readonly overview = signal<ParentChildOverview | null>(null);
   readonly selectedCourseId = signal<string | null>(null);
   readonly loadingChild = signal(false);
-  readonly savingParent = signal(false);
   readonly savingChild = signal(false);
   readonly impersonatingId = signal<string | null>(null);
   readonly message = signal('');
   readonly error = signal('');
+  readonly certificates = signal<StudentGradeCertificate[]>([]);
+  readonly certificatesLoading = signal(false);
+  readonly openCertificateId = signal<string | null>(null);
+  readonly exportingCertificates = signal(false);
 
-  parentEmail = '';
-  parentMobile = '';
-  parentPassword = '';
-  parentPasswordConfirm = '';
   childEmail = '';
   childMobile = '';
   childPassword = '';
@@ -113,6 +127,92 @@ export class ParentDashboardComponent {
         this.error.set(this.locale.fromApiError(err, 'parent.loadChildFailed'));
       }
     });
+    this.loadCertificates(child.studentId);
+  }
+
+  /** Approved certificates of the selected child; only these are visible to parents. */
+  loadCertificates(childId: string): void {
+    this.certificates.set([]);
+    this.openCertificateId.set(null);
+    this.certificatesLoading.set(true);
+    this.api.getChildGradeCertificates(childId).subscribe({
+      next: (certificates) => {
+        this.certificates.set(certificates ?? []);
+        this.certificatesLoading.set(false);
+      },
+      error: (err) => {
+        this.certificatesLoading.set(false);
+        this.error.set(this.locale.fromApiError(err, 'certificates.loadFailed'));
+      }
+    });
+  }
+
+  toggleCertificate(certificateId: string): void {
+    this.openCertificateId.set(this.openCertificateId() === certificateId ? null : certificateId);
+  }
+
+  /** Prints the selected certificate, or all of the child's certificates when none is selected. */
+  async printCertificates(): Promise<void> {
+    const models = await this.buildCertificateModels();
+    if (!models.length) return;
+    const printed = await printCertificateModels(models, this.locale.lang() === 'ar', this.printTitle(models));
+    if (!printed) {
+      this.error.set(this.locale.t('certificates.popupBlocked'));
+    }
+  }
+
+  /** Downloads one PNG per certificate; selected one first, or all of the child's certificates. */
+  async exportCertificateImages(): Promise<void> {
+    if (this.exportingCertificates()) return;
+    this.exportingCertificates.set(true);
+    try {
+      const models = await this.buildCertificateModels();
+      const items = models.map((model) => ({
+        model,
+        fileName: safeCertificateFileName(`${model.title} - ${model.studentName}`)
+      }));
+      await exportCertificateModelImages(items, this.locale.lang() === 'ar');
+      this.message.set(this.locale.t('certificates.exported'));
+    } catch {
+      this.error.set(this.locale.t('certificates.exportFailed'));
+    } finally {
+      this.exportingCertificates.set(false);
+    }
+  }
+
+  private async buildCertificateModels(): Promise<CertificatePrintModel[]> {
+    const openId = this.openCertificateId();
+    const items = openId
+      ? this.certificates().filter((certificate) => certificate.id === openId)
+      : this.certificates();
+    if (!items.length) return [];
+    const brand = await this.loadPrintBrand();
+    return studentCertificatePrintModels(
+      items,
+      this.selectedChild()?.displayName || this.overview()?.displayName || '',
+      this.gradeLabel(items[0]?.grade),
+      brand,
+      defaultCertificateLabels((key) => this.locale.t(key))
+    );
+  }
+
+  private printTitle(models: CertificatePrintModel[]): string {
+    return models.length === 1 ? models[0].title : this.locale.t('certificates.title');
+  }
+
+  /** Platform name and logo, with the logo inlined as a data URL for printing/exporting. */
+  private async loadPrintBrand(): Promise<{ name: string; logo: string | null }> {
+    const logoUrl = this.brand.logoUrl();
+    let logo: string | null = null;
+    if (logoUrl) {
+      const absolute = new URL(logoUrl, window.location.origin).href;
+      try {
+        logo = await blobToDataUrl(await firstValueFrom(this.http.get(absolute, { responseType: 'blob' })));
+      } catch {
+        logo = absolute;
+      }
+    }
+    return { name: this.brand.siteName(), logo };
   }
 
   selectCourse(course: ParentChildCourse): void {
@@ -141,37 +241,22 @@ export class ParentDashboardComponent {
     this.overview.set(null);
     this.message.set('');
     this.error.set('');
-    this.clearParentPassword();
     this.clearChildPassword();
-  }
-
-  saveParentAccount(): void {
-    const dashboard = this.dashboard();
-    if (!dashboard) return;
-    this.saveAccount(dashboard.parentId, {
-      email: this.parentEmail,
-      mobilePhone: this.parentMobile,
-      password: this.parentPassword,
-      confirmPassword: this.parentPasswordConfirm
-    }, 'self');
   }
 
   saveChildAccount(): void {
     const childId = this.selectedChildId();
     if (!childId) return;
-    this.saveAccount(childId, {
+    this.saveChild(childId);
+  }
+
+  private saveChild(userId: string): void {
+    const form = {
       email: this.childEmail,
       mobilePhone: this.childMobile,
       password: this.childPassword,
       confirmPassword: this.childPasswordConfirm
-    }, 'child');
-  }
-
-  private saveAccount(
-    userId: string,
-    form: { email: string; mobilePhone: string; password: string; confirmPassword: string },
-    kind: 'self' | 'child'
-  ): void {
+    };
     this.error.set('');
     this.message.set('');
     if (!form.email.trim() && !form.mobilePhone.trim()) {
@@ -189,8 +274,7 @@ export class ParentDashboardComponent {
       }
     }
 
-    const saving = kind === 'self' ? this.savingParent : this.savingChild;
-    saving.set(true);
+    this.savingChild.set(true);
     this.api
       .updateParentManagedAccount(userId, {
         email: form.email.trim() || null,
@@ -199,19 +283,13 @@ export class ParentDashboardComponent {
       })
       .subscribe({
         next: (account) => {
-          saving.set(false);
-          if (kind === 'self') {
-            this.clearParentPassword();
-            this.auth.patchUser({ email: account.email, mobilePhone: account.mobilePhone });
-            this.message.set(this.locale.t('parent.accountSaved'));
-          } else {
-            this.clearChildPassword();
-            this.message.set(this.locale.t('parent.childAccountSaved'));
-          }
-          this.reloadDashboard(kind === 'child' ? userId : undefined);
+          this.savingChild.set(false);
+          this.clearChildPassword();
+          this.message.set(this.locale.t('parent.childAccountSaved'));
+          this.reloadDashboard(userId);
         },
         error: (err) => {
-          saving.set(false);
+          this.savingChild.set(false);
           this.error.set(this.locale.fromApiError(err, 'parent.accountSaveFailed'));
         }
       });
@@ -221,8 +299,6 @@ export class ParentDashboardComponent {
     this.api.getParentDashboard().subscribe({
       next: (dashboard) => {
         this.dashboard.set(dashboard);
-        this.parentEmail = dashboard.parentEmail ?? '';
-        this.parentMobile = dashboard.parentMobilePhone ?? '';
         const childId = keepChildId ?? this.selectedChildId() ?? this.route.snapshot.queryParamMap.get('child');
         if (childId) {
           const child = dashboard.children.find((c) => c.studentId === childId);
@@ -242,11 +318,6 @@ export class ParentDashboardComponent {
     this.childEmail = child.email ?? '';
     this.childMobile = child.mobilePhone ?? '';
     this.clearChildPassword();
-  }
-
-  private clearParentPassword(): void {
-    this.parentPassword = '';
-    this.parentPasswordConfirm = '';
   }
 
   private clearChildPassword(): void {
@@ -337,4 +408,13 @@ export class ParentDashboardComponent {
     if (term === 'SecondTerm') return this.locale.t('student.secondTerm');
     return this.locale.t('student.fullYear');
   }
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ''));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
 }

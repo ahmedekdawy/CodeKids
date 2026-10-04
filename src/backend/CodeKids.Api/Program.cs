@@ -528,6 +528,16 @@ builder.Services.AddScoped<ICommandHandler<DeleteGradeCertificateCommand, bool>,
 
 builder.Services.AddScoped<ICommandHandler<SaveGradeCertificateMarksCommand, GradeCertificateSheetDto>, SaveGradeCertificateMarksCommandHandler>();
 
+builder.Services.AddScoped<ICommandHandler<ApproveGradeCertificateCommand, int>, ApproveGradeCertificateCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<RevokeGradeCertificateApprovalCommand, int>, RevokeGradeCertificateApprovalCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<ApproveAllGradeCertificatesCommand, int>, ApproveAllGradeCertificatesCommandHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListStudentGradeCertificatesQuery, IReadOnlyList<StudentGradeCertificateDto>>, ListStudentGradeCertificatesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListChildGradeCertificatesQuery, IReadOnlyList<StudentGradeCertificateDto>>, ListChildGradeCertificatesQueryHandler>();
+
 builder.Services.AddScoped<IQueryHandler<ListWeeklyStudyPlansQuery, IReadOnlyList<WeeklyStudyPlanDto>>, ListWeeklyStudyPlansQueryHandler>();
 builder.Services.AddScoped<IQueryHandler<ListAdminWeeklyStudyPlansQuery, PagedWeeklyStudyPlansResultDto>, ListAdminWeeklyStudyPlansQueryHandler>();
 

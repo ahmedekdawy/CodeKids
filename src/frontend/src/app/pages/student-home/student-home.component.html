@@ -123,6 +123,50 @@
     }
   </section>
 
+  @if (certificates().length) {
+    <section class="section-card certificates-card">
+      <div class="section-head">
+        <div>
+          <h2>{{ 'certificates.studentTitle' | t }}</h2>
+          <p class="section-hint">{{ 'certificates.studentHint' | t }}</p>
+        </div>
+        <div class="row-actions">
+          <button type="button" class="ghost-btn" (click)="printCertificates()">
+            {{ 'certificates.printAll' | t }}
+          </button>
+          <button
+            type="button"
+            class="ghost-btn"
+            [disabled]="exportingCertificates()"
+            (click)="exportCertificateImages()"
+          >
+            {{ (exportingCertificates() ? 'certificates.exporting' : 'certificates.imageAll') | t }}
+          </button>
+        </div>
+      </div>
+      <div class="item-list">
+        @for (certificate of certificates(); track certificate.id) {
+          <div class="item-row">
+            <div class="item-body">
+              <strong>{{ certificate.title }}</strong>
+              <p class="meta">{{ certificate.classroomName }} · {{ formatDate(certificate.approvedAtUtc) }}</p>
+            </div>
+            <button type="button" class="ghost-btn small-btn" (click)="toggleCertificate(certificate.id)">
+              {{ (openCertificateId() === certificate.id ? 'certificates.hide' : 'certificates.show') | t }}
+            </button>
+          </div>
+          @if (openCertificateId() === certificate.id) {
+            <app-certificate-preview
+              [certificate]="certificate"
+              [studentName]="auth.user()?.displayName || ''"
+              [gradeLabelText]="gradeLabel(certificate.grade)"
+            />
+          }
+        }
+      </div>
+    </section>
+  }
+
   <div class="student-layout">
     <main class="student-main">
       <section class="section-card">

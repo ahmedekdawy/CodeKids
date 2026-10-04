@@ -94,7 +94,21 @@
   }
 
   <section class="block">
-    <h3>{{ 'certificates.list' | t }}</h3>
+    <div class="sheet-head">
+      <div>
+        <h3>{{ 'certificates.list' | t }}</h3>
+        @if (isAdmin()) {
+          <p class="meta">
+            {{ 'certificates.approvalSummary' | t:{ approved: approvedCount(), pending: pendingCount() } }}
+          </p>
+        }
+      </div>
+      @if (isAdmin() && pendingCount() > 0) {
+        <button type="button" class="ghost-btn" [disabled]="approving()" (click)="approveAllCertificates()">
+          {{ (approving() ? 'certificates.approving' : 'certificates.approveAll') | t }}
+        </button>
+      }
+    </div>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
@@ -104,6 +118,9 @@
             <th>{{ 'common.grade' | t }}</th>
             <th>{{ 'certificates.subjects' | t }}</th>
             <th>{{ 'certificates.students' | t }}</th>
+            @if (isAdmin()) {
+              <th>{{ 'certificates.approval' | t }}</th>
+            }
             <th>{{ 'common.actions' | t }}</th>
           </tr>
         </thead>
@@ -117,12 +134,38 @@
               <td>{{ gradeLabel(certificate.grade) }}</td>
               <td>{{ certificate.subjectCount }}</td>
               <td>{{ certificate.studentCount }}</td>
+              @if (isAdmin()) {
+                <td>
+                  @if (certificate.isApproved) {
+                    <span class="approval-chip approved">✓ {{ 'certificates.approvedChip' | t }}</span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="ghost-btn small-btn approve-btn"
+                      [disabled]="approving()"
+                      (click)="approveCertificate(certificate)"
+                    >
+                      {{ 'certificates.approve' | t }}
+                    </button>
+                  }
+                </td>
+              }
               <td>
                 <div class="row-actions">
                   <button type="button" class="ghost-btn small-btn" (click)="openSheet(certificate)">
                     {{ 'certificates.enterDegrees' | t }}
                   </button>
                   @if (isAdmin()) {
+                    @if (certificate.isApproved) {
+                      <button
+                        type="button"
+                        class="ghost-btn small-btn"
+                        [disabled]="approving()"
+                        (click)="revokeApproval(certificate)"
+                      >
+                        {{ 'certificates.revokeApproval' | t }}
+                      </button>
+                    }
                     <app-icon-action-button kind="edit" [label]="'common.edit' | t" (action)="startEdit(certificate)" />
                     <app-icon-action-button
                       kind="delete"
@@ -136,7 +179,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="meta">
+              <td [attr.colspan]="isAdmin() ? 7 : 6" class="meta">
                 {{ (isAdmin() ? 'certificates.emptyAdmin' : 'certificates.emptyTeacher') | t }}
               </td>
             </tr>
@@ -173,6 +216,10 @@
 
       @if (!isAdmin()) {
         <p class="meta">{{ 'certificates.teacherHint' | t }}</p>
+      } @else if (current.isApproved) {
+        <p class="meta">✓ {{ 'certificates.sheetApprovedHint' | t }}</p>
+      } @else {
+        <p class="meta">{{ 'certificates.sheetPendingHint' | t }}</p>
       }
 
       <div class="table-wrap">
