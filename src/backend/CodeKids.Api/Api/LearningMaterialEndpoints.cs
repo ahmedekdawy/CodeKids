@@ -17,6 +17,7 @@ public static class LearningMaterialEndpoints
             HttpContext httpContext,
             IFileStorage fileStorage,
             IAppDbContext dbContext,
+            CodeKids.Infrastructure.Tenancy.ITenantContext tenantContext,
             Microsoft.Extensions.Options.IOptions<MediaOptions> mediaOptions,
             CancellationToken cancellationToken) =>
         {
@@ -40,11 +41,12 @@ public static class LearningMaterialEndpoints
 
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken, tenantContext.TenantId);
                 var asset = new CodeKids.Domain.Entities.MediaAsset
                 {
                     Id = Guid.NewGuid(),
                     StorageKey = storageKey,
+                    FilePath = fileStorage.GetRelativePath(storageKey),
                     FileName = uploadFileName,
                     ContentType = contentType,
                     SizeBytes = file.Length,

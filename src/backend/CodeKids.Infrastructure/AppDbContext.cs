@@ -844,6 +844,7 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.StorageKey).HasMaxLength(400).IsRequired();
+            entity.Property(x => x.FilePath).HasMaxLength(400);
             entity.Property(x => x.ExternalUrl).HasMaxLength(1000);
             entity.Property(x => x.FileName).HasMaxLength(260).IsRequired();
             entity.Property(x => x.ContentType).HasMaxLength(120).IsRequired();

@@ -1103,6 +1103,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(260)
                         .HasColumnType("character varying(260)");
 
+                    b.Property<string>("FilePath")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
                     b.Property<long>("SizeBytes")
                         .HasColumnType("bigint");
 

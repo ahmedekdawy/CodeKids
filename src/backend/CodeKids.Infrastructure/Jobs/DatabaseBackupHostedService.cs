@@ -130,7 +130,8 @@ public sealed class DatabaseBackupHostedService(
                 stream,
                 fileName,
                 "application/octet-stream",
-                cancellationToken);
+                cancellationToken,
+                tenantId: tenant.Id);
             logger.LogInformation(
                 "Uploaded database backup for tenant {TenantId}. StorageKey={StorageKey}",
                 tenant.Id,

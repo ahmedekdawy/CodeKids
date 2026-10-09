@@ -14,17 +14,14 @@ public sealed class TeraboxFileStorage(
         Stream content,
         string fileName,
         string contentType,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? tenantId = null)
     {
-        var safeName = MediaFileTypes.EnsureFileName(fileName, contentType);
-        var ext = Path.GetExtension(safeName);
-        if (string.IsNullOrWhiteSpace(ext) || ext.Length > 10)
-        {
-            ext = MediaFileTypes.ExtensionForContentType(contentType);
-        }
-
-        var remoteName = $"{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
-        var remoteDirectory = $"{NormalizeDirectory(_options.RemoteDirectory)}/{DateTime.UtcNow:yyyy/MM/dd}";
+        var relativePath = MediaStoragePaths.NewRelativePath(tenantId, fileName, contentType);
+        var slash = relativePath.LastIndexOf('/');
+        var remoteName = relativePath[(slash + 1)..];
+        var remoteDirectory = $"{NormalizeDirectory(_options.RemoteDirectory)}/{relativePath[..slash]}";
+        var ext = Path.GetExtension(remoteName);
 
         var tempPath = Path.Combine(Path.GetTempPath(), $"codekids-{Guid.NewGuid():N}{ext}");
         try
@@ -84,6 +81,19 @@ public sealed class TeraboxFileStorage(
         }
 
         return teraboxClient.ExistsAsync(remotePath).GetAwaiter().GetResult();
+    }
+
+    public string? GetRelativePath(string? storageKey)
+    {
+        if (!TeraboxStorageKey.TryParse(storageKey, out _, out var remotePath))
+        {
+            return null;
+        }
+
+        var root = NormalizeDirectory(_options.RemoteDirectory) + "/";
+        return remotePath.StartsWith(root, StringComparison.OrdinalIgnoreCase)
+            ? remotePath[root.Length..]
+            : remotePath.TrimStart('/');
     }
 
     private static string NormalizeDirectory(string directory)

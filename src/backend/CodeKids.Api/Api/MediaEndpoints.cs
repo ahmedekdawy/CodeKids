@@ -19,6 +19,7 @@ public static class MediaEndpoints
             HttpContext httpContext,
             IFileStorage fileStorage,
             IAppDbContext dbContext,
+            ITenantContext tenantContext,
             Microsoft.Extensions.Options.IOptions<MediaOptions> mediaOptions,
             CancellationToken cancellationToken) =>
         {
@@ -43,11 +44,12 @@ public static class MediaEndpoints
                 }
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken, tenantContext.TenantId);
                 var asset = new CodeKids.Domain.Entities.MediaAsset
                 {
                     Id = Guid.NewGuid(),
                     StorageKey = storageKey,
+                    FilePath = fileStorage.GetRelativePath(storageKey),
                     FileName = Path.GetFileName(file.FileName),
                     ContentType = contentType,
                     SizeBytes = file.Length,

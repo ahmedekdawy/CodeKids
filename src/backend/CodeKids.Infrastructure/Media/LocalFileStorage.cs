@@ -14,16 +14,11 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
         Stream content,
         string fileName,
         string contentType,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? tenantId = null)
     {
         Directory.CreateDirectory(_root);
-        var ext = Path.GetExtension(fileName);
-        if (string.IsNullOrWhiteSpace(ext) || ext.Length > 10)
-        {
-            ext = GuessExtension(contentType);
-        }
-
-        var storageKey = $"{DateTime.UtcNow:yyyy/MM/dd}/{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
+        var storageKey = MediaStoragePaths.NewRelativePath(tenantId, fileName, contentType);
         var fullPath = Path.Combine(_root, storageKey.Replace('/', Path.DirectorySeparatorChar));
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
 
@@ -56,6 +51,9 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
     }
 
     public bool Exists(string storageKey) => File.Exists(ResolvePath(storageKey));
+
+    public string? GetRelativePath(string? storageKey) =>
+        string.IsNullOrWhiteSpace(storageKey) ? null : storageKey.Replace('\\', '/').TrimStart('/');
 
     public bool SupportsRangeProcessing => true;
 
@@ -92,9 +90,6 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
 
         return fullPath;
     }
-
-    private static string GuessExtension(string contentType) =>
-        MediaFileTypes.ExtensionForContentType(contentType);
 }
 
 /// <summary>A read-only wrapper stream limited to the first <paramref name="length"/> bytes of an underlying stream.</summary>
