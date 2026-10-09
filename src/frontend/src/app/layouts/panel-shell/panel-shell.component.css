@@ -279,13 +279,18 @@
   gap: 0.5rem;
   width: 100%;
   margin: 0.15rem 0 0.1rem;
-  padding: 0.2rem 0.7rem;
-  background: transparent;
+  padding: 0.4rem 0.7rem;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
   border: 0;
   border-radius: var(--radius-sm);
   cursor: pointer;
   color: inherit;
   font: inherit;
+}
+
+/* Submenu items sit on a neutral tint so they read as children of the accent-tinted category. */
+.nav-category > a {
+  background: color-mix(in srgb, var(--text) 7%, transparent);
 }
 
 .nav-category-toggle:hover .nav-category-label {
