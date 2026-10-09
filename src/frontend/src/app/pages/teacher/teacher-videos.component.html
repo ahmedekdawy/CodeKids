@@ -104,7 +104,7 @@
               <app-searchable-select
                 [(ngModel)]="selectedLessonId"
                 name="lessonId"
-                [emptyLabel]="'videos.optionalLesson' | t"
+                [emptyLabel]="'videos.selectLesson' | t"
                 [options]="lessonsForUnit().map(l => ({ value: l.id, label: l.title }))"
               />
             </label>
@@ -159,10 +159,10 @@
           }
 
           <div class="form-actions">
-            <button type="submit" [disabled]="uploading() || !lessonVideoUrl.trim()">
+            <button type="submit" [disabled]="uploading() || !selectedLessonId || !lessonVideoUrl.trim()">
               {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
             </button>
-            <button type="button" class="ghost-btn" [disabled]="uploading() || !lessonVideoFile()" (click)="attachLessonVideoFile()">
+            <button type="button" class="ghost-btn" [disabled]="uploading() || !selectedLessonId || !lessonVideoFile()" (click)="attachLessonVideoFile()">
               {{
                 uploadProgress() != null
                   ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
@@ -262,12 +262,91 @@
 
     @if (tab() === 'course') {
       <section class="block">
+        <div class="card-head">
+          <h3>{{ 'videos.uploadCourse' | t }}</h3>
+          <p class="meta">{{ 'videos.teacherCourseHint' | t }}</p>
+        </div>
+
+        <form class="upload-form" (ngSubmit)="attachCourseVideoLink()">
+          <div class="field-grid">
+            <label>
+              {{ 'common.course' | t }}
+              <app-searchable-select
+                [(ngModel)]="courseUploadCourseId"
+                name="courseUploadCourseId"
+                [options]="courses().map(c => ({ value: c.id, label: courseLabel(c) }))"
+              />
+            </label>
+            <label>
+              {{ 'common.title' | t }}
+              <input [(ngModel)]="courseVideoTitle" name="courseVideoTitle" [placeholder]="'videos.optionalTitle' | t" />
+            </label>
+          </div>
+
+          <div class="source-row">
+            <label class="source-link">
+              {{ 'videos.videoLink' | t }}
+              <input
+                type="url"
+                [(ngModel)]="courseVideoUrl"
+                name="courseVideoUrl"
+                [placeholder]="'videos.videoLinkPlaceholder' | t"
+              />
+            </label>
+
+            <div class="source-file">
+              <span class="source-file-label">{{ 'videos.videoFile' | t }}</span>
+              <div class="source-file-row">
+                <label class="file-btn" [class.disabled]="uploading()">
+                  {{ 'videos.chooseFile' | t }}
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm,video/quicktime"
+                    hidden
+                    (change)="onCourseFileSelected($event)"
+                    [disabled]="uploading()"
+                  />
+                </label>
+                <span class="file-name">
+                  @if (courseVideoFile(); as file) {
+                    {{ file.name }} · {{ formatBytes(file.size) }}
+                  } @else {
+                    {{ 'videos.noFileChosen' | t }}
+                  }
+                </span>
+              </div>
+            </div>
+          </div>
+
+          @if (uploadProgress() != null) {
+            <div class="upload-progress" aria-live="polite">
+              <div class="upload-progress-bar">
+                <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
+              </div>
+              <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+            </div>
+          }
+
+          <div class="form-actions">
+            <button type="submit" [disabled]="uploading() || !courseUploadCourseId || !courseVideoUrl.trim()">
+              {{ (uploading() ? 'videos.attaching' : 'videos.attachLink') | t }}
+            </button>
+            <button type="button" class="ghost-btn" [disabled]="uploading() || !courseUploadCourseId || !courseVideoFile()" (click)="attachCourseVideoFile()">
+              {{
+                uploadProgress() != null
+                  ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                  : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
+              }}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="block">
         <div class="card-head row">
           <h3>{{ 'videos.courseList' | t }}</h3>
           <p class="meta">{{ shownLabel(filteredCourseVideos().length, courseVideos().length) }}</p>
         </div>
-        <p class="meta">{{ 'videos.teacherCourseHint' | t }}</p>
-
         <div class="video-filters">
           <label>
             {{ 'common.course' | t }}
