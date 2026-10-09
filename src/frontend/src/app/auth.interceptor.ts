@@ -6,9 +6,11 @@ import { currentTenantId } from './tenant';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.token();
-  const headers: Record<string, string> = {
-    'X-Tenant-Id': currentTenantId()
-  };
+  const headers: Record<string, string> = {};
+  const tenantId = currentTenantId();
+  if (tenantId) {
+    headers['X-Tenant-Id'] = tenantId;
+  }
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }

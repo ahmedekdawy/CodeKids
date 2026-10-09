@@ -22,6 +22,9 @@ public static class TenantEndpoints
             }
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+        app.MapGet("/api/tenants/default", (CodeKids.Infrastructure.Tenancy.TenantCatalog catalog) =>
+            Results.Ok(new { tenantId = catalog.DefaultTenantId })).AllowAnonymous();
+
         app.MapPost("/api/tenants/register", async (
             RegisterTenantRequest request,
             ICommandHandler<RegisterTenantCommand, RegisterTenantResult> handler,

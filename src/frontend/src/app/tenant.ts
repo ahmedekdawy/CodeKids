@@ -1,4 +1,5 @@
 import { environment } from '../environments/environment';
+import { resolveApiBaseUrl } from './api-base-url';
 
 const TENANT_KEY = 'codekids_tenant';
 const USER_KEY = 'codekids_user';
@@ -41,7 +42,14 @@ function tenantFromSavedUser(): string | null {
   }
 }
 
-export function currentTenantId(): string {
+/** Tenant ids are slugs: letters, digits, dashes and underscores. */
+export function normalizeTenantId(raw: string | null | undefined): string | null {
+  const value = (raw ?? '').trim().toLowerCase();
+  return /^[a-z0-9_-]{1,64}$/.test(value) ? value : null;
+}
+
+/** Null when nothing identifies the tenant; the login page then asks the user for it. */
+export function currentTenantId(): string | null {
   const fromQuery = tenantFromQueryString();
   if (fromQuery) {
     setCurrentTenantId(fromQuery);
@@ -66,7 +74,18 @@ export function currentTenantId(): string {
     return mapped;
   }
 
-  const fallback = environment.defaultTenant || 'abakera';
-  setCurrentTenantId(fallback);
-  return fallback;
+  return null;
+}
+
+/** When the browser knows no tenant, adopt the API's Tenants:Default (if one is configured). */
+export async function loadDefaultTenant(): Promise<void> {
+  if (currentTenantId()) return;
+  try {
+    const response = await fetch(`${resolveApiBaseUrl()}/tenants/default`);
+    if (!response.ok) return;
+    const body = (await response.json()) as { tenantId?: string | null };
+    setCurrentTenantId(body.tenantId);
+  } catch {
+    // API unreachable: leave the tenant unset so the login page asks for it.
+  }
 }

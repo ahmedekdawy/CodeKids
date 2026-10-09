@@ -8,7 +8,6 @@ export const environment = {
   openRouterApiKey: '',
   zoomCallbackUrl: 'https://abakera.runasp.net/api/zoom/callback',
   zoomFrontendRedirectUrl: 'https://abakeraadmin.runasp.net/teacher/zoom',
-  defaultTenant: 'abakera',
   tenantHosts: {
     localhost: 'abakera',
     'abakeraadmin.runasp.net': 'abakera',

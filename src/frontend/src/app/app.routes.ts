@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, roleGuard } from './auth.guard';
+import { authGuard, roleGuard, tenantGuard } from './auth.guard';
 import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
@@ -67,14 +67,14 @@ import { AssessmentLinkEntryComponent } from './pages/assessment-link-entry/asse
 import { SmartAssistantAdminComponent } from './pages/admin/smart-assistant-admin.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', component: LandingComponent },
+  { path: '', pathMatch: 'full', component: LandingComponent, canActivate: [tenantGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'register', component: RegisterComponent, canActivate: [tenantGuard] },
   { path: 'register-tenant', component: RegisterTenantComponent },
   { path: 'verify-tenant', component: VerifyTenantComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'go/:key', component: AssessmentLinkEntryComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [tenantGuard] },
+  { path: 'reset-password', component: ResetPasswordComponent, canActivate: [tenantGuard] },
+  { path: 'go/:key', component: AssessmentLinkEntryComponent, canActivate: [tenantGuard] },
   {
     path: 'student',
     canActivate: [authGuard, roleGuard(['Student'])],

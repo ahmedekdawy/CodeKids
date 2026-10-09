@@ -14,7 +14,10 @@ public sealed class TenantCatalog
     public const string HeaderName = "X-Tenant-Id";
 
     public bool Enabled { get; }
+    /// <summary>Connection used when a request matches no tenant; see <see cref="DefaultTenantId"/> for its identity.</summary>
     public TenantInfo Default { get; }
+    /// <summary>Tenants:Default from config. Null when unset: requests that name no tenant then get no tenant at all.</summary>
+    public string? DefaultTenantId { get; }
     public IReadOnlyList<TenantInfo> All { get; }
 
     public TenantCatalog(IConfiguration configuration)
@@ -83,8 +86,9 @@ public sealed class TenantCatalog
         }
 
         All = items;
-        var defaultId = configuration["Tenants:Default"] ?? items[0].Id;
-        Default = items.FirstOrDefault(x => string.Equals(x.Id, defaultId, StringComparison.OrdinalIgnoreCase))
+        var defaultId = configuration["Tenants:Default"]?.Trim();
+        DefaultTenantId = string.IsNullOrWhiteSpace(defaultId) ? null : defaultId;
+        Default = items.FirstOrDefault(x => string.Equals(x.Id, DefaultTenantId, StringComparison.OrdinalIgnoreCase))
             ?? items[0];
     }
 
@@ -109,7 +113,7 @@ public sealed class TenantCatalog
         var originHost = HostFromOrigin(origin);
         var connection = FindByHost(originHost)
             ?? FindByHost(NormalizeHost(requestHost))
-            ?? Default;
+            ?? (DefaultTenantId is null ? Default with { Id = string.Empty } : Default);
 
         // Same-DB logical tenants (signup slugs) are not catalog connection ids.
         // Keep the resolved connection string but honor the header as TenantId.
