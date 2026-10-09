@@ -359,6 +359,90 @@ public sealed class TeraboxClient
         return new HttpDependencyStream(stream, response, client);
     }
 
+    /// <summary>
+    /// Opens a byte range of a Terabox file by forwarding the Range header to the direct
+    /// download link. Returns the upstream content stream plus resolved range metadata so
+    /// the media endpoint can emit proper 206 Partial Content responses (video seeking).
+    /// </summary>
+    public async Task<StorageReadResult> OpenRangeAsync(long fsId, string? remotePath, long? start, long? end, CancellationToken cancellationToken = default)
+    {
+        var link = await GetRawDirectLinkAsync(fsId, remotePath, cancellationToken);
+        var client = CreateClient();
+
+        HttpResponseMessage? response = null;
+        try
+        {
+            // Terabox download links redirect to CDN hosts; send once, then re-send with
+            // the Range header applied to the final redirect target.
+            using var request = new HttpRequestMessage(HttpMethod.Get, link);
+            PrepareDownloadRequest(request);
+            response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            if (response.StatusCode is System.Net.HttpStatusCode.Redirect or System.Net.HttpStatusCode.MovedPermanently or System.Net.HttpStatusCode.Found or System.Net.HttpStatusCode.SeeOther or System.Net.HttpStatusCode.TemporaryRedirect)
+            {
+                var redirectUrl = response.Headers.Location?.ToString();
+                response.Dispose();
+                response = null;
+                if (string.IsNullOrWhiteSpace(redirectUrl))
+                {
+                    throw new InvalidOperationException("Terabox file download redirect had no location.");
+                }
+                if (redirectUrl.StartsWith("//", StringComparison.Ordinal))
+                {
+                    redirectUrl = $"https:{redirectUrl}";
+                }
+
+                var redirectRequest = new HttpRequestMessage(HttpMethod.Get, redirectUrl);
+                redirectRequest.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(start, end);
+                PrepareDownloadRequest(redirectRequest);
+                response = await client.SendAsync(redirectRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            }
+            else
+            {
+                // No redirect: repeat against the original link with the Range header.
+                response.Dispose();
+                var rangedRequest = new HttpRequestMessage(HttpMethod.Get, link);
+                rangedRequest.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(start, end);
+                PrepareDownloadRequest(rangedRequest);
+                response = await client.SendAsync(rangedRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            }
+
+            if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.PartialContent)
+            {
+                var code = (int)response.StatusCode;
+                response.Dispose();
+                client.Dispose();
+                throw new InvalidOperationException($"Terabox file download failed ({code}).");
+            }
+
+            // Resolve total length from Content-Range (bytes start-end/total) or Content-Length.
+            long? total = null;
+            var contentRange = response.Content.Headers.ContentRange;
+            if (contentRange?.Length.HasValue == true)
+            {
+                total = contentRange.Length;
+            }
+            else if (contentRange?.HasRange == true && contentRange.From.HasValue && contentRange.To.HasValue)
+            {
+                total = contentRange.To + 1;
+            }
+            else if (response.Headers.AcceptRanges.Contains("bytes") && response.Content.Headers.ContentLength.HasValue && !start.HasValue)
+            {
+                total = response.Content.Headers.ContentLength;
+            }
+
+            var fromHeader = contentRange?.From ?? start ?? 0;
+            var toHeader = contentRange?.To ?? end;
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            return new StorageReadResult(new HttpDependencyStream(stream, response, client), true, fromHeader, toHeader, total);
+        }
+        catch
+        {
+            response?.Dispose();
+            client.Dispose();
+            throw;
+        }
+    }
+
     public async Task DeleteAsync(string remotePath, CancellationToken cancellationToken = default)
     {
         EnsureConfigured();

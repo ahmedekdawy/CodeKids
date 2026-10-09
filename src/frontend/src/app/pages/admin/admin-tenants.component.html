@@ -1,0 +1,54 @@
+<div class="panel-page">
+  <h2>{{ 'admin.tenants.title' | t }}</h2>
+  <p class="meta">{{ 'admin.tenants.subtitle' | t }}</p>
+
+  <app-page-feedback [error]="error()" />
+
+  <section class="block">
+    <div class="list-filters">
+      <button type="button" class="ghost-btn" (click)="reload()">
+        {{ 'common.refresh' | t }}
+      </button>
+      <span class="meta">{{ 'admin.tenants.count' | t }}: {{ rows().length }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'admin.tenants.name' | t }}</th>
+            <th>{{ 'admin.tenants.slug' | t }}</th>
+            <th>{{ 'admin.tenants.email' | t }}</th>
+            <th>{{ 'admin.tenants.mobile' | t }}</th>
+            <th>{{ 'admin.tenants.admin' | t }}</th>
+            <th>{{ 'admin.tenants.status' | t }}</th>
+            <th>{{ 'admin.tenants.users' | t }}</th>
+            <th>{{ 'admin.tenants.created' | t }}</th>
+            <th>{{ 'admin.tenants.verified' | t }}</th>
+            <th>{{ 'admin.tenants.lastLogin' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td>{{ row.name || ('common.emDash' | t) }}</td>
+              <td><code>{{ row.slug || row.id }}</code></td>
+              <td>{{ row.email || ('common.emDash' | t) }}</td>
+              <td>{{ row.mobilePhone || ('common.emDash' | t) }}</td>
+              <td>{{ row.displayName || ('common.emDash' | t) }}</td>
+              <td>{{ statusLabel(row.status) }}</td>
+              <td>{{ row.userCount }}</td>
+              <td>{{ formatUtc(row.createdAtUtc) }}</td>
+              <td>{{ formatUtc(row.verifiedAtUtc) }}</td>
+              <td>{{ formatUtc(row.lastLoginUtc) }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>

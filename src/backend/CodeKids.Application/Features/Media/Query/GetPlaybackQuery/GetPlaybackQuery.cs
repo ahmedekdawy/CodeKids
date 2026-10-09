@@ -6,4 +6,4 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Media;
 
-public sealed record GetPlaybackQuery(Guid MediaAssetId, Guid UserId, string BaseApiUrl) : IQuery<PlaybackDto>;
+public sealed record GetPlaybackQuery(Guid MediaAssetId, Guid UserId, string BaseApiUrl, string? TenantId = null) : IQuery<PlaybackDto>;

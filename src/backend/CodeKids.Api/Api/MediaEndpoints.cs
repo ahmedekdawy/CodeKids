@@ -1,6 +1,7 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Media;
 using CodeKids.Domain.Abstractions;
+using CodeKids.Domain.Entities;
 using CodeKids.Infrastructure;
 using CodeKids.Infrastructure.Tenancy;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,7 @@ public static class MediaEndpoints
             HttpContext httpContext,
             IFileStorage fileStorage,
             IAppDbContext dbContext,
+            ITenantContext tenantContext,
             Microsoft.Extensions.Options.IOptions<MediaOptions> mediaOptions,
             CancellationToken cancellationToken) =>
         {
@@ -42,11 +44,12 @@ public static class MediaEndpoints
                 }
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken, tenantContext.TenantId);
                 var asset = new CodeKids.Domain.Entities.MediaAsset
                 {
                     Id = Guid.NewGuid(),
                     StorageKey = storageKey,
+                    FilePath = fileStorage.GetRelativePath(storageKey),
                     FileName = Path.GetFileName(file.FileName),
                     ContentType = contentType,
                     SizeBytes = file.Length,
@@ -228,7 +231,7 @@ public static class MediaEndpoints
                     mediaOptions.Value.PublicBaseUrl,
                     httpContext);
                 return Results.Ok(await handler.Handle(
-                    new GetPlaybackQuery(mediaAssetId, userId, baseApiUrl),
+                    new GetPlaybackQuery(mediaAssetId, userId, baseApiUrl, tenant.Id),
                     cancellationToken));
             }
             catch (Exception ex)
@@ -239,23 +242,96 @@ public static class MediaEndpoints
 
         app.MapGet("/api/media/stream", async (
             string token,
+            HttpContext httpContext,
             IMediaAccessTokenService tokenService,
             IAppDbContext dbContext,
             IFileStorage fileStorage,
+            TenantCatalog tenantCatalog,
+            Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext> dbOptions,
             CancellationToken cancellationToken) =>
         {
-            if (!tokenService.TryValidate(token, out var mediaAssetId, out _, out _))
+            if (!tokenService.TryValidate(token, out var mediaAssetId, out _, out _, out var tokenTenantId))
             {
                 return Results.Unauthorized();
             }
-            var media = await dbContext.MediaAssets.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == mediaAssetId, cancellationToken);
+
+            // Anonymous <video> requests carry no X-Tenant-Id header, so the scoped
+            // DbContext would resolve to the default tenant. The signed token embeds
+            // the tenant that issued the playback URL - use it to scope the lookup.
+            var media = await LoadMediaForTokenTenantAsync(
+                dbContext,
+                dbOptions,
+                tenantCatalog,
+                tokenTenantId,
+                httpContext,
+                mediaAssetId,
+                cancellationToken);
+            if (media is null)
             if (media is null || string.IsNullOrWhiteSpace(media.StorageKey))
             {
                 return Results.NotFound();
             }
-            var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
             var contentType = MediaFileTypes.ResolveContentType(media.ContentType, media.FileName);
+
+            // Serve proper 206 Partial Content responses so the browser's <video> element
+            // can seek/scrub forward and backward within streamed videos.
+            var rangeHeader = httpContext.Request.Headers.Range.ToString();
+            if (!string.IsNullOrWhiteSpace(rangeHeader) &&
+                System.Net.Http.Headers.RangeHeaderValue.TryParse(rangeHeader, out var range) &&
+                range.Ranges.Count > 0)
+            {
+                var spec = range.Ranges.First();
+                long? start = spec.From;
+                long? end = spec.To;
+
+                if (!start.HasValue && end.HasValue)
+                {
+                    // Suffix range (bytes=-N): last N bytes; requires total length.
+                    var probe = await fileStorage.OpenRangeAsync(media.StorageKey, null, null, cancellationToken);
+                    if (probe.TotalLength is long totalForSuffix)
+                    {
+                        await probe.Content.DisposeAsync();
+                        start = Math.Max(0, totalForSuffix - end.Value);
+                        end = totalForSuffix - 1;
+                    }
+                    else
+                    {
+                        await probe.Content.DisposeAsync();
+                        start = 0;
+                    }
+                }
+
+                var result = await fileStorage.OpenRangeAsync(media.StorageKey, start, end, cancellationToken);
+                if (!result.RangeHandled)
+                {
+                    await result.Content.DisposeAsync();
+                    // Provider cannot serve ranges; fall back to full-content streaming.
+                    var fallback = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
+                    return Results.File(fallback, contentType, enableRangeProcessing: true);
+                }
+
+                if (result.TotalLength.HasValue && start.HasValue && start.Value >= result.TotalLength.Value)
+                {
+                    await result.Content.DisposeAsync();
+                    return Results.StatusCode(StatusCodes.Status416RangeNotSatisfiable);
+                }
+
+                long from = result.Start ?? start ?? 0;
+                long to = result.End ?? (result.TotalLength.HasValue ? result.TotalLength.Value - 1 : from);
+                long totalLength = result.TotalLength ?? to + 1;
+
+                httpContext.Response.StatusCode = StatusCodes.Status206PartialContent;
+                httpContext.Response.ContentType = contentType;
+                httpContext.Response.Headers.AcceptRanges = "bytes";
+                httpContext.Response.Headers.ContentRange = $"bytes {from}-{to}/{totalLength}";
+                httpContext.Response.ContentLength = to - from + 1;
+                await result.Content.CopyToAsync(httpContext.Response.Body, cancellationToken);
+                return Results.Empty;
+            }
+
+            // No Range header: full download; still advertise range support for future seeks.
+            var stream = await fileStorage.OpenReadAsync(media.StorageKey, cancellationToken);
+            httpContext.Response.Headers.AcceptRanges = "bytes";
             return Results.File(
                 stream,
                 contentType: contentType,
@@ -297,5 +373,25 @@ public static class MediaEndpoints
             return Results.Ok(await handler.Handle(new GetWatchSessionsQuery(userId, mediaAssetId), cancellationToken));
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
         return app;
+    }
+
+    private static async Task<MediaAsset?> LoadMediaForTokenTenantAsync(
+        IAppDbContext dbContext,
+        Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext> dbOptions,
+        TenantCatalog tenantCatalog,
+        string? tokenTenantId,
+        HttpContext httpContext,
+        Guid mediaAssetId,
+        CancellationToken cancellationToken)
+    {
+        // All tenants use the same connection string � always use the provided request-scoped dbContext.
+        // Ensure we bypass any global query filters (tenant scoping) and explicitly filter by the token tenant id.
+        return await dbContext.MediaAssets
+            .AsNoTracking()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x =>
+                x.Id == mediaAssetId &&
+                (tokenTenantId == null || x.TenantId == tokenTenantId),
+                cancellationToken);
     }
 }

@@ -12,7 +12,7 @@ import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { TopStudentsBoardComponent } from '../../shared/top-students-board/top-students-board.component';
-import { setCurrentTenantId } from '../../tenant';
+import { currentTenantId, normalizeTenantId, setCurrentTenantId } from '../../tenant';
 
 @Component({
   selector: 'app-login',
@@ -30,9 +30,12 @@ export class LoginComponent implements OnInit {
   readonly brand = inject(SiteBrandService);
 
   readonly form = this.fb.nonNullable.group({
+    tenant: [''],
     login: ['', Validators.required],
     password: ['', Validators.required]
   });
+  /** True when nothing identified the tenant, so the form asks for it. */
+  readonly askTenant = signal(false);
   readonly loading = signal(false);
   readonly error = signal('');
 
@@ -44,6 +47,13 @@ export class LoginComponent implements OnInit {
 
     if (this.auth.isLoggedIn()) {
       void this.router.navigateByUrl(this.postLoginUrl());
+      return;
+    }
+
+    if (!currentTenantId()) {
+      this.askTenant.set(true);
+      this.form.controls.tenant.addValidators(Validators.required);
+      this.form.controls.tenant.updateValueAndValidity();
     }
   }
 
@@ -53,9 +63,31 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const { login, password } = this.form.getRawValue();
-    this.loading.set(true);
+    const { tenant, login, password } = this.form.getRawValue();
     this.error.set('');
+    if (!this.askTenant()) {
+      this.signIn(login, password);
+      return;
+    }
+
+    const tenantId = normalizeTenantId(tenant);
+    if (!tenantId) {
+      this.error.set(this.locale.t('auth.tenant.invalid'));
+      return;
+    }
+
+    // Requests read the tenant from the query string first, so update the URL before signing in.
+    setCurrentTenantId(tenantId);
+    void this.router
+      .navigate([], { relativeTo: this.route, queryParams: { tenant: tenantId }, queryParamsHandling: 'merge', replaceUrl: true })
+      .then(() => {
+        this.brand.load();
+        this.signIn(login, password);
+      });
+  }
+
+  private signIn(login: string, password: string): void {
+    this.loading.set(true);
     this.auth.login(login.trim(), password).subscribe({
       next: () => {
         this.loading.set(false);

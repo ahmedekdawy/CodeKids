@@ -1,14 +1,13 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://schoolacadmyapi.runasp.net/api',
-  appBaseUrl: 'http://schoolacadmy.runasp.net',
+  apiBaseUrl: 'https://schoolacadmyapi.runasp.net/api',
+  appBaseUrl: 'https://schoolacadmy.runasp.net',
   teraboxBaseUrl: 'https://www.1024terabox.com',
   openRouterBaseUrl: 'https://openrouter.ai/api/v1',
   openRouterModel: 'openai/gpt-4o-mini',
   openRouterApiKey: '',
-  zoomCallbackUrl: 'http://abakera.runasp.net/api/zoom/callback',
-  zoomFrontendRedirectUrl: 'http://schoolacadmy.runasp.net/teacher/zoom',
-  defaultTenant: 'abakera',
+  zoomCallbackUrl: 'https://abakera.runasp.net/api/zoom/callback',
+  zoomFrontendRedirectUrl: 'https://schoolacadmy.runasp.net/teacher/zoom',
   tenantHosts: {
     localhost: 'abakera',
     'schoolacadmy.runasp.net': 'esraa',
@@ -20,7 +19,7 @@ export const environment = {
     'abakera.runasp.net': 'https://abakera.runasp.net/api',
     'abakeraadmin.runasp.net': 'https://abakera.runasp.net/api',
     'www.abakeraadmin.runasp.net': 'https://abakera.runasp.net/api',
-    'schoolacadmy.runasp.net': 'http://schoolacadmyapi.runasp.net/api',
-    'www.schoolacadmy.runasp.net': 'http://schoolacadmyapi.runasp.net/api'
+    'schoolacadmy.runasp.net': 'https://schoolacadmyapi.runasp.net/api',
+    'www.schoolacadmy.runasp.net': 'https://schoolacadmyapi.runasp.net/api'
   } as Record<string, string>
 };

@@ -12,6 +12,12 @@
     <p class="supporting">{{ 'auth.login.subtitle' | t }}</p>
 
     <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+      @if (askTenant()) {
+        <label>
+          <span>{{ 'auth.tenant.label' | t }}</span>
+          <input formControlName="tenant" type="text" [placeholder]="'auth.tenant.placeholder' | t" autocomplete="organization" autocapitalize="none" />
+        </label>
+      }
       <label>
         <span>{{ 'auth.loginOrMobile' | t }}</span>
         <input formControlName="login" type="text" placeholder="" autocomplete="username" />

@@ -85,7 +85,7 @@ export class ChatRealtimeService {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(this.hubUrl(), {
         accessTokenFactory: () => this.auth.token() ?? '',
-        headers: { 'X-Tenant-Id': currentTenantId() }
+        headers: { 'X-Tenant-Id': currentTenantId() ?? '' }
       })
       .withAutomaticReconnect()
       .build();

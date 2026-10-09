@@ -20,6 +20,10 @@ export class AuthService {
   readonly token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
   readonly impersonator = signal<AuthUser | null>(this.readImpersonator());
 
+  constructor() {
+    setCurrentTenantId(this.user()?.tenantId);
+  }
+
   login(login: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, { email: login, password }).pipe(
       tap((response) => this.persist(response))

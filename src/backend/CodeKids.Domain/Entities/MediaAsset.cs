@@ -4,6 +4,8 @@ public class MediaAsset : TenantEntity
 {
     public Guid Id { get; set; }
     public string StorageKey { get; set; } = string.Empty;
+    /// <summary>Path relative to the storage root, e.g. tenant/2026/10/09/name.mp4. Null for older uploads and external URLs.</summary>
+    public string? FilePath { get; set; }
     /// <summary>When set, playback uses this URL instead of local file storage.</summary>
     public string? ExternalUrl { get; set; }
     public string FileName { get; set; } = string.Empty;

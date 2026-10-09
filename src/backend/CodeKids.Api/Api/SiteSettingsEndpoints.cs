@@ -144,6 +144,8 @@ public static class SiteSettingsEndpoints
 
             IFileStorage fileStorage,
 
+            CodeKids.Infrastructure.Tenancy.ITenantContext tenantContext,
+
             ICommandHandler<UploadSiteImageCommand, SiteSettingsDto> handler,
 
             CancellationToken cancellationToken) =>
@@ -198,7 +200,7 @@ public static class SiteSettingsEndpoints
 
                 await using var stream = file.OpenReadStream();
 
-                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, file.FileName, contentType, cancellationToken, tenantContext.TenantId);
 
                 return Results.Ok(await handler.Handle(
 

@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { UserRole } from './models';
+import { currentTenantId } from './tenant';
 
 export const authGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
@@ -13,6 +14,18 @@ export const authGuard: CanActivateFn = (_route, state) => {
   const returnUrl = state.url;
   return router.createUrlTree(['/login'], {
     queryParams: returnUrl && returnUrl !== '/login' ? { returnUrl } : undefined
+  });
+};
+
+/** Public pages still need a tenant; without one, send the visitor to login, which asks for it. */
+export const tenantGuard: CanActivateFn = (_route, state) => {
+  if (currentTenantId()) {
+    return true;
+  }
+
+  const returnUrl = safeReturnUrl(state.url);
+  return inject(Router).createUrlTree(['/login'], {
+    queryParams: returnUrl && returnUrl !== '/' ? { returnUrl } : undefined
   });
 };
 

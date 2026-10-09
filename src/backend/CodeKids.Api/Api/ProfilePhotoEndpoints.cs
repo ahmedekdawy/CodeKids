@@ -16,6 +16,7 @@ public static class ProfilePhotoEndpoints
             HttpRequest request,
             HttpContext httpContext,
             IFileStorage fileStorage,
+            CodeKids.Infrastructure.Tenancy.ITenantContext tenantContext,
             ICommandHandler<SaveProfilePhotoCommand, AuthUserDto> handler,
             CancellationToken cancellationToken) =>
         {
@@ -40,7 +41,7 @@ public static class ProfilePhotoEndpoints
 
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken, tenantContext.TenantId);
 
                 return Results.Ok(await handler.Handle(
                     new SaveProfilePhotoCommand(userId, storageKey, contentType),

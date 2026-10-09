@@ -18,6 +18,7 @@ public static class QuestionImageEndpoints
             HttpContext httpContext,
             IFileStorage fileStorage,
             IAppDbContext dbContext,
+            CodeKids.Infrastructure.Tenancy.ITenantContext tenantContext,
             CancellationToken cancellationToken) =>
         {
             try
@@ -41,11 +42,12 @@ public static class QuestionImageEndpoints
 
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken);
+                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken, tenantContext.TenantId);
                 var asset = new MediaAsset
                 {
                     Id = Guid.NewGuid(),
                     StorageKey = storageKey,
+                    FilePath = fileStorage.GetRelativePath(storageKey),
                     FileName = uploadFileName,
                     ContentType = contentType,
                     SizeBytes = file.Length,
