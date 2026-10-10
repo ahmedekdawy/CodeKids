@@ -35,7 +35,7 @@ public sealed class RunDailyWhatsAppReportsCommandHandler(
 
         var studentIds = classrooms.SelectMany(c => c.Students.Select(s => s.StudentId)).Distinct().ToList();
         var students = await dbContext.Users
-            .Include(x => x.Parent)
+            .Include(x => x.StudentProfile!.Parent)
             .Where(x => studentIds.Contains(x.Id) && x.Role == UserRole.Student)
             .ToListAsync(cancellationToken);
 
@@ -65,7 +65,7 @@ public sealed class RunDailyWhatsAppReportsCommandHandler(
                 skipped++;
             }
 
-            var parentPhone = student.Parent?.MobilePhone?.Trim();
+            var parentPhone = student.StudentProfile?.Parent?.MobilePhone?.Trim();
             if (!string.IsNullOrWhiteSpace(parentPhone))
             {
                 attemptedParent++;

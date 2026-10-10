@@ -151,33 +151,33 @@ public sealed class CreateMeetingCommandHandler(
 
     private async Task<string?> EnsurePersonalZoomAccessTokenAsync(User host, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(host.ZoomRefreshToken))
+        if (string.IsNullOrWhiteSpace(host.TeacherProfile?.ZoomRefreshToken))
         {
             return null;
         }
 
-        if (!string.IsNullOrWhiteSpace(host.ZoomAccessToken)
-            && host.ZoomTokenExpiresAt is DateTimeOffset expires
+        if (!string.IsNullOrWhiteSpace(host.TeacherProfile?.ZoomAccessToken)
+            && host.TeacherProfile?.ZoomTokenExpiresAt is DateTimeOffset expires
             && expires > DateTimeOffset.UtcNow.AddMinutes(2))
         {
-            return host.ZoomAccessToken;
+            return host.TeacherProfile?.ZoomAccessToken;
         }
 
         if (!zoomUserOAuth.IsUserOAuthConfigured)
         {
-            return string.IsNullOrWhiteSpace(host.ZoomAccessToken) ? null : host.ZoomAccessToken;
+            return string.IsNullOrWhiteSpace(host.TeacherProfile?.ZoomAccessToken) ? null : host.TeacherProfile?.ZoomAccessToken;
         }
 
-        var tokens = await zoomUserOAuth.RefreshAsync(host.ZoomRefreshToken, cancellationToken);
-        host.ZoomAccessToken = tokens.AccessToken;
-        host.ZoomRefreshToken = tokens.RefreshToken;
-        host.ZoomTokenExpiresAt = tokens.ExpiresAt;
+        var tokens = await zoomUserOAuth.RefreshAsync(host.TeacherProfile?.ZoomRefreshToken, cancellationToken);
+        host.EnsureTeacherProfile().ZoomAccessToken = tokens.AccessToken;
+        host.EnsureTeacherProfile().ZoomRefreshToken = tokens.RefreshToken;
+        host.EnsureTeacherProfile().ZoomTokenExpiresAt = tokens.ExpiresAt;
         if (!string.IsNullOrWhiteSpace(tokens.Email))
         {
-            host.ZoomConnectedEmail = tokens.Email;
+            host.EnsureTeacherProfile().ZoomConnectedEmail = tokens.Email;
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        return host.ZoomAccessToken;
+        return host.TeacherProfile?.ZoomAccessToken;
     }
 }

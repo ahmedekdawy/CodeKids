@@ -510,7 +510,7 @@ public sealed class ListChildGradeCertificatesQueryHandler(IAppDbContext dbConte
             .FirstOrDefaultAsync(x => x.Id == query.ChildId && x.Role == UserRole.Student, cancellationToken)
             ?? throw new InvalidOperationException("Student not found.");
 
-        if (child.ParentId != query.ParentId)
+        if (child.StudentProfile?.ParentId != query.ParentId)
         {
             throw new InvalidOperationException("This student is not linked to your account.");
         }

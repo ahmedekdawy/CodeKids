@@ -26,10 +26,10 @@ public sealed class CompleteZoomConnectCommandHandler(
             ?? throw new InvalidOperationException("Teacher account not found.");
 
         var tokens = await zoomUserOAuth.ExchangeCodeAsync(command.Code, cancellationToken);
-        teacher.ZoomAccessToken = tokens.AccessToken;
-        teacher.ZoomRefreshToken = tokens.RefreshToken;
-        teacher.ZoomTokenExpiresAt = tokens.ExpiresAt;
-        teacher.ZoomConnectedEmail = tokens.Email ?? teacher.Email;
+        teacher.EnsureTeacherProfile().ZoomAccessToken = tokens.AccessToken;
+        teacher.EnsureTeacherProfile().ZoomRefreshToken = tokens.RefreshToken;
+        teacher.EnsureTeacherProfile().ZoomTokenExpiresAt = tokens.ExpiresAt;
+        teacher.EnsureTeacherProfile().ZoomConnectedEmail = tokens.Email ?? teacher.Email;
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var redirect = zoomUserOAuth.FrontendRedirectUri.TrimEnd('/');

@@ -52,7 +52,7 @@ public sealed class ListWeeklyStudyPlansQueryHandler(IAppDbContext dbContext)
         {
             var childIds = await dbContext.Users
                 .AsNoTracking()
-                .Where(x => x.ParentId == query.ViewerUserId && x.Role == UserRole.Student)
+                .Where(x => x.StudentProfile!.ParentId == query.ViewerUserId && x.Role == UserRole.Student)
                 .Select(x => x.Id)
                 .ToListAsync(cancellationToken);
 

@@ -38,7 +38,8 @@ public static class TenantEndpoints
                         request.Email,
                         request.DisplayName,
                         request.Password,
-                        request.MobilePhone),
+                        request.MobilePhone,
+                        request.TenantStyle),
                     cancellationToken);
                 return Results.Ok(result);
             }

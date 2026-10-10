@@ -32,7 +32,7 @@ public static class StudentCourseVisibility
         var student = await dbContext.Users
             .AsNoTracking()
             .Where(x => x.Id == studentId)
-            .Select(x => new { x.Grade, x.SchoolType })
+            .Select(x => new { x.StudentProfile!.Grade, x.StudentProfile!.SchoolType })
             .FirstOrDefaultAsync(cancellationToken);
 
         var specific = await dbContext.StudentCourseEnrollments

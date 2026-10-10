@@ -34,7 +34,7 @@ public static class BadgeAwarder
                 continue;
             }
 
-            if (user.TotalXp >= badge.RequiredXp && completedSteps >= badge.RequiredSteps)
+            if ((user.StudentProfile?.TotalXp ?? 0) >= badge.RequiredXp && completedSteps >= badge.RequiredSteps)
             {
                 eligible.Add(badge);
             }

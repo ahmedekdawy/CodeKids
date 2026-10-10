@@ -1,5 +1,6 @@
 using CodeKids.Application.Abstractions;
 using CodeKids.Application.Features.Auth;
+using CodeKids.Application.Features.SiteSettings;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
 using CodeKids.Domain.Enums;
@@ -55,11 +56,15 @@ public sealed class VerifyTenantCommandHandler(
             DisplayName = signup.DisplayName,
             PasswordHash = signup.PasswordHash,
             Role = UserRole.SuperAdmin,
-            TenantId = signup.TenantSlug,
-            TotalXp = 0
+            TenantId = signup.TenantSlug
         });
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        var settings = await GetSiteSettingsQueryHandler.EnsureForTenantAsync(dbContext, signup.TenantSlug, cancellationToken);
+        settings.TenantStyle = signup.TenantStyle;
+        await dbContext.SaveChangesAsync(cancellationToken);
+
         return new VerifyTenantResult(signup.TenantSlug, signup.Email, "Email verified. Your tenant is ready. Sign in to continue.");
     }
 }

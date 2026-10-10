@@ -91,6 +91,8 @@ export class LoginComponent implements OnInit {
     this.auth.login(login.trim(), password).subscribe({
       next: () => {
         this.loading.set(false);
+        // The signed-in user's tenant may differ from the one the app started with.
+        this.brand.load();
         void this.router.navigateByUrl(this.postLoginUrl());
       },
       error: (err) => {

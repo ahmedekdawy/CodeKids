@@ -101,7 +101,7 @@ public static class NotificationRecipients
         await dbContext.Users
             .AsNoTracking()
             .Where(x => x.Id == studentId)
-            .Select(x => x.ParentId)
+            .Select(x => x.StudentProfile!.ParentId)
             .FirstOrDefaultAsync(cancellationToken);
 
     public static async Task<IReadOnlyList<Guid>> TeachersForAssessmentAsync(
@@ -230,7 +230,7 @@ public sealed class NotificationPublisher(
             relatedStudentId: null,
             cancellationToken);
 
-        if (student.ParentId is Guid parentId)
+        if (student.StudentProfile?.ParentId is Guid parentId)
         {
             await NotifyUserAsync(
                 parentId,
@@ -264,7 +264,7 @@ public sealed class NotificationPublisher(
             relatedStudentId: null,
             cancellationToken);
 
-        if (student.ParentId is Guid parentId)
+        if (student.StudentProfile?.ParentId is Guid parentId)
         {
             await NotifyUserAsync(
                 parentId,

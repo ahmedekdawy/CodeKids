@@ -80,7 +80,7 @@ internal static class StudentClassroomAttendanceAccess
             row.StudentId,
             row.Student?.DisplayName ?? string.Empty,
             row.Student?.Email ?? string.Empty,
-            row.Student?.Grade,
+            row.Student?.StudentProfile?.Grade,
             row.ClassroomId,
             row.Classroom?.Name ?? string.Empty,
             row.AttendanceDate,

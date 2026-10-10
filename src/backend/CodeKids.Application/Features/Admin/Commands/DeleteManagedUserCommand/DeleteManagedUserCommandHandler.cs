@@ -30,9 +30,9 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
         var uid = command.UserId;
         var adminId = command.AdminUserId;
 
-        foreach (var child in await dbContext.Users.Where(x => x.ParentId == uid).ToListAsync(cancellationToken))
+        foreach (var child in await dbContext.Users.Where(x => x.StudentProfile!.ParentId == uid).ToListAsync(cancellationToken))
         {
-            child.ParentId = null;
+            child.StudentProfile?.ParentId = null;
         }
 
         foreach (var row in await dbContext.Quizzes.Where(x => x.CreatedByUserId == uid).ToListAsync(cancellationToken))

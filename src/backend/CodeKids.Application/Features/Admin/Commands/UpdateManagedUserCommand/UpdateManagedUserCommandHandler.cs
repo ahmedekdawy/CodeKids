@@ -62,11 +62,17 @@ public sealed class UpdateManagedUserCommandHandler(
         user.Email = email;
         user.DisplayName = command.DisplayName.Trim();
         user.Role = role;
-        user.ParentId = role == UserRole.Student ? command.ParentId : null;
-        user.Grade = role == UserRole.Student
-            ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
-            : null;
-        user.SchoolType = CreateManagedUserCommandHandler.ParseSchoolType(role, command.SchoolType);
+        user.EnsureRoleProfile();
+        // A user whose role changed away from student keeps the row (XP, avatar) but loses these.
+        if (role == UserRole.Student || user.StudentProfile is not null)
+        {
+            var student = user.EnsureStudentProfile();
+            student.ParentId = role == UserRole.Student ? command.ParentId : null;
+            student.Grade = role == UserRole.Student
+                ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
+                : null;
+            student.SchoolType = CreateManagedUserCommandHandler.ParseSchoolType(role, command.SchoolType);
+        }
         if (!string.IsNullOrWhiteSpace(mobile)
             && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile && x.Id != user.Id, cancellationToken))
         {
@@ -74,19 +80,25 @@ public sealed class UpdateManagedUserCommandHandler(
         }
 
         user.MobilePhone = mobile;
-        user.WorkShift = CreateManagedUserCommandHandler.ParseWorkShift(role, command.WorkShift);
-        user.Stages = CreateManagedUserCommandHandler.ParseTeacherStages(role, command.Stages);
-        var contract = CreateManagedUserCommandHandler.ParseTeacherContract(
-            role,
-            command.ContractType,
-            command.PrimaryAmount,
-            command.PrepAmount,
-            command.SecondaryAmount);
-        user.ContractType = contract.ContractType;
-        user.PrimaryAmount = contract.PrimaryAmount;
-        user.PrepAmount = contract.PrepAmount;
-        user.SecondaryAmount = contract.SecondaryAmount;
-        user.MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary);
+        // The Parse* helpers return empty values for non-teachers, clearing a former teacher's settings.
+        if (role == UserRole.Teacher || user.TeacherProfile is not null)
+        {
+            var teacher = user.EnsureTeacherProfile();
+            teacher.WorkShift = CreateManagedUserCommandHandler.ParseWorkShift(role, command.WorkShift);
+            teacher.Stages = CreateManagedUserCommandHandler.ParseTeacherStages(role, command.Stages);
+            var contract = CreateManagedUserCommandHandler.ParseTeacherContract(
+                role,
+                command.ContractType,
+                command.PrimaryAmount,
+                command.PrepAmount,
+                command.SecondaryAmount);
+            teacher.ContractType = contract.ContractType;
+            teacher.PrimaryAmount = contract.PrimaryAmount;
+            teacher.PrepAmount = contract.PrepAmount;
+            teacher.SecondaryAmount = contract.SecondaryAmount;
+            teacher.MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary);
+        }
+
         if (!string.IsNullOrWhiteSpace(command.Password))
         {
             user.PasswordHash = passwordHasher.Hash(command.Password);

@@ -15,12 +15,12 @@ public sealed class SelectAvatarCommandHandler(IAppDbContext dbContext)
         var avatar = await dbContext.Avatars.FirstOrDefaultAsync(x => x.Id == command.AvatarId, cancellationToken)
             ?? throw new InvalidOperationException("Avatar not found.");
 
-        if (user.TotalXp < avatar.UnlockXp)
+        if ((user.StudentProfile?.TotalXp ?? 0) < avatar.UnlockXp)
         {
             throw new InvalidOperationException($"Earn {avatar.UnlockXp} XP to unlock {avatar.Name}.");
         }
 
-        user.AvatarId = avatar.Id;
+        user.EnsureStudentProfile().AvatarId = avatar.Id;
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return new AvatarDto(

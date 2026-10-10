@@ -56,7 +56,7 @@ public sealed class ImpersonateUserCommandHandler(
                 throw new InvalidOperationException("Parents can only sign in as their linked children.");
             }
 
-            if (user.ParentId != command.AdminUserId)
+            if (user.StudentProfile?.ParentId != command.AdminUserId)
             {
                 throw new InvalidOperationException("This student is not linked to your account.");
             }

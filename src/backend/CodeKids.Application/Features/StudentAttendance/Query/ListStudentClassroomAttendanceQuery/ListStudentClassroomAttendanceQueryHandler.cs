@@ -49,7 +49,7 @@ public sealed class ListStudentClassroomAttendanceQueryHandler(IAppDbContext dbC
 
         if (query.GradeId is int gradeId)
         {
-            baseQuery = baseQuery.Where(x => x.Student!.Grade == gradeId);
+            baseQuery = baseQuery.Where(x => x.Student!.StudentProfile!.Grade == gradeId);
         }
 
         if (query.FromDate.HasValue)
@@ -93,8 +93,8 @@ public sealed class ListStudentClassroomAttendanceQueryHandler(IAppDbContext dbC
                 ? query.OrderBy(x => x.Student!.DisplayName).ThenByDescending(x => x.AttendanceDate)
                 : query.OrderByDescending(x => x.Student!.DisplayName).ThenByDescending(x => x.AttendanceDate),
             "studentGradeId" => asc
-                ? query.OrderBy(x => x.Student!.Grade).ThenBy(x => x.Student!.DisplayName)
-                : query.OrderByDescending(x => x.Student!.Grade).ThenBy(x => x.Student!.DisplayName),
+                ? query.OrderBy(x => x.Student!.StudentProfile!.Grade).ThenBy(x => x.Student!.DisplayName)
+                : query.OrderByDescending(x => x.Student!.StudentProfile!.Grade).ThenBy(x => x.Student!.DisplayName),
             "classroomName" => asc
                 ? query.OrderBy(x => x.Classroom!.Name).ThenByDescending(x => x.AttendanceDate)
                 : query.OrderByDescending(x => x.Classroom!.Name).ThenByDescending(x => x.AttendanceDate),

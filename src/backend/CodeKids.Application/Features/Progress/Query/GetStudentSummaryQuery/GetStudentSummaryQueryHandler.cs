@@ -25,8 +25,8 @@ public sealed class GetStudentSummaryQueryHandler(IAppDbContext dbContext)
             user.Id,
             user.DisplayName,
             completedSteps,
-            user.TotalXp,
-            user.AvatarId,
+            (user.StudentProfile?.TotalXp ?? 0),
+            user.StudentProfile?.AvatarId,
             user.Badges.Select(x => x.Badge!.Name).ToList());
     }
 }

@@ -76,7 +76,7 @@ public sealed class CreateClassroomCommandHandler(IAppDbContext dbContext)
         var teachers = await dbContext.Users
             .AsNoTracking()
             .Where(x => teacherIds.Contains(x.Id) && x.Role == UserRole.Teacher)
-            .Select(x => new { x.Id, x.Stages })
+            .Select(x => new { x.Id, x.TeacherProfile!.Stages })
             .ToListAsync(cancellationToken);
         if (teachers.Count != teacherIds.Count)
         {

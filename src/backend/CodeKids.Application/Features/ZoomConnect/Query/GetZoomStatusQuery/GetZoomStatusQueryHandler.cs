@@ -16,9 +16,9 @@ public sealed class GetZoomStatusQueryHandler(
             ?? throw new InvalidOperationException("Teacher account not found.");
 
         return new ZoomConnectionStatus(
-            teacher.HasPersonalZoom,
-            string.IsNullOrWhiteSpace(teacher.ZoomConnectedEmail) ? null : teacher.ZoomConnectedEmail,
-            teacher.ZoomTokenExpiresAt,
+            (teacher.TeacherProfile?.HasPersonalZoom ?? false),
+            string.IsNullOrWhiteSpace(teacher.TeacherProfile?.ZoomConnectedEmail) ? null : teacher.TeacherProfile?.ZoomConnectedEmail,
+            teacher.TeacherProfile?.ZoomTokenExpiresAt,
             zoomUserOAuth.IsServerOAuthConfigured,
             zoomUserOAuth.IsUserOAuthConfigured,
             zoomUserOAuth.UserOAuthRedirectUri,

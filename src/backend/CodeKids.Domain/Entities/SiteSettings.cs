@@ -12,6 +12,7 @@ public class SiteSettings : TenantEntity
 
     public Guid Id { get; set; } = DefaultId;
     public string SiteName { get; set; } = "CodeKids";
+    public Enums.TenantStyle TenantStyle { get; set; } = Enums.TenantStyle.School;
     public string LogoStorageKey { get; set; } = string.Empty;
     public string LogoContentType { get; set; } = string.Empty;
     public string BannerStorageKey { get; set; } = string.Empty;

@@ -55,7 +55,7 @@ public sealed class GradeSubmissionCommandHandler(IAppDbContext dbContext, Notif
             submission.MaxScore > 0 &&
             submission.Score >= Math.Ceiling(submission.MaxScore.Value * 0.7))
         {
-            student.TotalXp += submission.Assignment.XpReward;
+            student.EnsureStudentProfile().TotalXp += submission.Assignment.XpReward;
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

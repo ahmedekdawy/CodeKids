@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/panel-shell.component';
+import { SiteBrandService } from '../../site-brand.service';
+import { navItemsForStyle } from '../../tenant-style';
 
 @Component({
   selector: 'app-teacher-shell',
@@ -9,13 +11,15 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
     <app-panel-shell
       titleKey="shell.teacher.title"
       subtitleKey="shell.teacher.subtitle"
-      [navItems]="navItems">
+      [navItems]="navItems()">
       <router-outlet />
     </app-panel-shell>
   `
 })
 export class TeacherShellComponent {
-  readonly navItems: PanelNavItem[] = [
+  private readonly brand = inject(SiteBrandService);
+
+  private readonly allNavItems: PanelNavItem[] = [
     { labelKey: 'nav.teacher.overview', path: '/teacher/overview', icon: 'O' },
     { labelKey: 'nav.teacher.account', path: '/teacher/account', icon: '👤' },
 
@@ -42,4 +46,6 @@ export class TeacherShellComponent {
     { labelKey: 'nav.teacher.weeklyReports', path: '/teacher/weekly-reports', icon: 'W', categoryKey: 'nav.cat.communication' },
     { labelKey: 'nav.teacher.gradeCertificates', path: '/teacher/grade-certificates', icon: 'D', categoryKey: 'nav.cat.assessments' }
   ];
+
+  readonly navItems = computed(() => navItemsForStyle(this.allNavItems, this.brand.tenantStyle()));
 }

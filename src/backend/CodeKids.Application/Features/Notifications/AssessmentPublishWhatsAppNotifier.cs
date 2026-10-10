@@ -55,7 +55,7 @@ public sealed class AssessmentPublishWhatsAppNotifier(
                 ? []
                 : await dbContext.Users
                     .AsNoTracking()
-                    .Include(x => x.Parent)
+                    .Include(x => x.StudentProfile!.Parent)
                     .Where(x => studentIds.Contains(x.Id) && x.IsActive)
                     .ToListAsync(cancellationToken);
 
@@ -73,7 +73,7 @@ public sealed class AssessmentPublishWhatsAppNotifier(
                 if (options.NotifyParentsOnAssessmentPublish)
                 {
                     await SendToPhoneAsync(
-                        student.Parent?.MobilePhone,
+                        student.StudentProfile?.Parent?.MobilePhone,
                         BuildParentMessage(student, info, context, link),
                         info,
                         student.Id,

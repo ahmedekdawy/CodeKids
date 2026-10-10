@@ -48,11 +48,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("StartsAtUtc");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("TeacherId", "StartsAtUtc");
 
@@ -66,6 +72,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CourseId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
@@ -82,8 +91,15 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("DueAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("SolutionVideoMediaAssetId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -97,9 +113,13 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("ClassroomId");
 
+                    b.HasIndex("CourseId");
+
                     b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("SolutionVideoMediaAssetId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Assignments");
                 });
@@ -108,6 +128,9 @@ namespace CodeKids.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnswerImageMediaAssetId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("AnswerText")
@@ -127,11 +150,19 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("SubmissionId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AnswerImageMediaAssetId");
 
                     b.HasIndex("QuestionId");
 
                     b.HasIndex("SubmissionId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("AssignmentAnswers");
                 });
@@ -147,28 +178,44 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("CorrectAnswer")
                         .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<string>("OptionA")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<string>("OptionA")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
-
                     b.Property<string>("OptionB")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("OptionC")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("OptionsJson")
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)");
+
+                    b.Property<Guid?>("ParentQuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PassageText")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
 
                     b.Property<int>("Points")
                         .HasColumnType("integer");
 
                     b.Property<string>("Prompt")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<Guid?>("PromptImageMediaAssetId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("QuestionType")
                         .IsRequired()
@@ -178,9 +225,19 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssignmentId");
+
+                    b.HasIndex("ParentQuestionId");
+
+                    b.HasIndex("PromptImageMediaAssetId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("AssignmentQuestions");
                 });
@@ -192,6 +249,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("FeedbackImageMediaAssetId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("GradedAtUtc")
@@ -221,9 +281,17 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(800)
                         .HasColumnType("character varying(800)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("FeedbackImageMediaAssetId");
+
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("AssignmentId", "StudentId")
                         .IsUnique();
@@ -252,6 +320,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Theme")
                         .IsRequired()
                         .HasMaxLength(60)
@@ -261,6 +333,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Avatars");
                 });
@@ -297,10 +371,16 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("RequiredXp")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
                         .IsUnique();
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Badges");
                 });
@@ -313,8 +393,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("CorrectAnswer")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
 
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
@@ -365,6 +445,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
+                    b.Property<Guid?>("PromptImageMediaAssetId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("QuestionType")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -372,6 +455,10 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -383,7 +470,161 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("ParentQuestionId");
 
+                    b.HasIndex("PromptImageMediaAssetId");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("BankQuestions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("RoomId", "CreatedAtUtc");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatRoom", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CourseTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid?>("LessonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LessonTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<Guid?>("UnitId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UnitTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("ClassroomId", "CourseId", "Kind");
+
+                    b.ToTable("ChatRooms");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatRoomMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("BlockedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("BlockedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LastReadAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("RoomId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ChatRoomMembers");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Classroom", b =>
@@ -414,6 +655,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("WhatsAppGroupInviteUrl")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -431,6 +676,8 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Classrooms");
                 });
@@ -453,11 +700,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("TeacherId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("ClassroomId", "CourseId")
                         .IsUnique();
@@ -480,9 +733,15 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("ClassroomId", "StudentId")
                         .IsUnique();
@@ -502,6 +761,11 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("AgeMin")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(1000)
@@ -513,15 +777,13 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Notes")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
 
                     b.Property<string>("SchoolType")
                         .HasMaxLength(20)
@@ -538,10 +800,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int?>("StageId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("StudentAskEnabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SubjectCode")
                         .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int?>("TermId")
                         .HasColumnType("integer");
@@ -576,58 +845,17 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
-                    b.Property<bool>("StudentAskEnabled")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ExternalSubjectId");
 
                     b.HasIndex("StageId");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("Grade", "SubjectCode", "TrackCode");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("StudentAskEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("TermId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<string>("VerificationStatus")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId", "SortOrder");
-
-                    b.ToTable("CourseUnits");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Exam", b =>
@@ -656,6 +884,16 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("DueAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(160)
@@ -672,6 +910,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("Exams");
                 });
 
@@ -679,6 +919,9 @@ namespace CodeKids.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnswerImageMediaAssetId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("AnswerText")
@@ -698,11 +941,19 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int?>("PointsAwarded")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AnswerImageMediaAssetId");
 
                     b.HasIndex("AttemptId");
 
                     b.HasIndex("ExamQuestionId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("ExamAnswers");
                 });
@@ -714,6 +965,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ExamId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("FeedbackImageMediaAssetId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("GradedAtUtc")
@@ -743,9 +997,17 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(800)
                         .HasColumnType("character varying(800)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("FeedbackImageMediaAssetId");
+
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("ExamId", "StudentId")
                         .IsUnique();
@@ -764,8 +1026,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("CorrectAnswer")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
 
                     b.Property<Guid>("ExamId")
                         .HasColumnType("uuid");
@@ -810,6 +1072,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
+                    b.Property<Guid?>("PromptImageMediaAssetId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("QuestionType")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -817,6 +1082,10 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
@@ -828,6 +1097,10 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("ParentExamQuestionId");
 
+                    b.HasIndex("PromptImageMediaAssetId");
+
+                    b.HasIndex("TenantId");
+
                     b.ToTable("ExamQuestions");
                 });
 
@@ -837,12 +1110,12 @@ namespace CodeKids.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("CombinedGrades")
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
@@ -861,9 +1134,15 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("DayOfWeek", "Period", "SessionNumber");
 
@@ -891,14 +1170,138 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("StageId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("StageId");
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("Grades");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.Lesson", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ApprovedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ApprovedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("GradeCertificates");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificateMark", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Degree")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("numeric(7,2)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SubjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UpdatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SubjectId", "StudentId")
+                        .IsUnique();
+
+                    b.ToTable("GradeCertificateMarks");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificateSubject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IncludedInTotal")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("MaxDegree")
+                        .HasPrecision(7, 2)
+                        .HasColumnType("numeric(7,2)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CertificateId", "CourseId")
+                        .IsUnique();
+
+                    b.ToTable("GradeCertificateSubjects");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.LearningMaterial", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -907,43 +1310,53 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Difficulty")
-                        .HasColumnType("integer");
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid?>("LessonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MediaAssetId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("StudentAskEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Theme")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("character varying(60)");
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<Guid?>("UnitId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("XpReward")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UploadedByUserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("MediaAssetId");
+
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("UnitId");
 
-                    b.ToTable("Lessons");
+                    b.HasIndex("UploadedByUserId");
+
+                    b.ToTable("LearningMaterials");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.LessonStep", b =>
@@ -968,6 +1381,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("StepNumber")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -976,6 +1393,8 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LessonId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LessonSteps");
                 });
@@ -986,10 +1405,13 @@ namespace CodeKids.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("LessonId")
+                    b.Property<Guid?>("LessonId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("MediaAssetId")
@@ -998,6 +1420,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(160)
@@ -1005,9 +1431,13 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseId");
+
                     b.HasIndex("LessonId");
 
                     b.HasIndex("MediaAssetId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LessonVideos");
                 });
@@ -1051,6 +1481,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("StartsAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(160)
@@ -1073,6 +1507,8 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasIndex("HostUserId");
 
                     b.HasIndex("StartsAtUtc");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("LiveSessions");
                 });
@@ -1115,10 +1551,16 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UploadedByUserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("UploadedByUserId");
 
@@ -1151,46 +1593,29 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ExpenseDate");
 
                     b.HasIndex("Name");
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("OtherExpenses");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherPayrollAdjustment", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.ParentProfile", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
+                    b.HasKey("UserId");
 
-                    b.Property<DateOnly>("AdjustmentDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdjustmentDate");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("TeacherPayrollAdjustments");
+                    b.ToTable("ParentProfiles");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.PasswordResetToken", b =>
@@ -1205,6 +1630,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("ExpiresAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("TokenHash")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -1217,6 +1646,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("TokenHash")
                         .IsUnique();
@@ -1249,6 +1680,16 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -1263,9 +1704,11 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("CourseId");
 
+                    b.HasIndex("CreatedAtUtc");
+
                     b.HasIndex("CreatedByUserId");
 
-                    b.HasIndex("CreatedAtUtc");
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Quizzes");
                 });
@@ -1288,6 +1731,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("TotalQuestions")
                         .HasColumnType("integer");
 
@@ -1298,6 +1745,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("QuizId");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("QuizAttempts");
@@ -1307,6 +1756,9 @@ namespace CodeKids.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnswerImageMediaAssetId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AttemptId")
@@ -1320,12 +1772,20 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("SelectedOption")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AnswerImageMediaAssetId");
+
                     b.HasIndex("QuestionId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("AttemptId", "QuestionId")
                         .IsUnique();
@@ -1339,10 +1799,15 @@ namespace CodeKids.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
                     b.Property<string>("CorrectOption")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("OptionA")
                         .IsRequired()
@@ -1364,10 +1829,29 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(8000)
                         .HasColumnType("character varying(8000)");
 
+                    b.Property<Guid?>("ParentQuestionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PassageText")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Prompt")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<Guid?>("PromptImageMediaAssetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("QuestionType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
                     b.Property<Guid>("QuizId")
                         .HasColumnType("uuid");
@@ -1375,9 +1859,19 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("ParentQuestionId");
+
+                    b.HasIndex("PromptImageMediaAssetId");
+
                     b.HasIndex("QuizId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("QuizQuestions");
                 });
@@ -1428,6 +1922,15 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("TenantStyle")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<DateTimeOffset?>("TimetableWeekStartUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -1435,6 +1938,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("SiteSettings");
                 });
@@ -1454,9 +1959,301 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("TenantId");
+
                     b.ToTable("Stages");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentAskedQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AiAnswer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("AiInScope")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CourseTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("LessonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LessonTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasMaxLength(800)
+                        .HasColumnType("character varying(800)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("StudentName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("TeacherAnswer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("TeacherAnsweredAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid?>("UnitId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UnitTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CourseId", "CreatedAtUtc");
+
+                    b.ToTable("StudentAskedQuestions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentClassroomAttendance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("AttendanceDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RecordedByTeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttendanceDate");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("RecordedByTeacherId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("StudentId", "ClassroomId", "AttendanceDate")
+                        .IsUnique();
+
+                    b.ToTable("StudentClassroomAttendances");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClassroomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("EnrolledAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassroomId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("StudentId", "ClassroomId", "CourseId")
+                        .IsUnique();
+
+                    b.ToTable("StudentCourseEnrollments");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentProfile", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AvatarId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Grade")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SchoolType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("TotalXp")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("AvatarId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("StudentProfiles");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CompletedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("EarnedXp")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("LessonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StepId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId", "StepId")
+                        .IsUnique();
+
+                    b.ToTable("StudentProgress");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentWeeklyReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("AttendancePercent")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("HomeworkPercent")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("InteractionDuringSession")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool?>("OpenCamera")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("PerformancePercent")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("WeekStartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("WeekStartDate");
+
+                    b.HasIndex("TeacherId", "StudentId", "WeekStartDate")
+                        .IsUnique();
+
+                    b.ToTable("StudentWeeklyReports");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
@@ -1495,6 +2292,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("StageId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int?>("TermId")
                         .HasColumnType("integer");
 
@@ -1529,6 +2330,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("StageId");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("Code", "StageId");
 
                     b.HasIndex("GradeId", "TermId", "Code", "TrackCode");
@@ -1547,8 +2350,15 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("StudentAskEnabled")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SubjectId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1561,6 +2371,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("character varying(80)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("SubjectId", "SortOrder");
 
@@ -1578,8 +2390,15 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("StudentAskEnabled")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("SubjectUnitId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1588,71 +2407,11 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("SubjectUnitId", "SortOrder");
 
                     b.ToTable("SubjectUnitLessons");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ClassroomId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("EnrolledAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClassroomId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("StudentId", "ClassroomId", "CourseId")
-                        .IsUnique();
-
-                    b.ToTable("StudentCourseEnrollments");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.StudentProgress", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CompletedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("EarnedXp")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("StepId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "StepId")
-                        .IsUnique();
-
-                    b.ToTable("StudentProgress");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.TeacherCourseRate", b =>
@@ -1678,14 +2437,116 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("TeacherId", "CourseId")
                         .IsUnique();
 
                     b.ToTable("TeacherCourseRates");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherPayrollAdjustment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("AdjustmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdjustmentDate");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("TeacherPayrollAdjustments");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherProfile", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContractType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal?>("MonthlySalary")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal?>("PrepAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal?>("PrimaryAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal?>("SecondaryAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Stages")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("WorkShift")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("ZoomAccessToken")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ZoomConnectedEmail")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<string>("ZoomRefreshToken")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTimeOffset?>("ZoomTokenExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("TeacherProfiles");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.TeacherSessionAttendance", b =>
@@ -1706,11 +2567,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("SessionDate");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("TeacherId", "CourseId", "SessionDate")
                         .IsUnique();
@@ -1718,153 +2585,76 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("TeacherSessionAttendances");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.StudentWeeklyReport", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.TenantSignup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int?>("AttendancePercent")
-                        .HasColumnType("integer");
-
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("HomeworkPercent")
-                        .HasColumnType("integer");
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
 
-                    b.Property<string>("InteractionDuringSession")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<DateTimeOffset>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MobilePhone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<bool?>("OpenCamera")
-                        .HasColumnType("boolean");
+                    b.Property<string>("TenantId")
+                        .HasColumnType("text");
 
-                    b.Property<int?>("PerformancePercent")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("StudentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("UpdatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly>("WeekStartDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("WeekStartDate");
-
-                    b.HasIndex("TeacherId", "StudentId", "WeekStartDate")
-                        .IsUnique();
-
-                    b.ToTable("StudentWeeklyReports");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateOnly>("FromDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Notes")
+                    b.Property<string>("TenantName")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
 
-                    b.Property<Guid>("TeacherId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("TenantSlug")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
-                    b.Property<DateOnly>("ToDate")
-                        .HasColumnType("date");
+                    b.Property<string>("TenantStyle")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
-                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTimeOffset?>("VerifiedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("FromDate");
-
-                    b.HasIndex("ToDate");
-
-                    b.HasIndex("TeacherId", "CourseId", "FromDate")
+                    b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("WeeklyStudyPlans");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateOnly>("FromDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("integer");
-
-                    b.Property<DateOnly>("ToDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("WeekNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("WeeklyStudyPlanId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WeeklyStudyPlanId", "WeekNumber")
+                    b.HasIndex("TenantSlug")
                         .IsUnique();
 
-                    b.ToTable("WeeklyStudyPlanItems");
-                });
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanTopic", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Highlight")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<Guid>("WeeklyStudyPlanItemId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WeeklyStudyPlanItemId", "SortOrder");
-
-                    b.ToTable("WeeklyStudyPlanTopics");
+                    b.ToTable("TenantSignups");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
@@ -1897,6 +2687,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<int>("Year")
                         .HasColumnType("integer");
 
@@ -1908,6 +2702,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("Year", "Month");
 
                     b.ToTable("TuitionPayments");
@@ -1918,13 +2714,6 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AvatarId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ContractType")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
@@ -1939,9 +2728,6 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(160)
                         .HasColumnType("character varying(160)");
 
-                    b.Property<int?>("Grade")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -1955,84 +2741,41 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<decimal?>("PrepAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
+                    b.Property<string>("ProfilePhotoContentType")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
 
-                    b.Property<decimal?>("PrimaryAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
+                    b.Property<string>("ProfilePhotoStorageKey")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<string>("SchoolType")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<decimal?>("SecondaryAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<decimal?>("MonthlySalary")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<string>("Stages")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)");
-
-                    b.Property<int>("TotalXp")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("WorkShift")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("ZoomAccessToken")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("ZoomConnectedEmail")
-                        .IsRequired()
-                        .HasMaxLength(160)
-                        .HasColumnType("character varying(160)");
-
-                    b.Property<string>("ZoomRefreshToken")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<DateTimeOffset?>("ZoomTokenExpiresAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvatarId");
+                    b.HasIndex("LastLoginDateUtc");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TenantId", "Email")
                         .IsUnique()
                         .HasFilter("\"Email\" <> ''");
 
-                    b.HasIndex("LastLoginDateUtc");
-
-                    b.HasIndex("MobilePhone")
+                    b.HasIndex("TenantId", "MobilePhone")
                         .IsUnique()
                         .HasFilter("\"MobilePhone\" <> ''");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Users");
                 });
@@ -2049,6 +2792,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("BadgeId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -2056,10 +2803,66 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("BadgeId");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("UserId", "BadgeId")
                         .IsUnique();
 
                     b.ToTable("UserBadges");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.UserNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<Guid?>("RelatedStudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TargetUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId", "IsRead", "CreatedAtUtc");
+
+                    b.ToTable("UserNotifications");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.VideoWatchSession", b =>
@@ -2092,6 +2895,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid>("StudentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<bool>("UsedSpeedUp")
                         .HasColumnType("boolean");
 
@@ -2101,9 +2908,128 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.HasIndex("StudentId");
 
+                    b.HasIndex("TenantId");
+
                     b.HasIndex("MediaAssetId", "StudentId");
 
                     b.ToTable("VideoWatchSessions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("FromDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateOnly>("ToDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("FromDate");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("ToDate");
+
+                    b.HasIndex("TeacherId", "CourseId", "FromDate")
+                        .IsUnique();
+
+                    b.ToTable("WeeklyStudyPlans");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("FromDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateOnly>("ToDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("WeekNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("WeeklyStudyPlanId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("WeeklyStudyPlanId", "WeekNumber")
+                        .IsUnique();
+
+                    b.ToTable("WeeklyStudyPlanItems");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanTopic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Highlight")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("WeeklyStudyPlanItemId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("WeeklyStudyPlanItemId", "SortOrder");
+
+                    b.ToTable("WeeklyStudyPlanTopics");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.WhatsAppReportLog", b =>
@@ -2141,7 +3067,13 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("WhatsAppReportLogs");
                 });
@@ -2173,6 +3105,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
@@ -2186,6 +3123,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Navigation("Classroom");
 
+                    b.Navigation("Course");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("SolutionVideo");
@@ -2193,6 +3132,11 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.AssignmentAnswer", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "AnswerImage")
+                        .WithMany()
+                        .HasForeignKey("AnswerImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.AssignmentQuestion", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
@@ -2204,6 +3148,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasForeignKey("SubmissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AnswerImage");
 
                     b.Navigation("Question");
 
@@ -2218,7 +3164,21 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CodeKids.Domain.Entities.AssignmentQuestion", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "PromptImage")
+                        .WithMany()
+                        .HasForeignKey("PromptImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Assignment");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("PromptImage");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.AssignmentSubmission", b =>
@@ -2229,6 +3189,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "FeedbackImage")
+                        .WithMany()
+                        .HasForeignKey("FeedbackImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
@@ -2236,6 +3201,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Assignment");
+
+                    b.Navigation("FeedbackImage");
 
                     b.Navigation("Student");
                 });
@@ -2254,23 +3221,88 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CodeKids.Domain.Entities.Lesson", "Lesson")
-                        .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("CodeKids.Domain.Entities.BankQuestion", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentQuestionId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "PromptImage")
+                        .WithMany()
+                        .HasForeignKey("PromptImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Course");
 
                     b.Navigation("CreatedBy");
 
-                    b.Navigation("Lesson");
-
                     b.Navigation("Parent");
+
+                    b.Navigation("PromptImage");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatMessage", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.ChatRoom", "Room")
+                        .WithMany("Messages")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatRoom", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Classroom", "Classroom")
+                        .WithMany()
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Classroom");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatRoomMember", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.ChatRoom", "Room")
+                        .WithMany("Members")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Classroom", b =>
@@ -2331,30 +3363,19 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Course", b =>
                 {
-                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
-                        .WithMany()
-                        .HasForeignKey("StageId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("CodeKids.Domain.Entities.Subject", "ExternalSubject")
                         .WithMany()
                         .HasForeignKey("ExternalSubjectId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
+                        .WithMany()
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("ExternalSubject");
 
                     b.Navigation("Stage");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
-                        .WithMany("Units")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Exam", b =>
@@ -2385,6 +3406,11 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.ExamAnswer", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "AnswerImage")
+                        .WithMany()
+                        .HasForeignKey("AnswerImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.ExamAttempt", "Attempt")
                         .WithMany("Answers")
                         .HasForeignKey("AttemptId")
@@ -2396,6 +3422,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasForeignKey("ExamQuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("AnswerImage");
 
                     b.Navigation("Attempt");
 
@@ -2410,6 +3438,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "FeedbackImage")
+                        .WithMany()
+                        .HasForeignKey("FeedbackImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
@@ -2417,6 +3450,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Exam");
+
+                    b.Navigation("FeedbackImage");
 
                     b.Navigation("Student");
                 });
@@ -2434,23 +3469,23 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CodeKids.Domain.Entities.Lesson", "Lesson")
-                        .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("CodeKids.Domain.Entities.ExamQuestion", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentExamQuestionId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "PromptImage")
+                        .WithMany()
+                        .HasForeignKey("PromptImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("BankQuestion");
 
                     b.Navigation("Exam");
 
-                    b.Navigation("Lesson");
-
                     b.Navigation("Parent");
+
+                    b.Navigation("PromptImage");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.FixedTimetableEntry", b =>
@@ -2472,40 +3507,71 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.Lesson", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.Grade", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
+                        .WithMany("Grades")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Stage");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificate", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Classroom", "Classroom")
+                        .WithMany()
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Classroom");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificateMark", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.GradeCertificateSubject", "Subject")
+                        .WithMany("Marks")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificateSubject", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.GradeCertificate", "Certificate")
+                        .WithMany("Subjects")
+                        .HasForeignKey("CertificateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CodeKids.Domain.Entities.Course", "Course")
-                        .WithMany("Lessons")
+                        .WithMany()
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CodeKids.Domain.Entities.CourseUnit", "Unit")
-                        .WithMany("Lessons")
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.Navigation("Certificate");
 
                     b.Navigation("Course");
-
-                    b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.LessonStep", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.LearningMaterial", b =>
                 {
-                    b.HasOne("CodeKids.Domain.Entities.Lesson", "Lesson")
-                        .WithMany("Steps")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.LessonVideo", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Lesson", "Lesson")
-                        .WithMany("Videos")
-                        .HasForeignKey("LessonId")
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2515,7 +3581,33 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Lesson");
+                    b.HasOne("CodeKids.Domain.Entities.User", "UploadedBy")
+                        .WithMany()
+                        .HasForeignKey("UploadedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("MediaAsset");
+
+                    b.Navigation("UploadedBy");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.LessonVideo", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "MediaAsset")
+                        .WithMany()
+                        .HasForeignKey("MediaAssetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
 
                     b.Navigation("MediaAsset");
                 });
@@ -2554,6 +3646,17 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("UploadedBy");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ParentProfile", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithOne("ParentProfile")
+                        .HasForeignKey("CodeKids.Domain.Entities.ParentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.PasswordResetToken", b =>
@@ -2613,6 +3716,11 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttemptAnswer", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "AnswerImage")
+                        .WithMany()
+                        .HasForeignKey("AnswerImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.QuizAttempt", "Attempt")
                         .WithMany("Answers")
                         .HasForeignKey("AttemptId")
@@ -2625,6 +3733,8 @@ namespace CodeKids.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("AnswerImage");
+
                     b.Navigation("Attempt");
 
                     b.Navigation("Question");
@@ -2632,13 +3742,80 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizQuestion", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.QuizQuestion", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "PromptImage")
+                        .WithMany()
+                        .HasForeignKey("PromptImageMediaAssetId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("CodeKids.Domain.Entities.Quiz", "Quiz")
                         .WithMany("Questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Parent");
+
+                    b.Navigation("PromptImage");
+
                     b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentAskedQuestion", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentClassroomAttendance", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Classroom", "Classroom")
+                        .WithMany()
+                        .HasForeignKey("ClassroomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "RecordedByTeacher")
+                        .WithMany()
+                        .HasForeignKey("RecordedByTeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Classroom");
+
+                    b.Navigation("RecordedByTeacher");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.StudentCourseEnrollment", b =>
@@ -2668,6 +3845,31 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentProfile", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Avatar", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("CodeKids.Domain.Entities.StudentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Avatar");
+
+                    b.Navigation("Parent");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.StudentProgress", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.User", "User")
@@ -2677,6 +3879,65 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.StudentWeeklyReport", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Grade", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
+                        .WithMany("Subjects")
+                        .HasForeignKey("StageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Grade");
+
+                    b.Navigation("Stage");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnit", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Subject", "Subject")
+                        .WithMany("Units")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnitLesson", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.SubjectUnit", "Unit")
+                        .WithMany("Lessons")
+                        .HasForeignKey("SubjectUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.TeacherCourseRate", b =>
@@ -2709,6 +3970,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherProfile", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithOne("TeacherProfile")
+                        .HasForeignKey("CodeKids.Domain.Entities.TeacherProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TeacherSessionAttendance", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.Course", "Course")
@@ -2728,23 +4000,70 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.StudentWeeklyReport", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
                 {
+                    b.HasOne("CodeKids.Domain.Entities.User", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("CodeKids.Domain.Entities.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
-                        .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("Parent");
 
                     b.Navigation("Student");
+                });
 
-                    b.Navigation("Teacher");
+            modelBuilder.Entity("CodeKids.Domain.Entities.UserBadge", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.Badge", "Badge")
+                        .WithMany()
+                        .HasForeignKey("BadgeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithMany("Badges")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Badge");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.UserNotification", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.VideoWatchSession", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "MediaAsset")
+                        .WithMany()
+                        .HasForeignKey("MediaAssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MediaAsset");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
@@ -2788,90 +4107,16 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Week");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.User", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Parent");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.User", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Avatar", "Avatar")
-                        .WithMany()
-                        .HasForeignKey("AvatarId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("CodeKids.Domain.Entities.User", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Avatar");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.UserBadge", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Badge", "Badge")
-                        .WithMany()
-                        .HasForeignKey("BadgeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CodeKids.Domain.Entities.User", "User")
-                        .WithMany("Badges")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Badge");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.VideoWatchSession", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Lesson", "Lesson")
-                        .WithMany()
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("CodeKids.Domain.Entities.MediaAsset", "MediaAsset")
-                        .WithMany()
-                        .HasForeignKey("MediaAssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CodeKids.Domain.Entities.User", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-
-                    b.Navigation("MediaAsset");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("CodeKids.Domain.Entities.Assignment", b =>
                 {
                     b.Navigation("Questions");
 
                     b.Navigation("Submissions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.AssignmentQuestion", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.AssignmentSubmission", b =>
@@ -2882,6 +4127,13 @@ namespace CodeKids.Infrastructure.Migrations
             modelBuilder.Entity("CodeKids.Domain.Entities.BankQuestion", b =>
                 {
                     b.Navigation("Children");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.ChatRoom", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Classroom", b =>
@@ -2895,71 +4147,7 @@ namespace CodeKids.Infrastructure.Migrations
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Course", b =>
                 {
-                    b.Navigation("ExternalSubject");
-
-                    b.Navigation("Lessons");
-
                     b.Navigation("Quizzes");
-
-                    b.Navigation("Stage");
-
-                    b.Navigation("Units");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.Grade", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
-                        .WithMany("Grades")
-                        .HasForeignKey("StageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Stage");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Grade", "Grade")
-                        .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("CodeKids.Domain.Entities.Stage", "Stage")
-                        .WithMany("Subjects")
-                        .HasForeignKey("StageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Grade");
-
-                    b.Navigation("Stage");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnit", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.Subject", "Subject")
-                        .WithMany("Units")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Subject");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.SubjectUnitLesson", b =>
-                {
-                    b.HasOne("CodeKids.Domain.Entities.SubjectUnit", "Unit")
-                        .WithMany("Lessons")
-                        .HasForeignKey("SubjectUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("CodeKids.Domain.Entities.CourseUnit", b =>
-                {
-                    b.Navigation("Lessons");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Exam", b =>
@@ -2979,11 +4167,14 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.Lesson", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificate", b =>
                 {
-                    b.Navigation("Steps");
+                    b.Navigation("Subjects");
+                });
 
-                    b.Navigation("Videos");
+            modelBuilder.Entity("CodeKids.Domain.Entities.GradeCertificateSubject", b =>
+                {
+                    b.Navigation("Marks");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Quiz", b =>
@@ -2991,26 +4182,21 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.Stage", b =>
-                {
-                    b.Navigation("Grades");
-
-                    b.Navigation("Subjects");
-                });
-
             modelBuilder.Entity("CodeKids.Domain.Entities.QuizAttempt", b =>
                 {
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.QuizQuestion", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
+            modelBuilder.Entity("CodeKids.Domain.Entities.Stage", b =>
                 {
-                    b.Navigation("Topics");
+                    b.Navigation("Grades");
+
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.Subject", b =>
@@ -3031,9 +4217,25 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Navigation("CourseRates");
 
+                    b.Navigation("ParentProfile");
+
                     b.Navigation("Progress");
 
                     b.Navigation("QuizAttempts");
+
+                    b.Navigation("StudentProfile");
+
+                    b.Navigation("TeacherProfile");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlanItem", b =>
+                {
+                    b.Navigation("Topics");
                 });
 #pragma warning restore 612, 618
         }

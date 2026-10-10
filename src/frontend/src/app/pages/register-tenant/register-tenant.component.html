@@ -18,6 +18,19 @@
       </div>
     } @else {
       <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()">
+        <fieldset class="style-picker">
+          <legend>{{ 'auth.tenant.style' | t }}</legend>
+          <div class="style-cards">
+            @for (style of styles; track style) {
+              <label class="style-card">
+                <input type="radio" formControlName="tenantStyle" [value]="style" />
+                <span class="style-card-icon" aria-hidden="true">{{ styleIcons[style] }}</span>
+                <span class="style-card-title">{{ 'auth.tenant.style.' + style | t }}</span>
+                <span class="style-card-text">{{ 'auth.tenant.styleHint.' + style | t }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
         <label>
           <span>{{ 'auth.tenant.name' | t }}</span>
           <input formControlName="tenantName" autocomplete="organization" />

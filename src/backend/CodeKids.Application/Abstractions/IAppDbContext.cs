@@ -7,6 +7,9 @@ namespace CodeKids.Application.Abstractions;
 public interface IAppDbContext
 {
     DbSet<User> Users { get; }
+    DbSet<StudentProfile> StudentProfiles { get; }
+    DbSet<TeacherProfile> TeacherProfiles { get; }
+    DbSet<ParentProfile> ParentProfiles { get; }
     DbSet<Avatar> Avatars { get; }
     DbSet<Course> Courses { get; }
     DbSet<Stage> Stages { get; }
