@@ -126,7 +126,7 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
             submission.GradedAtUtc = DateTimeOffset.UtcNow;
             if (autoScore >= Math.Ceiling(maxScore * 0.7))
             {
-                student.TotalXp += assignment.XpReward;
+                student.EnsureStudentProfile().TotalXp += assignment.XpReward;
             }
         }
 

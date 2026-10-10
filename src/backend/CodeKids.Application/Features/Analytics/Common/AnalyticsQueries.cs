@@ -77,7 +77,7 @@ public static class AnalyticsQueries
         User student,
         CancellationToken cancellationToken)
     {
-        var level = StudentLevelCalculator.FromXp(student.TotalXp);
+        var level = StudentLevelCalculator.FromXp((student.StudentProfile?.TotalXp ?? 0));
         var completedToday = await dbContext.StudentProgress.CountAsync(
             x => x.UserId == student.Id
                  && x.IsCompleted
@@ -95,7 +95,7 @@ public static class AnalyticsQueries
 
         return
             $"Abakera daily report for {student.DisplayName}\n" +
-            $"Level {level.LevelNumber} ({level.Name}) · {student.TotalXp} XP\n" +
+            $"Level {level.LevelNumber} ({level.Name}) · {(student.StudentProfile?.TotalXp ?? 0)} XP\n" +
             $"Today: {completedToday} steps · {watchToday}s video watched\n" +
             weakText;
     }

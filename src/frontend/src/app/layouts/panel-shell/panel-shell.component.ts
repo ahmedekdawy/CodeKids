@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, HostListener, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, Input, OnChanges, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth.service';
@@ -32,7 +32,7 @@ const NAV_COLLAPSED_KEY = 'codekids_nav_categories_collapsed';
   templateUrl: './panel-shell.component.html',
   styleUrl: './panel-shell.component.css'
 })
-export class PanelShellComponent implements OnInit {
+export class PanelShellComponent implements OnInit, OnChanges {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -169,8 +169,12 @@ export class PanelShellComponent implements OnInit {
     this.categories = categories;
   }
 
-  ngOnInit(): void {
+  /** The menu can change after load (it depends on the tenant style), so regroup whenever it does. */
+  ngOnChanges(): void {
     this.groupNavItems();
+  }
+
+  ngOnInit(): void {
     this.loadCollapsedCategories();
     this.expandCategoryForUrl(this.router.url);
     this.collapsed.set(localStorage.getItem(COLLAPSED_KEY) === '1');

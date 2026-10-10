@@ -43,7 +43,7 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
             var student = await dbContext.Users
                 .AsNoTracking()
                 .Where(x => x.Id == query.ViewerUserId)
-                .Select(x => new { x.Grade, x.SchoolType })
+                .Select(x => new { x.StudentProfile!.Grade, x.StudentProfile!.SchoolType })
                 .FirstOrDefaultAsync(cancellationToken);
 
             foreach (var classroom in classrooms)
@@ -77,7 +77,7 @@ public sealed class GetClassroomsQueryHandler(IAppDbContext dbContext)
         else if (string.Equals(query.ViewerRole, nameof(UserRole.Parent), StringComparison.OrdinalIgnoreCase))
         {
             var childIds = await dbContext.Users
-                .Where(x => x.ParentId == query.ViewerUserId && x.Role == UserRole.Student)
+                .Where(x => x.StudentProfile!.ParentId == query.ViewerUserId && x.Role == UserRole.Student)
                 .Select(x => x.Id)
                 .ToListAsync(cancellationToken);
             classrooms = classrooms

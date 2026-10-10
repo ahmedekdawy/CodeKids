@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { LearningApiService } from './learning-api.service';
 import { SiteSettings } from './models';
+import { TenantStyle, normalizeTenantStyle } from './tenant-style';
 import { DEFAULT_SESSION_COUNT, DEFAULT_PM_START_MINUTES, normalizeSessionCount, normalizePmStartMinutes } from './fixed-timetable.util';
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +14,7 @@ export class SiteBrandService {
   readonly amSessionCount = signal(DEFAULT_SESSION_COUNT);
   readonly pmSessionCount = signal(DEFAULT_SESSION_COUNT);
   readonly pmStartMinutes = signal(DEFAULT_PM_START_MINUTES);
+  readonly tenantStyle = signal<TenantStyle>('School');
   readonly loaded = signal(false);
 
   load(): void {
@@ -24,6 +26,7 @@ export class SiteBrandService {
 
   apply(settings: SiteSettings): void {
     this.siteName.set(settings.siteName || 'CodeKids');
+    this.tenantStyle.set(normalizeTenantStyle(settings.tenantStyle));
     const stamp = settings.updatedAtUtc || Date.now().toString();
     const logo = this.api.siteAssetUrl(settings.logoUrl);
     const banner = this.api.siteAssetUrl(settings.bannerUrl);

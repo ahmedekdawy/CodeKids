@@ -21,13 +21,13 @@ public sealed class GetParentDashboardQueryHandler(IAppDbContext dbContext)
             .AsNoTracking()
             .Include(x => x.Badges)
                 .ThenInclude(x => x.Badge)
-            .Where(x => x.ParentId == parent.Id && x.Role == UserRole.Student)
+            .Where(x => x.StudentProfile!.ParentId == parent.Id && x.Role == UserRole.Student)
             .ToListAsync(cancellationToken);
 
         var childIds = children.Select(x => x.Id).ToList();
         var grades = await StudentGradeResolver.ResolveAsync(
             dbContext,
-            children.Select(x => (x.Id, x.Grade)),
+            children.Select(x => (x.Id, x.StudentProfile?.Grade)),
             cancellationToken);
 
         var progressCounts = await dbContext.StudentProgress
@@ -78,11 +78,11 @@ public sealed class GetParentDashboardQueryHandler(IAppDbContext dbContext)
                 child.DisplayName,
                 child.Email,
                 child.MobilePhone,
-                grades.GetValueOrDefault(child.Id) ?? child.Grade,
-                child.TotalXp,
+                grades.GetValueOrDefault(child.Id) ?? child.StudentProfile?.Grade,
+                (child.StudentProfile?.TotalXp ?? 0),
                 progressCounts.GetValueOrDefault(child.Id),
                 quizCounts.GetValueOrDefault(child.Id),
-                child.AvatarId,
+                child.StudentProfile?.AvatarId,
                 ProfilePhotoUrls.Build(child),
                 child.Badges.Select(x => x.Badge!.Name).ToList(),
                 latestEvaluations.GetValueOrDefault(child.Id))).ToList());

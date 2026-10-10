@@ -71,7 +71,7 @@ internal static class TuitionPaymentValidators
             throw new InvalidOperationException("Selected user must be a student.");
         }
 
-        if (student.ParentId.HasValue)
+        if (student.StudentProfile?.ParentId is not null)
         {
             throw new InvalidOperationException("This student has a parent; record the payment under the parent.");
         }

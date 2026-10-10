@@ -16,5 +16,6 @@ public static class SiteSettingsMapper
             Domain.Entities.SiteSettings.NormalizeSessionCount(settings.AmSessionCount),
             Domain.Entities.SiteSettings.NormalizeSessionCount(settings.PmSessionCount),
             Domain.Entities.SiteSettings.NormalizePmStartMinutes(settings.PmStartMinutes),
-            settings.UpdatedAtUtc);
+            settings.UpdatedAtUtc,
+            settings.TenantStyle.ToString());
 }

@@ -152,6 +152,7 @@ export interface SiteSettings {
   pmSessionCount: number;
   pmStartMinutes: number;
   updatedAtUtc: string;
+  tenantStyle?: string | null;
 }
 
 export interface LessonStep {

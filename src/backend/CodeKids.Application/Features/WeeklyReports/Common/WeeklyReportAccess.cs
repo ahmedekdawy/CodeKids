@@ -30,11 +30,11 @@ internal static class WeeklyReportAccess
 
         if (grade.HasValue)
         {
-            studentsQuery = studentsQuery.Where(x => x.Grade == grade.Value);
+            studentsQuery = studentsQuery.Where(x => x.StudentProfile!.Grade == grade.Value);
         }
 
         return await studentsQuery
-            .OrderBy(x => x.Grade)
+            .OrderBy(x => x.StudentProfile!.Grade)
             .ThenBy(x => x.DisplayName)
             .Select(x => x.Id)
             .ToListAsync(cancellationToken);

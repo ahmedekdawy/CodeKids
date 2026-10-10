@@ -143,7 +143,7 @@ public sealed class SubmitExamCommandHandler(IAppDbContext dbContext)
             attempt.GradedAtUtc = DateTimeOffset.UtcNow;
             if (maxScore > 0 && autoScore >= Math.Ceiling(maxScore * 0.7))
             {
-                student.TotalXp += exam.XpReward;
+                student.EnsureStudentProfile().TotalXp += exam.XpReward;
             }
         }
 

@@ -61,6 +61,7 @@ export class AuthService {
     displayName: string;
     password: string;
     mobilePhone?: string;
+    tenantStyle?: string;
   }): Observable<{ accepted: boolean; message: string }> {
     return this.http.post<{ accepted: boolean; message: string }>(
       `${resolveApiBaseUrl()}/tenants/register`,

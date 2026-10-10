@@ -24,7 +24,7 @@ public sealed class ListStudentWeeklyReportsQueryHandler(IAppDbContext dbContext
 
         if (query.Grade.HasValue)
         {
-            rows = rows.Where(x => x.Student != null && x.Student.Grade == query.Grade.Value);
+            rows = rows.Where(x => x.Student != null && x.Student.StudentProfile!.Grade == query.Grade.Value);
         }
 
         if (query.FromDate.HasValue)
@@ -40,7 +40,7 @@ public sealed class ListStudentWeeklyReportsQueryHandler(IAppDbContext dbContext
         return (await rows
             .OrderByDescending(x => x.WeekStartDate)
             .ThenBy(x => x.Teacher!.DisplayName)
-            .ThenBy(x => x.Student!.Grade)
+            .ThenBy(x => x.Student!.StudentProfile!.Grade)
             .ThenBy(x => x.Student!.DisplayName)
             .ToListAsync(cancellationToken))
             .Select(x => new StudentWeeklyReportDto(
@@ -49,7 +49,7 @@ public sealed class ListStudentWeeklyReportsQueryHandler(IAppDbContext dbContext
                 x.Teacher?.DisplayName ?? string.Empty,
                 x.StudentId,
                 x.Student?.DisplayName ?? string.Empty,
-                x.Student?.Grade,
+                x.Student?.StudentProfile?.Grade,
                 x.WeekStartDate,
                 x.PerformancePercent,
                 x.AttendancePercent,

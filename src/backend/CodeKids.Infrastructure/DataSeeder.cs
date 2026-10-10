@@ -177,8 +177,7 @@ public static class DataSeeder
                     Email = "admin@codekids.local",
                     DisplayName = "Super Admin",
                     PasswordHash = passwordHasher.Hash("Admin123!"),
-                    Role = UserRole.SuperAdmin,
-                    TotalXp = 0
+                    Role = UserRole.SuperAdmin
                 },
                 new User
                 {
@@ -187,7 +186,7 @@ public static class DataSeeder
                     DisplayName = "Ms. Nova",
                     PasswordHash = passwordHasher.Hash("Teacher123!"),
                     Role = UserRole.Teacher,
-                    TotalXp = 0
+                    TeacherProfile = new TeacherProfile { UserId = teacherId }
                 },
                 new User
                 {
@@ -196,7 +195,7 @@ public static class DataSeeder
                     DisplayName = "Alex Parent",
                     PasswordHash = passwordHasher.Hash("Parent123!"),
                     Role = UserRole.Parent,
-                    TotalXp = 0
+                    ParentProfile = new ParentProfile { UserId = parentId }
                 },
                 new User
                 {
@@ -205,10 +204,13 @@ public static class DataSeeder
                     DisplayName = "Ava",
                     PasswordHash = passwordHasher.Hash("Student123!"),
                     Role = UserRole.Student,
-                    ParentId = parentId,
-                    AvatarId = defaultAvatarId,
-                    Grade = 3,
-                    TotalXp = 0
+                    StudentProfile = new StudentProfile
+                    {
+                        UserId = studentId,
+                        ParentId = parentId,
+                        AvatarId = defaultAvatarId,
+                        Grade = 3
+                    }
                 });
         }
         else if (!await dbContext.Users.AnyAsync(x => x.Role == UserRole.SuperAdmin, cancellationToken))
@@ -219,8 +221,7 @@ public static class DataSeeder
                 Email = "admin@codekids.local",
                 DisplayName = "Super Admin",
                 PasswordHash = passwordHasher.Hash("Admin123!"),
-                Role = UserRole.SuperAdmin,
-                TotalXp = 0
+                Role = UserRole.SuperAdmin
             });
         }
 

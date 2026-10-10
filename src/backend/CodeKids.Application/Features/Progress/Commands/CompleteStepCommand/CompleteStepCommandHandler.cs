@@ -22,7 +22,7 @@ public sealed class CompleteStepCommandHandler(IAppDbContext dbContext)
 
         if (step is null)
         {
-            return new CompleteStepResponse(false, 0, "We couldn't find that challenge step.", "api.feedback.stepNotFound", user.TotalXp, []);
+            return new CompleteStepResponse(false, 0, "We couldn't find that challenge step.", "api.feedback.stepNotFound", (user.StudentProfile?.TotalXp ?? 0), []);
         }
 
         var alreadyDone = await dbContext.StudentProgress.AnyAsync(
@@ -32,7 +32,7 @@ public sealed class CompleteStepCommandHandler(IAppDbContext dbContext)
         var isCorrect = Normalize(step.ExpectedAnswer) == Normalize(command.SubmittedAnswer);
         if (!isCorrect)
         {
-            return new CompleteStepResponse(false, 0, "Not quite yet. Try matching the example carefully.", "api.feedback.stepIncorrect", user.TotalXp, []);
+            return new CompleteStepResponse(false, 0, "Not quite yet. Try matching the example carefully.", "api.feedback.stepIncorrect", (user.StudentProfile?.TotalXp ?? 0), []);
         }
 
         var earnedXp = alreadyDone ? 0 : 20;
@@ -48,7 +48,7 @@ public sealed class CompleteStepCommandHandler(IAppDbContext dbContext)
                 EarnedXp = earnedXp,
                 CompletedAtUtc = DateTimeOffset.UtcNow
             });
-            user.TotalXp += earnedXp;
+            user.EnsureStudentProfile().TotalXp += earnedXp;
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
@@ -70,7 +70,7 @@ public sealed class CompleteStepCommandHandler(IAppDbContext dbContext)
             earnedXp,
             alreadyDone ? "You already mastered this step. Nice review!" : "Great job! You solved the coding step.",
             alreadyDone ? "api.feedback.stepAlreadyDone" : "api.feedback.stepCorrect",
-            user.TotalXp,
+            (user.StudentProfile?.TotalXp ?? 0),
             newBadges);
     }
 

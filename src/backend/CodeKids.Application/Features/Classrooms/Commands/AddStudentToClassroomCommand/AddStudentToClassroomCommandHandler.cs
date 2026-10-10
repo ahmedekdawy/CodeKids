@@ -68,7 +68,7 @@ public sealed class AddStudentToClassroomCommandHandler(
                 throw new InvalidOperationException("One or more courses were not found.");
             }
 
-            if (courses.Any(c => c.Grade is not null && student.Grade is not null && c.Grade != student.Grade))
+            if (courses.Any(c => c.Grade is not null && student.StudentProfile?.Grade is not null && c.Grade != student.StudentProfile?.Grade))
             {
                 throw new InvalidOperationException("One or more courses do not match the student grade.");
             }

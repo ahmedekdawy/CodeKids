@@ -13,4 +13,5 @@ public sealed record SiteSettingsDto(
     int AmSessionCount,
     int PmSessionCount,
     int PmStartMinutes,
-    DateTimeOffset UpdatedAtUtc);
+    DateTimeOffset UpdatedAtUtc,
+    string TenantStyle = "School");

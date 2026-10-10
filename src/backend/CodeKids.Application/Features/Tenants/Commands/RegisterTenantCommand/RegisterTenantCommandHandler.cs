@@ -6,6 +6,7 @@ using CodeKids.Application.Features.Auth;
 using CodeKids.Application.Options;
 using CodeKids.Domain.Abstractions;
 using CodeKids.Domain.Entities;
+using CodeKids.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -32,6 +33,8 @@ public sealed class RegisterTenantCommandHandler(
         {
             throw new InvalidOperationException("Tenant name is required.");
         }
+
+        var tenantStyle = ParseTenantStyle(command.TenantStyle);
 
         if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
         {
@@ -80,6 +83,7 @@ public sealed class RegisterTenantCommandHandler(
                 Id = Guid.NewGuid(),
                 TenantName = tenantName,
                 TenantSlug = slug,
+                TenantStyle = tenantStyle,
                 Email = email,
                 MobilePhone = mobile,
                 DisplayName = displayName,
@@ -95,6 +99,7 @@ public sealed class RegisterTenantCommandHandler(
         {
             pending.TenantName = tenantName;
             pending.TenantSlug = slug;
+            pending.TenantStyle = tenantStyle;
             pending.DisplayName = displayName;
             pending.MobilePhone = mobile;
             pending.PasswordHash = passwordHasher.Hash(password);
@@ -115,6 +120,25 @@ public sealed class RegisterTenantCommandHandler(
 
         await emailSender.SendEmailAsync(email, "Verify your CodeKids tenant email", body);
         return new RegisterTenantResult(true, AcceptedMessage);
+    }
+
+    private static TenantStyle ParseTenantStyle(string? raw)
+    {
+        var value = (raw ?? string.Empty).Trim();
+        if (value.Length == 0)
+        {
+            return TenantStyle.School;
+        }
+
+        // Reject numeric strings: Enum.TryParse would accept any integer.
+        if (!char.IsAsciiDigit(value[0])
+            && Enum.TryParse<TenantStyle>(value, ignoreCase: true, out var style)
+            && Enum.IsDefined(style))
+        {
+            return style;
+        }
+
+        throw new InvalidOperationException("Tenant style must be School, Academy, or SingleTeacher.");
     }
 
     private async Task<string> UniqueSlugAsync(string tenantName, CancellationToken cancellationToken)

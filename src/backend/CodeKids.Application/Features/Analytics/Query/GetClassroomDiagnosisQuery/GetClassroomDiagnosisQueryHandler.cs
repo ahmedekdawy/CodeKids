@@ -30,15 +30,15 @@ public sealed class GetClassroomDiagnosisQueryHandler(IAppDbContext dbContext)
         var weaknesses = await AnalyticsQueries.GetWeakLessonsForClassroom(
             dbContext, studentIds, cancellationToken);
 
-        var avgXp = students.Count == 0 ? 0 : students.Average(x => x.TotalXp);
+        var avgXp = students.Count == 0 ? 0 : students.Average(x => (x.StudentProfile?.TotalXp ?? 0));
         var behind = students
-            .Where(x => x.TotalXp < avgXp * 0.6 || StudentLevelCalculator.FromXp(x.TotalXp).LevelNumber <= 1)
-            .OrderBy(x => x.TotalXp)
+            .Where(x => (x.StudentProfile?.TotalXp ?? 0) < avgXp * 0.6 || StudentLevelCalculator.FromXp((x.StudentProfile?.TotalXp ?? 0)).LevelNumber <= 1)
+            .OrderBy(x => (x.StudentProfile?.TotalXp ?? 0))
             .Select(x => x.DisplayName)
             .Take(8)
             .ToList();
         var strong = students
-            .OrderByDescending(x => x.TotalXp)
+            .OrderByDescending(x => (x.StudentProfile?.TotalXp ?? 0))
             .Take(5)
             .Select(x => x.DisplayName)
             .ToList(); 

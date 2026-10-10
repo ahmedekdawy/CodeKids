@@ -20,7 +20,7 @@ public sealed class ListTopWeeklyStudentsQueryHandler(IAppDbContext dbContext)
             {
                 x.StudentId,
                 StudentName = x.Student!.DisplayName,
-                StudentGrade = x.Student.Grade,
+                StudentGrade = x.Student.StudentProfile!.Grade,
                 PhotoStorageKey = x.Student.ProfilePhotoStorageKey,
                 PerformancePercent = x.PerformancePercent!.Value
             })

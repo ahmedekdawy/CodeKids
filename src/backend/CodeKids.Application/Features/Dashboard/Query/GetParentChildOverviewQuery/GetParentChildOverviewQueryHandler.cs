@@ -18,16 +18,16 @@ public sealed class GetParentChildOverviewQueryHandler(IAppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == query.ChildId && x.Role == UserRole.Student, cancellationToken)
             ?? throw new InvalidOperationException("Student not found.");
 
-        if (child.ParentId != query.ParentId)
+        if (child.StudentProfile?.ParentId != query.ParentId)
         {
             throw new InvalidOperationException("This student is not linked to your account.");
         }
 
         var grades = await StudentGradeResolver.ResolveAsync(
             dbContext,
-            [(child.Id, child.Grade)],
+            [(child.Id, child.StudentProfile?.Grade)],
             cancellationToken);
-        var grade = grades.GetValueOrDefault(child.Id) ?? child.Grade;
+        var grade = grades.GetValueOrDefault(child.Id) ?? child.StudentProfile?.Grade;
 
         var visibleCourseIds = await StudentCourseVisibility.GetVisibleCourseIdsAsync(
             dbContext, child.Id, cancellationToken);

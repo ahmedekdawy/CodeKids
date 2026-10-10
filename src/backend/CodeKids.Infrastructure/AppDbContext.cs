@@ -24,6 +24,9 @@ public class AppDbContext : DbContext, IAppDbContext
         optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
     public DbSet<User> Users => Set<User>();
+    public DbSet<StudentProfile> StudentProfiles => Set<StudentProfile>();
+    public DbSet<TeacherProfile> TeacherProfiles => Set<TeacherProfile>();
+    public DbSet<ParentProfile> ParentProfiles => Set<ParentProfile>();
     public DbSet<Avatar> Avatars => Set<Avatar>();
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Stage> Stages => Set<Stage>();
@@ -100,22 +103,22 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.ProfilePhotoStorageKey).HasMaxLength(400);
             entity.Property(x => x.ProfilePhotoContentType).HasMaxLength(120);
-            entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
-            entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
-            entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();
-            entity.Property(x => x.ContractType).HasConversion<string>().HasMaxLength(20);
-            entity.Property(x => x.PrimaryAmount).HasPrecision(18, 2);
-            entity.Property(x => x.PrepAmount).HasPrecision(18, 2);
-            entity.Property(x => x.SecondaryAmount).HasPrecision(18, 2);
-            entity.Property(x => x.MonthlySalary).HasPrecision(18, 2);
-            entity.Property(x => x.ZoomAccessToken).HasMaxLength(2000).IsRequired();
             entity.HasMany(x => x.CourseRates)
                 .WithOne(x => x.Teacher)
                 .HasForeignKey(x => x.TeacherId)
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.Property(x => x.ZoomRefreshToken).HasMaxLength(2000).IsRequired();
-            entity.Property(x => x.ZoomConnectedEmail).HasMaxLength(160).IsRequired();
             entity.Property(x => x.IsActive).HasDefaultValue(true);
+            entity.HasIndex(x => x.LastLoginDateUtc);
+        });
+
+        modelBuilder.Entity<StudentProfile>(entity =>
+        {
+            entity.HasKey(x => x.UserId);
+            entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.StudentProfile)
+                .HasForeignKey<StudentProfile>(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(x => x.Parent)
                 .WithMany(x => x.Children)
                 .HasForeignKey(x => x.ParentId)
@@ -124,7 +127,43 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.AvatarId)
                 .OnDelete(DeleteBehavior.SetNull);
-            entity.HasIndex(x => x.LastLoginDateUtc);
+        });
+
+        modelBuilder.Entity<TeacherProfile>(entity =>
+        {
+            entity.HasKey(x => x.UserId);
+            entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();
+            entity.Property(x => x.ContractType).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.PrimaryAmount).HasPrecision(18, 2);
+            entity.Property(x => x.PrepAmount).HasPrecision(18, 2);
+            entity.Property(x => x.SecondaryAmount).HasPrecision(18, 2);
+            entity.Property(x => x.MonthlySalary).HasPrecision(18, 2);
+            entity.Property(x => x.ZoomAccessToken).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.ZoomRefreshToken).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.ZoomConnectedEmail).HasMaxLength(160).IsRequired();
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.TeacherProfile)
+                .HasForeignKey<TeacherProfile>(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ParentProfile>(entity =>
+        {
+            entity.HasKey(x => x.UserId);
+            entity.HasOne(x => x.User)
+                .WithOne(x => x.ParentProfile)
+                .HasForeignKey<ParentProfile>(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Role profiles load with the user so callers can read them without an explicit Include.
+        // Configured here because the navigations only exist once the relationships above are defined.
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Navigation(x => x.StudentProfile).AutoInclude();
+            entity.Navigation(x => x.TeacherProfile).AutoInclude();
+            entity.Navigation(x => x.ParentProfile).AutoInclude();
         });
 
         modelBuilder.Entity<Avatar>(entity =>
@@ -1056,6 +1095,7 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.SiteName).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.TenantStyle).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.LogoStorageKey).HasMaxLength(400).IsRequired();
             entity.Property(x => x.LogoContentType).HasMaxLength(120).IsRequired();
             entity.Property(x => x.BannerStorageKey).HasMaxLength(400).IsRequired();
@@ -1070,6 +1110,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasKey(x => x.Id);
             entity.Property(x => x.TenantName).HasMaxLength(120).IsRequired();
             entity.Property(x => x.TenantSlug).HasMaxLength(64).IsRequired();
+            entity.Property(x => x.TenantStyle).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.DisplayName).HasMaxLength(80).IsRequired();
@@ -1097,6 +1138,12 @@ public class AppDbContext : DbContext, IAppDbContext
 
     private void StampTenantOnInsert()
     {
+        // Every new student, teacher and parent gets its profile row, whichever code path created the user.
+        foreach (var entry in ChangeTracker.Entries<User>().Where(x => x.State == EntityState.Added).ToList())
+        {
+            entry.Entity.EnsureRoleProfile();
+        }
+
         if (string.IsNullOrWhiteSpace(CurrentTenantId))
         {
             return;

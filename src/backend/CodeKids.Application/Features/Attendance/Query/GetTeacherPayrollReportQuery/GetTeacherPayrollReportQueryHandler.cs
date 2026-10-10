@@ -83,11 +83,11 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
         else if (teacherIds.Count > 0)
         {
             teachersQuery = teachersQuery.Where(x =>
-                teacherIds.Contains(x.Id) || (x.MonthlySalary != null && x.MonthlySalary > 0));
+                teacherIds.Contains(x.Id) || (x.TeacherProfile!.MonthlySalary != null && x.TeacherProfile!.MonthlySalary > 0));
         }
         else
         {
-            teachersQuery = teachersQuery.Where(x => x.MonthlySalary != null && x.MonthlySalary > 0);
+            teachersQuery = teachersQuery.Where(x => x.TeacherProfile!.MonthlySalary != null && x.TeacherProfile!.MonthlySalary > 0);
         }
 
         var teachers = await teachersQuery.ToListAsync(cancellationToken);
@@ -165,7 +165,7 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
                 }
 
                 var monthlySalary = Math.Round(
-                    (teacher?.MonthlySalary ?? 0m) * monthsInRange,
+                    (teacher?.TeacherProfile?.MonthlySalary ?? 0m) * monthsInRange,
                     2,
                     MidpointRounding.AwayFromZero);
                 var manualAmount = Math.Round(
@@ -219,9 +219,9 @@ public sealed class GetTeacherPayrollReportQueryHandler(IAppDbContext dbContext)
 
         return stage switch
         {
-            GradeStage.Primary => teacher?.PrimaryAmount ?? 0m,
-            GradeStage.Middle => teacher?.PrepAmount ?? 0m,
-            GradeStage.Secondary => teacher?.SecondaryAmount ?? 0m,
+            GradeStage.Primary => teacher?.TeacherProfile?.PrimaryAmount ?? 0m,
+            GradeStage.Middle => teacher?.TeacherProfile?.PrepAmount ?? 0m,
+            GradeStage.Secondary => teacher?.TeacherProfile?.SecondaryAmount ?? 0m,
             _ => 0m
         };
     }

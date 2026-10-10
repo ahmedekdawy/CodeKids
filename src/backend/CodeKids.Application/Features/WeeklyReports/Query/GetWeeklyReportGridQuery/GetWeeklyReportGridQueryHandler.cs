@@ -23,9 +23,9 @@ public sealed class GetWeeklyReportGridQueryHandler(IAppDbContext dbContext)
         var students = await dbContext.Users
             .AsNoTracking()
             .Where(x => studentIds.Contains(x.Id) && x.Role == UserRole.Student)
-            .OrderBy(x => x.Grade)
+            .OrderBy(x => x.StudentProfile!.Grade)
             .ThenBy(x => x.DisplayName)
-            .Select(x => new { x.Id, x.DisplayName, x.Grade })
+            .Select(x => new { x.Id, x.DisplayName, x.StudentProfile!.Grade })
             .ToListAsync(cancellationToken);
 
         var existing = await dbContext.StudentWeeklyReports

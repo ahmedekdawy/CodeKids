@@ -57,7 +57,7 @@ public sealed class GradeExamAttemptCommandHandler(IAppDbContext dbContext, Noti
             attempt.MaxScore > 0 &&
             attempt.Score >= Math.Ceiling(attempt.MaxScore.Value * 0.7))
         {
-            student.TotalXp += attempt.Exam.XpReward;
+            student.EnsureStudentProfile().TotalXp += attempt.Exam.XpReward;
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

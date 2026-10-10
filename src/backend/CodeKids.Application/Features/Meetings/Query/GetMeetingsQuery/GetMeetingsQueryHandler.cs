@@ -50,7 +50,7 @@ public sealed class GetMeetingsQueryHandler(IAppDbContext dbContext)
         else if (isParent)
         {
             var childIds = await dbContext.Users
-                .Where(x => x.ParentId == query.ViewerUserId && x.Role == UserRole.Student)
+                .Where(x => x.StudentProfile!.ParentId == query.ViewerUserId && x.Role == UserRole.Student)
                 .Select(x => x.Id)
                 .ToListAsync(cancellationToken);
             sessions = sessions

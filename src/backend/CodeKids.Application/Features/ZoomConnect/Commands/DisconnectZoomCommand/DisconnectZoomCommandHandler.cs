@@ -14,10 +14,10 @@ public sealed class DisconnectZoomCommandHandler(IAppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == command.TeacherUserId && x.Role == UserRole.Teacher, cancellationToken)
             ?? throw new InvalidOperationException("Teacher account not found.");
 
-        teacher.ZoomAccessToken = string.Empty;
-        teacher.ZoomRefreshToken = string.Empty;
-        teacher.ZoomTokenExpiresAt = null;
-        teacher.ZoomConnectedEmail = string.Empty;
+        teacher.EnsureTeacherProfile().ZoomAccessToken = string.Empty;
+        teacher.EnsureTeacherProfile().ZoomRefreshToken = string.Empty;
+        teacher.EnsureTeacherProfile().ZoomTokenExpiresAt = null;
+        teacher.EnsureTeacherProfile().ZoomConnectedEmail = string.Empty;
         await dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }

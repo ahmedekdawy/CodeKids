@@ -94,7 +94,7 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
 
         dbContext.QuizAttempts.Add(attempt);
 
-        user.TotalXp += earnedXp;
+        user.EnsureStudentProfile().TotalXp += earnedXp;
         await dbContext.SaveChangesAsync(cancellationToken);
 
         var beforeBadges = await dbContext.UserBadges
@@ -114,7 +114,7 @@ public sealed class SubmitQuizCommandHandler(IAppDbContext dbContext)
             score,
             total,
             earnedXp,
-            user.TotalXp,
+            (user.StudentProfile?.TotalXp ?? 0),
             ratio >= 0.7 ? "Quiz cleared! Your coding brain is glowing." : "Keep practicing — you're getting closer!",
             ratio >= 0.7 ? "api.feedback.quizPassed" : "api.feedback.quizRetry",
             newBadges);

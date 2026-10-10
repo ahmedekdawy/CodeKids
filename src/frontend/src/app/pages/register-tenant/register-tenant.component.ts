@@ -9,13 +9,14 @@ import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
+import { TENANT_STYLES, TenantStyle } from '../../tenant-style';
 
 @Component({
   selector: 'app-register-tenant',
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent, ThemeSwitcherComponent, SiteBrandComponent, ApiBusyIndicatorComponent],
   templateUrl: './register-tenant.component.html',
-  styleUrl: '../forgot-password/forgot-password.component.css'
+  styleUrl: './register-tenant.component.css'
 })
 export class RegisterTenantComponent {
   private readonly auth = inject(AuthService);
@@ -23,7 +24,11 @@ export class RegisterTenantComponent {
   private readonly locale = inject(LocaleService);
   readonly brand = inject(SiteBrandService);
 
+  readonly styles = TENANT_STYLES;
+  readonly styleIcons: Record<TenantStyle, string> = { School: '🏫', Academy: '🎓', SingleTeacher: '🧑‍🏫' };
+
   readonly form = this.fb.nonNullable.group({
+    tenantStyle: ['School' as TenantStyle, Validators.required],
     tenantName: ['', Validators.required],
     displayName: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -46,6 +51,7 @@ export class RegisterTenantComponent {
     this.success.set('');
     this.auth
       .registerTenant({
+        tenantStyle: value.tenantStyle,
         tenantName: value.tenantName.trim(),
         displayName: value.displayName.trim(),
         email: value.email.trim(),

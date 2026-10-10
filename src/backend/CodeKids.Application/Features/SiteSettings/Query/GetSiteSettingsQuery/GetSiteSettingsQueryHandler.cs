@@ -21,25 +21,7 @@ public sealed class GetSiteSettingsQueryHandler(IAppDbContext dbContext)
         var tenantId = dbContext.CurrentTenantId;
         if (!string.IsNullOrWhiteSpace(tenantId))
         {
-            var tenantSettings = await dbContext.SiteSettings
-                .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(x => x.TenantId == tenantId, cancellationToken);
-            if (tenantSettings is not null)
-            {
-                return tenantSettings;
-            }
-
-            var template = await dbContext.SiteSettings
-                    .IgnoreQueryFilters()
-                    .FirstOrDefaultAsync(x => x.TenantId == null && x.Id == Domain.Entities.SiteSettings.DefaultId, cancellationToken)
-                ?? await dbContext.SiteSettings
-                    .IgnoreQueryFilters()
-                    .FirstOrDefaultAsync(x => x.TenantId == null, cancellationToken);
-
-            tenantSettings = CloneForTenant(template, tenantId);
-            dbContext.SiteSettings.Add(tenantSettings);
-            await dbContext.SaveChangesAsync(cancellationToken);
-            return tenantSettings;
+            return await EnsureForTenantAsync(dbContext, tenantId, cancellationToken);
         }
 
         var settings = await dbContext.SiteSettings
@@ -58,6 +40,33 @@ public sealed class GetSiteSettingsQueryHandler(IAppDbContext dbContext)
         dbContext.SiteSettings.Add(settings);
         await dbContext.SaveChangesAsync(cancellationToken);
         return settings;
+    }
+
+    /// <summary>Returns the tenant's own settings row, cloning the shared template the first time.</summary>
+    public static async Task<Domain.Entities.SiteSettings> EnsureForTenantAsync(
+        IAppDbContext dbContext,
+        string tenantId,
+        CancellationToken cancellationToken)
+    {
+        var tenantSettings = await dbContext.SiteSettings
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x => x.TenantId == tenantId, cancellationToken);
+        if (tenantSettings is not null)
+        {
+            return tenantSettings;
+        }
+
+        var template = await dbContext.SiteSettings
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.TenantId == null && x.Id == Domain.Entities.SiteSettings.DefaultId, cancellationToken)
+            ?? await dbContext.SiteSettings
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.TenantId == null, cancellationToken);
+
+        tenantSettings = CloneForTenant(template, tenantId);
+        dbContext.SiteSettings.Add(tenantSettings);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return tenantSettings;
     }
 
     private static Domain.Entities.SiteSettings CloneForTenant(Domain.Entities.SiteSettings? template, string tenantId) =>

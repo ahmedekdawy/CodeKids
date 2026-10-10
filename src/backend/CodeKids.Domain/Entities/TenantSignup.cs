@@ -5,6 +5,7 @@ public class TenantSignup : TenantEntity
     public Guid Id { get; set; }
     public string TenantName { get; set; } = string.Empty;
     public string TenantSlug { get; set; } = string.Empty;
+    public Enums.TenantStyle TenantStyle { get; set; } = Enums.TenantStyle.School;
     public string Email { get; set; } = string.Empty;
     public string MobilePhone { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;

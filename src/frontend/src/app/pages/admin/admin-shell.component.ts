@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/panel-shell.component';
+import { SiteBrandService } from '../../site-brand.service';
+import { navItemsForStyle } from '../../tenant-style';
 
 @Component({
   selector: 'app-admin-shell',
@@ -9,13 +11,15 @@ import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/pan
     <app-panel-shell
       titleKey="shell.admin.title"
       subtitleKey="shell.admin.subtitle"
-      [navItems]="navItems">
+      [navItems]="navItems()">
       <router-outlet />
     </app-panel-shell>
   `
 })
 export class AdminShellComponent {
-  readonly navItems: PanelNavItem[] = [
+  private readonly brand = inject(SiteBrandService);
+
+  private readonly allNavItems: PanelNavItem[] = [
     { labelKey: 'nav.admin.dashboard', path: '/admin/dashboard', icon: 'D' },
 
     { labelKey: 'nav.admin.admins', path: '/admin/admins', icon: 'A', categoryKey: 'nav.cat.people' },
@@ -51,4 +55,6 @@ export class AdminShellComponent {
     { labelKey: 'nav.admin.whatsapp', path: '/admin/whatsapp', icon: 'W', categoryKey: 'nav.cat.system' },
     { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B', categoryKey: 'nav.cat.system' }
   ];
+
+  readonly navItems = computed(() => navItemsForStyle(this.allNavItems, this.brand.tenantStyle()));
 }

@@ -28,7 +28,7 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
 
         var student = await dbContext.Users
             .AsNoTracking()
-            .Include(x => x.Parent)
+            .Include(x => x.StudentProfile!.Parent)
             .FirstOrDefaultAsync(x => x.Id == query.StudentId && x.Role == UserRole.Student, cancellationToken)
             ?? throw new InvalidOperationException("Student not found.");
 
@@ -147,16 +147,16 @@ public sealed class GetTeacherStudentDetailQueryHandler(IAppDbContext dbContext)
             x.SkippedAhead,
             x.LastEventAtUtc)).ToList();
 
-        var level = StudentLevelCalculator.FromXp(student.TotalXp);
+        var level = StudentLevelCalculator.FromXp((student.StudentProfile?.TotalXp ?? 0));
 
         return new TeacherStudentDetailDto(
             student.Id,
             student.DisplayName,
             student.Email,
             string.IsNullOrWhiteSpace(student.MobilePhone) ? null : student.MobilePhone,
-            student.Parent?.DisplayName,
-            string.IsNullOrWhiteSpace(student.Parent?.MobilePhone) ? null : student.Parent!.MobilePhone,
-            student.TotalXp,
+            student.StudentProfile?.Parent?.DisplayName,
+            string.IsNullOrWhiteSpace(student.StudentProfile?.Parent?.MobilePhone) ? null : student.StudentProfile?.Parent!.MobilePhone,
+            (student.StudentProfile?.TotalXp ?? 0),
             new StudentLevelDto(level.LevelNumber, level.Code, level.Name, level.MinXp, level.NextMinXp, level.ProgressPercent),
             completedSteps,
             quizAttempts,

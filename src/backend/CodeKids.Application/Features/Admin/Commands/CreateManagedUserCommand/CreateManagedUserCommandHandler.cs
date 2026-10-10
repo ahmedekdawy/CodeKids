@@ -75,20 +75,38 @@ public sealed class CreateManagedUserCommandHandler(
             DisplayName = command.DisplayName.Trim(),
             PasswordHash = passwordHasher.Hash(command.Password),
             Role = role,
-            ParentId = role == UserRole.Student ? command.ParentId : null,
-            Grade = grade,
-            SchoolType = schoolType,
-            AvatarId = defaultAvatar?.Id,
-            MobilePhone = mobile,
-            WorkShift = workShift,
-            Stages = stages,
-            ContractType = contract.ContractType,
-            PrimaryAmount = contract.PrimaryAmount,
-            PrepAmount = contract.PrepAmount,
-            SecondaryAmount = contract.SecondaryAmount,
-            MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary),
-            TotalXp = 0
+            MobilePhone = mobile
         };
+
+        switch (role)
+        {
+            case UserRole.Student:
+                user.StudentProfile = new StudentProfile
+                {
+                    UserId = user.Id,
+                    ParentId = command.ParentId,
+                    Grade = grade,
+                    SchoolType = schoolType,
+                    AvatarId = defaultAvatar?.Id
+                };
+                break;
+            case UserRole.Teacher:
+                user.TeacherProfile = new TeacherProfile
+                {
+                    UserId = user.Id,
+                    WorkShift = workShift,
+                    Stages = stages,
+                    ContractType = contract.ContractType,
+                    PrimaryAmount = contract.PrimaryAmount,
+                    PrepAmount = contract.PrepAmount,
+                    SecondaryAmount = contract.SecondaryAmount,
+                    MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary)
+                };
+                break;
+            case UserRole.Parent:
+                user.ParentProfile = new ParentProfile { UserId = user.Id };
+                break;
+        }
 
         dbContext.Users.Add(user);
         await ReplaceCourseRatesAsync(dbContext, user.Id, role, command.CourseRates, cancellationToken);
@@ -306,20 +324,20 @@ public sealed class CreateManagedUserCommandHandler(
             user.Email,
             user.DisplayName,
             user.Role.ToString(),
-            user.ParentId,
-            user.Grade,
-            user.SchoolType?.ToString(),
-            user.TotalXp,
+            user.StudentProfile?.ParentId,
+            user.StudentProfile?.Grade,
+            user.StudentProfile?.SchoolType?.ToString(),
+            (user.StudentProfile?.TotalXp ?? 0),
             user.MobilePhone,
-            user.WorkShift?.ToString(),
+            user.TeacherProfile?.WorkShift?.ToString(),
             user.Role == UserRole.Teacher
-                ? GradeStageHelper.ParseStages(user.Stages)
+                ? GradeStageHelper.ParseStages(user.TeacherProfile?.Stages)
                 : Array.Empty<int>(),
-            user.ContractType?.ToString(),
-            user.PrimaryAmount,
-            user.PrepAmount,
-            user.SecondaryAmount,
-            user.MonthlySalary,
+            user.TeacherProfile?.ContractType?.ToString(),
+            user.TeacherProfile?.PrimaryAmount,
+            user.TeacherProfile?.PrepAmount,
+            user.TeacherProfile?.SecondaryAmount,
+            user.TeacherProfile?.MonthlySalary,
             user.IsActive,
             rates,
             ProfilePhotoUrls.Build(user));

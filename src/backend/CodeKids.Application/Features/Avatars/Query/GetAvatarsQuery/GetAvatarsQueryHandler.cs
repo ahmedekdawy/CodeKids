@@ -24,7 +24,7 @@ public sealed class GetAvatarsQueryHandler(IAppDbContext dbContext)
             avatar.AccentColor,
             avatar.Emoji,
             avatar.UnlockXp,
-            user.TotalXp >= avatar.UnlockXp,
-            user.AvatarId == avatar.Id)).ToList();
+            (user.StudentProfile?.TotalXp ?? 0) >= avatar.UnlockXp,
+            user.StudentProfile?.AvatarId == avatar.Id)).ToList();
     }
 }

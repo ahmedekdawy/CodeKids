@@ -26,9 +26,9 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
 
         var students = await dbContext.Users
             .AsNoTracking()
-            .Include(x => x.Parent)
+            .Include(x => x.StudentProfile!.Parent)
             .Where(x => studentIds.Contains(x.Id) && x.Role == UserRole.Student)
-            .OrderByDescending(x => x.TotalXp)
+            .OrderByDescending(x => x.StudentProfile!.TotalXp)
             .ToListAsync(cancellationToken);
 
         var progressCounts = await dbContext.StudentProgress
@@ -47,15 +47,15 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
             dbContext, studentIds, cancellationToken);
 
         var mapped = new List<TeacherStudentDto>();
-        var avgXp = students.Count == 0 ? 0 : students.Average(x => x.TotalXp);
+        var avgXp = students.Count == 0 ? 0 : students.Average(x => (x.StudentProfile?.TotalXp ?? 0));
         var behindCount = 0;
 
         foreach (var student in students)
         {
-            var level = StudentLevelCalculator.FromXp(student.TotalXp);
+            var level = StudentLevelCalculator.FromXp((student.StudentProfile?.TotalXp ?? 0));
             var weak = await AnalyticsQueries.GetWeakLessonsForStudent(dbContext, student.Id, cancellationToken);
             string? signal = null;
-            if (student.TotalXp < avgXp * 0.6 || level.LevelNumber <= 1)
+            if ((student.StudentProfile?.TotalXp ?? 0) < avgXp * 0.6 || level.LevelNumber <= 1)
             {
                 signal = "Behind";
                 behindCount++;
@@ -73,14 +73,14 @@ public sealed class GetTeacherDashboardQueryHandler(IAppDbContext dbContext)
                 student.Id,
                 student.DisplayName,
                 student.Email,
-                student.TotalXp,
+                (student.StudentProfile?.TotalXp ?? 0),
                 level.LevelNumber,
                 level.Name,
                 level.ProgressPercent,
                 progressCounts.GetValueOrDefault(student.Id),
                 quizCounts.GetValueOrDefault(student.Id),
                 weak.Count,
-                student.Parent?.DisplayName,
+                student.StudentProfile?.Parent?.DisplayName,
                 signal,
                 ProfilePhotoUrls.Build(student)));
         }

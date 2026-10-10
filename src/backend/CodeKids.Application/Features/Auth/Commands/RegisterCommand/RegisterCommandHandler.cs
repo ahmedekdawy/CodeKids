@@ -48,11 +48,14 @@ public sealed class RegisterCommandHandler(
             Email = email,
             DisplayName = command.DisplayName.Trim(),
             PasswordHash = passwordHasher.Hash(command.Password),
-            Role = role,
-            ParentId = role == UserRole.Student ? command.ParentId : null,
-            AvatarId = role == UserRole.Student ? defaultAvatar?.Id : null,
-            TotalXp = 0
+            Role = role
         };
+        user.EnsureRoleProfile();
+        if (user.StudentProfile is { } student)
+        {
+            student.ParentId = command.ParentId;
+            student.AvatarId = defaultAvatar?.Id;
+        }
 
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -66,11 +69,11 @@ public sealed class RegisterCommandHandler(
             user.Email,
             user.DisplayName,
             user.Role.ToString(),
-            user.ParentId,
-            user.AvatarId,
-            user.TotalXp,
+            user.StudentProfile?.ParentId,
+            user.StudentProfile?.AvatarId,
+            (user.StudentProfile?.TotalXp ?? 0),
             user.MobilePhone,
-            user.WorkShift?.ToString(),
+            user.TeacherProfile?.WorkShift?.ToString(),
             user.TenantId,
             ProfilePhotoUrls.Build(user));
 

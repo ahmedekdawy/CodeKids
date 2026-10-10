@@ -25,7 +25,7 @@ public sealed class UpdateParentManagedAccountCommandHandler(
                 ?? throw new InvalidOperationException("Student not found.");
 
         if (user.Id != parent.Id
-            && (user.Role != UserRole.Student || user.ParentId != parent.Id))
+            && (user.Role != UserRole.Student || user.StudentProfile?.ParentId != parent.Id))
         {
             throw new InvalidOperationException("This student is not linked to your account.");
         }
