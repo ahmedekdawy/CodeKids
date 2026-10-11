@@ -44,7 +44,7 @@ export class AdminCourseTreeComponent {
   readonly generating = signal(false);
   readonly applying = signal(false);
   readonly aiDraft = signal<GeneratedCourseTree | null>(null);
-  readonly isSuperAdmin = computed(() => this.auth.user()?.role === 'SuperAdmin');
+  readonly isSuperAdmin = computed(() => this.auth.hasAdminRights());
   readonly emptyCoursesKey = computed(() =>
     this.isSuperAdmin() ? 'admin.courseTree.noCourses' : 'admin.courseTree.noAssignedCourses'
   );

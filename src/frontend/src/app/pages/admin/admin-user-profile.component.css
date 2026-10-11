@@ -1,0 +1,58 @@
+.profile-top {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.profile-top .ghost-btn,
+.panel-page > .ghost-btn {
+  text-decoration: none;
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-head-text h2 {
+  margin: 0 0 0.4rem;
+}
+
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.profile-chip {
+  padding: 0.2rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.profile-chip.is-off {
+  color: var(--text-muted);
+  border-style: dashed;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0.75rem 0 0;
+}
+
+.profile-detail dt {
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--text-muted);
+}
+
+.profile-detail dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}

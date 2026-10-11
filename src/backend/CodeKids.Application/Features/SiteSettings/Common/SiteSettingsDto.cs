@@ -14,4 +14,6 @@ public sealed record SiteSettingsDto(
     int PmSessionCount,
     int PmStartMinutes,
     DateTimeOffset UpdatedAtUtc,
-    string TenantStyle = "School");
+    string TenantStyle = "School",
+    bool MultiTimeZone = false,
+    string? TimeZone = null);

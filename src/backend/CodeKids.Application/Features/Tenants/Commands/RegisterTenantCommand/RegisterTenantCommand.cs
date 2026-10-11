@@ -8,7 +8,9 @@ public sealed record RegisterTenantRequest(
     string DisplayName,
     string Password,
     string? MobilePhone = null,
-    string? TenantStyle = null);
+    string? TenantStyle = null,
+    bool? MultiTimeZone = null,
+    string? TimeZone = null);
 
 public sealed record RegisterTenantResult(bool Accepted, string Message);
 
@@ -18,4 +20,6 @@ public sealed record RegisterTenantCommand(
     string DisplayName,
     string Password,
     string? MobilePhone = null,
-    string? TenantStyle = null) : ICommand<RegisterTenantResult>;
+    string? TenantStyle = null,
+    bool MultiTimeZone = false,
+    string? TimeZone = null) : ICommand<RegisterTenantResult>;

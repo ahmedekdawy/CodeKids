@@ -1,6 +1,8 @@
 import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
+import { zoneShiftMinutes } from '../../time-zone.util';
 import { LearningApiService } from '../../learning-api.service';
 import { FixedTimetableEntry } from '../../models';
 import { SiteBrandService } from '../../site-brand.service';
@@ -43,6 +45,7 @@ export class TeacherTimetableComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
   private readonly brand = inject(SiteBrandService);
+  private readonly auth = inject(AuthService);
 
   readonly entries = signal<FixedTimetableEntry[]>([]);
   readonly filterGrade = signal<number | ''>('');
@@ -57,9 +60,31 @@ export class TeacherTimetableComponent {
   readonly grades = GRADE_CODES;
   readonly weekDays = WEEKDAY_INDEXES;
 
-  readonly sessionSlots = computed(() =>
-    visibleSessionSlots(this.filterPeriod(), this.brand.amSessionCount(), this.brand.pmSessionCount(), this.brand.pmStartMinutes())
-  );
+  /** The teacher's own zone, when the school allows multiple time zones and it differs from the school's. */
+  readonly viewerTimeZone = computed(() => {
+    const school = this.brand.timeZone();
+    const mine = this.auth.user()?.timeZone;
+    return this.brand.multiTimeZone() && school && mine && mine !== school ? mine : null;
+  });
+
+  readonly timeZoneNote = computed(() => {
+    const mine = this.viewerTimeZone();
+    return mine
+      ? this.locale.t('teacher.timetable.zoneNote', { mine: mine.replace(/_/g, ' '), school: (this.brand.timeZone() ?? '').replace(/_/g, ' ') })
+      : '';
+  });
+
+  readonly sessionSlots = computed(() => {
+    const mine = this.viewerTimeZone();
+    const shift = mine ? zoneShiftMinutes(this.brand.timeZone()!, mine) : 0;
+    return visibleSessionSlots(
+      this.filterPeriod(),
+      this.brand.amSessionCount(),
+      this.brand.pmSessionCount(),
+      this.brand.pmStartMinutes(),
+      shift
+    );
+  });
   readonly amSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'am'));
   readonly pmSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'pm'));
 

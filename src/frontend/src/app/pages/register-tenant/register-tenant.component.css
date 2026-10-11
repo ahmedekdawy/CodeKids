@@ -90,3 +90,17 @@
   line-height: 1.4;
   color: var(--text-soft);
 }
+
+.auth-form .check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.auth-form .check-row input {
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  flex-shrink: 0;
+}

@@ -1,6 +1,9 @@
 <div class="panel-page timetable-page" dir="rtl">
   <h2>{{ 'teacher.timetable.title' | t }}</h2>
   <p class="meta">{{ 'teacher.timetable.subtitle' | t }}</p>
+  @if (timeZoneNote(); as note) {
+    <p class="meta">{{ note }}</p>
+  }
 
   <app-page-feedback [ok]="message()" [error]="error()" />
 

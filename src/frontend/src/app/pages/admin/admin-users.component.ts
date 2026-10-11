@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,6 +25,9 @@ import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { STAGE_CODES, formatCourseLabel, formatStageLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SiteBrandService } from '../../site-brand.service';
+import { timeZoneOptions } from '../../time-zone.util';
+import { StyledField, showsField } from '../../tenant-style';
 
 type ManagedRole = Extract<UserRole, 'SuperAdmin' | 'Teacher' | 'Parent'>;
 type CourseRateRow = { courseId: string; sessionAmount: number | null; monthlySalary: number | null };
@@ -69,6 +72,7 @@ export class AdminUsersComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  readonly brand = inject(SiteBrandService);
 
   readonly managedRole = toSignal(
     this.route.data.pipe(map((data) => (data['role'] as ManagedRole) || 'SuperAdmin')),
@@ -83,6 +87,8 @@ export class AdminUsersComponent {
   readonly sortKey = signal<string>('displayName');
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
+  /** True while the add/edit popup is showing. */
+  readonly formOpen = signal(false);
   readonly impersonatingId = signal<string | null>(null);
   readonly page = signal(1);
   readonly pageSize = signal(10);
@@ -103,6 +109,23 @@ export class AdminUsersComponent {
   readonly workShifts: TeacherWorkShift[] = ['Am', 'Pm', 'Both'];
   readonly contractTypes: TeacherContractType[] = ['Session', 'Monthly'];
   readonly pageSizeOptions = [10, 25, 50];
+
+  /** Gender and time zone are shared by the create and edit forms. */
+  formGender = '';
+  formTimeZone = '';
+  readonly timeZones = timeZoneOptions();
+
+  /** Whether this tenant's style uses the given group of fields. */
+  shows(field: StyledField): boolean {
+    return showsField(this.brand.tenantStyle(), field);
+  }
+
+  genderOptions(): { value: string; label: string }[] {
+    return [
+      { value: 'Male', label: this.locale.t('common.genderMale') },
+      { value: 'Female', label: this.locale.t('common.genderFemale') }
+    ];
+  }
 
   userEmail = '';
   userName = '';
@@ -394,12 +417,15 @@ export class AdminUsersComponent {
         prepAmount: role === 'Teacher' ? this.userPrepAmount : null,
         secondaryAmount: role === 'Teacher' ? this.userSecondaryAmount : null,
         monthlySalary: role === 'Teacher' ? this.userMonthlySalary : null,
-        courseRates: rates
+        courseRates: rates,
+        gender: role === 'Teacher' ? this.formGender || null : null,
+        timeZone: role === 'Teacher' && this.brand.multiTimeZone() ? this.formTimeZone || null : null
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.users.created'));
           this.resetCreateForm();
+          this.formOpen.set(false);
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.users.createFailed'))
@@ -420,11 +446,38 @@ export class AdminUsersComponent {
     this.editSecondaryAmount = user.secondaryAmount ?? null;
     this.editMonthlySalary = user.monthlySalary ?? null;
     this.editCourseRates.set(toRateRows(user.courseRates));
+    this.formGender = user.gender || '';
+    this.formTimeZone = user.timeZone || '';
     this.clearStatus();
+    this.formOpen.set(true);
+  }
+
+  viewProfile(user: ManagedUser): void {
+    void this.router.navigate(['/admin/users', user.id]);
+  }
+
+  /** Opens the popup with an empty form for a new user. */
+  openCreate(): void {
+    this.cancelEdit();
+    this.clearStatus();
+    this.formOpen.set(true);
+  }
+
+  closeForm(): void {
+    this.cancelEdit();
+    this.clearStatus();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.formOpen()) this.closeForm();
   }
 
   cancelEdit(): void {
     this.editingId.set(null);
+    this.formOpen.set(false);
+    this.formGender = '';
+    this.formTimeZone = '';
     this.editCourseRates.set([]);
   }
 
@@ -458,6 +511,8 @@ export class AdminUsersComponent {
         secondaryAmount: role === 'Teacher' ? this.editSecondaryAmount : null,
         monthlySalary: role === 'Teacher' ? this.editMonthlySalary : null,
         courseRates: rates,
+        gender: role === 'Teacher' ? this.formGender || null : null,
+        timeZone: role === 'Teacher' && this.brand.multiTimeZone() ? this.formTimeZone || null : null,
         password: this.editPassword || null
       })
       .subscribe({
@@ -517,6 +572,8 @@ export class AdminUsersComponent {
   }
 
   private resetCreateForm(): void {
+    this.formGender = '';
+    this.formTimeZone = '';
     this.userEmail = '';
     this.userName = '';
     this.userPassword = '';

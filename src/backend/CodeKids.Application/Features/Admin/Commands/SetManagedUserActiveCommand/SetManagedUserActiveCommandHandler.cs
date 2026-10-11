@@ -21,6 +21,11 @@ public sealed class SetManagedUserActiveCommandHandler(IAppDbContext dbContext)
             .FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken)
             ?? throw new InvalidOperationException("User not found.");
 
+        if (!command.IsActive && user.IsTenantOwner)
+        {
+            throw new InvalidOperationException("The account owner cannot be deactivated.");
+        }
+
         if (!command.IsActive && user.Role == UserRole.SuperAdmin)
         {
             var adminCount = await dbContext.Users.CountAsync(

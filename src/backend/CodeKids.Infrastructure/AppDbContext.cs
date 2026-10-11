@@ -84,6 +84,8 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
     public DbSet<TenantSignup> TenantSignups => Set<TenantSignup>();
+    public DbSet<UserAvailability> UserAvailabilities => Set<UserAvailability>();
+    public DbSet<TeacherVacation> TeacherVacations => Set<TeacherVacation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,6 +117,8 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(x => x.UserId);
             entity.Property(x => x.SchoolType).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Gender).HasConversion<string>().HasMaxLength(10);
+            entity.Property(x => x.TimeZone).HasMaxLength(64);
             entity.HasOne(x => x.User)
                 .WithOne(x => x.StudentProfile)
                 .HasForeignKey<StudentProfile>(x => x.UserId)
@@ -133,6 +137,8 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(x => x.UserId);
             entity.Property(x => x.WorkShift).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.Gender).HasConversion<string>().HasMaxLength(10);
+            entity.Property(x => x.TimeZone).HasMaxLength(64);
             entity.Property(x => x.Stages).HasMaxLength(40).IsRequired();
             entity.Property(x => x.ContractType).HasConversion<string>().HasMaxLength(20);
             entity.Property(x => x.PrimaryAmount).HasPrecision(18, 2);
@@ -1096,6 +1102,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasKey(x => x.Id);
             entity.Property(x => x.SiteName).HasMaxLength(120).IsRequired();
             entity.Property(x => x.TenantStyle).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.TimeZone).HasMaxLength(64);
             entity.Property(x => x.LogoStorageKey).HasMaxLength(400).IsRequired();
             entity.Property(x => x.LogoContentType).HasMaxLength(120).IsRequired();
             entity.Property(x => x.BannerStorageKey).HasMaxLength(400).IsRequired();
@@ -1111,6 +1118,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.TenantName).HasMaxLength(120).IsRequired();
             entity.Property(x => x.TenantSlug).HasMaxLength(64).IsRequired();
             entity.Property(x => x.TenantStyle).HasConversion<string>().HasMaxLength(20);
+            entity.Property(x => x.TimeZone).HasMaxLength(64);
             entity.Property(x => x.Email).HasMaxLength(160).IsRequired();
             entity.Property(x => x.MobilePhone).HasMaxLength(30).IsRequired();
             entity.Property(x => x.DisplayName).HasMaxLength(80).IsRequired();
@@ -1119,6 +1127,27 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasIndex(x => x.Email).IsUnique();
             entity.HasIndex(x => x.TenantSlug).IsUnique();
             entity.HasIndex(x => x.TokenHash).IsUnique();
+        });
+
+        modelBuilder.Entity<UserAvailability>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.UserId, x.DayOfWeek });
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<TeacherVacation>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Note).HasMaxLength(TeacherVacation.MaxNoteLength).IsRequired();
+            entity.HasIndex(x => new { x.TeacherId, x.StartDate });
+            entity.HasOne(x => x.Teacher)
+                .WithMany()
+                .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         ApplyTenantFilters(modelBuilder);

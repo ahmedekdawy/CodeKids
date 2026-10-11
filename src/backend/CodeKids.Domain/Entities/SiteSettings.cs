@@ -13,6 +13,10 @@ public class SiteSettings : TenantEntity
     public Guid Id { get; set; } = DefaultId;
     public string SiteName { get; set; } = "CodeKids";
     public Enums.TenantStyle TenantStyle { get; set; } = Enums.TenantStyle.School;
+    /// <summary>When true, students and teachers each have their own time zone and timetables are shown in it.</summary>
+    public bool MultiTimeZone { get; set; }
+    /// <summary>IANA id of the zone the tenant's timetable times are written in; null when never set.</summary>
+    public string? TimeZone { get; set; }
     public string LogoStorageKey { get; set; } = string.Empty;
     public string LogoContentType { get; set; } = string.Empty;
     public string BannerStorageKey { get; set; } = string.Empty;

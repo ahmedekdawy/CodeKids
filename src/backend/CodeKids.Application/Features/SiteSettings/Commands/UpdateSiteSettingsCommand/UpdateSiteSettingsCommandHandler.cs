@@ -12,7 +12,7 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
     public async Task<SiteSettingsDto> Handle(UpdateSiteSettingsCommand command, CancellationToken cancellationToken)
     {
         _ = await dbContext.Users.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && x.Role == Domain.Enums.UserRole.SuperAdmin, cancellationToken)
+            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && (x.Role == Domain.Enums.UserRole.SuperAdmin || x.IsTenantOwner), cancellationToken)
             ?? throw new InvalidOperationException("Super Admin account not found.");
 
         var name = command.SiteName.Trim();
@@ -65,6 +65,22 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
         if (command.PmStartMinutes.HasValue)
         {
             settings.PmStartMinutes = ValidatePmStartMinutes(command.PmStartMinutes.Value);
+        }
+
+        if (command.MultiTimeZone.HasValue)
+        {
+            settings.MultiTimeZone = command.MultiTimeZone.Value;
+        }
+
+        // Only replaces the zone when one is sent, so older clients do not wipe it.
+        if (Tenants.TimeZoneIds.Normalize(command.TimeZone) is { } timeZone)
+        {
+            settings.TimeZone = timeZone;
+        }
+
+        if (settings.MultiTimeZone && string.IsNullOrWhiteSpace(settings.TimeZone))
+        {
+            throw new InvalidOperationException("Choose the school time zone before allowing multiple time zones.");
         }
 
         settings.UpdatedAtUtc = DateTimeOffset.UtcNow;

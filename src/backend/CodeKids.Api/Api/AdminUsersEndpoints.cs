@@ -32,6 +32,29 @@ public static class AdminUsersEndpoints
 
         }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
 
+        app.MapGet("/api/admin/users/{userId:guid}", async (
+
+            Guid userId,
+
+            CodeKids.Application.Abstractions.IAppDbContext dbContext,
+
+            CancellationToken cancellationToken) =>
+
+        {
+
+            if (!await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync(
+                    dbContext.Users, x => x.Id == userId, cancellationToken))
+
+            {
+
+                return Results.NotFound();
+
+            }
+
+            return Results.Ok(await CreateManagedUserCommandHandler.LoadDtoAsync(dbContext, userId, cancellationToken));
+
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+
         app.MapPost("/api/admin/users", async (
 
             CreateManagedUserRequest request,
@@ -86,7 +109,15 @@ public static class AdminUsersEndpoints
 
                         request.MonthlySalary,
 
-                        request.CourseRates),
+                        request.CourseRates,
+
+                        request.Gender,
+
+                        request.TimeZone,
+
+                        request.SessionMinutes,
+
+                        request.SessionsPerWeek),
 
                     cancellationToken));
 
@@ -160,7 +191,15 @@ public static class AdminUsersEndpoints
 
                         request.MonthlySalary,
 
-                        request.CourseRates),
+                        request.CourseRates,
+
+                        request.Gender,
+
+                        request.TimeZone,
+
+                        request.SessionMinutes,
+
+                        request.SessionsPerWeek),
 
                     cancellationToken));
 

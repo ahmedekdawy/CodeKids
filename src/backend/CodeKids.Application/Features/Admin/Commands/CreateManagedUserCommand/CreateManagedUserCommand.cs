@@ -24,7 +24,11 @@ public sealed record CreateManagedUserRequest(
     decimal? PrepAmount = null,
     decimal? SecondaryAmount = null,
     decimal? MonthlySalary = null,
-    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null);
+    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null,
+    string? Gender = null,
+    string? TimeZone = null,
+    int? SessionMinutes = null,
+    int? SessionsPerWeek = null);
 
 public sealed record CreateManagedUserCommand(
     Guid AdminUserId,
@@ -43,4 +47,8 @@ public sealed record CreateManagedUserCommand(
     decimal? PrepAmount = null,
     decimal? SecondaryAmount = null,
     decimal? MonthlySalary = null,
-    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null) : ICommand<ManagedUserDto>;
+    IReadOnlyList<TeacherCourseRateInput>? CourseRates = null,
+    string? Gender = null,
+    string? TimeZone = null,
+    int? SessionMinutes = null,
+    int? SessionsPerWeek = null) : ICommand<ManagedUserDto>;

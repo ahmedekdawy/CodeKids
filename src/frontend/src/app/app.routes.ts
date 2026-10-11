@@ -178,6 +178,11 @@ export const routes: Routes = [
       { path: 'zoom', component: TeacherZoomComponent },
       { path: 'appointments', component: TeacherAppointmentsComponent },
       { path: 'timetable', component: TeacherTimetableComponent },
+      {
+        path: 'availability',
+        loadComponent: () =>
+          import('./pages/teacher/teacher-availability.component').then((m) => m.TeacherAvailabilityComponent)
+      },
       { path: 'attendance', component: TeacherAttendanceComponent },
       { path: 'student-attendance', component: TeacherStudentAttendanceComponent },
       { path: 'weekly-reports', component: TeacherWeeklyReportsComponent },
@@ -208,6 +213,11 @@ export const routes: Routes = [
       { path: 'parents', component: AdminUsersComponent, data: { role: 'Parent' } },
       { path: 'users', redirectTo: 'admins' },
       { path: 'students', component: AdminStudentsComponent },
+      {
+        path: 'users/:id',
+        loadComponent: () =>
+          import('./pages/admin/admin-user-profile.component').then((m) => m.AdminUserProfileComponent)
+      },
       { path: 'courses', component: AdminCoursesComponent },
       { path: 'course-tree', component: AdminCourseTreeComponent },
       { path: 'videos', component: AdminVideosComponent },
@@ -216,6 +226,11 @@ export const routes: Routes = [
       { path: 'enroll-student', component: AdminEnrollStudentComponent },
       { path: 'appointments', component: AdminAppointmentsComponent },
       { path: 'timetable', component: AdminTimetableComponent },
+      {
+        path: 'availability',
+        loadComponent: () =>
+          import('./pages/admin/admin-availability.component').then((m) => m.AdminAvailabilityComponent)
+      },
       { path: 'study-plans', component: AdminStudyPlansComponent },
       { path: 'weekly-reports', component: AdminWeeklyReportsComponent },
       {

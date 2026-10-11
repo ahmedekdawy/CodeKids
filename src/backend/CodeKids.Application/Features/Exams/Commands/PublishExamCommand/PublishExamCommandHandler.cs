@@ -19,7 +19,7 @@ public sealed class PublishExamCommandHandler(IAppDbContext dbContext, Notificat
             ?? throw new InvalidOperationException("Exam not found.");
 
         var isAdmin = await dbContext.Users.AnyAsync(
-            x => x.Id == command.TeacherUserId && x.Role == UserRole.SuperAdmin,
+            x => x.Id == command.TeacherUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner),
             cancellationToken);
         if (!isAdmin && exam.Classroom?.Courses.Any(t => t.TeacherId == command.TeacherUserId) != true)
         {

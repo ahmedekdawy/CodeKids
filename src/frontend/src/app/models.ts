@@ -24,6 +24,10 @@ export interface AuthUser {
   workShift?: TeacherWorkShift | string | null;
   tenantId?: string | null;
   profilePhotoUrl?: string | null;
+  gender?: string | null;
+  timeZone?: string | null;
+  /** Owner of a single-teacher tenant: a teacher who also has every admin right. */
+  isTenantOwner?: boolean;
 }
 
 export interface AuthResponse {
@@ -153,6 +157,8 @@ export interface SiteSettings {
   pmStartMinutes: number;
   updatedAtUtc: string;
   tenantStyle?: string | null;
+  multiTimeZone?: boolean;
+  timeZone?: string | null;
 }
 
 export interface LessonStep {
@@ -1031,6 +1037,10 @@ export interface ManagedUser {
   isActive?: boolean;
   courseRates?: TeacherCourseRate[];
   profilePhotoUrl?: string | null;
+  gender?: string | null;
+  timeZone?: string | null;
+  sessionMinutes?: number | null;
+  sessionsPerWeek?: number | null;
 }
 
 export interface ZoomConnectionStatus {
@@ -1462,4 +1472,22 @@ export interface SaveGradeCertificatePayload {
   classroomId: string;
   title: string;
   subjects: { courseId: string; maxDegree: number; includedInTotal: boolean }[];
+}
+
+/** One period on one weekday; minutes are from midnight in the person's own time zone. */
+export interface AvailabilityPeriod {
+  /** 0 = Sunday … 6 = Saturday. */
+  dayOfWeek: number;
+  startMinutes: number;
+  endMinutes: number;
+}
+
+export interface TeacherVacation {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  /** yyyy-MM-dd, inclusive. */
+  startDate: string;
+  endDate: string;
+  note: string;
 }

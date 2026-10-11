@@ -1044,6 +1044,17 @@
   box-shadow: var(--modal-shadow);
 }
 
+/* For full add/edit forms, which need more room than a small dialog. */
+.modal-card.modal-card--wide {
+  width: min(60rem, 100%);
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
 .modal-head {
   display: flex;
   align-items: center;

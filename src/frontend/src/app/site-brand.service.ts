@@ -15,6 +15,10 @@ export class SiteBrandService {
   readonly pmSessionCount = signal(DEFAULT_SESSION_COUNT);
   readonly pmStartMinutes = signal(DEFAULT_PM_START_MINUTES);
   readonly tenantStyle = signal<TenantStyle>('School');
+  /** True when students and teachers each have their own time zone. */
+  readonly multiTimeZone = signal(false);
+  /** Zone the school's timetable times are written in. */
+  readonly timeZone = signal<string | null>(null);
   readonly loaded = signal(false);
 
   load(): void {
@@ -27,6 +31,8 @@ export class SiteBrandService {
   apply(settings: SiteSettings): void {
     this.siteName.set(settings.siteName || 'CodeKids');
     this.tenantStyle.set(normalizeTenantStyle(settings.tenantStyle));
+    this.multiTimeZone.set(settings.multiTimeZone === true);
+    this.timeZone.set(settings.timeZone || null);
     const stamp = settings.updatedAtUtc || Date.now().toString();
     const logo = this.api.siteAssetUrl(settings.logoUrl);
     const banner = this.api.siteAssetUrl(settings.bannerUrl);

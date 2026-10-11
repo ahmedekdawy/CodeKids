@@ -22,7 +22,7 @@ public sealed class ImpersonateUserCommandHandler(
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.TargetUserId, cancellationToken)
             ?? throw new InvalidOperationException("User not found.");
 
-        if (actor.Role == UserRole.SuperAdmin)
+        if (actor.HasAdminRights)
         {
             if (user.Role is not (UserRole.Student or UserRole.Parent or UserRole.Teacher))
             {

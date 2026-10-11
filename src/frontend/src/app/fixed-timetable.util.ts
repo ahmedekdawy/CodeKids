@@ -35,16 +35,24 @@ export function normalizeSessionCount(value: unknown, fallback = DEFAULT_SESSION
   return Math.min(MAX_SESSION_COUNT, Math.max(MIN_SESSION_COUNT, n));
 }
 
+/**
+ * @param shiftMinutes added to the displayed times only, to show school times in the viewer's time zone.
+ *   A slot that lands on another day gets a (+1) / (-1) marker.
+ */
 export function buildSessionSlots(
   period: 'am' | 'pm',
   count = DEFAULT_SESSION_COUNT,
-  pmStartMinutes = DEFAULT_PM_START_MINUTES
+  pmStartMinutes = DEFAULT_PM_START_MINUTES,
+  shiftMinutes = 0
 ): FixedSessionSlot[] {
   const base = period === 'am' ? AM_START_MINUTES : normalizePmStartMinutes(pmStartMinutes);
   return sessionNumbers(count).map((sessionNumber) => {
     const startMinutes = base + (sessionNumber - 1) * PERIOD_STEP_MINUTES;
     const endMinutes = startMinutes + SESSION_MINUTES;
-    const timeLabel = `${formatClock(startMinutes)}-${formatClock(endMinutes)}`;
+    const dayOffset = Math.floor((startMinutes + shiftMinutes) / MINUTES_PER_DAY);
+    const dayMarker = dayOffset === 0 ? '' : ` (${dayOffset > 0 ? '+' : '-'}${Math.abs(dayOffset)})`;
+    const timeLabel =
+      `${formatClock(wrapDay(startMinutes + shiftMinutes))}-${formatClock(wrapDay(endMinutes + shiftMinutes))}${dayMarker}`;
     return {
       sessionNumber,
       period,
@@ -61,14 +69,21 @@ export function visibleSessionSlots(
   periodFilter: TimetablePeriodFilter,
   amCount = DEFAULT_SESSION_COUNT,
   pmCount = DEFAULT_SESSION_COUNT,
-  pmStartMinutes = DEFAULT_PM_START_MINUTES
+  pmStartMinutes = DEFAULT_PM_START_MINUTES,
+  shiftMinutes = 0
 ): FixedSessionSlot[] {
-  if (periodFilter === 'am') return buildSessionSlots('am', amCount, pmStartMinutes);
-  if (periodFilter === 'pm') return buildSessionSlots('pm', pmCount, pmStartMinutes);
+  if (periodFilter === 'am') return buildSessionSlots('am', amCount, pmStartMinutes, shiftMinutes);
+  if (periodFilter === 'pm') return buildSessionSlots('pm', pmCount, pmStartMinutes, shiftMinutes);
   return [
-    ...buildSessionSlots('am', amCount, pmStartMinutes),
-    ...buildSessionSlots('pm', pmCount, pmStartMinutes)
+    ...buildSessionSlots('am', amCount, pmStartMinutes, shiftMinutes),
+    ...buildSessionSlots('pm', pmCount, pmStartMinutes, shiftMinutes)
   ];
+}
+
+const MINUTES_PER_DAY = 24 * 60;
+
+function wrapDay(totalMinutes: number): number {
+  return ((totalMinutes % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
 }
 
 export function normalizePmStartMinutes(value: unknown, fallback = DEFAULT_PM_START_MINUTES): number {

@@ -131,11 +131,11 @@
           <form class="meeting-form" (ngSubmit)="saveChildAccount()">
             <label>
               {{ 'common.email' | t }}
-              <input [(ngModel)]="childEmail" name="childEmail" type="email" autocomplete="email" />
+              <input [(ngModel)]="childEmail" name="childEmail" type="email" autocomplete="off" />
             </label>
             <label>
               {{ 'common.mobile' | t }}
-              <input [(ngModel)]="childMobile" name="childMobile" autocomplete="tel" />
+              <input [(ngModel)]="childMobile" name="childMobile" autocomplete="off" />
             </label>
             <label>
               {{ 'common.newPasswordOptional' | t }}

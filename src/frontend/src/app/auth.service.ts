@@ -62,6 +62,8 @@ export class AuthService {
     password: string;
     mobilePhone?: string;
     tenantStyle?: string;
+    multiTimeZone?: boolean;
+    timeZone?: string;
   }): Observable<{ accepted: boolean; message: string }> {
     return this.http.post<{ accepted: boolean; message: string }>(
       `${resolveApiBaseUrl()}/tenants/register`,
@@ -167,6 +169,12 @@ export class AuthService {
     const next = { ...current, ...partial };
     localStorage.setItem(USER_KEY, JSON.stringify(next));
     this.user.set(next);
+  }
+
+  /** Admins, and the owner of a single-teacher tenant. */
+  hasAdminRights(): boolean {
+    const user = this.user();
+    return user?.role === 'SuperAdmin' || user?.isTenantOwner === true;
   }
 
   roleHome(): string {

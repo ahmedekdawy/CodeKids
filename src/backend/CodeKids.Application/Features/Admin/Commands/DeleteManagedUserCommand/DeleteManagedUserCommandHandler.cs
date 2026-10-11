@@ -18,6 +18,11 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken)
             ?? throw new InvalidOperationException("User not found.");
 
+        if (user.IsTenantOwner)
+        {
+            throw new InvalidOperationException("The account owner cannot be deleted.");
+        }
+
         if (user.Role == UserRole.SuperAdmin)
         {
             var adminCount = await dbContext.Users.CountAsync(x => x.Role == UserRole.SuperAdmin, cancellationToken);

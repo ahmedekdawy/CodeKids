@@ -718,6 +718,8 @@ app.MapTeacherAssessmentsReportEndpoints();
 
 app.MapAdminUsersEndpoints();
 
+app.MapAvailabilityEndpoints();
+
 app.MapAppointmentsEndpoints();
 
 app.MapAssessmentsEndpoints();

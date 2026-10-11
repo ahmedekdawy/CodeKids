@@ -120,7 +120,11 @@ public static class SiteSettingsEndpoints
 
                         request.PmSessionCount,
 
-                        request.PmStartMinutes),
+                        request.PmStartMinutes,
+
+                        request.MultiTimeZone,
+
+                        request.TimeZone),
 
                     cancellationToken));
 

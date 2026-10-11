@@ -18,7 +18,7 @@ public sealed class CreateManagedUserCommandHandler(
         if (command.Role != "SuperAdmin")
         {
             var admin = await dbContext.Users.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && x.Role == UserRole.SuperAdmin, cancellationToken)
+                .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner), cancellationToken)
                 ?? throw new InvalidOperationException("Super Admin account not found.");
         }
 
@@ -58,6 +58,9 @@ public sealed class CreateManagedUserCommandHandler(
         var workShift = ParseWorkShift(role, command.WorkShift);
         var stages = ParseTeacherStages(role, command.Stages);
         var contract = ParseTeacherContract(role, command);
+        var gender = ParseGender(command.Gender);
+        var timeZone = Tenants.TimeZoneIds.Normalize(command.TimeZone);
+        var (sessionMinutes, sessionsPerWeek) = ValidateStudentSessions(command.SessionMinutes, command.SessionsPerWeek);
         if (!string.IsNullOrWhiteSpace(mobile)
             && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile, cancellationToken))
         {
@@ -87,7 +90,11 @@ public sealed class CreateManagedUserCommandHandler(
                     ParentId = command.ParentId,
                     Grade = grade,
                     SchoolType = schoolType,
-                    AvatarId = defaultAvatar?.Id
+                    AvatarId = defaultAvatar?.Id,
+                    Gender = gender,
+                    TimeZone = timeZone,
+                    SessionMinutes = sessionMinutes,
+                    SessionsPerWeek = sessionsPerWeek
                 };
                 break;
             case UserRole.Teacher:
@@ -100,7 +107,9 @@ public sealed class CreateManagedUserCommandHandler(
                     PrimaryAmount = contract.PrimaryAmount,
                     PrepAmount = contract.PrepAmount,
                     SecondaryAmount = contract.SecondaryAmount,
-                    MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary)
+                    MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary),
+                    Gender = gender,
+                    TimeZone = timeZone
                 };
                 break;
             case UserRole.Parent:
@@ -118,6 +127,42 @@ public sealed class CreateManagedUserCommandHandler(
 
     internal static string NormalizeEmail(string? email) =>
         (email ?? string.Empty).Trim().ToLowerInvariant();
+
+    internal static (int? SessionMinutes, int? SessionsPerWeek) ValidateStudentSessions(int? sessionMinutes, int? sessionsPerWeek)
+    {
+        if (sessionMinutes is < StudentProfile.MinSessionMinutes or > StudentProfile.MaxSessionMinutes)
+        {
+            throw new InvalidOperationException(
+                $"Session time must be between {StudentProfile.MinSessionMinutes} and {StudentProfile.MaxSessionMinutes} minutes.");
+        }
+
+        if (sessionsPerWeek is < StudentProfile.MinSessionsPerWeek or > StudentProfile.MaxSessionsPerWeek)
+        {
+            throw new InvalidOperationException(
+                $"Sessions per week must be between {StudentProfile.MinSessionsPerWeek} and {StudentProfile.MaxSessionsPerWeek}.");
+        }
+
+        return (sessionMinutes, sessionsPerWeek);
+    }
+
+    internal static Gender? ParseGender(string? gender)
+    {
+        var value = (gender ?? string.Empty).Trim();
+        if (value.Length == 0)
+        {
+            return null;
+        }
+
+        // Reject numeric strings: Enum.TryParse would accept any integer.
+        if (!char.IsAsciiDigit(value[0])
+            && Enum.TryParse<Gender>(value, ignoreCase: true, out var parsed)
+            && Enum.IsDefined(parsed))
+        {
+            return parsed;
+        }
+
+        throw new InvalidOperationException("Gender must be Male or Female.");
+    }
 
     internal static SchoolType? ParseSchoolType(UserRole role, string? schoolType)
     {
@@ -291,7 +336,7 @@ public sealed class CreateManagedUserCommandHandler(
         }
     }
 
-    internal static async Task<ManagedUserDto> LoadDtoAsync(
+    public static async Task<ManagedUserDto> LoadDtoAsync(
         IAppDbContext dbContext,
         Guid userId,
         CancellationToken cancellationToken)
@@ -340,6 +385,10 @@ public sealed class CreateManagedUserCommandHandler(
             user.TeacherProfile?.MonthlySalary,
             user.IsActive,
             rates,
-            ProfilePhotoUrls.Build(user));
+            ProfilePhotoUrls.Build(user),
+            (user.StudentProfile?.Gender ?? user.TeacherProfile?.Gender)?.ToString(),
+            user.StudentProfile?.TimeZone ?? user.TeacherProfile?.TimeZone,
+            user.StudentProfile?.SessionMinutes,
+            user.StudentProfile?.SessionsPerWeek);
     }
 }

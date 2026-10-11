@@ -1,0 +1,60 @@
+.availability-days {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.availability-day {
+  display: grid;
+  grid-template-columns: 8rem 1fr auto;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.availability-day-name {
+  padding-top: 0.45rem;
+}
+
+.availability-periods {
+  display: grid;
+  gap: 0.45rem;
+  min-height: 2.2rem;
+  align-content: center;
+}
+
+.availability-period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.availability-period input[type='time'] {
+  width: 8.5rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font: inherit;
+}
+
+.availability-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .availability-day {
+    grid-template-columns: 1fr;
+  }
+
+  .availability-day-name {
+    padding-top: 0;
+  }
+}

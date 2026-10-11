@@ -39,7 +39,9 @@ public static class TenantEndpoints
                         request.DisplayName,
                         request.Password,
                         request.MobilePhone,
-                        request.TenantStyle),
+                        request.TenantStyle,
+                        request.MultiTimeZone == true,
+                        request.TimeZone),
                     cancellationToken);
                 return Results.Ok(result);
             }

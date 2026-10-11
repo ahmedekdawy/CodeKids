@@ -21,7 +21,7 @@ public sealed class UploadSiteImageCommandHandler(IAppDbContext dbContext)
     public async Task<SiteSettingsDto> Handle(UploadSiteImageCommand command, CancellationToken cancellationToken)
     {
         _ = await dbContext.Users.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && x.Role == Domain.Enums.UserRole.SuperAdmin, cancellationToken)
+            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && (x.Role == Domain.Enums.UserRole.SuperAdmin || x.IsTenantOwner), cancellationToken)
             ?? throw new InvalidOperationException("Super Admin account not found.");
 
         if (!AllowedImageTypes.Contains(command.ContentType))

@@ -14,6 +14,11 @@ public class User : TenantEntity
     public string? ProfilePhotoStorageKey { get; set; }
     public string? ProfilePhotoContentType { get; set; }
     public bool IsActive { get; set; } = true;
+    /// <summary>
+    /// The person who registered a single-teacher tenant. They keep the Teacher role (so they can be
+    /// assigned to courses and classrooms) and also get every admin right, so no separate admin account is needed.
+    /// </summary>
+    public bool IsTenantOwner { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
     /// <summary>Set on each successful login; null until the user has signed in at least once.</summary>
     public DateTimeOffset? LastLoginDateUtc { get; set; }
@@ -28,6 +33,9 @@ public class User : TenantEntity
     public List<StudentProgress> Progress { get; set; } = [];
     public List<QuizAttempt> QuizAttempts { get; set; } = [];
     public List<TeacherCourseRate> CourseRates { get; set; } = [];
+
+    /// <summary>True for admins and for the owner of a single-teacher tenant.</summary>
+    public bool HasAdminRights => Role == UserRole.SuperAdmin || IsTenantOwner;
 
     /// <summary>Returns the student profile, creating it the first time student data is written.</summary>
     public StudentProfile EnsureStudentProfile() => StudentProfile ??= new StudentProfile { UserId = Id };
