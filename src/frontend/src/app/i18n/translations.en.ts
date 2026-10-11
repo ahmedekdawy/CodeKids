@@ -1386,6 +1386,13 @@ export const EN: Record<string, string> = {
   'teacher.guide.weekly.action': 'Go to Weekly reports',
   'teacher.guide.weekly.count': '{n} weekly reports',
 
+  'owner.guide.title': 'Getting started',
+  'owner.guide.subtitle': 'You run everything from this one account. Set up your courses and students first, then start teaching. Each step is ticked automatically once it is done.',
+  'owner.guide.allDone': 'You are all set. You can hide this guide, or reopen any step to add more.',
+  'owner.guide.assign.title': 'Put yourself on the classroom',
+  'owner.guide.assign.text': 'Open Assign, pick the classroom, then choose yourself as the teacher for each course in it. This is what makes the classroom and its students appear in your teaching pages.',
+  'owner.guide.assign.action': 'Go to Assign',
+  'owner.guide.assign.count': '{n} classrooms with a teacher',
   'admin.guide.title': 'Getting started',
   'admin.guide.subtitle': 'Follow these steps in order to set up your school. Each step is ticked automatically once it is done.',
   'admin.guide.allDone': 'Setup is complete. You can hide this guide, or reopen any step to add more.',

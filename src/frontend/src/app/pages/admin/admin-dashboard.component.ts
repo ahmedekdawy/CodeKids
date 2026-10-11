@@ -6,17 +6,21 @@ import { AdminLoginDashboard, AdminLoginDashboardDay, AdminLoginUser } from '../
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { AdminSetupGuideComponent } from './admin-setup-guide.component';
+import { TeacherSetupGuideComponent } from '../teacher/teacher-setup-guide.component';
+import { AuthService } from '../../auth.service';
 
 type LoginRole = 'teachers' | 'parents' | 'students';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [PageFeedbackComponent, FormsModule, TranslatePipe, AdminSetupGuideComponent],
+  imports: [PageFeedbackComponent, FormsModule, TranslatePipe, AdminSetupGuideComponent, TeacherSetupGuideComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-panel.css'
 })
 export class AdminDashboardComponent {
   private readonly api = inject(LearningApiService);
+  /** The owner of a single-teacher tenant gets the combined setup-and-teaching guide. */
+  readonly isTenantOwner = inject(AuthService).user()?.isTenantOwner === true;
   private readonly locale = inject(LocaleService);
 
   readonly report = signal<AdminLoginDashboard | null>(null);

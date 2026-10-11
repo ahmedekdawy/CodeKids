@@ -1385,6 +1385,13 @@ export const AR: Record<string, string> = {
   'teacher.guide.weekly.action': 'الذهاب إلى التقارير الأسبوعية',
   'teacher.guide.weekly.count': 'التقارير الأسبوعية: {n}',
 
+  'owner.guide.title': 'ابدأ من هنا',
+  'owner.guide.subtitle': 'تدير كل شيء من هذا الحساب. جهّز موادك وطلابك أولًا ثم ابدأ التدريس. تُعلَّم كل خطوة تلقائيًا عند إتمامها.',
+  'owner.guide.allDone': 'كل شيء جاهز. يمكنك إخفاء هذا الدليل أو إعادة فتح أي خطوة لإضافة المزيد.',
+  'owner.guide.assign.title': 'أضف نفسك معلمًا للفصل',
+  'owner.guide.assign.text': 'افتح «إسناد»، اختر الفصل، ثم اختر نفسك معلمًا لكل مادة فيه. بهذا يظهر الفصل وطلابه في صفحات التدريس الخاصة بك.',
+  'owner.guide.assign.action': 'الذهاب إلى الإسناد',
+  'owner.guide.assign.count': '{n} فصول لها معلم',
   'admin.guide.title': 'ابدأ من هنا',
   'admin.guide.subtitle': 'اتبع هذه الخطوات بالترتيب لإعداد المدرسة. تُعلَّم كل خطوة تلقائيًا عند إتمامها.',
   'admin.guide.allDone': 'اكتمل الإعداد. يمكنك إخفاء هذا الدليل أو فتح أي خطوة لإضافة المزيد.',
