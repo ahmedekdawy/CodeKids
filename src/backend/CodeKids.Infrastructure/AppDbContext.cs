@@ -86,6 +86,8 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<TenantSignup> TenantSignups => Set<TenantSignup>();
     public DbSet<UserAvailability> UserAvailabilities => Set<UserAvailability>();
     public DbSet<TeacherVacation> TeacherVacations => Set<TeacherVacation>();
+    public DbSet<PushSubscription> PushSubscriptions => Set<PushSubscription>();
+    public DbSet<WebPushKeyPair> WebPushKeys => Set<WebPushKeyPair>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1148,6 +1150,28 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(x => x.TeacherId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<PushSubscription>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Endpoint).HasMaxLength(PushSubscription.MaxEndpointLength).IsRequired();
+            entity.Property(x => x.P256dh).HasMaxLength(PushSubscription.MaxKeyLength).IsRequired();
+            entity.Property(x => x.Auth).HasMaxLength(PushSubscription.MaxKeyLength).IsRequired();
+            entity.HasIndex(x => x.Endpoint).IsUnique();
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WebPushKeyPair>(entity =>
+        {
+            entity.ToTable("WebPushKeys");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.PublicKey).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.PrivateKey).HasMaxLength(200).IsRequired();
         });
 
         ApplyTenantFilters(modelBuilder);

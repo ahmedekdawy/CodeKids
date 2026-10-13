@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { LearningApiService } from './learning-api.service';
 import { SiteSettings } from './models';
+import { useTenantManifest } from './pwa-manifest';
 import { TenantStyle, normalizeTenantStyle } from './tenant-style';
 import { DEFAULT_SESSION_COUNT, DEFAULT_PM_START_MINUTES, normalizeSessionCount, normalizePmStartMinutes } from './fixed-timetable.util';
 
@@ -42,6 +43,7 @@ export class SiteBrandService {
     this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
     this.pmStartMinutes.set(normalizePmStartMinutes(settings.pmStartMinutes));
     document.title = this.siteName();
+    useTenantManifest(this.siteName());
     this.loaded.set(true);
   }
 

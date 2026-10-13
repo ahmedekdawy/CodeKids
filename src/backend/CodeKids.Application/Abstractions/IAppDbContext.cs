@@ -69,6 +69,7 @@ public interface IAppDbContext
     DbSet<TenantSignup> TenantSignups { get; }
     DbSet<UserAvailability> UserAvailabilities { get; }
     DbSet<TeacherVacation> TeacherVacations { get; }
+    DbSet<PushSubscription> PushSubscriptions { get; }
 
     string? CurrentTenantId { get; }
 

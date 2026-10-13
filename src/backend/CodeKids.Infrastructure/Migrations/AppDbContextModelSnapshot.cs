@@ -1657,6 +1657,49 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("PasswordResetTokens");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.PushSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Auth")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("P256dh")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Endpoint")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PushSubscriptions");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.Quiz", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3021,6 +3064,29 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("VideoWatchSessions");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.WebPushKeyPair", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PrivateKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WebPushKeys", (string)null);
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3766,6 +3832,17 @@ namespace CodeKids.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.PasswordResetToken", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.PushSubscription", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.User", "User")
                         .WithMany()
