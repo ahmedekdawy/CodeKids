@@ -40,6 +40,7 @@
                 }
               ],
               "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json",
               "optimization": {
                 "fonts": false
               },
@@ -59,6 +60,7 @@
                 }
               ],
               "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json",
               "optimization": {
                 "fonts": false
               },

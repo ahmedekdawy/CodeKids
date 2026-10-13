@@ -4,5 +4,12 @@
     <button type="button" (click)="auth.stopImpersonating()">{{ 'auth.stopImpersonating' | t }}</button>
   </div>
 }
+@if (pwa.updateReady()) {
+  <div class="update-banner" role="status">
+    <span>{{ 'pwa.updateReady' | t }}</span>
+    <button type="button" (click)="pwa.reload()">{{ 'pwa.refresh' | t }}</button>
+    <button type="button" class="update-later" (click)="pwa.dismiss()">{{ 'pwa.later' | t }}</button>
+  </div>
+}
 <router-outlet />
 <app-toast-host />

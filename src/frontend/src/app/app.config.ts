@@ -1,4 +1,5 @@
-import { ApplicationConfig, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
@@ -12,6 +13,11 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAppInitializer(loadDefaultTenant),
     provideHttpClient(withInterceptors([authInterceptor, apiBusyInterceptor])),
-    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' }))
+    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
+    // Production builds only; registering once the app is idle keeps it off the first page load.
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ]
 };
