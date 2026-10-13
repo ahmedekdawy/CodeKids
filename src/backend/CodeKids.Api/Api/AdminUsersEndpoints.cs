@@ -257,6 +257,8 @@ public static class AdminUsersEndpoints
 
             Guid userId,
 
+            bool? deleteData,
+
             HttpContext httpContext,
 
             ICommandHandler<DeleteManagedUserCommand, bool> handler,
@@ -271,7 +273,7 @@ public static class AdminUsersEndpoints
 
                 var adminId = CurrentUser.GetUserId(httpContext.User);
 
-                await handler.Handle(new DeleteManagedUserCommand(adminId, userId), cancellationToken);
+                await handler.Handle(new DeleteManagedUserCommand(adminId, userId, deleteData == true), cancellationToken);
 
                 return Results.NoContent();
 

@@ -197,6 +197,8 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
+builder.Services.AddScoped<IUserCascadeDeleter, UserCascadeDeleter>();
+
 builder.Services.AddMediaStorage(builder.Configuration);
 
 builder.Services.AddZoomIntegration(builder.Configuration);

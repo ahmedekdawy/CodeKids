@@ -1046,8 +1046,9 @@ export class LearningApiService {
     return this.http.put<ManagedUser>(`${this.baseUrl}/admin/users/${userId}`, payload);
   }
 
-  deleteUser(userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/admin/users/${userId}`);
+  /** @param deleteData true also deletes everything that belongs to the user; false moves it to the admin. */
+  deleteUser(userId: string, deleteData = false): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/users/${userId}?deleteData=${deleteData}`);
   }
 
   setUserActive(userId: string, isActive: boolean): Observable<ManagedUser> {

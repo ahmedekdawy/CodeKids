@@ -89,6 +89,9 @@ export class AdminUsersComponent {
   readonly editingId = signal<string | null>(null);
   /** True while the add/edit popup is showing. */
   readonly formOpen = signal(false);
+  /** The user the delete dialog is asking about; null when it is closed. */
+  readonly deleteTarget = signal<ManagedUser | null>(null);
+  deleteMode: 'keep' | 'all' = 'keep';
   readonly impersonatingId = signal<string | null>(null);
   readonly page = signal(1);
   readonly pageSize = signal(10);
@@ -470,6 +473,10 @@ export class AdminUsersComponent {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.deleteTarget()) {
+      this.deleteTarget.set(null);
+      return;
+    }
     if (this.formOpen()) this.closeForm();
   }
 
@@ -525,10 +532,18 @@ export class AdminUsersComponent {
       });
   }
 
+  /** Asks whether to keep or delete the user's data before deleting them. */
   deleteUser(user: ManagedUser): void {
-    if (!confirm(this.locale.t('admin.users.confirmDelete', { name: user.displayName }))) return;
     this.clearStatus();
-    this.api.deleteUser(user.id).subscribe({
+    this.deleteMode = 'keep';
+    this.deleteTarget.set(user);
+  }
+
+  confirmDelete(): void {
+    const target = this.deleteTarget();
+    if (!target) return;
+    this.deleteTarget.set(null);
+    this.api.deleteUser(target.id, this.deleteMode === 'all').subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.users.deleted'));
         this.reload();

@@ -375,10 +375,11 @@ export class AdminStudentsComponent {
       });
   }
 
+  /** Deleting a student always deletes their data with them. */
   deleteStudent(student: ManagedUser): void {
     if (!confirm(this.locale.t('admin.students.confirmDelete', { name: student.displayName }))) return;
     this.clearStatus();
-    this.api.deleteUser(student.id).subscribe({
+    this.api.deleteUser(student.id, true).subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.students.deleted'));
         if (this.editingId() === student.id) {

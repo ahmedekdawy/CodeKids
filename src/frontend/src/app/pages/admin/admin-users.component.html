@@ -415,3 +415,34 @@
     </div>
   </section>
 </div>
+
+@if (deleteTarget(); as target) {
+  <div class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>{{ 'admin.deleteDialog.title' | t: { name: target.displayName } }}</h3>
+        <button type="button" class="ghost-btn" (click)="deleteTarget.set(null)">{{ 'common.close' | t }}</button>
+      </div>
+      <div class="delete-options">
+        <label class="delete-option">
+          <input type="radio" name="deleteMode" value="keep" [(ngModel)]="deleteMode" />
+          <span>
+            <strong>{{ 'admin.deleteDialog.keep' | t }}</strong>
+            <span class="meta">{{ 'admin.deleteDialog.keepHint' | t }}</span>
+          </span>
+        </label>
+        <label class="delete-option">
+          <input type="radio" name="deleteMode" value="all" [(ngModel)]="deleteMode" />
+          <span>
+            <strong>{{ 'admin.deleteDialog.all' | t }}</strong>
+            <span class="meta">{{ 'admin.deleteDialog.allHint' | t }}</span>
+          </span>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="button" (click)="confirmDelete()">{{ 'common.delete' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="deleteTarget.set(null)">{{ 'common.cancel' | t }}</button>
+      </div>
+    </div>
+  </div>
+}
