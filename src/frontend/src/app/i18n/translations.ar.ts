@@ -832,6 +832,8 @@ export const AR: Record<string, string> = {
   'videos.attachFile': 'رفع ملف',
   'videos.uploadingFile': 'جاري الرفع…',
   'videos.uploadProgress': 'جاري الرفع {percent}%',
+  'videos.savingToStorage': 'تم استلام الملف. جارٍ حفظ الفيديو في التخزين — قد يستغرق ذلك بضع دقائق للملفات الكبيرة. يُرجى إبقاء الصفحة مفتوحة.',
+  'videos.savingShort': 'جارٍ الحفظ في التخزين…',
   'videos.fileRequired': 'اختر ملف فيديو.',
   'videos.uploadedLessonFile': 'تم رفع فيديو الدرس.',
   'videos.uploadedCourseFile': 'تم رفع فيديو المادة. يمكن للطلاب المسجّلين مشاهدته.',

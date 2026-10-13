@@ -442,7 +442,8 @@ export class TeacherVideosComponent {
         this.lessonVideoFile.set(null);
         this.reloadLibrary();
       },
-      'videos.attachLessonFailed'
+      'videos.attachLessonFailed',
+      this.selectedCourseId
     );
   }
 
@@ -465,7 +466,8 @@ export class TeacherVideosComponent {
         this.courseVideoFile.set(null);
         this.reloadLibrary();
       },
-      'videos.attachCourseFailed'
+      'videos.attachCourseFailed',
+      courseId
     );
   }
 
@@ -536,14 +538,15 @@ export class TeacherVideosComponent {
     file: File,
     attach: (asset: { id: string; fileName: string }) => Observable<unknown>,
     onSuccess: () => void,
-    attachFailKey: string
+    attachFailKey: string,
+    courseId?: string | null
   ): void {
     this.error.set('');
     this.info.set('');
     this.uploading.set(true);
     this.uploadProgress.set(0);
 
-    this.api.uploadMediaWithProgress(file).subscribe({
+    this.api.uploadMediaWithProgress(file, undefined, courseId).subscribe({
       next: (update) => {
         this.uploadProgress.set(update.progress);
         if (!update.asset) return;

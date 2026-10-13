@@ -833,6 +833,8 @@ export const EN: Record<string, string> = {
   'videos.attachFile': 'Upload file',
   'videos.uploadingFile': 'Uploading…',
   'videos.uploadProgress': 'Uploading {percent}%',
+  'videos.savingToStorage': 'Upload received. Saving the video to storage — this can take a few minutes for large files. Please keep this page open.',
+  'videos.savingShort': 'Saving to storage…',
   'videos.fileRequired': 'Choose a video file.',
   'videos.uploadedLessonFile': 'Lesson video uploaded.',
   'videos.uploadedCourseFile': 'Course video uploaded. Enrolled students can watch it.',

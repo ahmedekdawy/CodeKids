@@ -15,10 +15,11 @@ public sealed class LocalFileStorage(IOptions<MediaOptions> options) : IFileStor
         string fileName,
         string contentType,
         CancellationToken cancellationToken = default,
-        string? tenantId = null)
+        string? tenantId = null,
+        string? subjectFolder = null)
     {
         Directory.CreateDirectory(_root);
-        var storageKey = MediaStoragePaths.NewRelativePath(tenantId, fileName, contentType);
+        var storageKey = MediaStoragePaths.NewRelativePath(tenantId, fileName, contentType, subjectFolder);
         var fullPath = Path.Combine(_root, storageKey.Replace('/', Path.DirectorySeparatorChar));
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
 

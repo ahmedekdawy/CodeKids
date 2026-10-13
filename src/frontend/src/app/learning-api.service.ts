@@ -1626,9 +1626,11 @@ export class LearningApiService {
     return this.http.post<ExamAttempt>(`${this.baseUrl}/exams/attempts/grade`, payload);
   }
 
-  uploadMedia(file: File, durationSeconds?: number): Observable<MediaAsset> {
+  /** @param courseId the course the video is for; its files are stored in that subject's folder. */
+  uploadMedia(file: File, durationSeconds?: number, courseId?: string | null): Observable<MediaAsset> {
     const form = new FormData();
     form.append('file', file, file.name);
+    if (courseId) form.append('courseId', courseId);
     if (durationSeconds && durationSeconds > 0) {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
@@ -1637,10 +1639,12 @@ export class LearningApiService {
 
   uploadMediaWithProgress(
     file: File,
-    durationSeconds?: number
+    durationSeconds?: number,
+    courseId?: string | null
   ): Observable<{ progress: number; asset?: MediaAsset }> {
     const form = new FormData();
     form.append('file', file, file.name);
+    if (courseId) form.append('courseId', courseId);
     if (durationSeconds && durationSeconds > 0) {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
@@ -1725,9 +1729,10 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}/solution-video`);
   }
 
-  uploadLearningMaterialFile(file: File): Observable<MediaAsset> {
+  uploadLearningMaterialFile(file: File, courseId?: string | null): Observable<MediaAsset> {
     const form = new FormData();
     form.append('file', file, file.name);
+    if (courseId) form.append('courseId', courseId);
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/learning-materials/upload`, form);
   }
 

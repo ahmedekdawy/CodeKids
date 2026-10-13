@@ -39,9 +39,19 @@ public static class LearningMaterialEndpoints
                 LearningMaterialUploadRules.EnsureAllowed(contentType, file.Length, mediaOptions.Value.MaxUploadBytes);
                 var uploadFileName = MediaFileTypes.EnsureFileName(file.FileName, contentType);
 
+                // Files uploaded for a course go in that subject's own folder.
+                string? subjectFolder = null;
+                if (Guid.TryParse(form["courseId"], out var courseId))
+                {
+                    // Only for a course this tenant can see, so a made-up id cannot create stray folders.
+                    var courseExists = await dbContext.Courses.AsNoTracking()
+                        .AnyAsync(x => x.Id == courseId, cancellationToken);
+                    subjectFolder = courseExists ? MediaStoragePaths.SubjectFolder(courseId) : null;
+                }
+
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 await using var stream = file.OpenReadStream();
-                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken, tenantContext.TenantId);
+                var storageKey = await fileStorage.SaveAsync(stream, uploadFileName, contentType, cancellationToken, tenantContext.TenantId, subjectFolder);
                 var asset = new CodeKids.Domain.Entities.MediaAsset
                 {
                     Id = Guid.NewGuid(),

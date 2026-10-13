@@ -14,8 +14,14 @@ public static class MediaStoragePaths
         return folder.Length == 0 ? SharedFolder : folder;
     }
 
-    /// <summary>Relative path for a new upload: {tenant}/yyyy/MM/dd/{guid}{ext}.</summary>
-    public static string NewRelativePath(string? tenantId, string fileName, string contentType)
+    /// <summary>Folder name for a subject (course): its id, so renaming the course never moves its files.</summary>
+    public static string SubjectFolder(Guid courseId) => courseId.ToString("D");
+
+    /// <summary>
+    /// Relative path for a new upload. With a subject folder: {tenant}/{subject}/{guid}{ext};
+    /// otherwise {tenant}/yyyy/MM/dd/{guid}{ext}.
+    /// </summary>
+    public static string NewRelativePath(string? tenantId, string fileName, string contentType, string? subjectFolder = null)
     {
         var ext = Path.GetExtension(MediaFileTypes.EnsureFileName(fileName, contentType));
         if (string.IsNullOrWhiteSpace(ext) || ext.Length > 10 || !ext.Skip(1).All(char.IsAsciiLetterOrDigit))
@@ -23,6 +29,7 @@ public static class MediaStoragePaths
             ext = MediaFileTypes.ExtensionForContentType(contentType);
         }
 
-        return $"{TenantFolder(tenantId)}/{DateTime.UtcNow:yyyy/MM/dd}/{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
+        var folder = string.IsNullOrWhiteSpace(subjectFolder) ? $"{DateTime.UtcNow:yyyy/MM/dd}" : subjectFolder;
+        return $"{TenantFolder(tenantId)}/{folder}/{Guid.NewGuid():N}{ext.ToLowerInvariant()}";
     }
 }
