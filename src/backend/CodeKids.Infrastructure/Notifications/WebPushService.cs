@@ -229,6 +229,8 @@ public sealed class WebPushWorker(
                 badge = "/icons/icon-192.png",
                 dir = "auto",
                 vibrate = new[] { 200, 100, 200 },
+                // Chat pushes reuse the room as their tag; renotify makes each new message alert again.
+                renotify = true,
                 tag = item.NotificationId.ToString("N"),
                 data = new
                 {
