@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Channels;
+using CodeKids.Application.Features.Chat;
 using CodeKids.Domain.Entities;
 using CodeKids.Infrastructure.Tenancy;
 using Microsoft.EntityFrameworkCore;
@@ -175,7 +176,7 @@ public sealed class WebPushWorker(
         }
 
         var keys = await keyStore.GetAsync(dbContext, cancellationToken);
-        var payload = BuildPayload(item);
+        var payload = BuildPayload(item, await UnreadCountAsync(dbContext, item.UserId, cancellationToken));
         var options = new Dictionary<string, object>
         {
             ["vapidDetails"] = keys,
@@ -215,12 +216,34 @@ public sealed class WebPushWorker(
         }
     }
 
-    /// <summary>The shape Angular's service worker turns into a system notification without custom code.</summary>
-    private static string BuildPayload(WebPushQueue.Item item)
+    /// <summary>
+    /// What the installed app's icon badge shows: unread notifications plus unread chat messages, the
+    /// same two counts the open app adds up. Counted when sending, so the badge is right while closed.
+    /// </summary>
+    private static async Task<int> UnreadCountAsync(AppDbContext dbContext, Guid userId, CancellationToken cancellationToken)
+    {
+        var notifications = await dbContext.UserNotifications
+            .AsNoTracking()
+            .CountAsync(x => x.UserId == userId && !x.IsRead, cancellationToken);
+        var roomIds = await dbContext.ChatRoomMembers
+            .AsNoTracking()
+            .Where(x => x.UserId == userId)
+            .Select(x => x.RoomId)
+            .ToListAsync(cancellationToken);
+        var chat = (await ChatAccess.UnreadCountsAsync(dbContext, userId, roomIds, cancellationToken)).Values.Sum();
+        return notifications + chat;
+    }
+
+    /// <summary>
+    /// The shape Angular's service worker turns into a system notification without custom code.
+    /// appBadge sits outside it and is read by app-sw.js, which wraps Angular's worker.
+    /// </summary>
+    private static string BuildPayload(WebPushQueue.Item item, int unread)
     {
         var url = string.IsNullOrWhiteSpace(item.TargetUrl) ? "/" : item.TargetUrl;
         return JsonSerializer.Serialize(new
         {
+            appBadge = unread,
             notification = new
             {
                 title = item.Title,

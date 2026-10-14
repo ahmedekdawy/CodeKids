@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AppBadgeService } from '../app-badge.service';
 import { AuthService } from '../auth.service';
 import { ChatNotifyService } from '../chat-notify.service';
 import { NotificationNotifyService } from '../notification-notify.service';
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit {
   private readonly brand = inject(SiteBrandService);
   readonly pwa = inject(PwaUpdateService);
   readonly push = inject(PushService);
+  private readonly _badge = inject(AppBadgeService);
   private readonly _chatNotify = inject(ChatNotifyService);
   private readonly _notificationNotify = inject(NotificationNotifyService);
   private readonly _theme = inject(ThemeService);

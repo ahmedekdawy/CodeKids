@@ -1,6 +1,7 @@
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, filter, map } from 'rxjs';
+import { Observable, filter, map, tap } from 'rxjs';
+import { unreadChanged } from './unread-changed';
 import {
   Appointment,
   AvailabilityPeriod,
@@ -204,15 +205,15 @@ export class LearningApiService {
   }
 
   markNotificationRead(id: string): Observable<AppNotification> {
-    return this.http.post<AppNotification>(`${this.baseUrl}/notifications/${id}/read`, {});
+    return this.http.post<AppNotification>(`${this.baseUrl}/notifications/${id}/read`, {}).pipe(tap(() => unreadChanged.next()));
   }
 
   markAllNotificationsRead(): Observable<number> {
-    return this.http.post<number>(`${this.baseUrl}/notifications/read-all`, {});
+    return this.http.post<number>(`${this.baseUrl}/notifications/read-all`, {}).pipe(tap(() => unreadChanged.next()));
   }
 
   markChatRoomRead(roomId: string): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/chat/rooms/${roomId}/read`, {});
+    return this.http.put<void>(`${this.baseUrl}/chat/rooms/${roomId}/read`, {}).pipe(tap(() => unreadChanged.next()));
   }
 
   createChatRoom(payload: {

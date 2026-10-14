@@ -15,7 +15,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor, apiBusyInterceptor])),
     provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     // Production builds only; registering once the app is idle keeps it off the first page load.
-    provideServiceWorker('ngsw-worker.js', {
+    // app-sw.js is Angular's worker plus the app icon's unread badge for pushes that arrive while closed.
+    provideServiceWorker('app-sw.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     })
