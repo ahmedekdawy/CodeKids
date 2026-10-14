@@ -20,7 +20,7 @@ import { TranslatePipe } from '../shared/translate.pipe';
 export class AppComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly brand = inject(SiteBrandService);
-  readonly pwa = inject(PwaUpdateService);
+  private readonly _pwa = inject(PwaUpdateService);
   readonly push = inject(PushService);
   private readonly _badge = inject(AppBadgeService);
   private readonly _chatNotify = inject(ChatNotifyService);
