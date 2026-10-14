@@ -1,9 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { SwPush } from '@angular/service-worker';
 import { firstValueFrom } from 'rxjs';
 import { resolveApiBaseUrl } from './api-base-url';
 import { AuthService } from './auth.service';
+import { LocaleService } from './i18n/locale.service';
+import { ToastService } from './shared/toast/toast.service';
 
 /** Set when the user turns alerts off here, so the app does not quietly turn them back on. */
 const OPTED_OUT_KEY = 'codekids.push.optedOut';
@@ -20,6 +22,8 @@ export class PushService {
   private readonly swPush = inject(SwPush);
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
+  private readonly toasts = inject(ToastService);
+  private readonly locale = inject(LocaleService);
 
   /** False in development builds and in browsers without push support. */
   readonly supported = this.swPush.isEnabled && 'Notification' in globalThis && 'PushManager' in globalThis;
@@ -84,21 +88,42 @@ export class PushService {
     });
   }
 
-  /** Must be called from a click: browsers only show the permission prompt in response to one. */
-  async enable(): Promise<boolean> {
+  /**
+   * Must be called from a click: browsers only show the permission prompt in response to one.
+   * Quiet skips the error toasts, for subscribing again in the background.
+   */
+  async enable(quiet = false): Promise<boolean> {
     if (!this.supported || this.busy()) return false;
     this.busy.set(true);
+    // Ask before any network wait: iOS only shows the dialog while the tap is still being handled.
+    const permission = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+    if (permission !== 'granted') {
+      this.blocked.set(permission === 'denied');
+      if (!quiet && permission === 'denied') this.toasts.error(this.locale.t('notifications.pushBlocked'));
+      this.busy.set(false);
+      return false;
+    }
+
+    let step: 'config' | 'subscribe' | 'save' = 'config';
     try {
       const config = await firstValueFrom(this.http.get<{ publicKey: string }>(`${resolveApiBaseUrl()}/push/config`));
+      step = 'subscribe';
       const subscription = await this.swPush.requestSubscription({ serverPublicKey: config.publicKey });
       this.subscription = subscription;
       this.syncedFor = null;
+      step = 'save';
       await this.save(subscription);
       this.enabled.set(true);
       writeStorage(OPTED_OUT_KEY, null);
       return true;
-    } catch {
+    } catch (error) {
+      console.error(`Turning on push alerts failed at "${step}".`, error);
       this.blocked.set(Notification.permission === 'denied');
+      if (!quiet) {
+        // A server without push support answers the key request with 404.
+        const serverMissing = step === 'config' && error instanceof HttpErrorResponse && error.status === 404;
+        this.toasts.error(this.locale.t(serverMissing ? 'notifications.pushServerMissing' : 'notifications.pushFailed'));
+      }
       return false;
     } finally {
       this.busy.set(false);
@@ -132,7 +157,7 @@ export class PushService {
     if (this.resubscribeTried || !this.checked() || !this.signedIn() || this.enabled() || this.busy()) return;
     if (Notification.permission !== 'granted' || readStorage(OPTED_OUT_KEY)) return;
     this.resubscribeTried = true;
-    void this.enable();
+    void this.enable(true);
   }
 
   /** Makes sure the server has this device recorded under the signed-in user. */

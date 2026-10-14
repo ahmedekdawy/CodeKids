@@ -381,6 +381,8 @@ export const AR: Record<string, string> = {
   'notifications.pushTurnOn': 'تفعيل',
   'notifications.pushTurnOff': 'إيقاف',
   'notifications.pushBlocked': 'الإشعارات محظورة لهذا الموقع. اسمح بها من إعدادات المتصفح لتفعيل التنبيهات.',
+  'notifications.pushFailed': 'تعذّر تفعيل التنبيهات. تحقق من الاتصال وحاول مرة أخرى.',
+  'notifications.pushServerMissing': 'خادم المدرسة لا يدعم التنبيهات بعد. اطلب من المسؤول تحديثه.',
   'notifications.pushInstall': 'لاستقبال التنبيهات على iPhone أو iPad، اضغط مشاركة ثم «إضافة إلى الشاشة الرئيسية»، وافتح التطبيق من هناك.',
   'pwa.updateReady': 'يتوفر إصدار جديد من التطبيق.',
   'pwa.refresh': 'تحديث الآن',
