@@ -382,7 +382,7 @@ export const EN: Record<string, string> = {
   'notifications.pushTurnOn': 'Turn on',
   'notifications.pushTurnOff': 'Turn off',
   'notifications.pushBlocked': 'Notifications are blocked for this site. Allow them in your browser settings to turn alerts on.',
-  'notifications.pushFailed': 'Alerts could not be turned on. Check your connection and try again.',
+  'notifications.pushFailed': 'Alerts could not be turned on. Check your connection and try again. ({detail})',
   'notifications.pushServerMissing': 'The school server does not support alerts yet. Ask the admin to update it.',
   'notifications.pushInstall': 'To get alerts on this iPhone or iPad, tap Share, then Add to Home Screen, and open the app from there.',
   'pwa.updateReady': 'A new version of the app is ready.',

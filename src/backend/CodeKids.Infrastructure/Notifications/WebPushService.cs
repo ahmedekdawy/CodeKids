@@ -27,10 +27,55 @@ public sealed class WebPushOptions
 /// <summary>Supplies the VAPID keys: from configuration when set, otherwise one generated pair per database.</summary>
 public sealed class WebPushKeyStore(IOptions<WebPushOptions> options)
 {
+    /// <summary>Same tables as the AddWebPush migration; every statement is safe to run again.</summary>
+    private const string CreateTablesSql =
+        """
+        CREATE TABLE IF NOT EXISTS "PushSubscriptions" (
+            "Id" uuid NOT NULL,
+            "UserId" uuid NOT NULL,
+            "Endpoint" character varying(1000) NOT NULL,
+            "P256dh" character varying(200) NOT NULL,
+            "Auth" character varying(200) NOT NULL,
+            "CreatedAtUtc" timestamp with time zone NOT NULL,
+            "TenantId" character varying(64) NULL,
+            CONSTRAINT "PK_PushSubscriptions" PRIMARY KEY ("Id"),
+            CONSTRAINT "FK_PushSubscriptions_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
+        );
+        CREATE UNIQUE INDEX IF NOT EXISTS "IX_PushSubscriptions_Endpoint" ON "PushSubscriptions" ("Endpoint");
+        CREATE INDEX IF NOT EXISTS "IX_PushSubscriptions_UserId" ON "PushSubscriptions" ("UserId");
+        CREATE INDEX IF NOT EXISTS "IX_PushSubscriptions_TenantId" ON "PushSubscriptions" ("TenantId");
+
+        CREATE TABLE IF NOT EXISTS "WebPushKeys" (
+            "Id" integer NOT NULL,
+            "PublicKey" character varying(200) NOT NULL,
+            "PrivateKey" character varying(200) NOT NULL,
+            "CreatedAtUtc" timestamp with time zone NOT NULL,
+            CONSTRAINT "PK_WebPushKeys" PRIMARY KEY ("Id")
+        );
+        """;
+
     private readonly ConcurrentDictionary<string, VapidDetails> _byDatabase = new();
+    private readonly ConcurrentDictionary<string, bool> _tablesReady = new();
+
+    /// <summary>
+    /// Migrations are applied by hand (CodeKids.DbUpdate), so a database can be running this code before
+    /// the push tables exist. Creating them here keeps push working without waiting for that run.
+    /// </summary>
+    public async Task EnsureTablesAsync(AppDbContext dbContext, CancellationToken cancellationToken = default)
+    {
+        var database = dbContext.Database.GetConnectionString() ?? string.Empty;
+        if (_tablesReady.ContainsKey(database))
+        {
+            return;
+        }
+
+        await dbContext.Database.ExecuteSqlRawAsync(CreateTablesSql, cancellationToken);
+        _tablesReady[database] = true;
+    }
 
     public async Task<VapidDetails> GetAsync(AppDbContext dbContext, CancellationToken cancellationToken = default)
     {
+        await EnsureTablesAsync(dbContext, cancellationToken);
         var configured = options.Value;
         if (!string.IsNullOrWhiteSpace(configured.PublicKey) && !string.IsNullOrWhiteSpace(configured.PrivateKey))
         {

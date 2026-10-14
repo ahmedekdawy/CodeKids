@@ -33,8 +33,10 @@ public static class PushEndpoints
             HttpContext httpContext,
             AppDbContext dbContext,
             ITenantContext tenantContext,
+            WebPushKeyStore keyStore,
             CancellationToken cancellationToken) =>
         {
+            await keyStore.EnsureTablesAsync(dbContext, cancellationToken);
             var endpoint = (request.Endpoint ?? string.Empty).Trim();
             var p256dh = (request.P256dh ?? string.Empty).Trim();
             var auth = (request.Auth ?? string.Empty).Trim();

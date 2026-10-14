@@ -12,6 +12,8 @@ const OPTED_OUT_KEY = 'codekids.push.optedOut';
 /** Until when "Not now" keeps the prompt hidden. */
 const SNOOZE_KEY = 'codekids.push.askAfter';
 const SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
+/** Short names for the step that failed, shown in the error so it can be reported from a phone. */
+const STEP_LABELS = { config: 'key', subscribe: 'subscribe', save: 'save' } as const;
 
 /**
  * Push notifications for the installed app. A device has one subscription; it is tied to whoever is
@@ -122,7 +124,11 @@ export class PushService {
       if (!quiet) {
         // A server without push support answers the key request with 404.
         const serverMissing = step === 'config' && error instanceof HttpErrorResponse && error.status === 404;
-        this.toasts.error(this.locale.t(serverMissing ? 'notifications.pushServerMissing' : 'notifications.pushFailed'));
+        this.toasts.error(
+          serverMissing
+            ? this.locale.t('notifications.pushServerMissing')
+            : this.locale.t('notifications.pushFailed', { detail: `${STEP_LABELS[step]}: ${describeError(error)}` })
+        );
       }
       return false;
     } finally {
@@ -200,6 +206,13 @@ function isStandalone(): boolean {
     globalThis.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true
   );
+}
+
+/** An HTTP status, or the browser's error name (NotAllowedError, AbortError...). */
+function describeError(error: unknown): string {
+  if (error instanceof HttpErrorResponse) return String(error.status || 'offline');
+  if (error instanceof Error) return error.name || error.message;
+  return 'unknown';
 }
 
 /** Storage can be unavailable (private windows, blocked site data); the prompt then just shows again. */
