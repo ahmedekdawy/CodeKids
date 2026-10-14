@@ -7,6 +7,25 @@ namespace CodeKids.Api;
 
 public static class TenantEndpoints
 {
+    /// <summary>
+    /// Relative links, so they resolve against wherever the manifest itself was fetched from. The version
+    /// follows the logo, so replacing it makes installed apps fetch the new icon.
+    /// </summary>
+    private static object[] TenantIcons(string tenantId, string logoStorageKey)
+    {
+        var version = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(logoStorageKey)))[..12].ToLowerInvariant();
+        string Src(int size, bool maskable = false) =>
+            $"icon.png?tenant={Uri.EscapeDataString(tenantId)}&size={size}{(maskable ? "&maskable=true" : "")}&v={version}";
+
+        return
+        [
+            new { src = Src(192), sizes = "192x192", type = "image/png", purpose = "any" },
+            new { src = Src(512), sizes = "512x512", type = "image/png", purpose = "any" },
+            new { src = Src(512, maskable: true), sizes = "512x512", type = "image/png", purpose = "maskable" }
+        ];
+    }
+
     public static IEndpointRouteBuilder MapTenantEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/admin/tenants", async (
@@ -48,17 +67,15 @@ public static class TenantEndpoints
             var validTenant = tenantId.Length is > 0 and <= 64
                 && tenantId.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_');
 
-            string? siteName = null;
-            if (validTenant)
-            {
-                siteName = await dbContext.SiteSettings
+            var settings = validTenant
+                ? await dbContext.SiteSettings
                     .IgnoreQueryFilters()
                     .Where(x => x.TenantId == tenantId)
-                    .Select(x => x.SiteName)
-                    .FirstOrDefaultAsync(cancellationToken);
-            }
+                    .Select(x => new { x.SiteName, x.LogoStorageKey })
+                    .FirstOrDefaultAsync(cancellationToken)
+                : null;
 
-            var name = string.IsNullOrWhiteSpace(siteName) ? "CodeKids" : siteName.Trim();
+            var name = string.IsNullOrWhiteSpace(settings?.SiteName) ? "CodeKids" : settings.SiteName.Trim();
             var startUrl = validTenant ? $"{appOrigin}/?tenant={Uri.EscapeDataString(tenantId)}" : $"{appOrigin}/";
             var manifest = new
             {
@@ -71,16 +88,66 @@ public static class TenantEndpoints
                 orientation = "any",
                 background_color = "#07111f",
                 theme_color = "#0c1a2e",
-                icons = new object[]
-                {
-                    new { src = $"{appOrigin}/icons/icon-192.png", sizes = "192x192", type = "image/png", purpose = "any" },
-                    new { src = $"{appOrigin}/icons/icon-512.png", sizes = "512x512", type = "image/png", purpose = "any" },
-                    new { src = $"{appOrigin}/icons/icon-maskable-512.png", sizes = "512x512", type = "image/png", purpose = "maskable" }
-                }
+                icons = string.IsNullOrWhiteSpace(settings?.LogoStorageKey)
+                    ? new object[]
+                    {
+                        new { src = $"{appOrigin}/icons/icon-192.png", sizes = "192x192", type = "image/png", purpose = "any" },
+                        new { src = $"{appOrigin}/icons/icon-512.png", sizes = "512x512", type = "image/png", purpose = "any" },
+                        new { src = $"{appOrigin}/icons/icon-maskable-512.png", sizes = "512x512", type = "image/png", purpose = "maskable" }
+                    }
+                    : TenantIcons(tenantId, settings.LogoStorageKey)
             };
 
             httpContext.Response.Headers.CacheControl = "public, max-age=300";
             return Results.Json(manifest, contentType: "application/manifest+json");
+        }).AllowAnonymous();
+
+        // The tenant's logo as a square app icon. The manifest links here only when the tenant has a logo.
+        app.MapGet("/api/tenants/icon.png", async (
+            string? tenant,
+            int? size,
+            bool? maskable,
+            HttpContext httpContext,
+            CodeKids.Application.Abstractions.IAppDbContext dbContext,
+            CodeKids.Application.Abstractions.IFileStorage fileStorage,
+            CancellationToken cancellationToken) =>
+        {
+            var tenantId = (tenant ?? string.Empty).Trim().ToLowerInvariant();
+            var pixels = size ?? 192;
+            if (tenantId.Length is 0 or > 64 || !TenantIconRenderer.Sizes.Contains(pixels))
+            {
+                return Results.NotFound();
+            }
+
+            var logoKey = await dbContext.SiteSettings
+                .IgnoreQueryFilters()
+                .Where(x => x.TenantId == tenantId)
+                .Select(x => x.LogoStorageKey)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (string.IsNullOrWhiteSpace(logoKey))
+            {
+                return Results.NotFound();
+            }
+
+            var png = await TenantIconRenderer.RenderAsync(
+                $"{tenantId}|{logoKey}",
+                async () =>
+                {
+                    await using var stream = await fileStorage.OpenReadAsync(logoKey, cancellationToken);
+                    using var buffer = new MemoryStream();
+                    await stream.CopyToAsync(buffer, cancellationToken);
+                    return buffer.ToArray();
+                },
+                pixels,
+                maskable == true);
+            if (png is null)
+            {
+                return Results.NotFound();
+            }
+
+            // The manifest's links carry the logo version, so a new logo gets new URLs and this can be cached long.
+            httpContext.Response.Headers.CacheControl = "public, max-age=604800";
+            return Results.File(png, "image/png");
         }).AllowAnonymous();
 
         app.MapPost("/api/tenants/register", async (

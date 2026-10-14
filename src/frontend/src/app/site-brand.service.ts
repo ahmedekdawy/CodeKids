@@ -43,7 +43,7 @@ export class SiteBrandService {
     this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
     this.pmStartMinutes.set(normalizePmStartMinutes(settings.pmStartMinutes));
     document.title = this.siteName();
-    useTenantManifest(this.siteName());
+    useTenantManifest(this.siteName(), logo ? stamp : null);
     this.loaded.set(true);
   }
 
