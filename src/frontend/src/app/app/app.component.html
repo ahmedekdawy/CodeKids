@@ -10,6 +10,12 @@
     <button type="button" (click)="pwa.reload()">{{ 'pwa.refresh' | t }}</button>
     <button type="button" class="update-later" (click)="pwa.dismiss()">{{ 'pwa.later' | t }}</button>
   </div>
+} @else if (push.shouldAsk()) {
+  <div class="update-banner push-banner" role="dialog" [attr.aria-label]="'pwa.pushAskTitle' | t">
+    <span>🔔 {{ 'pwa.pushAsk' | t }}</span>
+    <button type="button" [disabled]="push.busy()" (click)="push.enable()">{{ 'notifications.pushTurnOn' | t }}</button>
+    <button type="button" class="update-later" (click)="push.snooze()">{{ 'pwa.pushNotNow' | t }}</button>
+  </div>
 }
 <router-outlet />
 <app-toast-host />

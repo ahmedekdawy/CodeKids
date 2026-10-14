@@ -1,9 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { SwPush } from '@angular/service-worker';
 import { firstValueFrom } from 'rxjs';
 import { resolveApiBaseUrl } from './api-base-url';
 import { AuthService } from './auth.service';
+
+/** Set when the user turns alerts off here, so the app does not quietly turn them back on. */
+const OPTED_OUT_KEY = 'codekids.push.optedOut';
+/** Until when "Not now" keeps the prompt hidden. */
+const SNOOZE_KEY = 'codekids.push.askAfter';
+const SNOOZE_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Push notifications for the installed app. A device has one subscription; it is tied to whoever is
@@ -29,8 +35,30 @@ export class PushService {
   /** True when the browser's notification permission was refused; only the browser's settings can undo that. */
   readonly blocked = signal(this.supported && Notification.permission === 'denied');
 
+  /** False until the service worker has said whether this device is already subscribed. */
+  private readonly checked = signal(false);
+  private readonly snoozed = signal(readNumber(SNOOZE_KEY) > Date.now());
+  private readonly signedIn = computed(() => !!this.auth.token() && !!this.auth.user()?.id);
+
+  /**
+   * Whether to offer alerts to the signed-in user. Only an offer: the browser's own permission dialog
+   * has to come from a tap, so the banner's button is what calls enable().
+   */
+  readonly shouldAsk = computed(
+    () =>
+      this.supported &&
+      this.checked() &&
+      this.signedIn() &&
+      !this.auth.impersonator() &&
+      !this.enabled() &&
+      !this.blocked() &&
+      !this.snoozed() &&
+      Notification.permission === 'default'
+  );
+
   private subscription: PushSubscription | null = null;
   private syncedFor: string | null = null;
+  private resubscribeTried = false;
 
   constructor() {
     if (!this.supported) return;
@@ -38,13 +66,18 @@ export class PushService {
     this.swPush.subscription.subscribe((subscription) => {
       this.subscription = subscription;
       this.enabled.set(!!subscription);
+      this.checked.set(true);
       this.sync();
+      this.resubscribe();
     });
 
     effect(() => {
       const userId = this.auth.token() ? (this.auth.user()?.id ?? null) : null;
       if (userId) {
-        this.sync();
+        untracked(() => {
+          this.sync();
+          this.resubscribe();
+        });
       } else if (this.syncedFor) {
         this.release();
       }
@@ -62,6 +95,7 @@ export class PushService {
       this.syncedFor = null;
       await this.save(subscription);
       this.enabled.set(true);
+      writeStorage(OPTED_OUT_KEY, null);
       return true;
     } catch {
       this.blocked.set(Notification.permission === 'denied');
@@ -78,9 +112,27 @@ export class PushService {
       this.release();
       await this.swPush.unsubscribe().catch(() => undefined);
       this.enabled.set(false);
+      writeStorage(OPTED_OUT_KEY, '1');
     } finally {
       this.busy.set(false);
     }
+  }
+
+  /** Hides the prompt for a week. */
+  snooze(): void {
+    writeStorage(SNOOZE_KEY, String(Date.now() + SNOOZE_MS));
+    this.snoozed.set(true);
+  }
+
+  /**
+   * Permission was granted before but the subscription is gone (the browser expired it, or the app was
+   * reinstalled). Subscribing again needs no dialog then, so do it without asking.
+   */
+  private resubscribe(): void {
+    if (this.resubscribeTried || !this.checked() || !this.signedIn() || this.enabled() || this.busy()) return;
+    if (Notification.permission !== 'granted' || readStorage(OPTED_OUT_KEY)) return;
+    this.resubscribeTried = true;
+    void this.enable();
   }
 
   /** Makes sure the server has this device recorded under the signed-in user. */
@@ -123,4 +175,26 @@ function isStandalone(): boolean {
     globalThis.matchMedia?.('(display-mode: standalone)').matches ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true
   );
+}
+
+/** Storage can be unavailable (private windows, blocked site data); the prompt then just shows again. */
+function readStorage(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function readNumber(key: string): number {
+  return Number(readStorage(key)) || 0;
+}
+
+function writeStorage(key: string, value: string | null): void {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    // Not remembered; harmless.
+  }
 }

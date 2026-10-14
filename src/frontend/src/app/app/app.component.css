@@ -55,3 +55,9 @@
   border: 1px solid var(--border);
   color: var(--text-muted);
 }
+
+.push-banner span {
+  flex: 1 1 16rem;
+  max-width: 34rem;
+  font-weight: 500;
+}

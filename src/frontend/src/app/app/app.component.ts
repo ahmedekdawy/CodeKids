@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly brand = inject(SiteBrandService);
   readonly pwa = inject(PwaUpdateService);
-  private readonly _push = inject(PushService);
+  readonly push = inject(PushService);
   private readonly _chatNotify = inject(ChatNotifyService);
   private readonly _notificationNotify = inject(NotificationNotifyService);
   private readonly _theme = inject(ThemeService);
