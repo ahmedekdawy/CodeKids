@@ -33,6 +33,10 @@
             </button>
           }
         </div>
+      } @else if (push.needsInstall) {
+        <div class="notify-push">
+          <span>{{ 'notifications.pushInstall' | t }}</span>
+        </div>
       }
 
       @if (loading()) {

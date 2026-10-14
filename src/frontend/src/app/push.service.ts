@@ -20,6 +20,12 @@ export class PushService {
   /** True while this device has an active subscription. */
   readonly enabled = signal(false);
   readonly busy = signal(false);
+  /**
+   * iPhone and iPad only offer push to a web app opened from the Home Screen, so in Safari itself push
+   * looks unsupported. Tell those users how to get it instead of hiding the option.
+   */
+  readonly needsInstall =
+    this.swPush.isEnabled && !this.supported && isAppleMobile() && !isStandalone();
   /** True when the browser's notification permission was refused; only the browser's settings can undo that. */
   readonly blocked = signal(this.supported && Notification.permission === 'denied');
 
@@ -104,4 +110,17 @@ export class PushService {
       .post<void>(`${resolveApiBaseUrl()}/push/unsubscribe`, { endpoint: this.subscription.endpoint })
       .subscribe({ error: () => undefined });
   }
+}
+
+/** iPadOS reports itself as a Mac, so a touch-capable "Mac" is an iPad. */
+function isAppleMobile(): boolean {
+  const ua = navigator.userAgent;
+  return /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+}
+
+function isStandalone(): boolean {
+  return (
+    globalThis.matchMedia?.('(display-mode: standalone)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true
+  );
 }

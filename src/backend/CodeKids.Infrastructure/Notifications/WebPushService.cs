@@ -89,6 +89,8 @@ public sealed class WebPushWorker(
     TenantCatalog catalog,
     ILogger<WebPushWorker> logger) : BackgroundService
 {
+    private const int PushTimeToLiveSeconds = 24 * 60 * 60;
+
     private readonly WebPushClient _client = new();
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -129,6 +131,15 @@ public sealed class WebPushWorker(
 
         var keys = await keyStore.GetAsync(dbContext, cancellationToken);
         var payload = BuildPayload(item);
+        var options = new Dictionary<string, object>
+        {
+            ["vapidDetails"] = keys,
+            // A phone that is off or offline gets the alert when it reconnects, but not once it is stale.
+            ["TTL"] = PushTimeToLiveSeconds,
+            // "high" makes the push service wake a sleeping phone (Android Doze) instead of holding the
+            // push until the user next unlocks it, so alerts arrive while the app is closed.
+            ["headers"] = new Dictionary<string, object> { ["Urgency"] = "high" }
+        };
         var gone = new List<PushSubscription>();
 
         foreach (var subscription in subscriptions)
@@ -138,7 +149,7 @@ public sealed class WebPushWorker(
                 await _client.SendNotificationAsync(
                     new WebPush.PushSubscription(subscription.Endpoint, subscription.P256dh, subscription.Auth),
                     payload,
-                    keys,
+                    options,
                     cancellationToken);
             }
             catch (WebPushException ex) when (ex.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Gone)
@@ -172,6 +183,7 @@ public sealed class WebPushWorker(
                 icon = "/icons/icon-192.png",
                 badge = "/icons/icon-192.png",
                 dir = "auto",
+                vibrate = new[] { 200, 100, 200 },
                 tag = item.NotificationId.ToString("N"),
                 data = new
                 {
