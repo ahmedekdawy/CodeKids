@@ -83,13 +83,16 @@ export class NotificationNotifyService {
     }
 
     const title = notification.title;
+    // New-item notifications now carry their own text naming the teacher; ones created before that
+    // still hold the old English "New …: title" and are shown through the translated template.
+    const isLegacyCreated = !notification.body || notification.body.startsWith('New ');
     switch (notification.kind) {
       case 'AssignmentCreated':
-        return this.locale.t('notifications.assignmentCreated', { title });
+        return isLegacyCreated ? this.locale.t('notifications.assignmentCreated', { title }) : notification.body;
       case 'ExamCreated':
-        return this.locale.t('notifications.examCreated', { title });
+        return isLegacyCreated ? this.locale.t('notifications.examCreated', { title }) : notification.body;
       case 'QuizCreated':
-        return this.locale.t('notifications.quizCreated', { title });
+        return isLegacyCreated ? this.locale.t('notifications.quizCreated', { title }) : notification.body;
       case 'AssignmentGraded':
         return this.locale.t('notifications.assignmentGraded', { title });
       case 'ExamGraded':

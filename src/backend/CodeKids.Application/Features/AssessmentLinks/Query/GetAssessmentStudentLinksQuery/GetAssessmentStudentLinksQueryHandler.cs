@@ -94,7 +94,8 @@ public sealed class GetAssessmentStudentLinksQueryHandler(
         return new AssessmentStudentLinksResult(query.Kind, query.ResourceId, title, links);
     }
 
-    private static TimeSpan ResolveLifetime(DateTimeOffset? dueAtUtc)
+    /// <summary>How long a student's private link stays valid: until a week after the due date, and at least 90 days.</summary>
+    public static TimeSpan ResolveLifetime(DateTimeOffset? dueAtUtc)
     {
         if (dueAtUtc is DateTimeOffset due && due > DateTimeOffset.UtcNow)
         {

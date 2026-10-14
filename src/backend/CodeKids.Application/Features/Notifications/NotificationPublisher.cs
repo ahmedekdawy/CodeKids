@@ -151,14 +151,14 @@ public static class NotificationRecipients
 public sealed class NotificationPublisher(
     IAppDbContext dbContext,
     IAssessmentPublishNotificationQueue whatsAppQueue,
-    INotificationRealtime? realtime = null)
+    INotificationRealtime? realtime = null,
+    IAssessmentAccessTokenService? linkTokens = null)
 {
     public Task NotifyAssignmentCreatedAsync(
         Assignment assignment,
         CancellationToken cancellationToken) =>
         NotifyStudentsAsync(
             NotificationKind.AssignmentCreated,
-            $"New assignment: {assignment.Title}",
             new AssessmentPublishInfo(
                 "Assignment",
                 "واجب",
@@ -177,7 +177,6 @@ public sealed class NotificationPublisher(
         CancellationToken cancellationToken) =>
         NotifyStudentsAsync(
             NotificationKind.ExamCreated,
-            $"New exam: {exam.Title}",
             new AssessmentPublishInfo(
                 "Exam",
                 "امتحان",
@@ -196,7 +195,6 @@ public sealed class NotificationPublisher(
         CancellationToken cancellationToken) =>
         NotifyStudentsAsync(
             NotificationKind.QuizCreated,
-            $"New quiz: {quiz.Title}",
             new AssessmentPublishInfo(
                 "Quiz",
                 "كويز",
@@ -280,7 +278,6 @@ public sealed class NotificationPublisher(
 
     private async Task NotifyStudentsAsync(
         NotificationKind kind,
-        string body,
         AssessmentPublishInfo publishInfo,
         Func<Task<IReadOnlyList<Guid>>> resolveStudents,
         CancellationToken cancellationToken)
@@ -290,14 +287,39 @@ public sealed class NotificationPublisher(
         // Queue WhatsApp first so a slow/failing in-app fan-out cannot skip messaging.
         whatsAppQueue.Enqueue(dbContext.CurrentTenantId, publishInfo, studentIds);
 
+        // The text is in Arabic, like the WhatsApp message for the same event: a push notification is shown
+        // by the phone as sent, so it cannot follow each student's chosen app language.
+        var teacherName = publishInfo.CreatedByUserId is Guid creatorId
+            ? await dbContext.Users.AsNoTracking()
+                .Where(x => x.Id == creatorId)
+                .Select(x => x.DisplayName)
+                .FirstOrDefaultAsync(cancellationToken)
+            : null;
+        var body = string.IsNullOrWhiteSpace(teacherName)
+            ? $"{publishInfo.KindLabel} جديد: {publishInfo.Title}"
+            : $"{publishInfo.KindLabel} جديد من {teacherName.Trim()}: {publishInfo.Title}";
+
+        var linkKind = publishInfo.Kind switch
+        {
+            "Exam" => AssessmentLinkKind.Exam,
+            "Quiz" => AssessmentLinkKind.Quiz,
+            "Assignment" => AssessmentLinkKind.Assignment,
+            _ => (AssessmentLinkKind?)null
+        };
+        var linkLifetime = AssessmentLinks.GetAssessmentStudentLinksQueryHandler.ResolveLifetime(publishInfo.DueAtUtc);
+
         foreach (var studentId in studentIds)
         {
+            // Each student gets their own private link: opening it signs them in and goes straight to the item.
+            var targetUrl = linkTokens is not null && linkKind is AssessmentLinkKind kindForLink
+                ? $"/go/{linkTokens.CreateToken(kindForLink, publishInfo.EntityId, studentId, linkLifetime)}"
+                : publishInfo.TargetPath;
             await NotifyUserAsync(
                 studentId,
                 kind,
                 publishInfo.Title,
                 body,
-                publishInfo.TargetPath,
+                targetUrl,
                 publishInfo.EntityId,
                 relatedStudentId: null,
                 cancellationToken);

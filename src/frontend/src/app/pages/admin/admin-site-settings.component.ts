@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
 import { SiteSettings } from '../../models';
-import { SiteBrandService } from '../../site-brand.service';
+import { SiteBrandService, withVersion } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { browserTimeZone, timeZoneOptions } from '../../time-zone.util';
@@ -80,13 +80,13 @@ export class AdminSiteSettingsComponent {
   logoUrl(): string | null {
     const settings = this.settings();
     const url = this.api.siteAssetUrl(settings?.logoUrl);
-    return url ? `${url}?v=${settings?.updatedAtUtc || ''}` : null;
+    return url ? withVersion(url, settings?.updatedAtUtc || '') : null;
   }
 
   bannerUrl(): string | null {
     const settings = this.settings();
     const url = this.api.siteAssetUrl(settings?.bannerUrl);
-    return url ? `${url}?v=${settings?.updatedAtUtc || ''}` : null;
+    return url ? withVersion(url, settings?.updatedAtUtc || '') : null;
   }
 
   onUseCurrentWeekChange(useCurrent: boolean): void {

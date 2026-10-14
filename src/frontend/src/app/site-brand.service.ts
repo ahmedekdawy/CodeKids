@@ -37,8 +37,8 @@ export class SiteBrandService {
     const stamp = settings.updatedAtUtc || Date.now().toString();
     const logo = this.api.siteAssetUrl(settings.logoUrl);
     const banner = this.api.siteAssetUrl(settings.bannerUrl);
-    this.logoUrl.set(logo ? `${logo}?v=${stamp}` : null);
-    this.bannerUrl.set(banner ? `${banner}?v=${stamp}` : null);
+    this.logoUrl.set(logo ? withVersion(logo, stamp) : null);
+    this.bannerUrl.set(banner ? withVersion(banner, stamp) : null);
     this.amSessionCount.set(normalizeSessionCount(settings.amSessionCount));
     this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
     this.pmStartMinutes.set(normalizePmStartMinutes(settings.pmStartMinutes));
@@ -56,4 +56,9 @@ export class SiteBrandService {
     }
     return name.slice(0, 2).toUpperCase();
   }
+}
+
+/** Adds a cache-busting version so a newly uploaded image replaces the old one at once. */
+export function withVersion(url: string, version: string): string {
+  return `${url}${url.includes('?') ? '&' : '?'}v=${encodeURIComponent(version)}`;
 }

@@ -32,6 +32,8 @@ public static class SiteSettingsEndpoints
 
         app.MapGet("/api/site-settings/logo", async (
 
+            string? tenant,
+
             IAppDbContext dbContext,
 
             IFileStorage fileStorage,
@@ -40,9 +42,9 @@ public static class SiteSettingsEndpoints
 
         {
 
-            var settings = await GetSiteSettingsQueryHandler.EnsureAsync(dbContext, cancellationToken);
+            var image = await LoadImageAsync(dbContext, tenant, x => new SiteImage(x.LogoStorageKey, x.LogoContentType), cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(settings.LogoStorageKey))
+            if (image is null || string.IsNullOrWhiteSpace(image.StorageKey))
 
             {
 
@@ -50,14 +52,16 @@ public static class SiteSettingsEndpoints
 
             }
 
-            var stream = await fileStorage.OpenReadAsync(settings.LogoStorageKey, cancellationToken);
+            var stream = await fileStorage.OpenReadAsync(image.StorageKey, cancellationToken);
 
-            return Results.File(stream, string.IsNullOrWhiteSpace(settings.LogoContentType) ? "image/png" : settings.LogoContentType);
+            return Results.File(stream, string.IsNullOrWhiteSpace(image.ContentType) ? "image/png" : image.ContentType);
 
         }).AllowAnonymous();
 
         app.MapGet("/api/site-settings/banner", async (
 
+            string? tenant,
+
             IAppDbContext dbContext,
 
             IFileStorage fileStorage,
@@ -66,9 +70,9 @@ public static class SiteSettingsEndpoints
 
         {
 
-            var settings = await GetSiteSettingsQueryHandler.EnsureAsync(dbContext, cancellationToken);
+            var image = await LoadImageAsync(dbContext, tenant, x => new SiteImage(x.BannerStorageKey, x.BannerContentType), cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(settings.BannerStorageKey))
+            if (image is null || string.IsNullOrWhiteSpace(image.StorageKey))
 
             {
 
@@ -76,9 +80,9 @@ public static class SiteSettingsEndpoints
 
             }
 
-            var stream = await fileStorage.OpenReadAsync(settings.BannerStorageKey, cancellationToken);
+            var stream = await fileStorage.OpenReadAsync(image.StorageKey, cancellationToken);
 
-            return Results.File(stream, string.IsNullOrWhiteSpace(settings.BannerContentType) ? "image/jpeg" : settings.BannerContentType);
+            return Results.File(stream, string.IsNullOrWhiteSpace(image.ContentType) ? "image/jpeg" : image.ContentType);
 
         }).AllowAnonymous();
 
@@ -190,7 +194,10 @@ public static class SiteSettingsEndpoints
 
                 }
 
-                var contentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
+                // Some phone file pickers send no type (or a generic one); fall back to the file's extension.
+                var contentType = CodeKids.Application.Features.Media.MediaFileTypes.ResolveContentType(
+                    string.IsNullOrWhiteSpace(file.ContentType) ? null : file.ContentType,
+                    file.FileName);
 
                 if (file.Length > 5 * 1024 * 1024)
 
@@ -228,6 +235,32 @@ public static class SiteSettingsEndpoints
 
         return app;
 
+    }
+
+    private sealed record SiteImage(string StorageKey, string ContentType);
+
+    /// <summary>
+    /// The named tenant's image when the URL carries one; otherwise the request's tenant, as before.
+    /// Read-only: an image request must not create settings rows for arbitrary tenant names.
+    /// </summary>
+    private static async Task<SiteImage?> LoadImageAsync(
+        IAppDbContext dbContext,
+        string? tenant,
+        System.Linq.Expressions.Expression<Func<CodeKids.Domain.Entities.SiteSettings, SiteImage>> select,
+        CancellationToken cancellationToken)
+    {
+        var tenantId = (tenant ?? string.Empty).Trim().ToLowerInvariant();
+        if (tenantId.Length is > 0 and <= 64 && tenantId.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_'))
+        {
+            return await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(
+                Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters(dbContext.SiteSettings)
+                    .Where(x => x.TenantId == tenantId)
+                    .Select(select),
+                cancellationToken);
+        }
+
+        var settings = await GetSiteSettingsQueryHandler.EnsureAsync(dbContext, cancellationToken);
+        return select.Compile()(settings);
     }
 
 }

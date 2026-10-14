@@ -52,6 +52,7 @@ public static class MediaFileTypes
             ".png" => "image/png",
             ".jpg" => "image/jpeg",
             ".jpeg" => "image/jpeg",
+            ".svg" => "image/svg+xml",
             ".webp" => "image/webp",
             ".gif" => "image/gif",
             ".pdf" => "application/pdf",
