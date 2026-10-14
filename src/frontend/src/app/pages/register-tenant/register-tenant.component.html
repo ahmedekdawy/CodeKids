@@ -31,6 +31,21 @@
             }
           </div>
         </fieldset>
+        <label class="check-row">
+          <input type="checkbox" formControlName="multiTimeZone" />
+          <span>{{ 'auth.tenant.multiTimeZone' | t }}</span>
+        </label>
+        <small class="hint">{{ 'auth.tenant.multiTimeZoneHint' | t }}</small>
+        @if (form.controls.multiTimeZone.value) {
+          <label>
+            <span>{{ 'auth.tenant.timeZone' | t }}</span>
+            <select formControlName="timeZone">
+              @for (zone of timeZones; track zone.value) {
+                <option [value]="zone.value">{{ zone.label }}</option>
+              }
+            </select>
+          </label>
+        }
         <label>
           <span>{{ 'auth.tenant.name' | t }}</span>
           <input formControlName="tenantName" autocomplete="organization" />

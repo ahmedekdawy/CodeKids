@@ -149,6 +149,21 @@
           />
           <span class="meta">{{ 'admin.site.pmStartHint' | t: { min: minPmStartTime, max: maxPmStartTime } }}</span>
         </label>
+
+        <label>
+          {{ 'admin.site.timeZone' | t }}
+          <select [(ngModel)]="timeZone" name="siteTimeZone">
+            @for (zone of timeZones; track zone.value) {
+              <option [value]="zone.value">{{ zone.label }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="checkbox span-all">
+          <input type="checkbox" [(ngModel)]="multiTimeZone" name="multiTimeZone" />
+          <span>{{ 'admin.site.multiTimeZone' | t }}</span>
+        </label>
+        <span class="meta span-all">{{ 'admin.site.multiTimeZoneHint' | t }}</span>
       </div>
     </section>
   </div>

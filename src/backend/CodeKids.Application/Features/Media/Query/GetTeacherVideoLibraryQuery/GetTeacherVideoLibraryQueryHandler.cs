@@ -15,7 +15,7 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var isAdmin = await dbContext.Users.AnyAsync(
-            x => x.Id == query.TeacherUserId && x.Role == UserRole.SuperAdmin,
+            x => x.Id == query.TeacherUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner),
             cancellationToken);
 
         var lessonVideos = await dbContext.LessonVideos

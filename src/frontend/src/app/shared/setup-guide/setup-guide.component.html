@@ -36,10 +36,10 @@
             [attr.aria-expanded]="openStep() === step.id"
             (click)="toggle(step.id)">
             <span class="guide-step-num">{{ isDone(step) ? '✓' : i + 1 }}</span>
-            <span class="guide-step-title">{{ prefix() + '.' + step.id + '.title' | t }}</span>
+            <span class="guide-step-title">{{ stepKey(step, 'title') | t }}</span>
             @if (isDone(step)) {
               <span class="guide-step-badge">
-                {{ step.visitOnly ? ('guide.opened' | t) : (prefix() + '.' + step.id + '.count' | t: { n: count(step.id) }) }}
+                {{ step.visitOnly ? ('guide.opened' | t) : (stepKey(step, 'count') | t: { n: count(step.id) }) }}
               </span>
             } @else if (nextStep() === step.id) {
               <span class="guide-step-badge guide-step-badge-next">{{ 'guide.startHere' | t }}</span>
@@ -47,9 +47,9 @@
           </button>
           @if (openStep() === step.id) {
             <div class="guide-step-body">
-              <p>{{ prefix() + '.' + step.id + '.text' | t }}</p>
+              <p>{{ stepKey(step, 'text') | t }}</p>
               <a class="guide-go" [routerLink]="step.path" (click)="markVisited(step)">
-                {{ prefix() + '.' + step.id + '.action' | t }}
+                {{ stepKey(step, 'action') | t }}
               </a>
             </div>
           }

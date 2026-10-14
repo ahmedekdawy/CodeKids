@@ -36,6 +36,10 @@ export const roleGuard = (roles: UserRole[]): CanActivateFn => () => {
   if (user && roles.includes(user.role)) {
     return true;
   }
+  // The owner of a single-teacher tenant is a teacher who can open the admin pages too.
+  if (roles.includes('SuperAdmin') && auth.hasAdminRights()) {
+    return true;
+  }
   return router.createUrlTree([auth.roleHome()]);
 };
 

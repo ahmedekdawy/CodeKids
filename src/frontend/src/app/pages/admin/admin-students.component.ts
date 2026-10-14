@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
@@ -12,6 +12,9 @@ import { SortDir, nextSort, sortBy } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SiteBrandService } from '../../site-brand.service';
+import { timeZoneOptions } from '../../time-zone.util';
+import { StyledField, showsField } from '../../tenant-style';
 import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
 
 @Component({
@@ -25,6 +28,26 @@ export class AdminStudentsComponent {
   private readonly auth = inject(AuthService);
   private readonly locale = inject(LocaleService);
   private readonly router = inject(Router);
+  readonly brand = inject(SiteBrandService);
+
+  /** Gender and time zone are shared by the create and edit forms. */
+  formGender = '';
+  formTimeZone = '';
+  formSessionMinutes: number | null = null;
+  formSessionsPerWeek: number | null = null;
+  readonly timeZones = timeZoneOptions();
+
+  /** Whether this tenant's style uses the given group of fields. */
+  shows(field: StyledField): boolean {
+    return showsField(this.brand.tenantStyle(), field);
+  }
+
+  genderOptions(): { value: string; label: string }[] {
+    return [
+      { value: 'Male', label: this.locale.t('common.genderMale') },
+      { value: 'Female', label: this.locale.t('common.genderFemale') }
+    ];
+  }
   readonly students = signal<ManagedUser[]>([]);
   readonly parents = signal<ManagedUser[]>([]);
   readonly catalogGrades = signal<Grade[]>([]);
@@ -33,6 +56,8 @@ export class AdminStudentsComponent {
   readonly sortKey = signal('displayName');
   readonly sortDir = signal<SortDir>('asc');
   readonly editingId = signal<string | null>(null);
+  /** True while the add/edit popup is showing. */
+  readonly formOpen = signal(false);
   readonly impersonatingId = signal<string | null>(null);
   readonly page = signal(1);
   readonly pageSize = signal(10);
@@ -255,12 +280,17 @@ export class AdminStudentsComponent {
         parentId: this.studentParentId || null,
         grade: this.studentGrade,
         schoolType: this.studentSchoolType || null,
-        mobilePhone: this.studentMobile || null
+        mobilePhone: this.studentMobile || null,
+        gender: this.formGender || null,
+        timeZone: this.brand.multiTimeZone() ? this.formTimeZone || null : null,
+        sessionMinutes: this.formSessionMinutes || null,
+        sessionsPerWeek: this.formSessionsPerWeek || null
       })
       .subscribe({
         next: () => {
           this.message.set(this.locale.t('admin.students.created'));
           this.resetCreateForm();
+          this.formOpen.set(false);
           this.reload();
         },
         error: (err) => this.error.set(this.locale.fromApiError(err, 'admin.students.createFailed'))
@@ -276,11 +306,42 @@ export class AdminStudentsComponent {
     this.editSchoolType = student.schoolType || '';
     this.editGrade = student.grade ?? null;
     this.editPassword = '';
+    this.formGender = student.gender || '';
+    this.formTimeZone = student.timeZone || '';
+    this.formSessionMinutes = student.sessionMinutes ?? null;
+    this.formSessionsPerWeek = student.sessionsPerWeek ?? null;
     this.clearStatus();
+    this.formOpen.set(true);
+  }
+
+  viewProfile(student: ManagedUser): void {
+    void this.router.navigate(['/admin/users', student.id]);
+  }
+
+  /** Opens the popup with an empty form for a new user. */
+  openCreate(): void {
+    this.cancelEdit();
+    this.clearStatus();
+    this.formOpen.set(true);
+  }
+
+  closeForm(): void {
+    this.cancelEdit();
+    this.clearStatus();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.formOpen()) this.closeForm();
   }
 
   cancelEdit(): void {
     this.editingId.set(null);
+    this.formOpen.set(false);
+    this.formGender = '';
+    this.formTimeZone = '';
+    this.formSessionMinutes = null;
+    this.formSessionsPerWeek = null;
   }
 
   saveEdit(studentId: string): void {
@@ -298,7 +359,11 @@ export class AdminStudentsComponent {
         password: this.editPassword || null,
         grade: this.editGrade,
         schoolType: this.editSchoolType || null,
-        mobilePhone: this.editMobile || null
+        mobilePhone: this.editMobile || null,
+        gender: this.formGender || null,
+        timeZone: this.brand.multiTimeZone() ? this.formTimeZone || null : null,
+        sessionMinutes: this.formSessionMinutes || null,
+        sessionsPerWeek: this.formSessionsPerWeek || null
       })
       .subscribe({
         next: () => {
@@ -310,10 +375,11 @@ export class AdminStudentsComponent {
       });
   }
 
+  /** Deleting a student always deletes their data with them. */
   deleteStudent(student: ManagedUser): void {
     if (!confirm(this.locale.t('admin.students.confirmDelete', { name: student.displayName }))) return;
     this.clearStatus();
-    this.api.deleteUser(student.id).subscribe({
+    this.api.deleteUser(student.id, true).subscribe({
       next: () => {
         this.message.set(this.locale.t('admin.students.deleted'));
         if (this.editingId() === student.id) {
@@ -362,6 +428,10 @@ export class AdminStudentsComponent {
   }
 
   private resetCreateForm(): void {
+    this.formGender = '';
+    this.formTimeZone = '';
+    this.formSessionMinutes = null;
+    this.formSessionsPerWeek = null;
     this.studentEmail = '';
     this.studentName = '';
     this.studentPassword = '';

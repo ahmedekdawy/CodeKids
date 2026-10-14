@@ -4,15 +4,28 @@
 
   <app-page-feedback [ok]="message()" [error]="error()" />
 
-  <section class="block">
-    <h3>{{ (editingId() ? 'common.edit' : meta().createKey) | t }}</h3>
-    <form class="meeting-form" (ngSubmit)="editingId() ? saveEdit(editingId()!) : createUser()">
+  <div class="page-actions">
+    <button type="button" (click)="openCreate()">{{ meta().createKey | t }}</button>
+  </div>
+
+  @if (formOpen()) {
+  <div class="modal-backdrop">
+    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>{{ (editingId() ? 'common.edit' : meta().createKey) | t }}</h3>
+        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.close' | t }}</button>
+      </div>
+      @if (error()) {
+        <p class="feedback">{{ error() }}</p>
+      }
+    <form class="meeting-form" autocomplete="off" (ngSubmit)="editingId() ? saveEdit(editingId()!) : createUser()">
       <label>
         {{ 'common.name' | t }}
         <input
           [ngModel]="editingId() ? editName : userName"
           (ngModelChange)="editingId() ? (editName = $event) : (userName = $event)"
           name="userName"
+          autocomplete="off"
           required
         />
       </label>
@@ -22,6 +35,7 @@
           [ngModel]="editingId() ? editEmail : userEmail"
           (ngModelChange)="editingId() ? (editEmail = $event) : (userEmail = $event)"
           name="userEmail"
+          autocomplete="off"
           type="email"
           [placeholder]="'common.optional' | t"
         />
@@ -32,6 +46,7 @@
           [ngModel]="editingId() ? editMobile : userMobile"
           (ngModelChange)="editingId() ? (editMobile = $event) : (userMobile = $event)"
           name="userMobile"
+          autocomplete="off"
           [placeholder]="'admin.users.mobilePlaceholder' | t"
         />
       </label>
@@ -41,6 +56,7 @@
           [ngModel]="editingId() ? editPassword : userPassword"
           (ngModelChange)="editingId() ? (editPassword = $event) : (userPassword = $event)"
           name="userPassword"
+          autocomplete="new-password"
           type="password"
           [required]="!editingId()"
           [placeholder]="editingId() ? ('common.newPasswordOptional' | t) : ''"
@@ -48,6 +64,27 @@
       </label>
 
       @if (managedRole() === 'Teacher') {
+        <label>
+          {{ 'common.gender' | t }}
+          <app-searchable-select
+            [(ngModel)]="formGender"
+            name="userGender"
+            [emptyLabel]="'common.select' | t"
+            [options]="genderOptions()"
+          />
+        </label>
+        @if (brand.multiTimeZone()) {
+          <label>
+            {{ 'common.timeZone' | t }}
+            <app-searchable-select
+              [(ngModel)]="formTimeZone"
+              name="userTimeZone"
+              [emptyLabel]="'common.select' | t"
+              [options]="timeZones"
+            />
+          </label>
+        }
+        @if (shows('teacherShiftAndStages')) {
         <label>
           {{ 'admin.users.workShift' | t }}
           <app-searchable-select
@@ -68,7 +105,9 @@
           />
           <span class="meta">{{ 'admin.users.stagesHint' | t }}</span>
         </label>
+        }
 
+        @if (shows('teacherPay')) {
         <label>
           {{ 'admin.users.contractType' | t }}
           <app-searchable-select
@@ -78,6 +117,8 @@
             [options]="contractTypes.map(t => ({ value: t, label: contractTypeLabel(t) }))"
           />
         </label>
+        }
+        @if (shows('teacherStageAmounts')) {
         <label>
           {{ 'admin.users.primaryAmount' | t }}
           <input
@@ -111,6 +152,8 @@
             name="userSecondaryAmount"
           />
         </label>
+        }
+        @if (shows('teacherPay')) {
         <label>
           {{ 'admin.users.teacherMonthlySalary' | t }}
           <input
@@ -193,18 +236,19 @@
             </div>
           }
         </div>
+        }
       }
 
       <div class="form-actions">
         <button type="submit">
           {{ (editingId() ? 'common.save' : meta().createKey) | t }}
         </button>
-        @if (editingId()) {
-          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
-        }
+        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
       </div>
     </form>
-  </section>
+    </div>
+  </div>
+  }
 
   <section class="block">
     <h3>{{ meta().listKey | t }}</h3>
@@ -214,6 +258,7 @@
         <input
           [ngModel]="filterName()"
           name="filterName"
+          autocomplete="off"
           (ngModelChange)="setFilterName($event)"
           [placeholder]="'common.search' | t"
         />
@@ -223,6 +268,7 @@
         <input
           [ngModel]="filterEmail()"
           name="filterEmail"
+          autocomplete="off"
           (ngModelChange)="setFilterEmail($event)"
           [placeholder]="'common.search' | t"
         />
@@ -232,6 +278,7 @@
         <input
           [ngModel]="filterMobile()"
           name="filterMobile"
+          autocomplete="off"
           (ngModelChange)="setFilterMobile($event)"
           [placeholder]="'common.search' | t"
         />
@@ -242,6 +289,7 @@
           <input
             [ngModel]="filterParent()"
             name="filterParent"
+            autocomplete="off"
             (ngModelChange)="setFilterParent($event)"
             [placeholder]="'common.search' | t"
           />
@@ -283,10 +331,18 @@
             <th class="sortable" (click)="setSort('email')">{{ 'common.email' | t }} <span class="sort-mark">{{ sortMark('email') }}</span></th>
             <th class="sortable" (click)="setSort('mobilePhone')">{{ 'common.mobile' | t }} <span class="sort-mark">{{ sortMark('mobilePhone') }}</span></th>
             @if (managedRole() === 'Teacher') {
-              <th>{{ 'admin.users.workShift' | t }}</th>
-              <th>{{ 'admin.users.contractType' | t }}</th>
-              <th>{{ 'admin.users.stages' | t }}</th>
-              <th>{{ 'admin.users.primaryAmount' | t }}</th>
+              @if (shows('teacherShiftAndStages')) {
+                <th>{{ 'admin.users.workShift' | t }}</th>
+              }
+              @if (shows('teacherPay')) {
+                <th>{{ 'admin.users.contractType' | t }}</th>
+              }
+              @if (shows('teacherShiftAndStages')) {
+                <th>{{ 'admin.users.stages' | t }}</th>
+              }
+              @if (shows('teacherStageAmounts')) {
+                <th>{{ 'admin.users.primaryAmount' | t }}</th>
+              }
             }
             <th>{{ 'common.status' | t }}</th>
             <th>{{ 'common.actions' | t }}</th>
@@ -299,15 +355,28 @@
               <td>{{ user.email || ('common.emDash' | t) }}</td>
               <td>{{ user.mobilePhone || ('common.emDash' | t) }}</td>
               @if (managedRole() === 'Teacher') {
-                <td>{{ workShiftLabel(user.workShift) }}</td>
-                <td>{{ contractTypeLabel(user.contractType) }}</td>
-                <td>{{ stagesLabel(user.stages) }}</td>
-                <td>{{ moneyLabel(user.primaryAmount) }}</td>
+                @if (shows('teacherShiftAndStages')) {
+                  <td>{{ workShiftLabel(user.workShift) }}</td>
+                }
+                @if (shows('teacherPay')) {
+                  <td>{{ contractTypeLabel(user.contractType) }}</td>
+                }
+                @if (shows('teacherShiftAndStages')) {
+                  <td>{{ stagesLabel(user.stages) }}</td>
+                }
+                @if (shows('teacherStageAmounts')) {
+                  <td>{{ moneyLabel(user.primaryAmount) }}</td>
+                }
               }
               <td>{{ isActive(user) ? ('admin.users.statusActive' | t) : ('admin.users.statusInactive' | t) }}</td>
               <td>
                 <div class="row-actions">
                   @if (managedRole() !== 'SuperAdmin') {
+                    <app-icon-action-button
+                      kind="preview"
+                      [label]="'admin.profile.view' | t"
+                      (action)="viewProfile(user)"
+                    />
                     <app-icon-action-button
                       kind="loginAs"
                       [label]="'common.loginAs' | t"
@@ -346,3 +415,34 @@
     </div>
   </section>
 </div>
+
+@if (deleteTarget(); as target) {
+  <div class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>{{ 'admin.deleteDialog.title' | t: { name: target.displayName } }}</h3>
+        <button type="button" class="ghost-btn" (click)="deleteTarget.set(null)">{{ 'common.close' | t }}</button>
+      </div>
+      <div class="delete-options">
+        <label class="delete-option">
+          <input type="radio" name="deleteMode" value="keep" [(ngModel)]="deleteMode" />
+          <span>
+            <strong>{{ 'admin.deleteDialog.keep' | t }}</strong>
+            <span class="meta">{{ 'admin.deleteDialog.keepHint' | t }}</span>
+          </span>
+        </label>
+        <label class="delete-option">
+          <input type="radio" name="deleteMode" value="all" [(ngModel)]="deleteMode" />
+          <span>
+            <strong>{{ 'admin.deleteDialog.all' | t }}</strong>
+            <span class="meta">{{ 'admin.deleteDialog.allHint' | t }}</span>
+          </span>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="button" (click)="confirmDelete()">{{ 'common.delete' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="deleteTarget.set(null)">{{ 'common.cancel' | t }}</button>
+      </div>
+    </div>
+  </div>
+}

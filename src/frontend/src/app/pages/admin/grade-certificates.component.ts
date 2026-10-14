@@ -53,7 +53,7 @@ export class GradeCertificatesComponent {
   private readonly brand = inject(SiteBrandService);
   private readonly http = inject(HttpClient);
 
-  readonly isAdmin = computed(() => this.auth.user()?.role === 'SuperAdmin');
+  readonly isAdmin = computed(() => this.auth.hasAdminRights());
 
   readonly certificates = signal<GradeCertificateListItem[]>([]);
   readonly classrooms = signal<Classroom[]>([]);

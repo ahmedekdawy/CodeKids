@@ -13,7 +13,7 @@ public sealed class GetCourseVideoLibraryQueryHandler(IAppDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var isAdmin = await dbContext.Users.AnyAsync(
-            x => x.Id == query.AdminUserId && x.Role == UserRole.SuperAdmin,
+            x => x.Id == query.AdminUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner),
             cancellationToken);
         if (!isAdmin)
         {

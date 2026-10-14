@@ -6,6 +6,7 @@ import { LearningApiService } from '../../learning-api.service';
 import { AppNotification } from '../../models';
 import { NotificationNotifyService } from '../../notification-notify.service';
 import { NotificationRealtimeService } from '../../notification-realtime.service';
+import { PushService } from '../../push.service';
 import { TranslatePipe } from '../translate.pipe';
 
 @Component({
@@ -22,6 +23,7 @@ export class NotificationBellComponent {
   private readonly notify = inject(NotificationNotifyService);
   private readonly realtime = inject(NotificationRealtimeService);
   private readonly router = inject(Router);
+  readonly push = inject(PushService);
 
   readonly open = signal(false);
   readonly loading = signal(false);
@@ -37,6 +39,11 @@ export class NotificationBellComponent {
         return next.slice(0, 30);
       });
     });
+  }
+
+  togglePush(event: Event): void {
+    event.stopPropagation();
+    void (this.push.enabled() ? this.push.disable() : this.push.enable());
   }
 
   toggle(event: Event): void {

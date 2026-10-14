@@ -125,3 +125,14 @@
   padding: 1rem;
   color: var(--text-muted, #64748b);
 }
+
+.notify-push {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}

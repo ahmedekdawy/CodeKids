@@ -1657,6 +1657,49 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("PasswordResetTokens");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.PushSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Auth")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("P256dh")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Endpoint")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PushSubscriptions");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.Quiz", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1907,6 +1950,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
+                    b.Property<bool>("MultiTimeZone")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("PmSessionCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
@@ -1930,6 +1976,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<string>("TimeZone")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<DateTimeOffset?>("TimetableWeekStartUtc")
                         .HasColumnType("timestamp with time zone");
@@ -2140,6 +2190,10 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<Guid?>("AvatarId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Gender")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
                     b.Property<int?>("Grade")
                         .HasColumnType("integer");
 
@@ -2149,6 +2203,16 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Property<string>("SchoolType")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<int?>("SessionMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SessionsPerWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TimeZone")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("TotalXp")
                         .HasColumnType("integer");
@@ -2501,6 +2565,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("Gender")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
                     b.Property<decimal?>("MonthlySalary")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)");
@@ -2521,6 +2589,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)");
+
+                    b.Property<string>("TimeZone")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("WorkShift")
                         .HasMaxLength(20)
@@ -2585,6 +2657,42 @@ namespace CodeKids.Infrastructure.Migrations
                     b.ToTable("TeacherSessionAttendances");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherVacation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TeacherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TeacherId", "StartDate");
+
+                    b.ToTable("TeacherVacations");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TenantSignup", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2612,6 +2720,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
+                    b.Property<bool>("MultiTimeZone")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -2634,6 +2745,10 @@ namespace CodeKids.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<string>("TimeZone")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("TokenHash")
                         .IsRequired()
@@ -2733,6 +2848,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsTenantOwner")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset?>("LastLoginDateUtc")
                         .HasColumnType("timestamp with time zone");
 
@@ -2778,6 +2896,37 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasFilter("\"MobilePhone\" <> ''");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.UserAvailability", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EndMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StartMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TenantId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId", "DayOfWeek");
+
+                    b.ToTable("UserAvailabilities");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.UserBadge", b =>
@@ -2913,6 +3062,29 @@ namespace CodeKids.Infrastructure.Migrations
                     b.HasIndex("MediaAssetId", "StudentId");
 
                     b.ToTable("VideoWatchSessions");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.WebPushKeyPair", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PrivateKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WebPushKeys", (string)null);
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.WeeklyStudyPlan", b =>
@@ -3670,6 +3842,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.PushSubscription", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.Quiz", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.Classroom", "Classroom")
@@ -4000,6 +4183,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("CodeKids.Domain.Entities.TeacherVacation", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Teacher");
+                });
+
             modelBuilder.Entity("CodeKids.Domain.Entities.TuitionPayment", b =>
                 {
                     b.HasOne("CodeKids.Domain.Entities.User", "Parent")
@@ -4015,6 +4209,17 @@ namespace CodeKids.Infrastructure.Migrations
                     b.Navigation("Parent");
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CodeKids.Domain.Entities.UserAvailability", b =>
+                {
+                    b.HasOne("CodeKids.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CodeKids.Domain.Entities.UserBadge", b =>

@@ -139,7 +139,7 @@ export class AdminVideosComponent {
       this.error.set(this.locale.t('videos.fileRequired'));
       return;
     }
-    this.saveFromAsset(() => this.api.uploadMedia(file), true);
+    this.saveFromAsset(() => this.api.uploadMedia(file, undefined, this.selectedCourseId), true);
   }
 
   private saveFromAsset(

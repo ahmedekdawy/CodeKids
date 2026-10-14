@@ -197,6 +197,8 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 
 builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
+builder.Services.AddScoped<IUserCascadeDeleter, UserCascadeDeleter>();
+
 builder.Services.AddMediaStorage(builder.Configuration);
 
 builder.Services.AddZoomIntegration(builder.Configuration);
@@ -284,6 +286,11 @@ builder.Services.AddScoped<ICommandHandler<SetChatMemberBlockedCommand, ChatMemb
 builder.Services.AddScoped<ICommandHandler<MarkChatRoomReadCommand, int>, MarkChatRoomReadCommandHandler>();
 builder.Services.AddScoped<IQueryHandler<GetChatUnreadSummaryQuery, ChatUnreadSummaryDto>, GetChatUnreadSummaryQueryHandler>();
 
+builder.Services.Configure<CodeKids.Infrastructure.Notifications.WebPushOptions>(
+    builder.Configuration.GetSection(CodeKids.Infrastructure.Notifications.WebPushOptions.SectionName));
+builder.Services.AddSingleton<CodeKids.Infrastructure.Notifications.WebPushKeyStore>();
+builder.Services.AddSingleton<CodeKids.Infrastructure.Notifications.WebPushQueue>();
+builder.Services.AddHostedService<CodeKids.Infrastructure.Notifications.WebPushWorker>();
 builder.Services.AddScoped<INotificationRealtime, NotificationRealtime>();
 builder.Services.AddScoped<NotificationPublisher>();
 builder.Services.AddScoped<IQueryHandler<ListNotificationsQuery, IReadOnlyList<NotificationDto>>, ListNotificationsQueryHandler>();
@@ -717,6 +724,10 @@ app.MapAccountReportEndpoints();
 app.MapTeacherAssessmentsReportEndpoints();
 
 app.MapAdminUsersEndpoints();
+
+app.MapAvailabilityEndpoints();
+
+app.MapPushEndpoints();
 
 app.MapAppointmentsEndpoints();
 

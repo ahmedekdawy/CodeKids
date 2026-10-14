@@ -4,7 +4,11 @@
 
   <app-page-feedback [error]="error()" />
 
-  <app-admin-setup-guide />
+  @if (isTenantOwner) {
+    <app-teacher-setup-guide />
+  } @else {
+    <app-admin-setup-guide />
+  }
 
   <section class="block">
     <div class="list-filters">

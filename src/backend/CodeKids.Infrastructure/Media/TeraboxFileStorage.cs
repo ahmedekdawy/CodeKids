@@ -15,9 +15,10 @@ public sealed class TeraboxFileStorage(
         string fileName,
         string contentType,
         CancellationToken cancellationToken = default,
-        string? tenantId = null)
+        string? tenantId = null,
+        string? subjectFolder = null)
     {
-        var relativePath = MediaStoragePaths.NewRelativePath(tenantId, fileName, contentType);
+        var relativePath = MediaStoragePaths.NewRelativePath(tenantId, fileName, contentType, subjectFolder);
         var slash = relativePath.LastIndexOf('/');
         var remoteName = relativePath[(slash + 1)..];
         var remoteDirectory = $"{NormalizeDirectory(_options.RemoteDirectory)}/{relativePath[..slash]}";

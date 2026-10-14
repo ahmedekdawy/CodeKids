@@ -15,7 +15,7 @@ public sealed class UpdateManagedUserCommandHandler(
     public async Task<ManagedUserDto> Handle(UpdateManagedUserCommand command, CancellationToken cancellationToken)
     {
         _ = await dbContext.Users.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && x.Role == UserRole.SuperAdmin, cancellationToken)
+            .FirstOrDefaultAsync(x => x.Id == command.AdminUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner), cancellationToken)
             ?? throw new InvalidOperationException("Super Admin account not found.");
 
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken)
@@ -50,6 +50,11 @@ public sealed class UpdateManagedUserCommandHandler(
             }
         }
 
+        if (user.IsTenantOwner && role != user.Role)
+        {
+            throw new InvalidOperationException("The account owner's role cannot be changed.");
+        }
+
         if (user.Role == UserRole.SuperAdmin && role != UserRole.SuperAdmin)
         {
             var adminCount = await dbContext.Users.CountAsync(x => x.Role == UserRole.SuperAdmin, cancellationToken);
@@ -72,6 +77,13 @@ public sealed class UpdateManagedUserCommandHandler(
                 ? CreateCourseCommandHandler.NormalizeGrade(command.Grade)
                 : null;
             student.SchoolType = CreateManagedUserCommandHandler.ParseSchoolType(role, command.SchoolType);
+            if (role == UserRole.Student)
+            {
+                student.Gender = CreateManagedUserCommandHandler.ParseGender(command.Gender);
+                student.TimeZone = Tenants.TimeZoneIds.Normalize(command.TimeZone);
+                (student.SessionMinutes, student.SessionsPerWeek) =
+                    CreateManagedUserCommandHandler.ValidateStudentSessions(command.SessionMinutes, command.SessionsPerWeek);
+            }
         }
         if (!string.IsNullOrWhiteSpace(mobile)
             && await dbContext.Users.AnyAsync(x => x.MobilePhone == mobile && x.Id != user.Id, cancellationToken))
@@ -97,6 +109,11 @@ public sealed class UpdateManagedUserCommandHandler(
             teacher.PrepAmount = contract.PrepAmount;
             teacher.SecondaryAmount = contract.SecondaryAmount;
             teacher.MonthlySalary = CreateManagedUserCommandHandler.NormalizeMoney(command.MonthlySalary);
+            if (role == UserRole.Teacher)
+            {
+                teacher.Gender = CreateManagedUserCommandHandler.ParseGender(command.Gender);
+                teacher.TimeZone = Tenants.TimeZoneIds.Normalize(command.TimeZone);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(command.Password))

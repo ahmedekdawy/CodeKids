@@ -22,6 +22,23 @@
         }
       </div>
 
+      @if (push.supported) {
+        <div class="notify-push">
+          @if (push.blocked()) {
+            <span>{{ 'notifications.pushBlocked' | t }}</span>
+          } @else {
+            <span>{{ (push.enabled() ? 'notifications.pushOn' : 'notifications.pushOff') | t }}</span>
+            <button type="button" class="ghost" [disabled]="push.busy()" (click)="togglePush($event)">
+              {{ (push.enabled() ? 'notifications.pushTurnOff' : 'notifications.pushTurnOn') | t }}
+            </button>
+          }
+        </div>
+      } @else if (push.needsInstall) {
+        <div class="notify-push">
+          <span>{{ 'notifications.pushInstall' | t }}</span>
+        </div>
+      }
+
       @if (loading()) {
         <p class="notify-empty">{{ 'common.loading' | t }}</p>
       } @else if (!items().length) {

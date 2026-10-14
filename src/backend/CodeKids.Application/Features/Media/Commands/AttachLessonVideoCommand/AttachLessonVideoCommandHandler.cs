@@ -42,7 +42,7 @@ public sealed class AttachLessonVideoCommandHandler(IAppDbContext dbContext)
         if (media.UploadedByUserId != command.TeacherUserId)
         {
             var isAdmin = await dbContext.Users.AnyAsync(
-                x => x.Id == command.TeacherUserId && x.Role == UserRole.SuperAdmin,
+                x => x.Id == command.TeacherUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner),
                 cancellationToken);
             if (!isAdmin)
             {

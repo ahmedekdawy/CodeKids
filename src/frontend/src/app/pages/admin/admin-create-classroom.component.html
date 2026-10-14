@@ -4,8 +4,20 @@
 
   <app-page-feedback [ok]="message()" [error]="error()" />
 
-  <section class="block edit-panel">
-    <h3>{{ (editingId() ? ('admin.classrooms.editTitle' | t:{ name: formName }) : ('admin.classrooms.create' | t)) }}</h3>
+  <div class="page-actions">
+    <button type="button" (click)="openCreate()">{{ 'admin.classrooms.create' | t }}</button>
+  </div>
+
+  @if (formOpen()) {
+  <div class="modal-backdrop">
+    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>{{ (editingId() ? ('admin.classrooms.editTitle' | t:{ name: formName }) : ('admin.classrooms.create' | t)) }}</h3>
+        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.close' | t }}</button>
+      </div>
+      @if (error()) {
+        <p class="feedback">{{ error() }}</p>
+      }
     <form class="meeting-form classroom-edit-form" (ngSubmit)="saveForm()">
       <label>{{ 'common.name' | t }} <input [(ngModel)]="formName" name="formName" required /></label>
       <label>{{ 'common.description' | t }} <input [(ngModel)]="formDescription" name="formDescription" /></label>
@@ -27,12 +39,12 @@
       </div>
       <div class="span-3 form-actions chip-row">
         <button type="submit">{{ (editingId() ? ('common.save' | t) : ('admin.classrooms.create' | t)) }}</button>
-        @if (editingId()) {
-          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
-        }
+        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
       </div>
     </form>
-  </section>
+    </div>
+  </div>
+  }
 
   <section class="block">
     <h3>{{ 'admin.classrooms.list' | t }}</h3>

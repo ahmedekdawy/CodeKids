@@ -55,7 +55,9 @@ public sealed class VerifyTenantCommandHandler(
             MobilePhone = signup.MobilePhone,
             DisplayName = signup.DisplayName,
             PasswordHash = signup.PasswordHash,
-            Role = UserRole.SuperAdmin,
+            // In a single-teacher tenant the owner is the teacher and manages everything from that account.
+            Role = signup.TenantStyle == TenantStyle.SingleTeacher ? UserRole.Teacher : UserRole.SuperAdmin,
+            IsTenantOwner = signup.TenantStyle == TenantStyle.SingleTeacher,
             TenantId = signup.TenantSlug
         });
 
@@ -63,6 +65,8 @@ public sealed class VerifyTenantCommandHandler(
 
         var settings = await GetSiteSettingsQueryHandler.EnsureForTenantAsync(dbContext, signup.TenantSlug, cancellationToken);
         settings.TenantStyle = signup.TenantStyle;
+        settings.MultiTimeZone = signup.MultiTimeZone;
+        settings.TimeZone = signup.TimeZone;
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return new VerifyTenantResult(signup.TenantSlug, signup.Email, "Email verified. Your tenant is ready. Sign in to continue.");

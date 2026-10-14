@@ -3,6 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, filter, map } from 'rxjs';
 import {
   Appointment,
+  AvailabilityPeriod,
+  TeacherVacation,
   AssessmentStudentLinksResult,
   Assignment,
   AssignmentSubmission,
@@ -947,6 +949,37 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/admin/other-expenses/${expenseId}`);
   }
 
+  getAvailability(userId: string): Observable<AvailabilityPeriod[]> {
+    return this.http.get<AvailabilityPeriod[]>(`${this.baseUrl}/availability/${userId}`);
+  }
+
+  /** Replaces the person's whole weekly availability. */
+  saveAvailability(userId: string, periods: AvailabilityPeriod[]): Observable<AvailabilityPeriod[]> {
+    return this.http.put<AvailabilityPeriod[]>(`${this.baseUrl}/availability/${userId}`, { periods });
+  }
+
+  getTeacherVacations(teacherId?: string): Observable<TeacherVacation[]> {
+    const query = teacherId ? `?teacherId=${teacherId}` : '';
+    return this.http.get<TeacherVacation[]>(`${this.baseUrl}/teacher-vacations${query}`);
+  }
+
+  createTeacherVacation(payload: {
+    teacherId?: string | null;
+    startDate: string;
+    endDate: string;
+    note?: string | null;
+  }): Observable<TeacherVacation> {
+    return this.http.post<TeacherVacation>(`${this.baseUrl}/teacher-vacations`, payload);
+  }
+
+  deleteTeacherVacation(vacationId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/teacher-vacations/${vacationId}`);
+  }
+
+  getUser(userId: string): Observable<ManagedUser> {
+    return this.http.get<ManagedUser>(`${this.baseUrl}/admin/users/${userId}`);
+  }
+
   getUsers(role?: string): Observable<ManagedUser[]> {
     const query = role ? `?role=${role}` : '';
     return this.http.get<ManagedUser[]>(`${this.baseUrl}/admin/users${query}`);
@@ -973,6 +1006,10 @@ export class LearningApiService {
       sessionAmount?: number | null;
       monthlySalary?: number | null;
     }> | null;
+    gender?: string | null;
+    timeZone?: string | null;
+    sessionMinutes?: number | null;
+    sessionsPerWeek?: number | null;
   }): Observable<ManagedUser> {
     return this.http.post<ManagedUser>(`${this.baseUrl}/admin/users`, payload);
   }
@@ -1000,13 +1037,18 @@ export class LearningApiService {
         sessionAmount?: number | null;
         monthlySalary?: number | null;
       }> | null;
+      gender?: string | null;
+      timeZone?: string | null;
+      sessionMinutes?: number | null;
+      sessionsPerWeek?: number | null;
     }
   ): Observable<ManagedUser> {
     return this.http.put<ManagedUser>(`${this.baseUrl}/admin/users/${userId}`, payload);
   }
 
-  deleteUser(userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/admin/users/${userId}`);
+  /** @param deleteData true also deletes everything that belongs to the user; false moves it to the admin. */
+  deleteUser(userId: string, deleteData = false): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/users/${userId}?deleteData=${deleteData}`);
   }
 
   setUserActive(userId: string, isActive: boolean): Observable<ManagedUser> {
@@ -1179,6 +1221,8 @@ export class LearningApiService {
     amSessionCount?: number;
     pmSessionCount?: number;
     pmStartMinutes?: number;
+    multiTimeZone?: boolean;
+    timeZone?: string | null;
   }): Observable<SiteSettings> {
     return this.http
       .put<SiteSettings>(`${this.baseUrl}/admin/site-settings`, payload)
@@ -1583,9 +1627,11 @@ export class LearningApiService {
     return this.http.post<ExamAttempt>(`${this.baseUrl}/exams/attempts/grade`, payload);
   }
 
-  uploadMedia(file: File, durationSeconds?: number): Observable<MediaAsset> {
+  /** @param courseId the course the video is for; its files are stored in that subject's folder. */
+  uploadMedia(file: File, durationSeconds?: number, courseId?: string | null): Observable<MediaAsset> {
     const form = new FormData();
     form.append('file', file, file.name);
+    if (courseId) form.append('courseId', courseId);
     if (durationSeconds && durationSeconds > 0) {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
@@ -1594,10 +1640,12 @@ export class LearningApiService {
 
   uploadMediaWithProgress(
     file: File,
-    durationSeconds?: number
+    durationSeconds?: number,
+    courseId?: string | null
   ): Observable<{ progress: number; asset?: MediaAsset }> {
     const form = new FormData();
     form.append('file', file, file.name);
+    if (courseId) form.append('courseId', courseId);
     if (durationSeconds && durationSeconds > 0) {
       form.append('durationSeconds', String(Math.round(durationSeconds)));
     }
@@ -1682,9 +1730,10 @@ export class LearningApiService {
     return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}/solution-video`);
   }
 
-  uploadLearningMaterialFile(file: File): Observable<MediaAsset> {
+  uploadLearningMaterialFile(file: File, courseId?: string | null): Observable<MediaAsset> {
     const form = new FormData();
     form.append('file', file, file.name);
+    if (courseId) form.append('courseId', courseId);
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/learning-materials/upload`, form);
   }
 
@@ -1787,6 +1836,9 @@ function normalizeSiteSettings(raw: SiteSettings | Record<string, unknown>): Sit
     amSessionCount: Number(item.amSessionCount ?? item['AmSessionCount'] ?? 6) || 6,
     pmSessionCount: Number(item.pmSessionCount ?? item['PmSessionCount'] ?? 6) || 6,
     pmStartMinutes: normalizePmStartMinutes(item.pmStartMinutes ?? item['PmStartMinutes']),
-    updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? '')
+    updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? ''),
+    tenantStyle: (item.tenantStyle ?? item['TenantStyle'] ?? null) as string | null,
+    multiTimeZone: (item.multiTimeZone ?? item['MultiTimeZone']) === true,
+    timeZone: (item.timeZone ?? item['TimeZone'] ?? null) as string | null
   };
 }

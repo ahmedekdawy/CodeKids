@@ -1,8 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { PanelNavItem, PanelShellComponent } from '../../layouts/panel-shell/panel-shell.component';
+import { PanelShellComponent } from '../../layouts/panel-shell/panel-shell.component';
 import { SiteBrandService } from '../../site-brand.service';
-import { navItemsForStyle } from '../../tenant-style';
+import { AuthService } from '../../auth.service';
+import { panelNavItems } from '../../panel-nav';
 
 @Component({
   selector: 'app-teacher-shell',
@@ -18,34 +19,9 @@ import { navItemsForStyle } from '../../tenant-style';
 })
 export class TeacherShellComponent {
   private readonly brand = inject(SiteBrandService);
+  private readonly auth = inject(AuthService);
 
-  private readonly allNavItems: PanelNavItem[] = [
-    { labelKey: 'nav.teacher.overview', path: '/teacher/overview', icon: 'O' },
-    { labelKey: 'nav.teacher.account', path: '/teacher/account', icon: '👤' },
-
-    { labelKey: 'nav.cat.content', path: '/teacher/videos', icon: 'V', categoryKey: 'nav.cat.content' },
-    { labelKey: 'nav.teacher.materials', path: '/teacher/materials', icon: 'M', categoryKey: 'nav.cat.content' },
-    { labelKey: 'nav.teacher.smartAssistant', path: '/teacher/smart-study-assistant', icon: '🤖', categoryKey: 'nav.cat.content' },
-    { labelKey: 'nav.teacher.courseTree', path: '/teacher/course-tree', icon: 'U', categoryKey: 'nav.cat.content' },
-    { labelKey: 'nav.teacher.studyPlans', path: '/teacher/study-plans', icon: 'P', categoryKey: 'nav.cat.content' },
-
-    { labelKey: 'nav.teacher.exams', path: '/teacher/exams', icon: 'E', categoryKey: 'nav.cat.assessments' },
-    { labelKey: 'nav.teacher.quizzes', path: '/teacher/quizzes', icon: 'Q', categoryKey: 'nav.cat.assessments' },
-    { labelKey: 'nav.teacher.assignments', path: '/teacher/assignments', icon: 'A', categoryKey: 'nav.cat.assessments' },
-    { labelKey: 'nav.teacher.questionBank', path: '/teacher/question-bank', icon: 'B', categoryKey: 'nav.cat.assessments' },
-    { labelKey: 'nav.teacher.review', path: '/teacher/review', icon: 'R', categoryKey: 'nav.cat.assessments' },
-
-    { labelKey: 'nav.teacher.timetable', path: '/teacher/timetable', icon: 'H', categoryKey: 'nav.cat.schedule' },
-    { labelKey: 'nav.teacher.appointments', path: '/teacher/appointments', icon: 'K', categoryKey: 'nav.cat.schedule' },
-    { labelKey: 'nav.teacher.attendance', path: '/teacher/attendance', icon: 'N', categoryKey: 'nav.cat.schedule' },
-    { labelKey: 'nav.teacher.studentAttendance', path: '/teacher/student-attendance', icon: 'A', categoryKey: 'nav.cat.schedule' },
-
-    { labelKey: 'nav.teacher.students', path: '/teacher/students', icon: 'S', categoryKey: 'nav.cat.communication' },
-    { labelKey: 'nav.teacher.askedQuestions', path: '/teacher/asked-questions', icon: '?', categoryKey: 'nav.cat.communication' },
-    { labelKey: 'nav.teacher.chat', path: '/teacher/chat', icon: 'C', categoryKey: 'nav.cat.communication' },
-    { labelKey: 'nav.teacher.weeklyReports', path: '/teacher/weekly-reports', icon: 'W', categoryKey: 'nav.cat.communication' },
-    { labelKey: 'nav.teacher.gradeCertificates', path: '/teacher/grade-certificates', icon: 'D', categoryKey: 'nav.cat.assessments' }
-  ];
-
-  readonly navItems = computed(() => navItemsForStyle(this.allNavItems, this.brand.tenantStyle()));
+  readonly navItems = computed(() =>
+    panelNavItems('teacher', this.brand.tenantStyle(), this.auth.user()?.isTenantOwner === true)
+  );
 }

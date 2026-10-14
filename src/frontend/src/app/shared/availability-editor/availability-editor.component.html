@@ -1,0 +1,98 @@
+<app-page-feedback [ok]="message()" [error]="error()" />
+
+<section class="block">
+  <h3>{{ 'availability.weekly' | t }}</h3>
+  <p class="meta">{{ 'availability.weeklyHint' | t }}</p>
+
+  <div class="availability-days">
+    @for (day of days(); track day.dayOfWeek) {
+      <div class="availability-day">
+        <strong class="availability-day-name">{{ dayLabel(day.dayOfWeek) }}</strong>
+
+        <div class="availability-periods">
+          @for (period of day.periods; track $index) {
+            <div class="availability-period">
+              <input type="time" [(ngModel)]="period.from" [attr.aria-label]="'availability.from' | t" />
+              <span aria-hidden="true">–</span>
+              <input type="time" [(ngModel)]="period.to" [attr.aria-label]="'availability.to' | t" />
+              <button type="button" class="ghost-btn" (click)="removePeriod(day, $index)">
+                {{ 'common.remove' | t }}
+              </button>
+            </div>
+          } @empty {
+            <span class="meta">{{ 'availability.notAvailable' | t }}</span>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="ghost-btn"
+          [disabled]="day.periods.length >= maxPeriodsPerDay"
+          (click)="addPeriod(day)"
+        >
+          {{ 'availability.addPeriod' | t }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="availability-actions">
+    <button type="button" [disabled]="saving() || loading()" (click)="save()">
+      {{ (saving() ? 'common.saving' : 'common.save') | t }}
+    </button>
+  </div>
+</section>
+
+@if (showVacations) {
+  <section class="block">
+    <h3>{{ 'availability.vacations' | t }}</h3>
+    <p class="meta">{{ 'availability.vacationsHint' | t }}</p>
+
+    <div class="list-filters">
+      <label>
+        {{ 'availability.from' | t }}
+        <input type="date" [(ngModel)]="vacationFrom" />
+      </label>
+      <label>
+        {{ 'availability.to' | t }}
+        <input type="date" [(ngModel)]="vacationTo" [min]="vacationFrom" />
+      </label>
+      <label>
+        {{ 'common.notes' | t }}
+        <input [(ngModel)]="vacationNote" maxlength="200" [placeholder]="'common.optional' | t" />
+      </label>
+      <button type="button" (click)="addVacation()">{{ 'availability.addVacation' | t }}</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'availability.from' | t }}</th>
+            <th>{{ 'availability.to' | t }}</th>
+            <th>{{ 'common.notes' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (vacation of vacations(); track vacation.id) {
+            <tr>
+              <td>{{ formatDate(vacation.startDate) }}</td>
+              <td>{{ formatDate(vacation.endDate) }}</td>
+              <td>{{ vacation.note || '—' }}</td>
+              <td>
+                <button type="button" class="ghost-btn" (click)="removeVacation(vacation)">
+                  {{ 'common.delete' | t }}
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="meta">{{ 'availability.noVacations' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}

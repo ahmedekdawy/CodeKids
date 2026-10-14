@@ -91,6 +91,8 @@ public static class ChatEndpoints
             IHubContext<ChatHub> hub,
             IAppDbContext dbContext,
             ICommandHandler<SendChatMessageCommand, ChatMessageDto> handler,
+            CodeKids.Infrastructure.Notifications.WebPushQueue webPushQueue,
+            CodeKids.Infrastructure.Tenancy.ITenantContext tenantContext,
             CancellationToken cancellationToken) =>
         {
             try
@@ -102,6 +104,7 @@ public static class ChatEndpoints
                     new SendChatMessageCommand(userId, role, id, request.Body),
                     cancellationToken);
                 await ChatHub.PublishMessageAsync(hub, dbContext, dto, cancellationToken);
+                await ChatHub.QueueMessagePushAsync(webPushQueue, tenantContext.TenantId, dbContext, dto, cancellationToken);
                 return Results.Ok(dto);
             }
             catch (Exception ex)

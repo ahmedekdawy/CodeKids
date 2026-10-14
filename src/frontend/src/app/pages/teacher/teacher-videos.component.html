@@ -154,7 +154,13 @@
               <div class="upload-progress-bar">
                 <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
               </div>
-              <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+              <span class="upload-progress-label">
+                {{
+                  (uploadProgress() ?? 0) >= 100
+                    ? ('videos.savingToStorage' | t)
+                    : ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                }}
+              </span>
             </div>
           }
 
@@ -165,7 +171,9 @@
             <button type="button" class="ghost-btn" [disabled]="uploading() || !selectedLessonId || !lessonVideoFile()" (click)="attachLessonVideoFile()">
               {{
                 uploadProgress() != null
-                  ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                  ? ((uploadProgress() ?? 0) >= 100
+                      ? ('videos.savingShort' | t)
+                      : ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 }))
                   : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
               }}
             </button>
@@ -323,7 +331,13 @@
               <div class="upload-progress-bar">
                 <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
               </div>
-              <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+              <span class="upload-progress-label">
+                {{
+                  (uploadProgress() ?? 0) >= 100
+                    ? ('videos.savingToStorage' | t)
+                    : ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                }}
+              </span>
             </div>
           }
 
@@ -334,7 +348,9 @@
             <button type="button" class="ghost-btn" [disabled]="uploading() || !courseUploadCourseId || !courseVideoFile()" (click)="attachCourseVideoFile()">
               {{
                 uploadProgress() != null
-                  ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                  ? ((uploadProgress() ?? 0) >= 100
+                      ? ('videos.savingShort' | t)
+                      : ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 }))
                   : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
               }}
             </button>
@@ -469,7 +485,13 @@
               <div class="upload-progress-bar">
                 <span class="upload-progress-fill" [style.width.%]="uploadProgress()"></span>
               </div>
-              <span class="upload-progress-label">{{ 'videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 } }}</span>
+              <span class="upload-progress-label">
+                {{
+                  (uploadProgress() ?? 0) >= 100
+                    ? ('videos.savingToStorage' | t)
+                    : ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                }}
+              </span>
             </div>
           }
 
@@ -480,7 +502,9 @@
             <button type="button" class="ghost-btn" [disabled]="uploading() || !solutionVideoFile()" (click)="attachSolutionVideoFile()">
               {{
                 uploadProgress() != null
-                  ? ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 })
+                  ? ((uploadProgress() ?? 0) >= 100
+                      ? ('videos.savingShort' | t)
+                      : ('videos.uploadProgress' | t: { percent: uploadProgress() ?? 0 }))
                   : ((uploading() ? 'videos.uploadingFile' : 'videos.attachFile') | t)
               }}
             </button>

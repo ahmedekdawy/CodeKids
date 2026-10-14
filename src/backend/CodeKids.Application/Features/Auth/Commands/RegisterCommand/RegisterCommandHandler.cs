@@ -75,7 +75,10 @@ public sealed class RegisterCommandHandler(
             user.MobilePhone,
             user.TeacherProfile?.WorkShift?.ToString(),
             user.TenantId,
-            ProfilePhotoUrls.Build(user));
+            ProfilePhotoUrls.Build(user),
+            (user.StudentProfile?.Gender ?? user.TeacherProfile?.Gender)?.ToString(),
+            user.StudentProfile?.TimeZone ?? user.TeacherProfile?.TimeZone,
+            user.IsTenantOwner);
 
     /// <summary>Keeps digits and an optional leading +.</summary>
     internal static string NormalizePhone(string? phone)

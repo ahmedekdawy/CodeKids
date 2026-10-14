@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { LearningApiService } from './learning-api.service';
 import { SiteSettings } from './models';
+import { useTenantManifest } from './pwa-manifest';
 import { TenantStyle, normalizeTenantStyle } from './tenant-style';
 import { DEFAULT_SESSION_COUNT, DEFAULT_PM_START_MINUTES, normalizeSessionCount, normalizePmStartMinutes } from './fixed-timetable.util';
 
@@ -15,6 +16,10 @@ export class SiteBrandService {
   readonly pmSessionCount = signal(DEFAULT_SESSION_COUNT);
   readonly pmStartMinutes = signal(DEFAULT_PM_START_MINUTES);
   readonly tenantStyle = signal<TenantStyle>('School');
+  /** True when students and teachers each have their own time zone. */
+  readonly multiTimeZone = signal(false);
+  /** Zone the school's timetable times are written in. */
+  readonly timeZone = signal<string | null>(null);
   readonly loaded = signal(false);
 
   load(): void {
@@ -27,6 +32,8 @@ export class SiteBrandService {
   apply(settings: SiteSettings): void {
     this.siteName.set(settings.siteName || 'CodeKids');
     this.tenantStyle.set(normalizeTenantStyle(settings.tenantStyle));
+    this.multiTimeZone.set(settings.multiTimeZone === true);
+    this.timeZone.set(settings.timeZone || null);
     const stamp = settings.updatedAtUtc || Date.now().toString();
     const logo = this.api.siteAssetUrl(settings.logoUrl);
     const banner = this.api.siteAssetUrl(settings.bannerUrl);
@@ -36,6 +43,7 @@ export class SiteBrandService {
     this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
     this.pmStartMinutes.set(normalizePmStartMinutes(settings.pmStartMinutes));
     document.title = this.siteName();
+    useTenantManifest(this.siteName());
     this.loaded.set(true);
   }
 

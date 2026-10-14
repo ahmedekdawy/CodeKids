@@ -35,6 +35,7 @@ public sealed class RegisterTenantCommandHandler(
         }
 
         var tenantStyle = ParseTenantStyle(command.TenantStyle);
+        var timeZone = TimeZoneIds.Normalize(command.TimeZone);
 
         if (string.IsNullOrWhiteSpace(email) || !email.Contains('@'))
         {
@@ -84,6 +85,8 @@ public sealed class RegisterTenantCommandHandler(
                 TenantName = tenantName,
                 TenantSlug = slug,
                 TenantStyle = tenantStyle,
+                MultiTimeZone = command.MultiTimeZone,
+                TimeZone = timeZone,
                 Email = email,
                 MobilePhone = mobile,
                 DisplayName = displayName,
@@ -100,6 +103,8 @@ public sealed class RegisterTenantCommandHandler(
             pending.TenantName = tenantName;
             pending.TenantSlug = slug;
             pending.TenantStyle = tenantStyle;
+            pending.MultiTimeZone = command.MultiTimeZone;
+            pending.TimeZone = timeZone;
             pending.DisplayName = displayName;
             pending.MobilePhone = mobile;
             pending.PasswordHash = passwordHasher.Hash(password);

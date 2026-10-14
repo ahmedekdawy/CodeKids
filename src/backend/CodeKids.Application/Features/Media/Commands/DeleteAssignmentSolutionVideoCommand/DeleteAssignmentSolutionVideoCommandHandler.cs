@@ -24,7 +24,7 @@ public sealed class DeleteAssignmentSolutionVideoCommandHandler(IAppDbContext db
         }
 
         var isAdmin = await dbContext.Users.AnyAsync(
-            x => x.Id == command.TeacherUserId && x.Role == UserRole.SuperAdmin,
+            x => x.Id == command.TeacherUserId && (x.Role == UserRole.SuperAdmin || x.IsTenantOwner),
             cancellationToken);
         if (!isAdmin
             && assignment.Classroom?.Courses.Any(t => t.TeacherId == command.TeacherUserId) != true

@@ -1,0 +1,113 @@
+<div class="panel-page">
+  @if (user(); as u) {
+    <div class="profile-top">
+      <a class="ghost-btn" [routerLink]="listPath()">{{ 'common.back' | t }}</a>
+    </div>
+
+    <section class="block profile-head">
+      <app-user-photo size="lg" [photoUrl]="u.profilePhotoUrl" [name]="u.displayName" />
+      <div class="profile-head-text">
+        <h2>{{ u.displayName }}</h2>
+        <div class="profile-chips">
+          <span class="profile-chip">{{ roleLabel() }}</span>
+          <span class="profile-chip" [class.is-off]="!isActive(u)">
+            {{ (isActive(u) ? 'admin.users.statusActive' : 'admin.users.statusInactive') | t }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h3>{{ 'admin.profile.details' | t }}</h3>
+      <dl class="profile-details">
+        @for (row of details(); track row.labelKey) {
+          <div class="profile-detail">
+            <dt>{{ row.labelKey | t }}</dt>
+            <dd>{{ row.value }}</dd>
+          </div>
+        }
+        @if (u.role === 'Student') {
+          <div class="profile-detail">
+            <dt>{{ 'common.parent' | t }}</dt>
+            <dd>
+              @if (parent(); as p) {
+                <a [routerLink]="['/admin/users', p.id]">{{ p.displayName }}</a>
+              } @else {
+                {{ 'common.emDash' | t }}
+              }
+            </dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    @if (u.role === 'Teacher' && shows('teacherPay') && u.courseRates?.length) {
+      <section class="block">
+        <h3>{{ 'admin.users.subjectRates' | t }}</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'common.course' | t }}</th>
+                <th>{{ 'common.grade' | t }}</th>
+                <th>{{ 'admin.users.sessionAmount' | t }}</th>
+                <th>{{ 'admin.users.monthlySalary' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (rate of u.courseRates; track rate.courseId) {
+                <tr>
+                  <td>{{ rate.courseName || ('common.emDash' | t) }}</td>
+                  <td>{{ gradeLabel(rate.courseGrade) }}</td>
+                  <td>{{ moneyLabel(rate.sessionAmount) }}</td>
+                  <td>{{ moneyLabel(rate.monthlySalary) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    @if (u.role === 'Parent') {
+      <section class="block">
+        <h3>{{ 'admin.profile.children' | t }}</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'common.name' | t }}</th>
+                <th>{{ 'common.grade' | t }}</th>
+                <th>{{ 'common.mobile' | t }}</th>
+                <th>{{ 'common.status' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (child of children(); track child.id) {
+                <tr [class.is-inactive]="!isActive(child)">
+                  <td><a [routerLink]="['/admin/users', child.id]">{{ child.displayName }}</a></td>
+                  <td>{{ gradeLabel(child.grade) }}</td>
+                  <td>{{ child.mobilePhone || ('common.emDash' | t) }}</td>
+                  <td>{{ (isActive(child) ? 'admin.users.statusActive' : 'admin.users.statusInactive') | t }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="meta">{{ 'admin.profile.noChildren' | t }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    @if (u.role === 'Teacher' || u.role === 'Student') {
+      <app-availability-editor [userId]="u.id" [showVacations]="u.role === 'Teacher'" />
+    }
+  } @else if (loading()) {
+    <p class="meta">{{ 'common.loading' | t }}</p>
+  } @else {
+    <p class="feedback">{{ error() || ('admin.profile.notFound' | t) }}</p>
+    <a class="ghost-btn" routerLink="/admin/dashboard">{{ 'common.back' | t }}</a>
+  }
+</div>

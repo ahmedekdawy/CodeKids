@@ -7,11 +7,13 @@ export interface SetupGuideStep {
   path: string;
   /** No data to count: the step is done once its page was opened from the guide. */
   visitOnly?: boolean;
+  /** Take this step's wording from another guide's keys instead of the guide's own prefix. */
+  textPrefix?: string;
 }
 
 /**
  * Getting-started checklist. Text comes from `<prefix>.title|subtitle|allDone` and
- * `<prefix>.<stepId>.title|text|action|count`; a step is done when its count is above zero
+ * `<prefix>.<stepId>.title|text|action|count` (or the step's own `textPrefix`); a step is done when its count is above zero
  * (or, for `visitOnly` steps, once it was opened).
  */
 @Component({
@@ -50,6 +52,11 @@ export class SetupGuideComponent implements OnInit {
   ngOnInit(): void {
     this.hidden.set(localStorage.getItem(this.hiddenKey) === '1');
     this.visited.set((localStorage.getItem(this.visitedKey) ?? '').split(',').filter(Boolean));
+  }
+
+  /** Translation key for one part of a step: title, text, action or count. */
+  stepKey(step: SetupGuideStep, part: string): string {
+    return `${step.textPrefix ?? this.prefix()}.${step.id}.${part}`;
   }
 
   count(id: string): number {

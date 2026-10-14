@@ -160,7 +160,7 @@ export class TeacherMaterialsComponent {
     this.uploading.set(true);
     this.uploadProgress.set(0);
 
-    this.api.uploadLearningMaterialFile(file).subscribe({
+    this.api.uploadLearningMaterialFile(file, this.selectedCourseId).subscribe({
       next: (asset) => {
         this.uploadProgress.set(null);
         this.api

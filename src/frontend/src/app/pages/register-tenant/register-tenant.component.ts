@@ -10,6 +10,7 @@ import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { ApiBusyIndicatorComponent } from '../../shared/api-busy-indicator/api-busy-indicator.component';
 import { TENANT_STYLES, TenantStyle } from '../../tenant-style';
+import { browserTimeZone, timeZoneOptions } from '../../time-zone.util';
 
 @Component({
   selector: 'app-register-tenant',
@@ -25,10 +26,13 @@ export class RegisterTenantComponent {
   readonly brand = inject(SiteBrandService);
 
   readonly styles = TENANT_STYLES;
+  readonly timeZones = timeZoneOptions();
   readonly styleIcons: Record<TenantStyle, string> = { School: '🏫', Academy: '🎓', SingleTeacher: '🧑‍🏫' };
 
   readonly form = this.fb.nonNullable.group({
     tenantStyle: ['School' as TenantStyle, Validators.required],
+    multiTimeZone: [false],
+    timeZone: [browserTimeZone()],
     tenantName: ['', Validators.required],
     displayName: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -52,6 +56,8 @@ export class RegisterTenantComponent {
     this.auth
       .registerTenant({
         tenantStyle: value.tenantStyle,
+        multiTimeZone: value.multiTimeZone,
+        timeZone: value.timeZone || browserTimeZone(),
         tenantName: value.tenantName.trim(),
         displayName: value.displayName.trim(),
         email: value.email.trim(),

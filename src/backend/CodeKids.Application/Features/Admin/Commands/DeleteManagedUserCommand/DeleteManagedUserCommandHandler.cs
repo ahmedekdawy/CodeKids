@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Admin;
 
-public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
+public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext, IUserCascadeDeleter cascadeDeleter)
     : ICommandHandler<DeleteManagedUserCommand, bool>
 {
     public async Task<bool> Handle(DeleteManagedUserCommand command, CancellationToken cancellationToken)
@@ -15,8 +15,13 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
             throw new InvalidOperationException("You cannot delete your own account.");
         }
 
-        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken)
+        var user = await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == command.UserId, cancellationToken)
             ?? throw new InvalidOperationException("User not found.");
+
+        if (user.IsTenantOwner)
+        {
+            throw new InvalidOperationException("The account owner cannot be deleted.");
+        }
 
         if (user.Role == UserRole.SuperAdmin)
         {
@@ -27,50 +32,39 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
             }
         }
 
-        var uid = command.UserId;
-        var adminId = command.AdminUserId;
-
-        foreach (var child in await dbContext.Users.Where(x => x.StudentProfile!.ParentId == uid).ToListAsync(cancellationToken))
+        // A student's records (attempts, attendance, enrolments) mean nothing on anyone else's account,
+        // so they always go with the student. For other roles the caller chooses.
+        var deleteRelatedData = command.DeleteRelatedData || user.Role == UserRole.Student;
+        if (!deleteRelatedData)
         {
-            child.StudentProfile?.ParentId = null;
+            // Keep the user's data: hand it to the admin first, so the delete below finds little left to remove.
+            await MoveDataToAdminAsync(user.Id, command.AdminUserId, cancellationToken);
         }
 
-        foreach (var row in await dbContext.Quizzes.Where(x => x.CreatedByUserId == uid).ToListAsync(cancellationToken))
-        {
-            row.CreatedByUserId = null;
-        }
+        // Removes the user and whatever still belongs to them: their profile, enrolments, attendance,
+        // attempts and submissions, and anything they created (exams, assignments, questions, videos...)
+        // along with what hangs off those. Optional links, such as a child's parent, are just cleared.
+        await cascadeDeleter.DeleteUserAsync(user.Id, cancellationToken);
 
-        foreach (var row in await dbContext.StudentAskedQuestions.Where(x => x.TeacherId == uid).ToListAsync(cancellationToken))
-        {
-            row.TeacherId = null;
-        }
+        // These columns hold a user id without a database relationship, so the cascade cannot see them.
+        var uid = user.Id;
+        await dbContext.UserNotifications.Where(x => x.RelatedStudentId == uid)
+            .ExecuteUpdateAsync(x => x.SetProperty(n => n.RelatedStudentId, (Guid?)null), cancellationToken);
+        await dbContext.ChatRoomMembers.Where(x => x.BlockedByUserId == uid)
+            .ExecuteUpdateAsync(x => x.SetProperty(m => m.BlockedByUserId, (Guid?)null), cancellationToken);
+        await dbContext.ChatMessages.Where(x => x.DeletedByUserId == uid)
+            .ExecuteUpdateAsync(x => x.SetProperty(m => m.DeletedByUserId, (Guid?)null), cancellationToken);
+        await dbContext.WhatsAppReportLogs.Where(x => x.StudentId == uid)
+            .ExecuteUpdateAsync(x => x.SetProperty(l => l.StudentId, (Guid?)null), cancellationToken);
+        return true;
+    }
 
-        foreach (var row in await dbContext.TuitionPayments.Where(x => x.ParentId == uid || x.StudentId == uid).ToListAsync(cancellationToken))
-        {
-            if (row.ParentId == uid) row.ParentId = null;
-            if (row.StudentId == uid) row.StudentId = null;
-        }
-
-        foreach (var row in await dbContext.UserNotifications.Where(x => x.RelatedStudentId == uid).ToListAsync(cancellationToken))
-        {
-            row.RelatedStudentId = null;
-        }
-
-        foreach (var row in await dbContext.ChatRoomMembers.Where(x => x.BlockedByUserId == uid).ToListAsync(cancellationToken))
-        {
-            row.BlockedByUserId = null;
-        }
-
-        foreach (var row in await dbContext.ChatMessages.Where(x => x.DeletedByUserId == uid).ToListAsync(cancellationToken))
-        {
-            row.DeletedByUserId = null;
-        }
-
-        foreach (var row in await dbContext.WhatsAppReportLogs.Where(x => x.StudentId == uid).ToListAsync(cancellationToken))
-        {
-            row.StudentId = null;
-        }
-
+    /// <summary>
+    /// Moves the user's rows to the admin. Where the admin already has the same row (same classroom,
+    /// same exam, same day...) the user's row is left behind and goes with the user.
+    /// </summary>
+    private async Task MoveDataToAdminAsync(Guid uid, Guid adminId, CancellationToken cancellationToken)
+    {
         await ReassignAsync(dbContext.Assignments.Where(x => x.CreatedByUserId == uid), x => x.CreatedByUserId = adminId, cancellationToken);
         await ReassignAsync(dbContext.BankQuestions.Where(x => x.CreatedByUserId == uid), x => x.CreatedByUserId = adminId, cancellationToken);
         await ReassignAsync(dbContext.Exams.Where(x => x.CreatedByUserId == uid), x => x.CreatedByUserId = adminId, cancellationToken);
@@ -176,13 +170,9 @@ public sealed class DeleteManagedUserCommandHandler(IAppDbContext dbContext)
             x => x.MediaAssetId,
             x => x.StudentId = adminId,
             cancellationToken);
+        await ReassignAsync(dbContext.LearningMaterials.Where(x => x.UploadedByUserId == uid), x => x.UploadedByUserId = adminId, cancellationToken);
 
-        dbContext.PasswordResetTokens.RemoveRange(
-            await dbContext.PasswordResetTokens.Where(x => x.UserId == uid).ToListAsync(cancellationToken));
-
-        dbContext.Users.Remove(user);
         await dbContext.SaveChangesAsync(cancellationToken);
-        return true;
     }
 
     private static async Task ReassignAsync<T>(IQueryable<T> query, Action<T> assign, CancellationToken cancellationToken)

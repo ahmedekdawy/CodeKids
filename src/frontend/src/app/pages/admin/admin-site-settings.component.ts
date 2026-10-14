@@ -6,6 +6,7 @@ import { SiteSettings } from '../../models';
 import { SiteBrandService } from '../../site-brand.service';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { browserTimeZone, timeZoneOptions } from '../../time-zone.util';
 import {
   DEFAULT_SESSION_COUNT,
   DEFAULT_PM_START_MINUTES,
@@ -42,6 +43,9 @@ export class AdminSiteSettingsComponent {
   amSessionCount = DEFAULT_SESSION_COUNT;
   pmSessionCount = DEFAULT_SESSION_COUNT;
   pmStartTime = minutesToTimeInput(DEFAULT_PM_START_MINUTES);
+  multiTimeZone = false;
+  timeZone = browserTimeZone();
+  readonly timeZones = timeZoneOptions();
   readonly minSessionCount = MIN_SESSION_COUNT;
   readonly maxSessionCount = MAX_SESSION_COUNT;
   readonly minPmStartTime = minutesToTimeInput(MIN_PM_START_MINUTES);
@@ -183,11 +187,15 @@ export class AdminSiteSettingsComponent {
     amSessionCount: number;
     pmSessionCount: number;
     pmStartMinutes: number;
+    multiTimeZone: boolean;
+    timeZone: string;
   } {
     const counts = {
       amSessionCount: normalizeSessionCount(this.amSessionCount),
       pmSessionCount: normalizeSessionCount(this.pmSessionCount),
-      pmStartMinutes: timeInputToMinutes(this.pmStartTime)
+      pmStartMinutes: timeInputToMinutes(this.pmStartTime),
+      multiTimeZone: this.multiTimeZone,
+      timeZone: this.timeZone
     };
     if (this.useCurrentTimetableWeek) {
       return {
@@ -210,6 +218,8 @@ export class AdminSiteSettingsComponent {
     this.siteName = settings.siteName;
     this.applyTimetableWeek(settings);
     this.applySessionCounts(settings);
+    this.multiTimeZone = settings.multiTimeZone === true;
+    this.timeZone = settings.timeZone || browserTimeZone();
     this.brand.apply(settings);
     this.savedSnapshot = this.snapshot();
   }
@@ -221,7 +231,9 @@ export class AdminSiteSettingsComponent {
       timetableWeek: this.useCurrentTimetableWeek ? '' : this.timetableWeekLocal,
       amSessionCount: Number(this.amSessionCount),
       pmSessionCount: Number(this.pmSessionCount),
-      pmStartTime: this.pmStartTime
+      pmStartTime: this.pmStartTime,
+      multiTimeZone: this.multiTimeZone,
+      timeZone: this.timeZone
     });
   }
 

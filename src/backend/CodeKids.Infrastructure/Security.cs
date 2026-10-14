@@ -47,6 +47,14 @@ public sealed class JwtTokenService(IConfiguration configuration) : IJwtTokenSer
             new(ClaimTypes.Role, user.Role.ToString()),
             new("uid", user.Id.ToString())
         };
+        // The owner of a single-teacher tenant is a Teacher in the database but acts as an admin everywhere.
+        // Admin goes first because handlers read the first role claim to decide how much the caller may see;
+        // the Teacher claim after it keeps the teacher-only endpoints open to them.
+        if (user.IsTenantOwner && user.Role != CodeKids.Domain.Enums.UserRole.SuperAdmin)
+        {
+            var roleIndex = claims.FindIndex(x => x.Type == ClaimTypes.Role);
+            claims.Insert(roleIndex, new Claim(ClaimTypes.Role, nameof(CodeKids.Domain.Enums.UserRole.SuperAdmin)));
+        }
 
         var token = new JwtSecurityToken(
             issuer: configuration["Jwt:Issuer"],

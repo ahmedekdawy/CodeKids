@@ -27,4 +27,8 @@ public sealed record ManagedUserDto(
     decimal? MonthlySalary = null,
     bool IsActive = true,
     IReadOnlyList<TeacherCourseRateDto>? CourseRates = null,
-    string? ProfilePhotoUrl = null);
+    string? ProfilePhotoUrl = null,
+    string? Gender = null,
+    string? TimeZone = null,
+    int? SessionMinutes = null,
+    int? SessionsPerWeek = null);

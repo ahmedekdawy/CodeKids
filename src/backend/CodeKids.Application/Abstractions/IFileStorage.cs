@@ -46,8 +46,11 @@ public sealed record StorageReadResult(
 
 public interface IFileStorage
 {
-    /// <summary>Saves the file under the tenant's folder (see <see cref="Features.Media.MediaStoragePaths"/>).</summary>
-    Task<string> SaveAsync(Stream content, string fileName, string contentType, CancellationToken cancellationToken = default, string? tenantId = null);
+    /// <summary>
+    /// Saves the file under the tenant's folder, inside <paramref name="subjectFolder"/> when one is given
+    /// (see <see cref="Features.Media.MediaStoragePaths"/>).
+    /// </summary>
+    Task<string> SaveAsync(Stream content, string fileName, string contentType, CancellationToken cancellationToken = default, string? tenantId = null, string? subjectFolder = null);
 
     /// <summary>Path of the stored file relative to the storage root, e.g. tenant/2026/10/09/name.mp4.</summary>
     string? GetRelativePath(string? storageKey);

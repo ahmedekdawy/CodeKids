@@ -1044,6 +1044,17 @@
   box-shadow: var(--modal-shadow);
 }
 
+/* For full add/edit forms, which need more room than a small dialog. */
+.modal-card.modal-card--wide {
+  width: min(60rem, 100%);
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
 .modal-head {
   display: flex;
   align-items: center;
@@ -1295,4 +1306,35 @@ label.checkbox {
   flex-direction: row;
   align-items: center;
   gap: 0.45rem;
+}
+
+.delete-options {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.delete-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.delete-option:has(input:checked) {
+  border-color: var(--border-strong);
+  background: var(--surface);
+}
+
+.delete-option input {
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+.delete-option > span {
+  display: grid;
+  gap: 0.2rem;
 }

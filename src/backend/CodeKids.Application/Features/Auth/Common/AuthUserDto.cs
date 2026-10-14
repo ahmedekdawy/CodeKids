@@ -18,4 +18,7 @@ public sealed record AuthUserDto(
     string MobilePhone,
     string? WorkShift,
     string? TenantId,
-    string? ProfilePhotoUrl);
+    string? ProfilePhotoUrl,
+    string? Gender = null,
+    string? TimeZone = null,
+    bool IsTenantOwner = false);

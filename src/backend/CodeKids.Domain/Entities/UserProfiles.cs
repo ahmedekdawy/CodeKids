@@ -5,6 +5,11 @@ namespace CodeKids.Domain.Entities;
 /// <summary>Student-only data, one row per student. Shares its key with <see cref="User"/>.</summary>
 public class StudentProfile
 {
+    public const int MinSessionMinutes = 5;
+    public const int MaxSessionMinutes = 600;
+    public const int MinSessionsPerWeek = 1;
+    public const int MaxSessionsPerWeek = 50;
+
     public Guid UserId { get; set; }
     public Guid? ParentId { get; set; }
     public Guid? AvatarId { get; set; }
@@ -13,6 +18,13 @@ public class StudentProfile
     /// <summary>Student school type: Arabic or Language; null when unset.</summary>
     public SchoolType? SchoolType { get; set; }
     public int TotalXp { get; set; }
+    /// <summary>Length of one of this student's sessions, in minutes; null when not set.</summary>
+    public int? SessionMinutes { get; set; }
+    /// <summary>How many sessions the student takes each week; null when not set.</summary>
+    public int? SessionsPerWeek { get; set; }
+    public Gender? Gender { get; set; }
+    /// <summary>IANA time zone id (e.g. Africa/Cairo); only used when the tenant allows multiple time zones.</summary>
+    public string? TimeZone { get; set; }
 
     public User? User { get; set; }
     public User? Parent { get; set; }
@@ -41,6 +53,9 @@ public class TeacherProfile
     public string ZoomRefreshToken { get; set; } = string.Empty;
     public DateTimeOffset? ZoomTokenExpiresAt { get; set; }
     public string ZoomConnectedEmail { get; set; } = string.Empty;
+    public Gender? Gender { get; set; }
+    /// <summary>IANA time zone id (e.g. Africa/Cairo); only used when the tenant allows multiple time zones.</summary>
+    public string? TimeZone { get; set; }
 
     public User? User { get; set; }
 
