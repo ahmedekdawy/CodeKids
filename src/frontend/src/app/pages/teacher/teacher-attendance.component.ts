@@ -8,10 +8,11 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatCourseLabel, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-teacher-attendance',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './teacher-attendance.component.html',
   styleUrl: '../admin/admin-panel.css'
 })

@@ -187,7 +187,7 @@
           <p class="meta">{{ shownLabel(filteredLessonVideos().length, lessonVideos().length) }}</p>
         </div>
 
-        <div class="video-filters">
+        <div class="video-filters" appSavedFilters>
           <label>
             {{ 'common.course' | t }}
             <app-searchable-select
@@ -363,7 +363,7 @@
           <h3>{{ 'videos.courseList' | t }}</h3>
           <p class="meta">{{ shownLabel(filteredCourseVideos().length, courseVideos().length) }}</p>
         </div>
-        <div class="video-filters">
+        <div class="video-filters" appSavedFilters>
           <label>
             {{ 'common.course' | t }}
             <app-searchable-select
@@ -518,7 +518,7 @@
           <p class="meta">{{ shownLabel(filteredSolutionVideos().length, solutionVideos().length) }}</p>
         </div>
 
-        <div class="video-filters">
+        <div class="video-filters" appSavedFilters>
           <label>
             {{ 'common.classroom' | t }}
             <app-searchable-select
@@ -604,7 +604,7 @@
             </div>
           </div>
 
-          <div class="video-filters">
+          <div class="video-filters" appSavedFilters>
             <label>
               {{ 'videos.searchStudent' | t }}
               <input [(ngModel)]="analyticsSearch" name="analyticsSearch" [placeholder]="'videos.studentPlaceholder' | t" />

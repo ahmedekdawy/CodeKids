@@ -14,10 +14,11 @@ import { GRADE_CODES, formatCourseAudienceLabel, formatGradeLabel } from '../../
 import { totalPages } from '../../list-query.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-courses',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
   templateUrl: './admin-courses.component.html',
   styleUrl: './admin-panel.css'
 })

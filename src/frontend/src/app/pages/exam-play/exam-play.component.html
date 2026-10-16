@@ -38,7 +38,7 @@
           <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
           <app-question-image-display [url]="answer.promptImageUrl" />
           <p class="meta">
-            {{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}
+            {{ 'common.yourAnswer' | t }}: <span class="answer-html" [innerHTML]="(answer.answerText || ('common.emDash' | t)) | richText"></span>
             @if (answer.isCorrect === true) { · {{ 'common.correct' | t }} }
             @else if (answer.isCorrect === false) { · {{ 'common.incorrect' | t }} }
           </p>

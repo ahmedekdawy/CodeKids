@@ -370,7 +370,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<QuizAttemptAnswer>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.SelectedOption).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.SelectedOption).HasMaxLength(8000).IsRequired();
             entity.HasIndex(x => new { x.AttemptId, x.QuestionId }).IsUnique();
             entity.HasOne(x => x.Question)
                 .WithMany()
@@ -757,7 +757,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<AssignmentAnswer>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.AnswerText).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.AnswerText).HasMaxLength(8000).IsRequired();
             entity.HasOne(x => x.Question)
                 .WithMany()
                 .HasForeignKey(x => x.QuestionId)
@@ -876,7 +876,7 @@ public class AppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<ExamAnswer>(entity =>
         {
             entity.HasKey(x => x.Id);
-            entity.Property(x => x.AnswerText).HasMaxLength(1000).IsRequired();
+            entity.Property(x => x.AnswerText).HasMaxLength(8000).IsRequired();
             entity.HasOne(x => x.Question)
                 .WithMany()
                 .HasForeignKey(x => x.ExamQuestionId)

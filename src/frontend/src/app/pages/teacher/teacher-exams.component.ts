@@ -1,4 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from '../../shared/toast/toast.service';
+import { RichTextPipe } from '../../shared/rich-text.pipe';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -35,13 +38,20 @@ interface AttemptDraft {
     QuestionImageUploadComponent,
     SafeHtmlPipe,
     AssessmentStudentLinksDialogComponent,
-    AssessmentPreviewDialogComponent
-  ],
+    AssessmentPreviewDialogComponent, RichTextPipe],
   templateUrl: './teacher-exams.component.html',
   styleUrls: ['./teacher-panel.css', './teacher-exams.component.css']
 })
 export class TeacherExamsComponent {
   private readonly locale = inject(LocaleService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toasts = inject(ToastService);
+
+  /** The list and the add/edit form are separate pages that share this component. */
+  readonly mode: 'list' | 'form' = this.route.snapshot.data['mode'] === 'form' ? 'form' : 'list';
+  /** Set on the edit page (…/:id/edit). */
+  private readonly editId = this.route.snapshot.paramMap.get('id');
   private readonly api = inject(LearningApiService);
   readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
@@ -70,6 +80,30 @@ export class TeacherExamsComponent {
   reviewExamId = '';
   bankSearch = '';
   private readonly attemptDrafts = signal<Record<string, AttemptDraft>>({});
+
+
+  openNew(): void {
+    void this.router.navigate(['/teacher/exams', 'new']);
+  }
+
+  backToList(): void {
+    void this.router.navigate(['/teacher/exams']);
+  }
+
+  /** Cancel: on the form page this leaves it; elsewhere it just clears the form. */
+  closeForm(): void {
+    this.backToList();
+  }
+
+  /** After a save the form page hands over to the list, so the message goes in a toast that survives the move. */
+  private announceSaved(message: string): void {
+    if (this.mode === 'form') {
+      this.toasts.success(message);
+      this.backToList();
+      return;
+    }
+    this.info.set(message);
+  }
 
   constructor() {
     this.api.getCourses().subscribe((courses) => {
@@ -255,7 +289,7 @@ export class TeacherExamsComponent {
       })
       .subscribe({
         next: () => {
-          this.info.set(this.locale.t('teacher.exams.created'));
+          this.announceSaved(this.locale.t('teacher.exams.created'));
           this.title = '';
           this.description = '';
           this.isPublished = false;

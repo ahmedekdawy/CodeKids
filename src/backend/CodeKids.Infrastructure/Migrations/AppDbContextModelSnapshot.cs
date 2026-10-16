@@ -135,8 +135,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("AnswerText")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)");
 
                     b.Property<bool?>("IsCorrect")
                         .HasColumnType("boolean");
@@ -926,8 +926,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("AnswerText")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)");
 
                     b.Property<Guid>("AttemptId")
                         .HasColumnType("uuid");
@@ -1815,8 +1815,8 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<string>("SelectedOption")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(8000)
+                        .HasColumnType("character varying(8000)");
 
                     b.Property<string>("TenantId")
                         .HasMaxLength(64)

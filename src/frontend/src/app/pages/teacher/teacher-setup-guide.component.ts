@@ -11,8 +11,8 @@ const TEACHING_STEPS: SetupGuideStep[] = [
   { id: 'material', path: '/teacher/materials' },
   { id: 'assistant', path: '/teacher/smart-study-assistant', visitOnly: true },
   { id: 'question', path: '/teacher/question-bank' },
-  { id: 'exam', path: '/teacher/exams' },
-  { id: 'assignment', path: '/teacher/assignments' },
+  { id: 'exam', path: '/teacher/exams/new' },
+  { id: 'assignment', path: '/teacher/assignments/new' },
   { id: 'review', path: '/teacher/review', visitOnly: true },
   { id: 'weekly', path: '/teacher/weekly-reports' }
 ];

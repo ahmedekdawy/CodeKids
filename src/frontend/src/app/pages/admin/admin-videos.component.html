@@ -50,7 +50,7 @@
       <h3>{{ 'videos.courseList' | t }}</h3>
       <p class="meta">{{ shownLabel(filteredVideos().length, videos().length) }}</p>
     </div>
-    <div class="video-filters">
+    <div class="video-filters" appSavedFilters>
       <label>
         {{ 'common.course' | t }}
         <app-searchable-select

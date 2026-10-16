@@ -28,7 +28,7 @@
         <div class="question">
           <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
           <app-question-image-display [url]="answer.promptImageUrl" />
-          <p>{{ 'common.answer' | t }}: {{ formatChoice(answer.answerText, answer.options) || ('common.emDash' | t) }}</p>
+          <p>{{ 'common.answer' | t }}: <span class="answer-html" [innerHTML]="(formatChoice(answer.answerText, answer.options) || ('common.emDash' | t)) | richText"></span></p>
           <app-question-image-display [url]="answer.answerImageUrl" />
           @if (answer.options?.length) {
             <ul class="choice-options">
@@ -43,7 +43,7 @@
               }
             </ul>
           }
-          <p class="meta">{{ 'common.key' | t }}: {{ formatChoice(answer.correctAnswer, answer.options) || ('common.emDash' | t) }}</p>
+          <p class="meta">{{ 'common.key' | t }}: <span class="answer-html" [innerHTML]="(formatChoice(answer.correctAnswer, answer.options) || ('common.emDash' | t)) | richText"></span></p>
           <label class="points-field">
             {{ 'teacher.review.points' | t }}
             <input

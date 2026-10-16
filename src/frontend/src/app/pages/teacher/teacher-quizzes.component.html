@@ -6,6 +6,17 @@
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
+  @if (mode === 'list') {
+    <div class="page-actions">
+      <button type="button" (click)="openNew()">{{ 'teacher.quizzes.create' | t }}</button>
+    </div>
+  } @else {
+    <div class="page-actions start">
+      <button type="button" class="ghost-btn" (click)="backToList()">← {{ 'common.back' | t }}</button>
+    </div>
+  }
+
+  @if (mode === 'form') {
   <section class="block" id="quiz-form-section">
     <div class="card-head row">
       <div class="card-head-title">
@@ -15,7 +26,7 @@
         }
       </div>
       @if (editingQuizId) {
-        <button type="button" class="ghost-btn small-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        <button type="button" class="ghost-btn small-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
       }
     </div>
 
@@ -127,12 +138,14 @@
         <button type="submit">{{ (editingQuizId ? 'teacher.quizzes.save' : 'teacher.quizzes.create') | t }}</button>
         <button type="button" class="ghost-btn" (click)="previewForm()">{{ 'teacher.assessments.preview' | t }}</button>
         @if (editingQuizId) {
-          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+          <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
         }
       </div>
     </form>
   </section>
+  }
 
+  @if (mode === 'list') {
   @if (reviewQuizId) {
     <section class="block" id="quiz-review-section">
       <div class="card-head row">
@@ -175,11 +188,11 @@
                     <dl class="answer-facts">
                       <div>
                         <dt>{{ 'teacher.quizzes.studentAnswer' | t }}</dt>
-                        <dd>{{ answer.selectedText || ('common.emDash' | t) }}</dd>
+                        <dd [innerHTML]="(answer.selectedText || ('common.emDash' | t)) | richText"></dd>
                       </div>
                       <div>
                         <dt>{{ 'common.correctAnswer' | t }}</dt>
-                        <dd>{{ answer.correctText || ('common.emDash' | t) }}</dd>
+                        <dd [innerHTML]="(answer.correctText || ('common.emDash' | t)) | richText"></dd>
                       </div>
                     </dl>
                   </div>
@@ -214,7 +227,7 @@
       <p class="meta">{{ 'teacher.quizzes.countLabel' | t: { count: quizzes().length } }}</p>
     </div>
 
-    <div class="list-filters-row">
+    <div class="list-filters-row" appSavedFilters>
       <label>
         {{ 'teacher.quizzes.dateFrom' | t }}
         <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" [ngModelOptions]="{ standalone: true }" (ngModelChange)="reloadQuizzes()" />
@@ -345,6 +358,8 @@
       [kindLabel]="'nav.teacher.quizzes' | t"
       (closed)="closeStudentLinks()"
     />
+  }
+
   }
 
   @if (preview(); as current) {

@@ -78,7 +78,10 @@ public sealed class SubmitAssignmentCommandHandler(IAppDbContext dbContext)
                 allAutoGradable = false;
                 if (TypedQuestionSupport.IsShortAnswer(question.QuestionType)
                     && !string.IsNullOrWhiteSpace(question.CorrectAnswer)
-                    && string.Equals(answerText, question.CorrectAnswer, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(
+                        CodeKids.Application.Common.RichText.ToPlainText(answerText),
+                        CodeKids.Application.Common.RichText.ToPlainText(question.CorrectAnswer),
+                        StringComparison.OrdinalIgnoreCase)
                     && answerImageId is null)
                 {
                     isCorrect = true;

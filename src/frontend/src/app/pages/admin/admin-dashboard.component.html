@@ -11,7 +11,7 @@
   }
 
   <section class="block">
-    <div class="list-filters">
+    <div class="list-filters" appSavedFilters>
       <label>
         {{ 'admin.dashboard.dateFrom' | t }}
         <input type="date" [(ngModel)]="filterFromDate" name="filterFromDate" (ngModelChange)="reload()" />

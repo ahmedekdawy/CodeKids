@@ -75,6 +75,21 @@
   </aside>
 
   <main class="shell-main">
+    @if (crumbs().length > 1) {
+      <nav class="crumbs" [attr.aria-label]="'common.breadcrumb' | t">
+        <ol>
+          @for (crumb of crumbs(); track $index; let last = $last) {
+            <li>
+              @if (crumb.path) {
+                <a [routerLink]="crumb.path">{{ crumb.labelKey | t }}</a>
+              } @else {
+                <span [attr.aria-current]="last ? 'page' : null">{{ crumb.labelKey | t }}</span>
+              }
+            </li>
+          }
+        </ol>
+      </nav>
+    }
     <ng-content />
     <app-api-busy-indicator />
   </main>

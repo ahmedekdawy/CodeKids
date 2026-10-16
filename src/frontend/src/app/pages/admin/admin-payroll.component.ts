@@ -14,10 +14,11 @@ import { downloadElementAsPng } from '../../export-image.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-payroll',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     FormsModule,

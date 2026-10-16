@@ -6,10 +6,11 @@ import { OtherExpense } from '../../models';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-other-expenses',
-  imports: [PageFeedbackComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-other-expenses.component.html',
   styleUrl: './admin-panel.css'
 })

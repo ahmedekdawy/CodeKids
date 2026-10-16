@@ -1,3 +1,4 @@
+using CodeKids.Application.Common;
 using CodeKids.Domain.Enums;
 
 namespace CodeKids.Application.Features.QuestionBank;
@@ -33,8 +34,10 @@ public static class ExamGrading
         if (BankQuestionValidator.IsTextAnswer(type))
         {
             // Text answers auto-grade only when a model answer was provided.
-            return !string.IsNullOrWhiteSpace(correctAnswer)
-                && string.Equals(studentAnswer.Trim(), correctAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+            // Both may be editor HTML; compare the text the student actually wrote.
+            var expected = RichText.ToPlainText(correctAnswer);
+            return expected.Length > 0
+                && string.Equals(RichText.ToPlainText(studentAnswer), expected, StringComparison.OrdinalIgnoreCase);
         }
 
         if (type == BankQuestionType.MultiChoice)

@@ -34,6 +34,7 @@ import {
   timetableSubjectIcon,
   timetableSubjectTone
 } from '../../timetable-theme.util';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 type TimetableCell = {
   entry: FixedTimetableEntry;
@@ -55,7 +56,7 @@ type SlotTarget = {
 
 @Component({
   selector: 'app-admin-timetable',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     SearchableMultiSelectComponent,

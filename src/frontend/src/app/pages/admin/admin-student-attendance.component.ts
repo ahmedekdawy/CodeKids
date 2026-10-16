@@ -10,10 +10,11 @@ import { SortDir, nextSort } from '../../sort.util';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-student-attendance',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-student-attendance.component.html',
   styleUrl: './admin-panel.css'
 })

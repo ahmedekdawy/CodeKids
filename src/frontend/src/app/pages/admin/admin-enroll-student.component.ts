@@ -11,6 +11,7 @@ import { courseMatchesClassroomGrade, formatGradeLabel, matchesStudentSchoolType
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { SearchableMultiSelectComponent } from '../../shared/searchable-multi-select/searchable-multi-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 interface EnrollmentRow {
   classroomId: string;
@@ -24,7 +25,7 @@ interface EnrollmentRow {
 
 @Component({
   selector: 'app-admin-enroll-student',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, SearchableMultiSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, SearchableMultiSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe],
   templateUrl: './admin-enroll-student.component.html',
   styleUrl: './admin-panel.css'
 })

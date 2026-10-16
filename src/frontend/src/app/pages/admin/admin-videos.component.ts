@@ -9,6 +9,7 @@ import { Course, CourseVideoLibraryItem } from '../../models';
 import { formatCourseLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 interface VideoPreview {
   mediaAssetId: string;
@@ -17,7 +18,7 @@ interface VideoPreview {
 
 @Component({
   selector: 'app-admin-videos',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     FormsModule,

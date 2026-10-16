@@ -1,6 +1,6 @@
-import { Component, DestroyRef, ElementRef, HostListener, Input, OnChanges, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, Input, OnChanges, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { SiteBrandService } from '../../site-brand.service';
@@ -16,6 +16,18 @@ export interface PanelNavItem {
   /** Optional i18n key of the category this item belongs to; uncategorized items render before the groups. */
   categoryKey?: string;
 }
+
+/** One step of the navigation path above the page; the last step has no link. */
+export interface PanelCrumb {
+  labelKey: string;
+  path?: string;
+}
+
+/** Trailing address segments that name a sub-page of a menu item. */
+const SUB_PAGE_CRUMBS: Record<string, string> = {
+  new: 'common.new',
+  edit: 'common.edit'
+};
 
 export interface PanelNavCategory {
   /** i18n key of the category heading; empty string renders an unlabeled group. */
@@ -41,6 +53,14 @@ export class PanelShellComponent implements OnInit, OnChanges {
   readonly brand = inject(SiteBrandService);
   readonly collapsed = signal(false);
   readonly menuOpen = signal(false);
+  private readonly currentUrl = signal(this.router.url);
+  private readonly navItemsVersion = signal(0);
+
+  /** Home › category › page › sub-page, built from the menu so it always matches what the sidebar calls things. */
+  readonly crumbs = computed<PanelCrumb[]>(() => {
+    this.navItemsVersion();
+    return this.buildCrumbs(this.currentUrl().split('?')[0].split('#')[0]);
+  });
 
   @Input({ required: true }) titleKey = '';
   @Input({ required: true }) subtitleKey = '';
@@ -61,6 +81,7 @@ export class PanelShellComponent implements OnInit, OnChanges {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
         if (event instanceof NavigationEnd) {
+          this.currentUrl.set(event.urlAfterRedirects);
           this.expandCategoryForUrl(event.urlAfterRedirects);
         }
       });
@@ -172,6 +193,39 @@ export class PanelShellComponent implements OnInit, OnChanges {
   /** The menu can change after load (it depends on the tenant style), so regroup whenever it does. */
   ngOnChanges(): void {
     this.groupNavItems();
+    this.navItemsVersion.update((v) => v + 1);
+  }
+
+  private buildCrumbs(path: string): PanelCrumb[] {
+    const home = this.navItems[0];
+    const item = this.navItems
+      .filter((x) => path === x.path || path.startsWith(x.path + '/'))
+      .sort((a, b) => b.path.length - a.path.length)[0];
+
+    const crumbs: PanelCrumb[] = [];
+    if (home && home !== item) crumbs.push({ labelKey: home.labelKey, path: home.path });
+    if (item) {
+      if (item.categoryKey) crumbs.push({ labelKey: item.categoryKey });
+      crumbs.push({ labelKey: item.labelKey, path: item.path });
+      const subPage = path.slice(item.path.length).split('/').filter(Boolean).pop();
+      const subKey = subPage ? SUB_PAGE_CRUMBS[subPage] : undefined;
+      if (subKey) crumbs.push({ labelKey: subKey });
+    }
+
+    // A page outside the menu (a profile, say) names itself through its route's data.crumbKey.
+    const routeKey = this.deepestCrumbKey(this.router.routerState.snapshot.root);
+    if (routeKey) crumbs.push({ labelKey: routeKey });
+
+    if (crumbs.length) delete crumbs[crumbs.length - 1].path;
+    return crumbs;
+  }
+
+  private deepestCrumbKey(route: ActivatedRouteSnapshot): string | undefined {
+    let key: string | undefined;
+    for (let current: ActivatedRouteSnapshot | null = route; current; current = current.firstChild) {
+      if (current.routeConfig?.data?.['crumbKey']) key = current.routeConfig.data['crumbKey'];
+    }
+    return key;
   }
 
   ngOnInit(): void {

@@ -5,7 +5,7 @@
   <app-page-feedback [ok]="message()" [error]="error()" />
 
   <section class="block">
-    <div class="list-filters">
+    <div class="list-filters" appSavedFilters (filtersRestored)="search()">
       <label>
         {{ 'common.teacher' | t }}
         <app-searchable-select

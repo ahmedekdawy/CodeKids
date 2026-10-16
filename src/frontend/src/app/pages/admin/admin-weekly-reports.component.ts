@@ -7,10 +7,11 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-weekly-reports',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-weekly-reports.component.html',
   styleUrl: './admin-panel.css'
 })

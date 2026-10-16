@@ -6,6 +6,17 @@
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
+  @if (mode === 'list') {
+    <div class="page-actions">
+      <button type="button" (click)="openNew()">{{ 'teacher.assignments.create' | t }}</button>
+    </div>
+  } @else {
+    <div class="page-actions start">
+      <button type="button" class="ghost-btn" (click)="backToList()">← {{ 'common.back' | t }}</button>
+    </div>
+  }
+
+  @if (mode === 'form') {
   <section class="block" id="assignment-form">
     <div class="card-head row">
       <div class="card-head-title">
@@ -15,7 +26,7 @@
         }
       </div>
       @if (editingAssignmentId) {
-        <button type="button" class="ghost-btn small-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+        <button type="button" class="ghost-btn small-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
       }
     </div>
 
@@ -145,19 +156,21 @@
         <button type="submit">{{ (editingAssignmentId ? 'teacher.assignments.save' : 'teacher.assignments.create') | t }}</button>
         <button type="button" class="ghost-btn" (click)="previewForm()">{{ 'teacher.assessments.preview' | t }}</button>
         @if (editingAssignmentId) {
-          <button type="button" class="ghost-btn" (click)="cancelEdit()">{{ 'common.cancel' | t }}</button>
+          <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
         }
       </div>
     </form>
   </section>
+  }
 
+  @if (mode === 'list') {
   <section class="block">
     <div class="card-head row">
       <h3>{{ 'teacher.assignments.list' | t }}</h3>
       <p class="meta">{{ shownLabel(filteredAssignments().length, assignments().length) }}</p>
     </div>
 
-    <div class="list-filters-row">
+    <div class="list-filters-row" appSavedFilters>
       <label>
         {{ 'common.search' | t }}
         <input [(ngModel)]="assignmentSearch" name="assignmentSearch" [placeholder]="'teacher.assignments.searchPlaceholder' | t" />
@@ -256,6 +269,8 @@
       [kindLabel]="'nav.teacher.assignments' | t"
       (closed)="closeStudentLinks()"
     />
+  }
+
   }
 
   @if (preview(); as current) {

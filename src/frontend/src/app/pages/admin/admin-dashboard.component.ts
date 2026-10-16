@@ -8,12 +8,13 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
 import { AdminSetupGuideComponent } from './admin-setup-guide.component';
 import { TeacherSetupGuideComponent } from '../teacher/teacher-setup-guide.component';
 import { AuthService } from '../../auth.service';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 type LoginRole = 'teachers' | 'parents' | 'students';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [PageFeedbackComponent, FormsModule, TranslatePipe, AdminSetupGuideComponent, TeacherSetupGuideComponent],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, FormsModule, TranslatePipe, AdminSetupGuideComponent, TeacherSetupGuideComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-panel.css'
 })

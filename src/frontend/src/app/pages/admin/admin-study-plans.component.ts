@@ -11,10 +11,11 @@ import { SearchableSelectComponent } from '../../shared/searchable-select/search
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { StudyPlanSheetComponent } from '../../shared/study-plan-sheet/study-plan-sheet.component';
 import { normalizeStudyPlans } from '../../shared/study-plan-sheet/study-plan.util';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-study-plans',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     FormsModule,

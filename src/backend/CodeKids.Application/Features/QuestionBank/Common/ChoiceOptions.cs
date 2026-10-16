@@ -67,13 +67,19 @@ public static class ChoiceOptions
         return FromTexts([optionA ?? string.Empty, optionB ?? string.Empty, optionC ?? string.Empty, optionD ?? string.Empty]);
     }
 
+    /// <summary>Length of the old OptionA–D columns. The full option text lives in OptionsJson.</summary>
+    public const int LegacyColumnLength = 200;
+
     public static (string? A, string? B, string? C, string? D) ToLegacy(IReadOnlyList<ChoiceOptionDto> options) =>
     (
-        options.ElementAtOrDefault(0)?.Text,
-        options.ElementAtOrDefault(1)?.Text,
-        options.ElementAtOrDefault(2)?.Text,
-        options.ElementAtOrDefault(3)?.Text
+        FitLegacy(options.ElementAtOrDefault(0)?.Text),
+        FitLegacy(options.ElementAtOrDefault(1)?.Text),
+        FitLegacy(options.ElementAtOrDefault(2)?.Text),
+        FitLegacy(options.ElementAtOrDefault(3)?.Text)
     );
+
+    private static string? FitLegacy(string? text) =>
+        text is { Length: > LegacyColumnLength } ? text[..LegacyColumnLength] : text;
 
     public static HashSet<string> AllowedKeys(IReadOnlyList<ChoiceOptionDto> options) =>
         options.Select(x => x.Key).ToHashSet(StringComparer.OrdinalIgnoreCase);

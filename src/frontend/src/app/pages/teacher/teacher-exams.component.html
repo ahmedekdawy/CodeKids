@@ -6,6 +6,17 @@
 
   <app-page-feedback [ok]="info()" [error]="error()" />
 
+  @if (mode === 'list') {
+    <div class="page-actions">
+      <button type="button" (click)="openNew()">{{ 'teacher.exams.create' | t }}</button>
+    </div>
+  } @else {
+    <div class="page-actions start">
+      <button type="button" class="ghost-btn" (click)="backToList()">← {{ 'common.back' | t }}</button>
+    </div>
+  }
+
+  @if (mode === 'form') {
   <section class="block">
     <div class="card-head row">
       <div>
@@ -144,7 +155,9 @@
       </div>
     </form>
   </section>
+  }
 
+  @if (mode === 'list') {
   <section class="block">
     <div class="card-head row">
       <h3>{{ 'teacher.exams.list' | t }}</h3>
@@ -261,7 +274,7 @@
 
                 <p class="answer-text">
                   <span class="answer-label">{{ 'common.answer' | t }}</span>
-                  {{ formatChoice(answer.answerText, answer.options) || ('common.emDash' | t) }}
+                  <span class="answer-html" [innerHTML]="(formatChoice(answer.answerText, answer.options) || ('common.emDash' | t)) | richText"></span>
                 </p>
                 @if (answer.options?.length) {
                   <ul class="choice-options">
@@ -277,7 +290,7 @@
                   </ul>
                 }
                 @if (answer.correctAnswer) {
-                  <p class="meta">{{ 'common.key' | t }}: {{ formatChoice(answer.correctAnswer, answer.options) }}</p>
+                  <p class="meta">{{ 'common.key' | t }}: <span class="answer-html" [innerHTML]="formatChoice(answer.correctAnswer, answer.options) | richText"></span></p>
                 }
                 <app-question-image-display [url]="answer.answerImageUrl" />
 
@@ -333,6 +346,8 @@
         <p class="meta exam-empty">{{ 'teacher.exams.noAttempts' | t }}</p>
       }
     </section>
+  }
+
   }
 
   @if (preview(); as current) {

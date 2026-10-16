@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { RichTextPipe } from '../../shared/rich-text.pipe';
 import { FormsModule } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -19,7 +20,7 @@ interface SubmissionDraft {
 
 @Component({
   selector: 'app-teacher-review',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, SafeHtmlPipe, TranslatePipe, QuestionImageDisplayComponent, QuestionImageUploadComponent],
+  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, SafeHtmlPipe, TranslatePipe, QuestionImageDisplayComponent, QuestionImageUploadComponent, RichTextPipe],
   templateUrl: './teacher-review.component.html',
   styleUrl: './teacher-panel.css'
 })

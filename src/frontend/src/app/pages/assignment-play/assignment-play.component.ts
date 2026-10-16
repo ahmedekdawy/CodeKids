@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { RichTextPipe } from '../../shared/rich-text.pipe';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { LocaleService } from '../../i18n/locale.service';
@@ -17,7 +18,7 @@ import { answerableQuestions, flattenQuestions } from '../../shared/question-dra
 
 @Component({
   selector: 'app-assignment-play',
-  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent],
+  imports: [PageFeedbackComponent, FormsModule, RouterLink, ProtectedVideoPlayerComponent, SafeHtmlPipe, TranslatePipe, SiteBrandComponent, ApiBusyIndicatorComponent, QuestionImageDisplayComponent, QuestionPlayPromptComponent, RichTextPipe],
   templateUrl: './assignment-play.component.html',
   styleUrl: './assignment-play.component.css'
 })

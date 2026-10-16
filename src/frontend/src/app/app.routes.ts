@@ -195,8 +195,13 @@ export const routes: Routes = [
       { path: 'whatsapp', component: TeacherWhatsAppComponent },
       { path: 'question-bank', component: TeacherQuestionBankComponent },
       { path: 'exams', component: TeacherExamsComponent },
+      { path: 'exams/new', component: TeacherExamsComponent, data: { mode: 'form' } },
       { path: 'quizzes', component: TeacherQuizzesComponent },
+      { path: 'quizzes/new', component: TeacherQuizzesComponent, data: { mode: 'form' } },
+      { path: 'quizzes/:id/edit', component: TeacherQuizzesComponent, data: { mode: 'form' } },
       { path: 'assignments', component: TeacherAssignmentsComponent },
+      { path: 'assignments/new', component: TeacherAssignmentsComponent, data: { mode: 'form' } },
+      { path: 'assignments/:id/edit', component: TeacherAssignmentsComponent, data: { mode: 'form' } },
       { path: 'review', component: TeacherReviewComponent },
       { path: 'students', component: TeacherStudentsComponent }
     ]
@@ -215,6 +220,7 @@ export const routes: Routes = [
       { path: 'students', component: AdminStudentsComponent },
       {
         path: 'users/:id',
+        data: { crumbKey: 'common.profile' },
         loadComponent: () =>
           import('./pages/admin/admin-user-profile.component').then((m) => m.AdminUserProfileComponent)
       },

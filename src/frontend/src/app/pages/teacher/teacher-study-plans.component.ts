@@ -11,6 +11,7 @@ import { SearchableSelectComponent } from '../../shared/searchable-select/search
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { IconActionButtonComponent } from '../../shared/icon-action-button/icon-action-button.component';
 import { normalizeStudyPlan, normalizeStudyPlans } from '../../shared/study-plan-sheet/study-plan.util';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 type EditableTopic = {
   title: string;
@@ -40,7 +41,7 @@ const DEFAULT_WEEKS = 18;
 
 @Component({
   selector: 'app-teacher-study-plans',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     FormsModule,

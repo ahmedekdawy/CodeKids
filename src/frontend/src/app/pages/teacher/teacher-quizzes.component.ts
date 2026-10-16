@@ -1,4 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from '../../shared/toast/toast.service';
+import { RichTextPipe } from '../../shared/rich-text.pipe';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocaleService } from '../../i18n/locale.service';
 import { LearningApiService } from '../../learning-api.service';
@@ -27,10 +30,11 @@ import {
   validateQuestionDraft
 } from '../../shared/question-draft/question-draft.util';
 import { paginate, totalPages } from '../../list-query.util';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-teacher-quizzes',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     SearchableMultiSelectComponent,
@@ -42,14 +46,21 @@ import { paginate, totalPages } from '../../list-query.util';
     QuestionDraftEditorComponent,
     QuestionImageDisplayComponent,
     AssessmentStudentLinksDialogComponent,
-    AssessmentPreviewDialogComponent
-  ],
+    AssessmentPreviewDialogComponent, RichTextPipe],
   templateUrl: './teacher-quizzes.component.html',
   styleUrls: ['./teacher-panel.css', '../admin/admin-panel.css', './teacher-quizzes.component.css']
 })
 export class TeacherQuizzesComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toasts = inject(ToastService);
+
+  /** The list and the add/edit form are separate pages that share this component. */
+  readonly mode: 'list' | 'form' = this.route.snapshot.data['mode'] === 'form' ? 'form' : 'list';
+  /** Set on the edit page (…/:id/edit). */
+  private readonly editId = this.route.snapshot.paramMap.get('id');
   private readonly fb = inject(FormBuilder);
 
   readonly courses = signal<Course[]>([]);
@@ -101,7 +112,38 @@ export class TeacherQuizzesComponent {
     paginate(this.attempts(), this.attemptsPage(), this.attemptsPageSize)
   );
 
+
+  openNew(): void {
+    void this.router.navigate(['/teacher/quizzes', 'new']);
+  }
+
+  backToList(): void {
+    void this.router.navigate(['/teacher/quizzes']);
+  }
+
+  /** Cancel: on the form page this leaves it; elsewhere it just clears the form. */
+  closeForm(): void {
+    if (this.mode === 'form') {
+      this.backToList();
+      return;
+    }
+    this.cancelEdit();
+  }
+
+  /** After a save the form page hands over to the list, so the message goes in a toast that survives the move. */
+  private announceSaved(message: string): void {
+    if (this.mode === 'form') {
+      this.toasts.success(message);
+      this.backToList();
+      return;
+    }
+    this.info.set(message);
+  }
+
   constructor() {
+    if (this.mode === 'form' && this.editId) {
+      this.fillForm(this.editId);
+    }
     this.api.getCourses().subscribe((courses) => {
       this.courses.set(courses);
       if (!this.quizForm.controls.courseId.value && courses[0]) {
@@ -295,19 +337,20 @@ export class TeacherQuizzesComponent {
   }
 
   startEdit(quiz: TeacherQuizListItem): void {
+    if (this.mode === 'list') {
+      void this.router.navigate(['/teacher/quizzes', quiz.id, 'edit']);
+      return;
+    }
+    this.fillForm(quiz.id);
+  }
+
+  /** Loads the saved quiz into the form. */
+  private fillForm(quizId: string): void {
     this.error.set('');
     this.info.set('');
-    this.editingQuizId = quiz.id;
+    this.editingQuizId = quizId;
     this.reviewQuizId = '';
-    this.quizForm.patchValue({
-      title: quiz.title,
-      description: quiz.description,
-      courseId: quiz.courseId,
-      classroomId: quiz.classroomId || '',
-      xp: quiz.xpReward,
-      isPublished: quiz.isPublished
-    });
-    this.api.getTeacherQuiz(quiz.id).subscribe({
+    this.api.getTeacherQuiz(quizId).subscribe({
       next: (detail) => {
         this.questions = detail.questions.length
           ? detail.questions.map((question) => draftFromQuizQuestion(question))
@@ -495,7 +538,7 @@ export class TeacherQuizzesComponent {
     request.subscribe({
       next: () => {
         this.cancelEdit();
-        this.info.set(
+        this.announceSaved(
           this.locale.t(editingId ? 'teacher.quizzes.updated' : 'teacher.quizzes.created')
         );
         this.reloadQuizzes();

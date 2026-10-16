@@ -1,4 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastService } from '../../shared/toast/toast.service';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
 import { LocaleService } from '../../i18n/locale.service';
@@ -30,10 +32,11 @@ import {
   toQuestionPayload,
   validateQuestionDraft
 } from '../../shared/question-draft/question-draft.util';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-teacher-assignments',
-  imports: [
+  imports: [SavedFiltersDirective, 
     PageFeedbackComponent,
     SearchableSelectComponent,
     SearchableMultiSelectComponent,
@@ -50,6 +53,14 @@ import {
 export class TeacherAssignmentsComponent {
   private readonly api = inject(LearningApiService);
   private readonly locale = inject(LocaleService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toasts = inject(ToastService);
+
+  /** The list and the add/edit form are separate pages that share this component. */
+  readonly mode: 'list' | 'form' = this.route.snapshot.data['mode'] === 'form' ? 'form' : 'list';
+  /** Set on the edit page (…/:id/edit). */
+  private readonly editId = this.route.snapshot.paramMap.get('id');
   private readonly auth = inject(AuthService);
   readonly courses = signal<Course[]>([]);
   readonly classrooms = signal<Classroom[]>([]);
@@ -77,6 +88,34 @@ export class TeacherAssignmentsComponent {
   assignmentSearch = '';
   listClassroomId = '';
   listStatus = 'all';
+
+
+  openNew(): void {
+    void this.router.navigate(['/teacher/assignments', 'new']);
+  }
+
+  backToList(): void {
+    void this.router.navigate(['/teacher/assignments']);
+  }
+
+  /** Cancel: on the form page this leaves it; elsewhere it just clears the form. */
+  closeForm(): void {
+    if (this.mode === 'form') {
+      this.backToList();
+      return;
+    }
+    this.cancelEdit();
+  }
+
+  /** After a save the form page hands over to the list, so the message goes in a toast that survives the move. */
+  private announceSaved(message: string): void {
+    if (this.mode === 'form') {
+      this.toasts.success(message);
+      this.backToList();
+      return;
+    }
+    this.info.set(message);
+  }
 
   constructor() {
     this.api.getCourses().subscribe({
@@ -328,6 +367,14 @@ export class TeacherAssignmentsComponent {
   }
 
   startEdit(assignment: Assignment): void {
+    if (this.mode === 'list') {
+      void this.router.navigate(['/teacher/assignments', assignment.id, 'edit']);
+      return;
+    }
+    this.fillForm(assignment);
+  }
+
+  private fillForm(assignment: Assignment): void {
     this.error.set('');
     this.info.set('');
     this.editingAssignmentId = assignment.id;
@@ -507,7 +554,7 @@ export class TeacherAssignmentsComponent {
     request.subscribe({
       next: () => {
         this.cancelEdit();
-        this.info.set(
+        this.announceSaved(
           this.locale.t(editingId ? 'teacher.assignments.updated' : 'teacher.assignments.created')
         );
         this.reloadAssignments();
@@ -536,7 +583,14 @@ export class TeacherAssignmentsComponent {
   }
 
   private reloadAssignments(): void {
-    this.api.getAssignments().subscribe((assignments) => this.assignments.set(assignments));
+    this.api.getAssignments().subscribe((assignments) => {
+      this.assignments.set(assignments);
+      // The edit page opens on an id; fill the form once the assignment has loaded.
+      if (this.mode === 'form' && this.editId && this.editingAssignmentId !== this.editId) {
+        const assignment = assignments.find((x) => x.id === this.editId);
+        if (assignment) this.fillForm(assignment);
+      }
+    });
   }
 
   private clampQuestionCount(value: number, fallback: number): number {

@@ -23,12 +23,11 @@
       </div>
     }
   } @else if (question.questionType === 'ShortAnswer' || question.questionType === 'FreeText') {
-    <textarea
-      rows="3"
-      [value]="answers[question.id] || ''"
-      (input)="setAnswer(question.id, $any($event.target).value)"
-      [placeholder]="question.questionType === 'FreeText' ? ('play.freeTextPlaceholder' | t) : ''"
-    ></textarea>
+    <app-math-prompt-editor
+      [ngModel]="answers[question.id] || ''"
+      (ngModelChange)="setAnswer(question.id, $event)"
+      [placeholderKey]="question.questionType === 'FreeText' ? 'play.freeTextPlaceholder' : 'play.answerPlaceholder'"
+    />
   } @else if (question.questionType === 'Underline') {
     <label>
       {{ 'play.underlinedPhrase' | t }}

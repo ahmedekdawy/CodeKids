@@ -23,6 +23,7 @@ import {
   timetableSubjectIcon,
   timetableSubjectTone
 } from '../../timetable-theme.util';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 type TimetableCell = {
   entry: FixedTimetableEntry;
@@ -37,7 +38,7 @@ type TimetableDayRow = {
 
 @Component({
   selector: 'app-teacher-timetable',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-timetable.component.html',
   styleUrl: '../admin/admin-panel.css'
 })

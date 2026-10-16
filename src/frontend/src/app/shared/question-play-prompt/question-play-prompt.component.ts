@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ChoiceOption } from '../../models';
 import { QuestionImageDisplayComponent } from '../question-image-display/question-image-display.component';
 import { SafeHtmlPipe } from '../safe-html.pipe';
+import { MathPromptEditorComponent } from '../math-prompt-editor/math-prompt-editor.component';
 import { StudentAnswerUploadComponent } from '../student-answer-upload/student-answer-upload.component';
 import { TranslatePipe } from '../translate.pipe';
 import { AnswerImageDraft, PlayableQuestion } from './playable-question';
@@ -22,8 +23,7 @@ import {
     TranslatePipe,
     QuestionImageDisplayComponent,
     StudentAnswerUploadComponent,
-    MapQuestionBoardComponent
-  ],
+    MapQuestionBoardComponent, MathPromptEditorComponent],
   templateUrl: './question-play-prompt.component.html',
   styleUrl: './question-play-prompt.component.css'
 })

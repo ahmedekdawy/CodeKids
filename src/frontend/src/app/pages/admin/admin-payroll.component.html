@@ -14,7 +14,7 @@
       }
     </h3>
 
-    <div class="list-filters">
+    <div class="list-filters" appSavedFilters>
       <label>
         {{ 'admin.payroll.year' | t }}
         <app-searchable-select
@@ -166,7 +166,7 @@
       <button type="submit">{{ 'admin.payroll.addManual' | t }}</button>
     </form>
 
-    <div class="list-filters">
+    <div class="list-filters" appSavedFilters>
       <label>
         {{ 'admin.payroll.year' | t }}
         <app-searchable-select

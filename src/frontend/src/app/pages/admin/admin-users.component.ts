@@ -28,6 +28,7 @@ import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.
 import { SiteBrandService } from '../../site-brand.service';
 import { timeZoneOptions } from '../../time-zone.util';
 import { StyledField, showsField } from '../../tenant-style';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 type ManagedRole = Extract<UserRole, 'SuperAdmin' | 'Teacher' | 'Parent'>;
 type CourseRateRow = { courseId: string; sessionAmount: number | null; monthlySalary: number | null };
@@ -61,7 +62,7 @@ const ROLE_META: Record<
 
 @Component({
   selector: 'app-admin-users',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, SearchableMultiSelectComponent, TranslatePipe],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-panel.css'
 })

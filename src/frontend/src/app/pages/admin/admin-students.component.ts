@@ -16,10 +16,11 @@ import { SiteBrandService } from '../../site-brand.service';
 import { timeZoneOptions } from '../../time-zone.util';
 import { StyledField, showsField } from '../../tenant-style';
 import { UserPhotoComponent } from '../../shared/user-photo/user-photo.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-students',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe, UserPhotoComponent],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, IconActionButtonComponent, TranslatePipe, UserPhotoComponent],
   templateUrl: './admin-students.component.html',
   styleUrl: './admin-panel.css'
 })

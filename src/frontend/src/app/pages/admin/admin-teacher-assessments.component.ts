@@ -7,10 +7,11 @@ import { Classroom, ManagedUser, TeacherAssessmentReportItem } from '../../model
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { TranslatePipe } from '../../shared/translate.pipe';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-teacher-assessments',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-teacher-assessments.component.html',
   styleUrl: './admin-panel.css'
 })

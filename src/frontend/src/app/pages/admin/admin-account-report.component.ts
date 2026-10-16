@@ -5,10 +5,11 @@ import { LearningApiService } from '../../learning-api.service';
 import { AccountReport } from '../../models';
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 @Component({
   selector: 'app-admin-account-report',
-  imports: [PageFeedbackComponent, FormsModule, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, FormsModule, TranslatePipe],
   templateUrl: './admin-account-report.component.html',
   styleUrl: './admin-panel.css'
 })

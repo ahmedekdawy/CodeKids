@@ -38,7 +38,7 @@
       <section class="block question">
         <div class="prompt-html" [innerHTML]="answer.prompt | safeHtml"></div>
         <app-question-image-display [url]="answer.promptImageUrl" />
-        <p class="meta">{{ 'common.yourAnswer' | t }}: {{ answer.answerText || ('common.emDash' | t) }}</p>
+        <p class="meta">{{ 'common.yourAnswer' | t }}: <span class="answer-html" [innerHTML]="(answer.answerText || ('common.emDash' | t)) | richText"></span></p>
         <app-question-image-display [url]="answer.answerImageUrl" />
       </section>
     }

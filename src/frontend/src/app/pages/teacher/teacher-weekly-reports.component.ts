@@ -7,12 +7,13 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { GRADE_CODES, formatGradeLabel } from '../../grade.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
+import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
 
 type EditableRow = StudentWeeklyReportGridRow & { dirty?: boolean };
 
 @Component({
   selector: 'app-teacher-weekly-reports',
-  imports: [PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
+  imports: [SavedFiltersDirective, PageFeedbackComponent, SearchableSelectComponent, FormsModule, TranslatePipe],
   templateUrl: './teacher-weekly-reports.component.html',
   styleUrl: '../admin/admin-panel.css'
 })
