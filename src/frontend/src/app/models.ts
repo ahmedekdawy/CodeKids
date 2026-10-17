@@ -1491,3 +1491,54 @@ export interface TeacherVacation {
   endDate: string;
   note: string;
 }
+
+/** One page of the current user's menu, resolved from their roles. */
+export interface MenuPage {
+  pageId: string;
+  /** Route path, including the leading slash. */
+  key: string;
+  labelKey: string;
+  icon: string;
+  categoryKey: string;
+  panel: string;
+  sortOrder: number;
+  isHidden: boolean;
+}
+
+export interface MyMenu {
+  items: MenuPage[];
+  /** Display names of the roles the menu was built from. */
+  roles: string[];
+}
+
+/** A page in the fixed catalogue, as assigned to a role. */
+export interface CataloguePage {
+  id: string;
+  key: string;
+  labelKey: string;
+  icon: string;
+  categoryKey: string;
+  panel: string;
+  sortOrder: number;
+}
+
+export interface RoleSummary {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string;
+  /** Seeded SuperAdmin/Teacher roles: they cannot be edited or deleted. */
+  isSystem: boolean;
+  baseRole: 'Teacher' | 'SuperAdmin';
+  memberCount: number;
+  pages: CataloguePage[];
+}
+
+export interface RoleMember {
+  userId: string;
+  displayName: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  assignedAtUtc: string;
+}

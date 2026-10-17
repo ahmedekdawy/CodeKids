@@ -1338,3 +1338,41 @@ label.checkbox {
   display: grid;
   gap: 0.2rem;
 }
+
+.role-pages {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.role-pages legend {
+  padding: 0 0.35rem;
+  font-weight: 800;
+  color: var(--heading);
+}
+
+.role-page-group + .role-page-group {
+  margin-top: 0.75rem;
+}
+
+.role-page-group > strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.role-page-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.role-page-toggle input {
+  margin: 0;
+}

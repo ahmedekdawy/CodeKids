@@ -90,7 +90,12 @@ import {
   GradeCertificateListItem,
   GradeCertificateSheet,
   SaveGradeCertificatePayload,
-  StudentGradeCertificate
+  StudentGradeCertificate,
+  CataloguePage,
+  MenuPage,
+  MyMenu,
+  RoleMember,
+  RoleSummary
 } from './models';
 import { normalizePmStartMinutes } from './fixed-timetable.util';
 import { resolveApiBaseUrl } from './api-base-url';
@@ -1822,6 +1827,62 @@ export class LearningApiService {
 
   getWatchSessions(mediaAssetId: string): Observable<WatchSession[]> {
     return this.http.get<WatchSession[]>(`${this.baseUrl}/media/${mediaAssetId}/watch-sessions`);
+  }
+
+  /** The current user's menu: pages from their roles, with their own order and hidden pages. */
+  getMyMenu(): Observable<MyMenu> {
+    return this.http.get<MyMenu>(`${this.baseUrl}/menu`);
+  }
+
+  /** Items are saved in the given order; `isHidden` keeps a page out of the sidebar. */
+  saveMyMenu(items: Array<{ key: string; isHidden: boolean }>): Observable<MyMenu> {
+    return this.http.put<MyMenu>(`${this.baseUrl}/menu`, { items });
+  }
+
+  resetMyMenu(): Observable<MyMenu> {
+    return this.http.post<MyMenu>(`${this.baseUrl}/menu/reset`, {});
+  }
+
+  getPages(): Observable<CataloguePage[]> {
+    return this.http.get<CataloguePage[]>(`${this.baseUrl}/admin/pages`);
+  }
+
+  getRoles(baseRole?: string): Observable<RoleSummary[]> {
+    const query = baseRole ? `?baseRole=${encodeURIComponent(baseRole)}` : '';
+    return this.http.get<RoleSummary[]>(`${this.baseUrl}/admin/roles${query}`);
+  }
+
+  getRoleMembers(roleId: string): Observable<RoleMember[]> {
+    return this.http.get<RoleMember[]>(`${this.baseUrl}/admin/roles/${roleId}/members`);
+  }
+
+  createRole(payload: {
+    name: string;
+    displayName: string;
+    description?: string | null;
+    baseRole: 'Teacher' | 'SuperAdmin';
+    pageKeys: string[];
+  }): Observable<RoleSummary> {
+    return this.http.post<RoleSummary>(`${this.baseUrl}/admin/roles`, payload);
+  }
+
+  updateRole(
+    roleId: string,
+    payload: { displayName: string; description?: string | null; pageKeys: string[] }
+  ): Observable<RoleSummary> {
+    return this.http.put<RoleSummary>(`${this.baseUrl}/admin/roles/${roleId}`, payload);
+  }
+
+  deleteRole(roleId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/admin/roles/${roleId}`);
+  }
+
+  assignRoleUser(roleId: string, userId: string): Observable<RoleSummary> {
+    return this.http.post<RoleSummary>(`${this.baseUrl}/admin/roles/${roleId}/users`, { userId });
+  }
+
+  removeRoleUser(roleId: string, userId: string): Observable<RoleSummary> {
+    return this.http.delete<RoleSummary>(`${this.baseUrl}/admin/roles/${roleId}/users/${userId}`);
   }
 }
 

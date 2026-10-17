@@ -88,6 +88,11 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<TeacherVacation> TeacherVacations => Set<TeacherVacation>();
     public DbSet<PushSubscription> PushSubscriptions => Set<PushSubscription>();
     public DbSet<WebPushKeyPair> WebPushKeys => Set<WebPushKeyPair>();
+    public DbSet<Page> Pages => Set<Page>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<RolePage> RolePages => Set<RolePage>();
+    public DbSet<UserInRole> UserInRoles => Set<UserInRole>();
+    public DbSet<UserMenuPreference> UserMenuPreferences => Set<UserMenuPreference>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -1149,6 +1154,75 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasOne(x => x.Teacher)
                 .WithMany()
                 .HasForeignKey(x => x.TeacherId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Page>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Key).HasMaxLength(160).IsRequired();
+            entity.Property(x => x.LabelKey).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Icon).HasMaxLength(16).IsRequired();
+            entity.Property(x => x.CategoryKey).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.Panel).HasMaxLength(20).IsRequired();
+            entity.HasIndex(x => new { x.TenantId, x.Key }).IsUnique();
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Name).HasMaxLength(80).IsRequired();
+            entity.Property(x => x.DisplayName).HasMaxLength(120).IsRequired();
+            entity.Property(x => x.Description).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.BaseRole).HasConversion<string>().HasMaxLength(30);
+            entity.HasIndex(x => new { x.TenantId, x.Name }).IsUnique();
+            entity.HasMany(x => x.Pages)
+                .WithOne(x => x.Role)
+                .HasForeignKey(x => x.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasMany(x => x.Members)
+                .WithOne(x => x.Role)
+                .HasForeignKey(x => x.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<RolePage>(entity =>
+        {
+            entity.HasKey(x => new { x.RoleId, x.PageId });
+            entity.HasIndex(x => x.PageId);
+            entity.HasOne(x => x.Page)
+                .WithMany(x => x.Roles)
+                .HasForeignKey(x => x.PageId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UserInRole>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.TenantId, x.UserId, x.RoleId }).IsUnique();
+            entity.HasIndex(x => x.RoleId);
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Role)
+                .WithMany(x => x.Members)
+                .HasForeignKey(x => x.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UserMenuPreference>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.HasIndex(x => new { x.TenantId, x.UserId, x.PageId }).IsUnique();
+            entity.HasIndex(x => x.UserId);
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(x => x.Page)
+                .WithMany()
+                .HasForeignKey(x => x.PageId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

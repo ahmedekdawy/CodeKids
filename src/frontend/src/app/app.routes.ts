@@ -65,6 +65,8 @@ import { StudentAskedQuestionsComponent } from './pages/student-asked-questions/
 import { StudentChatComponent } from './pages/student-chat/student-chat.component';
 import { AssessmentLinkEntryComponent } from './pages/assessment-link-entry/assessment-link-entry.component';
 import { SmartAssistantAdminComponent } from './pages/admin/smart-assistant-admin.component';
+import { AdminRolesComponent } from './pages/admin/admin-roles.component';
+import { MenuCustomizerComponent } from './pages/menu-customizer/menu-customizer.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: LandingComponent, canActivate: [tenantGuard] },
@@ -158,6 +160,7 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'overview' },
       { path: 'overview', component: TeacherOverviewComponent },
+      { path: 'menu', component: MenuCustomizerComponent },
       {
         path: 'account',
         loadComponent: () =>
@@ -253,6 +256,8 @@ export const routes: Routes = [
       { path: 'other-expenses', component: AdminOtherExpensesComponent },
       { path: 'tenants', component: AdminTenantsComponent },
       { path: 'whatsapp', component: AdminWhatsAppComponent },
+      { path: 'roles', component: AdminRolesComponent },
+      { path: 'menu', component: MenuCustomizerComponent },
       { path: 'site-settings', component: AdminSiteSettingsComponent },
       { path: 'classrooms', redirectTo: 'create-classroom' },
       { path: 'smart-assistant', component: SmartAssistantAdminComponent }

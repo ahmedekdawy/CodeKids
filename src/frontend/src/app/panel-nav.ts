@@ -36,11 +36,14 @@ export const ADMIN_NAV_ITEMS: PanelNavItem[] = [
   { labelKey: 'nav.admin.accountReport', path: '/admin/account-report', icon: '%', categoryKey: 'nav.cat.finance' },
 
   { labelKey: 'nav.admin.whatsapp', path: '/admin/whatsapp', icon: 'W', categoryKey: 'nav.cat.system' },
+  { labelKey: 'nav.admin.roles', path: '/admin/roles', icon: 'R', categoryKey: 'nav.cat.system' },
+  { labelKey: 'nav.admin.menu', path: '/admin/menu', icon: '☰', categoryKey: 'nav.cat.system' },
   { labelKey: 'nav.admin.settings', path: '/admin/site-settings', icon: 'B', categoryKey: 'nav.cat.system' }
 ];
 
 export const TEACHER_NAV_ITEMS: PanelNavItem[] = [
   { labelKey: 'nav.teacher.overview', path: '/teacher/overview', icon: 'O' },
+  { labelKey: 'nav.teacher.menu', path: '/teacher/menu', icon: '☰' },
   { labelKey: 'nav.teacher.account', path: '/teacher/account', icon: '👤' },
 
   { labelKey: 'nav.cat.content', path: '/teacher/videos', icon: 'V', categoryKey: 'nav.cat.content' },
@@ -83,8 +86,14 @@ const OWNER_SKIPPED_ADMIN_PATHS = [
   '/admin/timetable',
   '/admin/appointments',
   '/admin/student-attendance',
-  '/admin/availability'
+  '/admin/availability',
+  '/admin/menu'
 ];
+
+/** Removes admin duplicates when the owner of a single-teacher tenant sees one combined menu. */
+export function ownerFilteredNavItems(items: PanelNavItem[]): PanelNavItem[] {
+  return items.filter((item) => !OWNER_SKIPPED_ADMIN_PATHS.includes(item.path));
+}
 
 /**
  * Menu for a panel. The owner of a single-teacher tenant gets one combined menu (their teacher pages
@@ -93,7 +102,7 @@ const OWNER_SKIPPED_ADMIN_PATHS = [
 export function panelNavItems(panel: 'admin' | 'teacher', style: TenantStyle, isTenantOwner: boolean): PanelNavItem[] {
   if (isTenantOwner) {
     return navItemsForStyle(
-      [...TEACHER_NAV_ITEMS, ...ADMIN_NAV_ITEMS.filter((item) => !OWNER_SKIPPED_ADMIN_PATHS.includes(item.path))],
+      ownerFilteredNavItems([...TEACHER_NAV_ITEMS, ...ADMIN_NAV_ITEMS]),
       style
     );
   }

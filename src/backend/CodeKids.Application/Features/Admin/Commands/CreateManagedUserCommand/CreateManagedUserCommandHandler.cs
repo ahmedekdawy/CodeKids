@@ -118,6 +118,18 @@ public sealed class CreateManagedUserCommandHandler(
         }
 
         dbContext.Users.Add(user);
+        var defaultRole = await dbContext.Roles
+            .FirstOrDefaultAsync(x => x.IsSystem && x.BaseRole == role, cancellationToken);
+        if (defaultRole is not null)
+        {
+            dbContext.UserInRoles.Add(new UserInRole
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                RoleId = defaultRole.Id
+            });
+        }
+
         await ReplaceCourseRatesAsync(dbContext, user.Id, role, command.CourseRates, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 

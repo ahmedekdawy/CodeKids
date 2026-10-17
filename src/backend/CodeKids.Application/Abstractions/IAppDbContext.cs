@@ -70,6 +70,11 @@ public interface IAppDbContext
     DbSet<UserAvailability> UserAvailabilities { get; }
     DbSet<TeacherVacation> TeacherVacations { get; }
     DbSet<PushSubscription> PushSubscriptions { get; }
+    DbSet<Page> Pages { get; }
+    DbSet<Role> Roles { get; }
+    DbSet<RolePage> RolePages { get; }
+    DbSet<UserInRole> UserInRoles { get; }
+    DbSet<UserMenuPreference> UserMenuPreferences { get; }
 
     string? CurrentTenantId { get; }
 

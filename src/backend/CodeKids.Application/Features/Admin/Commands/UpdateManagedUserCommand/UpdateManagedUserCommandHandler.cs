@@ -64,6 +64,7 @@ public sealed class UpdateManagedUserCommandHandler(
             }
         }
 
+        var previousRole = user.Role;
         user.Email = email;
         user.DisplayName = command.DisplayName.Trim();
         user.Role = role;
@@ -92,6 +93,38 @@ public sealed class UpdateManagedUserCommandHandler(
         }
 
         user.MobilePhone = mobile;
+
+        // Moving a user to another base role drops roles that no longer apply and grants the new default.
+        var assignments = new List<UserInRole>();
+        if (previousRole != role)
+        {
+            assignments = await dbContext.UserInRoles
+                .Where(x => x.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+            if (assignments.Count > 0)
+            {
+                var roleIds = assignments.Select(x => x.RoleId).ToList();
+                var assignedRoles = await dbContext.Roles
+                    .Where(x => roleIds.Contains(x.Id))
+                    .ToListAsync(cancellationToken);
+                dbContext.UserInRoles.RemoveRange(assignments.Where(assignment =>
+                    assignedRoles.All(x => x.Id != assignment.RoleId || x.BaseRole != role)));
+            }
+
+            var defaultRole = await dbContext.Roles
+                .FirstOrDefaultAsync(x => x.IsSystem && x.BaseRole == role, cancellationToken);
+            if (defaultRole is not null
+                && !assignments.Any(x => x.RoleId == defaultRole.Id))
+            {
+                dbContext.UserInRoles.Add(new UserInRole
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    RoleId = defaultRole.Id
+                });
+            }
+        }
+
         // The Parse* helpers return empty values for non-teachers, clearing a former teacher's settings.
         if (role == UserRole.Teacher || user.TeacherProfile is not null)
         {

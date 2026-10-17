@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { PanelShellComponent } from '../../layouts/panel-shell/panel-shell.component';
 import { SiteBrandService } from '../../site-brand.service';
 import { AuthService } from '../../auth.service';
+import { MenuService } from '../../menu.service';
 import { panelNavItems } from '../../panel-nav';
 
 @Component({
@@ -20,8 +21,16 @@ import { panelNavItems } from '../../panel-nav';
 export class AdminShellComponent {
   private readonly brand = inject(SiteBrandService);
   private readonly auth = inject(AuthService);
+  private readonly menu = inject(MenuService);
 
-  readonly navItems = computed(() =>
-    panelNavItems('admin', this.brand.tenantStyle(), this.auth.user()?.isTenantOwner === true)
-  );
+  readonly navItems = computed(() => {
+    const items = this.menu.items();
+    return this.menu.loaded()
+      ? items
+      : panelNavItems('admin', this.brand.tenantStyle(), this.auth.user()?.isTenantOwner === true);
+  });
+
+  constructor() {
+    this.menu.load();
+  }
 }

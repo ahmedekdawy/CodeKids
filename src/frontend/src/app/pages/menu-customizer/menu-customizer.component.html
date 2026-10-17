@@ -1,0 +1,67 @@
+<div class="panel-page">
+  <h2>{{ 'menu.title' | t }}</h2>
+  <p class="meta">{{ 'menu.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <section class="block">
+    <div class="menu-head">
+      <div>
+        <h3>{{ 'menu.pages' | t }}</h3>
+        <p class="meta">{{ 'menu.hint' | t }}</p>
+      </div>
+      <div class="menu-actions">
+        <button type="button" class="ghost-btn" (click)="reload()">{{ 'common.refresh' | t }}</button>
+        <button type="button" class="ghost-btn" (click)="reset()">{{ 'menu.resetAction' | t }}</button>
+        <button type="button" (click)="save()">{{ 'common.save' | t }}</button>
+      </div>
+    </div>
+
+    @if (roles().length) {
+      <div class="chip-row menu-roles">
+        <span class="meta">{{ 'menu.roles' | t }}:</span>
+        @for (role of roles(); track role) {
+          <span class="chip">{{ role }}</span>
+        }
+      </div>
+    }
+
+    <ul class="menu-list">
+      @for (item of items(); track item.key; let index = $index) {
+        <li class="menu-row" [class.menu-row--hidden]="item.isHidden">
+          <span class="menu-icon" aria-hidden="true">{{ item.icon || '•' }}</span>
+          <span class="menu-text">
+            <strong>{{ item.labelKey | t }}</strong>
+            @if (item.categoryKey) {
+              <small class="meta">{{ item.categoryKey | t }}</small>
+            }
+          </span>
+          <span class="menu-buttons">
+            <button
+              type="button"
+              class="ghost-btn icon-btn"
+              [disabled]="index === 0"
+              [title]="'menu.moveUp' | t"
+              [attr.aria-label]="'menu.moveUp' | t"
+              (click)="move(index, -1)">↑</button>
+            <button
+              type="button"
+              class="ghost-btn icon-btn"
+              [disabled]="index === items().length - 1"
+              [title]="'menu.moveDown' | t"
+              [attr.aria-label]="'menu.moveDown' | t"
+              (click)="move(index, 1)">↓</button>
+            <button
+              type="button"
+              class="ghost-btn icon-btn"
+              [title]="(item.isHidden ? 'menu.show' : 'menu.hide') | t"
+              [attr.aria-label]="(item.isHidden ? 'menu.show' : 'menu.hide') | t"
+              (click)="toggleHidden(index)">{{ item.isHidden ? '🚫' : '👁' }}</button>
+          </span>
+        </li>
+      } @empty {
+        <li class="meta">{{ loading() ? ('common.loading' | t) : ('menu.empty' | t) }}</li>
+      }
+    </ul>
+  </section>
+</div>

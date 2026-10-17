@@ -45,6 +45,10 @@ using CodeKids.Application.Features.LearningMaterials;
 
 using CodeKids.Application.Features.Media;
 
+using CodeKids.Application.Features.Menu;
+
+using CodeKids.Application.Features.Roles;
+
 using CodeKids.Application.Features.Meetings;
 
 using CodeKids.Application.Features.Payments;
@@ -424,6 +428,28 @@ builder.Services.AddScoped<ICommandHandler<SendAdminWhatsAppCommand, SendAdminWh
 
 builder.Services.AddScoped<IQueryHandler<ListManagedUsersQuery, IReadOnlyList<ManagedUserDto>>, ListManagedUsersQueryHandler>();
 
+builder.Services.AddScoped<IQueryHandler<GetMyMenuQuery, MyMenuDto>, GetMyMenuQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<SaveMyMenuCommand, MyMenuDto>, SaveMyMenuCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<ResetMyMenuCommand, MyMenuDto>, ResetMyMenuCommandHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListRolesQuery, IReadOnlyList<RoleDto>>, ListRolesQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListRoleMembersQuery, IReadOnlyList<RoleMemberDto>>, ListRoleMembersQueryHandler>();
+
+builder.Services.AddScoped<IQueryHandler<ListPagesQuery, IReadOnlyList<PageDto>>, ListPagesQueryHandler>();
+
+builder.Services.AddScoped<ICommandHandler<CreateRoleCommand, RoleDto>, CreateRoleCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<UpdateRoleCommand, RoleDto>, UpdateRoleCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<DeleteRoleCommand, bool>, DeleteRoleCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<AssignRoleUserCommand, RoleDto>, AssignRoleUserCommandHandler>();
+
+builder.Services.AddScoped<ICommandHandler<RemoveRoleUserCommand, RoleDto>, RemoveRoleUserCommandHandler>();
+
 builder.Services.AddScoped<ICommandHandler<CreateClassroomCommand, ClassroomDto>, CreateClassroomCommandHandler>();
 
 builder.Services.AddScoped<ICommandHandler<UpdateClassroomCommand, ClassroomDto>, UpdateClassroomCommandHandler>();
@@ -724,6 +750,10 @@ app.MapAccountReportEndpoints();
 app.MapTeacherAssessmentsReportEndpoints();
 
 app.MapAdminUsersEndpoints();
+
+app.MapRolesEndpoints();
+
+app.MapMenuEndpoints();
 
 app.MapAvailabilityEndpoints();
 

@@ -1,0 +1,202 @@
+<div class="panel-page">
+  <h2>{{ 'roles.title' | t }}</h2>
+  <p class="meta">{{ 'roles.subtitle' | t }}</p>
+
+  <app-page-feedback [ok]="message()" [error]="error()" />
+
+  <div class="page-actions">
+    <button type="button" (click)="openCreate()">{{ 'roles.create' | t }}</button>
+  </div>
+
+  <section class="block">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'roles.displayName' | t }}</th>
+            <th>{{ 'roles.name' | t }}</th>
+            <th>{{ 'roles.type' | t }}</th>
+            <th>{{ 'roles.pageCount' | t }}</th>
+            <th>{{ 'roles.members' | t }}</th>
+            <th>{{ 'common.actions' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (role of roles(); track role.id) {
+            <tr>
+              <td>
+                {{ role.displayName }}
+                @if (role.isSystem) {
+                  <span class="chip">{{ 'roles.system' | t }}</span>
+                }
+              </td>
+              <td><code>{{ role.name }}</code></td>
+              <td>{{ roleTypeLabel(role) }}</td>
+              <td>{{ role.pages.length }}</td>
+              <td>{{ role.memberCount }}</td>
+              <td class="row-actions">
+                @if (role.isSystem) {
+                  <span class="meta">{{ 'roles.systemLocked' | t }}</span>
+                } @else {
+                  <button type="button" class="ghost-btn" (click)="openEdit(role)">{{ 'common.edit' | t }}</button>
+                  <button type="button" class="ghost-btn danger" (click)="deleteRole(role)">{{ 'common.delete' | t }}</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6">{{ 'common.noData' | t }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3>{{ 'roles.membersTitle' | t }}</h3>
+    <p class="meta">{{ 'roles.membersHint' | t }}</p>
+
+    <label>
+      {{ 'roles.chooseRole' | t }}
+      <app-searchable-select
+        [ngModel]="membersRoleId()"
+        (ngModelChange)="selectMembersRole($event ?? '')"
+        name="membersRole"
+        [options]="roleOptions()"
+        [emptyLabel]="'roles.chooseRole' | t"
+      />
+    </label>
+
+    @if (selectedMembersRole(); as role) {
+      <div class="list-filters">
+        <app-searchable-select
+          [ngModel]="selectedUserId()"
+          (ngModelChange)="selectedUserId.set($event ?? '')"
+          name="assignUser"
+          [options]="userOptions()"
+          [emptyLabel]="'roles.chooseUser' | t"
+        />
+        <button type="button" (click)="assignUser()" [disabled]="!selectedUserId()">
+          {{ 'roles.assign' | t }}
+        </button>
+        <span class="meta">{{ roleTypeLabel(role) }}</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>{{ 'common.name' | t }}</th>
+              <th>{{ 'common.email' | t }}</th>
+              <th>{{ 'roles.accountRole' | t }}</th>
+              <th>{{ 'roles.assigned' | t }}</th>
+              <th>{{ 'common.actions' | t }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (member of members(); track member.userId) {
+              <tr>
+                <td>{{ member.displayName }}</td>
+                <td>{{ member.email || ('common.emDash' | t) }}</td>
+                <td>{{ member.role }}</td>
+                <td>{{ formatUtc(member.assignedAtUtc) }}</td>
+                <td>
+                  <button type="button" class="ghost-btn danger" (click)="removeMember(member)">
+                    {{ 'roles.remove' | t }}
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5">{{ 'roles.noMembers' | t }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
+
+@if (formOpen()) {
+  <div class="modal-backdrop">
+    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>{{ (editingId() ? 'roles.editTitle' : 'roles.newTitle') | t }}</h3>
+        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.close' | t }}</button>
+      </div>
+
+      <app-page-feedback [error]="error()" />
+
+      <form class="meeting-form" autocomplete="off" (ngSubmit)="save()">
+        <label>
+          {{ 'roles.displayName' | t }}
+          <input
+            [ngModel]="formDisplayName()"
+            (ngModelChange)="formDisplayName.set($event)"
+            name="roleDisplayName"
+            required
+          />
+        </label>
+        <label>
+          {{ 'roles.name' | t }}
+          <input
+            [ngModel]="formName()"
+            (ngModelChange)="formName.set($event)"
+            name="roleName"
+            [disabled]="editingId() !== null"
+            required
+          />
+          <span class="meta">{{ 'roles.nameHint' | t }}</span>
+        </label>
+        <label>
+          {{ 'roles.type' | t }}
+          <app-searchable-select
+            [ngModel]="formBaseRole()"
+            (ngModelChange)="formBaseRole.set($event)"
+            name="roleBaseRole"
+            [options]="baseRoleOptions()"
+            [disabled]="editingId() !== null"
+            [clearable]="false"
+          />
+          <span class="meta">{{ 'roles.typeHint' | t }}</span>
+        </label>
+        <label>
+          {{ 'roles.description' | t }}
+          <input
+            [ngModel]="formDescription()"
+            (ngModelChange)="formDescription.set($event)"
+            name="roleDescription"
+          />
+        </label>
+
+        <fieldset class="role-pages">
+          <legend>{{ 'roles.selectPages' | t }}</legend>
+          @for (group of catalogueGroups(); track group.labelKey) {
+            <div class="role-page-group">
+              <strong>{{ group.labelKey | t }}</strong>
+              <div class="chip-row">
+                @for (page of group.pages; track page.key) {
+                  <label class="role-page-toggle">
+                    <input
+                      type="checkbox"
+                      [checked]="isPageSelected(page.key)"
+                      (change)="togglePage(page.key)"
+                    />
+                    <span>{{ page.labelKey | t }}</span>
+                  </label>
+                }
+              </div>
+            </div>
+          }
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit">{{ 'common.save' | t }}</button>
+          <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

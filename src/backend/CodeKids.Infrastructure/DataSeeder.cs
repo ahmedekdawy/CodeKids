@@ -272,6 +272,169 @@ public static class DataSeeder
                 await dbContext.SaveChangesAsync(cancellationToken);
             }
         }
+
+        await EnsureNavigationSeedAsync(dbContext, cancellationToken);
+    }
+
+    /// <summary>
+    /// Seeds the fixed page catalogue and the two default roles, then gives every user without a role
+    /// assignment their default role. Runs on every update so newly added pages reach the system roles.
+    /// </summary>
+    private static async Task EnsureNavigationSeedAsync(AppDbContext dbContext, CancellationToken cancellationToken)
+    {
+        var pages = await dbContext.Pages.ToListAsync(cancellationToken);
+        var pagesByKey = pages.ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var definition in PageCatalog.All)
+        {
+            if (!pagesByKey.TryGetValue(definition.Key, out var page))
+            {
+                page = new Page { Id = definition.Id, Key = definition.Key };
+                dbContext.Pages.Add(page);
+                pagesByKey[definition.Key] = page;
+            }
+
+            page.LabelKey = definition.LabelKey;
+            page.Icon = definition.Icon;
+            page.CategoryKey = definition.CategoryKey;
+            page.Panel = definition.Panel;
+            page.SortOrder = definition.SortOrder;
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var superAdminRole = await EnsureSystemRoleAsync(
+            dbContext,
+            Guid.Parse("44444444-4444-4444-4444-000000000001"),
+            Role.SuperAdminName,
+            "Super Admin",
+            "Every admin page.",
+            UserRole.SuperAdmin,
+            PageCatalog.AdminPanel,
+            cancellationToken);
+
+        var teacherRole = await EnsureSystemRoleAsync(
+            dbContext,
+            Guid.Parse("44444444-4444-4444-4444-000000000002"),
+            Role.TeacherName,
+            "Teacher",
+            "Every teacher page.",
+            UserRole.Teacher,
+            PageCatalog.TeacherPanel,
+            cancellationToken);
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+        await EnsureDefaultRoleAssignmentsAsync(dbContext, superAdminRole.Id, teacherRole.Id, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task<Role> EnsureSystemRoleAsync(
+        AppDbContext dbContext,
+        Guid id,
+        string name,
+        string displayName,
+        string description,
+        UserRole baseRole,
+        string panel,
+        CancellationToken cancellationToken)
+    {
+        var role = await dbContext.Roles.FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
+        if (role is null)
+        {
+            role = new Role { Id = id, Name = name };
+            dbContext.Roles.Add(role);
+        }
+
+        // System roles are not editable, so their definition is always restored from the catalogue.
+        role.DisplayName = displayName;
+        role.Description = description;
+        role.IsSystem = true;
+        role.BaseRole = baseRole;
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var desiredPages = await dbContext.Pages
+            .Where(x => x.Panel == panel)
+            .OrderBy(x => x.SortOrder)
+            .ToListAsync(cancellationToken);
+        var existing = await dbContext.RolePages
+            .Where(x => x.RoleId == role.Id)
+            .ToListAsync(cancellationToken);
+        var byPage = existing.ToDictionary(x => x.PageId);
+
+        for (var index = 0; index < desiredPages.Count; index++)
+        {
+            var page = desiredPages[index];
+            if (byPage.TryGetValue(page.Id, out var link))
+            {
+                link.SortOrder = index;
+                continue;
+            }
+
+            dbContext.RolePages.Add(new RolePage
+            {
+                RoleId = role.Id,
+                PageId = page.Id,
+                SortOrder = index
+            });
+        }
+
+        var desiredIds = desiredPages.Select(x => x.Id).ToHashSet();
+        dbContext.RolePages.RemoveRange(existing.Where(x => !desiredIds.Contains(x.PageId)));
+
+        return role;
+    }
+
+    private static async Task EnsureDefaultRoleAssignmentsAsync(
+        AppDbContext dbContext,
+        Guid superAdminRoleId,
+        Guid teacherRoleId,
+        CancellationToken cancellationToken)
+    {
+        var users = await dbContext.Users
+            .Select(x => new { x.Id, x.Role, x.IsTenantOwner })
+            .ToListAsync(cancellationToken);
+        var assignments = await dbContext.UserInRoles.ToListAsync(cancellationToken);
+
+        foreach (var user in users)
+        {
+            var roleIds = assignments
+                .Where(x => x.UserId == user.Id)
+                .Select(x => x.RoleId)
+                .ToHashSet();
+
+            if (user.IsTenantOwner)
+            {
+                // The owner runs the whole tenant; they keep the teacher panel and gain the admin one.
+                AddIfMissing(teacherRoleId);
+                AddIfMissing(superAdminRoleId);
+                continue;
+            }
+
+            if (user.Role == UserRole.Teacher && roleIds.Count == 0)
+            {
+                AddIfMissing(teacherRoleId);
+            }
+            else if (user.Role == UserRole.SuperAdmin && roleIds.Count == 0)
+            {
+                AddIfMissing(superAdminRoleId);
+            }
+
+            void AddIfMissing(Guid roleId)
+            {
+                if (roleIds.Add(roleId))
+                {
+                    var assignment = new UserInRole
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = user.Id,
+                        RoleId = roleId
+                    };
+                    dbContext.UserInRoles.Add(assignment);
+                    assignments.Add(assignment);
+                }
+            }
+        }
     }
 
     private static async Task EnsureAchievementBadgesAsync(AppDbContext dbContext, CancellationToken cancellationToken)
