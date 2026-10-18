@@ -5,7 +5,7 @@ import {
   SiteBrandComponent,
   ThemeService,
   ThemeSwitcherComponent
-} from "./chunk-OYCOGJI2.js";
+} from "./chunk-NM7TRCB5.js";
 import {
   SafeHtmlPipe
 } from "./chunk-3ZZ6X64X.js";
@@ -74,11 +74,11 @@ import {
   applyDropdownPanelStyle,
   attachDropdownPanelToBody,
   isInsideDropdown
-} from "./chunk-AEKLNI6J.js";
+} from "./chunk-3LTRJ3NX.js";
 import {
   LocaleService,
   TranslatePipe
-} from "./chunk-MAWF43RP.js";
+} from "./chunk-5TRF6X2H.js";
 import {
   DEFAULT_PM_START_MINUTES,
   DEFAULT_SESSION_COUNT,
@@ -11924,61 +11924,88 @@ function MathPromptEditorComponent_Conditional_44_Template(rf, ctx) {
     \u0275\u0275attribute("title", \u0275\u0275pipeBind1(8, 7, "editor.customColor"));
   }
 }
-function MathPromptEditorComponent_Conditional_49_For_2_Template(rf, ctx) {
+function MathPromptEditorComponent_Conditional_49_Conditional_5_For_1_Template(rf, ctx) {
   if (rf & 1) {
-    const _r15 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 32);
+    const _r16 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 33);
     \u0275\u0275pipe(1, "t");
     \u0275\u0275pipe(2, "t");
-    \u0275\u0275listener("mousedown", function MathPromptEditorComponent_Conditional_49_For_2_Template_button_mousedown_0_listener($event) {
+    \u0275\u0275listener("mousedown", function MathPromptEditorComponent_Conditional_49_Conditional_5_For_1_Template_button_mousedown_0_listener($event) {
       return $event.preventDefault();
-    })("click", function MathPromptEditorComponent_Conditional_49_For_2_Template_button_click_0_listener() {
-      const tool_r16 = \u0275\u0275restoreView(_r15).$implicit;
-      const ctx_r3 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r3.runEquationTool(tool_r16.id));
+    })("click", function MathPromptEditorComponent_Conditional_49_Conditional_5_For_1_Template_button_click_0_listener() {
+      const tool_r17 = \u0275\u0275restoreView(_r16).$implicit;
+      const ctx_r3 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r3.runEquationTool(tool_r17.id));
     });
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const tool_r16 = ctx.$implicit;
-    const ctx_r3 = \u0275\u0275nextContext(2);
-    \u0275\u0275classProp("active", tool_r16.id === "fraction" && ctx_r3.showFractionBuilder);
-    \u0275\u0275attribute("title", \u0275\u0275pipeBind1(1, 5, tool_r16.titleKey))("aria-label", \u0275\u0275pipeBind1(2, 7, tool_r16.titleKey));
+    const tool_r17 = ctx.$implicit;
+    const ctx_r3 = \u0275\u0275nextContext(3);
+    \u0275\u0275classProp("active", tool_r17.id === "fraction" && ctx_r3.showFractionBuilder);
+    \u0275\u0275attribute("title", \u0275\u0275pipeBind1(1, 5, tool_r17.titleKey))("aria-label", \u0275\u0275pipeBind1(2, 7, tool_r17.titleKey));
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", tool_r16.label, " ");
+    \u0275\u0275textInterpolate1(" ", tool_r17.label, " ");
+  }
+}
+function MathPromptEditorComponent_Conditional_49_Conditional_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275repeaterCreate(0, MathPromptEditorComponent_Conditional_49_Conditional_5_For_1_Template, 4, 9, "button", 32, _forTrack2);
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext(2);
+    \u0275\u0275repeater(ctx_r3.equationTools);
   }
 }
 function MathPromptEditorComponent_Conditional_49_Template(rf, ctx) {
   if (rf & 1) {
+    const _r15 = \u0275\u0275getCurrentView();
     \u0275\u0275element(0, "span", 6);
-    \u0275\u0275repeaterCreate(1, MathPromptEditorComponent_Conditional_49_For_2_Template, 4, 9, "button", 31, _forTrack2);
+    \u0275\u0275elementStart(1, "button", 31);
+    \u0275\u0275pipe(2, "t");
+    \u0275\u0275pipe(3, "t");
+    \u0275\u0275listener("mousedown", function MathPromptEditorComponent_Conditional_49_Template_button_mousedown_1_listener($event) {
+      return $event.preventDefault();
+    })("click", function MathPromptEditorComponent_Conditional_49_Template_button_click_1_listener() {
+      \u0275\u0275restoreView(_r15);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.toggleAdvanced());
+    });
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275conditionalCreate(5, MathPromptEditorComponent_Conditional_49_Conditional_5_Template, 2, 0);
   }
   if (rf & 2) {
     const ctx_r3 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275repeater(ctx_r3.equationTools);
+    \u0275\u0275classProp("active", ctx_r3.advancedOpen);
+    \u0275\u0275attribute("aria-expanded", ctx_r3.advancedOpen)("title", \u0275\u0275pipeBind1(2, 7, ctx_r3.advancedOpen ? "editor.hideAdvanced" : "editor.showAdvanced"))("aria-label", \u0275\u0275pipeBind1(3, 9, ctx_r3.advancedOpen ? "editor.hideAdvanced" : "editor.showAdvanced"));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", ctx_r3.advancedOpen ? "\u25B4" : "\u25BE", " ");
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx_r3.advancedOpen ? 5 : -1);
   }
 }
 function MathPromptEditorComponent_Conditional_50_Template(rf, ctx) {
   if (rf & 1) {
-    const _r17 = \u0275\u0275getCurrentView();
+    const _r18 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 22);
     \u0275\u0275pipe(1, "t");
-    \u0275\u0275elementStart(2, "div", 33)(3, "label", 34)(4, "span");
+    \u0275\u0275elementStart(2, "div", 34)(3, "label", 35)(4, "span");
     \u0275\u0275text(5);
     \u0275\u0275pipe(6, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "input", 35, 1);
+    \u0275\u0275elementStart(7, "input", 36, 1);
     \u0275\u0275pipe(9, "t");
     \u0275\u0275twoWayListener("ngModelChange", function MathPromptEditorComponent_Conditional_50_Template_input_ngModelChange_7_listener($event) {
-      \u0275\u0275restoreView(_r17);
+      \u0275\u0275restoreView(_r18);
       const ctx_r3 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r3.fractionNum, $event) || (ctx_r3.fractionNum = $event);
       return \u0275\u0275resetView($event);
     });
     \u0275\u0275listener("keydown.enter", function MathPromptEditorComponent_Conditional_50_Template_input_keydown_enter_7_listener($event) {
-      \u0275\u0275restoreView(_r17);
+      \u0275\u0275restoreView(_r18);
       const ctx_r3 = \u0275\u0275nextContext();
       $event.preventDefault();
       return \u0275\u0275resetView(ctx_r3.insertFraction());
@@ -11986,26 +12013,26 @@ function MathPromptEditorComponent_Conditional_50_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "div", 36)(11, "span", 37)(12, "span", 38);
+    \u0275\u0275elementStart(10, "div", 37)(11, "span", 38)(12, "span", 39);
     \u0275\u0275text(13);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "span", 39);
+    \u0275\u0275elementStart(14, "span", 40);
     \u0275\u0275text(15);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(16, "label", 34)(17, "span");
+    \u0275\u0275elementStart(16, "label", 35)(17, "span");
     \u0275\u0275text(18);
     \u0275\u0275pipe(19, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(20, "input", 35);
+    \u0275\u0275elementStart(20, "input", 36);
     \u0275\u0275pipe(21, "t");
     \u0275\u0275twoWayListener("ngModelChange", function MathPromptEditorComponent_Conditional_50_Template_input_ngModelChange_20_listener($event) {
-      \u0275\u0275restoreView(_r17);
+      \u0275\u0275restoreView(_r18);
       const ctx_r3 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r3.fractionDen, $event) || (ctx_r3.fractionDen = $event);
       return \u0275\u0275resetView($event);
     });
     \u0275\u0275listener("keydown.enter", function MathPromptEditorComponent_Conditional_50_Template_input_keydown_enter_20_listener($event) {
-      \u0275\u0275restoreView(_r17);
+      \u0275\u0275restoreView(_r18);
       const ctx_r3 = \u0275\u0275nextContext();
       $event.preventDefault();
       return \u0275\u0275resetView(ctx_r3.insertFraction());
@@ -12013,18 +12040,18 @@ function MathPromptEditorComponent_Conditional_50_Template(rf, ctx) {
     \u0275\u0275elementEnd();
     \u0275\u0275controlCreate();
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(22, "div", 40)(23, "button", 41);
+    \u0275\u0275elementStart(22, "div", 41)(23, "button", 42);
     \u0275\u0275listener("click", function MathPromptEditorComponent_Conditional_50_Template_button_click_23_listener() {
-      \u0275\u0275restoreView(_r17);
+      \u0275\u0275restoreView(_r18);
       const ctx_r3 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r3.insertFraction());
     });
     \u0275\u0275text(24);
     \u0275\u0275pipe(25, "t");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(26, "button", 42);
+    \u0275\u0275elementStart(26, "button", 43);
     \u0275\u0275listener("click", function MathPromptEditorComponent_Conditional_50_Template_button_click_26_listener() {
-      \u0275\u0275restoreView(_r17);
+      \u0275\u0275restoreView(_r18);
       const ctx_r3 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r3.cancelFractionBuilder());
     });
@@ -12059,57 +12086,57 @@ function MathPromptEditorComponent_Conditional_50_Template(rf, ctx) {
 }
 function MathPromptEditorComponent_Conditional_51_For_3_Template(rf, ctx) {
   if (rf & 1) {
-    const _r18 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 47);
+    const _r19 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 48);
     \u0275\u0275listener("mousedown", function MathPromptEditorComponent_Conditional_51_For_3_Template_button_mousedown_0_listener($event) {
       return $event.preventDefault();
     })("click", function MathPromptEditorComponent_Conditional_51_For_3_Template_button_click_0_listener() {
-      const group_r19 = \u0275\u0275restoreView(_r18).$implicit;
+      const group_r20 = \u0275\u0275restoreView(_r19).$implicit;
       const ctx_r3 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r3.selectGroup(group_r19.id));
+      return \u0275\u0275resetView(ctx_r3.selectGroup(group_r20.id));
     });
     \u0275\u0275text(1);
     \u0275\u0275pipe(2, "t");
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const group_r19 = ctx.$implicit;
+    const group_r20 = ctx.$implicit;
     const ctx_r3 = \u0275\u0275nextContext(2);
-    \u0275\u0275classProp("active", ctx_r3.activeGroupId === group_r19.id);
-    \u0275\u0275attribute("aria-selected", ctx_r3.activeGroupId === group_r19.id);
+    \u0275\u0275classProp("active", ctx_r3.activeGroupId === group_r20.id);
+    \u0275\u0275attribute("aria-selected", ctx_r3.activeGroupId === group_r20.id);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(2, 4, group_r19.labelKey), " ");
+    \u0275\u0275textInterpolate1(" ", \u0275\u0275pipeBind1(2, 4, group_r20.labelKey), " ");
   }
 }
 function MathPromptEditorComponent_Conditional_51_For_6_Template(rf, ctx) {
   if (rf & 1) {
-    const _r20 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 48);
+    const _r21 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 49);
     \u0275\u0275listener("mousedown", function MathPromptEditorComponent_Conditional_51_For_6_Template_button_mousedown_0_listener($event) {
       return $event.preventDefault();
     })("click", function MathPromptEditorComponent_Conditional_51_For_6_Template_button_click_0_listener() {
-      const symbol_r21 = \u0275\u0275restoreView(_r20).$implicit;
+      const symbol_r22 = \u0275\u0275restoreView(_r21).$implicit;
       const ctx_r3 = \u0275\u0275nextContext(2);
-      return \u0275\u0275resetView(ctx_r3.insertSymbol(symbol_r21));
+      return \u0275\u0275resetView(ctx_r3.insertSymbol(symbol_r22));
     });
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const symbol_r21 = ctx.$implicit;
-    \u0275\u0275attribute("title", symbol_r21)("aria-label", symbol_r21);
+    const symbol_r22 = ctx.$implicit;
+    \u0275\u0275attribute("title", symbol_r22)("aria-label", symbol_r22);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", symbol_r21, " ");
+    \u0275\u0275textInterpolate1(" ", symbol_r22, " ");
   }
 }
 function MathPromptEditorComponent_Conditional_51_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 43);
+    \u0275\u0275elementStart(0, "div", 44);
     \u0275\u0275pipe(1, "t");
-    \u0275\u0275repeaterCreate(2, MathPromptEditorComponent_Conditional_51_For_3_Template, 3, 6, "button", 44, _forTrack2);
+    \u0275\u0275repeaterCreate(2, MathPromptEditorComponent_Conditional_51_For_3_Template, 3, 6, "button", 45, _forTrack2);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 45);
-    \u0275\u0275repeaterCreate(5, MathPromptEditorComponent_Conditional_51_For_6_Template, 2, 3, "button", 46, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275elementStart(4, "div", 46);
+    \u0275\u0275repeaterCreate(5, MathPromptEditorComponent_Conditional_51_For_6_Template, 2, 3, "button", 47, \u0275\u0275repeaterTrackByIdentity);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -12287,6 +12314,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
       }
     ];
     this.activeGroupId = this.symbolGroups[0].id;
+    this.advancedOpen = false;
     this.showFractionBuilder = false;
     this.fractionNum = "";
     this.fractionDen = "";
@@ -12325,6 +12353,13 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
   }
   selectGroup(id) {
     this.activeGroupId = id;
+  }
+  toggleAdvanced() {
+    this.advancedOpen = !this.advancedOpen;
+    this.colorPanel = null;
+    if (!this.advancedOpen) {
+      this.showFractionBuilder = false;
+    }
   }
   exec(command, value) {
     this.colorPanel = null;
@@ -12632,7 +12667,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         useExisting: forwardRef(() => _MathPromptEditorComponent),
         multi: true
       }
-    ])], decls: 55, vars: 59, consts: [["editor", ""], ["fracNumInput", ""], [1, "math-editor"], ["role", "toolbar", 1, "toolbar"], [1, "toolbar-row"], ["type", "button", 1, "fmt", 3, "italic", "underline", "strike"], ["aria-hidden", "true", 1, "sep"], ["type", "button", 1, "fmt", "align"], [1, "font-select"], [1, "visually-hidden"], [3, "mousedown", "change", "value"], [3, "value", "font-family"], [1, "font-select", "size"], [3, "value"], [1, "color-picker"], ["type", "button", 1, "fmt", "color-toggle", "text", 3, "mousedown", "click"], [1, "color-letter"], ["aria-hidden", "true", 1, "color-bar", "text-bar"], ["role", "listbox", 1, "color-panel"], ["type", "button", 1, "fmt", "color-toggle", "highlight", 3, "mousedown", "click"], ["aria-hidden", "true", 1, "color-bar", "highlight-bar"], ["type", "button", 1, "fmt", 3, "mousedown", "click"], ["role", "group", 1, "fraction-builder"], ["contenteditable", "true", "role", "textbox", "aria-multiline", "true", 1, "surface", 3, "input", "blur"], ["type", "button", 1, "fmt", "align", 3, "mousedown", "click"], ["type", "button", 1, "swatch", "default", 3, "mousedown", "click"], ["type", "button", 1, "swatch", 3, "light", "background"], [1, "custom-color"], ["type", "color", 3, "mousedown", "input"], ["type", "button", 1, "swatch", 3, "mousedown", "click"], ["type", "button", 1, "swatch", 3, "background"], ["type", "button", 1, "eq", 3, "active"], ["type", "button", 1, "eq", 3, "mousedown", "click"], [1, "fraction-fields"], [1, "frac-field"], ["type", "text", 3, "ngModelChange", "keydown.enter", "ngModel", "placeholder"], ["aria-hidden", "true", 1, "frac-preview"], [1, "math-frac"], [1, "math-num"], [1, "math-den"], [1, "fraction-actions"], ["type", "button", 1, "primary", 3, "click"], ["type", "button", 1, "ghost", 3, "click"], ["role", "tablist", 1, "symbol-tabs"], ["type", "button", "role", "tab", 1, "tab", 3, "active"], ["role", "tabpanel", 1, "symbol-pad"], ["type", "button", 1, "sym"], ["type", "button", "role", "tab", 1, "tab", 3, "mousedown", "click"], ["type", "button", 1, "sym", 3, "mousedown", "click"]], template: function MathPromptEditorComponent_Template(rf, ctx) {
+    ])], decls: 55, vars: 59, consts: [["editor", ""], ["fracNumInput", ""], [1, "math-editor"], ["role", "toolbar", 1, "toolbar"], [1, "toolbar-row"], ["type", "button", 1, "fmt", 3, "italic", "underline", "strike"], ["aria-hidden", "true", 1, "sep"], ["type", "button", 1, "fmt", "align"], [1, "font-select"], [1, "visually-hidden"], [3, "mousedown", "change", "value"], [3, "value", "font-family"], [1, "font-select", "size"], [3, "value"], [1, "color-picker"], ["type", "button", 1, "fmt", "color-toggle", "text", 3, "mousedown", "click"], [1, "color-letter"], ["aria-hidden", "true", 1, "color-bar", "text-bar"], ["role", "listbox", 1, "color-panel"], ["type", "button", 1, "fmt", "color-toggle", "highlight", 3, "mousedown", "click"], ["aria-hidden", "true", 1, "color-bar", "highlight-bar"], ["type", "button", 1, "fmt", 3, "mousedown", "click"], ["role", "group", 1, "fraction-builder"], ["contenteditable", "true", "role", "textbox", "aria-multiline", "true", 1, "surface", 3, "input", "blur"], ["type", "button", 1, "fmt", "align", 3, "mousedown", "click"], ["type", "button", 1, "swatch", "default", 3, "mousedown", "click"], ["type", "button", 1, "swatch", 3, "light", "background"], [1, "custom-color"], ["type", "color", 3, "mousedown", "input"], ["type", "button", 1, "swatch", 3, "mousedown", "click"], ["type", "button", 1, "swatch", 3, "background"], ["type", "button", 1, "fmt", "advanced-toggle", 3, "mousedown", "click"], ["type", "button", 1, "eq", 3, "active"], ["type", "button", 1, "eq", 3, "mousedown", "click"], [1, "fraction-fields"], [1, "frac-field"], ["type", "text", 3, "ngModelChange", "keydown.enter", "ngModel", "placeholder"], ["aria-hidden", "true", 1, "frac-preview"], [1, "math-frac"], [1, "math-num"], [1, "math-den"], [1, "fraction-actions"], ["type", "button", 1, "primary", 3, "click"], ["type", "button", 1, "ghost", 3, "click"], ["role", "tablist", 1, "symbol-tabs"], ["type", "button", "role", "tab", 1, "tab", 3, "active"], ["role", "tabpanel", 1, "symbol-pad"], ["type", "button", 1, "sym"], ["type", "button", "role", "tab", 1, "tab", 3, "mousedown", "click"], ["type", "button", 1, "sym", 3, "mousedown", "click"]], template: function MathPromptEditorComponent_Template(rf, ctx) {
       if (rf & 1) {
         const _r1 = \u0275\u0275getCurrentView();
         \u0275\u0275elementStart(0, "div", 2)(1, "div", 3);
@@ -12717,7 +12752,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         });
         \u0275\u0275text(48, " Tx ");
         \u0275\u0275elementEnd();
-        \u0275\u0275conditionalCreate(49, MathPromptEditorComponent_Conditional_49_Template, 3, 0);
+        \u0275\u0275conditionalCreate(49, MathPromptEditorComponent_Conditional_49_Template, 6, 11);
         \u0275\u0275elementEnd();
         \u0275\u0275conditionalCreate(50, MathPromptEditorComponent_Conditional_50_Template, 29, 25, "div", 22);
         \u0275\u0275conditionalCreate(51, MathPromptEditorComponent_Conditional_51_Template, 7, 3);
@@ -12772,13 +12807,13 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
         \u0275\u0275advance(4);
         \u0275\u0275conditional(!ctx.compact ? 49 : -1);
         \u0275\u0275advance();
-        \u0275\u0275conditional(!ctx.compact && ctx.showFractionBuilder ? 50 : -1);
+        \u0275\u0275conditional(!ctx.compact && ctx.advancedOpen && ctx.showFractionBuilder ? 50 : -1);
         \u0275\u0275advance();
-        \u0275\u0275conditional(!ctx.compact ? 51 : -1);
+        \u0275\u0275conditional(!ctx.compact && ctx.advancedOpen ? 51 : -1);
         \u0275\u0275advance();
         \u0275\u0275attribute("data-placeholder", \u0275\u0275pipeBind1(54, 57, ctx.placeholderKey));
       }
-    }, dependencies: [FormsModule, NgSelectOption, \u0275NgSelectMultipleOption, DefaultValueAccessor, NgControlStatus, NgModel, TranslatePipe], styles: ['\n.math-editor[_ngcontent-%COMP%] {\n  position: relative;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  background: var(--input-bg);\n  overflow: visible;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.math-editor[_ngcontent-%COMP%]:focus-within {\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.math-editor.disabled[_ngcontent-%COMP%] {\n  opacity: 0.65;\n  pointer-events: none;\n}\n.toolbar[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.55rem 0.65rem 0.65rem;\n  background: var(--surface-strong);\n  border-bottom: 1px solid var(--border);\n  border-radius: var(--radius-md) var(--radius-md) 0 0;\n}\n.math-editor[_ngcontent-%COMP%]:has(.color-panel) {\n  z-index: 5;\n}\n.toolbar-row[_ngcontent-%COMP%], \n.symbol-tabs[_ngcontent-%COMP%], \n.symbol-pad[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  align-items: center;\n}\n.toolbar[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  min-width: 2rem;\n  padding: 0.32rem 0.5rem;\n  border-radius: 8px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  line-height: 1.2;\n  box-shadow: none;\n  cursor: pointer;\n}\n.toolbar[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.18);\n  transform: none;\n  box-shadow: none;\n}\n.toolbar[_ngcontent-%COMP%]   button.fmt.italic[_ngcontent-%COMP%] {\n  font-style: italic;\n}\n.toolbar[_ngcontent-%COMP%]   button.fmt.underline[_ngcontent-%COMP%] {\n  text-decoration: underline;\n}\n.toolbar[_ngcontent-%COMP%]   button.fmt.strike[_ngcontent-%COMP%] {\n  text-decoration: line-through;\n}\n.font-select[_ngcontent-%COMP%] {\n  display: inline-flex;\n  margin: 0;\n  min-width: 0;\n}\n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 8.5rem;\n  min-width: 5.5rem;\n  padding: 0.28rem 0.4rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: #ffffff;\n  color: #0f172a;\n  color-scheme: light;\n  font: inherit;\n  font-size: 0.78rem;\n  font-weight: 600;\n  cursor: pointer;\n}\n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #ffffff;\n  color: #0f172a;\n}\n.font-select.size[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 4.4rem;\n  min-width: 3.6rem;\n}\n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:hover, \n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  border-color: rgba(255, 214, 10, 0.55);\n  outline: none;\n  background: #ffffff;\n  color: #0f172a;\n}\n.visually-hidden[_ngcontent-%COMP%] {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n.math-editor.compact[_ngcontent-%COMP%]   .font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 7rem;\n  font-size: 0.72rem;\n}\n.math-editor.compact[_ngcontent-%COMP%]   .font-select.size[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 3.8rem;\n}\n.toolbar[_ngcontent-%COMP%]   button.color-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 0.12rem;\n  min-width: 2.1rem;\n  padding: 0.22rem 0.42rem 0.28rem;\n}\n.toolbar[_ngcontent-%COMP%]   button.color-toggle.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.color-letter[_ngcontent-%COMP%] {\n  font-weight: 800;\n  line-height: 1;\n}\n.color-bar[_ngcontent-%COMP%] {\n  display: block;\n  width: 1.05rem;\n  height: 3px;\n  border-radius: 99px;\n}\n.color-bar.text-bar[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      90deg,\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9);\n}\n.color-bar.highlight-bar[_ngcontent-%COMP%] {\n  background: #fef08a;\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);\n}\n.color-picker[_ngcontent-%COMP%] {\n  position: relative;\n}\n.color-panel[_ngcontent-%COMP%] {\n  position: absolute;\n  z-index: 30;\n  top: calc(100% + 0.3rem);\n  inset-inline-start: 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  width: 11.2rem;\n  padding: 0.5rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);\n}\n.color-panel[_ngcontent-%COMP%]   .swatch[_ngcontent-%COMP%] {\n  width: 1.4rem;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0;\n  border-radius: 6px;\n  border: 1px solid var(--border-strong);\n}\n.color-panel[_ngcontent-%COMP%]   .swatch.light[_ngcontent-%COMP%] {\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);\n}\n.color-panel[_ngcontent-%COMP%]   .swatch.default[_ngcontent-%COMP%] {\n  width: auto;\n  min-width: 100%;\n  height: auto;\n  padding: 0.28rem 0.4rem;\n  font-size: 0.72rem;\n  font-weight: 700;\n}\n.custom-color[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  width: 1.4rem;\n  height: 1.4rem;\n  margin: 0;\n  overflow: hidden;\n  border-radius: 6px;\n  border: 1px dashed var(--border-strong);\n  background:\n    conic-gradient(\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9,\n      #b91c1c);\n}\n.custom-color[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 1.8rem;\n  height: 1.8rem;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  cursor: pointer;\n  transform: scale(1.2);\n}\n.toolbar[_ngcontent-%COMP%]   button.eq[_ngcontent-%COMP%] {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-weight: 600;\n}\n.toolbar[_ngcontent-%COMP%]   .sep[_ngcontent-%COMP%] {\n  width: 1px;\n  align-self: stretch;\n  min-height: 1.6rem;\n  background: var(--border);\n  margin: 0 0.15rem;\n}\n.symbol-tabs[_ngcontent-%COMP%] {\n  gap: 0.25rem;\n  padding-top: 0.15rem;\n  border-top: 1px solid var(--border);\n}\n.symbol-tabs[_ngcontent-%COMP%]   .tab[_ngcontent-%COMP%] {\n  min-width: unset;\n  padding: 0.28rem 0.55rem;\n  font-size: 0.75rem;\n  font-weight: 600;\n  border-radius: 999px;\n  opacity: 0.85;\n}\n.symbol-tabs[_ngcontent-%COMP%]   .tab.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n  opacity: 1;\n}\n.symbol-pad[_ngcontent-%COMP%] {\n  max-height: 7.5rem;\n  overflow-y: auto;\n  padding: 0.15rem 0 0;\n}\n.toolbar[_ngcontent-%COMP%]   button.sym[_ngcontent-%COMP%] {\n  min-width: 1.85rem;\n  padding: 0.28rem 0.38rem;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.toolbar[_ngcontent-%COMP%]   button.eq.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.fraction-builder[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.65rem 0.7rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.fraction-fields[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1fr auto 1fr;\n  gap: 0.65rem;\n  align-items: end;\n}\n.frac-field[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.3rem;\n  margin: 0;\n}\n.frac-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.frac-field[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  text-align: center;\n}\n.frac-preview[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: 3rem;\n  padding-bottom: 0.15rem;\n}\n.fraction-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.fraction-actions[_ngcontent-%COMP%]   .primary[_ngcontent-%COMP%], \n.fraction-actions[_ngcontent-%COMP%]   .ghost[_ngcontent-%COMP%] {\n  min-width: unset;\n  padding: 0.4rem 0.75rem;\n  border-radius: 8px;\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.fraction-actions[_ngcontent-%COMP%]   .primary[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.28);\n  border-color: rgba(255, 214, 10, 0.55);\n  color: var(--text);\n}\n.fraction-actions[_ngcontent-%COMP%]   .ghost[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--text-muted);\n}\n@media (max-width: 560px) {\n  .fraction-fields[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n    justify-items: stretch;\n  }\n  .frac-preview[_ngcontent-%COMP%] {\n    order: -1;\n    justify-self: center;\n  }\n}\n.math-editor.compact[_ngcontent-%COMP%]   .toolbar[_ngcontent-%COMP%] {\n  padding: 0.4rem 0.5rem 0.45rem;\n}\n.math-editor.compact[_ngcontent-%COMP%]   .surface[_ngcontent-%COMP%] {\n  min-height: 2.7rem;\n  padding: 0.45rem 0.7rem;\n  line-height: 1.5;\n}\n.surface[_ngcontent-%COMP%] {\n  min-height: 7rem;\n  padding: 0.85rem 1rem;\n  color: var(--text);\n  font-size: 1rem;\n  line-height: 1.85;\n  outline: none;\n  border-radius: 0 0 var(--radius-md) var(--radius-md);\n}\n.surface[_ngcontent-%COMP%]:empty::before {\n  content: attr(data-placeholder);\n  color: var(--text-soft);\n}\n.frac-preview[_ngcontent-%COMP%]   .math-frac[_ngcontent-%COMP%] {\n  font-size: 1.15rem;\n}\n.math-sqrt[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: stretch;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-sqrt-radic[_ngcontent-%COMP%] {\n  line-height: 1;\n  align-self: flex-end;\n  padding-bottom: 0.05em;\n}\n.math-sqrt-body[_ngcontent-%COMP%] {\n  border-top: 1.5px solid currentColor;\n  padding: 0 0.22em 0 0.04em;\n  margin-left: -0.02em;\n  min-width: 0.7em;\n}\n.math-nroot[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: flex-start;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-nroot-index[_ngcontent-%COMP%] {\n  font-size: 0.65em;\n  margin-right: -0.15em;\n  margin-top: 0.1em;\n}\n.math-abs[_ngcontent-%COMP%] {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  white-space: nowrap;\n}\n/*# sourceMappingURL=math-prompt-editor.component.css.map */'] });
+    }, dependencies: [FormsModule, NgSelectOption, \u0275NgSelectMultipleOption, DefaultValueAccessor, NgControlStatus, NgModel, TranslatePipe], styles: ['\n.math-editor[_ngcontent-%COMP%] {\n  position: relative;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  background: var(--input-bg);\n  overflow: visible;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.math-editor[_ngcontent-%COMP%]:focus-within {\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.math-editor.disabled[_ngcontent-%COMP%] {\n  opacity: 0.65;\n  pointer-events: none;\n}\n.toolbar[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.55rem 0.65rem 0.65rem;\n  background: var(--surface-strong);\n  border-bottom: 1px solid var(--border);\n  border-radius: var(--radius-md) var(--radius-md) 0 0;\n}\n.math-editor[_ngcontent-%COMP%]:has(.color-panel) {\n  z-index: 5;\n}\n.toolbar-row[_ngcontent-%COMP%], \n.symbol-tabs[_ngcontent-%COMP%], \n.symbol-pad[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  align-items: center;\n}\n.toolbar[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  min-width: 2rem;\n  padding: 0.32rem 0.5rem;\n  border-radius: 8px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  line-height: 1.2;\n  box-shadow: none;\n  cursor: pointer;\n}\n.toolbar[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.18);\n  transform: none;\n  box-shadow: none;\n}\n.toolbar[_ngcontent-%COMP%]   button.fmt.italic[_ngcontent-%COMP%] {\n  font-style: italic;\n}\n.toolbar[_ngcontent-%COMP%]   button.fmt.underline[_ngcontent-%COMP%] {\n  text-decoration: underline;\n}\n.toolbar[_ngcontent-%COMP%]   button.fmt.strike[_ngcontent-%COMP%] {\n  text-decoration: line-through;\n}\n.font-select[_ngcontent-%COMP%] {\n  display: inline-flex;\n  margin: 0;\n  min-width: 0;\n}\n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 8.5rem;\n  min-width: 5.5rem;\n  padding: 0.28rem 0.4rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: #ffffff;\n  color: #0f172a;\n  color-scheme: light;\n  font: inherit;\n  font-size: 0.78rem;\n  font-weight: 600;\n  cursor: pointer;\n}\n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]   option[_ngcontent-%COMP%] {\n  background: #ffffff;\n  color: #0f172a;\n}\n.font-select.size[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 4.4rem;\n  min-width: 3.6rem;\n}\n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:hover, \n.font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%]:focus {\n  border-color: rgba(255, 214, 10, 0.55);\n  outline: none;\n  background: #ffffff;\n  color: #0f172a;\n}\n.visually-hidden[_ngcontent-%COMP%] {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n.math-editor.compact[_ngcontent-%COMP%]   .font-select[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 7rem;\n  font-size: 0.72rem;\n}\n.math-editor.compact[_ngcontent-%COMP%]   .font-select.size[_ngcontent-%COMP%]   select[_ngcontent-%COMP%] {\n  max-width: 3.8rem;\n}\n.toolbar[_ngcontent-%COMP%]   button.color-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 0.12rem;\n  min-width: 2.1rem;\n  padding: 0.22rem 0.42rem 0.28rem;\n}\n.toolbar[_ngcontent-%COMP%]   button.color-toggle.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.color-letter[_ngcontent-%COMP%] {\n  font-weight: 800;\n  line-height: 1;\n}\n.color-bar[_ngcontent-%COMP%] {\n  display: block;\n  width: 1.05rem;\n  height: 3px;\n  border-radius: 99px;\n}\n.color-bar.text-bar[_ngcontent-%COMP%] {\n  background:\n    linear-gradient(\n      90deg,\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9);\n}\n.color-bar.highlight-bar[_ngcontent-%COMP%] {\n  background: #fef08a;\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);\n}\n.color-picker[_ngcontent-%COMP%] {\n  position: relative;\n}\n.color-panel[_ngcontent-%COMP%] {\n  position: absolute;\n  z-index: 30;\n  top: calc(100% + 0.3rem);\n  inset-inline-start: 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  width: 11.2rem;\n  padding: 0.5rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);\n}\n.color-panel[_ngcontent-%COMP%]   .swatch[_ngcontent-%COMP%] {\n  width: 1.4rem;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0;\n  border-radius: 6px;\n  border: 1px solid var(--border-strong);\n}\n.color-panel[_ngcontent-%COMP%]   .swatch.light[_ngcontent-%COMP%] {\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);\n}\n.color-panel[_ngcontent-%COMP%]   .swatch.default[_ngcontent-%COMP%] {\n  width: auto;\n  min-width: 100%;\n  height: auto;\n  padding: 0.28rem 0.4rem;\n  font-size: 0.72rem;\n  font-weight: 700;\n}\n.custom-color[_ngcontent-%COMP%] {\n  display: grid;\n  place-items: center;\n  width: 1.4rem;\n  height: 1.4rem;\n  margin: 0;\n  overflow: hidden;\n  border-radius: 6px;\n  border: 1px dashed var(--border-strong);\n  background:\n    conic-gradient(\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9,\n      #b91c1c);\n}\n.custom-color[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 1.8rem;\n  height: 1.8rem;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  cursor: pointer;\n  transform: scale(1.2);\n}\n.toolbar[_ngcontent-%COMP%]   button.eq[_ngcontent-%COMP%] {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-weight: 600;\n}\n.toolbar[_ngcontent-%COMP%]   button.advanced-toggle[_ngcontent-%COMP%] {\n  margin-inline-start: auto;\n  font-size: 0.9rem;\n  line-height: 1;\n  color: var(--text-muted);\n}\n.toolbar[_ngcontent-%COMP%]   button.advanced-toggle.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n  color: var(--text);\n}\n@media (max-width: 560px) {\n  .toolbar[_ngcontent-%COMP%]   button.advanced-toggle[_ngcontent-%COMP%] {\n    margin-inline-start: 0;\n  }\n}\n.toolbar[_ngcontent-%COMP%]   .sep[_ngcontent-%COMP%] {\n  width: 1px;\n  align-self: stretch;\n  min-height: 1.6rem;\n  background: var(--border);\n  margin: 0 0.15rem;\n}\n.symbol-tabs[_ngcontent-%COMP%] {\n  gap: 0.25rem;\n  padding-top: 0.15rem;\n  border-top: 1px solid var(--border);\n}\n.symbol-tabs[_ngcontent-%COMP%]   .tab[_ngcontent-%COMP%] {\n  min-width: unset;\n  padding: 0.28rem 0.55rem;\n  font-size: 0.75rem;\n  font-weight: 600;\n  border-radius: 999px;\n  opacity: 0.85;\n}\n.symbol-tabs[_ngcontent-%COMP%]   .tab.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n  opacity: 1;\n}\n.symbol-pad[_ngcontent-%COMP%] {\n  max-height: 7.5rem;\n  overflow-y: auto;\n  padding: 0.15rem 0 0;\n}\n.toolbar[_ngcontent-%COMP%]   button.sym[_ngcontent-%COMP%] {\n  min-width: 1.85rem;\n  padding: 0.28rem 0.38rem;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.toolbar[_ngcontent-%COMP%]   button.eq.active[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.fraction-builder[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.65rem 0.7rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.fraction-fields[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: 1fr auto 1fr;\n  gap: 0.65rem;\n  align-items: end;\n}\n.frac-field[_ngcontent-%COMP%] {\n  display: grid;\n  gap: 0.3rem;\n  margin: 0;\n}\n.frac-field[_ngcontent-%COMP%]    > span[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.frac-field[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  text-align: center;\n}\n.frac-preview[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: 3rem;\n  padding-bottom: 0.15rem;\n}\n.fraction-actions[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.fraction-actions[_ngcontent-%COMP%]   .primary[_ngcontent-%COMP%], \n.fraction-actions[_ngcontent-%COMP%]   .ghost[_ngcontent-%COMP%] {\n  min-width: unset;\n  padding: 0.4rem 0.75rem;\n  border-radius: 8px;\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.fraction-actions[_ngcontent-%COMP%]   .primary[_ngcontent-%COMP%] {\n  background: rgba(255, 214, 10, 0.28);\n  border-color: rgba(255, 214, 10, 0.55);\n  color: var(--text);\n}\n.fraction-actions[_ngcontent-%COMP%]   .ghost[_ngcontent-%COMP%] {\n  background: transparent;\n  color: var(--text-muted);\n}\n@media (max-width: 560px) {\n  .fraction-fields[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n    justify-items: stretch;\n  }\n  .frac-preview[_ngcontent-%COMP%] {\n    order: -1;\n    justify-self: center;\n  }\n}\n.math-editor.compact[_ngcontent-%COMP%]   .toolbar[_ngcontent-%COMP%] {\n  padding: 0.4rem 0.5rem 0.45rem;\n}\n.math-editor.compact[_ngcontent-%COMP%]   .surface[_ngcontent-%COMP%] {\n  min-height: 2.7rem;\n  padding: 0.45rem 0.7rem;\n  line-height: 1.5;\n}\n.surface[_ngcontent-%COMP%] {\n  min-height: 7rem;\n  padding: 0.85rem 1rem;\n  color: var(--text);\n  font-size: 1rem;\n  line-height: 1.85;\n  outline: none;\n  border-radius: 0 0 var(--radius-md) var(--radius-md);\n}\n.surface[_ngcontent-%COMP%]:empty::before {\n  content: attr(data-placeholder);\n  color: var(--text-soft);\n}\n.frac-preview[_ngcontent-%COMP%]   .math-frac[_ngcontent-%COMP%] {\n  font-size: 1.15rem;\n}\n.math-sqrt[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: stretch;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-sqrt-radic[_ngcontent-%COMP%] {\n  line-height: 1;\n  align-self: flex-end;\n  padding-bottom: 0.05em;\n}\n.math-sqrt-body[_ngcontent-%COMP%] {\n  border-top: 1.5px solid currentColor;\n  padding: 0 0.22em 0 0.04em;\n  margin-left: -0.02em;\n  min-width: 0.7em;\n}\n.math-nroot[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: flex-start;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-nroot-index[_ngcontent-%COMP%] {\n  font-size: 0.65em;\n  margin-right: -0.15em;\n  margin-top: 0.1em;\n}\n.math-abs[_ngcontent-%COMP%] {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  white-space: nowrap;\n}\n/*# sourceMappingURL=math-prompt-editor.component.css.map */'] });
   }
 };
 (() => {
@@ -12953,22 +12988,35 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
 \r
       @if (!compact) {\r
         <span class="sep" aria-hidden="true"></span>\r
-        @for (tool of equationTools; track tool.id) {\r
-          <button\r
-            type="button"\r
-            class="eq"\r
-            [class.active]="tool.id === 'fraction' && showFractionBuilder"\r
-            (mousedown)="$event.preventDefault()"\r
-            (click)="runEquationTool(tool.id)"\r
-            [attr.title]="tool.titleKey | t"\r
-            [attr.aria-label]="tool.titleKey | t">\r
-            {{ tool.label }}\r
-          </button>\r
+        <button\r
+          type="button"\r
+          class="fmt advanced-toggle"\r
+          [class.active]="advancedOpen"\r
+          (mousedown)="$event.preventDefault()"\r
+          (click)="toggleAdvanced()"\r
+          [attr.aria-expanded]="advancedOpen"\r
+          [attr.title]="(advancedOpen ? 'editor.hideAdvanced' : 'editor.showAdvanced') | t"\r
+          [attr.aria-label]="(advancedOpen ? 'editor.hideAdvanced' : 'editor.showAdvanced') | t">\r
+          {{ advancedOpen ? '\u25B4' : '\u25BE' }}\r
+        </button>\r
+        @if (advancedOpen) {\r
+          @for (tool of equationTools; track tool.id) {\r
+            <button\r
+              type="button"\r
+              class="eq"\r
+              [class.active]="tool.id === 'fraction' && showFractionBuilder"\r
+              (mousedown)="$event.preventDefault()"\r
+              (click)="runEquationTool(tool.id)"\r
+              [attr.title]="tool.titleKey | t"\r
+              [attr.aria-label]="tool.titleKey | t">\r
+              {{ tool.label }}\r
+            </button>\r
+          }\r
         }\r
       }\r
     </div>\r
 \r
-    @if (!compact && showFractionBuilder) {\r
+    @if (!compact && advancedOpen && showFractionBuilder) {\r
       <div class="fraction-builder" role="group" [attr.aria-label]="'editor.fractionBuilder' | t">\r
         <div class="fraction-fields">\r
           <label class="frac-field">\r
@@ -13002,7 +13050,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
       </div>\r
     }\r
 \r
-    @if (!compact) {\r
+    @if (!compact && advancedOpen) {\r
       <div class="symbol-tabs" role="tablist" [attr.aria-label]="'editor.symbolGroups' | t">\r
         @for (group of symbolGroups; track group.id) {\r
           <button\r
@@ -13044,7 +13092,7 @@ var MathPromptEditorComponent = class _MathPromptEditorComponent {
     (blur)="onBlur()"\r
     [attr.data-placeholder]="placeholderKey | t"></div>\r
 </div>\r
-`, styles: ['/* src/app/shared/math-prompt-editor/math-prompt-editor.component.css */\n.math-editor {\n  position: relative;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  background: var(--input-bg);\n  overflow: visible;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.math-editor:focus-within {\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.math-editor.disabled {\n  opacity: 0.65;\n  pointer-events: none;\n}\n.toolbar {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.55rem 0.65rem 0.65rem;\n  background: var(--surface-strong);\n  border-bottom: 1px solid var(--border);\n  border-radius: var(--radius-md) var(--radius-md) 0 0;\n}\n.math-editor:has(.color-panel) {\n  z-index: 5;\n}\n.toolbar-row,\n.symbol-tabs,\n.symbol-pad {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  align-items: center;\n}\n.toolbar button {\n  min-width: 2rem;\n  padding: 0.32rem 0.5rem;\n  border-radius: 8px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  line-height: 1.2;\n  box-shadow: none;\n  cursor: pointer;\n}\n.toolbar button:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.18);\n  transform: none;\n  box-shadow: none;\n}\n.toolbar button.fmt.italic {\n  font-style: italic;\n}\n.toolbar button.fmt.underline {\n  text-decoration: underline;\n}\n.toolbar button.fmt.strike {\n  text-decoration: line-through;\n}\n.font-select {\n  display: inline-flex;\n  margin: 0;\n  min-width: 0;\n}\n.font-select select {\n  max-width: 8.5rem;\n  min-width: 5.5rem;\n  padding: 0.28rem 0.4rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: #ffffff;\n  color: #0f172a;\n  color-scheme: light;\n  font: inherit;\n  font-size: 0.78rem;\n  font-weight: 600;\n  cursor: pointer;\n}\n.font-select select option {\n  background: #ffffff;\n  color: #0f172a;\n}\n.font-select.size select {\n  max-width: 4.4rem;\n  min-width: 3.6rem;\n}\n.font-select select:hover,\n.font-select select:focus {\n  border-color: rgba(255, 214, 10, 0.55);\n  outline: none;\n  background: #ffffff;\n  color: #0f172a;\n}\n.visually-hidden {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n.math-editor.compact .font-select select {\n  max-width: 7rem;\n  font-size: 0.72rem;\n}\n.math-editor.compact .font-select.size select {\n  max-width: 3.8rem;\n}\n.toolbar button.color-toggle {\n  display: inline-flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 0.12rem;\n  min-width: 2.1rem;\n  padding: 0.22rem 0.42rem 0.28rem;\n}\n.toolbar button.color-toggle.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.color-letter {\n  font-weight: 800;\n  line-height: 1;\n}\n.color-bar {\n  display: block;\n  width: 1.05rem;\n  height: 3px;\n  border-radius: 99px;\n}\n.color-bar.text-bar {\n  background:\n    linear-gradient(\n      90deg,\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9);\n}\n.color-bar.highlight-bar {\n  background: #fef08a;\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);\n}\n.color-picker {\n  position: relative;\n}\n.color-panel {\n  position: absolute;\n  z-index: 30;\n  top: calc(100% + 0.3rem);\n  inset-inline-start: 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  width: 11.2rem;\n  padding: 0.5rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);\n}\n.color-panel .swatch {\n  width: 1.4rem;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0;\n  border-radius: 6px;\n  border: 1px solid var(--border-strong);\n}\n.color-panel .swatch.light {\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);\n}\n.color-panel .swatch.default {\n  width: auto;\n  min-width: 100%;\n  height: auto;\n  padding: 0.28rem 0.4rem;\n  font-size: 0.72rem;\n  font-weight: 700;\n}\n.custom-color {\n  display: grid;\n  place-items: center;\n  width: 1.4rem;\n  height: 1.4rem;\n  margin: 0;\n  overflow: hidden;\n  border-radius: 6px;\n  border: 1px dashed var(--border-strong);\n  background:\n    conic-gradient(\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9,\n      #b91c1c);\n}\n.custom-color input {\n  width: 1.8rem;\n  height: 1.8rem;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  cursor: pointer;\n  transform: scale(1.2);\n}\n.toolbar button.eq {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-weight: 600;\n}\n.toolbar .sep {\n  width: 1px;\n  align-self: stretch;\n  min-height: 1.6rem;\n  background: var(--border);\n  margin: 0 0.15rem;\n}\n.symbol-tabs {\n  gap: 0.25rem;\n  padding-top: 0.15rem;\n  border-top: 1px solid var(--border);\n}\n.symbol-tabs .tab {\n  min-width: unset;\n  padding: 0.28rem 0.55rem;\n  font-size: 0.75rem;\n  font-weight: 600;\n  border-radius: 999px;\n  opacity: 0.85;\n}\n.symbol-tabs .tab.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n  opacity: 1;\n}\n.symbol-pad {\n  max-height: 7.5rem;\n  overflow-y: auto;\n  padding: 0.15rem 0 0;\n}\n.toolbar button.sym {\n  min-width: 1.85rem;\n  padding: 0.28rem 0.38rem;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.toolbar button.eq.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.fraction-builder {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.65rem 0.7rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.fraction-fields {\n  display: grid;\n  grid-template-columns: 1fr auto 1fr;\n  gap: 0.65rem;\n  align-items: end;\n}\n.frac-field {\n  display: grid;\n  gap: 0.3rem;\n  margin: 0;\n}\n.frac-field > span {\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.frac-field input {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  text-align: center;\n}\n.frac-preview {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: 3rem;\n  padding-bottom: 0.15rem;\n}\n.fraction-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.fraction-actions .primary,\n.fraction-actions .ghost {\n  min-width: unset;\n  padding: 0.4rem 0.75rem;\n  border-radius: 8px;\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.fraction-actions .primary {\n  background: rgba(255, 214, 10, 0.28);\n  border-color: rgba(255, 214, 10, 0.55);\n  color: var(--text);\n}\n.fraction-actions .ghost {\n  background: transparent;\n  color: var(--text-muted);\n}\n@media (max-width: 560px) {\n  .fraction-fields {\n    grid-template-columns: 1fr;\n    justify-items: stretch;\n  }\n  .frac-preview {\n    order: -1;\n    justify-self: center;\n  }\n}\n.math-editor.compact .toolbar {\n  padding: 0.4rem 0.5rem 0.45rem;\n}\n.math-editor.compact .surface {\n  min-height: 2.7rem;\n  padding: 0.45rem 0.7rem;\n  line-height: 1.5;\n}\n.surface {\n  min-height: 7rem;\n  padding: 0.85rem 1rem;\n  color: var(--text);\n  font-size: 1rem;\n  line-height: 1.85;\n  outline: none;\n  border-radius: 0 0 var(--radius-md) var(--radius-md);\n}\n.surface:empty::before {\n  content: attr(data-placeholder);\n  color: var(--text-soft);\n}\n.frac-preview .math-frac {\n  font-size: 1.15rem;\n}\n.math-sqrt {\n  display: inline-flex;\n  align-items: stretch;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-sqrt-radic {\n  line-height: 1;\n  align-self: flex-end;\n  padding-bottom: 0.05em;\n}\n.math-sqrt-body {\n  border-top: 1.5px solid currentColor;\n  padding: 0 0.22em 0 0.04em;\n  margin-left: -0.02em;\n  min-width: 0.7em;\n}\n.math-nroot {\n  display: inline-flex;\n  align-items: flex-start;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-nroot-index {\n  font-size: 0.65em;\n  margin-right: -0.15em;\n  margin-top: 0.1em;\n}\n.math-abs {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  white-space: nowrap;\n}\n/*# sourceMappingURL=math-prompt-editor.component.css.map */\n'] }]
+`, styles: ['/* src/app/shared/math-prompt-editor/math-prompt-editor.component.css */\n.math-editor {\n  position: relative;\n  border: 1px solid var(--border-strong);\n  border-radius: var(--radius-md);\n  background: var(--input-bg);\n  overflow: visible;\n  transition: border-color 0.15s ease, box-shadow 0.15s ease;\n}\n.math-editor:focus-within {\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.math-editor.disabled {\n  opacity: 0.65;\n  pointer-events: none;\n}\n.toolbar {\n  display: flex;\n  flex-direction: column;\n  gap: 0.45rem;\n  padding: 0.55rem 0.65rem 0.65rem;\n  background: var(--surface-strong);\n  border-bottom: 1px solid var(--border);\n  border-radius: var(--radius-md) var(--radius-md) 0 0;\n}\n.math-editor:has(.color-panel) {\n  z-index: 5;\n}\n.toolbar-row,\n.symbol-tabs,\n.symbol-pad {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  align-items: center;\n}\n.toolbar button {\n  min-width: 2rem;\n  padding: 0.32rem 0.5rem;\n  border-radius: 8px;\n  background: var(--elevated-bg-hover);\n  color: var(--text);\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  line-height: 1.2;\n  box-shadow: none;\n  cursor: pointer;\n}\n.toolbar button:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.18);\n  transform: none;\n  box-shadow: none;\n}\n.toolbar button.fmt.italic {\n  font-style: italic;\n}\n.toolbar button.fmt.underline {\n  text-decoration: underline;\n}\n.toolbar button.fmt.strike {\n  text-decoration: line-through;\n}\n.font-select {\n  display: inline-flex;\n  margin: 0;\n  min-width: 0;\n}\n.font-select select {\n  max-width: 8.5rem;\n  min-width: 5.5rem;\n  padding: 0.28rem 0.4rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: #ffffff;\n  color: #0f172a;\n  color-scheme: light;\n  font: inherit;\n  font-size: 0.78rem;\n  font-weight: 600;\n  cursor: pointer;\n}\n.font-select select option {\n  background: #ffffff;\n  color: #0f172a;\n}\n.font-select.size select {\n  max-width: 4.4rem;\n  min-width: 3.6rem;\n}\n.font-select select:hover,\n.font-select select:focus {\n  border-color: rgba(255, 214, 10, 0.55);\n  outline: none;\n  background: #ffffff;\n  color: #0f172a;\n}\n.visually-hidden {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n.math-editor.compact .font-select select {\n  max-width: 7rem;\n  font-size: 0.72rem;\n}\n.math-editor.compact .font-select.size select {\n  max-width: 3.8rem;\n}\n.toolbar button.color-toggle {\n  display: inline-flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  gap: 0.12rem;\n  min-width: 2.1rem;\n  padding: 0.22rem 0.42rem 0.28rem;\n}\n.toolbar button.color-toggle.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.color-letter {\n  font-weight: 800;\n  line-height: 1;\n}\n.color-bar {\n  display: block;\n  width: 1.05rem;\n  height: 3px;\n  border-radius: 99px;\n}\n.color-bar.text-bar {\n  background:\n    linear-gradient(\n      90deg,\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9);\n}\n.color-bar.highlight-bar {\n  background: #fef08a;\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);\n}\n.color-picker {\n  position: relative;\n}\n.color-panel {\n  position: absolute;\n  z-index: 30;\n  top: calc(100% + 0.3rem);\n  inset-inline-start: 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.3rem;\n  width: 11.2rem;\n  padding: 0.5rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);\n}\n.color-panel .swatch {\n  width: 1.4rem;\n  min-width: 1.4rem;\n  height: 1.4rem;\n  padding: 0;\n  border-radius: 6px;\n  border: 1px solid var(--border-strong);\n}\n.color-panel .swatch.light {\n  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);\n}\n.color-panel .swatch.default {\n  width: auto;\n  min-width: 100%;\n  height: auto;\n  padding: 0.28rem 0.4rem;\n  font-size: 0.72rem;\n  font-weight: 700;\n}\n.custom-color {\n  display: grid;\n  place-items: center;\n  width: 1.4rem;\n  height: 1.4rem;\n  margin: 0;\n  overflow: hidden;\n  border-radius: 6px;\n  border: 1px dashed var(--border-strong);\n  background:\n    conic-gradient(\n      #b91c1c,\n      #f9a825,\n      #15803d,\n      #1d4ed8,\n      #6d28d9,\n      #b91c1c);\n}\n.custom-color input {\n  width: 1.8rem;\n  height: 1.8rem;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  cursor: pointer;\n  transform: scale(1.2);\n}\n.toolbar button.eq {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-weight: 600;\n}\n.toolbar button.advanced-toggle {\n  margin-inline-start: auto;\n  font-size: 0.9rem;\n  line-height: 1;\n  color: var(--text-muted);\n}\n.toolbar button.advanced-toggle.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n  color: var(--text);\n}\n@media (max-width: 560px) {\n  .toolbar button.advanced-toggle {\n    margin-inline-start: 0;\n  }\n}\n.toolbar .sep {\n  width: 1px;\n  align-self: stretch;\n  min-height: 1.6rem;\n  background: var(--border);\n  margin: 0 0.15rem;\n}\n.symbol-tabs {\n  gap: 0.25rem;\n  padding-top: 0.15rem;\n  border-top: 1px solid var(--border);\n}\n.symbol-tabs .tab {\n  min-width: unset;\n  padding: 0.28rem 0.55rem;\n  font-size: 0.75rem;\n  font-weight: 600;\n  border-radius: 999px;\n  opacity: 0.85;\n}\n.symbol-tabs .tab.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n  opacity: 1;\n}\n.symbol-pad {\n  max-height: 7.5rem;\n  overflow-y: auto;\n  padding: 0.15rem 0 0;\n}\n.toolbar button.sym {\n  min-width: 1.85rem;\n  padding: 0.28rem 0.38rem;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.toolbar button.eq.active {\n  background: rgba(255, 214, 10, 0.22);\n  border-color: rgba(255, 214, 10, 0.55);\n}\n.fraction-builder {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.65rem 0.7rem;\n  border-radius: 10px;\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.fraction-fields {\n  display: grid;\n  grid-template-columns: 1fr auto 1fr;\n  gap: 0.65rem;\n  align-items: end;\n}\n.frac-field {\n  display: grid;\n  gap: 0.3rem;\n  margin: 0;\n}\n.frac-field > span {\n  font-size: 0.75rem;\n  font-weight: 700;\n  color: var(--text-muted);\n}\n.frac-field input {\n  width: 100%;\n  box-sizing: border-box;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  font: inherit;\n  text-align: center;\n}\n.frac-preview {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-width: 3rem;\n  padding-bottom: 0.15rem;\n}\n.fraction-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n}\n.fraction-actions .primary,\n.fraction-actions .ghost {\n  min-width: unset;\n  padding: 0.4rem 0.75rem;\n  border-radius: 8px;\n  border: 1px solid var(--border);\n  font-weight: 700;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.fraction-actions .primary {\n  background: rgba(255, 214, 10, 0.28);\n  border-color: rgba(255, 214, 10, 0.55);\n  color: var(--text);\n}\n.fraction-actions .ghost {\n  background: transparent;\n  color: var(--text-muted);\n}\n@media (max-width: 560px) {\n  .fraction-fields {\n    grid-template-columns: 1fr;\n    justify-items: stretch;\n  }\n  .frac-preview {\n    order: -1;\n    justify-self: center;\n  }\n}\n.math-editor.compact .toolbar {\n  padding: 0.4rem 0.5rem 0.45rem;\n}\n.math-editor.compact .surface {\n  min-height: 2.7rem;\n  padding: 0.45rem 0.7rem;\n  line-height: 1.5;\n}\n.surface {\n  min-height: 7rem;\n  padding: 0.85rem 1rem;\n  color: var(--text);\n  font-size: 1rem;\n  line-height: 1.85;\n  outline: none;\n  border-radius: 0 0 var(--radius-md) var(--radius-md);\n}\n.surface:empty::before {\n  content: attr(data-placeholder);\n  color: var(--text-soft);\n}\n.frac-preview .math-frac {\n  font-size: 1.15rem;\n}\n.math-sqrt {\n  display: inline-flex;\n  align-items: stretch;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-sqrt-radic {\n  line-height: 1;\n  align-self: flex-end;\n  padding-bottom: 0.05em;\n}\n.math-sqrt-body {\n  border-top: 1.5px solid currentColor;\n  padding: 0 0.22em 0 0.04em;\n  margin-left: -0.02em;\n  min-width: 0.7em;\n}\n.math-nroot {\n  display: inline-flex;\n  align-items: flex-start;\n  vertical-align: middle;\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n}\n.math-nroot-index {\n  font-size: 0.65em;\n  margin-right: -0.15em;\n  margin-top: 0.1em;\n}\n.math-abs {\n  font-family:\n    Georgia,\n    "Times New Roman",\n    serif;\n  white-space: nowrap;\n}\n/*# sourceMappingURL=math-prompt-editor.component.css.map */\n'] }]
   }], null, { editor: [{
     type: ViewChild,
     args: ["editor", { static: true }]
@@ -72489,208 +72537,208 @@ var AdminRolesComponent = class _AdminRolesComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AdminRolesComponent, [{
     type: Component,
-    args: [{ selector: "app-admin-roles", imports: [PageFeedbackComponent, SearchableSelectComponent, TranslatePipe, FormsModule], template: `<div class="panel-page">
-  <h2>{{ 'roles.title' | t }}</h2>
-  <p class="meta">{{ 'roles.subtitle' | t }}</p>
-
-  <app-page-feedback [ok]="message()" [error]="error()" />
-
-  <div class="page-actions">
-    <button type="button" (click)="openCreate()">{{ 'roles.create' | t }}</button>
-  </div>
-
-  <section class="block">
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>{{ 'roles.displayName' | t }}</th>
-            <th>{{ 'roles.name' | t }}</th>
-            <th>{{ 'roles.type' | t }}</th>
-            <th>{{ 'roles.pageCount' | t }}</th>
-            <th>{{ 'roles.members' | t }}</th>
-            <th>{{ 'common.actions' | t }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (role of roles(); track role.id) {
-            <tr>
-              <td>
-                {{ role.displayName }}
-                @if (role.isSystem) {
-                  <span class="chip">{{ 'roles.system' | t }}</span>
-                }
-              </td>
-              <td><code>{{ role.name }}</code></td>
-              <td>{{ roleTypeLabel(role) }}</td>
-              <td>{{ role.pages.length }}</td>
-              <td>{{ role.memberCount }}</td>
-              <td class="row-actions">
-                @if (role.isSystem) {
-                  <span class="meta">{{ 'roles.systemLocked' | t }}</span>
-                } @else {
-                  <button type="button" class="ghost-btn" (click)="openEdit(role)">{{ 'common.edit' | t }}</button>
-                  <button type="button" class="ghost-btn danger" (click)="deleteRole(role)">{{ 'common.delete' | t }}</button>
-                }
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="6">{{ 'common.noData' | t }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="block">
-    <h3>{{ 'roles.membersTitle' | t }}</h3>
-    <p class="meta">{{ 'roles.membersHint' | t }}</p>
-
-    <label>
-      {{ 'roles.chooseRole' | t }}
-      <app-searchable-select
-        [ngModel]="membersRoleId()"
-        (ngModelChange)="selectMembersRole($event ?? '')"
-        name="membersRole"
-        [options]="roleOptions()"
-        [emptyLabel]="'roles.chooseRole' | t"
-      />
-    </label>
-
-    @if (selectedMembersRole(); as role) {
-      <div class="list-filters">
-        <app-searchable-select
-          [ngModel]="selectedUserId()"
-          (ngModelChange)="selectedUserId.set($event ?? '')"
-          name="assignUser"
-          [options]="userOptions()"
-          [emptyLabel]="'roles.chooseUser' | t"
-        />
-        <button type="button" (click)="assignUser()" [disabled]="!selectedUserId()">
-          {{ 'roles.assign' | t }}
-        </button>
-        <span class="meta">{{ roleTypeLabel(role) }}</span>
-      </div>
-
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>{{ 'common.name' | t }}</th>
-              <th>{{ 'common.email' | t }}</th>
-              <th>{{ 'roles.accountRole' | t }}</th>
-              <th>{{ 'roles.assigned' | t }}</th>
-              <th>{{ 'common.actions' | t }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (member of members(); track member.userId) {
-              <tr>
-                <td>{{ member.displayName }}</td>
-                <td>{{ member.email || ('common.emDash' | t) }}</td>
-                <td>{{ member.role }}</td>
-                <td>{{ formatUtc(member.assignedAtUtc) }}</td>
-                <td>
-                  <button type="button" class="ghost-btn danger" (click)="removeMember(member)">
-                    {{ 'roles.remove' | t }}
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="5">{{ 'roles.noMembers' | t }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-  </section>
-</div>
-
-@if (formOpen()) {
-  <div class="modal-backdrop">
-    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true">
-      <div class="modal-head">
-        <h3>{{ (editingId() ? 'roles.editTitle' : 'roles.newTitle') | t }}</h3>
-        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.close' | t }}</button>
-      </div>
-
-      <app-page-feedback [error]="error()" />
-
-      <form class="meeting-form" autocomplete="off" (ngSubmit)="save()">
-        <label>
-          {{ 'roles.displayName' | t }}
-          <input
-            [ngModel]="formDisplayName()"
-            (ngModelChange)="formDisplayName.set($event)"
-            name="roleDisplayName"
-            required
-          />
-        </label>
-        <label>
-          {{ 'roles.name' | t }}
-          <input
-            [ngModel]="formName()"
-            (ngModelChange)="formName.set($event)"
-            name="roleName"
-            [disabled]="editingId() !== null"
-            required
-          />
-          <span class="meta">{{ 'roles.nameHint' | t }}</span>
-        </label>
-        <label>
-          {{ 'roles.type' | t }}
-          <app-searchable-select
-            [ngModel]="formBaseRole()"
-            (ngModelChange)="formBaseRole.set($event)"
-            name="roleBaseRole"
-            [options]="baseRoleOptions()"
-            [disabled]="editingId() !== null"
-            [clearable]="false"
-          />
-          <span class="meta">{{ 'roles.typeHint' | t }}</span>
-        </label>
-        <label>
-          {{ 'roles.description' | t }}
-          <input
-            [ngModel]="formDescription()"
-            (ngModelChange)="formDescription.set($event)"
-            name="roleDescription"
-          />
-        </label>
-
-        <fieldset class="role-pages">
-          <legend>{{ 'roles.selectPages' | t }}</legend>
-          @for (group of catalogueGroups(); track group.labelKey) {
-            <div class="role-page-group">
-              <strong>{{ group.labelKey | t }}</strong>
-              <div class="chip-row">
-                @for (page of group.pages; track page.key) {
-                  <label class="role-page-toggle">
-                    <input
-                      type="checkbox"
-                      [checked]="isPageSelected(page.key)"
-                      (change)="togglePage(page.key)"
-                    />
-                    <span>{{ page.labelKey | t }}</span>
-                  </label>
-                }
-              </div>
-            </div>
-          }
-        </fieldset>
-
-        <div class="form-actions">
-          <button type="submit">{{ 'common.save' | t }}</button>
-          <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>
-        </div>
-      </form>
-    </div>
-  </div>
-}
+    args: [{ selector: "app-admin-roles", imports: [PageFeedbackComponent, SearchableSelectComponent, TranslatePipe, FormsModule], template: `<div class="panel-page">\r
+  <h2>{{ 'roles.title' | t }}</h2>\r
+  <p class="meta">{{ 'roles.subtitle' | t }}</p>\r
+\r
+  <app-page-feedback [ok]="message()" [error]="error()" />\r
+\r
+  <div class="page-actions">\r
+    <button type="button" (click)="openCreate()">{{ 'roles.create' | t }}</button>\r
+  </div>\r
+\r
+  <section class="block">\r
+    <div class="table-wrap">\r
+      <table class="data-table">\r
+        <thead>\r
+          <tr>\r
+            <th>{{ 'roles.displayName' | t }}</th>\r
+            <th>{{ 'roles.name' | t }}</th>\r
+            <th>{{ 'roles.type' | t }}</th>\r
+            <th>{{ 'roles.pageCount' | t }}</th>\r
+            <th>{{ 'roles.members' | t }}</th>\r
+            <th>{{ 'common.actions' | t }}</th>\r
+          </tr>\r
+        </thead>\r
+        <tbody>\r
+          @for (role of roles(); track role.id) {\r
+            <tr>\r
+              <td>\r
+                {{ role.displayName }}\r
+                @if (role.isSystem) {\r
+                  <span class="chip">{{ 'roles.system' | t }}</span>\r
+                }\r
+              </td>\r
+              <td><code>{{ role.name }}</code></td>\r
+              <td>{{ roleTypeLabel(role) }}</td>\r
+              <td>{{ role.pages.length }}</td>\r
+              <td>{{ role.memberCount }}</td>\r
+              <td class="row-actions">\r
+                @if (role.isSystem) {\r
+                  <span class="meta">{{ 'roles.systemLocked' | t }}</span>\r
+                } @else {\r
+                  <button type="button" class="ghost-btn" (click)="openEdit(role)">{{ 'common.edit' | t }}</button>\r
+                  <button type="button" class="ghost-btn danger" (click)="deleteRole(role)">{{ 'common.delete' | t }}</button>\r
+                }\r
+              </td>\r
+            </tr>\r
+          } @empty {\r
+            <tr>\r
+              <td colspan="6">{{ 'common.noData' | t }}</td>\r
+            </tr>\r
+          }\r
+        </tbody>\r
+      </table>\r
+    </div>\r
+  </section>\r
+\r
+  <section class="block">\r
+    <h3>{{ 'roles.membersTitle' | t }}</h3>\r
+    <p class="meta">{{ 'roles.membersHint' | t }}</p>\r
+\r
+    <label>\r
+      {{ 'roles.chooseRole' | t }}\r
+      <app-searchable-select\r
+        [ngModel]="membersRoleId()"\r
+        (ngModelChange)="selectMembersRole($event ?? '')"\r
+        name="membersRole"\r
+        [options]="roleOptions()"\r
+        [emptyLabel]="'roles.chooseRole' | t"\r
+      />\r
+    </label>\r
+\r
+    @if (selectedMembersRole(); as role) {\r
+      <div class="list-filters">\r
+        <app-searchable-select\r
+          [ngModel]="selectedUserId()"\r
+          (ngModelChange)="selectedUserId.set($event ?? '')"\r
+          name="assignUser"\r
+          [options]="userOptions()"\r
+          [emptyLabel]="'roles.chooseUser' | t"\r
+        />\r
+        <button type="button" (click)="assignUser()" [disabled]="!selectedUserId()">\r
+          {{ 'roles.assign' | t }}\r
+        </button>\r
+        <span class="meta">{{ roleTypeLabel(role) }}</span>\r
+      </div>\r
+\r
+      <div class="table-wrap">\r
+        <table class="data-table">\r
+          <thead>\r
+            <tr>\r
+              <th>{{ 'common.name' | t }}</th>\r
+              <th>{{ 'common.email' | t }}</th>\r
+              <th>{{ 'roles.accountRole' | t }}</th>\r
+              <th>{{ 'roles.assigned' | t }}</th>\r
+              <th>{{ 'common.actions' | t }}</th>\r
+            </tr>\r
+          </thead>\r
+          <tbody>\r
+            @for (member of members(); track member.userId) {\r
+              <tr>\r
+                <td>{{ member.displayName }}</td>\r
+                <td>{{ member.email || ('common.emDash' | t) }}</td>\r
+                <td>{{ member.role }}</td>\r
+                <td>{{ formatUtc(member.assignedAtUtc) }}</td>\r
+                <td>\r
+                  <button type="button" class="ghost-btn danger" (click)="removeMember(member)">\r
+                    {{ 'roles.remove' | t }}\r
+                  </button>\r
+                </td>\r
+              </tr>\r
+            } @empty {\r
+              <tr>\r
+                <td colspan="5">{{ 'roles.noMembers' | t }}</td>\r
+              </tr>\r
+            }\r
+          </tbody>\r
+        </table>\r
+      </div>\r
+    }\r
+  </section>\r
+</div>\r
+\r
+@if (formOpen()) {\r
+  <div class="modal-backdrop">\r
+    <div class="modal-card modal-card--wide" role="dialog" aria-modal="true">\r
+      <div class="modal-head">\r
+        <h3>{{ (editingId() ? 'roles.editTitle' : 'roles.newTitle') | t }}</h3>\r
+        <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.close' | t }}</button>\r
+      </div>\r
+\r
+      <app-page-feedback [error]="error()" />\r
+\r
+      <form class="meeting-form" autocomplete="off" (ngSubmit)="save()">\r
+        <label>\r
+          {{ 'roles.displayName' | t }}\r
+          <input\r
+            [ngModel]="formDisplayName()"\r
+            (ngModelChange)="formDisplayName.set($event)"\r
+            name="roleDisplayName"\r
+            required\r
+          />\r
+        </label>\r
+        <label>\r
+          {{ 'roles.name' | t }}\r
+          <input\r
+            [ngModel]="formName()"\r
+            (ngModelChange)="formName.set($event)"\r
+            name="roleName"\r
+            [disabled]="editingId() !== null"\r
+            required\r
+          />\r
+          <span class="meta">{{ 'roles.nameHint' | t }}</span>\r
+        </label>\r
+        <label>\r
+          {{ 'roles.type' | t }}\r
+          <app-searchable-select\r
+            [ngModel]="formBaseRole()"\r
+            (ngModelChange)="formBaseRole.set($event)"\r
+            name="roleBaseRole"\r
+            [options]="baseRoleOptions()"\r
+            [disabled]="editingId() !== null"\r
+            [clearable]="false"\r
+          />\r
+          <span class="meta">{{ 'roles.typeHint' | t }}</span>\r
+        </label>\r
+        <label>\r
+          {{ 'roles.description' | t }}\r
+          <input\r
+            [ngModel]="formDescription()"\r
+            (ngModelChange)="formDescription.set($event)"\r
+            name="roleDescription"\r
+          />\r
+        </label>\r
+\r
+        <fieldset class="role-pages">\r
+          <legend>{{ 'roles.selectPages' | t }}</legend>\r
+          @for (group of catalogueGroups(); track group.labelKey) {\r
+            <div class="role-page-group">\r
+              <strong>{{ group.labelKey | t }}</strong>\r
+              <div class="chip-row">\r
+                @for (page of group.pages; track page.key) {\r
+                  <label class="role-page-toggle">\r
+                    <input\r
+                      type="checkbox"\r
+                      [checked]="isPageSelected(page.key)"\r
+                      (change)="togglePage(page.key)"\r
+                    />\r
+                    <span>{{ page.labelKey | t }}</span>\r
+                  </label>\r
+                }\r
+              </div>\r
+            </div>\r
+          }\r
+        </fieldset>\r
+\r
+        <div class="form-actions">\r
+          <button type="submit">{{ 'common.save' | t }}</button>\r
+          <button type="button" class="ghost-btn" (click)="closeForm()">{{ 'common.cancel' | t }}</button>\r
+        </div>\r
+      </form>\r
+    </div>\r
+  </div>\r
+}\r
 `, styles: ['/* src/app/styles/dashboard-shared.css */\n.page {\n  position: relative;\n  min-height: 100vh;\n  padding: var(--space-5) 6vw 4rem;\n  color: var(--text);\n  background:\n    radial-gradient(\n      circle at 88% 0%,\n      var(--page-glow-1),\n      transparent 28%),\n    radial-gradient(\n      circle at 8% 12%,\n      var(--page-glow-2),\n      transparent 22%),\n    var(--bg);\n}\n.page p,\n.page span,\n.page strong,\n.page small,\n.page label,\n.page li,\n.page td,\n.page th {\n  color: inherit;\n}\n.topbar,\n.hero-strip,\n.grid-two,\n.grid-cards,\n.chip-row,\n.avatar-row {\n  display: flex;\n  gap: var(--space-3);\n}\n.topbar {\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: var(--space-5);\n}\n.brand {\n  margin: 0;\n  font-family: var(--font-display);\n  font-size: clamp(1.75rem, 3vw, 2.15rem);\n  font-weight: 800;\n  text-transform: uppercase;\n  color: var(--heading);\n  letter-spacing: 0.04em;\n}\nh1,\nh2,\nh3,\nh4 {\n  font-family: var(--font-display);\n  margin: 0.15rem 0;\n  color: var(--heading);\n  letter-spacing: 0.01em;\n  line-height: 1.15;\n}\nh1 {\n  font-size: clamp(1.8rem, 3vw, 2.4rem);\n}\nh2 {\n  font-size: clamp(1.4rem, 2.4vw, 1.85rem);\n}\nh3 {\n  font-size: 1.2rem;\n}\n.hero-strip {\n  justify-content: space-between;\n  align-items: center;\n  gap: var(--space-4);\n  padding: 1.5rem 1.6rem;\n  border-radius: var(--radius-xl);\n  margin-bottom: var(--space-5);\n  background: var(--hero-bg);\n  border: 1px solid var(--hero-border);\n  box-shadow: var(--shadow-sm);\n  color: var(--hero-fg);\n}\n.hero-strip p,\n.hero-strip h2 {\n  color: var(--hero-fg);\n}\n.eyebrow,\n.meta,\n.back {\n  color: var(--text-muted);\n}\n.eyebrow {\n  margin: 0 0 0.35rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n  color: var(--teal);\n}\n.back {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  margin-bottom: var(--space-3);\n  text-decoration: none;\n  font-weight: 600;\n  transition: color 0.15s ease;\n}\n.back:hover {\n  color: var(--heading);\n}\n.xp-pill,\nbutton,\n.chip,\n.list-btn,\n.avatar,\n.badge {\n  border: none;\n  border-radius: var(--radius-pill);\n  font: inherit;\n}\n.xp-pill,\nbutton {\n  padding: 0.8rem 1.15rem;\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  color: var(--accent-ink);\n  font-weight: 800;\n  cursor: pointer;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    opacity 0.15s ease;\n  box-shadow: var(--btn-shadow);\n}\nbutton:hover:not(:disabled) {\n  transform: translateY(-1px);\n  box-shadow: var(--btn-shadow-hover);\n}\nbutton:active:not(:disabled) {\n  transform: translateY(0);\n}\nbutton:disabled {\n  opacity: 0.55;\n  cursor: not-allowed;\n  box-shadow: none;\n}\nbutton:focus-visible,\n.chip:focus-visible,\n.list-btn:focus-visible,\na:focus-visible,\ninput:focus-visible,\nselect:focus-visible,\ntextarea:focus-visible {\n  outline: none;\n  box-shadow: var(--focus-ring);\n}\nbutton.ghost,\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\nbutton.ghost:hover:not(:disabled),\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.grid-two {\n  display: grid;\n  grid-template-columns: 1.3fr 0.9fr;\n  gap: var(--space-4);\n}\n.grid-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n}\n.side-stack {\n  display: grid;\n  gap: var(--space-4);\n}\n.block,\n.badge,\n.avatar {\n  background: var(--surface);\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  padding: 1.25rem;\n  color: var(--text);\n}\n.block {\n  display: grid;\n  gap: 0.85rem;\n  margin-bottom: var(--space-3);\n  box-shadow: var(--shadow-sm);\n  position: relative;\n  z-index: 0;\n}\n.block:has(app-searchable-select.ss--open),\n.block:has(app-searchable-multi-select.ms--open) {\n  z-index: 50;\n}\n.block > h3 {\n  padding-bottom: 0.55rem;\n  border-bottom: 1px solid var(--border);\n}\n.block p,\n.block strong,\n.block small {\n  color: var(--text);\n}\n.chip-row,\n.avatar-row {\n  flex-wrap: wrap;\n}\n.chip,\n.list-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.65rem 0.95rem;\n  background: var(--chip-bg);\n  border: 1px solid var(--chip-border);\n  color: var(--chip-fg);\n  text-decoration: none;\n  cursor: pointer;\n  transition:\n    background 0.15s ease,\n    border-color 0.15s ease,\n    transform 0.15s ease;\n}\n.chip:hover,\n.list-btn:hover {\n  background: var(--chip-bg);\n  border-color: var(--chip-border);\n  filter: brightness(0.97);\n  transform: translateY(-1px);\n}\n.chip.quiz {\n  background: rgba(95, 211, 188, 0.16);\n  border-color: rgba(95, 211, 188, 0.22);\n}\n.chip.video {\n  background: rgba(255, 214, 10, 0.16);\n  border-color: rgba(255, 214, 10, 0.28);\n}\n.list-btn {\n  width: 100%;\n  text-align: left;\n  margin-bottom: 0.45rem;\n  border-radius: var(--radius-md);\n}\n.list-btn.active,\n.avatar.selected,\n.badge.earned {\n  background:\n    linear-gradient(\n      135deg,\n      var(--accent),\n      var(--accent-hot));\n  border-color: transparent;\n  color: var(--accent-ink);\n}\n.avatar {\n  width: 9.5rem;\n  display: grid;\n  gap: 0.3rem;\n  text-align: left;\n  color: var(--text);\n  cursor: pointer;\n  transition: transform 0.15s ease, border-color 0.15s ease;\n}\n.avatar:hover:not(:disabled) {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n}\n.avatar strong,\n.avatar small,\n.badge strong,\n.badge small {\n  color: inherit;\n}\n.avatar:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.emoji {\n  font-size: 2rem;\n}\ntextarea,\ninput[type=radio],\ninput[type=checkbox] {\n  accent-color: var(--accent);\n}\ntextarea,\ninput[type=text],\ninput[type=email],\ninput[type=password],\ninput[type=number],\ninput[type=datetime-local],\ninput[type=file],\nselect {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.8rem 0.95rem;\n  font: inherit;\n  transition:\n    border-color 0.15s ease,\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\ntextarea {\n  min-height: 9rem;\n  resize: vertical;\n  line-height: 1.45;\n}\ntextarea::placeholder,\ninput::placeholder {\n  color: var(--text-soft);\n}\ntextarea:hover,\ninput:hover,\nselect:hover {\n  border-color: var(--input-border-hover);\n}\ntextarea:focus,\ninput:focus,\nselect:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  background: var(--input-bg-focus);\n  box-shadow: var(--focus-ring);\n}\nselect option {\n  background: var(--bg-elevated);\n  color: var(--text);\n}\nlabel {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n  font-weight: 600;\n}\nlabel > span {\n  color: var(--text-muted);\n}\n.feedback {\n  padding: 0.9rem 1rem;\n  border-radius: var(--radius-md);\n  background: var(--auth-error-bg);\n  border: 1px solid var(--auth-error-border);\n  color: var(--feedback-error-fg);\n}\n.feedback.ok {\n  background: rgba(81, 207, 102, 0.14);\n  border-color: rgba(125, 222, 160, 0.28);\n  color: var(--feedback-ok-fg);\n}\n[data-theme=light] .feedback.ok {\n  background: #f0fdf4;\n  border-color: #bbf7d0;\n}\n.question {\n  display: grid;\n  gap: 0.5rem;\n  margin-bottom: var(--space-3);\n  padding: 1rem;\n  border-radius: var(--radius-md);\n  background: var(--elevated-bg);\n  border: 1px solid var(--border);\n  color: var(--text);\n}\n.prompt-html {\n  color: var(--prompt-fg);\n}\n.prompt-html b,\n.prompt-html strong {\n  font-weight: 800;\n}\n.table {\n  display: grid;\n  gap: 0.35rem;\n}\n.table-row {\n  display: grid;\n  grid-template-columns: 1.4fr repeat(4, 1fr);\n  gap: 0.5rem;\n  padding: 0.85rem 0.4rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n  align-items: center;\n}\n.table-row.head {\n  color: var(--text-soft);\n  font-size: 0.82rem;\n  font-weight: 700;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  border-bottom-color: var(--border-strong);\n}\n@media (max-width: 900px) {\n  .grid-two,\n  .table-row {\n    grid-template-columns: 1fr;\n  }\n}\n.panel-page {\n  display: grid;\n  gap: var(--space-4);\n  color: var(--text);\n  animation: pageIn 0.35s ease;\n}\n.panel-page > h2 {\n  margin: 0;\n  color: var(--heading);\n}\n.panel-page > .meta {\n  margin-top: -0.55rem;\n}\n.meeting-form,\n.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: var(--space-3);\n  align-items: end;\n}\n.meeting-form label,\n.form-grid label {\n  display: grid;\n  gap: 0.4rem;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.meeting-form label.checkbox,\n.form-grid label.checkbox,\nlabel.checkbox {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  padding: 0.7rem 0.85rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.meeting-form input,\n.meeting-form select,\n.meeting-form textarea,\n.form-grid input,\n.form-grid select,\n.form-grid textarea {\n  width: 100%;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n}\n.meeting-row {\n  display: flex;\n  justify-content: space-between;\n  gap: var(--space-3);\n  align-items: center;\n  padding: 0.95rem 0.15rem;\n  border-bottom: 1px solid var(--border);\n  color: var(--text);\n}\n.meeting-row strong,\n.meeting-row .meta {\n  color: inherit;\n}\n.form-card {\n  display: grid;\n  gap: var(--space-3);\n  padding: 1.35rem;\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  border: 1px solid var(--border);\n  box-shadow: var(--shadow-sm);\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.75rem;\n  align-items: center;\n  padding-top: 0.35rem;\n}\n.stat-row {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));\n  gap: var(--space-3);\n}\n.stat-card {\n  padding: 1rem 1.1rem;\n  border-radius: var(--radius-md);\n  background: var(--surface-strong);\n  border: 1px solid var(--border);\n}\n.stat-card strong {\n  display: block;\n  font-family: var(--font-display);\n  font-size: 1.55rem;\n  color: var(--stat-strong);\n}\n.stat-card span {\n  color: var(--text-muted);\n  font-size: 0.85rem;\n}\nbutton.stat-card-link {\n  display: block;\n  width: 100%;\n  text-align: start;\n  font: inherit;\n  font-weight: inherit;\n  color: inherit;\n  cursor: pointer;\n  background: var(--surface-strong);\n  box-shadow: none;\n  transition:\n    transform 0.2s ease,\n    border-color 0.2s ease,\n    background 0.2s ease;\n}\nbutton.stat-card-link:hover,\nbutton.stat-card-link:focus-visible {\n  transform: translateY(-2px);\n  border-color: var(--border-strong);\n  box-shadow: none;\n  outline: none;\n}\nbutton.stat-card-link.active {\n  border-color: var(--border-strong);\n  box-shadow: 0 0 0 1px var(--border-strong);\n}\n@keyframes pageIn {\n  from {\n    opacity: 0;\n    transform: translateY(6px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@media (max-width: 700px) {\n  .page {\n    padding: 1.35rem 1rem 3rem;\n  }\n  .meeting-row {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n  .hero-strip {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n}\n.student-side-tools {\n  position: fixed;\n  inset-inline-end: 0;\n  top: 38%;\n  z-index: 46;\n  display: grid;\n  gap: 0.55rem;\n  justify-items: end;\n}\n.student-side-tools .side-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.7rem 0.75rem;\n  border: 1px solid var(--border-strong);\n  border-inline-end: none;\n  border-radius: var(--radius-md) 0 0 var(--radius-md);\n  background: var(--surface);\n  color: var(--heading);\n  text-decoration: none;\n  font-weight: 800;\n  box-shadow: var(--shadow-md);\n  max-width: 2.75rem;\n  overflow: hidden;\n  transition: max-width 0.2s ease;\n}\nhtml[dir=rtl] .student-side-tools .side-tab {\n  border-radius: 0 var(--radius-md) var(--radius-md) 0;\n}\n.student-side-tools .side-tab-icon {\n  flex-shrink: 0;\n  width: 1.2rem;\n  text-align: center;\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.student-side-tools .side-tab-label {\n  white-space: nowrap;\n  font-size: 0.88rem;\n}\n.student-side-tools .side-tab:hover,\n.student-side-tools .side-tab:focus-visible {\n  max-width: 12rem;\n}\n@media (max-width: 700px) {\n  .student-side-tools {\n    top: auto;\n    inset-block-end: 5.25rem;\n    z-index: 62;\n  }\n}\n\n/* src/app/pages/admin/admin-panel.css */\n.user-row {\n  grid-template-columns: 1.2fr 1.6fr 0.8fr 0.5fr 1fr;\n}\n.data-table {\n  width: 100%;\n  border-collapse: collapse;\n  font-size: 0.95rem;\n}\n.data-table th,\n.data-table td {\n  padding: 0.8rem 0.7rem;\n  border-bottom: 1px solid var(--border);\n  text-align: left;\n  vertical-align: middle;\n}\n.data-table td .chip-row {\n  margin-top: 0.45rem;\n}\n.data-table td .name-cell {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  min-width: 0;\n}\n.meeting-form label .chip-row input {\n  flex: 1;\n  min-width: 0;\n}\n.wa-destination {\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.wa-destination legend {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.edit-panel {\n  border: 1px solid rgba(95, 211, 188, 0.28);\n  background:\n    linear-gradient(\n      180deg,\n      rgba(95, 211, 188, 0.08),\n      transparent 60%);\n}\n.classroom-edit-form {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form {\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  align-items: start;\n}\n.student-edit-form .form-actions {\n  grid-column: 1 / -1;\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n.classroom-edit-form .span-3 {\n  grid-column: 1 / -1;\n}\n.classroom-edit-form .edit-form-hint {\n  margin: 0;\n  align-self: center;\n}\n.classroom-edit-form .form-actions {\n  justify-content: flex-start;\n  padding-top: 0.25rem;\n}\n@media (max-width: 1100px) {\n  .student-edit-form {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@media (max-width: 960px) {\n  .classroom-edit-form {\n    grid-template-columns: 1fr;\n  }\n  .classroom-edit-form .span-3 {\n    grid-column: auto;\n  }\n  .student-edit-form {\n    grid-template-columns: 1fr;\n  }\n}\n.field-label {\n  margin: 0 0 0.25rem;\n  font-weight: 700;\n}\n.data-table th {\n  color: var(--text-soft);\n  font-weight: 700;\n  font-size: 0.82rem;\n  letter-spacing: 0.04em;\n  text-transform: uppercase;\n  white-space: nowrap;\n}\n.data-table th.sortable {\n  cursor: pointer;\n  -webkit-user-select: none;\n  user-select: none;\n}\n.data-table th.sortable:hover {\n  color: var(--accent-fg);\n}\n.data-table th .sort-mark {\n  margin-left: 0.35rem;\n  opacity: 0.7;\n}\n.data-table tr:hover td {\n  background: var(--table-row-hover);\n}\n.data-table tr.is-inactive td {\n  opacity: 0.58;\n}\n.data-table tr.total-row td {\n  border-top: 2px solid var(--border);\n  background: var(--table-row-total);\n}\n.data-table input,\n.data-table select {\n  width: 100%;\n  min-width: 7rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.data-table input:focus,\n.data-table select:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.row-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.4rem;\n}\n.row-actions button {\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.85rem;\n}\n.row-actions app-icon-action-button {\n  display: inline-flex;\n}\n.row-actions button.danger {\n  background: var(--danger-soft-bg);\n  color: var(--danger-soft-fg);\n  box-shadow: none;\n}\n.row-actions button.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.table-wrap {\n  overflow-x: auto;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.brand-preview {\n  display: block;\n  margin: 0.75rem 0 1rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n  object-fit: contain;\n}\n.brand-preview.logo {\n  width: 96px;\n  height: 96px;\n  padding: 0.5rem;\n}\n.brand-preview.banner {\n  width: min(100%, 520px);\n  height: 160px;\n  object-fit: cover;\n}\n.login-preview {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);\n  gap: 0;\n  margin: 0.85rem 0 1rem;\n  min-height: 180px;\n  border-radius: var(--radius-md);\n  overflow: hidden;\n  border: 1px solid var(--border);\n  background: var(--surface);\n}\n.login-preview-form,\n.login-preview-visual {\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  text-align: center;\n  font-size: 0.86rem;\n  color: var(--text-soft);\n}\n.login-preview-form {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.login-preview-visual {\n  position: relative;\n  padding: 0;\n  min-height: 180px;\n  background:\n    radial-gradient(\n      circle at 70% 30%,\n      rgba(255, 214, 10, 0.18),\n      transparent 40%),\n    linear-gradient(\n      145deg,\n      #07111f,\n      #145a8f);\n}\n.login-preview-visual img {\n  position: absolute;\n  inset: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n@media (max-width: 700px) {\n  .login-preview {\n    grid-template-columns: 1fr;\n  }\n  .login-preview-form {\n    border-right: none;\n    border-bottom: 1px solid var(--border);\n    min-height: 72px;\n  }\n}\n.form-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.6rem;\n  align-items: center;\n}\n.file-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0.55rem 1rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--badge-ok-bg);\n  color: var(--badge-ok-fg);\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\n.file-btn:hover {\n  background: rgba(95, 211, 188, 0.26);\n}\n.ghost-btn {\n  background: transparent;\n  color: var(--ghost-fg);\n  border: 1px solid var(--border-strong);\n  box-shadow: none;\n}\n.ghost-btn:hover:not(:disabled) {\n  background: var(--surface-strong);\n  box-shadow: none;\n}\n.search-btn {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  padding: 0.55rem 0.9rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.55);\n  background: rgba(255, 214, 10, 0.22);\n  color: var(--text);\n  font: inherit;\n  font-weight: 700;\n  cursor: pointer;\n  box-shadow: none;\n}\n.search-btn i {\n  font-size: 0.95em;\n  line-height: 1;\n}\n.search-btn:hover:not(:disabled) {\n  background: rgba(255, 214, 10, 0.32);\n  box-shadow: none;\n  transform: none;\n}\n.list-filters {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 0.75rem 1rem;\n  margin: 0.75rem 0 1rem;\n  position: relative;\n  z-index: 2;\n}\n.list-filters label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n  min-width: 10rem;\n  color: var(--text-soft);\n  font-size: 0.85rem;\n  font-weight: 650;\n}\n.list-filters select,\n.list-filters input {\n  min-width: 12rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.65rem;\n  font: inherit;\n}\n.list-filters select:focus,\n.list-filters input:focus {\n  outline: none;\n  border-color: rgba(255, 214, 10, 0.65);\n  box-shadow: var(--focus-ring);\n}\n.list-filters .meta {\n  margin: 0 0 0.35rem;\n  align-self: center;\n}\n.list-pager {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.75rem;\n  margin-top: 0.85rem;\n}\n.list-pager .meta {\n  margin: 0;\n}\n.list-pager button:disabled {\n  opacity: 0.45;\n  cursor: not-allowed;\n}\n.data-table td input + input {\n  margin-top: 0.4rem;\n}\n.grade-multi,\n.stage-multi,\n.teachers-multi {\n  grid-column: 1 / -1;\n}\n.grade-multi .meta,\n.stage-multi .meta,\n.teachers-multi .meta {\n  margin-top: 0.35rem;\n}\n.data-table app-searchable-multi-select {\n  display: block;\n  min-width: 14rem;\n  max-width: 22rem;\n}\n.stage-multi app-searchable-multi-select {\n  max-width: 36rem;\n}\n.course-teacher-block {\n  grid-column: 1 / -1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.65rem;\n  padding: 0.85rem 0.9rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.course-teacher-block.compact {\n  padding: 0.5rem;\n  gap: 0.5rem;\n}\n.course-teacher-head {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.5rem;\n}\n.course-teacher-row {\n  display: grid;\n  grid-template-columns: 1.4fr 1fr auto;\n  gap: 0.6rem;\n  align-items: end;\n}\n.course-teacher-row label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.3rem;\n  min-width: 0;\n}\n.course-teacher-row select {\n  width: 100%;\n  border-radius: var(--radius-sm);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.5rem 0.6rem;\n  font: inherit;\n}\n.course-teacher-block .meta {\n  margin: 0;\n}\n@media (max-width: 700px) {\n  .course-teacher-row {\n    grid-template-columns: 1fr;\n  }\n}\n@media (max-width: 900px) {\n  .user-row {\n    grid-template-columns: 1fr;\n  }\n}\n.calendar-toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.85rem;\n}\n.calendar-toolbar h3 {\n  margin: 0;\n}\n.calendar-nav {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 0.5rem;\n}\n.calendar-nav .meta {\n  margin: 0;\n  margin-inline-start: 0.35rem;\n}\n.week-day-tabs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.45rem;\n  margin-bottom: 0.85rem;\n}\n.week-day-tab {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.45rem 0.75rem;\n  border-radius: var(--radius-pill);\n  border: 1px solid var(--border-strong);\n  background: var(--elevated-bg);\n  color: var(--text-soft);\n  font: inherit;\n  font-size: 0.85rem;\n  cursor: pointer;\n}\n.week-day-tab.active {\n  color: #07111f;\n  background: var(--accent);\n  border-color: transparent;\n  font-weight: 700;\n}\n.week-day-tab .day-count {\n  min-width: 1.25rem;\n  height: 1.25rem;\n  padding: 0 0.35rem;\n  border-radius: 999px;\n  background: rgba(7, 17, 31, 0.18);\n  color: inherit;\n  font-size: 0.75rem;\n  display: inline-grid;\n  place-items: center;\n}\n.day-calendar {\n  display: grid;\n  grid-template-columns: 4rem minmax(0, 1fr);\n  gap: 0.35rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  background: var(--surface);\n  overflow: auto;\n  max-height: min(70vh, 42rem);\n}\n.day-hours {\n  border-right: 1px solid var(--border);\n  background: var(--elevated-bg);\n}\n.day-hour {\n  display: flex;\n  align-items: flex-start;\n  justify-content: flex-end;\n  padding: 0.2rem 0.45rem 0 0;\n  color: var(--text-soft);\n  font-size: 0.75rem;\n  box-sizing: border-box;\n}\n.day-grid {\n  position: relative;\n  min-height: 12rem;\n}\n.day-grid-line {\n  position: absolute;\n  left: 0;\n  right: 0;\n  border-top: 1px dashed var(--border);\n  pointer-events: none;\n}\n.calendar-event {\n  position: absolute;\n  box-sizing: border-box;\n  display: flex;\n  flex-direction: column;\n  gap: 0.2rem;\n  padding: 0.45rem 0.5rem;\n  border-radius: var(--radius-sm);\n  border: 1px solid rgba(255, 214, 10, 0.35);\n  background:\n    linear-gradient(\n      145deg,\n      rgba(255, 214, 10, 0.22),\n      rgba(20, 90, 143, 0.45));\n  color: #fff;\n  overflow: hidden;\n  z-index: 1;\n}\n.calendar-event-label {\n  font-weight: 700;\n  font-size: 0.92rem;\n  line-height: 1.3;\n  white-space: normal;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 3;\n  -webkit-box-orient: vertical;\n  word-break: break-word;\n}\n.calendar-event-time {\n  font-size: 0.78rem;\n  color: rgba(255, 255, 255, 0.82);\n  white-space: nowrap;\n}\n.calendar-event .row-actions {\n  margin-top: auto;\n}\n.calendar-empty {\n  position: absolute;\n  inset: 0;\n  display: grid;\n  place-items: center;\n  margin: 0;\n  color: var(--text-soft);\n  font-size: 0.95rem;\n  pointer-events: none;\n}\n@media (max-width: 700px) {\n  .day-calendar {\n    grid-template-columns: 3rem minmax(0, 1fr);\n  }\n}\n.timetable-wrap {\n  overflow: auto;\n  max-height: min(80vh, 56rem);\n  border: 3px solid #e8c46a;\n  border-radius: 28px;\n  background:\n    radial-gradient(\n      circle at 8% 12%,\n      rgba(255, 214, 120, 0.35),\n      transparent 22%),\n    radial-gradient(\n      circle at 92% 10%,\n      rgba(168, 216, 255, 0.28),\n      transparent 24%),\n    radial-gradient(\n      circle at 10% 90%,\n      rgba(255, 182, 193, 0.25),\n      transparent 22%),\n    radial-gradient(\n      circle at 90% 88%,\n      rgba(186, 230, 180, 0.28),\n      transparent 24%),\n    linear-gradient(\n      180deg,\n      #fff8e8 0%,\n      #fffdf7 48%,\n      #f7fbff 100%);\n  direction: rtl;\n  position: relative;\n  z-index: 0;\n  isolation: isolate;\n  padding: 1.1rem 1rem 1.25rem;\n  box-shadow: 0 18px 40px rgba(120, 84, 20, 0.12);\n}\n.timetable-board {\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n}\n.timetable-deco {\n  position: absolute;\n  font-size: 1.55rem;\n  line-height: 1;\n  opacity: 0.88;\n  pointer-events: none;\n  z-index: 1;\n  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.08));\n}\n.timetable-deco-tl {\n  top: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-tr {\n  top: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-deco-bl {\n  bottom: 0.55rem;\n  inset-inline-start: 0.7rem;\n}\n.timetable-deco-br {\n  bottom: 0.55rem;\n  inset-inline-end: 0.7rem;\n}\n.timetable-banner {\n  position: relative;\n  z-index: 2;\n  display: grid;\n  place-items: center;\n  margin: 0.15rem auto 1rem;\n  width: min(28rem, 92%);\n  padding: 0.75rem 1.4rem 0.85rem;\n  border-radius: 18px;\n  border: 3px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8 0%,\n      #f6d06a 100%);\n  box-shadow: 0 8px 0 #c8961a, 0 14px 24px rgba(180, 120, 20, 0.18);\n  text-align: center;\n}\n.timetable-banner-crown {\n  position: absolute;\n  top: -0.85rem;\n  font-size: 1.35rem;\n  line-height: 1;\n}\n.timetable-banner-title {\n  margin: 0;\n  color: #1d3a75;\n  font-size: clamp(1.15rem, 2.4vw, 1.65rem);\n  font-weight: 800;\n  letter-spacing: 0.01em;\n}\n.timetable-motto {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.55rem;\n  margin: 1rem auto 0.15rem;\n  width: min(30rem, 94%);\n  padding: 0.55rem 1.1rem;\n  border-radius: 16px;\n  border: 2px solid #d4a017;\n  background:\n    linear-gradient(\n      180deg,\n      #fff1c2,\n      #f8d978);\n  color: #1d3a75;\n  font-weight: 800;\n  font-size: 1rem;\n  box-shadow: 0 4px 0 #c8961a;\n}\n.timetable-page {\n  direction: rtl;\n  text-align: right;\n}\n.timetable {\n  width: max-content;\n  border-collapse: separate;\n  border-spacing: 0.28rem;\n  font-size: 0.84rem;\n  font-family:\n    "Cairo",\n    "Baloo 2",\n    "Segoe UI",\n    Tahoma,\n    sans-serif;\n  color: #1f2a44;\n  direction: rtl;\n  position: relative;\n  z-index: 2;\n}\n.timetable th,\n.timetable td {\n  border: none;\n  vertical-align: middle;\n}\n.timetable-day-col,\n.timetable-day {\n  position: sticky;\n  right: 0;\n  left: auto;\n  inset-inline-start: auto;\n  inset-inline-end: 0;\n  z-index: 2;\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe082,\n      #ffd54f) !important;\n  color: #1d3a75 !important;\n  text-align: center;\n  padding: 0.35rem 0.4rem;\n  font-weight: 800;\n  border-radius: 18px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.35);\n}\n.timetable-day {\n  text-align: center;\n}\n.timetable-day-icon,\n.timetable-day-col-icon {\n  display: block;\n  font-size: 1.05rem;\n  line-height: 1;\n  margin-bottom: 0.2rem;\n}\n.timetable thead th {\n  position: sticky;\n  top: 0;\n  z-index: 3;\n  background:\n    linear-gradient(\n      180deg,\n      #ffe9a8,\n      #f0c75a) !important;\n  color: #1d3a75 !important;\n  font-size: 0.78rem;\n  letter-spacing: 0;\n  text-transform: none;\n  padding: 0.28rem 0.32rem;\n  text-align: center;\n  white-space: nowrap;\n  border-radius: 16px;\n  border: 2px solid #e0b13a !important;\n  box-shadow: 0 3px 0 rgba(196, 145, 30, 0.28);\n}\n.timetable thead .timetable-day-col {\n  z-index: 4;\n  top: 0;\n}\n.timetable-shift {\n  background:\n    linear-gradient(\n      180deg,\n      #fff3c4,\n      #f5d36a) !important;\n  color: #1d3a75 !important;\n  font-weight: 800;\n}\n.timetable-shift.pm {\n  background:\n    linear-gradient(\n      180deg,\n      #d8f5e8,\n      #9ed9bf) !important;\n  color: #14553a !important;\n  border-color: #7cbc9a !important;\n}\n.timetable-wrap.exporting {\n  overflow: visible !important;\n  max-height: none !important;\n  height: auto !important;\n}\n.timetable-wrap.exporting .timetable thead th,\n.timetable-wrap.exporting .timetable-day-col,\n.timetable-wrap.exporting .timetable-day {\n  position: static !important;\n}\n.timetable-wrap.exporting .row-actions {\n  display: none !important;\n}\n.timetable-export-bar {\n  display: flex;\n  justify-content: flex-start;\n  margin-bottom: 0.75rem;\n}\n.timetable-period {\n  min-width: 0;\n  width: 1%;\n  white-space: nowrap;\n}\n.timetable-session-id {\n  font-weight: 800;\n  font-size: 0.92rem;\n  color: #1d3a75;\n}\n.timetable-session-time {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n  font-size: 0.78rem;\n  font-weight: 700;\n  letter-spacing: 0.01em;\n  text-transform: none;\n  color: #4a3b12;\n  margin-top: 0.25rem;\n  font-variant-numeric: tabular-nums;\n  direction: ltr;\n  unicode-bidi: isolate;\n}\n.timetable-clock {\n  font-size: 0.85rem;\n  line-height: 1;\n}\n.timetable-cell {\n  width: 1%;\n  min-width: 0;\n  max-width: none;\n  height: auto;\n  min-height: 0;\n  padding: 0.15rem;\n  background: rgba(255, 255, 255, 0.55);\n  vertical-align: middle;\n  overflow: visible;\n  cursor: cell;\n  transition:\n    transform 0.15s ease,\n    box-shadow 0.15s ease,\n    outline 0.15s ease;\n  border-radius: 12px;\n  border: 2px dashed rgba(180, 150, 90, 0.35) !important;\n}\n.timetable-cell.pm {\n  background: rgba(232, 255, 246, 0.55);\n}\n.timetable-cell.empty {\n  background: rgba(255, 255, 255, 0.42);\n}\n.timetable-empty {\n  display: grid;\n  place-items: center;\n  min-height: 0;\n  padding: 0.1rem 0.2rem;\n  line-height: 1;\n  color: #9aa3b5;\n  font-size: 0.9rem;\n  font-weight: 700;\n}\n.timetable-cell.drag-over {\n  outline: 3px dashed #1d3a75;\n  background: rgba(255, 214, 10, 0.22);\n  transform: scale(1.01);\n}\n.timetable-entry {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: max-content;\n  min-width: max-content;\n  max-width: none;\n  gap: 0.08rem;\n  padding: 0.28rem 0.35rem;\n  border-radius: 10px;\n  border: 2px solid transparent;\n  margin: 0 auto;\n  overflow: visible;\n  cursor: grab;\n  text-align: center;\n  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.06);\n  transition: transform 0.15s ease, box-shadow 0.15s ease;\n}\n.timetable-entry + .timetable-entry {\n  margin-top: 0.18rem;\n}\n.timetable-entry:hover {\n  transform: translateY(-1px);\n  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08);\n}\n.timetable-entry:active {\n  cursor: grabbing;\n}\n.timetable-entry .row-actions {\n  display: flex;\n  flex-wrap: nowrap;\n  flex-shrink: 0;\n  gap: 0.25rem;\n  margin-top: 0.2rem;\n  cursor: default;\n  justify-content: center;\n}\n.timetable-entry .row-actions app-icon-action-button {\n  display: inline-flex;\n  flex-shrink: 0;\n}\n.timetable-subject-icon {\n  font-size: 1.05rem;\n  line-height: 1;\n}\n.timetable-course {\n  font-weight: 800;\n  line-height: 1.2;\n  white-space: nowrap;\n  overflow: visible;\n  color: #1f2a44;\n  font-size: 0.8rem;\n}\n.timetable-teacher {\n  font-size: 0.7rem;\n  color: #4b5568;\n  white-space: nowrap;\n  overflow: visible;\n  font-weight: 600;\n}\n.timetable-entry[data-tone="0"] {\n  background: #ffe0e8;\n  border-color: #f5a3b8;\n}\n.timetable-entry[data-tone="1"] {\n  background: #e8d8ff;\n  border-color: #c4a6f5;\n}\n.timetable-entry[data-tone="2"] {\n  background: #d8ecff;\n  border-color: #9ec4f0;\n}\n.timetable-entry[data-tone="3"] {\n  background: #fff0b8;\n  border-color: #e6c85a;\n}\n.timetable-entry[data-tone="4"] {\n  background: #d8f5e8;\n  border-color: #8fd0b0;\n}\n.timetable-entry[data-tone="5"] {\n  background: #ffe6cc;\n  border-color: #f0b878;\n}\n.timetable-entry[data-tone="6"] {\n  background: #e0f0ff;\n  border-color: #9ebfe8;\n}\n.timetable-entry[data-tone="7"] {\n  background: #f3e0ff;\n  border-color: #d0a8ef;\n}\n.modal-backdrop {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: grid;\n  place-items: center;\n  padding: 1rem;\n  background: rgba(4, 10, 22, 0.72);\n  -webkit-backdrop-filter: blur(2px);\n  backdrop-filter: blur(2px);\n}\n.modal-card {\n  width: min(32rem, 100%);\n  max-height: min(90vh, 44rem);\n  overflow: auto;\n  padding: 1.1rem 1.2rem 1.25rem;\n  border-radius: var(--radius);\n  border: 1px solid var(--border-strong);\n  background: var(--modal-bg);\n  box-shadow: var(--modal-shadow);\n}\n.modal-card.modal-card--wide {\n  width: min(60rem, 100%);\n}\n.page-actions {\n  display: flex;\n  justify-content: flex-end;\n  margin-bottom: 0.75rem;\n}\n.modal-head {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 0.75rem;\n  margin-bottom: 0.35rem;\n}\n.modal-head h3 {\n  margin: 0;\n  font-size: 1.15rem;\n}\n.course-tree {\n  display: flex;\n  flex-direction: column;\n  gap: 0.85rem;\n}\n.tree-unit {\n  border: 1px solid var(--border);\n  border-radius: 12px;\n  padding: 0.75rem 0.9rem;\n  background: var(--surface);\n}\n.tree-unit-head {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n}\n.tree-toggle {\n  min-width: 2rem;\n  padding: 0.2rem 0.4rem;\n}\n.tree-unit-title,\n.tree-lesson-title {\n  flex: 1;\n  min-width: 12rem;\n}\n.ask-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.35rem;\n  font-size: 0.82rem;\n  white-space: nowrap;\n  color: var(--text-soft);\n}\n.tree-unit-body {\n  margin-top: 0.75rem;\n  margin-inline-start: 1.6rem;\n  display: flex;\n  flex-direction: column;\n  gap: 0.55rem;\n}\n.tree-lesson {\n  display: flex;\n  align-items: center;\n  gap: 0.6rem;\n  flex-wrap: wrap;\n  padding: 0.45rem 0.55rem;\n  border-radius: 8px;\n  background: var(--elevated-bg);\n}\n.tree-inline-form,\n.tree-add-lesson {\n  width: 100%;\n}\n.course-tree-ai {\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  padding: 1rem 1.1rem;\n  background: var(--surface);\n}\n.course-tree-prompt-field {\n  display: grid;\n  gap: 0.45rem;\n  margin: 0.75rem 0 0.35rem;\n  width: 100%;\n  max-width: 42rem;\n}\n.course-tree-prompt-field > span:first-child {\n  font-weight: 650;\n  color: var(--text-muted);\n  font-size: 0.9rem;\n}\n.course-tree-prompt-field textarea {\n  width: 100%;\n  min-height: 5.5rem;\n  resize: vertical;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border-strong);\n  background: var(--input-bg);\n  color: var(--text);\n  padding: 0.75rem 0.9rem;\n  font: inherit;\n  line-height: 1.45;\n}\n.course-tree-ai-actions {\n  margin-top: 0.35rem;\n}\n.course-tree-ai-preview {\n  margin-top: 0.85rem;\n  padding-top: 0.85rem;\n  border-top: 1px dashed var(--border);\n}\n.login-stat {\n  border-top: 3px solid transparent;\n}\n.login-stat-teachers {\n  border-top-color: #5fd3bc;\n}\n.login-stat-parents {\n  border-top-color: #ffd60a;\n}\n.login-stat-students {\n  border-top-color: #4ea8de;\n}\n.login-chart-legend {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.85rem 1.25rem;\n  margin: 0.75rem 0 1rem;\n}\n.login-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.45rem;\n  color: var(--text-soft);\n  font-size: 0.88rem;\n}\n.login-swatch {\n  display: inline-block;\n  width: 0.75rem;\n  height: 0.75rem;\n  border-radius: 3px;\n}\n.login-swatch-teachers,\n.login-bar-teachers {\n  background: #5fd3bc;\n}\n.login-swatch-parents,\n.login-bar-parents {\n  background: #ffd60a;\n}\n.login-swatch-students,\n.login-bar-students {\n  background: #4ea8de;\n}\n.login-chart {\n  padding: 1rem 0.75rem 0.5rem;\n  border-radius: var(--radius-md);\n  border: 1px solid var(--border);\n  background: var(--surface);\n  overflow-x: auto;\n}\n.login-chart-bars {\n  display: flex;\n  align-items: flex-end;\n  gap: 0.35rem;\n  min-width: 100%;\n  min-height: 220px;\n}\n.login-chart-day {\n  flex: 1 1 0;\n  min-width: 1.35rem;\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 0.4rem;\n}\n.login-chart-group {\n  display: flex;\n  align-items: flex-end;\n  justify-content: center;\n  gap: 2px;\n  width: 100%;\n  height: 180px;\n}\n.login-chart-bar {\n  flex: 1 1 0;\n  min-width: 3px;\n  border-radius: 4px 4px 0 0;\n}\n.login-chart-label {\n  color: var(--text-muted);\n  font-size: 0.72rem;\n  line-height: 1;\n}\n.login-chart-label-spacer {\n  visibility: hidden;\n}\n.status-badge {\n  display: inline-flex;\n  align-items: center;\n  padding: 0.15rem 0.55rem;\n  border-radius: var(--radius-pill);\n  font-size: 0.78rem;\n  font-weight: 700;\n  line-height: 1.2;\n  border: 1px solid transparent;\n}\n.status-badge.published {\n  color: var(--badge-ok-fg);\n  background: var(--badge-ok-bg);\n  border-color: var(--badge-ok-border);\n}\n.status-badge.draft {\n  color: var(--badge-warn-fg);\n  background: var(--badge-warn-bg);\n  border-color: var(--badge-warn-border);\n}\nlabel.checkbox {\n  flex-direction: row;\n  align-items: center;\n  gap: 0.45rem;\n}\n.delete-options {\n  display: grid;\n  gap: 0.6rem;\n  margin: 0.75rem 0 1rem;\n}\n.delete-option {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.65rem;\n  padding: 0.7rem 0.85rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-md);\n  cursor: pointer;\n}\n.delete-option:has(input:checked) {\n  border-color: var(--border-strong);\n  background: var(--surface);\n}\n.delete-option input {\n  margin-top: 0.25rem;\n  flex-shrink: 0;\n}\n.delete-option > span {\n  display: grid;\n  gap: 0.2rem;\n}\n.role-pages {\n  grid-column: 1 / -1;\n  margin: 0;\n  padding: 0.85rem 1rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.role-pages legend {\n  padding: 0 0.35rem;\n  font-weight: 800;\n  color: var(--heading);\n}\n.role-page-group + .role-page-group {\n  margin-top: 0.75rem;\n}\n.role-page-group > strong {\n  display: block;\n  margin-bottom: 0.35rem;\n}\n.role-page-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.4rem;\n  padding: 0.25rem 0.5rem;\n  border: 1px solid var(--border);\n  border-radius: 999px;\n  font-size: 0.9rem;\n}\n.role-page-toggle input {\n  margin: 0;\n}\n/*# sourceMappingURL=admin-panel.css.map */\n'] }]
   }], () => [], null);
 })();
@@ -72995,73 +73043,73 @@ var MenuCustomizerComponent = class _MenuCustomizerComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MenuCustomizerComponent, [{
     type: Component,
-    args: [{ selector: "app-menu-customizer", imports: [PageFeedbackComponent, TranslatePipe], template: `<div class="panel-page">
-  <h2>{{ 'menu.title' | t }}</h2>
-  <p class="meta">{{ 'menu.subtitle' | t }}</p>
-
-  <app-page-feedback [ok]="message()" [error]="error()" />
-
-  <section class="block">
-    <div class="menu-head">
-      <div>
-        <h3>{{ 'menu.pages' | t }}</h3>
-        <p class="meta">{{ 'menu.hint' | t }}</p>
-      </div>
-      <div class="menu-actions">
-        <button type="button" class="ghost-btn" (click)="reload()">{{ 'common.refresh' | t }}</button>
-        <button type="button" class="ghost-btn" (click)="reset()">{{ 'menu.resetAction' | t }}</button>
-        <button type="button" (click)="save()">{{ 'common.save' | t }}</button>
-      </div>
-    </div>
-
-    @if (roles().length) {
-      <div class="chip-row menu-roles">
-        <span class="meta">{{ 'menu.roles' | t }}:</span>
-        @for (role of roles(); track role) {
-          <span class="chip">{{ role }}</span>
-        }
-      </div>
-    }
-
-    <ul class="menu-list">
-      @for (item of items(); track item.key; let index = $index) {
-        <li class="menu-row" [class.menu-row--hidden]="item.isHidden">
-          <span class="menu-icon" aria-hidden="true">{{ item.icon || '\u2022' }}</span>
-          <span class="menu-text">
-            <strong>{{ item.labelKey | t }}</strong>
-            @if (item.categoryKey) {
-              <small class="meta">{{ item.categoryKey | t }}</small>
-            }
-          </span>
-          <span class="menu-buttons">
-            <button
-              type="button"
-              class="ghost-btn icon-btn"
-              [disabled]="index === 0"
-              [title]="'menu.moveUp' | t"
-              [attr.aria-label]="'menu.moveUp' | t"
-              (click)="move(index, -1)">\u2191</button>
-            <button
-              type="button"
-              class="ghost-btn icon-btn"
-              [disabled]="index === items().length - 1"
-              [title]="'menu.moveDown' | t"
-              [attr.aria-label]="'menu.moveDown' | t"
-              (click)="move(index, 1)">\u2193</button>
-            <button
-              type="button"
-              class="ghost-btn icon-btn"
-              [title]="(item.isHidden ? 'menu.show' : 'menu.hide') | t"
-              [attr.aria-label]="(item.isHidden ? 'menu.show' : 'menu.hide') | t"
-              (click)="toggleHidden(index)">{{ item.isHidden ? '\u{1F6AB}' : '\u{1F441}' }}</button>
-          </span>
-        </li>
-      } @empty {
-        <li class="meta">{{ loading() ? ('common.loading' | t) : ('menu.empty' | t) }}</li>
-      }
-    </ul>
-  </section>
-</div>
+    args: [{ selector: "app-menu-customizer", imports: [PageFeedbackComponent, TranslatePipe], template: `<div class="panel-page">\r
+  <h2>{{ 'menu.title' | t }}</h2>\r
+  <p class="meta">{{ 'menu.subtitle' | t }}</p>\r
+\r
+  <app-page-feedback [ok]="message()" [error]="error()" />\r
+\r
+  <section class="block">\r
+    <div class="menu-head">\r
+      <div>\r
+        <h3>{{ 'menu.pages' | t }}</h3>\r
+        <p class="meta">{{ 'menu.hint' | t }}</p>\r
+      </div>\r
+      <div class="menu-actions">\r
+        <button type="button" class="ghost-btn" (click)="reload()">{{ 'common.refresh' | t }}</button>\r
+        <button type="button" class="ghost-btn" (click)="reset()">{{ 'menu.resetAction' | t }}</button>\r
+        <button type="button" (click)="save()">{{ 'common.save' | t }}</button>\r
+      </div>\r
+    </div>\r
+\r
+    @if (roles().length) {\r
+      <div class="chip-row menu-roles">\r
+        <span class="meta">{{ 'menu.roles' | t }}:</span>\r
+        @for (role of roles(); track role) {\r
+          <span class="chip">{{ role }}</span>\r
+        }\r
+      </div>\r
+    }\r
+\r
+    <ul class="menu-list">\r
+      @for (item of items(); track item.key; let index = $index) {\r
+        <li class="menu-row" [class.menu-row--hidden]="item.isHidden">\r
+          <span class="menu-icon" aria-hidden="true">{{ item.icon || '\u2022' }}</span>\r
+          <span class="menu-text">\r
+            <strong>{{ item.labelKey | t }}</strong>\r
+            @if (item.categoryKey) {\r
+              <small class="meta">{{ item.categoryKey | t }}</small>\r
+            }\r
+          </span>\r
+          <span class="menu-buttons">\r
+            <button\r
+              type="button"\r
+              class="ghost-btn icon-btn"\r
+              [disabled]="index === 0"\r
+              [title]="'menu.moveUp' | t"\r
+              [attr.aria-label]="'menu.moveUp' | t"\r
+              (click)="move(index, -1)">\u2191</button>\r
+            <button\r
+              type="button"\r
+              class="ghost-btn icon-btn"\r
+              [disabled]="index === items().length - 1"\r
+              [title]="'menu.moveDown' | t"\r
+              [attr.aria-label]="'menu.moveDown' | t"\r
+              (click)="move(index, 1)">\u2193</button>\r
+            <button\r
+              type="button"\r
+              class="ghost-btn icon-btn"\r
+              [title]="(item.isHidden ? 'menu.show' : 'menu.hide') | t"\r
+              [attr.aria-label]="(item.isHidden ? 'menu.show' : 'menu.hide') | t"\r
+              (click)="toggleHidden(index)">{{ item.isHidden ? '\u{1F6AB}' : '\u{1F441}' }}</button>\r
+          </span>\r
+        </li>\r
+      } @empty {\r
+        <li class="meta">{{ loading() ? ('common.loading' | t) : ('menu.empty' | t) }}</li>\r
+      }\r
+    </ul>\r
+  </section>\r
+</div>\r
 `, styles: ["/* src/app/pages/menu-customizer/menu-customizer.component.css */\n.menu-head {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1rem;\n  align-items: flex-start;\n  justify-content: space-between;\n}\n.menu-actions {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.menu-roles {\n  margin: 0.6rem 0 1rem;\n  align-items: center;\n}\n.menu-list {\n  display: grid;\n  gap: 0.5rem;\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\n.menu-row {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  padding: 0.6rem 0.75rem;\n  border: 1px solid var(--border);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n.menu-row--hidden {\n  opacity: 0.6;\n}\n.menu-icon {\n  width: 1.75rem;\n  text-align: center;\n  font-size: 1.05rem;\n}\n.menu-text {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  min-width: 0;\n}\n.menu-buttons {\n  display: flex;\n  gap: 0.35rem;\n}\n.icon-btn {\n  min-width: 2.25rem;\n  padding: 0.3rem 0.5rem;\n  font-size: 1rem;\n  line-height: 1;\n}\n.icon-btn:disabled {\n  opacity: 0.4;\n  cursor: not-allowed;\n}\n/*# sourceMappingURL=menu-customizer.component.css.map */\n"] }]
   }], () => [], null);
 })();
@@ -73152,7 +73200,7 @@ var routes = [
   {
     path: "parent/account",
     canActivate: [authGuard, roleGuard(["Parent"])],
-    loadComponent: () => import("./chunk-C7MED6ED.js").then((m) => m.ParentAccountComponent)
+    loadComponent: () => import("./chunk-5W6SW3HC.js").then((m) => m.ParentAccountComponent)
   },
   {
     path: "teacher",
@@ -73164,7 +73212,7 @@ var routes = [
       { path: "menu", component: MenuCustomizerComponent },
       {
         path: "account",
-        loadComponent: () => import("./chunk-MSHPIQRF.js").then((m) => m.TeacherAccountComponent)
+        loadComponent: () => import("./chunk-KNC3AZUJ.js").then((m) => m.TeacherAccountComponent)
       },
       { path: "videos", component: TeacherVideosComponent },
       { path: "materials", component: TeacherMaterialsComponent },
@@ -73180,14 +73228,14 @@ var routes = [
       { path: "timetable", component: TeacherTimetableComponent },
       {
         path: "availability",
-        loadComponent: () => import("./chunk-GNK7WX47.js").then((m) => m.TeacherAvailabilityComponent)
+        loadComponent: () => import("./chunk-F5FG7HQ5.js").then((m) => m.TeacherAvailabilityComponent)
       },
       { path: "attendance", component: TeacherAttendanceComponent },
       { path: "student-attendance", component: TeacherStudentAttendanceComponent },
       { path: "weekly-reports", component: TeacherWeeklyReportsComponent },
       {
         path: "grade-certificates",
-        loadComponent: () => import("./chunk-7KTX7ZOC.js").then((m) => m.GradeCertificatesComponent)
+        loadComponent: () => import("./chunk-IT5EZHME.js").then((m) => m.GradeCertificatesComponent)
       },
       { path: "study-plans", component: TeacherStudyPlansComponent },
       { path: "whatsapp", component: TeacherWhatsAppComponent },
@@ -73219,7 +73267,7 @@ var routes = [
       {
         path: "users/:id",
         data: { crumbKey: "common.profile" },
-        loadComponent: () => import("./chunk-SWTAIVZP.js").then((m) => m.AdminUserProfileComponent)
+        loadComponent: () => import("./chunk-3QDFPA6K.js").then((m) => m.AdminUserProfileComponent)
       },
       { path: "courses", component: AdminCoursesComponent },
       { path: "course-tree", component: AdminCourseTreeComponent },
@@ -73231,13 +73279,13 @@ var routes = [
       { path: "timetable", component: AdminTimetableComponent },
       {
         path: "availability",
-        loadComponent: () => import("./chunk-GJZLPHZ7.js").then((m) => m.AdminAvailabilityComponent)
+        loadComponent: () => import("./chunk-PJX6NMTA.js").then((m) => m.AdminAvailabilityComponent)
       },
       { path: "study-plans", component: AdminStudyPlansComponent },
       { path: "weekly-reports", component: AdminWeeklyReportsComponent },
       {
         path: "grade-certificates",
-        loadComponent: () => import("./chunk-7KTX7ZOC.js").then((m) => m.GradeCertificatesComponent)
+        loadComponent: () => import("./chunk-IT5EZHME.js").then((m) => m.GradeCertificatesComponent)
       },
       { path: "teacher-assessments", component: AdminTeacherAssessmentsComponent },
       { path: "attendance", component: AdminAttendanceComponent },

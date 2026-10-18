@@ -2237,6 +2237,8 @@ export const AR: Record<string, string> = {
   'editor.promptPlaceholder': 'اكتب نص السؤال. استخدم شريط الأدوات للرموز الرياضية والتنسيق…',
   'editor.formattingToolbar': 'تنسيق النص',
   'editor.symbolGroups': 'مجموعات الرموز الرياضية',
+  'editor.showAdvanced': 'إظهار الأدوات المتقدمة',
+  'editor.hideAdvanced': 'إخفاء الأدوات المتقدمة',
   'editor.bold': 'عريض',
   'editor.italic': 'مائل',
   'editor.underline': 'تسطير',

@@ -3,7 +3,7 @@ import {
   LanguageSwitcherComponent,
   SiteBrandComponent,
   ThemeSwitcherComponent
-} from "./chunk-OYCOGJI2.js";
+} from "./chunk-NM7TRCB5.js";
 import {
   AuthService
 } from "./chunk-MMGMRKLA.js";
@@ -15,7 +15,7 @@ import "./chunk-RLZFB7T3.js";
 import {
   LocaleService,
   TranslatePipe
-} from "./chunk-MAWF43RP.js";
+} from "./chunk-5TRF6X2H.js";
 import {
   LearningApiService
 } from "./chunk-7YFOTRM2.js";
@@ -379,4 +379,4 @@ var ParentAccountComponent = class _ParentAccountComponent {
 export {
   ParentAccountComponent
 };
-//# sourceMappingURL=chunk-C7MED6ED.js.map
+//# sourceMappingURL=chunk-5W6SW3HC.js.map

@@ -2,7 +2,11 @@ import {
   PlatformLocation,
   XhrFactory,
   parseCookieValue
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-SAVSPBX7.js
 } from "./chunk-53EX5PUZ.js";
+========
+} from "./chunk-EQPJXDGQ.js";
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-D2VM5XRM.js
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -2630,4 +2634,8 @@ export {
   withHttpTransferCache,
   httpResource
 };
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-SAVSPBX7.js
 //# sourceMappingURL=chunk-SAVSPBX7.js.map
+========
+//# sourceMappingURL=chunk-D2VM5XRM.js.map
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-D2VM5XRM.js

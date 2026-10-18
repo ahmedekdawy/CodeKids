@@ -2154,6 +2154,8 @@ var AR = {
   "editor.promptPlaceholder": "\u0627\u0643\u062A\u0628 \u0646\u0635 \u0627\u0644\u0633\u0624\u0627\u0644. \u0627\u0633\u062A\u062E\u062F\u0645 \u0634\u0631\u064A\u0637 \u0627\u0644\u0623\u062F\u0648\u0627\u062A \u0644\u0644\u0631\u0645\u0648\u0632 \u0627\u0644\u0631\u064A\u0627\u0636\u064A\u0629 \u0648\u0627\u0644\u062A\u0646\u0633\u064A\u0642\u2026",
   "editor.formattingToolbar": "\u062A\u0646\u0633\u064A\u0642 \u0627\u0644\u0646\u0635",
   "editor.symbolGroups": "\u0645\u062C\u0645\u0648\u0639\u0627\u062A \u0627\u0644\u0631\u0645\u0648\u0632 \u0627\u0644\u0631\u064A\u0627\u0636\u064A\u0629",
+  "editor.showAdvanced": "\u0625\u0638\u0647\u0627\u0631 \u0627\u0644\u0623\u062F\u0648\u0627\u062A \u0627\u0644\u0645\u062A\u0642\u062F\u0645\u0629",
+  "editor.hideAdvanced": "\u0625\u062E\u0641\u0627\u0621 \u0627\u0644\u0623\u062F\u0648\u0627\u062A \u0627\u0644\u0645\u062A\u0642\u062F\u0645\u0629",
   "editor.bold": "\u0639\u0631\u064A\u0636",
   "editor.italic": "\u0645\u0627\u0626\u0644",
   "editor.underline": "\u062A\u0633\u0637\u064A\u0631",
@@ -4604,6 +4606,8 @@ var EN = {
   "editor.promptPlaceholder": "Write the question prompt. Use the toolbar for math symbols and formatting\u2026",
   "editor.formattingToolbar": "Prompt formatting",
   "editor.symbolGroups": "Math symbol groups",
+  "editor.showAdvanced": "Show advanced tools",
+  "editor.hideAdvanced": "Hide advanced tools",
   "editor.bold": "Bold",
   "editor.italic": "Italic",
   "editor.underline": "Underline",
@@ -5072,4 +5076,4 @@ export {
   LocaleService,
   TranslatePipe
 };
-//# sourceMappingURL=chunk-MAWF43RP.js.map
+//# sourceMappingURL=chunk-5TRF6X2H.js.map

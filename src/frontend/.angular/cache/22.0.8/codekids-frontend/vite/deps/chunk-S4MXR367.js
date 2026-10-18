@@ -1,16 +1,29 @@
 import {
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-ZQYYOKIK.js
   withHttpTransferCache
 } from "./chunk-SAVSPBX7.js";
 import {
   CommonModule,
   PLATFORM_BROWSER_ID
 } from "./chunk-VATZPZNA.js";
+========
+  CommonModule,
+  PLATFORM_BROWSER_ID
+} from "./chunk-TBP3XVJY.js";
+import {
+  withHttpTransferCache
+} from "./chunk-D2VM5XRM.js";
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-S4MXR367.js
 import {
   DomAdapter,
   getDOM,
   parseCookieValue,
   setRootDomAdapter
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-ZQYYOKIK.js
 } from "./chunk-53EX5PUZ.js";
+========
+} from "./chunk-EQPJXDGQ.js";
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-S4MXR367.js
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationModule,
@@ -1552,4 +1565,8 @@ export {
   DomSanitizerImpl,
   VERSION
 };
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-ZQYYOKIK.js
 //# sourceMappingURL=chunk-ZQYYOKIK.js.map
+========
+//# sourceMappingURL=chunk-S4MXR367.js.map
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-S4MXR367.js

@@ -161,22 +161,35 @@
 
       @if (!compact) {
         <span class="sep" aria-hidden="true"></span>
-        @for (tool of equationTools; track tool.id) {
-          <button
-            type="button"
-            class="eq"
-            [class.active]="tool.id === 'fraction' && showFractionBuilder"
-            (mousedown)="$event.preventDefault()"
-            (click)="runEquationTool(tool.id)"
-            [attr.title]="tool.titleKey | t"
-            [attr.aria-label]="tool.titleKey | t">
-            {{ tool.label }}
-          </button>
+        <button
+          type="button"
+          class="fmt advanced-toggle"
+          [class.active]="advancedOpen"
+          (mousedown)="$event.preventDefault()"
+          (click)="toggleAdvanced()"
+          [attr.aria-expanded]="advancedOpen"
+          [attr.title]="(advancedOpen ? 'editor.hideAdvanced' : 'editor.showAdvanced') | t"
+          [attr.aria-label]="(advancedOpen ? 'editor.hideAdvanced' : 'editor.showAdvanced') | t">
+          {{ advancedOpen ? '▴' : '▾' }}
+        </button>
+        @if (advancedOpen) {
+          @for (tool of equationTools; track tool.id) {
+            <button
+              type="button"
+              class="eq"
+              [class.active]="tool.id === 'fraction' && showFractionBuilder"
+              (mousedown)="$event.preventDefault()"
+              (click)="runEquationTool(tool.id)"
+              [attr.title]="tool.titleKey | t"
+              [attr.aria-label]="tool.titleKey | t">
+              {{ tool.label }}
+            </button>
+          }
         }
       }
     </div>
 
-    @if (!compact && showFractionBuilder) {
+    @if (!compact && advancedOpen && showFractionBuilder) {
       <div class="fraction-builder" role="group" [attr.aria-label]="'editor.fractionBuilder' | t">
         <div class="fraction-fields">
           <label class="frac-field">
@@ -210,7 +223,7 @@
       </div>
     }
 
-    @if (!compact) {
+    @if (!compact && advancedOpen) {
       <div class="symbol-tabs" role="tablist" [attr.aria-label]="'editor.symbolGroups' | t">
         @for (group of symbolGroups; track group.id) {
           <button

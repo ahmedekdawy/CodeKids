@@ -1,6 +1,10 @@
 import {
   PlatformLocation
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-VATZPZNA.js
 } from "./chunk-53EX5PUZ.js";
+========
+} from "./chunk-EQPJXDGQ.js";
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-TBP3XVJY.js
 import {
   ApplicationRef,
   Attribute,
@@ -4684,4 +4688,8 @@ export {
   PRECONNECT_CHECK_BLOCKLIST,
   NgOptimizedImage
 };
+<<<<<<<< HEAD:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-VATZPZNA.js
 //# sourceMappingURL=chunk-VATZPZNA.js.map
+========
+//# sourceMappingURL=chunk-TBP3XVJY.js.map
+>>>>>>>> master:src/frontend/.angular/cache/22.0.8/codekids-frontend/vite/deps/chunk-TBP3XVJY.js
