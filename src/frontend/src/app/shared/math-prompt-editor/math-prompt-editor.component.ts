@@ -157,6 +157,8 @@ export class MathPromptEditorComponent implements ControlValueAccessor {
   ];
 
   activeGroupId = this.symbolGroups[0].id;
+  /** Advanced tools (equations, fraction builder, symbol pads) start collapsed. */
+  advancedOpen = false;
   showFractionBuilder = false;
   fractionNum = '';
   fractionDen = '';
@@ -203,6 +205,14 @@ export class MathPromptEditorComponent implements ControlValueAccessor {
 
   selectGroup(id: string): void {
     this.activeGroupId = id;
+  }
+
+  toggleAdvanced(): void {
+    this.advancedOpen = !this.advancedOpen;
+    this.colorPanel = null;
+    if (!this.advancedOpen) {
+      this.showFractionBuilder = false;
+    }
   }
 
   exec(command: string, value?: string): void {

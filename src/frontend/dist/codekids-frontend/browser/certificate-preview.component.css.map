@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;16f26f64b59af9d20ce569b780e05107df2811ffd703e667c443ffa461f2942b;D:/Projects/CodeKids/src/frontend/src/app/shared/certificate-preview/certificate-preview.component.ts"],
+  "sourcesContent": ["\n      :host {\n        display: block;\n      }\n\n      .gc-preview-frame {\n        overflow: hidden;\n        width: 100%;\n      }\n\n      .gc-preview-scale {\n        width: 1123px;\n        transform-origin: top left;\n      }\n    "],
+  "mappings": ";AACM;AACE,WAAS;AACX;AAEA,CAAC;AACC,YAAU;AACV,SAAO;AACT;AAEA,CAAC;AACC,SAAO;AACP,oBAAkB,IAAI;AACxB;",
+  "names": []
+}

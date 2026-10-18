@@ -2182,6 +2182,8 @@ export const EN: Record<string, string> = {
   'editor.promptPlaceholder': 'Write the question prompt. Use the toolbar for math symbols and formatting…',
   'editor.formattingToolbar': 'Prompt formatting',
   'editor.symbolGroups': 'Math symbol groups',
+  'editor.showAdvanced': 'Show advanced tools',
+  'editor.hideAdvanced': 'Hide advanced tools',
   'editor.bold': 'Bold',
   'editor.italic': 'Italic',
   'editor.underline': 'Underline',
