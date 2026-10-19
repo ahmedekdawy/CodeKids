@@ -41,7 +41,8 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
                 x.MediaAsset.SizeBytes,
                 x.MediaAsset.DurationSeconds,
                 x.SortOrder,
-                x.CreatedAtUtc);
+                x.CreatedAtUtc,
+                x.MediaAsset!.HasChat);
         }).ToList();
 
         var solutionVideos = await dbContext.Assignments
@@ -97,7 +98,8 @@ public sealed class GetTeacherVideoLibraryQueryHandler(IAppDbContext dbContext)
                 x.MediaAsset.SizeBytes,
                 x.MediaAsset.DurationSeconds,
                 x.SortOrder,
-                x.CreatedAtUtc))
+                x.CreatedAtUtc,
+                x.MediaAsset!.HasChat))
             .ToListAsync(cancellationToken);
 
         return new TeacherVideoLibraryDto(lessonVideoDtos, solutionVideos, courseVideos);

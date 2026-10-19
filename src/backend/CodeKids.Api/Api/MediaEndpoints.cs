@@ -95,7 +95,7 @@ public static class MediaEndpoints
             {
                 var userId = CurrentUser.GetUserId(httpContext.User);
                 return Results.Ok(await handler.Handle(
-                    new RegisterMediaFromUrlCommand(userId, request.Url, request.Title),
+                    new RegisterMediaFromUrlCommand(userId, request.Url, request.Title, request.HasChat),
                     cancellationToken));
             }
             catch (Exception ex)
@@ -217,7 +217,7 @@ public static class MediaEndpoints
             {
                 return ApiResults.ProblemFromException(ex);
             }
-        }).RequireAuthorization(new AuthorizeAttribute { Roles = "SuperAdmin" });
+        }).RequireAuthorization(new AuthorizeAttribute { Roles = "Teacher,SuperAdmin" });
 
         app.MapGet("/api/media/{mediaAssetId:guid}/playback", async (
             Guid mediaAssetId,

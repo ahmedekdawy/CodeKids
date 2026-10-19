@@ -7,6 +7,7 @@ import { ProtectedVideoPlayerComponent } from '../../shared/protected-video-play
 import { TranslatePipe } from '../../shared/translate.pipe';
 import { Course, CourseVideoLibraryItem } from '../../models';
 import { formatCourseLabel } from '../../grade.util';
+import { youtubeVideoKey } from '../../shared/youtube-chat.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
@@ -45,6 +46,8 @@ export class AdminVideosComponent {
   selectedCourseId = '';
   videoTitle = '';
   videoUrl = '';
+  /** Live chat flag: only offered for YouTube links, auto-on when one is pasted. */
+  hasChat = false;
   readonly filterCourseId = signal('');
   readonly search = signal('');
 
@@ -90,6 +93,15 @@ export class AdminVideosComponent {
     return formatCourseLabel((k, p) => this.locale.t(k, p), fallbackTitle, null);
   }
 
+  isYouTubeLink(url: string): boolean {
+    return youtubeVideoKey(url) != null;
+  }
+
+  setVideoUrl(value: string): void {
+    this.videoUrl = value;
+    this.hasChat = this.isYouTubeLink(value);
+  }
+
   formatDate(iso: string): string {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return '—';
@@ -131,7 +143,11 @@ export class AdminVideosComponent {
       this.error.set(this.locale.t('videos.linkRequired'));
       return;
     }
-    this.saveFromAsset((title) => this.api.registerMediaFromUrl({ url, title: title || null }), false);
+    this.saveFromAsset(
+      (title) =>
+        this.api.registerMediaFromUrl({ url, title: title || null, hasChat: this.hasChat && this.isYouTubeLink(url) }),
+      false
+    );
   }
 
   attachFile(): void {
@@ -170,6 +186,7 @@ export class AdminVideosComponent {
               );
               this.videoTitle = '';
               this.videoUrl = '';
+              this.hasChat = false;
               this.videoFile.set(null);
               this.reloadLibrary();
             },

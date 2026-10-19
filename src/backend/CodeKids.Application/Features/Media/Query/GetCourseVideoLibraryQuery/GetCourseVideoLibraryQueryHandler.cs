@@ -36,7 +36,8 @@ public sealed class GetCourseVideoLibraryQueryHandler(IAppDbContext dbContext)
                 x.MediaAsset.SizeBytes,
                 x.MediaAsset.DurationSeconds,
                 x.SortOrder,
-                x.CreatedAtUtc))
+                x.CreatedAtUtc,
+                x.MediaAsset!.HasChat))
             .ToListAsync(cancellationToken);
     }
 }

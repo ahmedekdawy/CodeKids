@@ -1,6 +1,6 @@
 import {
   LearningApiService
-} from "./chunk-7YFOTRM2.js";
+} from "./chunk-3MQCOGP4.js";
 import {
   Component,
   DestroyRef,
@@ -267,4 +267,4 @@ export {
   toSignal,
   UserPhotoComponent
 };
-//# sourceMappingURL=chunk-YI56DT2Q.js.map
+//# sourceMappingURL=chunk-QVPJPOWM.js.map

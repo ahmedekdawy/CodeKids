@@ -1,10 +1,10 @@
 import {
   LocaleService,
   TranslatePipe
-} from "./chunk-5TRF6X2H.js";
+} from "./chunk-BJYUWG4T.js";
 import {
   LearningApiService
-} from "./chunk-7YFOTRM2.js";
+} from "./chunk-3MQCOGP4.js";
 import {
   PageFeedbackComponent
 } from "./chunk-GSQJCOEO.js";
@@ -683,4 +683,4 @@ function toTimeInput(totalMinutes) {
 export {
   AvailabilityEditorComponent
 };
-//# sourceMappingURL=chunk-B6I2YGNS.js.map
+//# sourceMappingURL=chunk-M4BOK7QQ.js.map

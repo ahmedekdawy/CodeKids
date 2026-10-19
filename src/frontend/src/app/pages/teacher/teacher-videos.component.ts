@@ -18,6 +18,7 @@ import {
   WatchSession
 } from '../../models';
 import { formatCourseLabel } from '../../grade.util';
+import { youtubeVideoKey } from '../../shared/youtube-chat.util';
 import { SearchableSelectComponent } from '../../shared/searchable-select/searchable-select.component';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { SavedFiltersDirective } from '../../shared/saved-filters.directive';
@@ -65,6 +66,9 @@ export class TeacherVideosComponent {
   courseUploadCourseId = '';
   courseVideoTitle = '';
   courseVideoUrl = '';
+  /** Live chat flag: only offered for YouTube links, auto-on when one is pasted. */
+  lessonHasChat = false;
+  courseHasChat = false;
   solutionVideoUrl = '';
   selectedAssignmentId = '';
   selectedMediaAssetId = '';
@@ -233,6 +237,20 @@ export class TeacherVideosComponent {
     return formatCourseLabel((k, p) => this.locale.t(k, p), course.title, course.grade, 'common.allGrades', course.stageId);
   }
 
+  isYouTubeLink(url: string): boolean {
+    return youtubeVideoKey(url) != null;
+  }
+
+  setLessonVideoUrl(value: string): void {
+    this.lessonVideoUrl = value;
+    this.lessonHasChat = this.isYouTubeLink(value);
+  }
+
+  setCourseVideoUrl(value: string): void {
+    this.courseVideoUrl = value;
+    this.courseHasChat = this.isYouTubeLink(value);
+  }
+
   assignmentOptionLabel(assignment: Assignment): string {
     return assignment.solutionVideoMediaAssetId
       ? `${assignment.title} (${this.locale.t('videos.hasSolution')})`
@@ -381,8 +399,10 @@ export class TeacherVideosComponent {
         this.info.set(this.locale.t('videos.uploadedLesson'));
         this.videoTitle = '';
         this.lessonVideoUrl = '';
+        this.lessonHasChat = false;
       },
-      'videos.attachLessonFailed'
+      'videos.attachLessonFailed',
+      this.lessonHasChat
     );
   }
 
@@ -404,8 +424,10 @@ export class TeacherVideosComponent {
         this.info.set(this.locale.t('videos.uploadedCourse'));
         this.courseVideoTitle = '';
         this.courseVideoUrl = '';
+        this.courseHasChat = false;
       },
-      'videos.attachCourseFailed'
+      'videos.attachCourseFailed',
+      this.courseHasChat
     );
   }
 
@@ -477,13 +499,14 @@ export class TeacherVideosComponent {
     title: string,
     attach: (asset: { id: string; fileName: string }) => Observable<unknown>,
     onSuccess: () => void,
-    attachFailKey: string
+    attachFailKey: string,
+    hasChat = false
   ): void {
     this.error.set('');
     this.info.set('');
     this.uploading.set(true);
 
-    this.api.registerMediaFromUrl({ url, title: title || null }).subscribe({
+    this.api.registerMediaFromUrl({ url, title: title || null, hasChat: hasChat && this.isYouTubeLink(url) }).subscribe({
       next: (asset) => {
         this.selectedMediaAssetId = asset.id;
         attach(asset).subscribe({
@@ -616,6 +639,20 @@ export class TeacherVideosComponent {
         this.reloadLibrary();
       },
       error: (err) => this.error.set(this.locale.fromApiError(err,'videos.deleteLessonFailed'))
+    });
+  }
+
+  deleteCourseVideo(video: CourseVideoLibraryItem): void {
+    if (!confirm(this.locale.t('videos.confirmDeleteCourse', { title: video.title }))) return;
+    this.error.set('');
+    this.api.deleteCourseVideo(video.id).subscribe({
+      next: () => {
+        this.info.set(this.locale.t('videos.deletedCourse'));
+        if (this.selectedMediaAssetId === video.mediaAssetId) this.selectedMediaAssetId = '';
+        if (this.preview()?.mediaAssetId === video.mediaAssetId) this.closePreview();
+        this.reloadLibrary();
+      },
+      error: (err) => this.error.set(this.locale.fromApiError(err, 'videos.deleteCourseFailed'))
     });
   }
 

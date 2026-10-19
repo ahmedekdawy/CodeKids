@@ -884,6 +884,9 @@ var AR = {
   "videos.videoFile": "\u0645\u0644\u0641 \u0641\u064A\u062F\u064A\u0648 (MP4 / WebM / MOV)",
   "videos.videoLink": "\u0631\u0627\u0628\u0637 \u0627\u0644\u0641\u064A\u062F\u064A\u0648",
   "videos.videoLinkPlaceholder": "https://\u2026",
+  "videos.hasChatFlag": "\u062F\u0631\u062F\u0634\u0629 \u0627\u0644\u0628\u062B \u0627\u0644\u0645\u0628\u0627\u0634\u0631 \u0639\u0644\u0649 \u064A\u0648\u062A\u064A\u0648\u0628",
+  "videos.hasChatHint": "\u064A\u062D\u0635\u0644 \u0627\u0644\u0637\u0644\u0627\u0628 \u0639\u0644\u0649 \u0644\u0648\u062D\u0629 \u0627\u0644\u062F\u0631\u062F\u0634\u0629 \u0628\u062C\u0627\u0646\u0628 \u0627\u0644\u0641\u064A\u062F\u064A\u0648 \u2014 \u0628\u0646\u0641\u0633 \u0645\u0641\u062A\u0627\u062D \u0627\u0644\u0641\u064A\u062F\u064A\u0648.",
+  "videos.chatFlag": "\u062F\u0631\u062F\u0634\u0629 \u0645\u0628\u0627\u0634\u0631\u0629",
   "videos.link": "\u0627\u0644\u0631\u0627\u0628\u0637 / \u0627\u0644\u0627\u0633\u0645",
   "videos.attachLink": "\u0625\u0631\u0641\u0627\u0642 \u0627\u0644\u0631\u0627\u0628\u0637",
   "videos.attachFile": "\u0631\u0641\u0639 \u0645\u0644\u0641",
@@ -971,6 +974,7 @@ var AR = {
   "player.watched": "\u0634\u064F\u0648\u0647\u062F {seconds}\u062B",
   "player.speedUpDetected": "\u062A\u0645 \u0631\u0635\u062F \u062A\u0633\u0631\u064A\u0639",
   "player.skipDetected": "\u062A\u0645 \u0631\u0635\u062F \u062A\u062E\u0637\u064A",
+  "player.liveChat": "\u0627\u0644\u062F\u0631\u062F\u0634\u0629 \u0627\u0644\u0645\u0628\u0627\u0634\u0631\u0629",
   "admin.courses.title": "\u0627\u0644\u0645\u0648\u0627\u062F",
   "admin.courses.subtitle": "\u0625\u0646\u0634\u0627\u0621 \u0648\u062A\u0639\u062F\u064A\u0644 \u0648\u062D\u0630\u0641 \u0627\u0644\u0645\u0648\u0627\u062F. \u0627\u062E\u062A\u0631 \u0645\u0631\u062D\u0644\u0629 \u0648\u0627\u062E\u062A\u064A\u0627\u0631\u064A\u064B\u0627 \u0635\u0641\u0648\u0641\u064B\u0627 \u0645\u062D\u062F\u062F\u0629. \u0627\u0644\u0645\u0631\u062D\u0644\u0629 \u0628\u062F\u0648\u0646 \u0635\u0641 \u062A\u0639\u0646\u064A \u0643\u0644 \u0635\u0641\u0648\u0641 \u0647\u0630\u0647 \u0627\u0644\u0645\u0631\u062D\u0644\u0629. \u0627\u0644\u0641\u0635\u0644 \u0627\u0644\u062F\u0631\u0627\u0633\u064A \u0627\u062E\u062A\u064A\u0627\u0631\u064A. \u0627\u0646\u0642\u0631 \u0639\u0644\u0649 \u0627\u0644\u0639\u0646\u0627\u0648\u064A\u0646 \u0644\u0644\u062A\u0631\u062A\u064A\u0628.",
   "admin.courses.create": "\u0625\u0646\u0634\u0627\u0621 \u0645\u0627\u062F\u0629",
@@ -3336,6 +3340,9 @@ var EN = {
   "videos.videoFile": "Video file (MP4 / WebM / MOV)",
   "videos.videoLink": "Video link",
   "videos.videoLinkPlaceholder": "https://\u2026",
+  "videos.hasChatFlag": "YouTube live chat",
+  "videos.hasChatHint": "Students get the chat panel next to the video \u2014 it uses the same video key.",
+  "videos.chatFlag": "Live chat",
   "videos.link": "Link / name",
   "videos.attachLink": "Attach link",
   "videos.attachFile": "Upload file",
@@ -3423,6 +3430,7 @@ var EN = {
   "player.watched": "Watched {seconds}s",
   "player.speedUpDetected": "speed-up detected",
   "player.skipDetected": "skip detected",
+  "player.liveChat": "Live chat",
   "admin.courses.title": "Courses",
   "admin.courses.subtitle": "Create, edit, and delete courses. Choose a stage and optionally specific grades. A stage with no grade covers every grade in that stage. Term is optional. Click headers to sort.",
   "admin.courses.create": "Create course",
@@ -5076,4 +5084,4 @@ export {
   LocaleService,
   TranslatePipe
 };
-//# sourceMappingURL=chunk-5TRF6X2H.js.map
+//# sourceMappingURL=chunk-BJYUWG4T.js.map

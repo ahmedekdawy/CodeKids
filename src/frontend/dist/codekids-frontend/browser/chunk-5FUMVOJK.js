@@ -6,7 +6,7 @@ import "./chunk-RLZFB7T3.js";
 import {
   LocaleService,
   TranslatePipe
-} from "./chunk-5TRF6X2H.js";
+} from "./chunk-BJYUWG4T.js";
 import {
   PageFeedbackComponent
 } from "./chunk-GSQJCOEO.js";
@@ -258,4 +258,4 @@ var TeacherAccountComponent = class _TeacherAccountComponent {
 export {
   TeacherAccountComponent
 };
-//# sourceMappingURL=chunk-KNC3AZUJ.js.map
+//# sourceMappingURL=chunk-5FUMVOJK.js.map

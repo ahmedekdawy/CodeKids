@@ -336,6 +336,44 @@
   border-color: var(--badge-warn-border);
 }
 
+.video-chip.chat {
+  color: var(--badge-ok-fg);
+  background: var(--badge-ok-bg);
+  border-color: var(--badge-ok-border, var(--border));
+}
+
+/* YouTube live chat flag on the link upload forms */
+.chat-flag {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--elevated-bg);
+  cursor: pointer;
+}
+
+.chat-flag input[type='checkbox'] {
+  margin-top: 0.2rem;
+  accent-color: var(--teal, #5fd3bc);
+}
+
+.chat-flag-text {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.chat-flag-text strong {
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.chat-flag-text small {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
 .video-card-actions {
   display: flex;
   flex-wrap: wrap;

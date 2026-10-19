@@ -14,35 +14,50 @@
   }
 
   @if (playback(); as info) {
-    <div class="stage">
-      @if (embedUrl(); as safeEmbed) {
-        <iframe
-          class="embed-frame"
-          [src]="safeEmbed"
-          title="{{ title() }}"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          referrerpolicy="strict-origin-when-cross-origin"
-        ></iframe>
-      } @else {
-        <video
-          #videoEl
-          [src]="info.playbackUrl"
-          controls
-          controlsList="nodownload"
-          disablePictureInPicture
-          (canplay)="onCanPlay()"
-          (error)="onVideoError()"
-          (play)="onPlay()"
-          (pause)="onPause()"
-          (ended)="onEnded()"
-          (ratechange)="onRateChange()"
-          (seeking)="onSeeking()"
-          (seeked)="onSeeked()"
-          (contextmenu)="$event.preventDefault()">
-        </video>
+    <div class="stage-row" [class.with-chat]="chatUrl()">
+      <div class="stage">
+        @if (embedUrl(); as safeEmbed) {
+          <iframe
+            class="embed-frame"
+            [src]="safeEmbed"
+            title="{{ title() }}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        } @else {
+          <video
+            #videoEl
+            [src]="info.playbackUrl"
+            controls
+            controlsList="nodownload"
+            disablePictureInPicture
+            (canplay)="onCanPlay()"
+            (error)="onVideoError()"
+            (play)="onPlay()"
+            (pause)="onPause()"
+            (ended)="onEnded()"
+            (ratechange)="onRateChange()"
+            (seeking)="onSeeking()"
+            (seeked)="onSeeked()"
+            (contextmenu)="$event.preventDefault()">
+          </video>
+        }
+        <div class="watermark" aria-hidden="true">{{ info.watermarkText }}</div>
+      </div>
+
+      @if (chatUrl(); as chat) {
+        <aside class="chat-panel">
+          <div class="chat-head">{{ 'player.liveChat' | t }}</div>
+          <iframe
+            class="chat-frame"
+            [src]="chat"
+            title="{{ 'player.liveChat' | t }}"
+            allow="clipboard-write; encrypted-media"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </aside>
       }
-      <div class="watermark" aria-hidden="true">{{ info.watermarkText }}</div>
     </div>
     @if (session(); as watch) {
       <p class="meta">

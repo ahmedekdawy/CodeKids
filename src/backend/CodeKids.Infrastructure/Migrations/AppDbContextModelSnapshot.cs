@@ -1543,6 +1543,9 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
+                    b.Property<bool>("HasChat")
+                        .HasColumnType("boolean");
+
                     b.Property<long>("SizeBytes")
                         .HasColumnType("bigint");
 
@@ -1557,6 +1560,10 @@ namespace CodeKids.Infrastructure.Migrations
 
                     b.Property<Guid>("UploadedByUserId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("YoutubeVideoKey")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.HasKey("Id");
 

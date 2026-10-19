@@ -16,4 +16,6 @@ public sealed record PlaybackDto(
     string FileName,
     bool IsExternalLink = false,
     bool IsTeraboxHosted = false,
-    string? TeraboxBaseUrl = null);
+    string? TeraboxBaseUrl = null,
+    bool HasChat = false,
+    string? YoutubeVideoKey = null);

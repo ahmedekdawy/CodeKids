@@ -6,9 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeKids.Application.Features.Media;
 
-public sealed record RegisterMediaFromUrlRequest(string Url, string? Title = null);
+public sealed record RegisterMediaFromUrlRequest(string Url, string? Title = null, bool? HasChat = null);
 
 public sealed record RegisterMediaFromUrlCommand(
     Guid TeacherUserId,
     string Url,
-    string? Title = null) : ICommand<MediaAssetDto>;
+    string? Title = null,
+    bool? HasChat = null) : ICommand<MediaAssetDto>;

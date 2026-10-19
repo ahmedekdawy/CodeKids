@@ -10,4 +10,5 @@ public sealed record CourseVideoLibraryItemDto(
     long SizeBytes,
     int? DurationSeconds,
     int SortOrder,
-    DateTimeOffset CreatedAtUtc);
+    DateTimeOffset CreatedAtUtc,
+    bool HasChat = false);

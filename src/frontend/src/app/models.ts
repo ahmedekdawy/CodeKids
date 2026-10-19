@@ -195,6 +195,8 @@ export interface CourseVideoLibraryItem {
   durationSeconds?: number | null;
   sortOrder: number;
   createdAtUtc: string;
+  /** The source video is a YouTube live with a chat panel students can open next to it. */
+  hasChat?: boolean;
 }
 
 export interface Lesson {
@@ -219,6 +221,8 @@ export interface MediaAsset {
   durationSeconds?: number | null;
   createdAtUtc: string;
   externalUrl?: string | null;
+  hasChat?: boolean;
+  youtubeVideoKey?: string | null;
 }
 
 export interface TeacherLessonVideo {
@@ -234,6 +238,7 @@ export interface TeacherLessonVideo {
   durationSeconds?: number | null;
   sortOrder: number;
   createdAtUtc: string;
+  hasChat?: boolean;
 }
 
 export interface TeacherSolutionVideo {
@@ -298,6 +303,10 @@ export interface PlaybackInfo {
   isExternalLink?: boolean;
   isTeraboxHosted?: boolean;
   teraboxBaseUrl?: string | null;
+  /** True when a YouTube live chat panel belongs next to this video. */
+  hasChat?: boolean;
+  /** YouTube key shared by the video and its chat link, e.g. V9mTgsEvkt4. */
+  youtubeVideoKey?: string | null;
 }
 
 export interface WatchSession {

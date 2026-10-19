@@ -13,4 +13,6 @@ public sealed record MediaAssetDto(
     long SizeBytes,
     int? DurationSeconds,
     DateTimeOffset CreatedAtUtc,
-    string? ExternalUrl = null);
+    string? ExternalUrl = null,
+    bool HasChat = false,
+    string? YoutubeVideoKey = null);

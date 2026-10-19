@@ -119,7 +119,8 @@
               {{ 'videos.videoLink' | t }}
               <input
                 type="url"
-                [(ngModel)]="lessonVideoUrl"
+                [ngModel]="lessonVideoUrl"
+                (ngModelChange)="setLessonVideoUrl($event)"
                 name="lessonVideoUrl"
                 [placeholder]="'videos.videoLinkPlaceholder' | t"
               />
@@ -148,6 +149,16 @@
               </div>
             </div>
           </div>
+
+          @if (isYouTubeLink(lessonVideoUrl)) {
+            <label class="chat-flag">
+              <input type="checkbox" [(ngModel)]="lessonHasChat" name="lessonHasChat" [disabled]="uploading()" />
+              <span class="chat-flag-text">
+                <strong>{{ 'videos.hasChatFlag' | t }}</strong>
+                <small>{{ 'videos.hasChatHint' | t }}</small>
+              </span>
+            </label>
+          }
 
           @if (uploadProgress() != null) {
             <div class="upload-progress" aria-live="polite">
@@ -244,6 +255,9 @@
                     <span class="video-chip">{{ video.lessonTitle }}</span>
                   }
                   <span class="video-chip subtle">{{ formatDate(video.createdAtUtc) }}</span>
+                  @if (video.hasChat) {
+                    <span class="video-chip chat">{{ 'videos.chatFlag' | t }}</span>
+                  }
                 </div>
               </div>
 
@@ -296,7 +310,8 @@
               {{ 'videos.videoLink' | t }}
               <input
                 type="url"
-                [(ngModel)]="courseVideoUrl"
+                [ngModel]="courseVideoUrl"
+                (ngModelChange)="setCourseVideoUrl($event)"
                 name="courseVideoUrl"
                 [placeholder]="'videos.videoLinkPlaceholder' | t"
               />
@@ -325,6 +340,16 @@
               </div>
             </div>
           </div>
+
+          @if (isYouTubeLink(courseVideoUrl)) {
+            <label class="chat-flag">
+              <input type="checkbox" [(ngModel)]="courseHasChat" name="courseHasChat" [disabled]="uploading()" />
+              <span class="chat-flag-text">
+                <strong>{{ 'videos.hasChatFlag' | t }}</strong>
+                <small>{{ 'videos.hasChatHint' | t }}</small>
+              </span>
+            </label>
+          }
 
           @if (uploadProgress() != null) {
             <div class="upload-progress" aria-live="polite">
@@ -405,6 +430,9 @@
                 <div class="video-card-meta">
                   <span class="video-chip">{{ courseLabelById(video.courseId, video.courseTitle) }}</span>
                   <span class="video-chip subtle">{{ formatDate(video.createdAtUtc) }}</span>
+                  @if (video.hasChat) {
+                    <span class="video-chip chat">{{ 'videos.chatFlag' | t }}</span>
+                  }
                 </div>
               </div>
 
@@ -415,6 +443,12 @@
                 <button type="button" class="ghost-btn small-btn" (click)="inspectWatch(video.mediaAssetId)">
                   {{ 'videos.analytics' | t }}
                 </button>
+                <app-icon-action-button
+                  kind="delete"
+                  variant="danger"
+                  [label]="'videos.deleteCourse' | t"
+                  (action)="deleteCourseVideo(video)"
+                />
               </div>
             </article>
           } @empty {

@@ -3,6 +3,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LearningApiService } from '../../learning-api.service';
 import { LocaleService } from '../../i18n/locale.service';
 import { PlaybackInfo, WatchSession } from '../../models';
+import { youtubeChatUrl } from '../youtube-chat.util';
 import { TranslatePipe } from '../translate.pipe';
 
 @Component({
@@ -34,6 +35,13 @@ export class ProtectedVideoPlayerComponent implements OnInit, OnDestroy {
     if (!info?.isExternalLink) return null;
     const embed = toEmbedUrl(info.playbackUrl);
     return embed ? this.sanitizer.bypassSecurityTrustResourceUrl(embed) : null;
+  });
+
+  /** YouTube live chat for this video, shown next to it (same key as the video). */
+  readonly chatUrl = computed<SafeResourceUrl | null>(() => {
+    const info = this.playback();
+    if (!info?.hasChat || !info.youtubeVideoKey) return null;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(youtubeChatUrl(info.youtubeVideoKey));
   });
 
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;

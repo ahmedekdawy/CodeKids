@@ -15,6 +15,10 @@ public sealed class RegisterMediaFromUrlCommandHandler(IAppDbContext dbContext)
     {
         var url = MediaUploadRules.NormalizeExternalUrl(command.Url);
         var uri = new Uri(url);
+        // The chat panel is built from the same key the video URL carries (youtu.be/<key>, watch?v=<key>,
+        // studio.youtube.com/video/<key>/livestreaming, ...), and the teacher can switch it off.
+        var youtubeKey = YouTubeVideoKey.TryExtract(url);
+        var hasChat = youtubeKey is not null && command.HasChat != false;
         var title = (command.Title ?? string.Empty).Trim();
         if (title.Length > 260)
         {
@@ -38,6 +42,8 @@ public sealed class RegisterMediaFromUrlCommandHandler(IAppDbContext dbContext)
             SizeBytes = 0,
             DurationSeconds = null,
             UploadedByUserId = command.TeacherUserId,
+            HasChat = hasChat,
+            YoutubeVideoKey = youtubeKey,
             CreatedAtUtc = DateTimeOffset.UtcNow
         };
 
@@ -51,6 +57,8 @@ public sealed class RegisterMediaFromUrlCommandHandler(IAppDbContext dbContext)
             asset.SizeBytes,
             asset.DurationSeconds,
             asset.CreatedAtUtc,
-            asset.ExternalUrl);
+            asset.ExternalUrl,
+            asset.HasChat,
+            asset.YoutubeVideoKey);
     }
 }

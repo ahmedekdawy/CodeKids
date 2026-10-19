@@ -904,6 +904,9 @@ export const AR: Record<string, string> = {
   'videos.videoFile': 'ملف فيديو (MP4 / WebM / MOV)',
   'videos.videoLink': 'رابط الفيديو',
   'videos.videoLinkPlaceholder': 'https://…',
+  'videos.hasChatFlag': 'دردشة البث المباشر على يوتيوب',
+  'videos.hasChatHint': 'يحصل الطلاب على لوحة الدردشة بجانب الفيديو — بنفس مفتاح الفيديو.',
+  'videos.chatFlag': 'دردشة مباشرة',
   'videos.link': 'الرابط / الاسم',
   'videos.attachLink': 'إرفاق الرابط',
   'videos.attachFile': 'رفع ملف',
@@ -992,6 +995,7 @@ export const AR: Record<string, string> = {
   'player.watched': 'شُوهد {seconds}ث',
   'player.speedUpDetected': 'تم رصد تسريع',
   'player.skipDetected': 'تم رصد تخطي',
+  'player.liveChat': 'الدردشة المباشرة',
 
   'admin.courses.title': 'المواد',
   'admin.courses.subtitle': 'إنشاء وتعديل وحذف المواد. اختر مرحلة واختياريًا صفوفًا محددة. المرحلة بدون صف تعني كل صفوف هذه المرحلة. الفصل الدراسي اختياري. انقر على العناوين للترتيب.',

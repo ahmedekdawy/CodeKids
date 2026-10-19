@@ -905,6 +905,9 @@ export const EN: Record<string, string> = {
   'videos.videoFile': 'Video file (MP4 / WebM / MOV)',
   'videos.videoLink': 'Video link',
   'videos.videoLinkPlaceholder': 'https://…',
+  'videos.hasChatFlag': 'YouTube live chat',
+  'videos.hasChatHint': 'Students get the chat panel next to the video — it uses the same video key.',
+  'videos.chatFlag': 'Live chat',
   'videos.link': 'Link / name',
   'videos.attachLink': 'Attach link',
   'videos.attachFile': 'Upload file',
@@ -993,6 +996,7 @@ export const EN: Record<string, string> = {
   'player.watched': 'Watched {seconds}s',
   'player.speedUpDetected': 'speed-up detected',
   'player.skipDetected': 'skip detected',
+  'player.liveChat': 'Live chat',
 
   'admin.courses.title': 'Courses',
   'admin.courses.subtitle': 'Create, edit, and delete courses. Choose a stage and optionally specific grades. A stage with no grade covers every grade in that stage. Term is optional. Click headers to sort.',

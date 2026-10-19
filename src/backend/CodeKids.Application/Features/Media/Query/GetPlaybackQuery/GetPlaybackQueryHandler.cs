@@ -32,7 +32,9 @@ public sealed class GetPlaybackQueryHandler(
                 media.DurationSeconds,
                 media.ContentType,
                 media.FileName,
-                IsExternalLink: true);
+                IsExternalLink: true,
+                HasChat: media.HasChat,
+                YoutubeVideoKey: media.YoutubeVideoKey);
         }
 
         if (string.IsNullOrWhiteSpace(media.StorageKey))

@@ -20,11 +20,21 @@
         {{ 'videos.videoLink' | t }}
         <input
           type="url"
-          [(ngModel)]="videoUrl"
+          [ngModel]="videoUrl"
+          (ngModelChange)="setVideoUrl($event)"
           name="videoUrl"
           [placeholder]="'videos.videoLinkPlaceholder' | t"
         />
       </label>
+      @if (isYouTubeLink(videoUrl)) {
+        <label class="chat-flag">
+          <input type="checkbox" [(ngModel)]="hasChat" name="hasChat" [disabled]="uploading()" />
+          <span class="chat-flag-text">
+            <strong>{{ 'videos.hasChatFlag' | t }}</strong>
+            <small>{{ 'videos.hasChatHint' | t }}</small>
+          </span>
+        </label>
+      }
       <label>
         {{ 'videos.videoFile' | t }}
         <input
@@ -90,7 +100,12 @@
               (keydown.enter)="playVideo(video)"
               (keydown.space)="$event.preventDefault(); playVideo(video)"
             >
-              <td><strong>{{ video.title }}</strong></td>
+              <td>
+                <strong>{{ video.title }}</strong>
+                @if (video.hasChat) {
+                  <span class="video-chip chat">{{ 'videos.chatFlag' | t }}</span>
+                }
+              </td>
               <td>{{ courseLabelById(video.courseId, video.courseTitle) }}</td>
               <td class="mono">{{ video.fileName }}</td>
               <td>{{ formatDate(video.createdAtUtc) }}</td>

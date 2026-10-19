@@ -18,4 +18,5 @@ public sealed record TeacherLessonVideoDto(
     long SizeBytes,
     int? DurationSeconds,
     int SortOrder,
-    DateTimeOffset CreatedAtUtc);
+    DateTimeOffset CreatedAtUtc,
+    bool HasChat = false);

@@ -8,6 +8,10 @@ public class MediaAsset : TenantEntity
     public string? FilePath { get; set; }
     /// <summary>When set, playback uses this URL instead of local file storage.</summary>
     public string? ExternalUrl { get; set; }
+    /// <summary>True when students get the source video's live chat panel next to the video.</summary>
+    public bool HasChat { get; set; }
+    /// <summary>YouTube video key shared by the video and its chat, e.g. V9mTgsEvkt4 (null when not a YouTube link).</summary>
+    public string? YoutubeVideoKey { get; set; }
     public string FileName { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
     public long SizeBytes { get; set; }

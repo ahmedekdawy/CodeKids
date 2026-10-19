@@ -1686,7 +1686,11 @@ export class LearningApiService {
     );
   }
 
-  registerMediaFromUrl(payload: { url: string; title?: string | null }): Observable<MediaAsset> {
+  registerMediaFromUrl(payload: {
+    url: string;
+    title?: string | null;
+    hasChat?: boolean;
+  }): Observable<MediaAsset> {
     return this.http.post<MediaAsset>(`${this.baseUrl}/media/from-url`, payload);
   }
 
