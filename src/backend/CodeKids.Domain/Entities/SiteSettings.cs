@@ -6,6 +6,9 @@ public class SiteSettings : TenantEntity
     public const int DefaultSessionCount = 6;
     public const int MinSessionCount = 1;
     public const int MaxSessionCount = 12;
+    public const int DefaultAmStartMinutes = 8 * 60;
+    public const int MinAmStartMinutes = 6 * 60;
+    public const int MaxAmStartMinutes = 14 * 60;
     public const int DefaultPmStartMinutes = 15 * 60;
     public const int MinPmStartMinutes = 12 * 60;
     public const int MaxPmStartMinutes = 21 * 60;
@@ -24,12 +27,19 @@ public class SiteSettings : TenantEntity
     public DateTimeOffset? TimetableWeekStartUtc { get; set; }
     public int AmSessionCount { get; set; } = DefaultSessionCount;
     public int PmSessionCount { get; set; } = DefaultSessionCount;
+    /// <summary>Minutes from midnight when the first AM session starts. Default 08:00.</summary>
+    public int AmStartMinutes { get; set; } = DefaultAmStartMinutes;
     /// <summary>Minutes from midnight when the first PM session starts. Default 15:00.</summary>
     public int PmStartMinutes { get; set; } = DefaultPmStartMinutes;
     public DateTimeOffset UpdatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public static int NormalizeSessionCount(int value) =>
         Math.Clamp(value, MinSessionCount, MaxSessionCount);
+
+    public static int NormalizeAmStartMinutes(int value) =>
+        value <= 0
+            ? DefaultAmStartMinutes
+            : Math.Clamp(value, MinAmStartMinutes, MaxAmStartMinutes);
 
     public static int NormalizePmStartMinutes(int value) =>
         value <= 0

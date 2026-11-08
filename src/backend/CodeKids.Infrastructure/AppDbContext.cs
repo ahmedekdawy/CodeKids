@@ -1111,6 +1111,7 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(x => x.BannerContentType).HasMaxLength(120).IsRequired();
             entity.Property(x => x.AmSessionCount).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultSessionCount);
             entity.Property(x => x.PmSessionCount).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultSessionCount);
+            entity.Property(x => x.AmStartMinutes).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultAmStartMinutes);
             entity.Property(x => x.PmStartMinutes).HasDefaultValue(CodeKids.Domain.Entities.SiteSettings.DefaultPmStartMinutes);
         });
 

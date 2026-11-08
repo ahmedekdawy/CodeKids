@@ -15,6 +15,7 @@ public static class SiteSettingsMapper
             settings.TimetableWeekStartUtc,
             Domain.Entities.SiteSettings.NormalizeSessionCount(settings.AmSessionCount),
             Domain.Entities.SiteSettings.NormalizeSessionCount(settings.PmSessionCount),
+            Domain.Entities.SiteSettings.NormalizeAmStartMinutes(settings.AmStartMinutes),
             Domain.Entities.SiteSettings.NormalizePmStartMinutes(settings.PmStartMinutes),
             settings.UpdatedAtUtc,
             settings.TenantStyle.ToString(),

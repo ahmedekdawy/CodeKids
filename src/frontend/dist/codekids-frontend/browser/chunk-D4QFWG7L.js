@@ -24,7 +24,9 @@ var PERIOD_STEP_MINUTES = SESSION_MINUTES + BREAK_MINUTES;
 var DEFAULT_SESSION_COUNT = 6;
 var MIN_SESSION_COUNT = 1;
 var MAX_SESSION_COUNT = 12;
-var AM_START_MINUTES = 8 * 60;
+var DEFAULT_AM_START_MINUTES = 8 * 60;
+var MIN_AM_START_MINUTES = 6 * 60;
+var MAX_AM_START_MINUTES = 14 * 60;
 var DEFAULT_PM_START_MINUTES = 15 * 60;
 var MIN_PM_START_MINUTES = 12 * 60;
 var MAX_PM_START_MINUTES = 21 * 60;
@@ -38,8 +40,8 @@ function normalizeSessionCount(value, fallback = DEFAULT_SESSION_COUNT) {
     return fallback;
   return Math.min(MAX_SESSION_COUNT, Math.max(MIN_SESSION_COUNT, n));
 }
-function buildSessionSlots(period, count = DEFAULT_SESSION_COUNT, pmStartMinutes = DEFAULT_PM_START_MINUTES, shiftMinutes = 0) {
-  const base = period === "am" ? AM_START_MINUTES : normalizePmStartMinutes(pmStartMinutes);
+function buildSessionSlots(period, count = DEFAULT_SESSION_COUNT, periodStartMinutes = period === "am" ? DEFAULT_AM_START_MINUTES : DEFAULT_PM_START_MINUTES, shiftMinutes = 0) {
+  const base = period === "am" ? normalizeAmStartMinutes(periodStartMinutes) : normalizePmStartMinutes(periodStartMinutes);
   return sessionNumbers(count).map((sessionNumber) => {
     const startMinutes = base + (sessionNumber - 1) * PERIOD_STEP_MINUTES;
     const endMinutes = startMinutes + SESSION_MINUTES;
@@ -58,19 +60,24 @@ ${timeLabel}`
     };
   });
 }
-function visibleSessionSlots(periodFilter, amCount = DEFAULT_SESSION_COUNT, pmCount = DEFAULT_SESSION_COUNT, pmStartMinutes = DEFAULT_PM_START_MINUTES, shiftMinutes = 0) {
+function visibleSessionSlots(periodFilter, amCount = DEFAULT_SESSION_COUNT, pmCount = DEFAULT_SESSION_COUNT, pmStartMinutes = DEFAULT_PM_START_MINUTES, shiftMinutes = 0, amStartMinutes = DEFAULT_AM_START_MINUTES) {
+  const am = () => buildSessionSlots("am", amCount, amStartMinutes, shiftMinutes);
+  const pm = () => buildSessionSlots("pm", pmCount, pmStartMinutes, shiftMinutes);
   if (periodFilter === "am")
-    return buildSessionSlots("am", amCount, pmStartMinutes, shiftMinutes);
+    return am();
   if (periodFilter === "pm")
-    return buildSessionSlots("pm", pmCount, pmStartMinutes, shiftMinutes);
-  return [
-    ...buildSessionSlots("am", amCount, pmStartMinutes, shiftMinutes),
-    ...buildSessionSlots("pm", pmCount, pmStartMinutes, shiftMinutes)
-  ];
+    return pm();
+  return [...am(), ...pm()];
 }
 var MINUTES_PER_DAY = 24 * 60;
 function wrapDay(totalMinutes) {
   return (totalMinutes % MINUTES_PER_DAY + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+}
+function normalizeAmStartMinutes(value, fallback = DEFAULT_AM_START_MINUTES) {
+  const n = Number(value);
+  if (!Number.isInteger(n) || n <= 0)
+    return fallback;
+  return Math.min(MAX_AM_START_MINUTES, Math.max(MIN_AM_START_MINUTES, n));
 }
 function normalizePmStartMinutes(value, fallback = DEFAULT_PM_START_MINUTES) {
   const n = Number(value);
@@ -79,16 +86,20 @@ function normalizePmStartMinutes(value, fallback = DEFAULT_PM_START_MINUTES) {
   return Math.min(MAX_PM_START_MINUTES, Math.max(MIN_PM_START_MINUTES, n));
 }
 function minutesToTimeInput(totalMinutes) {
-  const normalized = normalizePmStartMinutes(totalMinutes);
+  const normalized = wrapDay(Math.round(Number(totalMinutes) || 0));
   const hour = Math.floor(normalized / 60);
   const minute = normalized % 60;
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
-function timeInputToMinutes(value, fallback = DEFAULT_PM_START_MINUTES) {
+function timeInputToMinutes(value, fallback) {
   const match = /^(\d{1,2}):(\d{2})$/.exec((value ?? "").trim());
   if (!match)
     return fallback;
-  return normalizePmStartMinutes(Number(match[1]) * 60 + Number(match[2]), fallback);
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  if (hour > 23 || minute > 59)
+    return fallback;
+  return hour * 60 + minute;
 }
 function formatClock(totalMinutes) {
   const hour24 = Math.floor(totalMinutes / 60) % 24;
@@ -1081,6 +1092,7 @@ function normalizeSiteSettings(raw) {
     timetableWeekStartUtc: timetableWeek == null ? null : String(timetableWeek),
     amSessionCount: Number(item.amSessionCount ?? item["AmSessionCount"] ?? 6) || 6,
     pmSessionCount: Number(item.pmSessionCount ?? item["PmSessionCount"] ?? 6) || 6,
+    amStartMinutes: normalizeAmStartMinutes(item.amStartMinutes ?? item["AmStartMinutes"]),
     pmStartMinutes: normalizePmStartMinutes(item.pmStartMinutes ?? item["PmStartMinutes"]),
     updatedAtUtc: String(item.updatedAtUtc ?? item["UpdatedAtUtc"] ?? ""),
     tenantStyle: item.tenantStyle ?? item["TenantStyle"] ?? null,
@@ -1094,12 +1106,16 @@ export {
   DEFAULT_SESSION_COUNT,
   MIN_SESSION_COUNT,
   MAX_SESSION_COUNT,
+  DEFAULT_AM_START_MINUTES,
+  MIN_AM_START_MINUTES,
+  MAX_AM_START_MINUTES,
   DEFAULT_PM_START_MINUTES,
   MIN_PM_START_MINUTES,
   MAX_PM_START_MINUTES,
   sessionNumbers,
   normalizeSessionCount,
   visibleSessionSlots,
+  normalizeAmStartMinutes,
   normalizePmStartMinutes,
   minutesToTimeInput,
   timeInputToMinutes,
@@ -1107,4 +1123,4 @@ export {
   arabicWeekdayName,
   LearningApiService
 };
-//# sourceMappingURL=chunk-ET3TNS53.js.map
+//# sourceMappingURL=chunk-D4QFWG7L.js.map

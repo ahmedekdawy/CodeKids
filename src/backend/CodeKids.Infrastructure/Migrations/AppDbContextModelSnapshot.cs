@@ -1930,6 +1930,11 @@ namespace CodeKids.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(6);
 
+                    b.Property<int>("AmStartMinutes")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(480);
+
                     b.Property<string>("BannerContentType")
                         .IsRequired()
                         .HasMaxLength(120)

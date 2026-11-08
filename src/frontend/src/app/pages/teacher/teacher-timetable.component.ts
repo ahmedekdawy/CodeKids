@@ -83,7 +83,8 @@ export class TeacherTimetableComponent {
       this.brand.amSessionCount(),
       this.brand.pmSessionCount(),
       this.brand.pmStartMinutes(),
-      shift
+      shift,
+      this.brand.amStartMinutes()
     );
   });
   readonly amSlots = computed(() => this.sessionSlots().filter((s) => s.period === 'am'));

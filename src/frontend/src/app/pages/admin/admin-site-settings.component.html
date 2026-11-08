@@ -137,6 +137,20 @@
         </label>
 
         <label>
+          {{ 'admin.site.amStart' | t }}
+          <input
+            type="time"
+            [(ngModel)]="amStartTime"
+            name="amStartTime"
+            required
+            [min]="minAmStartTime"
+            [max]="maxAmStartTime"
+            step="300"
+          />
+          <span class="meta">{{ 'admin.site.amStartHint' | t: { min: minAmStartTime, max: maxAmStartTime } }}</span>
+        </label>
+
+        <label>
           {{ 'admin.site.pmStart' | t }}
           <input
             type="time"

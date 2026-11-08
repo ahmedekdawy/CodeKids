@@ -13,6 +13,7 @@ public sealed record UpdateSiteSettingsRequest(
     bool? ClearTimetableWeek = null,
     int? AmSessionCount = null,
     int? PmSessionCount = null,
+    int? AmStartMinutes = null,
     int? PmStartMinutes = null,
     bool? MultiTimeZone = null,
     string? TimeZone = null);
@@ -26,6 +27,7 @@ public sealed record UpdateSiteSettingsCommand(
     bool ClearTimetableWeek,
     int? AmSessionCount,
     int? PmSessionCount,
+    int? AmStartMinutes,
     int? PmStartMinutes,
     bool? MultiTimeZone = null,
     string? TimeZone = null) : ICommand<SiteSettingsDto>;

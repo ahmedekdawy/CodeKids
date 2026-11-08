@@ -8,13 +8,17 @@ import { TranslatePipe } from '../../shared/translate.pipe';
 import { PageFeedbackComponent } from '../../shared/page-feedback/page-feedback.component';
 import { browserTimeZone, timeZoneOptions } from '../../time-zone.util';
 import {
+  DEFAULT_AM_START_MINUTES,
   DEFAULT_SESSION_COUNT,
   DEFAULT_PM_START_MINUTES,
+  MAX_AM_START_MINUTES,
   MAX_SESSION_COUNT,
+  MIN_AM_START_MINUTES,
   MIN_SESSION_COUNT,
   MAX_PM_START_MINUTES,
   MIN_PM_START_MINUTES,
   minutesToTimeInput,
+  normalizeAmStartMinutes,
   normalizePmStartMinutes,
   normalizeSessionCount,
   timeInputToMinutes
@@ -42,12 +46,15 @@ export class AdminSiteSettingsComponent {
   useCurrentTimetableWeek = true;
   amSessionCount = DEFAULT_SESSION_COUNT;
   pmSessionCount = DEFAULT_SESSION_COUNT;
+  amStartTime = minutesToTimeInput(DEFAULT_AM_START_MINUTES);
   pmStartTime = minutesToTimeInput(DEFAULT_PM_START_MINUTES);
   multiTimeZone = false;
   timeZone = browserTimeZone();
   readonly timeZones = timeZoneOptions();
   readonly minSessionCount = MIN_SESSION_COUNT;
   readonly maxSessionCount = MAX_SESSION_COUNT;
+  readonly minAmStartTime = minutesToTimeInput(MIN_AM_START_MINUTES);
+  readonly maxAmStartTime = minutesToTimeInput(MAX_AM_START_MINUTES);
   readonly minPmStartTime = minutesToTimeInput(MIN_PM_START_MINUTES);
   readonly maxPmStartTime = minutesToTimeInput(MAX_PM_START_MINUTES);
 
@@ -115,7 +122,17 @@ export class AdminSiteSettingsComponent {
       return;
     }
 
-    if (!this.pmStartValid()) {
+    if (!startTimeValid(this.amStartTime, MIN_AM_START_MINUTES, MAX_AM_START_MINUTES)) {
+      this.error.set(
+        this.locale.t('admin.site.amStartInvalid', {
+          min: this.minAmStartTime,
+          max: this.maxAmStartTime
+        })
+      );
+      return;
+    }
+
+    if (!startTimeValid(this.pmStartTime, MIN_PM_START_MINUTES, MAX_PM_START_MINUTES)) {
       this.error.set(
         this.locale.t('admin.site.pmStartInvalid', {
           min: this.minPmStartTime,
@@ -186,6 +203,7 @@ export class AdminSiteSettingsComponent {
     clearTimetableWeek?: boolean;
     amSessionCount: number;
     pmSessionCount: number;
+    amStartMinutes: number;
     pmStartMinutes: number;
     multiTimeZone: boolean;
     timeZone: string;
@@ -193,7 +211,12 @@ export class AdminSiteSettingsComponent {
     const counts = {
       amSessionCount: normalizeSessionCount(this.amSessionCount),
       pmSessionCount: normalizeSessionCount(this.pmSessionCount),
-      pmStartMinutes: timeInputToMinutes(this.pmStartTime),
+      amStartMinutes: normalizeAmStartMinutes(
+        timeInputToMinutes(this.amStartTime, DEFAULT_AM_START_MINUTES)
+      ),
+      pmStartMinutes: normalizePmStartMinutes(
+        timeInputToMinutes(this.pmStartTime, DEFAULT_PM_START_MINUTES)
+      ),
       multiTimeZone: this.multiTimeZone,
       timeZone: this.timeZone
     };
@@ -231,6 +254,7 @@ export class AdminSiteSettingsComponent {
       timetableWeek: this.useCurrentTimetableWeek ? '' : this.timetableWeekLocal,
       amSessionCount: Number(this.amSessionCount),
       pmSessionCount: Number(this.pmSessionCount),
+      amStartTime: this.amStartTime,
       pmStartTime: this.pmStartTime,
       multiTimeZone: this.multiTimeZone,
       timeZone: this.timeZone
@@ -253,6 +277,7 @@ export class AdminSiteSettingsComponent {
   private applySessionCounts(settings: SiteSettings): void {
     this.amSessionCount = normalizeSessionCount(settings.amSessionCount);
     this.pmSessionCount = normalizeSessionCount(settings.pmSessionCount);
+    this.amStartTime = minutesToTimeInput(normalizeAmStartMinutes(settings.amStartMinutes));
     this.pmStartTime = minutesToTimeInput(normalizePmStartMinutes(settings.pmStartMinutes));
   }
 
@@ -269,12 +294,13 @@ export class AdminSiteSettingsComponent {
     );
   }
 
-  private pmStartValid(): boolean {
-    const match = /^(\d{1,2}):(\d{2})$/.exec((this.pmStartTime ?? '').trim());
-    if (!match) return false;
-    const minutes = Number(match[1]) * 60 + Number(match[2]);
-    return minutes >= MIN_PM_START_MINUTES && minutes <= MAX_PM_START_MINUTES;
-  }
+}
+
+function startTimeValid(value: string, min: number, max: number): boolean {
+  const match = /^(\d{1,2}):(\d{2})$/.exec((value ?? '').trim());
+  if (!match) return false;
+  const minutes = Number(match[1]) * 60 + Number(match[2]);
+  return minutes >= min && minutes <= max;
 }
 
 function startOfWeekSunday(date: Date): Date {

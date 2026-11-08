@@ -1034,6 +1034,9 @@ var AR = {
   "admin.site.pmSessionCount": "\u062D\u0635\u0635 \u0627\u0644\u0641\u062A\u0631\u0629 \u0627\u0644\u0645\u0633\u0627\u0626\u064A\u0629",
   "admin.site.sessionCountHint": "\u0639\u062F\u062F \u0627\u0644\u062D\u0635\u0635 \u0641\u064A \u0643\u0644 \u0641\u062A\u0631\u0629 ({min}\u2013{max}). \u0627\u0644\u0627\u0641\u062A\u0631\u0627\u0636\u064A 6.",
   "admin.site.sessionCountInvalid": "\u0639\u062F\u062F \u0627\u0644\u062D\u0635\u0635 \u064A\u062C\u0628 \u0623\u0646 \u064A\u0643\u0648\u0646 \u0628\u064A\u0646 {min} \u0648 {max}.",
+  "admin.site.amStart": "\u0628\u062F\u0627\u064A\u0629 \u0627\u0644\u0641\u062A\u0631\u0629 \u0627\u0644\u0635\u0628\u0627\u062D\u064A\u0629",
+  "admin.site.amStartHint": "\u062A\u0628\u062F\u0623 \u0623\u0648\u0644 \u062D\u0635\u0629 \u0635\u0628\u0627\u062D\u064A\u0629 \u0641\u064A \u0647\u0630\u0627 \u0627\u0644\u0648\u0642\u062A ({min}\u2013{max}). \u0627\u0644\u0627\u0641\u062A\u0631\u0627\u0636\u064A 08:00.",
+  "admin.site.amStartInvalid": "\u0648\u0642\u062A \u0628\u062F\u0627\u064A\u0629 \u0627\u0644\u0641\u062A\u0631\u0629 \u0627\u0644\u0635\u0628\u0627\u062D\u064A\u0629 \u064A\u062C\u0628 \u0623\u0646 \u064A\u0643\u0648\u0646 \u0628\u064A\u0646 {min} \u0648 {max}.",
   "admin.site.pmStart": "\u0628\u062F\u0627\u064A\u0629 \u0627\u0644\u0641\u062A\u0631\u0629 \u0627\u0644\u0645\u0633\u0627\u0626\u064A\u0629",
   "admin.site.pmStartHint": "\u062A\u0628\u062F\u0623 \u0623\u0648\u0644 \u062D\u0635\u0629 \u0645\u0633\u0627\u0626\u064A\u0629 \u0641\u064A \u0647\u0630\u0627 \u0627\u0644\u0648\u0642\u062A ({min}\u2013{max}). \u0627\u0644\u0627\u0641\u062A\u0631\u0627\u0636\u064A 15:00.",
   "admin.site.pmStartInvalid": "\u0648\u0642\u062A \u0628\u062F\u0627\u064A\u0629 \u0627\u0644\u0641\u062A\u0631\u0629 \u0627\u0644\u0645\u0633\u0627\u0626\u064A\u0629 \u064A\u062C\u0628 \u0623\u0646 \u064A\u0643\u0648\u0646 \u0628\u064A\u0646 {min} \u0648 {max}.",
@@ -3431,6 +3434,9 @@ var EN = {
   "admin.site.pmSessionCount": "PM sessions",
   "admin.site.sessionCountHint": "Number of timetable sessions in each shift ({min}\u2013{max}). Default is 6.",
   "admin.site.sessionCountInvalid": "Session count must be between {min} and {max}.",
+  "admin.site.amStart": "AM start time",
+  "admin.site.amStartHint": "First morning session starts at this time ({min}\u2013{max}). Default is 08:00.",
+  "admin.site.amStartInvalid": "AM start time must be between {min} and {max}.",
   "admin.site.pmStart": "PM start time",
   "admin.site.pmStartHint": "First afternoon session starts at this time ({min}\u2013{max}). Default is 15:00.",
   "admin.site.pmStartInvalid": "PM start time must be between {min} and {max}.",
@@ -4966,4 +4972,4 @@ export {
   LocaleService,
   TranslatePipe
 };
-//# sourceMappingURL=chunk-WEWBZC6G.js.map
+//# sourceMappingURL=chunk-VRMRLUEJ.js.map

@@ -6,7 +6,9 @@ export const PERIOD_STEP_MINUTES = SESSION_MINUTES + BREAK_MINUTES;
 export const DEFAULT_SESSION_COUNT = 6;
 export const MIN_SESSION_COUNT = 1;
 export const MAX_SESSION_COUNT = 12;
-export const AM_START_MINUTES = 8 * 60;
+export const DEFAULT_AM_START_MINUTES = 8 * 60;
+export const MIN_AM_START_MINUTES = 6 * 60;
+export const MAX_AM_START_MINUTES = 14 * 60;
 export const DEFAULT_PM_START_MINUTES = 15 * 60;
 export const MIN_PM_START_MINUTES = 12 * 60;
 export const MAX_PM_START_MINUTES = 21 * 60;
@@ -36,16 +38,20 @@ export function normalizeSessionCount(value: unknown, fallback = DEFAULT_SESSION
 }
 
 /**
+ * @param startMinutes when the period's first session starts; each period has its own configured start.
  * @param shiftMinutes added to the displayed times only, to show school times in the viewer's time zone.
  *   A slot that lands on another day gets a (+1) / (-1) marker.
  */
 export function buildSessionSlots(
   period: 'am' | 'pm',
   count = DEFAULT_SESSION_COUNT,
-  pmStartMinutes = DEFAULT_PM_START_MINUTES,
+  periodStartMinutes: number = period === 'am' ? DEFAULT_AM_START_MINUTES : DEFAULT_PM_START_MINUTES,
   shiftMinutes = 0
 ): FixedSessionSlot[] {
-  const base = period === 'am' ? AM_START_MINUTES : normalizePmStartMinutes(pmStartMinutes);
+  const base =
+    period === 'am'
+      ? normalizeAmStartMinutes(periodStartMinutes)
+      : normalizePmStartMinutes(periodStartMinutes);
   return sessionNumbers(count).map((sessionNumber) => {
     const startMinutes = base + (sessionNumber - 1) * PERIOD_STEP_MINUTES;
     const endMinutes = startMinutes + SESSION_MINUTES;
@@ -70,14 +76,14 @@ export function visibleSessionSlots(
   amCount = DEFAULT_SESSION_COUNT,
   pmCount = DEFAULT_SESSION_COUNT,
   pmStartMinutes = DEFAULT_PM_START_MINUTES,
-  shiftMinutes = 0
+  shiftMinutes = 0,
+  amStartMinutes = DEFAULT_AM_START_MINUTES
 ): FixedSessionSlot[] {
-  if (periodFilter === 'am') return buildSessionSlots('am', amCount, pmStartMinutes, shiftMinutes);
-  if (periodFilter === 'pm') return buildSessionSlots('pm', pmCount, pmStartMinutes, shiftMinutes);
-  return [
-    ...buildSessionSlots('am', amCount, pmStartMinutes, shiftMinutes),
-    ...buildSessionSlots('pm', pmCount, pmStartMinutes, shiftMinutes)
-  ];
+  const am = () => buildSessionSlots('am', amCount, amStartMinutes, shiftMinutes);
+  const pm = () => buildSessionSlots('pm', pmCount, pmStartMinutes, shiftMinutes);
+  if (periodFilter === 'am') return am();
+  if (periodFilter === 'pm') return pm();
+  return [...am(), ...pm()];
 }
 
 const MINUTES_PER_DAY = 24 * 60;
@@ -86,23 +92,34 @@ function wrapDay(totalMinutes: number): number {
   return ((totalMinutes % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
 }
 
+export function normalizeAmStartMinutes(value: unknown, fallback = DEFAULT_AM_START_MINUTES): number {
+  const n = Number(value);
+  if (!Number.isInteger(n) || n <= 0) return fallback;
+  return Math.min(MAX_AM_START_MINUTES, Math.max(MIN_AM_START_MINUTES, n));
+}
+
 export function normalizePmStartMinutes(value: unknown, fallback = DEFAULT_PM_START_MINUTES): number {
   const n = Number(value);
   if (!Number.isInteger(n) || n <= 0) return fallback;
   return Math.min(MAX_PM_START_MINUTES, Math.max(MIN_PM_START_MINUTES, n));
 }
 
+/** `HH:MM` for a time-of-day input; the value is only wrapped into the day, not clamped to a shift. */
 export function minutesToTimeInput(totalMinutes: number): string {
-  const normalized = normalizePmStartMinutes(totalMinutes);
+  const normalized = wrapDay(Math.round(Number(totalMinutes) || 0));
   const hour = Math.floor(normalized / 60);
   const minute = normalized % 60;
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
 }
 
-export function timeInputToMinutes(value: string, fallback = DEFAULT_PM_START_MINUTES): number {
+/** Parses an `HH:MM` input; the caller decides which shift it belongs to and normalizes it. */
+export function timeInputToMinutes(value: string, fallback: number): number {
   const match = /^(\d{1,2}):(\d{2})$/.exec((value ?? '').trim());
   if (!match) return fallback;
-  return normalizePmStartMinutes(Number(match[1]) * 60 + Number(match[2]), fallback);
+  const hour = Number(match[1]);
+  const minute = Number(match[2]);
+  if (hour > 23 || minute > 59) return fallback;
+  return hour * 60 + minute;
 }
 
 export function formatClock(totalMinutes: number): string {

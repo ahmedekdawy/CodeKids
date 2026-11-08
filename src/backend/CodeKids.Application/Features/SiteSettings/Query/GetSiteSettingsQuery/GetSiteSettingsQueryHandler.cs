@@ -86,6 +86,9 @@ public sealed class GetSiteSettingsQueryHandler(IAppDbContext dbContext)
             PmSessionCount = template is null
                 ? Domain.Entities.SiteSettings.DefaultSessionCount
                 : Domain.Entities.SiteSettings.NormalizeSessionCount(template.PmSessionCount),
+            AmStartMinutes = template is null
+                ? Domain.Entities.SiteSettings.DefaultAmStartMinutes
+                : Domain.Entities.SiteSettings.NormalizeAmStartMinutes(template.AmStartMinutes),
             PmStartMinutes = template is null
                 ? Domain.Entities.SiteSettings.DefaultPmStartMinutes
                 : Domain.Entities.SiteSettings.NormalizePmStartMinutes(template.PmStartMinutes),

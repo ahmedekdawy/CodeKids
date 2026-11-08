@@ -124,6 +124,8 @@ public static class SiteSettingsEndpoints
 
                         request.PmSessionCount,
 
+                        request.AmStartMinutes,
+
                         request.PmStartMinutes,
 
                         request.MultiTimeZone,

@@ -62,6 +62,11 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
                 cancellationToken);
         }
 
+        if (command.AmStartMinutes.HasValue)
+        {
+            settings.AmStartMinutes = ValidateAmStartMinutes(command.AmStartMinutes.Value);
+        }
+
         if (command.PmStartMinutes.HasValue)
         {
             settings.PmStartMinutes = ValidatePmStartMinutes(command.PmStartMinutes.Value);
@@ -118,6 +123,18 @@ public sealed class UpdateSiteSettingsCommandHandler(IAppDbContext dbContext)
         }
 
         return count;
+    }
+
+    private static int ValidateAmStartMinutes(int minutes)
+    {
+        if (minutes is < Domain.Entities.SiteSettings.MinAmStartMinutes
+            or > Domain.Entities.SiteSettings.MaxAmStartMinutes)
+        {
+            throw new InvalidOperationException(
+                $"AM start time must be between {FormatClock(Domain.Entities.SiteSettings.MinAmStartMinutes)} and {FormatClock(Domain.Entities.SiteSettings.MaxAmStartMinutes)}.");
+        }
+
+        return minutes;
     }
 
     private static int ValidatePmStartMinutes(int minutes)

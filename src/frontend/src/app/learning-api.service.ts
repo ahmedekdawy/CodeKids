@@ -92,7 +92,7 @@ import {
   SaveGradeCertificatePayload,
   StudentGradeCertificate
 } from './models';
-import { normalizePmStartMinutes } from './fixed-timetable.util';
+import { normalizeAmStartMinutes, normalizePmStartMinutes } from './fixed-timetable.util';
 import { resolveApiBaseUrl } from './api-base-url';
 
 @Injectable({ providedIn: 'root' })
@@ -1221,6 +1221,7 @@ export class LearningApiService {
     clearTimetableWeek?: boolean;
     amSessionCount?: number;
     pmSessionCount?: number;
+    amStartMinutes?: number;
     pmStartMinutes?: number;
     multiTimeZone?: boolean;
     timeZone?: string | null;
@@ -1836,6 +1837,7 @@ function normalizeSiteSettings(raw: SiteSettings | Record<string, unknown>): Sit
     timetableWeekStartUtc: timetableWeek == null ? null : String(timetableWeek),
     amSessionCount: Number(item.amSessionCount ?? item['AmSessionCount'] ?? 6) || 6,
     pmSessionCount: Number(item.pmSessionCount ?? item['PmSessionCount'] ?? 6) || 6,
+    amStartMinutes: normalizeAmStartMinutes(item.amStartMinutes ?? item['AmStartMinutes']),
     pmStartMinutes: normalizePmStartMinutes(item.pmStartMinutes ?? item['PmStartMinutes']),
     updatedAtUtc: String(item.updatedAtUtc ?? item['UpdatedAtUtc'] ?? ''),
     tenantStyle: (item.tenantStyle ?? item['TenantStyle'] ?? null) as string | null,

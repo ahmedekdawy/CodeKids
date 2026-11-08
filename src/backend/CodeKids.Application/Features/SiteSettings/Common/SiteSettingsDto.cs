@@ -12,6 +12,7 @@ public sealed record SiteSettingsDto(
     DateTimeOffset? TimetableWeekStartUtc,
     int AmSessionCount,
     int PmSessionCount,
+    int AmStartMinutes,
     int PmStartMinutes,
     DateTimeOffset UpdatedAtUtc,
     string TenantStyle = "School",

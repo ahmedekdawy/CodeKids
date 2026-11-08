@@ -2,12 +2,14 @@ import {
   currentTenantId
 } from "./chunk-RN452YVM.js";
 import {
+  DEFAULT_AM_START_MINUTES,
   DEFAULT_PM_START_MINUTES,
   DEFAULT_SESSION_COUNT,
   LearningApiService,
+  normalizeAmStartMinutes,
   normalizePmStartMinutes,
   normalizeSessionCount
-} from "./chunk-ET3TNS53.js";
+} from "./chunk-D4QFWG7L.js";
 import {
   Injectable,
   inject,
@@ -107,6 +109,13 @@ var SiteBrandService = class _SiteBrandService {
         []
       )
     );
+    this.amStartMinutes = signal(
+      DEFAULT_AM_START_MINUTES,
+      ...ngDevMode ? [{ debugName: "amStartMinutes" }] : (
+        /* istanbul ignore next */
+        []
+      )
+    );
     this.pmStartMinutes = signal(
       DEFAULT_PM_START_MINUTES,
       ...ngDevMode ? [{ debugName: "pmStartMinutes" }] : (
@@ -161,6 +170,7 @@ var SiteBrandService = class _SiteBrandService {
     this.bannerUrl.set(banner ? withVersion(banner, stamp) : null);
     this.amSessionCount.set(normalizeSessionCount(settings.amSessionCount));
     this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
+    this.amStartMinutes.set(normalizeAmStartMinutes(settings.amStartMinutes));
     this.pmStartMinutes.set(normalizePmStartMinutes(settings.pmStartMinutes));
     document.title = this.siteName();
     useTenantManifest(this.siteName(), logo ? stamp : null);
@@ -202,4 +212,4 @@ export {
   SiteBrandService,
   withVersion
 };
-//# sourceMappingURL=chunk-V326I5SR.js.map
+//# sourceMappingURL=chunk-H3Q33PW4.js.map

@@ -154,6 +154,7 @@ export interface SiteSettings {
   timetableWeekStartUtc?: string | null;
   amSessionCount: number;
   pmSessionCount: number;
+  amStartMinutes: number;
   pmStartMinutes: number;
   updatedAtUtc: string;
   tenantStyle?: string | null;

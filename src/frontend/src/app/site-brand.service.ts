@@ -3,7 +3,14 @@ import { LearningApiService } from './learning-api.service';
 import { SiteSettings } from './models';
 import { useTenantManifest } from './pwa-manifest';
 import { TenantStyle, normalizeTenantStyle } from './tenant-style';
-import { DEFAULT_SESSION_COUNT, DEFAULT_PM_START_MINUTES, normalizeSessionCount, normalizePmStartMinutes } from './fixed-timetable.util';
+import {
+  DEFAULT_AM_START_MINUTES,
+  DEFAULT_PM_START_MINUTES,
+  DEFAULT_SESSION_COUNT,
+  normalizeAmStartMinutes,
+  normalizePmStartMinutes,
+  normalizeSessionCount
+} from './fixed-timetable.util';
 
 @Injectable({ providedIn: 'root' })
 export class SiteBrandService {
@@ -14,6 +21,7 @@ export class SiteBrandService {
   readonly bannerUrl = signal<string | null>(null);
   readonly amSessionCount = signal(DEFAULT_SESSION_COUNT);
   readonly pmSessionCount = signal(DEFAULT_SESSION_COUNT);
+  readonly amStartMinutes = signal(DEFAULT_AM_START_MINUTES);
   readonly pmStartMinutes = signal(DEFAULT_PM_START_MINUTES);
   readonly tenantStyle = signal<TenantStyle>('School');
   /** True when students and teachers each have their own time zone. */
@@ -41,6 +49,7 @@ export class SiteBrandService {
     this.bannerUrl.set(banner ? withVersion(banner, stamp) : null);
     this.amSessionCount.set(normalizeSessionCount(settings.amSessionCount));
     this.pmSessionCount.set(normalizeSessionCount(settings.pmSessionCount));
+    this.amStartMinutes.set(normalizeAmStartMinutes(settings.amStartMinutes));
     this.pmStartMinutes.set(normalizePmStartMinutes(settings.pmStartMinutes));
     document.title = this.siteName();
     useTenantManifest(this.siteName(), logo ? stamp : null);
